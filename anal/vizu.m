@@ -39,6 +39,9 @@ elseif strcmp(action,'new')
   Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
   action=a2; a2=a3;
 end
+if ~isempty([axs axc]) & isempty(findobj('type','figure','userdata',6)) 
+  axs=[]; axc=[];
+end
 REALT=0; manylim=1;
 Loc=local.site;
 if strcmp(action,'rtgup')

@@ -8,10 +8,15 @@ for i=forced'
  forcedpar=forcepar(3:end);
  if exist(forcedpar,'var')
   forcepare=eval(forcepar);
-  if isstr(forcepare) & exist(strtok(forcepare,'('),'var')
-   forcepar=forcepare;
+  if isstr(forcepare)
+   try
+    eval([forcedpar '=' forcepare ';'])
+   catch
+    eval([forcedpar '=' forcepar ';'])
+   end
+  else
+   eval([forcedpar '=' forcepar ';'])
   end
-  eval([forcedpar '=' forcepar ';'])
  else
   disp(['Forced parameter ' forcedpar ' do not exists!'])
  end

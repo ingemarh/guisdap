@@ -38,7 +38,7 @@ end
 
 %*********************** AND BY CALIBRATION POWER ************************
 %calculate first scale for all calibration measurements
-calibs=diff_val(lpg_cal);      % find all different values
+calibs=diff_val(lpg_cal(lpgs));      % find all different values
 calibs=calibs(find(calibs>0)); % Accept non-zero values
 scale=zeros(size(lpg_cal));
 sysTemp=[];

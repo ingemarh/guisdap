@@ -28,7 +28,7 @@ global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control
 global d_saveintdir
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_satch
-global a_antold a_txold a_elold a_maxgap secs a_intfixed a_intallow
+global a_antold a_maxgap secs a_intfixed a_intallow a_posold fileslist
  
 OK=0; EOF=0; jj=0; N_averaged=0;
 d_ExpInfo=[]; d_raw=[]; txdown=0;
@@ -59,8 +59,10 @@ elseif d_filelist(end).file<a_interval(1)
   EOF=1; return
 end
 
-d=cell2mat({d_filelist.file});
-files=d_filelist(find(d>a_interval(1) & d<=a_interval(2)));
+if length(fileslist)~=length(d_filelist)
+ fileslist=cell2mat({d_filelist.file});
+end
+files=d_filelist(find(fileslist>a_interval(1) & fileslist<=a_interval(2)));
 if isempty(files) & a_integr<=0, EOF=1; return, end
 i=0;
 while i<length(files)
@@ -87,29 +89,26 @@ while i<length(files)
   inttime=7;                   % parameter that holds integration time
   txpower=8;                   % parameter that holds transmitter power
   vhf=lpb>40 & d_parbl(41)==3; % vhf antenna?
-
+  positive=[9 10 42 63 65];    % parameters which are positive
+  if vhf
+   positive=[8:10 42 63 65];
+  end
   % do not work on unavailable parameters
   averaged(find(averaged>lpb))=[];
   allow(find(fixed>lpb))=[];
   fixed(find(fixed>lpb))=[];
   accumulated(find(accumulated>lpb))=[];
+  positive(find(positive>lpb))=[];
 
   [secs1,year]=tosecs(d_parbl(tvec));
   a_inttime=d_parbl(inttime);
+  d=find(d_parbl(positive)<0);
+  if ~isempty(a_posold) & ~isempty(d)
+   d_parbl(positive(d))=a_posold(d);
+  end
+  a_posold=d_parbl(positive);
   a_ant=d_parbl([el az]);
-  if a_ant(1)>0 & (~vhf | a_ant(2)>0)
-    a_elold=a_ant;
-  elseif ~isempty(a_elold)
-    a_ant=a_elold;
-    d_parbl([el az])=a_ant;
-  end
   a_tx=d_parbl(txpower);
-  if a_tx>=0
-    a_txold=a_tx;
-  elseif ~isempty(a_txold)
-    a_tx=a_txold;
-    d_parbl(txpower)=a_tx;
-  end
   if a_integr<=0
     if isempty(a_antold)
       a_antold=a_ant;

@@ -8,14 +8,20 @@
 %function subr_backgr
 function subr_backgr
 
-global d_data d_var1 d_var2 lpg_bac lpg_nt lpg_background ADDR_SHIFT
+global d_data d_var1 d_var2 lpg_bac lpg_nt lpg_background ADDR_SHIFT a_code lpg_bcs lpg_code
 
 data=d_data;
 var1=d_var1;
 var2=d_var2;
 
 %*********************** SUBTRACTING BACKGROUND ***************************
-bacs=lpg_bac(lpg_bac>0);
+lpgs=find(lpg_bcs);
+if ~isempty(a_code)
+  lpgs=lpgs(find(ismember(lpg_code(lpgs),unique(a_code))));
+end
+
+%bacs=lpg_bac(lpg_bac(lpgs)>0);
+bacs=lpg_bac(lpgs(find(lpg_bac(lpgs)>0)));
 bacs=diff_val(bacs);  % find all different values
 
 for bac=bacs

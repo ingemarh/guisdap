@@ -11,6 +11,7 @@ parbl(1:2:6)=floor(d_parbl(2:4)/100)+[1900;0;0];
 parbl(2:2:6)=rem(d_parbl(2:4),100);
 parbl([7:10 63])=d_parbl([94 99 9 6 97]).*[1;1000;.1;.1;1000]; 
 parbl(58:62)=d_parbl(121:125); 
+parbl(22)=1;
 if rem(d_parbl(95),2)==1 | d_parbl(95)==64
   parbl(8)=-1;
 end
