@@ -3,6 +3,7 @@
 %
 % See also: an_start integr_data
 function  [parbl,lpb]=nd2eros4(d_parbl)
+global d_data
 
 lpb=64;
 parbl=-1*ones(lpb,1);
@@ -22,6 +23,10 @@ parbl([21 41])=ant(:,d_parbl(1));
 if d_parbl(1)==3
   parbl(8)=max(d_parbl([99 101]))*1000;
 elseif d_parbl(1)~=2
-  parbl(42)=d_parbl(11);
+  parbl(42)=d_parbl(11)*100;
 end
-parbl(64)=d_data(end);
+parbl(64)=real(d_data(end));
+if size(d_data,1)==1
+ d_data=d_data(:);
+ parbl(64)=parbl(64)+1;
+end

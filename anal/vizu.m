@@ -66,7 +66,7 @@ if isempty(DATA_PATH)
   if strcmp(lower(action),'verbose')
     DATA_PATH=minput('Data path',result_path,1);
   elseif ~REALT
-    if isdir(action)
+    if isdir(action) | strfind(action,'/')
       DATA_PATH=action; action=[];
       if isstr(a2), MESSAGE1=a2; end
       if isstr(a3), name_ant=a3; end
@@ -232,7 +232,8 @@ elseif ~REALT
   DATA_PATH=DATA_PATH(1:end-1);
  end
  [d,dpath]=fileparts(DATA_PATH);
- START_TIME=[sscanf(dpath(1:10),'%4d-%2d-%2d')' 0 0 0];
+ START_TIME=datevec(median(Time(:))); START_TIME(4:6)=[0 0 0];
+%START_TIME=[sscanf(dpath(1:10),'%4d-%2d-%2d')' 0 0 0];
  END_TIME=START_TIME+[0 0 0 24 0 0];
 end
 if isempty(MESSAGE1)
@@ -433,7 +434,7 @@ if option(13)
  ll=[par1D(:,[3 2 1]) par2D(GATES,:,1)'];
  for i=1:s, ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
  if size(par1D,2)>3, ll=[ll par1D(:,4:end)]; end
- d=many(ll,[-30 310]);
+ d=many(ll,[0 300])+[-10 10];
  line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {'Latitude (\circN)','Longitude (\circE)'} TITLE(2) TITLE1(4) {'Offset (\mus)'}],[])
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

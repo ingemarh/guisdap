@@ -11,6 +11,10 @@ if nargin<3, lastfile=0; end
 if nargin<2, status=[]; end
 if isempty(status), status=0; end
 
+if ~isdir(data_path)
+  [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path);
+  return
+end
 data_path=fullfile(data_path,filesep);
 filelist=getfilelist(data_path);
 if nargin>2, filelist=filelist(filelist>lastfile); end

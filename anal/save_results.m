@@ -80,7 +80,7 @@ r_pprange=col(pp_range)*(p_dtau*1e-6*v_lightspeed/2/1000);
 
 r_h=col(range_to_height(r_range,ch_el(1)));
 r_range=col(r_range)*(p_dtau*1e-6*v_lightspeed/2/1000);
-r_Tsys=sysTemp;
+r_Tsys=sysTemp(isfinite(sysTemp));
 
 if ~di_results
  fprintf('Status: '); fprintf('%d',r_status); fprintf('\n');

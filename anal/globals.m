@@ -34,4 +34,4 @@ global lpg_womscaled k_radar
  global r_apriori r_apriorierror r_h
 
 % Global definitions for the spectrum calculations
- global pldfvv pldfv 
+ global pldfvv pldfv GUP_iniver

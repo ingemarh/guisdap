@@ -24,6 +24,7 @@
 % First find the ranges and the scattering angles from the common volume
 % For monostatic case quite simply 
 % Check that distance from transmitter to receiver less than 100 m
+
 if max(abs(gg2gc(p_XMITloc)-gg2gc(p_RECloc)))<.1
   sc_angle=pi;
   sc_R0=p_R0*scale;
@@ -39,7 +40,7 @@ if max(abs(gg2gc(p_XMITloc)-gg2gc(p_RECloc)))<.1
   %    Multiplication by scale is included here so that
   %    is is not needed in functions dirthe and power_prof
 elseif GUP_iniver<1.71
-  fprintf('Obsolete, please reinitialise\n');
+  fprintf('GUP init version %g obsolete, please reinitialise\n',GUP_iniver);
   [gg_sp,angle,ranges]=loc2gg(p_RECloc,[ch_el(1),ch_az(1),ch_range(1)],p_XMITloc);
   sc_angle=angle; sc_R0=ranges(2)*1E3; sc_R1=ranges(1)*1E3;
 % Effective scattering volume in m^3 for the remotes
