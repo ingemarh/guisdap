@@ -36,8 +36,8 @@ elseif a_classic
       if lenr>0
         len=length(a_range);
         a_range=[a_range ranges-lpg_dt(lpg)/2 max(ranges)+lpg_dt(lpg)/2 0];
-        a_code(code,len+(1:lenr))=ones(1,lenr);
-        a_code(code,len+lenr+1)=0;
+        acode(code,len+(1:lenr))=ones(1,lenr);
+        acode(code,len+lenr+1)=0;
       end
     end
     a_minwidth=zeros(1,length(a_range));
@@ -67,12 +67,12 @@ else
     end
   end
 
-  a_code=[];
+  acode=[];
   gates=[];
   codes=[];
-  if exist('analysis_code','var')
-    if length(analysis_code)==length(a_range)
-      temp=analysis_code;
+  if ~isempty(a_code)
+    if length(a_code)==length(a_range)
+      temp=a_code;
       while any(temp>0)
         code=rem(temp,10);
         temp=floor(temp/10);
@@ -83,12 +83,12 @@ else
       for i=1:max(codes)
         ind=find(codes==i);
         len=length(ind);
-        if len>0; a_code(i,gates(ind))=ones(1,len); end
+        if len>0; acode(i,gates(ind))=ones(1,len); end
       end
       clear code temp ind gates codes i
-    elseif max(analysis_code)>max(lpg_code)
+    elseif max(a_code)>max(lpg_code)
       fprintf('Analysis_code variable not well defined and neglected\n')
-      clear analysis_code
+      a_code=[];
     end
   end
 end
@@ -102,14 +102,14 @@ for gate=find(diffran>0)
   addr=find(ad_range>a_range(gate) & ad_range<=a_range(gate+1));
   if ~isempty(addr)
     % Select suitable codes 
-    if length(a_code)>0
+    if length(acode)>0
       ind1=[];
-      for code=find(a_code(:,gate)==1)';
+      for code=find(acode(:,gate)==1)';
         ind1=[ind1,find(ad_code(addr)==code)];
       end
       addr=addr(ind1);
-    elseif exist('analysis_code','var')
-      addr=addr(find(ismember(ad_code(addr),analysis_code)));
+    elseif ~isempty(a_code)
+      addr=addr(find(ismember(ad_code(addr),a_code)));
     end
     % Remove too narrow or too broad responses 
     ind1=find(ad_w(addr)>a_minwidth(gate) & ad_w(addr)<a_maxwidth(gate) );

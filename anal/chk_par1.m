@@ -103,6 +103,9 @@ if exist('NCAR','var')
  NCAR_output
  a_NCAR=NCAR;
 end
+if exist('analysis_code','var')
+ a_code=analysis_code;
+end
 
 di_figures=[0 0 0 0 0]; di_results=1;
 if exist('display_figures'), 

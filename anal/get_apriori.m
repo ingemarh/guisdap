@@ -12,7 +12,7 @@ function get_apriori(simul)
  
 global a_addr a_adstart a_adend a_range a_priori a_priorierror ADDR_SHIFT
 global lpg_bcs lpg_lag ch_el p_N0 ad_w  ad_range di_results di_figures
-global pp_profile pp_range pp_sigma pp_height a_chap
+global pp_profile pp_range pp_sigma pp_height a_chap a_code lpg_code
 
 if nargin==0, simul=0; end
 
@@ -31,6 +31,9 @@ if simul
 end
 % Calculate electron density estimates from zero lags, if available.
 ind=find(lpg_bcs=='s' & lpg_lag==0);
+if ~isempty(a_code)
+  ind=find(ismember(lpg_code(ind),a_code));
+end
 if length(ind)>0,
   [pp_profile,pp_range,pp_sigma]=power_prof(lpg_addr(ind)',0);
   pp_height=range_to_height(pp_range,ch_el(1));
