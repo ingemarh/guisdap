@@ -34,7 +34,11 @@ if strcmp(i2,'AUTO')
 elseif isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
  if a_NCAR
   NCAR_output
-  do_NCAR([],a_NCAR)
+  if a_realtime & isunix & ~isempty(local.site)
+   do_NCAR([],2)
+  else
+   do_NCAR([],a_NCAR)
+  end
  end
  if di_figures(5)
   vizu('new','rtgup')
