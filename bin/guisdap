@@ -13,8 +13,8 @@ filename=$0
 while [ -h $filename ]; do
 	lscmd=`ls -l $filename 2>/dev/null`
 	f1=`echo "$lscmd" | awk '{ print $NF }'`
-	fp=`echo "$f1" | awk -F '' '{ print $1 }'`
-	if [ $fp != "/" ];then
+	fp=`echo "$f1" | awk '{ print index($1,"/") }'`
+	if [ $fp != "1" ];then
 		filename=`dirname $filename`/$f1
 	else
 		filename=$f1
