@@ -135,11 +135,12 @@ void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acf
 	for(i=0;i<(aaN*ns);i++)
 		pPr[i]=aaPr[i];
 	
-	pPr[3]=pPr[3]/sqrt(pPr[1]);
+	pPr[3]/=sqrt(pPr[1]);
 
 	Transf(pPr,nin0Pr,tit0Pr,mim0Pr,psiPr,viPr,p_m0,nion);
         specCalc(pldfvPr,pldfvPi,nin0Pr,tit0Pr,nion,mim0Pr,psiPr,viPr,kd2Pr[0],scr,nom,omPr,specPr,use_reference);
 	/*add clutter signal*/
+	pPr[4+nion]/=nom;
 	for(i=0;i<nom;i++) {
 		specPr[i]+=pPr[4+nion]; /*Broadband*/
 		if(omPr[i]==0) specPr[i]+=pPr[5+nion]; /*DC spike*/

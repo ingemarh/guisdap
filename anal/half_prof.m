@@ -14,7 +14,7 @@ global pldfvv p_D0 p_N0 p_T0 p_om k_radar k_radar0 p_m0
 
 r_ind=0;
 NP=size(a_priori,2);
-physlim=[-ones(1,NP)*Inf;ones(1,NP)*Inf];
+physlim=[-ones(1,NP)*1e20;ones(1,NP)*1e20];
 physlim(:,1:4+length(p_m0))=[1e6 1   .01  1   -2e4 -.01*ones(1,length(p_m0)-1)
                             1e14 2e4 100  1e9  2e4 1.01*ones(1,length(p_m0)-1)];
 physlim=real_to_scaled(physlim);

@@ -21,7 +21,7 @@ param=real(param); % hyi hyi
 [nin0,tit0,mim0,psi,vi]=transf(param,p_m0);
 s=spec(nin0,tit0,mim0,psi,vi,kd2,p_om,pldfvv);
 %add clutter signal
-s=param(5+length(p_m0))+s; % Broadband
+s=param(5+length(p_m0))/length(s)+s; % Broadband
 %freq=p_om*p_om0*sin(sc_angle/2)/2/pi;
 f0=find(p_om==0); %DC spike
 if ~isempty(f0)
