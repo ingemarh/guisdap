@@ -12,13 +12,13 @@ end
 if isempty(dirpath)
   msg='Empty directory path';
 elseif isunix & a_realtime | strfind(dirpath,'?')
+  i=' ';
   if ~isempty(newer)
-   %newer=sprintf('-newer %s%08d.mat ',dirpath,newer);
-    newer=sprintf('-newer %s/%08d%s ',newer.dir,newer.file,newer.ext);
+    i=sprintf('-newer %s/%08d%s ',newer.dir,newer.file,newer.ext);
   end
   template=[row(col('\[0-9]')*ones(1,8)) '.mat\*'];
   d=[tempname '.txt'];
-  cmd=sprintf('find %s -name %s %s-print >%s 2>/dev/null',dirpath(1:end-1),template,newer,d);
+  cmd=sprintf('find %s -name %s%s-print >%s 2>/dev/null',dirpath(1:end-1),template,i,d);
   if unix(cmd) & unix(cmd)
     msg=['Error listing mat files in ' dirpath ' ' cmd];
   elseif exist(d)
@@ -35,7 +35,7 @@ elseif isunix & a_realtime | strfind(dirpath,'?')
     catch, disp(lasterr)
     end
   end
-  delete(d)
+  if exist(d), delete(d), end
 else
   dirpath=dirpath(1:end-1);
   i=strfind(dirpath,'*');
@@ -60,9 +60,6 @@ else
     end
     list=[list;l];
   end
-  if isempty(list)
-    msg=[dirpath ' - No valid mat files'];
-  end
   if ~isempty(newer)
     d=find(cell2mat({list.file})>newer.file);
     list=list(d);
@@ -70,4 +67,6 @@ else
 end
 if ~isempty(list)
   [dum,d]=sort(cell2mat({list.file})); list=list(d);
+elseif isempty(newer)
+  msg=[dirpath ' - No valid mat files'];
 end

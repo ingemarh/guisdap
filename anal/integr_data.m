@@ -43,7 +43,7 @@ if a_ind==0
   a_oldtime=0;
   a_maxgap=30;
 else
-  a_indold=a_ind;a_ind=a_ind+1; if (a_ind>length(a_integr)), a_ind=1; end
+  a_indold=a_ind; a_ind=a_ind+1; if a_ind>length(a_integr), a_ind=1; end
   a_interval=a_interval(2)+a_skip(a_indold)+[0 a_integr(a_ind)];
 end
 if a_integr<=0, a_interval(2)=a_end;
