@@ -117,7 +117,7 @@ end
 %report the result
 if Nsat>0 %| Nsatb>0
  if a_satch.plot
-  figure(a_satch.plot), set(gcf,'Name','Satellites detected')
+  drawnow, figure(a_satch.plot), set(gcf,'Name','Satellites detected')
   for i=1:j
    eval(['dat=dat' num2str(i) '; pc=pc' num2str(i) ';'])
    subplot(j,1,i)

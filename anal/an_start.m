@@ -29,6 +29,8 @@ chk_par1
 nat_const
 get_ADDRSHIFT
 init_graphics
+spektri_init % Loads in plasma dispersion function table
+name_antennas={'32m','42m','vhf','uhf','kir','sod'};
 
 old_rcprog=-1; old_point=[-1 -1];
 EOF=0;
@@ -59,8 +61,7 @@ while ~EOF
 
   if OK & a_do
     if d_rcprog~=old_rcprog | ((name_site=='K' | name_site=='S') & any(fix((old_point-[ch_el(1) ch_az(1)])/.05)))
-      name_ant={'32m','42m','vhf','uhf','kir','sod'};
-      name_ant=char(name_ant(ant_id));
+      name_ant=char(name_antennas(ant_id));
       load_initfile
       Ant_eff=.66;
       if name_site=='V'
@@ -77,8 +78,6 @@ while ~EOF
       if exist('GUIZARD')==2, GUIZARD, end
       scale_lpgwom % scales the spectral ambiguity function with lpg_ND factors
       form_adpar
-      spektri_init % Loads in plasma dispersion function table
-      constants
       % Removing uncessary variables
       clear lpg_wom vc_Aenv vc_Apenv vc_penvabs vc_penv vc_penvo ad_coeff_no_Pt
     end
@@ -86,6 +85,7 @@ while ~EOF
       run([path_expr 'guispert'])
     end
     force2ch, GUISPERT
+    constants
 
     if ~exist('ad_coeff_no_Pt','var')
       ad_coeff_no_Pt=radar_eq(Ant_eff); % calculates the radar constant      
@@ -117,10 +117,9 @@ while ~EOF
     subr_backgr   
 
     if di_figures(1)
-      figure(di_figures(1)); clf;
       indr=1:length(d_data); indi=indr;
       indi(find(imag(d_data)==0))=NaN; 
-      figure(di_figures(1)); clf;
+      drawnow, figure(di_figures(1)); %clf;
       plot(indr-1,real(d_data),'r',indi-1,imag(d_data),'b')
       indr=get(gca,'ylim'); indr=min([max([indr;-1000 -1000]);10000 10000]);
       set(gca,'ylim',indr)
@@ -144,7 +143,7 @@ while ~EOF
       save_results
 
       if di_figures(4)
-        figure(di_figures(4))
+        drawnow, figure(di_figures(4))
         plot_fit('panel',[1 1 1 0 1],[-inf inf 10*ceil((max(r_h)-min(r_h))/100)]);
         drawnow 
       end

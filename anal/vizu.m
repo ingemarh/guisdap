@@ -294,6 +294,7 @@ end
 t1=['Produced@' LOCATION ', ' date];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+drawnow
 if isempty(findobj('type','figure','userdata',6))
  figure
  if ~prod(get(0,'ScreenSize'))-1 & strcmp(version('-release'),'13')

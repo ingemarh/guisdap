@@ -87,7 +87,7 @@ if di_figures(3) | name_site=='K' | name_site=='S'
     fitted_p=result(indp)';
     res_err=err(indp)';
  
-    figure(di_figures(3)),%clf
+    drawnow, figure(di_figures(3)),%clf
  
     subplot('Position',[.1 .1 .7 .8])
     indr=indr-.05; indi=indi+.05;
