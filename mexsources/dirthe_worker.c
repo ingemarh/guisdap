@@ -111,11 +111,11 @@ void mymul(char transa,double *mat1,long mat1m,long mat1n,char transb,double *ma
 #ifdef ANSI_C
 void DirtheCalc(long ns,long aaN,double *aaPr,double *coefPr,long womM,
 			   double *womPr,double *kd2Pr,long nom,double *omPr,
-			   double *pldfvPr,double *pldfvPi,double *acfPr,long use_reference,double *scr,double *scr1)
+			   double *pldfvPr,double *pldfvPi,double *acfPr,long use_reference,double *p_m0,long nion,double *scr,double *scr1)
 #else
-void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acfPr,use_reference,scr,scr1)
-		long ns,aaN,womM,nom,use_reference;
-		double *aaPr,*coefPr,*womPr,*kd2Pr,*omPr,*acfPr,*pldfvPr,*pldfvPi,scr,scr1;
+void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acfPr,use_reference,p_m0,nion,scr,scr1)
+		long ns,aaN,womM,nom,use_reference,nion;
+		double *aaPr,*coefPr,*womPr,*kd2Pr,*omPr,*acfPr,*pldfvPr,*pldfvPi,p_m0,scr,scr1;
 #endif	
 	{
 	unsigned long i;
@@ -137,7 +137,7 @@ void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acf
 	
 	pPr[3]=pPr[3]/sqrt(pPr[1]);
 
-	Transf(pPr,nin0Pr,tit0Pr,mim0Pr,psiPr,viPr);
+	Transf(pPr,nin0Pr,tit0Pr,mim0Pr,psiPr,viPr,p_m0,nion);
         specCalc(pldfvPr,pldfvPi,nin0Pr,tit0Pr,nion,mim0Pr,psiPr,viPr,kd2Pr[0],scr,nom,omPr,specPr,use_reference);
 	/*acf=[p_coeffg.*(f_womega*s);col(aa)];*/
 	

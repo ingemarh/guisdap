@@ -17,7 +17,7 @@
 
 #define	RES_OUT	plhs[0]
 
-# include "guisdap.h"
+#include "guisdap.h"
 
 #ifdef ANSI_C
 	void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])

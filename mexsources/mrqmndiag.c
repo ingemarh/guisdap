@@ -1,12 +1,11 @@
-# include <stdlib.h>
-# include <stdio.h>
-# include <math.h>
-# include "mex.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include "mex.h"
+#include "guisdap.h"
 
 #define TEXT   1	/* mat.type indicating text */
 #define MATRIX 0	/* mat.type indicating matrix */
-
-#define ddabs(A) ((A)<(0) ? (-A) : (A))
 
 
 /* Output Arguments */
@@ -32,18 +31,6 @@
 /*
  * Beginning of the program !!!!!!!!
  */
-#ifdef ANSI_C
-extern void  MrqmndiagCalc(long ns,long aaN,double *aaPr,double *ymPr,double *variancePr,
-	long varianceM,long varianceN,double* ftolPr,double *itMaxPr,
-	double *coefPr,long coefM,long coefN,long womM,double *womPr,double *kd2Pr,
-	long nom,double *omPr,double *aaOutPr,double *chi2Pr,double *itsPr,double *alphaPr,
-	double *pldfvPr,double *pldfvPi,double *physlimPr);
-#else
-extern void MrqmndiagCalc();
-#endif
-
-extern double *p_m0;
-extern unsigned long nion;
 
 #ifdef ANSI_C
 void mexFunction(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[])
@@ -54,9 +41,9 @@ mxArray *plhs[];
 const mxArray *prhs[];
 #endif
 {
-	long nom,womM,aaN,ns,varianceM,varianceN,coefM,coefN;
+	long nom,womM,aaN,ns,varianceM,varianceN,coefM,coefN,nion;
 	double *aaPr,*coefPr,*womPr,*kd2Pr,*omPr, *ymPr, *variancePr,*ftolPr,*itMaxPr;
-	double *aaOutPr,*itsPr,*chi2Pr,*alphaPr,*pldfvPr,*pldfvPi,*physlimPr;
+	double *aaOutPr,*itsPr,*chi2Pr,*alphaPr,*pldfvPr,*pldfvPi,*physlimPr,*p_m0;
 
 
 /* Deal with the input arguments */
@@ -121,6 +108,6 @@ const mxArray *prhs[];
 /* Do the actual calculation */
 	MrqmndiagCalc(ns,aaN,aaPr,ymPr,variancePr,varianceM,varianceN,ftolPr,itMaxPr,
 		coefPr,coefM,coefN,womM,womPr,kd2Pr,nom,omPr,aaOutPr,chi2Pr,itsPr,
-		alphaPr,pldfvPr,pldfvPi,physlimPr);
+		alphaPr,pldfvPr,pldfvPi,physlimPr,p_m0,nion);
 
 }

@@ -1,8 +1,8 @@
-# include <stdlib.h>
-# include <stdio.h>
-# include <math.h>
-# include "mex.h"
-# include "guisdap.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include "mex.h"
+#include "guisdap.h"
 
 /* Output Arguments */
 #define	ACF_OUT	plhs[0]
@@ -26,8 +26,8 @@
 	const mxArray *prhs[];
 #endif
 {
-	long nom,womM,aaN,ns;
-	double *aaPr,*coefPr,*womPr,*kd2Pr,*omPr,*acfPr,*pldfvPr,*pldfvPi,*scr,*scr1;
+	long nom,womM,aaN,ns,nion;
+	double *aaPr,*coefPr,*womPr,*kd2Pr,*omPr,*acfPr,*pldfvPr,*pldfvPi,*scr,*scr1,*p_m0;
 
 /* First check that we get the proper number of input & output arguments */
 
@@ -57,5 +57,5 @@
 	scr = (double *)mxCalloc((nion+2)*(3+4*nom),sizeof(double));
 	scr1= (double *)mxCalloc(((nion+1)*5+nom+aaN)*ns,sizeof(double));
 
-	DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acfPr,0,scr,scr1);
+	DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acfPr,0,p_m0,nion,scr,scr1);
 }

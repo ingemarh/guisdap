@@ -4,22 +4,26 @@ MATLAB:=	/opt/matlab6
 endif
 ifeq ($(sys),SunOS)
 #Solaris:
-FFLAGS=-fast
-CFLAGS=-fast -mt -KPIC -DANSI_C -DGUPTHREAD -I$(MATLAB)/extern/include
+CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include
 MEXOPTS=-f $(MATLAB)/bin/f90opts.sh
 else
 #Linux
-FFLAGS=-O -s
-CFLAGS= -O -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -DGUPTHREAD -I$(MATLAB)/extern/include
+CFLAGS=-O3 -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
 MEXOPTS=
 endif
+
+th=$(shell if [ -e /usr/include/pthread.h ]; then echo 1;else echo 0;fi)
 
 #The rest
 M=	$(PWD)/../lib
 IRILIB=	-L$M -liri
 MSISLIB=	-L$M -lmsis
-GUPLIB=	-L$M -lguisdap -lpthread
+GUPLIB=	-L$M -lguisdap
 mex_Directory = ../mex6
+ifeq ($(th),1)
+CFLAGS:=	$(CFLAGS) -DGUPTHREAD
+GUPLIB:=	$(GUPLIB) -lpthread
+endif
 
 all: iri msis lib mex6 install
 

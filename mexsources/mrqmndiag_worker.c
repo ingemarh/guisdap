@@ -13,6 +13,7 @@
 
 #ifdef GUPTHREAD
 #include <pthread.h>
+#include <unistd.h>
 #endif
 struct pth {
 	long ns;
@@ -44,6 +45,9 @@ struct pth {
 	unsigned long nscr1;
 	double *scr;
 	double *scr1;
+	unsigned long nth;
+	double *p_m0;
+	unsigned long nion;
 };
 void *dirthe_loop(struct pth *);
 #ifdef THTIME
@@ -63,10 +67,10 @@ __inline__ unsigned long long int gethrtime (void)
 void MrqmndiagCalc(long ns,long aaN,double *aPr,double* ymPr,double *variancePr,long varianceM,long varianceN, 
 	double* ftolPr,double *itMaxPr,double *coefPr,long coefM,long coefN,
 	long womM,double *womPr,double *kd2Pr,long nom,double *omPr, 
-	double *aaOutPr,double *chi2Pr,double *itsPr,double *alphaPr,double *pldfvPr,double *pldfvPi,double *physlimPr)
+	double *aaOutPr,double *chi2Pr,double *itsPr,double *alphaPr,double *pldfvPr,double *pldfvPi,double *physlimPr,double *p_m0,long nion)
 #else
-void MrqmndiagCalc(ns,aaN,aPr,ymPr,variancePr,varianceM,varianceN,ftolPr,itMaxPr,coefPr,coefM,coefN,womM,womPr,kd2Pr,nom,omPr,aaOutPr,chi2Pr,itsPr,alphaPr,pldfvPr,pldfvPi,physlimPr)
-long ns,aaN,varianceM,varianceN,coefM,coefN,womM,nom;
+void MrqmndiagCalc(ns,aaN,aPr,ymPr,variancePr,varianceM,varianceN,ftolPr,itMaxPr,coefPr,coefM,coefN,womM,womPr,kd2Pr,nom,omPr,aaOutPr,chi2Pr,itsPr,alphaPr,pldfvPr,pldfvPi,physlimPr,p_m0,nion)
+long ns,aaN,varianceM,varianceN,coefM,coefN,womM,nom,nion;
 double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOutPr,*chi2Pr,*itsPr,*alphaPr,*pldfvPr,*pldfvPi,*physlimPr;
 #endif
 {
@@ -77,7 +81,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	long validDer=0,its=0,itMax,*indicesVector;
 	mxArray *storage;
 
-	unsigned long *varOK,nvarOK,*afree,nafree;
+	unsigned long *varOK,nvarOK,*afree,nafree,nth=1;
 	double *tempAlpha,*plim;
 	unsigned long nag=4,ag[]={0,1,2,3},nas=1,as[]={4};
 	struct pth pth;
@@ -110,31 +114,35 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	for(i=0;i<aaN;i++)
 		aaOutPr[i]=aPr[i];
 
-	aaOld=(double *)mxCalloc(3*aaN+nafree*nafree,sizeof(double));
+	aaOld=(double *)mxCalloc(3*aaN+nafree*nafree+(coefM+aaN)*coefN*2,sizeof(double));
 	plim=aaOld+aaN;
 	for(i=0;i<2*aaN;i++)
 		plim[i]=physlimPr[i];
 	tempAlpha=plim+2*aaN;
 
-/* Create matrices ya and yaOld and call Dirthe */
-
-	ya=(double *)mxCalloc((coefM+aaN)*coefN*2,sizeof(double));
+	ya=tempAlpha+nafree*nafree;
 	yaOld=ya+(coefM+aaN)*coefN;
 
-	nscr=(nion+2)*(3+4*nom); nscr1=((nion+1)*5+nom+aaN)*ns;
 #ifdef GUPTHREAD
-	scr=(double *)mxCalloc((nscr+nscr1)*nafree,sizeof(double));
-	scr1=scr+nscr*nafree;
-	aa2=(double *)mxCalloc((aaN+(coefM+aaN)*coefN)*nafree,sizeof(double));
-	tempYa=aa2+aaN*nafree;
-#else
-	scr=(double *)mxCalloc(nscr+nscr1,sizeof(double));
-	scr1=scr+nscr;
-	aa2=(double *)mxCalloc(aaN+(coefM+aaN)*coefN,sizeof(double));
-	tempYa=aa2+aaN;
+/* Do not thread if only one CPU */
+	if(sysconf(_SC_NPROCESSORS_ONLN)>1) nth=nafree;
+	pthread_attr_t sched_glob;
+	pthread_t *thread;
+	void *retval;
+	if(nth>1) {
+		pthread_attr_init(&sched_glob);
+		pthread_mutex_init(&pth.val_lock,NULL);
+		pthread_attr_setscope(&sched_glob,PTHREAD_SCOPE_SYSTEM);
+		thread=(pthread_t *)mxCalloc(nth,sizeof(pthread_t));
+	}
 #endif
+	nscr=(nion+2)*(3+4*nom); nscr1=((nion+1)*5+nom+aaN)*ns;
+	scr=(double *)mxCalloc((nscr+nscr1)*nth,sizeof(double));
+	scr1=scr+nscr*nth;
+	aa2=(double *)mxCalloc((aaN+(coefM+aaN)*coefN)*nth,sizeof(double));
+	tempYa=aa2+aaN*nth;
 
-	DirtheCalc(ns,aaN,aaOutPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,1,scr,scr1);
+	DirtheCalc(ns,aaN,aaOutPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,1,p_m0,nion,scr,scr1);
 
 /* Create dyda and the temporaty copy of dyda matrix for the spectrum derivatives */
 
@@ -143,7 +151,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 
 	/* Copy the sqrt(variance) to the errorbar (for the GULIPS) */ 
 	nR=(nafree*(nafree+1))/2;
-	errorBar=(double *)mxCalloc(nvarOK+nR+nafree+1+nafree,sizeof(double));
+	errorBar=(double *)mxCalloc(nvarOK+nR+nafree+1+nafree+1+nafree,sizeof(double));
 	chi2Pr[0]=0;
 	for (i=0;i<nvarOK;i++) {
 		j=varOK[i];
@@ -155,8 +163,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	Y=R+nR;		/* Note: this is number of unknowns (m) times 1) */
 	KhiSqr=Y+nafree;
 	dA=KhiSqr+1;	/* Matrix for the solution of the inverse problem */
-
-	RowStorage=(double *)mxCalloc(nafree+1,sizeof(double)); /*For GULIPS*/
+	RowStorage=dA+nafree; /*For GULIPS internal use*/
 
 	indicesVector=(long *)mxCalloc(nafree,sizeof(long));
 	for(i=0;i<nafree;i++)
@@ -177,15 +184,6 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	}
 
 	/* set up thread structure*/
-#ifdef GUPTHREAD
-	pthread_attr_t sched_glob;
-	pthread_t *thread;
-	void *retval;
-	pthread_attr_init(&sched_glob);
-	pthread_mutex_init(&pth.val_lock,NULL);
-	pthread_attr_setscope(&sched_glob,PTHREAD_SCOPE_SYSTEM);
-	thread=(pthread_t *)mxCalloc(nafree,sizeof(pthread_t));
-#endif
 	pth.ns=ns;
 	pth.aaN=aaN;
 	pth.aaPr=aa2;
@@ -213,6 +211,9 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	pth.nscr1=nscr1;
 	pth.scr=scr;
 	pth.scr1=scr1;
+	pth.nth=nth;
+	pth.p_m0=p_m0;
+	pth.nion=nion;
 /* The actual fitting loop */
 	while(its<itMax) {
 		if(!validDer) {
@@ -222,19 +223,25 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 #endif
 			for(i=0;i<nafree;i++) {
 #ifdef GUPTHREAD
-				pthread_mutex_lock(&pth.val_lock);
-				pth.i=i;
-				if(pthread_create(&thread[i],&sched_glob,(void *(*)(void *)) dirthe_loop,(void *)(&pth)))
-					mexErrMsgTxt("mrqmndiag: cannot thread");
+				if(nth>1) {
+					pthread_mutex_lock(&pth.val_lock);
+					pth.i=i;
+					if(pthread_create(&thread[i],&sched_glob,(void *(*)(void *)) dirthe_loop,(void *)(&pth)))
+						mexErrMsgTxt("mrqmndiag: cannot thread");
+				} else {
+					pth.i=i;
+					dirthe_loop(&pth);
+				}
 #else
 				pth.i=i;
 				dirthe_loop(&pth);
 #endif
 			}
 #ifdef GUPTHREAD
-			for(i=0;i<nafree;i++)
-				if(pthread_join(thread[i],&retval))
-					mexErrMsgTxt("mrqmndiag: cannot join thread");
+			if(nth>1)
+				for(i=0;i<nafree;i++)
+					if(pthread_join(thread[i],&retval))
+						mexErrMsgTxt("mrqmndiag: cannot join thread");
 #endif
 #ifdef THTIME
 			start1=gethrtime(); end2+=(start1-start2);
@@ -291,7 +298,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 		for(j=0;j<nag;j++) aa2[ag[j]]=exp(aa2[ag[j]]);
 		for(j=0;j<nas;j++) aa2[as[j]]=2.*sinh(aa2[as[j]]);
 
-		DirtheCalc(ns,aaN,aa2,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,0,scr,scr1);
+		DirtheCalc(ns,aaN,aa2,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,0,p_m0,nion,scr,scr1);
 		chi2Pr[0]=0;
 		for(i=0;i<nvarOK;i++) {
 			j=varOK[i];
@@ -340,32 +347,36 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 
 void *dirthe_loop(struct pth *pth)
 {
-	unsigned long i,j,k=0,k1=0,k2=0,k3=0;
+	unsigned long i,j=0;
+	double *aa2,*acf,*scr,*scr1;
 	i=pth->i;
 #ifdef GUPTHREAD
-	pthread_mutex_unlock(&pth->val_lock);
-	k=i*pth->aaN;
-	k1=i*pth->yaSize;
-	k2=i*pth->nscr;
-	k3=i*pth->nscr1;
+	if(pth->nth>1) {
+		pthread_mutex_unlock(&pth->val_lock);
+		j=i;
+	}
 #endif
+	aa2=j*pth->aaN+pth->aaPr;
+	acf=j*pth->yaSize+pth->acfPr;
+	scr=j*pth->nscr+pth->scr;
+	scr1=j*pth->nscr1+pth->scr1;
 	/*Copy aaOut into aa2*/
 	for(j=0;j<pth->aaN;j++)
-		pth->aaPr[j+k]=pth->aaOutPr[j];
+		aa2[j]=pth->aaOutPr[j];
 	/* Change one of the parameters... */
-	pth->aaPr[pth->afree[i]+k]+=0.0001;
+	aa2[pth->afree[i]]+=0.0001;
 	/* ...and calculate the derivatives using DirtheCalc 
 	and one loop which calculates the erotusosam‰‰r‰*/
 
 /* logscale pars IH*/
 	for(j=0;j<pth->nag;j++)
-		pth->aaPr[pth->ag[j]+k]=exp(pth->aaPr[pth->ag[j]+k]);
+		aa2[pth->ag[j]]=exp(aa2[pth->ag[j]]);
 	for(j=0;j<pth->nas;j++)
-		pth->aaPr[pth->as[j]+k]=2.*sinh(pth->aaPr[pth->as[j]+k]);
+		aa2[pth->as[j]]=2.*sinh(aa2[pth->as[j]]);
 
-	DirtheCalc(pth->ns,pth->aaN,pth->aaPr+k,pth->coefPr,pth->womM,pth->womPr,pth->kd2Pr,pth->nom,pth->omPr,pth->pldfvPr,pth->pldfvPi,pth->acfPr+k1,0,pth->scr+k2,pth->scr1+k3);
+	DirtheCalc(pth->ns,pth->aaN,aa2,pth->coefPr,pth->womM,pth->womPr,pth->kd2Pr,pth->nom,pth->omPr,pth->pldfvPr,pth->pldfvPi,acf,0,pth->p_m0,pth->nion,scr,scr1);
 
 	for(j=0;j<pth->nvarOK;j++)
-		pth->dyda[IND2(j,i,pth->nvarOK)]=((pth->ya[pth->varOK[j]]-pth->acfPr[pth->varOK[j]+k1])/0.0001);
+		pth->dyda[IND2(j,i,pth->nvarOK)]=((pth->ya[pth->varOK[j]]-acf[pth->varOK[j]])/0.0001);
 	return NULL;
 }

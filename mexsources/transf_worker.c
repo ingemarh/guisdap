@@ -1,9 +1,6 @@
 #include <stdlib.h>
 
-double *p_m0;
-unsigned long nion;
-
-void Transf(double *pPr,double *nin0Pr,double *tit0Pr,double *mim0Pr,double *psiPr,double *viPr)
+void Transf(double *pPr,double *nin0Pr,double *tit0Pr,double *mim0Pr,double *psiPr,double *viPr,double *p_m0,long nion)
 {
 	register double me,m0,psi0,p;
 	register int n;
@@ -31,6 +28,4 @@ void Transf(double *pPr,double *nin0Pr,double *tit0Pr,double *mim0Pr,double *psi
 		viPr[n]=pPr[4];
 		psiPr[n]=psi0;
 	}
-
-	/*flops += 5;*/
 }

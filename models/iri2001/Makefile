@@ -4,10 +4,10 @@ N=	libiri
 
 sys=$(shell uname -s)
 ifeq ($(sys),SunOS)
-FFLAGS = -KPIC -dalign -mt -silent -e
+FFLAGS = -O -KPIC -dalign -mt -silent -e
 FC=f90
 else
-FFLAGS = -O4 -fPIC -NC198 -c -static -finit-local-zero -ffixed-line-length-132
+FFLAGS = -O3 -fPIC -c -static -finit-local-zero -ffixed-line-length-132
 endif
 
 A=	.a
