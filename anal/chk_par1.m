@@ -68,7 +68,17 @@ else
  else
   % The normal case where it is expeced the data are matlab files
   a_rawdata=0;
-  data_path=fullfile(data_path,recurse,filesep);
+  if ~a_realtime
+    recurse(strfind(recurse,'?'))='*';
+  end
+  while strfind(recurse,'**')
+    for i=fliplr(strfind(recurse,'**'))
+      recurse(i+1)=[];
+    end
+  end
+  if isempty(dir([data_path '*.mat']))
+    data_path=fullfile(data_path,recurse,filesep);
+  end
   [d_filelist,msg]=getfilelist(data_path);
   if ~isempty(msg)
    error(msg)

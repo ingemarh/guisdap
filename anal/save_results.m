@@ -13,14 +13,15 @@ global r_apriori r_apriorierror
 global pp_range pp_sigma
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
 global webfile a_save
+global a_autodir di_figures START_TIME
 
 if length(d_time)>0 & a_save
   filename=sprintf('%08d',fix(tosecs(d_time(2,:))));
 else
   filename='00000000';
 end
-i1=strfind(result_path,'AUTO');
-if ~isempty(i1)
+[i1,i2]=fileparts(result_path(1:end-1));
+if strcmp(i2,'AUTO')
  if length(a_integr)>1
   aint='scan';
  elseif a_integr==0
@@ -28,13 +29,27 @@ if ~isempty(i1)
  else
   aint=num2str(a_integr);
  end
- result_dir=sprintf('%d-%02d-%02d_%s_%s@%s%s',d_time(2,1:3),name_expr,aint,name_ant,filesep);
- result_path=[result_path(1:i1-1) result_dir];
+ a_autodir.date=d_time(2,1:3); a_autodir.int=aint;
+elseif isstruct(a_autodir) & any(d_time(2,1:3)-a_autodir.date)
+ if a_NCAR
+  NCAR_output
+  do_NCAR(result_path,a_NCAR)
+ end
+ if di_figures(5)
+  vizu('new','rtgup')
+  vizu('save')
+  START_TIME=[];
+ end
+ a_autodir.date=d_time(2,1:3); r_h=[];
 end
 if isempty(r_h)
+ if isstruct(a_autodir)
+  result_dir=sprintf('%d-%02d-%02d_%s_%s@%s%s',a_autodir.date,name_expr,a_autodir.int,name_ant,filesep);
+  result_path=fullfile(i1,result_dir,filesep);
+ end
  if ~exist(result_path,'dir')
   [i1,i2]=fileparts(result_path(1:end-1)); mkdir(i1,i2)
- elseif ~isempty(ls(result_path))
+ elseif ~isempty(dir(result_path))
   beep
   fprintf('\n********** %s is not empty! **********\n\n',result_path)
  end

@@ -17,11 +17,11 @@ if using_x & isempty(get(0,'UserData'))
 global b
 figure(5)
 clf
-set(5,'Name','GUISDAP for dummies','userdata',5,'Position',[40 170 310 390],'NumberTitle','off','defaulttextunit','pixel','toolbar','auto')
+set(5,'Name','GUISDAP for dummies','userdata',5,'Position',[40 170 350 390],'NumberTitle','off','defaulttextunit','pixel','toolbar','auto')
 load(fullfile(path_GUP,'matfiles','logo')), plot(y,x,'.k'), axis image
 set(get(gca,'child'),'markersize',10), set(gca,'visible','off')
 pause(1), clf
-x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=200;
+x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=240;
 bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','set(bg,''visible'',''off'')','fontsize',14);
 uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
 text(0,ty(1),'Dsp expr')

@@ -15,6 +15,7 @@ data_path=fullfile(data_path,filesep);
 filelist=getfilelist(data_path);
 if nargin>2, filelist=filelist(filelist>lastfile); end
 n=length(filelist);
+ppres=.25; % pp resolution (km)
 
 %fprintf('\nSource directory: %s\n',data_path);
 if n==0
@@ -23,7 +24,7 @@ end
 n_tot=n;
 lastfile=filelist(n);
 file=sprintf('%08d',filelist(1));
-load([data_path file])
+load(canon([data_path file],0))
 n_alt=size(r_param,1);
 
 npar2D=9; nrpar2D=3;
@@ -36,7 +37,7 @@ else
   r_Tsys=[];
 end
 if nargout>3 & strfind('TVL',name_site) & ~isempty(r_pp)
-  n_ralt=length(unique(round(r_pp)));
+  n_ralt=length(unique(round(r_pprange/ppres)));
   rpar2D=ones(n_ralt,n_tot,3)*NaN;
   re=6370;
 else
@@ -46,9 +47,8 @@ end
 for i=1:n_tot
   file=sprintf('%08d',filelist(i));
   
-% fprintf('loading data from file %s.mat (%d/%d)\n',file,i,n(1))
   clear('r_*','name_*')
-  load([data_path file])
+  load(canon([data_path file],0))
   
   nalt=size(r_param,1);
   if nalt>n_alt
@@ -64,7 +64,7 @@ for i=1:n_tot
   Time(:,i)	=datenum(r_time);
   par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys)]; %10 kW
   if isfinite(n_ralt)
-    [ppr,k,l]=unique(round(r_pprange*5)); pp=ppr;
+    [ppr,k,l]=unique(round(r_pprange/ppres)); pp=ppr;
     nalt=length(ppr);
     for n=1:nalt
       d=find(l==n);

@@ -2,7 +2,7 @@ function [list,msg]=getfilelist(dirpath,newer)
 
 % [list,msg]= getfilelist(dirpath,newer)
 
-global path_tmp
+global path_tmp a_realtime
 
 list=[]; msg=''; dirlist=[];
 if nargin<2
@@ -11,7 +11,7 @@ end
 
 if isempty(dirpath)
   msg='Empty directory path';
-elseif isunix
+elseif isunix & a_realtime | strfind(dirpath,'?')
   if ~isempty(newer)
     newer=sprintf('-newer %s%08d.mat ',dirpath,newer);
   end
@@ -50,4 +50,6 @@ else
     list=list(find(list>newer));
   end
 end
-list=sort(list)';
+if ~isempty(list)
+  list=sort(list)';
+end

@@ -24,7 +24,7 @@ global a_NCAR a_save a_code
 global a_year a_start a_integr a_integdeffile a_skip a_end a_realtime a_txlim
 global di_figures di_results
 global name_ant
-global webfile, webfile=cell(1);
+global webfile a_autodir, webfile=cell(1);
 
 global lpg_womscaled k_radar
 

@@ -47,11 +47,6 @@ if t1(2)==t2(2)
 elseif i1(2)==i2(2)
  recurse(5)=sprintf('%d',i1(2));
 end
-while ~isunix & strfind(recurse,'**')
-  for i=fliplr(strfind(recurse,'**'))
-    recurse(i+1)=[];
-  end
-end
 
 read_anapar
 display_figures=figs;

@@ -40,10 +40,15 @@ end
 REALT=0; manylim=1;
 Loc=getenv('EISCATSITE');
 if strcmp(action,'rtgup')
-  global a_year a_start a_end a_realtime
+  global a_year a_start a_end a_realtime a_autodir
   if isempty(START_TIME)
-    START_TIME=toYMDHMS(a_year,a_start);
-    END_TIME=toYMDHMS(a_year,a_end);
+    if isstruct(a_autodir)
+      START_TIME=[a_autodir.date 0 0 0];
+      END_TIME=START_TIME+[0 0 0 24 0 0];
+    else
+      START_TIME=toYMDHMS(a_year,a_start);
+      END_TIME=toYMDHMS(a_year,a_end);
+    end
     close(findobj('type','figure','userdata',6))
     action=[];
   else
@@ -63,11 +68,10 @@ if isempty(DATA_PATH)
       if isstr(a2), MESSAGE1=a2; end
     else
       disp(['Available data directories in ' result_path]);
-      if isunix
-        unix(['ls -1p ' result_path ' | grep "/"']);
-      else
-        disp(ls(result_path));
-      end
+      dirs=dir(result_path);
+      for i=1:length(dirs), if dirs(i).isdir & dirs(i).name(1)~='.'
+        disp(dirs(i).name);
+      end, end
       DATA_PATH=sprintf('%s%s',result_path,minput('Data directory',' ',1));
     end
   end
@@ -86,14 +90,14 @@ elseif strcmp(action,'print') | strcmp(action,'save')
  if isunix
   set(hds(2:3),'visible','off')
   if strcmp(action,'print')
-    fig=sprintf('vizu%06d',round(rand*1e6)); dir=path_tmp(1:end-1); ext='ps';
+    fig=sprintf('vizu%06d',round(rand*1e6)); dirs=path_tmp(1:end-1); ext='ps';
   else
     fig=sprintf('%d-%02d-%02d_%s@%s',START_TIME(1:3),name_expr,name_ant);
-    dir=DATA_PATH; ext='eps';
+    dirs=DATA_PATH; ext='eps';
   end
-  file=fullfile(dir,fig);
+  file=fullfile(dirs,fig);
   print(gcf,['-d' ext '2c'],[file '.' ext]);
-  unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dir,fig,ext));
+  unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
   if strcmp(action,'print')
     unix(['lp -dcolor ' file '.' ext ' >/dev/null 2>&1']);
     delete([file '.' ext])
@@ -172,7 +176,7 @@ else
  end
 end
 if strcmp(name_expr,'arcd')
- SCALE(2,:)=[59 139]; WHICH_PARAM='Nr AE'; GATES=[];
+ SCALE(2,:)=[59 139]; WHICH_PARAM='Nr AE';
 elseif strcmp(name_expr,'dlayer')
  SCALE(2,:)=[59 121]; WHICH_PARAM='Ne AE';
 end
