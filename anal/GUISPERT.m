@@ -34,7 +34,7 @@ end
 %end
 
 if strcmp(name_ant(1:3),'uhf')
- d_date=datenum(d_date(1,:));
+ d_date=datenum(d_time(1,:));
  if (d_date>=datenum(2000,05,01) & d_date<=datenum(2001,03,01)) | ...
     (d_date>=datenum(2001,06,28) & d_date<=datenum(2001,10,15,13,31,00)) 
 % The 1 March date is still a guess. After Feb 6 but before March 9.
