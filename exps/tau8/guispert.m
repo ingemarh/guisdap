@@ -11,13 +11,17 @@ else
  hv=max(roots(sum(polhv)));
 end
 
+d_date=datenum(d_time(1,:));
+if d_date<datenum(2003,12,1,0,0,0)
+ ch_el=90;
+end
 if isempty(a_code) | length(a_code)==2
- [ch_el ch_az ch_gain]=vhf_elaz(90,0,10^4.31/2);
+ [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
 elseif length(a_code)==1 & a_code==2
- [ch_el ch_az ch_gain]=vhf_elaz(90,12,10^4.31/2);
+ [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),12,10^4.31/2);
  ch_Pt=polyval(polhv(2,:),hv)*1000;
 elseif length(a_code)==1 & a_code==1
- [ch_el ch_az ch_gain]=vhf_elaz(90,0,10^4.31/2);
+ [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
  ch_Pt=polyval(polhv(1,:),hv)*1000,
 else
  error('No such analysis_code')
