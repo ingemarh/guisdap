@@ -62,13 +62,13 @@ while ~EOF
 
   if OK
     if d_rcprog~=rcprog_old | name_site=='K' | name_site=='S' 
-      name_ant={'32m','42m','UHF','VHF','Kir','Sod'};
+      name_ant={'32m','42m','uhf','vhf','kir','sod'};
       name_ant=char(name_ant(ant_id));
       load_initfile
       Ant_eff=.66;
       if name_site=='V'
         [ch_el ch_az ch_gain]=vhf_elaz(ch_el,ch_az,ch_gain);
-	Ant_eff=.64;
+        Ant_eff=.64;
       elseif name_site=='L' & ant_id==2
         ch_gain=(42/32)^2*ch_gain;
       end

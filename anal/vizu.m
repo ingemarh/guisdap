@@ -207,7 +207,7 @@ end
 if strcmp(name_ant,'32m') | strcmp(name_ant,'42m')
   FIGURE_TITLE	='EISCAT SVALBARD RADAR';
   stretchSecs	=65;
-elseif strcmp(name_ant,'UHF') | strcmp(name_ant,'Kir') | strcmp(name_ant,'Sod')
+elseif strcmpi(name_ant,'uhf') | strcmpi(name_ant,'kir') | strcmpi(name_ant,'kod')
   FIGURE_TITLE	='EISCAT UHF RADAR';
 elseif strcmp(name_ant,'VHF')
   FIGURE_TITLE	='EISCAT VHF RADAR';
