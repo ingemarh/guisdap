@@ -3,11 +3,11 @@
 % 
 % function radar_eq
 
-  function radar_eq(eff)
+  function ad_coeff=radar_eq(eff)
 
   global ch_fradar  ch_gain  ch_Pt ch_az ch_el p_XMITloc p_RECloc
   global v_lightspeed v_electronradius v_Boltzmann p_dtau p_R0 p_N0 
-  global ad_coeff ad_range ad_w a_Magic_const
+  global ad_range ad_w a_Magic_const
   global lpg_h lpg_w lpg_code lpg_bcs lp_vc vc_ch
   global ADDR_SHIFT name_site 
   global sc_angle sc_R0 sc_R1 ch_range k_radar k_radar0
@@ -104,7 +104,7 @@ end
   P0perPt=4*pi*(v_electronradius^2)*polfac*...
     (ch_gain./(4*pi*sc_R0^2)).*(ch_gain./(4*pi*sc_R1^2)).*(lambda.^2/(4*pi));
 
-  p_coeff0=P0perPt.*ch_Pt.*Veff*p_N0; 
+  p_coeff0=P0perPt.*Veff*p_N0; 
 % Calculate now the factor for virtual channels
   vc=find(vc_ch>0); % These virtual channels in use
   p_coeff0=p_coeff0(vc_ch(vc))./(v_Boltzmann*Ap(vc,0)/(p_dtau*1e-6));
@@ -131,6 +131,3 @@ for sig=find(lpg_bcs=='s')
    lpg_h(sig)=range;
   end
 end
-
-% Finally factor to compensate for all the inaccuracies in the numeric constants
-ad_coeff=ad_coeff/a_Magic_const;
