@@ -16,7 +16,7 @@ vcg_Apenv=vc_Apenv(:,ind);
 vcg_penv=vc_penv(:,ind);
 vcg_penvabs=vc_penvabs(:,ind);
 
-str='GUP_iniver ch_fradar ch_gain lp_vc lpg_ND lpg_T lpg_bcs lpg_code lpg_lpstart lpg_lpend';
+str=' GUP_iniver ch_fradar ch_gain lp_vc lpg_ND lpg_T lpg_bcs lpg_code lpg_lpstart lpg_lpend';
 str=[str ' lpg_lpdata lpg_dt lpg_h lpg_lag lpg_nt lpg_ra lpg_ri lpg_w lpg_wom lpg_bac lpg_cal'];
 str=[str ' nameexpr p_XMITloc p_RECloc p_D0 p_N0 p_R0 p_T0 p_dtau p_m0 p_om p_om0'];
 %str=[str ' vc_penv vc_penvabs vc_penvo']; % these saved once for each vc_group
@@ -26,6 +26,8 @@ str=[str ' vc_ch vcg_Aenv vcg_Ap vcg_Apenv vc_group'];
 global vc_routine
 lpg_wr=sparse(lpg_wr); str=[str ' lpg_wr vc_routine'];
 if ~exist('apustr'), apustr=''; end
-eval([canon(['save ' path_expr name_expr name_site apustr 'init.mat ']), str]);
+initfile=[path_expr name_expr name_site apustr 'init'];
+eval(['save ' initfile str]);
+disp([initfile ' saved']);
 
-clear GUP_iniver nameexpr a ind vcg_Aenv vcg_Ap vcg_Apenv vcg_penv vcg_penvabs
+clear GUP_iniver nameexpr a ind vcg_Aenv vcg_Ap vcg_Apenv vcg_penv vcg_penvabs initfile

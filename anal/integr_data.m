@@ -36,7 +36,7 @@ if a_ind==0
   a_ind=1;
   a_cycle=sum(a_integr+a_skip);
   if a_cycle>0
-    i=fix((d_filelist(1)-a_start)/a_cycle);
+    i=fix((d_filelist(1).file-a_start)/a_cycle);
     if i>0, a_start=a_start+i*a_cycle; end
   end
   a_interval=a_start+[0 a_integr(1)];
@@ -49,22 +49,23 @@ end
 if a_integr<=0, a_interval(2)=a_end;
 elseif a_interval(2)>=a_end; EOF=1; end
 if a_realtime
-  if d_filelist(end)<=a_interval(1)
+  if d_filelist(end).file<=a_interval(1)
     [EOF,jj]=update_filelist(EOF,jj);
     if EOF, return, end
   end
-elseif d_filelist(end)<a_interval(1)
+elseif d_filelist(end).file<a_interval(1)
   EOF=1; return
 end
 
-files=d_filelist(find(d_filelist>a_interval(1) & d_filelist<=a_interval(2)));
+d=cell2mat({d_filelist.file});
+files=d_filelist(find(d>a_interval(1) & d<=a_interval(2)));
 if isempty(files) & a_integr<=0, EOF=1; return, end
 i=0;
 while i<length(files)
   i=i+1; file=files(i);
-  filename=sprintf('%08d',file);
+  filename=fullfile(file.dir,sprintf('%08d%s',file.file,file.ext));
   i_averaged=1; i_var1=[]; i_var2=[];
-  load(canon([data_path filename],0))
+  load(canon(filename,0))
 
   lpb=length(d_parbl);
   if lpb==128
@@ -121,9 +122,9 @@ while i<length(files)
     a_antold=a_ant;
     if any(fix(adiff/.2)) | tdiff
       if a_ant(1)<89.8 | a_ant(1)+adiff(1)<89.8 | tdiff
-        a_interval(2)=file;
+        a_interval(2)=file.file;
         if tdiff & N_averaged>1
-          a_interval(2)=file-.5; a_antold=[];
+          a_interval(2)=file.file-.5; a_antold=[];
         elseif N_averaged==0
 	  secs=secs1; return
         else
@@ -138,7 +139,7 @@ while i<length(files)
   end
 
   secs=secs1;
-  if secs<file | file-secs>=1 | year~=a_year
+  if secs<file.file | file.file-secs>=1 | year~=a_year
     disp('Filename conflicts with file contents or years do not match')
   end
 
@@ -194,10 +195,10 @@ while i<length(files)
   elseif OK
     d_parbl=prev_parbl;
   end
-  if a_realtime & file==d_filelist(end)
+  if a_realtime & file.file==d_filelist(end).file
     [EOF,jj]=update_filelist(EOF,jj);
     if EOF, break, end
-    files=d_filelist(find(d_filelist>a_interval(1) & d_filelist<=a_interval(2)));
+    files=d_filelist(find(d_filelist.file>a_interval(1) & d_filelist.file<=a_interval(2)));
   end
 end
 
@@ -232,7 +233,7 @@ if ~jj
 end
 
 df=getfilelist(data_path,d_filelist(end));
-while isempty(df)
+while isempty(df.file)
   fprintf('.'); pause(mrw)
   [df,msg]=getfilelist(data_path,d_filelist(end));
   j=j+1;

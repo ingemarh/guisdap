@@ -9,19 +9,25 @@
 % See also: path_expr save_toinitfile
 %
 
-temp=[path_expr name_expr, name_site];
+temp=[path_expr name_expr name_site];
 t_RECloc=p_RECloc;
-if name_site=='K' | name_site=='S';
+if name_site=='K' | name_site=='S'
   temp=[path_expr name_expr 'R'];
 end
-if exist('d_rcprog','var'), rcp=d_rcprog; else rcp=0; end
-if exist(canon([temp '_' int2str(rcp) 'GUPvar.mat'],0),'file')
-  load(canon([temp '_' int2str(rcp) 'GUPvar']))
-elseif exist(canon([temp 'GUPvar.mat'],0),'file')
-  load(canon([temp 'GUPvar']))
+GUPvarfil=tempname;
+if exist('d_rcprog','var')
+  GUPvarfile=[temp '_' int2str(d_rcprog) 'GUPvar'];
+  GUPvarfil=canon(GUPvarfile,0);
+end  
+if ~exist(GUPvarfil,'file')
+  GUPvarfile=[temp 'GUPvar'];
+  GUPvarfil=canon(GUPvarfile,0);
+end
+if exist(GUPvarfil,'file')
+  disp(GUPvarfile)
+  load(GUPvarfil)
 else
-  fprintf(['\n\n\n GUP variable file    ', canon([temp 'GUPvar.mat'],0),'    not found \n\n\n'])
-  error(' ')
+  error(['GUP variable file ' GUPvarfile '.mat not found'])
 end
 if GUP_iniver<1.52,
   fprintf('*\n*\n* Files produced by GUP version %.2f not usable\n', GUP_iniver)
@@ -35,4 +41,4 @@ else
   lp_fir=lp_firsto;
 end
 p_RECloc=t_RECloc;
-clear rcp t_RECloc
+clear t_RECloc GUPvarfile GUPvarfil

@@ -3,4 +3,5 @@
 %
 %
   pldfv=pldftab(0.075,0.075,61,48,-3,0);
-  save(canon(fullfile(path_GUP,'matfiles','pldfv')),'pldfv');
+  save(fullfile(path_GUP,'matfiles','pldfv'),'pldfv');
+  disp('pldfv saved');

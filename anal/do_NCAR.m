@@ -20,7 +20,7 @@ if isempty(ascbin), ascbin=3; end
 path=fullfile(path,filesep);
 list=getfilelist(path);
 if isempty(list), error('No result files found!'), end
-load([path sprintf('%08d',list(1))])
+load(canon(fullfile(list(1).dir,sprintf('%08d%s',list(1).file,list(1).ext)),0))
 if isempty(ant)
  if exist('name_ant','var')
   ant=name_ant;
@@ -33,7 +33,7 @@ file0=sprintf('%sNCAR_%d-%02d-%02d_%s@%s.',path,r_time(2,1:3),name_expr,ant);
 i1=[]; i2=[];
 if rem(ascbin,2), i1=[file0 'asc']; end
 if ascbin>1, i2=[file0 'bin']; end
-for i=list
- NCAR_output([path sprintf('%08d',i)],i1,i2)
+for i=list'
+ NCAR_output(canon(fullfile(i.dir,sprintf('%08d%s',i.file,i.ext)),0),i1,i2)
 end
 NCAR_output

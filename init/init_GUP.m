@@ -22,8 +22,8 @@ glob_GUP
 
 % Chdir to the experiment directory, store the present path as a return address
 original_path=pwd;
-fprintf('\n\nChdir to the experiment directory\n')
-cd(canon(path_expr))
+fprintf('\n\nChdir to the experiment directory: %s\n',path_expr)
+cd(path_expr)
 
 nat_const
 

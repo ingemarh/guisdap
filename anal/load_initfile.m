@@ -14,13 +14,20 @@ temp=[path_expr name_expr name_site];
 if name_site=='K' | name_site=='S';
   temp=[path_expr name_expr 'R'];
 end
-if exist('d_rcprog')==1, rcp=d_rcprog; else, rcp=0; end
-if exist(canon([temp '_' int2str(rcp) 'init.mat'],0))==2
-  load(canon([temp '_' int2str(rcp) 'init']))
-elseif exist(canon([temp 'init.mat'],0))==2
-  load(canon([temp 'init']))
+initfil=tempname;
+if exist('d_rcprog','var')
+  initfile=[temp '_' int2str(d_rcprog) 'init'];
+  initfil=canon(initfile,0);
+end  
+if ~exist(initfil,'file')
+  initfile=[temp 'init'];
+  initfil=canon(initfile,0);
+end
+if exist(initfil,'file')
+  disp(initfile)
+  load(initfil)
 else
-  error(['File ' temp 'init.mat not found'])
+  error(['File ' initfile '.mat not found'])
 end
 if GUP_iniver<1.52
   error(sprintf('Files produced by GUP vs %.2f not usable: Reinitialise!',GUP_iniver))
@@ -35,4 +42,4 @@ if exist('vcg_Aenv')
   clear vcg_Aenv vcg_Ap vcg_Apenv vcg_penv vcg_penvabs
 end
 if exist('t_RECloc'), p_RECloc=t_RECloc; clear t_RECloc, end
-clear rcp temp
+clear temp initfile initfil

@@ -26,8 +26,8 @@ glob_initKST
 
 % Chdir to the experiment directory, store the present path as a return address
 original_path=pwd;
-fprintf('\n\nChdir to the experiment directory\n')
-cd(canon(path_expr))
+fprintf('\n\nChdir to the experiment directory: %s\n',path_expr)
+cd(path_expr)
 
 % These values will be used if not redefined later
 p_dtau=1;   
@@ -74,7 +74,7 @@ for d_rcprog=B_rcprog:N_rcprog
 
   if N_rcprog>1, apustr=['_',int2str(d_rcprog)]; else apustr=[]; end
 
-  file=canon([name_expr name_site '_init'],0);
+  file=[name_expr name_site '_init'];
   for i=1:3,fprintf('\n'), end
   if exist(file)==2
     eval(file)
@@ -104,12 +104,11 @@ for d_rcprog=B_rcprog:N_rcprog
     load_PSrem
   end
 
-  fprintf('\n\n# Defining virtual channels:\n')
-  file=canon([name_expr name_site apustr 'vcinit'],0);
+  fprintf('\n\n# Defining virtual channels:\n#####\n')
+  file=[name_expr name_site apustr 'vcinit'];
   if exist(file)~=2
-    file=canon([name_expr name_site 'vcinit'],0);
+    file=[name_expr name_site 'vcinit'];
   end
-  fprintf('#####\n')
   if exist(file)==2
     eval(file)
     fprintf(['# ' file ' executed\n'])
@@ -133,11 +132,11 @@ for d_rcprog=B_rcprog:N_rcprog
   clear td_am td_t1 td_t2 td_ch
   vc_arrange
 
-  fprintf('\nDefining lag profiles by executing %s%s_LP:\n',name_expr,name_site)
-  file=canon([name_expr name_site apustr '_LP'],0);
+  file=[name_expr name_site apustr '_LP'];
   if exist(file)~=2
-    file=canon([name_expr name_site '_LP'],0);
+    file=[name_expr name_site '_LP'];
   end
+  fprintf('\nDefining lag profiles by executing %s:\n',file)
   eval(file)
   fprintf('\n%s passed\n\n',file)
 

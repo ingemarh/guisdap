@@ -4,7 +4,8 @@
 % suitable to be printed with tex code in file lpg.tex
 % 
 % See also: init_GUP
-fil=canon([path_expr name_expr name_site apustr 'lpg_i.tex']);
+fil=[path_expr name_expr name_site apustr 'lpg_i.tex'];
+disp(fil)
 if exist(fil)==2, delete(fil), end
 fid=fopen(fil,'w');
 

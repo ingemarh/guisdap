@@ -17,7 +17,8 @@ elseif nargin==1, Nrcprog=1; end
 if Nrcprog>1, apustr=['_',int2str(rcprog)]; else apustr=[]; end
 
 create=1;
-file=canon([ path_expr name_expr name_site apustr 'pat_PS.mat']);
+PSfile=[name_expr name_site apustr 'pat_PS'];
+file=canon([path_expr PSfile]);
 if exist(file)==2
   fprintf(' Loading existing pat_PS.mat from file\n')
   load(file)
@@ -40,12 +41,12 @@ if create
   td_am=zeros(1,td_len);
   ch_f=-1*ones(1,8);
 
-  fprintf(['\n\n Decoding the ',name_expr ,name_site, apustr, 'pat_PS file\n'])
+  fprintf(['\n\n Decoding the ' name_expr name_site apustr 'pat_PS file\n'])
   fprintf(' This may take some time for alternating code experiments\n')
   fprintf(' But you only have to do this once ...\n\n')
 
-  eval(canon([name_expr name_site apustr 'pat_PS'],0)) 
-  fprintf(['\n' name_expr name_site apustr 'pat_PS passed\n'])
+  eval(PS_file,0) 
+  disp([PSfile ' passed\n'])
 
   if td_ind<td_len;
     td_ch(td_ind+1:td_len)=[];
@@ -60,5 +61,5 @@ if create
     fprintf(' Contact a GUISPERT or GUIZARD if needed\n'),error(' ')
   end
 
-  save(canon(file),'td_ch','td_t1','td_t2','td_am','p_rep','ch_f','ch_filter','ch_adcint');
+  save([path_expr PSfile],'td_ch','td_t1','td_t2','td_am','p_rep','ch_f','ch_filter','ch_adcint');
 end

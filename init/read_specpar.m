@@ -18,12 +18,10 @@ p_om=2*sinh(-3:0.05:3.001)'; % Positive values shown below
 % 13.39 14.08 14.81 15.58 16.38 17.23 18.12 19.05 20.04
 p_R0=1000;
 
-if exist('name_expr')==1,
-
-  file=canon([name_expr name_site '_specpar'],0);
-
-  if exist(file)==2, 
-     eval(file), 
+if exist('name_expr')==1
+  file=[name_expr name_site '_specpar'];
+  if exist(file)==2
+     eval(file)
   else
     fprintf(['\n    ',file,' file is not available (need not be!)\n'])
     fprintf('    Hard coded values for scale parameters will be used\n')

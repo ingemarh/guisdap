@@ -16,9 +16,9 @@ if ~isdir(data_path)
   return
 end
 data_path=fullfile(data_path,filesep);
-filelist=getfilelist(data_path);
-if nargin>2, filelist=filelist(filelist>lastfile); end
-n=length(filelist);
+list=getfilelist(data_path);
+if nargin>2, list=list(cell2mat({list.file})>lastfile); end
+n=length(list);
 ppres=.25; % pp resolution (km)
 
 %fprintf('\nSource directory: %s\n',data_path);
@@ -27,9 +27,9 @@ if n==0
 end
 r_Tsys=[]; r_pp=[];
 n_tot=n;
-lastfile=filelist(n);
-file=sprintf('%08d',filelist(1));
-load(canon([data_path file],0))
+lastfile=list(n).file;
+
+load(canon(fullfile(list(1).dir,sprintf('%08d%s',list(1).file,list(1).ext)),0))
 n_alt=size(r_param,1);
 
 npar2D=9; nrpar2D=3;
@@ -53,10 +53,8 @@ if isempty(name_ant)
   name_ant=antennas(i:i+2);
 end
 for i=1:n_tot
-  file=sprintf('%08d',filelist(i));
-  
 % clear('r_*','name_*')
-  load(canon([data_path file],0))
+  load(canon(fullfile(list(i).dir,sprintf('%08d%s',list(i).file,list(i).ext)),0))
   
   nalt=size(r_param,1);
   if nalt>n_alt

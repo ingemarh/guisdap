@@ -86,7 +86,8 @@ if ~di_results
  fprintf('Status: '); fprintf('%d',r_status); fprintf('\n');
 end
 
-file=canon([result_path filename]);
+file=[result_path filename];
+disp(file)
 save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,...
      r_Pt,r_m0,r_range,r_h,r_param,r_error,r_res,r_status,...
      r_dp,r_apriori,r_apriorierror,r_pp,r_pprange,r_XMITloc,...

@@ -21,17 +21,18 @@ cd(path_expr)
 if exist('N_rcprog')~=1, N_rcprog=1; end
 for d_rcprog=1:N_rcprog
   apustr=['_',int2str(d_rcprog)];
-  if exist([path_expr,name_expr,name_site,apustr,'design.m'])==2
-    file=canon([name_expr,name_site,apustr,'design']);
-  elseif d_rcprog==1 & exist([path_expr,name_expr,name_site,'design.m'])==2
-    file=canon([name_expr,name_site,'design']);
-  elseif d_rcprog==1 & exist([path_expr,name_expr,name_site,'_design.m'])==2
-    file=canon([name_expr,name_site,'_design']);
+  file=[path_expr name_expr name_site apustr 'design'];
+  if exist([file '.m'])==2
+    file=[name_expr name_site apustr 'design'];
+  elseif d_rcprog==1 & exist([path_expr name_expr name_site 'design.m'])==2
+    file=[name_expr name_site 'design'];
+  elseif d_rcprog==1 & exist([path_expr name_expr name_site '_design.m'])==2
+    file=[name_expr name_site '_design'];
   else
-   file=canon([path_expr,name_expr,name_site,apustr,'design']);
-   fprintf(['Could not find desing file ', file,'\n'])
+   fprintf(['Could not find design file ', file,'\n'])
     error(' Error in design')
   end
+  disp(file)
 
   Stime=clock;
 
