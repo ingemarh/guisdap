@@ -3,7 +3,7 @@
 %
 % See also: mrqmndiag
 function [aa,chi2,its,alpha,OK]=...
-      mrqmn(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_womega,p_om,pldfvv,errorlim)
+      mrqmn(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_womega,p_om,pldfvv,errorlim,fb_womega)
  
   global p_m0
 
@@ -30,8 +30,7 @@ va=find(variance((end-length(a)+1):end)~=0);
   end
   lambda=0.001;
   aa=a; validder=0;
-% ya=dirthe([aa,comp],p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0);
-  ya=dirthe(aa,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0);
+  ya=dirthe(aa,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega);
   dyda=zeros(length(ya),length(va));
   if diagonal,
     chi2=(ym(vv)-ya(vv))'*(invsigma.*(ym(vv)-ya(vv)));
@@ -44,8 +43,7 @@ va=find(variance((end-length(a)+1):end)~=0);
       its=its+1;
       for i=1:length(va)
         aa2=aa; aa2(va(i))=aa(va(i))+0.0001;
-%       dyda(:,i)=(ya-dirthe([aa2,comp],p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0))/0.0001; %calculate derivatives;
-        dyda(:,i)=(ya-dirthe(aa2,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0))/0.0001; %calculate derivatives;
+        dyda(:,i)=(ya-dirthe(aa2,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega))/0.0001; %calculate derivatives;
       end 
       if diagonal,
         alpha=dyda(vv,:)'*(apu.*dyda(vv,:));
@@ -62,8 +60,7 @@ va=find(variance((end-length(a)+1):end)~=0);
 %    disp(da);
     chi2old=chi2; yaold=ya; aaold=aa;
     aa(va)=aa(va)+da;
-%   ya=dirthe([aa,comp],p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0);
-    ya=dirthe(aa,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0);
+    ya=dirthe(aa,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega);
     if diagonal,
       chi2=(ym(vv)-ya(vv))'*(invsigma.*(ym(vv)-ya(vv)));
     else

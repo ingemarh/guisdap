@@ -463,7 +463,7 @@ c
      &          'prelimenary. Erroneous profile features can occur.'
         if(GULB0) write(*,*) 'Ne, B0: Bottomside thickness is ',
      &          'obtained with Gulyaeva-1987 model.'
-        if(OLD79) write(*,*) 'Ne: Using IRI-79. Correction',
+        if(OLD79) write(*,*) 'Ne: No F10.7-saturation for NmF2.',
      &          ' of equatorial topside is not included.'
         if(FOF2IN) then
                 write(*,*) 'Ne, foF2/NmF2: provided by user.'
@@ -624,7 +624,7 @@ C
             call tcon(iyear,month,iday,daynr,rzar,arig,ttt,nmonth)
             if(nmonth.lt.0) goto 3330
         if(RZIN) then
-                  rrr = arzin
+                  rrr = arzin                                 
                   rzar(1) = rrr
                   rzar(2) = rrr
                   rzar(3) = rrr
@@ -899,7 +899,7 @@ c
         COS2=COS(MLAT*UMR)
         COS2=COS2*COS2
         FLU=(COVSAT-40.0)/30.0
-c option to use unlimiited F10.7M for the topside
+c option to use unlimited F10.7M for the topside
         IF(OLD79) FLU=(COV-40.0)/30.0
 c previously: IF(OLD79) ETA1=-0.0070305*COS2
         EX=EXP(-MLAT/15.)

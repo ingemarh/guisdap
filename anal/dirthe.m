@@ -12,7 +12,7 @@
 % Output parameter:
 % theo: theoretical values for the measurements
 % See also: spec, transf
-function theo=dirthe(param,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0)
+function theo=dirthe(param,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega)
 
 param=real(param); % hyi hyi
 
@@ -21,11 +21,10 @@ param=real(param); % hyi hyi
 [nin0,tit0,mim0,psi,vi]=transf(param,p_m0);
 s=spec(nin0,tit0,mim0,psi,vi,kd2,p_om,pldfvv);
 %add clutter signal
-s=param(5+length(p_m0))/length(s)+s; % Broadband
-%freq=p_om*p_om0*sin(sc_angle/2)/2/pi;
+b=param(5+length(p_m0)); % Broadband noise not from pulse
 f0=find(p_om==0); %DC spike
 if ~isempty(f0)
  s(f0)=param(6+length(p_m0))+s(f0);
 end
 
-theo=[p_coeffg.*(f_womega*s);col(param)];
+theo=[p_coeffg.*(f_womega*s)+fb_womega*b;col(param)];

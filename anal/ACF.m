@@ -24,9 +24,10 @@ dom=[0; 0.5*(p_om(3:len)-p_om(1:len-2)); 0]';
 [M,N]=size(paino);
 % Take the frequency bin widths into account
 f_womega=paino.*(dom(ones(M,1),:));
+fb_womega=zeros(size(lags));
 
 p_coeffg=ones(size(lags));
 ch=1;  kd2=k_radar(ch)^2*p_D0^2;
 
-plasma_acf=dirthe(param,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0);
+plasma_acf=dirthe(param,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega);
 plasma_acf=plasma_acf(1:length(lags));

@@ -27,7 +27,7 @@ for i=1:4
    set(F,'DefaultAxesFontWeight','bold','DefaultTextFontWeight','bold')
    used=[used;F];
   end
-  di_figures(i)=F;
+  di_figures(i)=sign(di_figures(i))*F;
  elseif ~isempty(F)
   close(F)
   used=used(find(used~=F));

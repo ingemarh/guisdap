@@ -111,17 +111,16 @@ void mymul(char transa,double *mat1,long mat1m,long mat1n,char transb,double *ma
 #ifdef ANSI_C
 void DirtheCalc(long ns,long aaN,double *aaPr,double *coefPr,long womM,
 			   double *womPr,double *kd2Pr,long nom,double *omPr,
-			   double *pldfvPr,double *pldfvPi,double *acfPr,long use_reference,double *p_m0,long nion,double *scr,double *scr1)
+			   double *pldfvPr,double *pldfvPi,double *acfPr,long use_reference,double *p_m0,long nion,double *bwomPr,double *scr,double *scr1)
 #else
-void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acfPr,use_reference,p_m0,nion,scr,scr1)
+void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acfPr,use_reference,p_m0,nion,bwomPr,scr,scr1)
 		long ns,aaN,womM,nom,use_reference,nion;
-		double *aaPr,*coefPr,*womPr,*kd2Pr,*omPr,*acfPr,*pldfvPr,*pldfvPi,p_m0,scr,scr1;
+		double *aaPr,*coefPr,*womPr,*kd2Pr,*omPr,*acfPr,*pldfvPr,*pldfvPi,p_m0,*bwomPr,scr,scr1;
 #endif	
 	{
 	unsigned long i;
 	double *nin0Pr,*tit0Pr,*mim0Pr,*psiPr,*viPr,*specPr;
-	double *pPr;
-	register double *acf_ptr,*coeffg_ptr;
+	double *pPr,b;
 
 	/* Copy matrix AA_IN into p and then use p */
 	
@@ -140,12 +139,9 @@ void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acf
 	Transf(pPr,nin0Pr,tit0Pr,mim0Pr,psiPr,viPr,p_m0,nion);
         specCalc(pldfvPr,pldfvPi,nin0Pr,tit0Pr,nion,mim0Pr,psiPr,viPr,kd2Pr[0],scr,nom,omPr,specPr,use_reference);
 	/*add clutter signal*/
-	pPr[4+nion]/=nom;
-	for(i=0;i<nom;i++) {
-		specPr[i]+=pPr[4+nion]; /*Broadband*/
+	b=pPr[4+nion]; /*Broadband*/
+	for(i=0;i<nom;i++)
 		if(omPr[i]==0) specPr[i]+=pPr[5+nion]; /*DC spike*/
-	}
-	/*acf=[p_coeffg.*(f_womega*s);col(aa)];*/
 	
 #ifdef ESSL
 	long acfN = 1;
@@ -169,10 +165,10 @@ void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acf
 	mymul('N',womPr,womM,nom,'N',specPr,nom,1,acfPr);
 /* Ambiguity fuction is already multiplied by the coefficients, so we don't have to do that any more here!*/
 #endif
-	acf_ptr = acfPr;coeffg_ptr = coefPr;
-	for(i=0;i<womM;i++,acf_ptr++,coeffg_ptr++)
-	    (*acf_ptr) *= (*coeffg_ptr);
+	/*acf=[p_coeffg.*(f_womega*s)+fb_womega*b;col(aa)];*/
+	for(i=0;i<womM;i++,acfPr++,coefPr++,bwomPr++)
+	    (*acfPr)=(*acfPr)*(*coefPr)+(*bwomPr)*b;
 	for(i=0;i<aaN;i++)
-	  acfPr[i+womM]= aaPr[i];
+	  acfPr[i]=aaPr[i];
 
       }

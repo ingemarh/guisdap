@@ -3,7 +3,7 @@
 %
 % See also: half_prof
 % function store_results(aa,meas,var,result,alpha,chi2,status,kd2,p_coeffg,f_womega,p_om,pldfvv)
-function store_results(aa,meas,var,result,alpha,chi2,status,kd2,p_coeffg,f_womega,p_om,pldfvv)
+function store_results(aa,meas,var,result,alpha,chi2,status,kd2,p_coeffg,f_womega,p_om,pldfvv,fb_womega,lpgs)
  
 global a_priori a_priorierror p_RECloc
 global ch_el di_fit g_ind
@@ -63,7 +63,7 @@ r_apriori(r_ind,:)=scaled_to_real(a_priori(g_ind,:));
 r_apriorierror(r_ind,:)=scaled_to_real(a_priorierror(g_ind,:));
 
 if di_figures(3) | name_site=='K' | name_site=='S'
-  theo=dirthe(result,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0);
+  theo=dirthe(result,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega);
   indr=1:len/2;
   sig_err=sqrt(var);
   sig_r=meas(indr); err_r=sig_err(indr); fitted_r=theo(indr);
@@ -77,21 +77,39 @@ if di_figures(3) | name_site=='K' | name_site=='S'
     end
     fprintf('Offset: %d us  ',r_Offsetppd(r_ind))
   end
-
-  if di_figures(3)
+end
+if di_figures(3)
+  drawnow, figure(abs(di_figures(3))),%clf
+  subplot('Position',[.1 .1 .7 .8])
+  if di_figures(3)<0
+    lpg=unique(lpgs); nlpg=length(lpgs); nom=length(p_om); F=[]; M=[]; V=[];
+    MM=(meas(1:len)-fb_womega*result(5+nion))./p_coeffg;
+    MV=var(1:len)./p_coeffg.^2;
+    for i=lpg
+      d=find(lpgs==i); d1=d(1); ld=length(d);
+      F=[F;f_womega(d1,:);f_womega(d1+nlpg,:)];
+      mv1=MV(d)+eps; mv2=MV(d+nlpg)+eps; smv1=sum(1./mv1); smv2=sum(1./mv2);
+      M=[M;sum(MM(d)./mv1)/smv1;sum(MM(d+nlpg)./mv2)/smv2];
+      V=[V;1/smv1/ld;1/smv2/ld];
+    end
+    [u,s,v]=svd(F,0); ds=diag(s); id=find(ds>ds(1)/10); % 10% Well...
+    f_wim=v(:,id)*inv(s(id,id))*u(:,id)';
+    mspec=f_wim*M; vspec=sqrt(abs(f_wim*V));
+    [nin0,tit0,mim0,psi,vi]=transf(result,p_m0);
+    tspec=spec(nin0,tit0,mim0,psi,vi,kd2,p_om,pldfvv);
+    f0=find(p_om==0); s(f0)=result(6+nion)+s(f0);
+    global p_om0 sc_angle
+    freq=p_om*p_om0(1)*sin(sc_angle/2)/2/pi*1e-3;
+    plot(freq,1e3*mspec,'ro',freq,1e3*tspec,'g-',...
+        [freq freq]',1e3*[mspec-vspec mspec+vspec]','r-')
+    title('Data (o) and fit results (solid line)')
+    ylabel('Power [K/kHz]'); xlabel('Frequency (kHz)')
+    set(gca,'xlim',freq([1 end])'+[-1 1]*min(diff(freq))), grid on
+  else
     indi=len/2+indr;
-    indp=len+find(er(1:lr));
     sig_i=meas(indi);err_i=sig_err(indi);
-    sig_p=meas(indp);err_p=sig_err(indp);
     fitted_i=theo(indi);
     indi(find(var(indi)==0))=NaN; indi=indi-len/2;
-    indp=indp-len;
-    fitted_p=result(indp)';
-    res_err=err(indp)';
- 
-    drawnow, figure(di_figures(3)),%clf
- 
-    subplot('Position',[.1 .1 .7 .8])
     indr=indr-.05; indi=indi+.05;
     plot(indr,sig_r,'ro',indr,fitted_r,'g-',...
          indi,sig_i,'bo',indi,fitted_i,'g-',...
@@ -106,19 +124,24 @@ if di_figures(3) | name_site=='K' | name_site=='S'
     end
     ylabel('Power [K]'); xlabel('# of data point')
     set(gca,'ylim',min([max([get(gca,'ylim');-1000 -1000]);10000 10000]));
- 
-    subplot('Position',[.85 .1 .12 .8])
-    plot(indp-0.15,sig_p,'ro',indp+0.15,fitted_p,'go',...
-        [indp;indp]-0.15,[sig_p-err_p,sig_p+err_p]','r:',...
-        [indp;indp]+0.15,[fitted_p-res_err,fitted_p+res_err]','g-')
-    set(get(gca,'Children'),'MarkerSize',4)
-    axlim=[0.5 max(indp)+.5 -1 max([5,ceil(fitted_p')])];
-    if all(~isnan(axlim))
-      axis(axlim);
-    end
-    XTickLabel=['N';'T';'r';'c';'v';'p';'p';'B';'D'];
-    set(gca,'Xtick',indp,'XTickLabel',XTickLabel(indp))
-    title('parameters')
-    drawnow
   end
+
+  indp=len+find(er(1:lr));
+  sig_p=meas(indp);err_p=sig_err(indp);
+  indp=indp-len;
+  fitted_p=result(indp)';
+  res_err=err(indp)';
+  subplot('Position',[.85 .1 .12 .8])
+  plot(indp-0.15,sig_p,'ro',indp+0.15,fitted_p,'go',...
+      [indp;indp]-0.15,[sig_p-err_p,sig_p+err_p]','r:',...
+      [indp;indp]+0.15,[fitted_p-res_err,fitted_p+res_err]','g-')
+  set(get(gca,'Children'),'MarkerSize',4)
+  axlim=[0.5 max(indp)+.5 -1 max([5,ceil(fitted_p')])];
+  if all(~isnan(axlim))
+    axis(axlim);
+  end
+  XTickLabel=['N';'T';'r';'c';'v';repmat('p',nion-1,1);'B';'D'];
+  set(gca,'Xtick',indp,'XTickLabel',XTickLabel(indp))
+  title('parameters')
+  drawnow
 end

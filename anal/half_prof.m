@@ -7,7 +7,7 @@ function half_prof
 
 global a_addr a_adstart a_adend a_control ad_lpg ad_coeff ad_range ADDR_SHIFT 
 global d_data d_var1 d_var2 d_time p_rep p_dtau ch_el di_fit
-global lpg_ND lpg_lag lpg_womscaled lpg_bac lpg_cal lpg_background
+global lpg_ND lpg_lag lpg_womscaled lpg_bac lpg_cal lpg_background lpg_Ap
 global a_priori a_priorierror p_ND
 global r_range r_status r_ind g_ind
 global pldfvv p_D0 p_N0 p_T0 p_om k_radar k_radar0 p_m0
@@ -15,8 +15,9 @@ global pldfvv p_D0 p_N0 p_T0 p_om k_radar k_radar0 p_m0
 r_ind=0;
 NP=size(a_priori,2);
 physlim=[-ones(1,NP)*1e20;ones(1,NP)*1e20];
-physlim(:,1:4+length(p_m0))=[1e6 1   .01  1   -2e4 -.01*ones(1,length(p_m0)-1)
-                            1e14 2e4 100  1e9  2e4 1.01*ones(1,length(p_m0)-1)];
+nion=length(p_m0);
+physlim(:,1:5+nion)=[1e6 1   .01  1   -2e4 -.01*ones(1,nion-1) -100
+                    1e14 2e4 100  1e9  2e4 1.01*ones(1,nion-1) 1e4];
 physlim=real_to_scaled(physlim);
 
 for g_ind=1:length(a_adstart)
@@ -27,6 +28,7 @@ for g_ind=1:length(a_adstart)
   lpgs=ad_lpg(addr+ADDR_SHIFT); % These are the lag profile groups of the data points
 
   f_womega=[real(lpg_womscaled(lpgs,:));imag(lpg_womscaled(lpgs,:))];
+  fb_womega=[real(lpg_Ap(lpgs));imag(lpg_Ap(lpgs))];
   p_coeffg=[ad_coeff(addr+ADDR_SHIFT),ad_coeff(addr+ADDR_SHIFT)]';
 
   signal_acf=[real(d_data(addr+ADDR_SHIFT));imag(d_data(addr+ADDR_SHIFT))];  
@@ -85,12 +87,12 @@ for g_ind=1:length(a_adstart)
   r_range(r_ind)=sum(ad_range(addr+ADDR_SHIFT)./diag_var(reind)')/sum(1 ./diag_var(reind));
 
   ch=1;  kd2=k_radar(ch)^2*p_D0^2; Fscale=k_radar0(ch)/k_radar(ch); % hyi hyi
-  [small_f_womega,small_p_om]=find_om_grid(aa,p_coeffg,f_womega,kd2,Fscale*p_om,pldfvv);
+  [small_f_womega,small_p_om]=find_om_grid(aa,f_womega,kd2,Fscale*p_om,pldfvv);
 
   errorlim=a_control(1); status=0;
   if errorlim>0 & errorlim<10000 % To prevent unnecessary error estimation
     % Check if the error of Ne larger than given limit when the fit is started
-    [error,correl,alpha]=error_estimate(aa,variance,kd2,p_coeffg,small_f_womega,small_p_om,pldfvv);
+    [error,correl,alpha]=error_estimate(aa,variance,kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega);
     if error(1)/aa(1) > errorlim, result=aa; chi2=inf; status=2; end % No fit done
   end
   if status==0 % Now proceed to the fitting routine
@@ -98,10 +100,10 @@ for g_ind=1:length(a_adstart)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if a_control(4)<=2
       [result,chi2,iter,alpha]=mrqmndiag(aa,measurement,variance,tol,maxiter,...
-              kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,p_m0,physlim);
+              kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,p_m0,physlim,fb_womega);
     else
       [result,chi2,iter,alpha]=mrqmn(aa,measurement,variance,tol,maxiter,...
-              kd2,p_coeffg,small_f_womega,small_p_om,pldfvv);
+              kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega);
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     status=(iter>=maxiter);
@@ -113,5 +115,5 @@ for g_ind=1:length(a_adstart)
   if min(size(variance))>1; variance=diag(variance); end
   ralpha=real(alpha);
   store_results(aa,measurement,variance,real(result),ralpha,chi2,status,...
-                kd2,p_coeffg,small_f_womega,small_p_om,pldfvv);
+                kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega,lpgs);
 end

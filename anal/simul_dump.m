@@ -10,7 +10,7 @@
 % 
 fprintf('Producing a simulated dump \n')
 
-global p_m0
+global p_m0 lpg_Ap
 
 ch=1;
 i=sqrt(-1);  
@@ -32,7 +32,8 @@ for code=diff_val(lpg_code)
      kd2=k_radar(ch)^2*p_D0^2;  
      womega=[real(lpg_womscaled(lpgs,:));imag(lpg_womscaled(lpgs,:))];
     [s_womega,s_p_om]=find_om_grid(param,coeff,womega,kd2,p_om,pldfvv);
-     theo=dirthe(param,coeff,s_womega,kd2,s_p_om,pldfvv,p_m0);
+     b_womega=[real(lpg_Ap(lpgs));imag(lpg_Ap(lpgs))];
+     theo=dirthe(param,coeff,s_womega,kd2,s_p_om,pldfvv,p_m0,b_womega);
      len=length(index);
      dump(addr+ADDR_SHIFT)=theo(1:len)+i*theo(len+1:2*len);
      ranges(index)=[];

@@ -28,6 +28,7 @@
 #define PLDFVV_IN	prhs[9]
 #define M_IN		prhs[10]
 #define PHYSLIM_IN	prhs[11]
+#define BWOM_IN		prhs[12]
 /*
  * Beginning of the program !!!!!!!!
  */
@@ -43,15 +44,15 @@ const mxArray *prhs[];
 {
 	long nom,womM,aaN,ns,varianceM,varianceN,coefM,coefN,nion;
 	double *aaPr,*coefPr,*womPr,*kd2Pr,*omPr, *ymPr, *variancePr,*ftolPr,*itMaxPr;
-	double *aaOutPr,*itsPr,*chi2Pr,*alphaPr,*pldfvPr,*pldfvPi,*physlimPr,*p_m0;
+	double *aaOutPr,*itsPr,*chi2Pr,*alphaPr,*pldfvPr,*pldfvPi,*physlimPr,*p_m0,*bwomPr;
 
 
 /* Deal with the input arguments */
 
 /* First check that we get the proper number of input & output arguments */
 
-	if (nrhs != 12)
-		mexErrMsgTxt("Mrqmndiag requires twelve input arguments.");
+	if (nrhs != 13)
+		mexErrMsgTxt("Mrqmndiag requires 13 input arguments.");
 	if (nlhs != 4)
 		mexErrMsgTxt("Mrqmndiag requires four output arguments.");
 
@@ -90,6 +91,7 @@ const mxArray *prhs[];
 	nion=mxGetM(M_IN)*mxGetN(M_IN);
 
 	physlimPr = mxGetPr(PHYSLIM_IN);
+	bwomPr = mxGetPr(BWOM_IN);
 
 /* Create output arguments */
 
@@ -108,6 +110,6 @@ const mxArray *prhs[];
 /* Do the actual calculation */
 	MrqmndiagCalc(ns,aaN,aaPr,ymPr,variancePr,varianceM,varianceN,ftolPr,itMaxPr,
 		coefPr,coefM,coefN,womM,womPr,kd2Pr,nom,omPr,aaOutPr,chi2Pr,itsPr,
-		alphaPr,pldfvPr,pldfvPi,physlimPr,p_m0,nion);
+		alphaPr,pldfvPr,pldfvPi,physlimPr,p_m0,nion,bwomPr);
 
 }

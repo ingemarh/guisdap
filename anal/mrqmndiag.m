@@ -16,7 +16,7 @@
 %
 % See also: dirthe, mrqmn
 %  function [aa,chi2,its,alpha]=mrqmndiag(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_womega,p_om,pldfvv,p_m0)
-function [aa,chi2,its,alpha]=mrqmndiag(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_womega,p_om,pldfvv,p_m0,physlim)
+function [aa,chi2,its,alpha]=mrqmndiag(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_womega,p_om,pldfvv,p_m0,physlim,fb_womega)
  
 % warning_state=warning;
 % warning off
@@ -31,7 +31,7 @@ function [aa,chi2,its,alpha]=mrqmndiag(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_w
   end
   lambda=0.001;
   aa=a; validder=0;
-  ya=dirthe(aa,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0);
+  ya=dirthe(aa,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega);
   dyda=zeros(length(ya),length(va));
   if diagonal,
     chi2=(ym(vv)-ya(vv))'*(invsigma.*(ym(vv)-ya(vv)));
@@ -50,7 +50,7 @@ function [aa,chi2,its,alpha]=mrqmndiag(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_w
       for i=1:length(va) 
         aa2=aa; aa2(va(i))=aa(va(i))+0.0001;
         aa2(ag)=exp(aa2(ag)); aa2(as)=2*sinh(aa2(as)); %log!
-        dyda(:,i)=(ya-dirthe(aa2,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0))/0.0001; %calculate derivatives;
+        dyda(:,i)=(ya-dirthe(aa2,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega))/0.0001; %calculate derivatives;
       end 
       if diagonal,
         alpha=dyda(vv,:)'*(apu.*dyda(vv,:));
@@ -68,7 +68,7 @@ function [aa,chi2,its,alpha]=mrqmndiag(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_w
     d=find(aa(va)>physlim(2,va)); aa(va(d))=physlim(2,va(d));
 %   da=aa(va)-aaold(va);
   aa2=aa; aa2(ag)=exp(aa2(ag)); aa2(as)=2*sinh(aa2(as)); %log!
-    ya=dirthe(aa2,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0);
+    ya=dirthe(aa2,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega);
     if diagonal,
       chi2=(ym(vv)-ya(vv))'*(invsigma.*(ym(vv)-ya(vv)));
     else

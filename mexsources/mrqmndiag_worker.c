@@ -48,6 +48,7 @@ struct pth {
 	unsigned long nth;
 	double *p_m0;
 	unsigned long nion;
+	double *bwomPr;
 };
 void *dirthe_loop(struct pth *);
 #ifdef THTIME
@@ -67,11 +68,11 @@ __inline__ unsigned long long int gethrtime (void)
 void MrqmndiagCalc(long ns,long aaN,double *aPr,double* ymPr,double *variancePr,long varianceM,long varianceN, 
 	double* ftolPr,double *itMaxPr,double *coefPr,long coefM,long coefN,
 	long womM,double *womPr,double *kd2Pr,long nom,double *omPr, 
-	double *aaOutPr,double *chi2Pr,double *itsPr,double *alphaPr,double *pldfvPr,double *pldfvPi,double *physlimPr,double *p_m0,long nion)
+	double *aaOutPr,double *chi2Pr,double *itsPr,double *alphaPr,double *pldfvPr,double *pldfvPi,double *physlimPr,double *p_m0,long nion,double *bwomPr)
 #else
-void MrqmndiagCalc(ns,aaN,aPr,ymPr,variancePr,varianceM,varianceN,ftolPr,itMaxPr,coefPr,coefM,coefN,womM,womPr,kd2Pr,nom,omPr,aaOutPr,chi2Pr,itsPr,alphaPr,pldfvPr,pldfvPi,physlimPr,p_m0,nion)
+void MrqmndiagCalc(ns,aaN,aPr,ymPr,variancePr,varianceM,varianceN,ftolPr,itMaxPr,coefPr,coefM,coefN,womM,womPr,kd2Pr,nom,omPr,aaOutPr,chi2Pr,itsPr,alphaPr,pldfvPr,pldfvPi,physlimPr,p_m0,nion,bwomPr)
 long ns,aaN,varianceM,varianceN,coefM,coefN,womM,nom,nion;
-double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOutPr,*chi2Pr,*itsPr,*alphaPr,*pldfvPr,*pldfvPi,*physlimPr;
+double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOutPr,*chi2Pr,*itsPr,*alphaPr,*pldfvPr,*pldfvPi,*physlimPr,*bwomPr;
 #endif
 {
 	unsigned long i,j,nR,nscr,nscr1;
@@ -144,7 +145,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	aa2=(double *)mxCalloc((aaN+(coefM+aaN)*coefN)*nth,sizeof(double));
 	tempYa=aa2+aaN*nth;
 
-	DirtheCalc(ns,aaN,aaOutPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,1,p_m0,nion,scr,scr1);
+	DirtheCalc(ns,aaN,aaOutPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,1,p_m0,nion,bwomPr,scr,scr1);
 
 /* Create dyda and the temporaty copy of dyda matrix for the spectrum derivatives */
 
@@ -216,6 +217,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	pth.nth=nth;
 	pth.p_m0=p_m0;
 	pth.nion=nion;
+	pth.bwomPr=bwomPr;
 /* The actual fitting loop */
 	while(its<itMax) {
 		if(!validDer) {
@@ -300,7 +302,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 		for(j=0;j<nag;j++) aa2[ag[j]]=exp(aa2[ag[j]]);
 		for(j=0;j<nas;j++) aa2[as[j]]=2.*sinh(aa2[as[j]]);
 
-		DirtheCalc(ns,aaN,aa2,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,0,p_m0,nion,scr,scr1);
+		DirtheCalc(ns,aaN,aa2,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,0,p_m0,nion,bwomPr,scr,scr1);
 		chi2Pr[0]=0;
 		for(i=0;i<nvarOK;i++) {
 			j=varOK[i];
@@ -376,7 +378,7 @@ void *dirthe_loop(struct pth *pth)
 	for(j=0;j<pth->nas;j++)
 		aa2[pth->as[j]]=2.*sinh(aa2[pth->as[j]]);
 
-	DirtheCalc(pth->ns,pth->aaN,aa2,pth->coefPr,pth->womM,pth->womPr,pth->kd2Pr,pth->nom,pth->omPr,pth->pldfvPr,pth->pldfvPi,acf,0,pth->p_m0,pth->nion,scr,scr1);
+	DirtheCalc(pth->ns,pth->aaN,aa2,pth->coefPr,pth->womM,pth->womPr,pth->kd2Pr,pth->nom,pth->omPr,pth->pldfvPr,pth->pldfvPi,acf,0,pth->p_m0,pth->nion,pth->bwomPr,scr,scr1);
 
 	for(j=0;j<pth->nvarOK;j++)
 		pth->dyda[IND2(j,i,pth->nvarOK)]=((pth->ya[pth->varOK[j]]-acf[pth->varOK[j]])/0.0001);
