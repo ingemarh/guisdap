@@ -5,6 +5,8 @@ function [list,msg,dpath]= getfilelist(dirpath,recurse) %{
 % 21-Jul-1998 Jm
 %====================================================================
 
+global path_tmp
+
 list = []; msg = ''; dirlist=[]; newer=[];
 if nargin < 2
  recurse=[];
@@ -36,22 +38,24 @@ end
 if isempty(dirlist)
  dpath=fullfile(dpath,recurse,filesep);
  if isunix
-  cmd=sprintf('find %s -name "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].mat" %s-print',dpath(1:end-1),newer);
-  [k,dirlist]=unix(cmd);
-% if k, pause(.6), [k,dirlist]=unix(cmd); end
+  d=[tempname '.txt'];
+  cmd=sprintf('find %s -name "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].mat" %s-print >%s',dpath(1:end-1),newer,d);
+  if unix(cmd)
+   msg=['Error listing mat files in ' dirpath ' ' cmd];
+  else
+   [dum,list]=textread(d,['%' num2str(length(dpath)) 's%d.mat']);
+  end
+  delete(d)
  else
-  k=0;
   dirlist=ls([dpath '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].mat']);
- end
- d=find(dirlist<32); dirlist(d)=[];
- if k
-  msg = ['Error listing mat files in ' dirpath ' ' cmd];
- elseif isempty(dirlist) & isempty(newer)
-  msg = ['No mat files in ' dirpath];
- else
-  try, list=reshape(dirlist,length(dpath)+12,[])';
-  list=sort(str2num(list(:,length(dpath)+(1:8))))';
-  catch, dirlist, msg=lasterr; list=[]; end
+  d=find(dirlist<32); dirlist(d)=[];
+  if isempty(dirlist) & isempty(newer)
+   msg=['No mat files in ' dirpath];
+  else
+   try, list=reshape(dirlist,length(dpath)+12,[])';
+   list=sort(str2num(list(:,length(dpath)+(1:8))))';
+   catch, dirlist, msg=lasterr; list=[]; end
+  end
  end
  return
 end

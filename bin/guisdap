@@ -6,7 +6,10 @@ mflags="-nojvm -nosplash"
 usage="Usage: guisdap [-a] [-i] [-b] [-x] [-t] [-m path]"
 matlab="matlab"
 
-TMPDIR=$HOME/tmp
+TMP=$HOME/tmp
+if [ ! -d $TMP ]; then
+	mkdir $TMP
+fi
 SHELL=/bin/sh
 #find GUP
 filename=$0
@@ -72,5 +75,5 @@ case $sys in
 esac
 
 #echo "$matlab $mflags $tail"
-export TMPDIR MATLABPATH IRIPATH PATH LD_LIBRARY_PATH SHELL
+export TMP MATLABPATH IRIPATH PATH LD_LIBRARY_PATH SHELL
 $matlab $mflags $tail
