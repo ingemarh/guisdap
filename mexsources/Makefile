@@ -12,7 +12,7 @@ CFLAGS=-O3 -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/includ
 MEXOPTS=
 endif
 
-th=$(shell if [ -e /usr/include/pthread.h ]; then echo 1;else echo 0;fi)
+th=$(shell if [ -f /usr/include/pthread.h ]; then echo 1;else echo 0;fi)
 
 #The rest
 M=	$(PWD)/../lib

@@ -4,7 +4,7 @@ N=	libiri
 
 sys=$(shell uname -s)
 ifeq ($(sys),SunOS)
-FFLAGS = -O -KPIC -dalign -mt -silent -e
+FFLAGS = -xO3 -KPIC -dalign -mt -silent -e
 FC=f90
 else
 FFLAGS = -O3 -fPIC -c -static -finit-local-zero -ffixed-line-length-132

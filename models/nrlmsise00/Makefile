@@ -4,7 +4,7 @@ N=	libmsis
 
 sys=$(shell uname -s)
 ifeq ($(sys),SunOS)
-FFLAGS = -KPIC -dalign -mt -silent -e
+FFLAGS = -xO3 -KPIC -dalign -mt -silent -e
 FC=f90
 else
 FFLAGS = -O3 -fPIC -c -static -finit-local-zero
