@@ -10,9 +10,10 @@
 clear vcg_Aenv  
 
 if ~isempty(p_RECloc), t_RECloc=p_RECloc; end
-temp=[path_expr name_expr name_site];
 if name_site=='K' | name_site=='S';
   temp=[path_expr name_expr 'R'];
+else
+  temp=[path_expr name_expr name_site];
 end
 if exist('d_rcprog','var')
   initfile=[temp '_' int2str(d_rcprog) 'init'];
