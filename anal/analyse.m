@@ -12,6 +12,7 @@ if exist([path_tmp '.gup'])
 end
 beg=sprintf('%04d %02d %02d  %02d %02d %02d',t1);
 to=sprintf('%04d %02d %02d  %02d %02d %02d',t2);
+sites='KSTVL';
 if using_x & isempty(get(0,'UserData'))
 global b
 figure(5)
@@ -27,7 +28,7 @@ text(0,ty(1),'Dsp expr')
 set(gca,'position',[0 0 1 1],'visible','off')
 b(1)=uicontrol('Style','pushbutton','string',name_expr,'position',[x y(1) x1 yh],'value',0,'callback','o=uigetdir(path_exps);if o,[path_exps,name_expr]=fileparts(o);set(b(1),''string'',name_expr),end');
 text(0,ty(2),'Site')
-b(2)=uicontrol('Style','popupmenu','string','K|S|T|V|L','position',[x y(2) x1 yh],'value',siteid);
+b(2)=uicontrol('Style','popupmenu','string',sites','position',[x y(2) x1 yh],'value',siteid);
 text(0,ty(3),'Data path')
 b(3)=uicontrol('Style','pushbutton','string',data_path,'position',[x y(3) x2 yh],'value',0,'callback','o=uigetdir(data_path);if o,data_path=o;set(b(3),''string'',o),end');
 text(0,ty(4),'Start time')
@@ -46,8 +47,8 @@ b(9)=uicontrol('Style','edit','string',num2str(figs),'position',[x y(9) x2 yh],'
 text(0,100,'Special')
 b(10)=uicontrol('Style','edit','string',extra,'position',[x 50 x2 100],'max',100,'HorizontalAlignment','left','tooltipstring','Matlab commands!');
 else
- sites='KSTVL';
- name_expr=minput('Dsp_exp',name_expr,'s');
+ path_exps=minput('Path exps',path_exps,'s');
+ name_expr=minput('Dsp exp',name_expr,'s');
  siteid=findstr(minput('Site',sites(siteid),'s'),sites);
  data_path=minput('Data path',data_path,'s');
  t1=minput('Start time',t1);

@@ -23,11 +23,16 @@ if ~isempty(i1)
  result_dir=sprintf('%d-%02d-%02d_%s@%s%s',d_time(2,1:3),name_expr,name_ant,filesep);
  result_path=[result_path(1:i1-1) result_dir];
 end
-if ~exist(result_path,'dir')
- [i1,i2]=fileparts(result_path(1:end-1)); mkdir(i1,i2)
-elseif isempty(r_h) & ~isempty(ls(result_path))
- beep
- fprintf('\n*********** %s is not empty! ***********\n\n',result_path)
+if isempty(r_h)
+ if ~exist(result_path,'dir')
+  [i1,i2]=fileparts(result_path(1:end-1)); mkdir(i1,i2)
+ elseif ~isempty(ls(result_path))
+  beep
+  fprintf('\n*********** %s is not empty! ***********\n\n',result_path)
+ end
+ if ~strcmp(path_tmp,result_path) & exist([path_tmp '.gup'],'file')
+  copyfile([path_tmp '.gup'],result_path,'f')
+ end
 end
 
 r_ver=GUP_ver;
