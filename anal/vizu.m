@@ -50,7 +50,7 @@ if strcmp(action,'rtgup')
       END_TIME=toYMDHMS(a_year,a_end);
     end
     close(findobj('type','figure','userdata',6))
-    action=[];
+    axs=[]; axc=[]; action=[];
   else
     action='update';
   end
