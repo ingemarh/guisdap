@@ -8,31 +8,40 @@ function [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path,fileno)
 
 global name_expr r_RECloc name_ant
 ask=0;
+Time=[]; par2D=[]; par1D=[]; rpar2D=[];
 if nargin<2, fileno=[]; end
 if isempty(fileno), ask=1; fileno=1; end
 
 website='http://www.eiscat.se/madrigal/';
-of=tempname,
+of=tempname;
 ws=['''' website 'experiments/' data_path '/expTab.txt'''];
-if unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
+%if unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
+if unix(['wget -O ' of ' ' ws ' 2>/dev/null'])
  return
 end
 [name_expr,kinst]=textread(of,'%*s%*s%s%*s%*s%*s%*s%*s%d%*[^\n]','delimiter',',');
-name_expr=char(name_expr);
 delete(of)
+name_expr=char(name_expr);
+name_expr(strfind(name_expr,'_'))=[];
+name_expr(strfind(name_expr,' '))=[];
 ws=['''' website 'experiments/' data_path '/fileTab.txt'''];
-if unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
+%if unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
+if unix(['wget -O ' of ' ' ws ' 2>/dev/null'])
  return
 end
 filename=textread(of,'%s%*[^\n]','delimiter',',');
 delete(of)
 antennas={'kir' 'uhf' 'sod' 'vhf' 'esr'};
 REClocs=[67.863 20.44 .412;69.583 19.21 .030;67.367 26.65 .180;69.583 19.21 .030;78.153 16.029 .438];
-i=min(kinst-70,5); name_ant=char(antennas(i)); r_RECloc=REClocs(i,:);
-if ask & length(filename)>1
+i=min(kinst-70,5);
+if i<1 | i>5, return, end
+name_ant=char(antennas(i)); r_RECloc=REClocs(i,:);
+if length(filename)>1
  fprintf('Available data files in %s:\n',data_path)
  for i=1:length(filename), fprintf('%d %s\n',i,char(filename(i))), end
- fileno=minput('Choose',1);
+ if ask
+  fileno=minput('Choose',1);
+ end
 end
 filename=char(filename(fileno));
 if strcmp(name_ant,'esr')
@@ -48,9 +57,8 @@ for i=fliplr(find(arg=='&' | arg==' '))
 end
 ws=['''' website 'cgi-bin/madDataDisplay'''];
 
-Time=[]; par2D=[]; par1D=[]; rpar2D=[];
-
-if unix(['curl -d ' arg ' -o ' of ' -f ' ws ' 2>/dev/null'])
+%if unix(['curl -d ' arg ' -o ' of ' -f ' ws ' 2>/dev/null'])
+if unix(['wget --post-data=' arg ' -O ' of ' ' ws ' 2>/dev/null'])
  return
 end
 data=textread(of,'','headerlines',8);
@@ -76,8 +84,8 @@ par1D(:,1)=mod(par1D(:,1)+360,360); %0-360 degrees
 par1D(:,3)=par1D(:,3)/10; %10 kW
 par2D=ones(n_alt,n_tot,npar2D)*NaN;
 naalt=0;
-n_ralt=NaN;
-rpar2D=[];
+n_ralt=0;
+nralt=0;
 
 data(:,13:14)=10.^data(:,13:14);
 avec=[8 5 13 15 16 17 12 19 9];
@@ -89,14 +97,12 @@ if nargout>3 & ~isempty(pp)
   if size(dum,1)==n_tot
     n_ralt=max(diff(ip));
     rpar2D=ones(n_ralt,n_tot,3)*NaN;
-    nralt=0;
   else
     disp('Different pp and acf data times not allowed --ignoring pp')
   end
 end
 for i=1:n_tot
-  ii=find(ja==i);
-  ppp=data(acf(find(jp==i)),avec);
+  ppp=data(acf(find(ja==i)),avec);
   [ppr,k,l]=unique(round(ppp(:,1)/acres));
   nalt=size(ppr,1); ppar=ones(nalt,9);
   for n=1:nalt
@@ -104,7 +110,7 @@ for i=1:n_tot
   end
   par2D(1:nalt,i,:)=ppar;
   naalt=max(naalt,nalt);
-  if isfinite(n_ralt)
+  if n_ralt>0
     ppp=data(pp(find(jp==i)),[8 5 14]);
     [ppr,k,l]=unique(round(ppp(:,1)/ppres));
     nalt=size(ppr,1); ppar=ones(nalt,3);
@@ -118,7 +124,7 @@ end
 if naalt<n_alt
   par2D=par2D(1:naalt,:,:);
 end
-if isfinite(n_ralt) & nralt<n_ralt
+if nralt<n_ralt
   rpar2D=rpar2D(1:nralt,:,:);
 end
 %disp('Done.')

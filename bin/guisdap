@@ -3,7 +3,7 @@ tail=
 init=
 my="$HOME/gup/mygup"
 mflags="-nojvm -nosplash"
-usage="Usage: guisdap [-a] [-i] [-b] [-x] [-t] [-m path] [-g file]"
+usage="Usage: guisdap [-a] [-i] [-b] [-B script] [-x] [-t] [-m path] [-g file]"
 matlab="matlab"
 mex=
 
@@ -36,12 +36,16 @@ if [ -d $GUP/mex6 ]; then
 	fi
 fi
 
-while getopts aibxtr:g: flag
+while getopts aibB:xtr:g: flag
 do
 	case $flag in
 		a) tail="-r analyse";;
 		i) init=":$GUP/init";;
 		b) tail="-r go_on(-1) >/dev/null 2>&1 &"
+		   mflags=
+		   matlab="nohup $matlab"
+		   ;;
+		B) tail="-r $OPTARG >$TMP/$OPTARG 2>&1 &"
 		   mflags=
 		   matlab="nohup $matlab"
 		   ;;

@@ -91,7 +91,9 @@ elseif strcmp(action,'update')
  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
  set(0,'currentfig',findobj('type','figure','userdata',6))
 elseif strcmp(action,'print') | strcmp(action,'save')
- if isunix
+ if isempty(axs)
+  disp('Nothing to print!')
+ elseif isunix
   [i,j]=unix('which addlogo.sh');
   if ~i, set(hds(2:3),'visible','off'), end
   dirs=path_tmp(1:end-1);
@@ -172,7 +174,7 @@ FIGURE_TITLE	='EISCAT RADAR';% Title for the whole figure
 if ~isempty(Loc)
  LOCATION	=['EISCAT-' Loc];
 end
-stretchSecs	=31;	% Number of seconds to stretch data points
+stretchSecs	=65;	% Number of seconds to stretch data points
 FS	=10;		% Font size
 TL	=[0.01 0.025];	% Tick size
 height(2)=.03;		% Panel separation
@@ -197,7 +199,7 @@ end
 if strcmp(name_expr,'arcd')
  SCALE(2,:)=[59 139]; WHICH_PARAM='Nr AE';
  if any(par1D(:,2)<90), SCALE(2,1)=50; end
-elseif strcmp(name_expr,'dlayer')
+elseif strcmp(name_expr,'dlayer')  | strfind(name_expr,'cp6')
  SCALE(2,:)=[59 121]; WHICH_PARAM='Ne AE';
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
