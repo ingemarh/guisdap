@@ -115,7 +115,9 @@ while i<length(files)
   end
 
   dumpOK=(d_parbl(txpower)*factx>=a_txlim);
-  if dumpOK & ~isempty(a_satch), dumpOK=satch(a_ant(1),secs,a_inttime); end
+  if dumpOK & ~isempty(a_satch)
+    dumpOK=satch(a_ant(1),secs,a_inttime);
+  end
   if length(d_parbl)==128
     if d_parbl(95)~=0, fprintf(' Status word is %g\n',d_parbl(95)), end 
     dumpOK=dumpOK & rem(d_parbl(95),2)==0 & d_parbl(95)~=64;

@@ -19,7 +19,7 @@ if ~isfield(a_satch,'filled')
 end
 
 C=tan(el*pi/180);
-Nsat=0; j=0;
+Nsat=0; j=0; x0max=0;
 n_echo=6; min_v=.065; skip=a_satch.skip;
 
 lp=find(lpg_lag==0 & lpg_bcs==115);
@@ -32,13 +32,14 @@ for i=lp
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
  N=lpg_ND(i)*inttime/(a_satch.prep*1e-6);
  dat=real(d_data(addr));
- [pb,th,L]=sat_check(sigma(i),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,nclutter(i));
+ [pb,th,L,x0]=sat_check(sigma(i),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,nclutter(i));
  pb=pb(find(pb<=length(dat)-L+1+nsp_no_use(i)));
  if a_satch.plot
   eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb+round(L/2);'])
  end
  if ~isempty(th)
   d_data(addr)=th;
+  x0max=max([x0max;x0]);
  end
  Nsat=Nsat+length(pb);
 end
@@ -64,34 +65,37 @@ for i=lp
  end
  d_data(addr)=data;
 end
-if a_satch.plot & (Nsat>0 )%| Nsatb>0)
- figure(a_satch.plot), set(gcf,'Name','Satellites detected')
- for i=1:j
-  eval(['dat=dat' num2str(i) '; pc=pc' num2str(i) ';'])
-  subplot(j,1,i)
-  plot(dat); hold on
-  plot(pc,zeros(size(pc)),'o'), hold off
-  ylabel(sprintf('%s_{%d}',lpg_bcs(lpgused(i)),lpgused(i)));
+if Nsat>0 %| Nsatb>0
+ if a_satch.plot
+  figure(a_satch.plot), set(gcf,'Name','Satellites detected')
+  for i=1:j
+   eval(['dat=dat' num2str(i) '; pc=pc' num2str(i) ';'])
+   subplot(j,1,i)
+   plot(dat); hold on
+   plot(pc,zeros(size(pc)),'o'), hold off
+   ylabel(sprintf('%s_{%d}',lpg_bcs(lpgused(i)),lpgused(i)));
+  end
+  drawnow
  end
- drawnow
+ fprintf('Warning: Satellite detection (%d %.1f) -- skipping dump\n',Nsat,x0max)
 end
 OK=Nsat==0;
 return
 
-function [pb,dat_m,L]=sat_check(sigma,n_echo,min_v,wr,dt,dat,N,C,nbigsig)
+function [pb,dat_m,L,x0]=sat_check(sigma,n_echo,min_v,wr,dt,dat,N,C,nbigsig)
 global p_dtau
 
-dat_m=[];
+dat_m=[]; x0=[];
 
 %calculate diff of profile normalised with std
 S_c=dat/sqrt(N);
-S_c(1:nbigsig)=100*S_c(1:nbigsig);
-mS_c=min(S_c(1:(end-1)),S_c(2:end));
+S_c(1:nbigsig)=1e2*S_c(1:nbigsig);
+mS_c=mean([S_c(1:(end-1)) S_c(2:end)],2);
 dat_s=diff(dat)./mS_c;
 
 %calculate pulse shape and diff in sampling intervals
-%if el low an echoe would be wider (3km wide beam)
-Le=floor(3/C/.15/p_dtau);
+%if el low an echoe would be wider (5km wide beam)
+Le=floor(5/C/.15/p_dtau);
 if Le>1
  wr=conv(wr,ones(Le,1)/Le);
 end

@@ -33,8 +33,8 @@ if nargin==0
   action=[];
 elseif strcmp(action,'new')
   close(findobj('type','figure','userdata',6))
-  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
   axs=[]; axc=[];
+  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
   action=a2; a2=a3;
 end
 REALT=0;
@@ -77,9 +77,8 @@ if isempty(action) | strcmp(action,'verbose')
  if isempty(Time)
   [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS);
  end
- if ~isempty(axs), delete(axs), end
- if ~isempty(axc), delete(axc), end
- axs=[]; axc=[];
+ if ~isempty(axs), delete(axs), axs=[]; end
+ if ~isempty(axc), delete(axc), axc=[]; end
 elseif strcmp(action,'update')
  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
  if isempty(Time)
@@ -454,14 +453,15 @@ function setup_axes(yscale,YTitle)
 global axs height n_tot Time START_TIME END_TIME add_plot xticks
 axs=[axs axes('Position',[.12 .06+(n_tot-add_plot)*sum(height) .7 height(1)])];
 set(gca,'xgrid','on','ygrid','on')
-set(gca,'XLim',[datenum(START_TIME) datenum(END_TIME)])
-tickform='HH:MM'; td=datenum(END_TIME)-datenum(START_TIME);
+xlim=[datenum(START_TIME) datenum(END_TIME)];
+set(gca,'XLim',xlim)
+tickform='HH:MM'; td=diff(xlim);
 if td>7, tickform='dd/mm';
 elseif td<.003, tickform='HH:MM:SS'; end
 if length(axs)==1
  datetick(gca,'x',tickform,'keeplimits')
  xticks=get(gca,'xtick');
- if ~(prod(get(0,'ScreenSize'))-1) & isempty(xticks)
+ if ~(prod(get(0,'ScreenSize'))-1) & (isempty(xticks) | all(xticks<xlim(1) | xticks>xlim(2)))
   fs=get(gca,'fontsize');
   set(gca,'fontsize',fs/12.429) % Matlab bug...
   datetick(gca,'x',tickform,'keeplimits')

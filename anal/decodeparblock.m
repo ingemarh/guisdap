@@ -25,8 +25,8 @@
   time = time - d_parbl(7);
   d_time(1,:) = toYMDHMS(year,time);
 
-  fprintf('\n%d/%02d/%02d  %2d:%2d:%2.0f-%2d:%2d:%2.0f integrated\n',...
-        d_time(1,1:6),d_time(2,4:6))
+  fprintf('\n%s-%s integrated\n',datestr(datenum(d_time(1,:)),0),...
+           datestr(datenum(d_time(2,:)),13))
 
   len = 1;
   ch_Pt = d_parbl(8)*ones(1,len);
