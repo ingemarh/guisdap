@@ -68,47 +68,41 @@ while i<length(files)
 
   lpb=length(d_parbl);
   if lpb==128
-    tvec=2:4;                     % parameters holding time 
-    fixed=[6 9];                  % parameters which are not allowed to change
-    allow=[11 11]';               % max allowed change of fixed pars
-    az=6; el=9; fac=10;           % parameters for antenna pointing
-    averaged=[6 9 96:99];         % parameters which are averaged
-    accumulated=94;               % parameters which are accumulated
-    ORed=95;                      % parameter which is OR'ed
-    inttime=94;                   % parameter that holds integration time
-    txpower=99; factx=1000;       % parameter that holds transmitter power
+    [d_parbl,lpb]=nd2eros4(d_parbl);
   else
-    tvec=1:6;
-    fixed=[9:10 42 64];
-    allow=[.11 .11 1000 0]';
-    az=10; el=9; fac=1;
-    averaged=[8:10 42 63];
-    accumulated=[7 64];
-    ORed=[];
-    inttime=7;
-    txpower=8; factx=1;
-    % do not work on unavailable parameters
-    averaged(find(averaged>lpb))=[];
-    allow(find(fixed>lpb))=[];
-    fixed(find(fixed>lpb))=[];
-    accumulated(find(accumulated>lpb))=[];
+    d_parbl=d_parbl(:);
   end
-  d_parbl=col(d_parbl);
+  tvec=1:6;                    % parameters holding time
+  fixed=[9 10 42 64];          % parameters which are not allowed to change
+  allow=[.11 .11 1000 0]';     % max allowed change of fixed pars
+  az=10; el=9;                 % parameters for antenna pointing
+  averaged=[8:10 42 63 65];    % parameters which are averaged
+  accumulated=[7 64];          % parameters which are accumulated
+  inttime=7;                   % parameter that holds integration time
+  txpower=8;                   % parameter that holds transmitter power
+  vhf=lpb>40 & d_parbl(41)==3; % vhf antenna?
+
+  % do not work on unavailable parameters
+  averaged(find(averaged>lpb))=[];
+  allow(find(fixed>lpb))=[];
+  fixed(find(fixed>lpb))=[];
+  accumulated(find(accumulated>lpb))=[];
+
   [secs1,year]=tosecs(d_parbl(tvec));
   a_inttime=d_parbl(inttime);
-  a_ant=d_parbl([el az])/fac;
-  if a_ant(1)>0
+  a_ant=d_parbl([el az]);
+  if a_ant(1)>0 & (~vhf | a_ant(2)>0)
     a_elold=a_ant;
   elseif ~isempty(a_elold)
     a_ant=a_elold;
-    d_parbl([el az])=a_ant*fac;
+    d_parbl([el az])=a_ant;
   end
-  a_tx=d_parbl(txpower)*factx;
+  a_tx=d_parbl(txpower);
   if a_tx>=0
     a_txold=a_tx;
   elseif ~isempty(a_txold)
     a_tx=a_txold;
-    d_parbl(txpower)=a_tx/factx;
+    d_parbl(txpower)=a_tx;
   end
   if a_integr<=0
     if isempty(a_antold)
@@ -157,10 +151,6 @@ while i<length(files)
   elseif ~isempty(a_satch)
     dumpOK=satch(a_ant(1),secs,a_inttime);
   end
-  if lpb==128
-    if d_parbl(95)~=0, fprintf(' Status word is %g\n',d_parbl(95)), end 
-    dumpOK=dumpOK & rem(d_parbl(95),2)==0 & d_parbl(95)~=64;
-  end
   if dumpOK & OK
     indfixed=fixed(find(abs(d_parbl(fixed)-prev_parbl(fixed))>allow));
     if ~isempty(indfixed)
@@ -181,12 +171,11 @@ while i<length(files)
   end
   if dumpOK
     if ~OK  % initialize with the first good dump
-      aver=0; status=0; data=0; d_var1=0; d_var2=0; accum=0;
+      aver=0; data=0; d_var1=0; d_var2=0; accum=0;
       starttime=secs-a_inttime;    % calculate starttime of first dump
       OK=1;
     end
     % update with the following files
-    status=bitwiseor(status,d_parbl(ORed),16);
     accum=accum+d_parbl(accumulated);
     data=data+d_data;
     aver=aver+d_parbl(averaged)*i_averaged;
@@ -213,7 +202,6 @@ if OK, % if at least one good data dump was found
   % update parameter block, accept the last parameter block as starting point
   d_parbl(averaged)=aver/N_averaged;
   d_parbl(accumulated)=accum;
-  d_parbl(ORed)=status;
   d_parbl(inttime)=tosecs(d_parbl(tvec))-starttime;
   d_data=data;
   if ~isempty(d_saveintdir)
