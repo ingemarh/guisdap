@@ -82,22 +82,31 @@ if di_figures(3)
   drawnow, figure(abs(di_figures(3))),%clf
   subplot('Position',[.1 .1 .7 .8])
   if di_figures(3)<0
-    lpg=unique(lpgs); nlpg=length(lpgs); nom=length(p_om); F=[]; M=[]; V=[];
+    lpg=unique(lpgs); nlpgs=length(lpgs); nlpg=length(lpg);
+    F=zeros(nlpg*2,size(f_womega,2)); M=zeros(nlpg*2,1); V=M;
     MM=(meas(1:len)-fb_womega*result(5+nion))./p_coeffg;
     MV=var(1:len)./p_coeffg.^2;
-    for i=lpg
-      d=find(lpgs==i); d1=d(1); ld=length(d);
-      F=[F;f_womega(d1,:);f_womega(d1+nlpg,:)];
-      mv1=MV(d)+eps; mv2=MV(d+nlpg)+eps; smv1=sum(1./mv1); smv2=sum(1./mv2);
-      M=[M;sum(MM(d)./mv1)/smv1;sum(MM(d+nlpg)./mv2)/smv2];
-      V=[V;1/smv1/ld;1/smv2/ld];
+    for i=1:nlpg
+      d=find(lpgs==lpg(i)); d1=d(1);
+      for j=0:1
+        F(i+j*nlpg,:)=f_womega(d1+j*nlpgs,:);
+        mv=MV(d+j*nlpgs);
+        if any(mv)
+          smv=sum(1./mv);
+          M(i+j*nlpg)=sum(MM(d+j*nlpgs)./mv)/smv;
+          V(i+j*nlpg)=1/smv;
+        else
+          M(i+j*nlpg)=sum(MM(d+j*nlpgs));
+        end
+      end
     end
-    [u,s,v]=svd(F,0); ds=diag(s); id=find(ds>ds(1)/10); % 10% Well...
-    f_wim=v(:,id)*inv(s(id,id))*u(:,id)';
-    mspec=f_wim*M; vspec=sqrt(abs(f_wim*V));
+    %[u,s,v]=svd(F,0); ds=diag(s); id=find(ds>ds(1)/10); % 10% Well...
+    %f_wim=v(:,id)*inv(s(id,id))*u(:,id)';
+    f_wim=pinv(F,norm(F)/10);
+    mspec=f_wim*M; vspec=sqrt(f_wim.^2*V); % diagonal variances
     [nin0,tit0,mim0,psi,vi]=transf(result,p_m0);
     tspec=spec(nin0,tit0,mim0,psi,vi,kd2,p_om,pldfvv);
-    f0=find(p_om==0); s(f0)=result(6+nion)+s(f0);
+    f0=find(p_om==0); tspec(f0)=result(6+nion)+tspec(f0);
     global p_om0 sc_angle
     freq=p_om*p_om0(1)*sin(sc_angle/2)/2/pi*1e-3;
     plot(freq,1e3*mspec,'ro',freq,1e3*tspec,'g-',...

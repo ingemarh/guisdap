@@ -28,7 +28,7 @@ set(5,'Name','GUISDAP for dummies','userdata',5,'Position',[40 170 350 390],'Num
 guisdaplogo(1), text(-.4,-.6,'Press mouse to continue'), waitforbuttonpress
 clf
 x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=240;
-bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','set([bg br],''visible'',''off'')','fontsize',14);
+bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','if strcmp(get(bg,''string''),''GO''),set(bg,''string'',''pause'',''fontsize'',10),else,waitforbuttonpress,end','fontsize',14);
 uicontrol('Style','pushbutton','string','?','position',[0 40 20 20],'callback',['web http://www.eiscat.com/GUISDAP/doc/howto' num2str(GUP_ver*10) '.html'],'tooltipstring','Get some help');
 uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
 uicontrol('Style','pushbutton','string','Save','position',[50 20 40 20],'callback','o=uiputfile;if o,save_setup(o);end','tooltipstring','Save setup in file');

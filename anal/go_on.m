@@ -17,7 +17,7 @@ if ~ishandle(bg)
  end
  if nargin>0, go_die=1; end
 else
- while strcmp(get(bg,'visible'),'on')
+ while strcmp(get(bg,'string'),'GO')
   pause(1)
   if ~ishandle(bg), return, end
  end
