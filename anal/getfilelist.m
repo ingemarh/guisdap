@@ -38,13 +38,12 @@ elseif isunix & a_realtime | strfind(dirpath,'?')
   if exist(d), delete(d), end
 else
   dirpath=dirpath(1:end-1);
-  i=strfind(dirpath,'*');
-  if i
-    dirs=dir(dirpath);
+  if strfind(dirpath,'*')
     dp=fileparts(dirpath);
+    dirs=dir(dirpath);
   else
-    dirs.name=dirpath;
     dp=[];
+    dirs.name=dirpath;
   end
   for j=1:length(dirs)
     dirlist=dir(fullfile(dp,dirs(j).name,'*.mat'));

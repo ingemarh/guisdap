@@ -75,7 +75,7 @@ else
   for i=fliplr(i)
     recurse(i+1)=[];
   end
-  if isempty(dir([data_path '*.mat']))
+  if isempty(dir([data_path '*.mat*']))
     data_path=fullfile(data_path,recurse,filesep);
   end
   [d_filelist,msg]=getfilelist(data_path);
