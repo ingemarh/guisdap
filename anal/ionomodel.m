@@ -11,7 +11,7 @@
 
 function [apriori, apriorierror]=ionomodel(heights);
 
-global ionomodel_control iono_model p_m0 fit_altitude
+global ionomodel_control iono_model p_m0 fit_altitude name_site
 
 len=length(heights);
 heights=col(heights);
@@ -23,14 +23,18 @@ if any([7 6]-size(fit_altitude)>0)
  ff=fit_altitude;
  % Altitudes (h2>h1) where to fit each parameter resp
  % Strucure: h1 h2 hd(transition height) maxerr minerr relerr(relative or static errors)
- fit_altitude=[0 Inf 0 1e3 0 1
-               0 Inf 0 1e4 0 0
-             107 Inf 0 1e1 0 0
-               0 107 0 1e2 0 1
-               0 Inf 0 1e5 0 0
-               0   0 0   1 0 0
-               0   0 0   1 0 0];
-%fit_altitude(:,4)=[1e-3;.1;1e-3;1e-2;1e-3;1e-3;1e-3];
+ fit_altitude=[0  Inf 0 1e3 0 1
+              80  Inf 0 1e4 0 0
+             107 1500 0 1e1 0 0
+              90  107 0 1e2 0 1
+               0  Inf 0 1e5 0 0
+               0    0 0   1 0 0
+               0    0 0   1 0 0];
+ if name_site=='L'
+  fit_altitude(2:4,1:2)=[90 Inf;113 1500;0 0];
+ elseif name_site=='V'
+  fit_altitude(2:4,1:2)=[100 Inf;120 1500;0 0];
+ end
  fit_altitude(1:size(ff,1),1:size(ff,2))=ff;
 end
 

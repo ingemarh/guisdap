@@ -89,6 +89,8 @@ else
     elseif max(a_code)>max(lpg_code)
       fprintf('Analysis_code variable not well defined and neglected\n')
       a_code=[];
+    elseif length(name_ant)==3
+      name_ant=[name_ant 96+a_code(1)];
     end
   end
 end

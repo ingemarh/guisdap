@@ -5,12 +5,14 @@ my="$HOME/gup/mygup"
 mflags="-nojvm -nosplash"
 usage="Usage: guisdap [-a] [-i] [-b] [-x] [-t] [-m path]"
 matlab="matlab"
+mex=
 
 TMP=$HOME/tmp
 if [ ! -d $TMP ]; then
 	mkdir $TMP
 fi
 SHELL=/bin/sh
+
 #find GUP
 filename=$0
 while [ -h $filename ]; do
@@ -27,8 +29,12 @@ GUP=`dirname $filename`
 GUP=`dirname $GUP`
 #echo $GUP
 
-#mex=$GUP/mex6:$GUP/NW/mex6:
-mex=$GUP/mex6:
+if [ -d $GUP/mex6 ]; then
+	mex=$GUP/mex6:
+	if [ -d $GUP/NW/mex6 ]; then
+		mex=$mex$GUP/NW/mex6:
+	fi
+fi
 
 while getopts aibxtr: flag
 do
@@ -66,13 +72,16 @@ sys=`uname -s`
 case $sys in
 	SunOS)
 		PATH=/usr/bin:/usr/local/bin:$GUP/bin
-		LD_LIBRARY_PATH=$GUP/lib:$GUP/NW/lib:/opt/SUNWspro/lib:/usr/local/ssl/lib
+		LD_LIBRARY_PATH=$GUP/lib:/opt/SUNWspro/lib:/usr/local/ssl/lib
 		;;
 	Linux)
-		LD_LIBRARY_PATH=$GUP/lib:$GUP/NW/lib
+		LD_LIBRARY_PATH=$GUP/lib
 		PATH=$PATH:$GUP/bin
 		;;
 esac
+if [ -d $GUP/NW/lib ]; then
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GUP/NW/lib
+fi
 
 #echo "$matlab $mflags $tail"
 export TMP MATLABPATH IRIPATH PATH LD_LIBRARY_PATH SHELL

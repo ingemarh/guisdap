@@ -220,15 +220,16 @@ end
 if isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);
 end
-if strcmpi(name_ant,'32m') | strcmpi(name_ant,'42m')
- FIGURE_TITLE	='EISCAT SVALBARD RADAR';
- stretchSecs	=65;
+nameant=lower(name_ant(1:3));
+if strcmp(nameant,'32m') | strcmp(nameant,'42m')
+ FIGURE_TITLE='EISCAT SVALBARD RADAR';
+ stretchSecs=65;
  fradar=500e6;
-elseif strcmpi(name_ant,'uhf') | strcmpi(name_ant,'kir') | strcmpi(name_ant,'sod')
- FIGURE_TITLE	='EISCAT UHF RADAR';
+elseif strcmp(nameant,'uhf') | strcmp(nameant,'kir') | strcmp(nameant,'sod')
+ FIGURE_TITLE='EISCAT UHF RADAR';
  fradar=930e6;
-elseif strcmpi(name_ant(1:3),'vhf')
- FIGURE_TITLE	='EISCAT VHF RADAR';
+elseif strcmp(nameant,'vhf')
+ FIGURE_TITLE='EISCAT VHF RADAR';
  fradar=224e6;
 end
 option=zeros(20,1);
