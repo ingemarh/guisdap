@@ -7,13 +7,14 @@ if isempty(lpg_lag)
   OK=1; return
 end
 if ~isfield(a_satch,'filled')
-  if ~isfield(a_satch,'sigma'), a_satch.sigma=3; end	% detection limit sig
+  if ~isfield(a_satch,'sigma'), a_satch.sigma=4; end	% detection limit sig
   if ~isfield(a_satch,'sigmab'), a_satch.sigmab=3; end	% detection limit cal
   if ~isfield(a_satch,'skip'), a_satch.skip=0; end	% no points to skip
   if ~isfield(a_satch,'clutter'), a_satch.clutter=0; end% no clutter red points
   if ~isfield(a_satch,'repair'), a_satch.repair=0; end	% for alt codes
   if ~isfield(a_satch,'prep'), a_satch.prep=max(vc_penvo); end% p_rep
   if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
+  if ~isfield(a_satch,'lpg_skip'), a_satch.lpg_skip=[0 0]; end% lpg to skip
   a_satch.filled=1;
   disp('Warning: Satellite check works only for single RC prog exps,')
   disp('         starting with the 2nd integration period')
@@ -23,7 +24,7 @@ C=tan(el*pi/180);
 Nsat=0; j=0; x0max=0;
 n_echo=6; min_v=.065; skip=a_satch.skip;
 
-lp=find(lpg_lag==0 & lpg_bcs==115);
+lp=setdiff(find(lpg_lag==0 & (lpg_bcs=='s' | lpg_bcs=='x')),a_satch.lpg_skip);
 nclutter(1:length(lp))=a_satch.clutter;
 nsp_no_use(1:length(lp))=a_satch.repair;
 sigma(1:length(lp))=a_satch.sigma;
@@ -45,7 +46,7 @@ for i=lp
  Nsat=Nsat+length(pb);
 end
 Nsatb=0;
-lp=find(lpg_lag==0 & (lpg_bcs==98 | lpg_bcs==99));
+lp=setdiff(find(lpg_lag==0 & (lpg_bcs=='b' | lpg_bcs=='c')),a_satch.lpg_skip);
 sigma(1:length(lp))=a_satch.sigmab;
 lpgused=[lpgused lp]; ii=0;
 for i=lp
