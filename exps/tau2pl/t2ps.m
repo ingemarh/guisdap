@@ -17,7 +17,7 @@ end
 for f=1:length(ch_f)
  d=find(td_ch==ch_f(f));
  td_ch(d)=f;
- dd=find(td_am(d)==2);
- td_t1(d(dd))=td_t1(d(dd))+ch_adcint(f)/2;
+%dd=find(td_am(d)==2);
+%td_t1(d(dd))=td_t1(d(dd))+ch_adcint(f)/2;
 end
 save(['tau2pl' site 'pat_PS'],'td_*','p_*','ch_*')

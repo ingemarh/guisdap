@@ -539,7 +539,7 @@ elseif td<.003, tickform='HH:MM:SS'; end
 if length(axs)==1
  datetick(gca,'x',tickform,'keeplimits')
  xticks=get(gca,'xtick');
- if ~(prod(get(0,'ScreenSize'))-1) & (isempty(xticks) | all(xticks<xlim(1) | xticks>xlim(2)))
+ if ~(prod(get(0,'ScreenSize'))-1) & (isempty(xticks) | all(xticks<xlim(1) | xticks>xlim(2)) | (length(xticks)<3 & td>.003))
   fs=get(gca,'fontsize');
   set(gca,'fontsize',fs/12.429) % Matlab bug...
   datetick(gca,'x',tickform,'keeplimits')
