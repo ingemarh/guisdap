@@ -23,7 +23,11 @@ ne=m_iri(:,1);
 d=find(isnan(ne));
 if ~isempty(d)
  d1=find(isfinite(m_iri(:,1)));
- ne(d)=exp(inter3(altitude(d),altitude(d1),log(ne(d1))))';
+ if isempty(d1)
+  ne(:)=1e7;
+ else 
+  ne(d)=exp(inter3(altitude(d),altitude(d1),log(ne(d1))))';
+ end
 end
 ti=m_iri(:,3);
 te=m_iri(:,2);

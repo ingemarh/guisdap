@@ -186,9 +186,6 @@ end
 %%%%%%%%%% Time scales %%%%%%%%%%%%%
 if strcmp(action,'verbose')
 % name_expr=minput('Experiment name',name_expr,1);
- if isempty(name_ant)
-  name_ant=minput('Which antenna','32m',1);
- end
  if isempty(START_TIME)
   START_TIME=floor(datevec(Time(1,1)));
   END_TIME=ceil(datevec(Time(2,end)));
@@ -207,7 +204,11 @@ elseif ~REALT
  [d,dpath]=fileparts(DATA_PATH);
  START_TIME=[str2num(dpath(1:4)) str2num(dpath(6:7)) str2num(dpath(9:10)) 0 0 0];
  END_TIME=START_TIME+[0 0 0 24 0 0];
- name_ant=dpath(end-2:end);
+%name_ant=dpath(end-2:end);
+end
+if isempty(name_ant)
+ disp('Antenna: 32m 42m vhf uhf kir sod');
+ name_ant=minput('Which antenna','32m',1);
 end
 if isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);

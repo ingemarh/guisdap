@@ -131,7 +131,7 @@ for gate=find(diffran>0)
   end
 end
 
-if length(a_addr)==0
+if isempty(a_addr)
   fprintf(' No correlator result memory locations have been selected\n')
   fprintf(' Check the data selection parameters\n')
   fprintf(' Execution will be stopped\n')
