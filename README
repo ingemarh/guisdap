@@ -19,9 +19,9 @@ cd into the guisdap directory
 if you want the speed improvements the mex utility provides:
  make "lib" and "mex6" directories
  cd models/iri2001
- "make" (should be gnu-make) and "make install"
+ "make" (should be gnu-make)
  cd ../nrlmsise00
- "make" and "make install"
+ "make"
  cd ../../mexsources
  "make"
 make a link of bin/guisdap to a place on your path (ex /usr/local/bin)

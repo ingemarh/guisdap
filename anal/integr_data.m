@@ -95,6 +95,7 @@ while i<length(files)
     a_txold=a_tx;
   elseif ~isempty(a_txold)
     a_tx=a_txold;
+    d_parbl(txpower)=a_tx/factx;
   end
   if a_integr==0
     if isempty(a_antold)
