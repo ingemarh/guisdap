@@ -132,8 +132,8 @@ TITLE={'Range (km)','Altitude (km)','Electron Density (m^{-3})',...
 	'Ion Composition (O^+/N_e)','Residual'};
 TITLE1={'Azimuth(\circ)','Elevation(\circ)','Power (10kW)',...
 	'System Temperature (K)'};
-SCALE =[80 600		% Altitude km
-	50 900		% Range km
+SCALE =[50 900		% Range km
+	80 600		% Altitude km
 	10.^[10 12]	% Ne m-3
 	0 4000		% Te K
 	0 3000		% Ti K
@@ -459,13 +459,15 @@ tickform='HH:MM'; td=datenum(END_TIME)-datenum(START_TIME);
 if td>7, tickform='dd/mm';
 elseif td<.003, tickform='HH:MM:SS'; end
 if length(axs)==1
- fs=get(gca,'fontsize');
- if strcmp(computer,'SOL2') & ~(prod(get(0,'ScreenSize'))-1)
-  set(gca,'fontsize',fs/12.429) % Matlab bug...
- end
  datetick(gca,'x',tickform,'keeplimits')
  xticks=get(gca,'xtick');
- set(gca,'fontsize',fs)
+ if ~(prod(get(0,'ScreenSize'))-1) & isempty(xticks)
+  fs=get(gca,'fontsize');
+  set(gca,'fontsize',fs/12.429) % Matlab bug...
+  datetick(gca,'x',tickform,'keeplimits')
+  xticks=get(gca,'xtick');
+  set(gca,'fontsize',fs)
+ end
 end
 set(gca,'xtick',xticks)
 datetick(gca,'x',tickform,'keeplimits','keepticks')

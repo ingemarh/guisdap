@@ -30,7 +30,7 @@ msis:
 	mex $(MEXOPTS) msis.f $(MSISLIB)
 
 lib:
-	$(COMPILE.c) mrqmndiag_worker.c dirthe_worker.c GULIPS_addm_worker.c GULIPS_cov_worker.c GULIPS_invR_worker.c GULIPS_mul_worker.c spec_worker.c transf_worker.c
+	$(COMPILE.c) mrqmndiag_worker.c dirthe_worker.c GULIPS_addm_worker.c GULIPS_cov_worker.c GULIPS_invR_worker.c GULIPS_mul_worker.c spec_worker.c transf_worker.c addr_covar_worker.c
 	$(LD) -o $M/libguisdap.so -dy -G -h libguisdap.so -z text *.o
 	$(AR) cr $M/libguisdap.a *.o
 	$(RM) *.o

@@ -1,8 +1,8 @@
-global iono_model
+global iono_model fit_altitude a_satch
  iono_model='iri';
  if exist('iri')~=3, iono_model='giveme'; end
-global fit_altitude
  fit_altitude=[0 Inf;80 Inf;107 1500;90 107;0 Inf];
+
 first=75; last=2500; d1=3; d2=1; n1=10;
 
 if name_site=='L'

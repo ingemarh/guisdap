@@ -17,7 +17,7 @@ if using_x & isempty(get(0,'UserData'))
 global b
 figure(5)
 clf
-set(5,'Name','GUISDAP for dummies','userdata',5,'Position',[40 170 310 400],'NumberTitle','off','defaulttextunit','pixel')
+set(5,'Name','GUISDAP for dummies','userdata',5,'Position',[40 170 310 390],'NumberTitle','off','defaulttextunit','pixel','toolbar','auto')
 load(fullfile(path_GUP,'matfiles','logo')), plot(y,x,'.k'), axis image
 set(get(gca,'child'),'markersize',10), set(gca,'visible','off')
 pause(1), clf
@@ -45,7 +45,7 @@ b(8)=uicontrol('Style','edit','string',num2str(intper),'position',[x y(8) x1 yh]
 text(0,ty(9),'Disp figures')
 b(9)=uicontrol('Style','edit','string',num2str(figs),'position',[x y(9) x2 yh],'tooltipstring','datadump powerprofile fits parameters vizu');
 text(0,100,'Special')
-b(10)=uicontrol('Style','edit','string',extra,'position',[x 50 x2 100],'max',100,'HorizontalAlignment','left','tooltipstring','Matlab commands!');
+b(10)=uicontrol('Style','edit','string',extra,'position',[x 30 x2 120],'max',100,'HorizontalAlignment','left','tooltipstring','Matlab commands!');
  go_on(bg)
 else
  path_exps=minput('Path exps',path_exps,'s');

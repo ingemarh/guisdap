@@ -26,7 +26,8 @@ function  [OK,EOF,N_averaged]=integr_data(txlim)
  
 global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control 
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
-global a_txlim a_realtime a_inttime
+global a_txlim a_realtime a_inttime a_satch
+%global a_antold secs
  
 OK=0; EOF=0; jj=0; N_averaged=0;
 if a_ind==0
@@ -66,7 +67,7 @@ while i<length(files)
     txpower=99; factx=1000;       % parameter that holds transmitter power
   else
     fixed=[9:10];
-    az=9; el=10; fac=1;
+    az=10; el=9; fac=1;
     averaged=[8:10];
     ORed=[];
     inttime=7;
@@ -80,8 +81,8 @@ while i<length(files)
     [secs1,year]=tosecs(d_parbl(1:6));
   end
   a_inttime=d_parbl(inttime);
+  a_ant=d_parbl([el az])/fac;
   if a_integr==0
-    a_ant=d_parbl([el az])/fac;
     if ~exist('a_antold','var')
       a_antold=a_ant;
       secs=secs1;
@@ -114,6 +115,7 @@ while i<length(files)
   end
 
   dumpOK=(d_parbl(txpower)*factx>=a_txlim);
+  if dumpOK & ~isempty(a_satch), dumpOK=satch(a_ant(1),secs,a_inttime); end
   if length(d_parbl)==128
     if d_parbl(95)~=0, fprintf(' Status word is %g\n',d_parbl(95)), end 
     dumpOK=dumpOK & rem(d_parbl(95),2)==0 & d_parbl(95)~=64;
