@@ -8,16 +8,8 @@ Markku Lehtinen 07/1995
 #include "mex.h"
 #include <time.h>
 
-#define divflop 32		/* division stalls fpu for 18 clocks */
-#define sqrtflop 32		/* sqrt stalls fpu for 32 clocks */
-#define UNIX 0			/* in UNIX we use double divisions, in MAC single */
-#define dabs(A) ((A)<(0) ? (-A) : (A))
-#define	max(A, B)	((A) > (B) ? (A) : (B))
-#define	min(A, B)	((A) < (B) ? (A) : (B))
-
 extern void pldfas(double *retR,double *retI,double zR,double zI);
 extern void adminvec(long nom,double *pldfvPr,double *pldfvPi,double *apuprv,double *apupiv,double *omv,double vi,double psi,double gam);
-extern void specCalc(double *pldfvPr,double *pldfvPi,double *nin0Pr,double *tit0Pr,long nion,double *mim0Pr,double *psiPr,double *viPr,double kd2Pr,double *scr,long nom,double *omPr,double *resPr,long ifref);
 
 /*Asymtotic expansion of plasma dispersion function to be used for abs(z)>3.5*/
 void pldfas(double *retR,double *retI,double zR,double zI)
@@ -56,7 +48,6 @@ void pldfas(double *retR,double *retI,double zR,double zI)
 
 	*retR = (resR*zR + resI*zI)*izRRpII;
 	*retI = (zR*resI - resR*zI)*izRRpII;
-/*	flops += 27 + divflop;*/
 }
 
 /* 
@@ -130,7 +121,6 @@ void adminvec(long nom,double *pldfvPr,double *pldfvPi,double *apuprv,double *ap
 		apuprv[k] = (resI*apupr  +  apupi * resR)*apusqr;
 		apupiv[k] = (resI*apupi  -  apuuapr * resR)*apusqr;
 	}
-/*	flops += 4 + nom*(17+divflop);*/
 }
 
 void specCalc(double *pldfvPr,double *pldfvPi,double *nin0Pr,double *tit0Pr,long nion,double *mim0Pr,double *psiPr,double *viPr,double kd2Pr,double *scr,long nom,double *omPr,double *resPr,long ifref)
@@ -185,7 +175,6 @@ void specCalc(double *pldfvPr,double *pldfvPi,double *nin0Pr,double *tit0Pr,long
 				apupivref[i*nom+k]=apupiv[i*nom+k];
 			}
 		}
-/*		flops += 1 + 2*divflop + sqrtflop;*/
 	}
 
 	for(k=0;k<nom;k++) {
@@ -211,5 +200,4 @@ void specCalc(double *pldfvPr,double *pldfvPi,double *nin0Pr,double *tit0Pr,long
 		resPr[k]=((yar*yar+yai*yai)*uars+(yars*yars+yais*yais)*uar)
 			/((apupr*apupr+apupi*apupi)*3.1415926535897932385);
 	}
-/*	flops += nom * (43 + divflop);*/
 }

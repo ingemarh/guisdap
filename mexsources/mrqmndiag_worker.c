@@ -8,12 +8,8 @@
 #include <sys/types.h>
 #include <sys/times.h>
 #endif
-
-#define	max(A, B)	((A) > (B) ? (A) : (B))
-#define	min(A, B)	((A) < (B) ? (A) : (B))
-#define ddabs(A) ((A)<(0) ? (-A) : (A))
-#define IND(k1,k2,N) (k1*N - ((k1+2)*(k1-1))/2L + k2-1)	/* Index of right triangular matrix */
-#define IND2(k1,k2,N) ((k1+N*k2))	/* Index of regular matrix */
+#include "guisdap.h"
+#include "GULIPS.h"
 
 #ifdef GUPTHREAD
 #include <pthread.h>
@@ -50,7 +46,6 @@ struct pth {
 	double *scr1;
 };
 void *dirthe_loop(struct pth *);
-extern unsigned long nion;
 #ifdef THTIME
 #ifdef __linux__
 /* Only used for linux, a high resolution timer operating at the CPU clock
@@ -62,20 +57,6 @@ __inline__ unsigned long long int gethrtime (void)
   return x;
 }
 #endif
-#endif
-
-#ifdef ANSI_C
-extern void DirtheCalc(long ns,long aaN,double *aaPr,double *coefPr,long womM,double *womPr,double *kd2Pr,long nom,double *omPr,double *pldfvPr,double *pldfvPi,double *acfPr,long use_reference,double *scr,double *scr1);
-extern void GULIPS_addmCalc(double *R, double *y, double *A, double *m,double *KhiSqr,unsigned long nnew,unsigned long npar,unsigned long nmeas,mxArray* storage, double *errorBarPr);
-extern void GULIPS_covCalc(double *R,long *indices,unsigned long indiceslength,unsigned long code,unsigned long npar, double *cov);
-extern void GULIPS_mulCalc(double *R,double *y,double *sol,unsigned long yn,unsigned long ym);
-extern void GULIPS_invRCalc(double *R,unsigned long npar);
-extern void MrqmndiagCalc(long ns,long aaN,double *aPr,double* ymPr,double *variancePr,long varianceM,long varianceN, 
-	double* ftolPr,double *itMaxPr,double *coefPr,long coefM,long coefN,
-	long womM,double *womPr,double *kd2Pr,long nom,double *omPr, 
-	double *aaOutPr,double *chi2Pr,double *itsPr,double *alphaPr,double *pldfvPr,double *pldfvPi,double *physlimPr);
-#else
-extern void DirtheCalc();
 #endif
 
 #ifdef ANSI_C

@@ -3,9 +3,6 @@
 # include <math.h>
 # include "mex.h"
 
-#define ddabs(A) ((A)<(0) ? (-A) : (A))
-
-
 /* Output Arguments */
 #define	NIN0_OUT	plhs[0]
 #define	TIT0_OUT	plhs[1]
@@ -23,14 +20,7 @@
 	extern long ffloor(double x);
 #endif
 
-#ifdef ANSI_C
-extern void Transf(double *pPr,double *nin0Pr,double *tit0Pr,double *mim0Pr,double *psiPr,double *viPr);
-#else
-	extern void Transf();
-#endif
-
-extern double *p_m0;
-extern unsigned long nion;
+# include "guisdap.h"
 
 #ifdef ANSI_C
 	void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])

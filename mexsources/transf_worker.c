@@ -1,11 +1,7 @@
 #include <stdlib.h>
 
-#define ddabs(A) ((A)<(0) ? (-A) : (A))
-
 double *p_m0;
 unsigned long nion;
-
-extern void Transf(double *pPr,double *nin0Pr,double *tit0Pr,double *mim0Pr,double *psiPr,double *viPr);
 
 void Transf(double *pPr,double *nin0Pr,double *tit0Pr,double *mim0Pr,double *psiPr,double *viPr)
 {

@@ -3,8 +3,6 @@
 # include <math.h>
 # include "mex.h"
 
-#define ddabs(A) ((A)<(0) ? (-A) : (A))
-
 /* Input Arguments */
 #define	NIN0_IN	prhs[0]
 #define	TIT0_IN	prhs[1]
@@ -19,16 +17,7 @@
 
 #define	RES_OUT	plhs[0]
 
-#ifdef MAC 
-extern long ffloor(double x);
-#endif
-
-
-#ifdef ANSI_C
-    extern void specCalc(double *pldfvPr,double *pldfvPi,double *nin0Pr,double *tit0Pr,long nion,double *mim0Pr,double *psiPr,double *viPr,double kd2Pr,double *scr,long nom,double *omPr,double *resPr,long ifref);
-#else
-	extern void specCalc();
-#endif
+# include "guisdap.h"
 
 #ifdef ANSI_C
 	void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
