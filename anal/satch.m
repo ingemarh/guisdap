@@ -15,6 +15,7 @@ if ~isfield(a_satch,'filled')
   if ~isfield(a_satch,'prep'), a_satch.prep=max(vc_penvo); end% p_rep
   if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
   if ~isfield(a_satch,'lpg_skip'), a_satch.lpg_skip=[0 0]; end% lpg to skip
+  a_satch.opts=optimset(optimset('fminsearch'),'display','off');
   a_satch.filled=1;
   disp('Warning: Satellite check works only for single RC prog exps,')
   disp('         starting with the 2nd integration period')
@@ -105,7 +106,7 @@ OK=Nsat==0;
 return
 
 function [pb,dat_m,L,x0]=sat_check(sigma,n_echo,min_v,wr,dt,dat,N,C,nbigsig)
-global p_dtau
+global p_dtau a_satch
 
 dat_m=[]; x0=[];
 
@@ -176,7 +177,7 @@ th=th(1+L:end-L,:); pb=pb-L;
 
 x0=y; x=x0; n_sat=0; l=ceil(L/2);
 
-opts=optimset(optimset('fminsearch'),'display','off');
+fit_sat_echo=inline('norm(P1-P2*x)',2);
 while length(x)>n_sat & ~isempty(x0)
 %make a profile with echoes replaced by polynoms
   dat_m=dat;
@@ -191,7 +192,7 @@ while length(x)>n_sat & ~isempty(x0)
   a=find(sum(th,2));
   dat_c=dat(a)-dat_m(a);
 
-  [x,err]=fminsearch('fit_sat',x0,opts,dat_c./S_c(a),th(a,:));
+  [x,err]=fminsearch(fit_sat_echo,x0,a_satch.opts,dat_c./S_c(a),th(a,:));
   sat=find(x>sigma);
   x0=x(sat);
   th=th(:,sat);
@@ -202,7 +203,7 @@ end
 
 %if n_sat>0
 %y',x0'
-% [err,th]=fit_prof(x0,dat_c./S_c,th);
+% th=th*x0;
 % figure(9),subplot(3,1,1)
 % plot([dat dat_m]);
 % subplot(3,1,2)
