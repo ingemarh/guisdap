@@ -15,7 +15,7 @@ elseif isunix
   if ~isempty(newer)
     newer=sprintf('-newer %s%08d.mat ',dirpath,newer);
   end
-  template=[row(col('[0-9]')*ones(1,8)) '.mat'];
+  template=[row(col('\[0-9]')*ones(1,8)) '.mat'];
   d=[tempname '.txt'];
   cmd=sprintf('find %s -name %s %s-print >%s',dirpath,template,newer,d);
   if unix(cmd)
