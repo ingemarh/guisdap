@@ -9,6 +9,9 @@
     ant_id=1;
   else
     ant_id=d_parbl(41);
+    if ant_id==0
+      ant_id=3; % For the May2000 data
+    end
   end
   d_rcprog = 1;
   if name_site=='K'

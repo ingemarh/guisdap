@@ -129,7 +129,7 @@ if Nsat>0 %| Nsatb>0
    subplot(j,1,i)
    plot(dat); hold on
    plot(pc,zeros(size(pc)),'o'), hold off
-   ylabel(sprintf('%s_{%d}',lpg_bcs(lpgused(i)),lpgused(i)));
+   ylabel(sprintf('%s_{%d}',num2str(lpg_bcs(lpgused(i))),lpgused(i)));
   end
   drawnow
  end
