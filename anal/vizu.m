@@ -215,7 +215,7 @@ if strcmp(action,'verbose')
  if length(GATES)>1
   SCALE(2,:)=minput('Altitude scale',10*[floor(min(par2D(GATES(1),:,2))/10) ceil(max(par2D(GATES(end),:,2))/10)]);
  end
- disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Lf L1 Co Nr Pf P1')
+ disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Co Nr Lf L1 Ls Pf P1')
  WHICH_PARAM=minput('Choose',WHICH_PARAM,1);
 elseif ~REALT
  if strcmp(DATA_PATH(end),filesep)
@@ -379,31 +379,31 @@ if option(6)
  end
 end
 if option(14)
- ll=8.98e-6*sqrt(par2D(GATES,:,3)).*sqrt(1+3*7.52e5*(fradar/3e8)^2*par2D(GATES,:,4)./par2D(GATES,:,3));
+ lf=8.98e-6*sqrt(par2D(GATES,:,3)).*sqrt(1+3*7.52e5*(fradar/3e8)^2*par2D(GATES,:,4)./par2D(GATES,:,3));
  if rem(option(14),2)
-  surf_plot(s,y_param(GATES,:),ll,PLF_SCALE,Yscale,YTitle,'Plasma line frequency (MHz)',[])
+  surf_plot(s,y_param(GATES,:),lf,PLF_SCALE,Yscale,YTitle,'Plasma line frequency (MHz)',[])
  end
  if option(14)>1
-  ll=findpeak(s,y_param(GATES,:),Yscale,ll,16,PLF_SCALE,'Cutoff plasma line frequency (MHz)',fix(option(14)/2)-1);
+  lf=findpeak(s,y_param(GATES,:),Yscale,lf,16,PLF_SCALE,'Cutoff plasma line frequency (MHz)',fix(option(14)/2)-1);
  end
 end
 if option(16)
- ll=8.98e-6*sqrt(par2D(GATES,:,3));
+ pf=8.98e-6*sqrt(par2D(GATES,:,3));
  if rem(option(16),2)
-  surf_plot(s,y_param(GATES,:),ll,PLF_SCALE,Yscale,YTitle,'Plasma frequency (MHz)',[])
+  surf_plot(s,y_param(GATES,:),pf,PLF_SCALE,Yscale,YTitle,'Plasma frequency (MHz)',[])
  end
  if option(16)>1
-  findpeak(s,y_param(GATES,:),Yscale,ll,5,PLF_SCALE,'Cutoff plasma frequency (MHz)',0);
+  pf=findpeak(s,y_param(GATES,:),Yscale,pf,5,PLF_SCALE,'Cutoff plasma frequency (MHz)',0);
  end
 end
 if option(15)
  surf_plot(s,rpar2D(:,:,Y_PARAM),rpar2D(:,:,3),RAWNE_SCALE,Yscale,YTitle,'Raw electron density (m^{-3})','log')
 end
 if option(11)
- ll=par1D(:,[3 1 2:2:end]);
- d=find(ll(:,3)<90.1 & ll(:,3)>89.9); ll(d,2)=NaN;
- d=many(ll,[0 360]);
- line_plot(s,ll,d,'Radar parameters',TITLE1([3 1 2 4]),[])
+ ae=par1D(:,[3 1 2:2:end]);
+ d=find(ae(:,3)<90.1 & ae(:,3)>89.9); ae(d,2)=NaN;
+ d=many(ae,[0 360]);
+ line_plot(s,ae,d,'Radar parameters',TITLE1([3 1 2 4]),[])
 end
 if option(13)
  ll=[par1D(:,[3 2 1]) par2D(GATES,:,1)'];
@@ -426,7 +426,15 @@ if REALT & ~isempty(Loc) & a_realtime & isunix
  webfile(1)=cellstr(pngfile);
 end
 if nargout
- varargout(1)={ll};
+ i=0; j=1; argout=str2mat('yy','lf','pf','ll','xx'); xx=[];
+ while i<nargout
+  i=i+1;
+  if j<5, j=j+1; end
+  while ~exist(argout(j,:),'var') & j<5
+   j=j+1;
+  end
+  varargout(i)={eval(argout(j,:))};
+ end
 end
 return
 

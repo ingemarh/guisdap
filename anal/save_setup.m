@@ -14,8 +14,11 @@ else
  intper=str2num(get(b(8),'string'));
  figs=str2num(get(b(9),'string'));
  extra=get(b(10),'string');
- if size(extra,2)>10, while all(extra(:,end)==32), extra(:,end)=[];
- end, end
+ if size(extra,2)>10
+  while all(extra(:,end)==32), extra(:,end)=[]; end
+ elseif isempty(extra)
+  extra=' ';
+ end
 end
 
 if nargin>0

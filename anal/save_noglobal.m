@@ -4,8 +4,11 @@
 function save_noglobal(varfile,varargin)
 varlist=[];
 for varno=1:length(varargin)
- vartemp=varargin{varno}; varname=inputname(varno+1);
- eval([varname '=vartemp;']);
- varlist=[varlist ' ' varname];
+ vartemp=varargin{varno};
+ if ~isempty(vartemp)
+  varname=inputname(varno+1);
+  eval([varname '=vartemp;']);
+  varlist=[varlist ' ' varname];
+ end
 end
 eval(['save ' varfile varlist ' -mat'])

@@ -31,6 +31,7 @@ global a_txlim a_realtime a_satch
 global a_antold a_txold a_elold a_maxgap secs
  
 OK=0; EOF=0; jj=0; N_averaged=0;
+d_ExpInfo=[]; d_raw=[];
 if a_ind==0
   a_ind=1;
   a_cycle=sum(a_integr+a_skip);
@@ -62,6 +63,7 @@ i=0;
 while i<length(files)
   i=i+1; file=files(i);
   filename=sprintf('%08d',file);
+  i_averaged=[]; i_var1=[]; i_var2=[];
   load(canon([data_path filename],0))
 
   lpb=length(d_parbl);
@@ -147,59 +149,38 @@ while i<length(files)
     if d_parbl(95)~=0, fprintf(' Status word is %g\n',d_parbl(95)), end 
     dumpOK=dumpOK & rem(d_parbl(95),2)==0 & d_parbl(95)~=64;
   end
-  if ~OK & dumpOK  % initialize with the first good dump
-    first_parbl=d_parbl;         % save the first parameter block
-    prev_parbl=d_parbl;          % initialize the previous parameter block
-    aver=d_parbl(averaged);      % initialize averaging
-    status=d_parbl(ORed);        % save the status word
-    starttime=secs-a_inttime;    % calculate starttime of first dump
-    if exist('i_averaged')
-      aver=d_parbl(averaged)*i_averaged; % initialize averaging
-      data=d_data;
-      if exist('i_var1') % The integrated file need not have variances in it
-        d_var1=i_var1(:);
-        d_var2=i_var2(:);
-        N_averaged=i_averaged;
-      else
-        d_var1=d_data.*d_data; 
-        d_var2=d_data.*conj(d_data);
-        N_averaged=1;
-      end
-    else
-      aver=d_parbl(averaged);      % initialize averaging
-      data=d_data;                 % data is now a complex column vector
-      d_var1=d_data.*d_data;       % for the variance calculations
-      d_var2=d_data.*conj(d_data);
-      N_averaged=1;
-    end
-    OK=1;
-  elseif OK & dumpOK  % update with the following files
-    if any(abs(d_parbl(fixed)-prev_parbl(fixed))>allow)
+  if dumpOK
+    if ~OK  % initialize with the first good dump
+      aver=0; status=0; data=0; d_var1=0; d_var2=0;
+      starttime=secs-a_inttime;    % calculate starttime of first dump
+      OK=1;
+    elseif any(abs(d_parbl(fixed)-prev_parbl(fixed))>allow)
    %  disp(' change in the parameter block')
       indfixed=find(d_parbl(fixed)~=prev_parbl(fixed));
       disp('    param#  previous   current ')
       indfixed=fixed(indfixed);
       disp([indfixed',prev_parbl(indfixed),d_parbl(indfixed)]) 
     end
+    % update with the following files
     status=bitwiseor(status,d_parbl(ORed),16);
-    if exist('i_averaged')
-      aver=aver+d_parbl(averaged)*i_averaged;
-      data=data+d_data;
-      if exist('i_var1')
-        d_var1=d_var1+i_var1(:);
-        d_var2=d_var2+i_var2(:);
-        N_averaged=N_averaged+i_averaged;
-      else
-        d_var1=d_var1+d_data.*d_data;
-        d_var2=d_var2+d_data.*conj(d_data);
-        N_averaged=N_averaged+1;
-      end
-    else
+    if isempty(i_averaged)
       aver=aver+d_parbl(averaged);
       data=data+d_data;
       d_var1=d_var1+d_data.*d_data;
       d_var2=d_var2+d_data.*conj(d_data);
       N_averaged=N_averaged+1;
+    else
+      aver=aver+d_parbl(averaged)*i_averaged;
+      data=data+d_data;
+      if isempty(i_var1)
+        d_var1=d_var1+d_data.*d_data;
+        d_var2=d_var2+d_data.*conj(d_data);
+        N_averaged=N_averaged+1;
+      else
+        d_var1=d_var1+i_var1(:);
+        d_var2=d_var2+i_var2(:);
+        N_averaged=N_averaged+i_averaged;
+      end
     end
   end
   prev_parbl=d_parbl; % update previous parameter block
@@ -217,17 +198,11 @@ if OK, % if at least one good data dump was found
   d_parbl(inttime)=secs-starttime;
   d_data=data;
   if ~isempty(d_saveintdir)
-   i_averaged=N_averaged; i_var1=d_var1; i_var2=d_var2;
-   file=fullfile(d_saveintdir,sprintf('%08d.mat',fix(secs)));
-   if exist('d_ExpInfo','var')
-    if exist('d_raw','var')
-     save_noglobal(file,d_ExpInfo,d_parbl,d_data,d_raw,i_var1,i_var2,i_averaged)
-    else
-     save_noglobal(file,d_ExpInfo,d_parbl,d_data,i_var1,i_var2,i_averaged)
-    end
-   else
-    save_noglobal(file,d_parbl,d_data,i_var1,i_var2,i_averaged)
+   if N_averaged>1
+    i_averaged=N_averaged; i_var1=real(d_var1); i_var2=d_var2;
    end
+   file=fullfile(d_saveintdir,sprintf('%08d.mat',fix(secs)));
+   save_noglobal(file,d_ExpInfo,d_parbl,d_data,d_raw,i_var1,i_var2,i_averaged)
   end
   d_var1=d_var1-data.*data/N_averaged;
   d_var2=d_var2-data.*conj(data)/N_averaged;
