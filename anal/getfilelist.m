@@ -37,9 +37,10 @@ else
 end
 if isempty(dirlist)
  dpath=fullfile(dpath,recurse,filesep);
+ files=[row(col('[0-9]')*ones(1,8)) '.mat'];
  if isunix
   d=[tempname '.txt'];
-  cmd=sprintf('find %s -name "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].mat" %s-print >%s',dpath(1:end-1),newer,d);
+  cmd=sprintf('find %s -name "%s" %s-print >%s',dpath(1:end-1),files,newer,d);
   if unix(cmd)
    msg=['Error listing mat files in ' dirpath ' ' cmd];
   else
@@ -48,7 +49,7 @@ if isempty(dirlist)
   end
   delete(d)
  else
-  dirlist=ls([dpath '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].mat']);
+  dirlist=ls([dpath files]);
   d=find(dirlist<32); dirlist(d)=[];
   if isempty(dirlist) & isempty(newer)
    msg=['No mat files in ' dirpath];
