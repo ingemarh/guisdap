@@ -9,11 +9,11 @@ for vc=1:N_SCAN
 end
 for vc=1:2:N_SCAN
     vcc=fix((vc-1)/128);
-    COR_pp(56106,1,vc,'b',1,20,0,1)
+    COR_pp(56106,1,vc,'b',1,20,0,vcc+1)
 end
 for vc=2:2:N_SCAN
     vcc=fix((vc-1)/128);
-    COR_pp(56126,1,vc,'c',1,20,0,1)
+    COR_pp(56126,1,vc,'c',1,20,0,vcc+1)
 end
    
 COR_end
