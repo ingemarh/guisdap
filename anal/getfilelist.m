@@ -14,7 +14,7 @@ if isempty(dirpath)
 elseif isunix & a_realtime | strfind(dirpath,'?')
   i=' ';
   if ~isempty(newer)
-    i=sprintf('-newer %s/%08d%s ',newer.dir,newer.file,newer.ext);
+    i=sprintf(' -newer %s/%08d%s ',newer.dir,newer.file,newer.ext);
   end
   template=[row(col('\[0-9]')*ones(1,8)) '.mat\*'];
   d=[local.tfile '.txt'];
