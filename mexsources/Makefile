@@ -5,12 +5,12 @@ endif
 ifeq ($(sys),SunOS)
 #Solaris:
 FFLAGS=-fast
-CFLAGS=-fast -KPIC -DANSI_C -I$(MATLAB)/extern/include
+CFLAGS=-fast -mt -KPIC -DANSI_C -DGUPTHREAD -I$(MATLAB)/extern/include
 MEXOPTS=-f $(MATLAB)/bin/f90opts.sh
 else
 #Linux
 FFLAGS=-O -s
-CFLAGS= -O -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
+CFLAGS= -O -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -DGUPTHREAD -I$(MATLAB)/extern/include
 MEXOPTS=
 endif
 
@@ -18,7 +18,7 @@ endif
 M=	$(PWD)/../lib
 IRILIB=	-L$M -liri
 MSISLIB=	-L$M -lmsis
-GUPLIB=	-L$M -lguisdap
+GUPLIB=	-L$M -lguisdap -lpthread
 mex_Directory = ../mex6
 
 all: iri msis lib mex6 install

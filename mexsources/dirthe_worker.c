@@ -18,7 +18,7 @@
 extern void Transf(double *pPr,double *nin0Pr,double *tit0Pr,double *mim0Pr,double *psiPr,double *viPr);
 extern void specCalc(double *pldfvPr,double *pldfvPi,double *nin0Pr,double *tit0Pr,long nion,double *mim0Pr,double *psiPr,double *viPr,double kd2Pr,double *scr,long nom,double *omPr,double *resPr,long ifref);
 extern void mymul(char transa,double *mat1,long mat1m,long mat1n,char transb,double *mat2,long mat2m,long mat2n, double *res);
-extern void DirtheCalc(long ns,long aaN,double *aaPr,double *coefPr,long womM,double *womPr,double *kd2Pr,long nom,double *omPr,double *pldfvPr,double *pldfvPi,double *acfPr,long use_reference);
+extern void DirtheCalc(long ns,long aaN,double *aaPr,double *coefPr,long womM,double *womPr,double *kd2Pr,long nom,double *omPr,double *pldfvPr,double *pldfvPi,double *acfPr,long use_reference,double *scr,double *scr1);
 #else
 	extern void Transf();
 	extern void specCalc();
@@ -128,48 +128,33 @@ void mymul(char transa,double *mat1,long mat1m,long mat1n,char transb,double *ma
 #ifdef ANSI_C
 void DirtheCalc(long ns,long aaN,double *aaPr,double *coefPr,long womM,
 			   double *womPr,double *kd2Pr,long nom,double *omPr,
-			   double *pldfvPr,double *pldfvPi,double *acfPr,long use_reference)
+			   double *pldfvPr,double *pldfvPi,double *acfPr,long use_reference,double *scr,double *scr1)
 #else
-void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acfPr,use_reference)
+void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acfPr,use_reference,scr,scr1)
 		long ns,aaN,womM,nom,use_reference;
-		double *aaPr,*coefPr,*womPr,*kd2Pr,*omPr,*acfPr,*pldfvPr,*pldfvPi;
+		double *aaPr,*coefPr,*womPr,*kd2Pr,*omPr,*acfPr,*pldfvPr,*pldfvPi,scr,scr1;
 #endif	
 	{
 	unsigned long i;
-	mxArray *spec,*nin0,*tit0,*mim0,*psi,*vi, *p;
 	double *nin0Pr,*tit0Pr,*mim0Pr,*psiPr,*viPr,*specPr;
 	double *pPr;
 	register double *acf_ptr,*coeffg_ptr;
-	double *scr;
 
 	/* Copy matrix AA_IN into p and then use p */
 	
-	p = mxCreateDoubleMatrix(ns,aaN,mxREAL);
-	pPr = mxGetPr(p);
+	nin0Pr = scr1;
+	tit0Pr = nin0Pr+ns*(nion+1);
+	mim0Pr = tit0Pr+ns*(nion+1);
+	psiPr = mim0Pr+ns*(nion+1);
+	viPr = psiPr+ns*(nion+1);
+	specPr = viPr+ns*(nion+1);
+	pPr = specPr+nom*ns;
 	for(i=0;i<(aaN*ns);i++)
 		pPr[i] = aaPr[i];
 	
 	pPr[3]=pPr[3]/sqrt(pPr[1]);
 
-
-	nin0 = mxCreateDoubleMatrix(ns, nion+1, mxREAL);
-	tit0 = mxCreateDoubleMatrix(ns, nion+1, mxREAL);
-	mim0 = mxCreateDoubleMatrix(ns, nion+1, mxREAL);
-	psi = mxCreateDoubleMatrix(ns, nion+1, mxREAL);
-	vi = mxCreateDoubleMatrix(ns, nion+1, mxREAL);
-
-	nin0Pr = mxGetPr(nin0);
-	tit0Pr = mxGetPr(tit0);
-	mim0Pr = mxGetPr(mim0);
-	psiPr = mxGetPr(psi);
-	viPr = mxGetPr(vi);
-
 	Transf(pPr,nin0Pr,tit0Pr,mim0Pr,psiPr,viPr);
-
-	spec = mxCreateDoubleMatrix(nom,ns,mxREAL);
-
-	specPr = mxGetPr(spec);
-	scr = (double *)mxCalloc((nion+2)*(3+4*nom),sizeof(double));
         specCalc(pldfvPr,pldfvPi,nin0Pr,tit0Pr,nion,mim0Pr,psiPr,viPr,kd2Pr[0],scr,nom,omPr,specPr,use_reference);
 	/*acf=[p_coeffg.*(f_womega*s);col(aa)];*/
 	
@@ -204,16 +189,10 @@ void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acf
 	mymul('N',womPr,womM,nom,'N',specPr,nom,1,acfPr);
 /* Ambiguity fuction is already multiplied by the coefficients, so we don't have to do that any more here!*/
 	acf_ptr = acfPr;coeffg_ptr = coefPr;
-	for(i=0;i<womM;i++)
-	  {
+	for(i=0;i<womM;i++,acf_ptr++,coeffg_ptr++)
 	    (*acf_ptr) *= (*coeffg_ptr);
-	    acf_ptr++;coeffg_ptr++;
-	  }
 	for(i=0;i<aaN;i++)
 	  acfPr[i+womM]= aaPr[i];
 
 #endif	
       }
-
-
-
