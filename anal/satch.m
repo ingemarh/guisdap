@@ -1,7 +1,7 @@
 function OK=satch(el,secs,inttime)
 global lpg_lag lpg_wr lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code
 global d_data a_satch a_code
-global callev calstd
+global calold
 
 if isempty(lpg_lag)
   OK=1; return
@@ -9,17 +9,24 @@ end
 if ~isfield(a_satch,'filled')
   if ~isfield(a_satch,'sigma'), a_satch.sigma=4; end	% detection limit sig
   if ~isfield(a_satch,'sigmab'), a_satch.sigmab=3; end	% det lim bac+cal
-  if ~isfield(a_satch,'sigmac'), a_satch.sigmac=9; end	% det lim cal fill
+  if ~isfield(a_satch,'sigmac'), a_satch.sigmac=3; end	% det lim cal fill
+  if ~isfield(a_satch,'calsecs'), a_satch.calsecs=99; end% time lim cal fill
   if ~isfield(a_satch,'skip'), a_satch.skip=0; end	% no points to skip
   if ~isfield(a_satch,'clutter'), a_satch.clutter=0; end% no clutter red points
   if ~isfield(a_satch,'repair'), a_satch.repair=0; end	% for alt codes
   if ~isfield(a_satch,'prep'), a_satch.prep=max(vc_penvo); end% p_rep
   if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
   if ~isfield(a_satch,'lpg_skip'), a_satch.lpg_skip=[]; end% lpg to skip
+  if ~isfield(a_satch,'do'), a_satch.do=1; end		% do satch
   a_satch.opts=optimset(optimset('fminsearch'),'display','off');
   a_satch.filled=1;
-  disp('Warning: Satellite check works only for single RC prog exps,')
-  disp('         starting with the 2nd integration period')
+  if a_satch.do
+   disp('Warning: Satellite check works only for single RC prog exps,')
+   disp('         starting with the 2nd integration period')
+  end
+end
+if ~a_satch.do
+ OK=1; return
 end
 
 C=tan(el*pi/180);
@@ -86,21 +93,24 @@ if ~isempty(a_code)
 end
 sigma(1:length(lp))=a_satch.sigmac;
 ii=0;
-if isempty(callev), callev=ones(size(lp))*Inf; calstd=callev; end
+if isempty(calold) | calold.secs-secs>a_satch.calsecs
+ calold.lev=ones(size(lp))*Inf; calold.std=calold.lev;
+end
+calold.secs=secs;
 for i=lp
  ii=ii+1;
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
  cal=real(d_data(addr))/lpg_ND(i);
  b=lpg_bac(i);
  bac=median(real(d_data((skip:lpg_nt(b)-1)*lpg_ri(b)+lpg_ra(b)+1)))/lpg_ND(b);
- newlev=mean(cal)-bac;
- d=(newlev-callev(ii))/calstd(ii);
+ newlev=(mean(cal)-bac)/inttime;
+ d=(newlev-calold.lev(ii))/calold.std(ii);
  if d>sigma(ii)
    fprintf('Sat filling cal, %.1f, replacing...\n',d)
-   d_data(addr)=lpg_ND(i)*(bac+callev(ii));
+   d_data(addr)=lpg_ND(i)*(bac+inttime*calold.lev(ii));
  else
-   calstd(ii)=std(cal);
-   callev(ii)=newlev;
+   calold.std(ii)=std(cal);
+   calold.lev(ii)=newlev;
  end
 end
 

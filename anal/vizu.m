@@ -1,4 +1,4 @@
-function vizu(action,a2,a3)
+function [varargout]=vizu(action,a2,a3)
 % Plot GUISDAP results
 %--------------------------------------------------------------------------
 %     EISCAT additions Copyright 1999-2003  EISCAT Scientific Association. 
@@ -215,7 +215,7 @@ if strcmp(action,'verbose')
  if length(GATES)>1
   SCALE(2,:)=minput('Altitude scale',10*[floor(min(par2D(GATES(1),:,2))/10) ceil(max(par2D(GATES(end),:,2))/10)]);
  end
- disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Lf Co Nr')
+ disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Lf L1 Co Nr Pf P1')
  WHICH_PARAM=minput('Choose',WHICH_PARAM,1);
 elseif ~REALT
  if strcmp(DATA_PATH(end),filesep)
@@ -250,10 +250,16 @@ if findstr(WHICH_PARAM,'TT') & length(GATES)==1, option(12)=1; end
 if findstr(WHICH_PARAM,'LL') & length(GATES)==1, option(13)=1; end
 if findstr(WHICH_PARAM,'O+'), option(8)=1; end
 if findstr(WHICH_PARAM,'Rs'), option(9)=1; end
-if findstr(WHICH_PARAM,'Lf'), option(14)=1; end
+if findstr(WHICH_PARAM,'Lf'), option(14)=option(14)+1; end
+if findstr(WHICH_PARAM,'L1'), option(14)=option(14)+2; end
+if findstr(WHICH_PARAM,'Ls'), option(14)=option(14)+4; end
+if findstr(WHICH_PARAM,'Pf'), option(16)=option(16)+1; end
+if findstr(WHICH_PARAM,'P1'), option(16)=option(16)+2; end
+if findstr(WHICH_PARAM,'Co'), option(7)=1; end
+if findstr(WHICH_PARAM,'Pf'), option(16)=1; end
 if findstr(WHICH_PARAM,'Co'), option(7)=1; end
 if findstr(WHICH_PARAM,'Nr') & ~isempty(rpar2D), option(15)=1; end
-n_tot=nnz(option);
+n_tot=sum(rem(option,2)+fix(option/2)-fix(option/4));
 if n_tot>6, FS=8; height(2)=.02; TL=TL/2; end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % to label plot to match window selected
@@ -374,7 +380,21 @@ if option(6)
 end
 if option(14)
  ll=8.98e-6*sqrt(par2D(GATES,:,3)).*sqrt(1+3*7.52e5*(fradar/3e8)^2*par2D(GATES,:,4)./par2D(GATES,:,3));
- surf_plot(s,y_param(GATES,:),ll,PLF_SCALE,Yscale,YTitle,'Plasma line frequency (MHz)',[])
+ if rem(option(14),2)
+  surf_plot(s,y_param(GATES,:),ll,PLF_SCALE,Yscale,YTitle,'Plasma line frequency (MHz)',[])
+ end
+ if option(14)>1
+  ll=findpeak(s,y_param(GATES,:),Yscale,ll,16,PLF_SCALE,'Cutoff plasma line frequency (MHz)',fix(option(14)/2)-1);
+ end
+end
+if option(16)
+ ll=8.98e-6*sqrt(par2D(GATES,:,3));
+ if rem(option(16),2)
+  surf_plot(s,y_param(GATES,:),ll,PLF_SCALE,Yscale,YTitle,'Plasma frequency (MHz)',[])
+ end
+ if option(16)>1
+  findpeak(s,y_param(GATES,:),Yscale,ll,5,PLF_SCALE,'Cutoff plasma frequency (MHz)',0);
+ end
 end
 if option(15)
  surf_plot(s,rpar2D(:,:,Y_PARAM),rpar2D(:,:,3),RAWNE_SCALE,Yscale,YTitle,'Raw electron density (m^{-3})','log')
@@ -404,6 +424,9 @@ if REALT & ~isempty(Loc) & a_realtime & isunix
  pngfile=sprintf('%sGup_%s.png',path_tmp,name_ant(1:3));
  print(gcf,flag,flag2,pngfile)
  webfile(1)=cellstr(pngfile);
+end
+if nargout
+ varargout(1)={ll};
 end
 return
 
@@ -540,4 +563,50 @@ if llx>p(1) & p(1)>0 & x(p(1))<l(1)
 end
 if llx>p(2) & p(2)>0 & x(p(2))>l(2)
  l(2)=x(p(2));
+end
+
+function peak=findpeak(s,h,hlim,p,npoly,zscale,ztitl,fft)
+if fft
+ %100 kHz, 1km resolution fast but need correction sometimes
+ df=.1; lf=round(diff(zscale/df)); freqs=(0:lf-1)/(lf-1)*diff(zscale)+zscale(1);
+ df=1/(lf-1)*diff(zscale);
+ lf=length(freqs); freq=zeros(length(freqs),s);
+ hf=hlim(1):hlim(2); lh=length(hf);
+ fmat=zeros(lf,lh); fpow=(hlim(1)./hf).^2;	%take r^2 effect into account
+ hf=log(hf); peak=ones(s,2)*NaN;
+else
+ peak=ones(s,1)*NaN;
+end
+loghl=log(hlim);
+for i=1:s
+ d=find(h(:,i)>hlim(1) & h(:,i)<hlim(2) & isfinite(p(:,i)));
+ npol=min(npoly,round(length(d)/2)-1);
+ if npol>1
+  logh=log(h(d,i));		%log(h) to reduce noisy high alt
+  [poly,S,mu]=polyfit(logh,p(d,i),npol);
+  %dum=gcf;figure(9),plot(h(d,i),p(d,i),h(d,i),polyval(poly,logh,[],mu),exp(hf),polyval(poly,hf,[],mu)),pause,figure(dum)
+  dpoly=polyder(poly); j=roots(dpoly); hl=(loghl-mu(1))/mu(2);
+  ddpoly=polyder(dpoly);
+  d=find(~imag(j) & j>hl(1) & j<hl(2) & polyval(ddpoly,j)<0);
+  if ~isempty(d)
+   peak(i)=max(polyval(poly,j(d)));	%find cutoff
+  end
+  if fft
+   f=round((polyval(poly,hf,[],mu)-zscale(1))/diff(zscale)*(lf-1));
+   d=find(f>-1 & f<lf & hf>logh(1) & hf<logh(end)); f=f+(0:lh-1)*lf+1;
+   fmat(f(d))=fpow(d);		%"plot" into matrix
+   freq(:,i)=sum(fmat,2);	%integrate along height
+   fmat(f(d))=0;		%reset "plot window"
+   [d,j]=max(freq(:,i)); peak(i,2)=freqs(j);	%find strongest line
+   %dum=gcf;figure(9),hold on,plot(freqs,freq(:,i)),figure(dum)
+  end
+ end
+end
+
+if fft
+ surf_plot(s,freqs'*ones(1,s),freq,[0 max(max(freq))],zscale,'Plasma line spectrum (MHz)','Power (any unit)',[])
+ peak={peak freqs freq};
+else
+ d=many(peak,zscale);
+ line_plot(s,peak,d,ztitl,[],[])
 end

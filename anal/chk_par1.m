@@ -134,3 +134,8 @@ if exist('analysis_save','var')
   di_figures(5)=0; result_path=path_tmp;
  end
 end
+
+a_do=1;
+if exist('analysis_do','var')
+ a_do=analysis_do;
+end

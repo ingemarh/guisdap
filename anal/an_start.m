@@ -55,7 +55,7 @@ while ~EOF
 % At this point, an integrated complex data dump is stored in variable d_data
 %****************************************************************************
 
-  if OK
+  if OK & a_do
     if d_rcprog~=old_rcprog | ((name_site=='K' | name_site=='S') & any(fix((old_point-[ch_el(1) ch_az(1)])/.05)))
       name_ant={'32m','42m','vhf','uhf','kir','sod'};
       name_ant=char(name_ant(ant_id));
@@ -66,8 +66,8 @@ while ~EOF
         Ant_eff=.64;
       elseif name_site=='L' & ant_id==2
         %ch_gain=(42/32)^2*ch_gain;
-        %ch_gain=(42/32)^2*10^4.25;
-        ch_gain=10^4.52;
+        ch_gain=(42/32)^2*10^4.25;
+        %ch_gain=10^4.52;
         Ant_eff=.68;
       end
       if a_control(4)>=2, load_GUPvar, end  
@@ -126,7 +126,8 @@ while ~EOF
       xlabel('Address'); ylabel('Power [K]'); grid; drawnow
       clear indr indi
     end
-    get_apriori(any(a_simul))
+    if ~isempty(a_addr)
+      get_apriori(any(a_simul))
 %******************************************************************
 % The get_apriori call calculated the raw electron density profile. 
 % It is stored in variables
@@ -135,31 +136,34 @@ while ~EOF
 % pp_sigma   : Ne with Te=Ti
 %******************************************************************
 
-    clear_results
-    half_prof
-    GUIDITOR
-    save_results
+      clear_results
+      half_prof
+      GUIDITOR
+      save_results
 
-    if di_figures(4)
-      figure(di_figures(4))
-      plot_fit('panel',[1 1 1 0 1],[-inf inf 10*ceil((max(r_h)-min(r_h))/100)]);
-      drawnow 
+      if di_figures(4)
+        figure(di_figures(4))
+        plot_fit('panel',[1 1 1 0 1],[-inf inf 10*ceil((max(r_h)-min(r_h))/100)]);
+        drawnow 
+      end
     end
   end 
 
 end
-t_stop(1)
-t_result
-if a_NCAR
-  NCAR_output
-  do_NCAR([],a_NCAR)
-end
-if di_figures(5)
-  vizu('new','rtgup')
-  if di_figures(5)>1
-    vizu('save',[],'print')
-  else
-    vizu('save')
+if ~isempty(a_addr)
+  t_stop(1)
+  t_result
+  if a_NCAR
+    NCAR_output
+    do_NCAR([],a_NCAR)
   end
+  if di_figures(5)
+    vizu('new','rtgup')
+    if di_figures(5)>1
+      vizu('save',[],'print')
+    else
+      vizu('save')
+    end
+  end
+  send_www
 end
-send_www
