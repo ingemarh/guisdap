@@ -17,7 +17,7 @@
 #endif
 
 #ifdef ANSI_C
-extern void GULIPS_addmCalc(double *R, double *y, double *A, double *m,double *KhiSqr,unsigned long nnew,unsigned long npar,unsigned long nmeas,mxArray* storage, double *errorBarPr);
+extern void GULIPS_addmCalc(double *R,double *y,double *A,double *m,double *KhiSqr,unsigned long nnew,unsigned long npar,unsigned long nmeas,mxArray* storage,double *errorBarPr,double *RowStorage);
 extern void GULIPS_covCalc(double *R,long *indices,unsigned long indiceslength,unsigned long code,unsigned long npar, double *cov);
 extern void GULIPS_mulCalc(double *R,double *y,double *sol,unsigned long yn,unsigned long ym);
 extern void GULIPS_invRCalc(double *R,unsigned long npar);

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "mex.h"
+#include "guisdap.h"
 
 /* Input Arguments */
 #define ADDR1_IN 	prhs[0]
@@ -24,25 +25,7 @@
 #define	COVAR_IM_OUT	plhs[1]
 
 #ifdef ANSI_C
-extern void covar33Calc(long addr1, long addr2,
-			unsigned long signallength, unsigned long signalvcs, double *vc_signal,
-			unsigned long nlp, /* common length of following variables */
-			long *lp_vc, long *lp_dt, long *lp_ra, long *lp_ri,
-			long *lp_nt, long *lp_t1, long *lp_t2, long *lp_dec,
-			long *lp_nfir,
-			unsigned long maxfir, /* size of longest filter */
-			double *lp_fir,
-			double *covarRe, double *covarIm);
-#else
-/*	extern void covartestCalc(); */
-	extern void covar33Calc();
-#endif
-
-#ifdef ANSI_C
-void mexFunction(int nlhs, 
-                 mxArray *plhs[], 
-                 int nrhs, 
-                 const mxArray *prhs[])
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 #else
 mexFunction(nlhs, plhs, nrhs, prhs)
 	int nlhs, nrhs;
@@ -66,9 +49,9 @@ mexFunction(nlhs, plhs, nrhs, prhs)
 		/* Check for proper number of arguments */
 	
 		if (nrhs != 13) {
-			mexErrMsgTxt("Covartest requires 13 input arguments.");
+			mexErrMsgTxt("Covar33 requires 13 input arguments.");
 		} else if (nlhs > 2) {
-			mexErrMsgTxt("Covartest requires two output arguments.");
+			mexErrMsgTxt("Covar33 requires two output arguments.");
 		}
 
 		

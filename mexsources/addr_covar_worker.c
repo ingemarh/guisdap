@@ -1,16 +1,6 @@
 #include <math.h>
 #include "mex.h"
 
-#define llabs(A) ((A)<(0) ? (-A) : (A))
-
-extern void covar33Calc (long addr1, long addr2,
-			 unsigned long signallength, unsigned long signalvcs,
-			 double *vc_signal, unsigned long nlp, long *lp_vc,
-			 long *lp_dt, long *lp_ra, long *lp_ri, long *lp_nt,
-			 long *lp_t1, long *lp_t2, long *lp_dec,
-			 long *lp_nfir, unsigned long maxfir, double *lp_fir,
-			 double *covarRe, double *covarIm);
-
 #ifdef ANSI_C
 void
 covar33Calc (long addr1, long addr2, unsigned long signallength, unsigned long signalvcs, double *vc_signal, unsigned long nlp,	/* common length of following variables */

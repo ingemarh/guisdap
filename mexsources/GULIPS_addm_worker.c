@@ -40,20 +40,15 @@
 #include "mex.h"
 #include "GULIPS.h"
 
-extern void GULIPS_addmCalc(DFLOAT *R, double *y, double *A, double *m,double *KhiSqr,
-				            unsigned long nnew,unsigned long npar,unsigned long nmeas, 
-				            mxArray* storage, double *errorBarPr);
-
 #ifdef ANSI_C
-	void GULIPS_addmCalc(DFLOAT *R, double *y, double *A, double *m,double *KhiSqr,
-				   unsigned long nnew,unsigned long npar,unsigned long nmeas, 
-				   mxArray* storage, double *errorBarPr)
+	void GULIPS_addmCalc(DFLOAT *R,double *y,double *A,double *m,double *KhiSqr,unsigned long nnew,unsigned long npar,unsigned long nmeas,mxArray* storage,double *errorBarPr,double *RowStorage)
 #else
 	void GULIPS_addmCalc(R,y,A,m,KhiSqr,nnew,npar,nmeas,storage,errorBarPr)
 	DFLOAT *R;
 	double *y,*A,*m,*KhiSqr,*errorBarPr;
 	unsigned long nnew,npar,nmeas;
 	mxArray *storage;
+	double *RowStorage;
 #endif
 {
 #ifdef MAC
@@ -91,8 +86,8 @@ if(fileName[0] != 0)								/* Open file storage if requested by the user */
 	angle = (long *)mxCalloc(npar,sizeof(long));
 	}
 
-ARowStorage = (double *)mxCalloc(npar,sizeof(double));		/* Allocate the temporary work arrays */
-mRowStorage = (double *)mxCalloc(nmeas,sizeof(double));
+ARowStorage = RowStorage;	/* Use the temporary work array: npar values */
+mRowStorage = RowStorage+npar;	/* Use the temporary work array: nmeas values */
 
 for (inew=0; inew<nnew; inew++)						/* Loop that goes through number of new measurements (rows of the A&m matrix)*/
 	{

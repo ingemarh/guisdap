@@ -31,10 +31,10 @@ struct pth {
 	unsigned long *ag;
 	unsigned long nas;
 	unsigned long *as;
-	double *dydaPr;
+	double *dyda;
 	unsigned long nvarOK;
 	unsigned long *varOK;
-	double *yaPr;
+	double *ya;
 	unsigned long i;
 	pthread_mutex_t val_lock;
 	double *aaOutPr;
@@ -69,23 +69,19 @@ void MrqmndiagCalc(ns,aaN,aPr,ymPr,variancePr,varianceM,varianceN,ftolPr,itMaxPr
 long ns,aaN,varianceM,varianceN,coefM,coefN,womM,nom;
 double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOutPr,*chi2Pr,*itsPr,*alphaPr,*pldfvPr,*pldfvPi,*physlimPr;
 #endif
-	{
-	unsigned long i,j,nR;
-	mxArray *ya,*dyda,*aa2,*tempYa,*R,*Y,*KhiSqr,*dA,*chi2Old,*yaOld,*aaOld,*tempDyda,*errorBar;
-	double *yaPr,*dydaPr,*aa2Pr,*tempYaPr,*RPr,*YPr,*KhiSqrPr,*dAPr,*chi2OldPr,*yaOldPr,*aaOldPr;
-	double *tempDydaPr,*errorBarPr;
-	double *scr,*scr1;
-	unsigned long nscr,nscr1;
-	double lambda = 0.001,maxDeviation;
-	long validDer = 0,its = 0,itMax,*indicesVector;
+{
+	unsigned long i,j,nR,nscr,nscr1;
+	double *ya,*dyda,*aa2,*tempYa,*R,*Y,*KhiSqr,*dA,*yaOld,*aaOld;
+	double *tempDyda,*errorBar,*scr,*scr1,*RowStorage;
+	double lambda=0.001,maxDeviation,chi2Old;
+	long validDer=0,its=0,itMax,*indicesVector;
 	mxArray *storage;
 
 	unsigned long *varOK,nvarOK,*afree,nafree;
-	mxArray *tempAlpha,*plim;
-	double *tempAlphaPr,*plimPr;
+	double *tempAlpha,*plim;
 	unsigned long nag=4,ag[]={0,1,2,3},nas=1,as[]={4};
-
 	struct pth pth;
+
 #ifdef THTIME
 #ifdef __linux__
 	unsigned long long int start1, start2, end1=0, end2=0;
@@ -102,87 +98,65 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	storage=mxCreateDoubleMatrix(0, 0, mxREAL);	/* Do not save the angles in GULIPS_addm*/				
 
 /* Check for free pars IH*/
-	varOK=(unsigned long *)mxCalloc(varianceM*varianceN,sizeof(long));
-	for(i=0,nvarOK=0;i<(varianceM*varianceN);i++)
-		if(variancePr[i]!=0) varOK[nvarOK++]=i;
-	afree=(unsigned long *)mxCalloc(aaN,sizeof(long));
+	afree=(unsigned long *)mxCalloc(aaN+varianceM*varianceN,sizeof(long));
 	for(i=0,nafree=0;i<aaN;i++)
 		if(variancePr[i+coefM]!=0) afree[nafree++]=i;
-	tempAlpha=mxCreateDoubleMatrix(nafree,nafree,mxREAL);
-	tempAlphaPr=mxGetPr(tempAlpha);
+	varOK=afree+aaN;
+	for(i=0,nvarOK=0;i<(varianceM*varianceN);i++)
+		if(variancePr[i]!=0) varOK[nvarOK++]=i;
 	for(i=0;i<aaN*aaN;i++) alphaPr[i]=0.;
 
 /* Copy a into aaOut */
 	for(i=0;i<aaN;i++)
 		aaOutPr[i]=aPr[i];
 
-	plim=mxCreateDoubleMatrix(2, aaN, mxREAL);
-	plimPr=mxGetPr(plim);
+	aaOld=(double *)mxCalloc(3*aaN+nafree*nafree,sizeof(double));
+	plim=aaOld+aaN;
 	for(i=0;i<2*aaN;i++)
-		plimPr[i]=physlimPr[i];
-
-	aaOld=mxCreateDoubleMatrix(1, aaN, mxREAL);
-	aaOldPr=mxGetPr(aaOld);
-
-	chi2Old=mxCreateDoubleMatrix(1,1,mxREAL);
-	chi2OldPr=mxGetPr(chi2Old);
+		plim[i]=physlimPr[i];
+	tempAlpha=plim+2*aaN;
 
 /* Create matrices ya and yaOld and call Dirthe */
 
-	ya=mxCreateDoubleMatrix((coefM + aaN), coefN, mxREAL);
-	yaPr=mxGetPr(ya);
-
-	yaOld=mxCreateDoubleMatrix((coefM + aaN), coefN, mxREAL);
-	yaOldPr=mxGetPr(yaOld);
+	ya=(double *)mxCalloc((coefM+aaN)*coefN*2,sizeof(double));
+	yaOld=ya+(coefM+aaN)*coefN;
 
 	nscr=(nion+2)*(3+4*nom); nscr1=((nion+1)*5+nom+aaN)*ns;
 #ifdef GUPTHREAD
-	scr = (double *)mxCalloc(nscr*nafree,sizeof(double));
-	scr1= (double *)mxCalloc(nscr1*nafree,sizeof(double));
-	tempYa=mxCreateDoubleMatrix((coefM + aaN),coefN*nafree,mxREAL);
-	aa2=mxCreateDoubleMatrix(1,aaN*nafree,mxREAL);
+	scr=(double *)mxCalloc((nscr+nscr1)*nafree,sizeof(double));
+	scr1=scr+nscr*nafree;
+	aa2=(double *)mxCalloc((aaN+(coefM+aaN)*coefN)*nafree,sizeof(double));
+	tempYa=aa2+aaN*nafree;
 #else
-	scr = (double *)mxCalloc(nscr,sizeof(double));
-	scr1= (double *)mxCalloc(nscr1,sizeof(double));
-	tempYa=mxCreateDoubleMatrix((coefM + aaN),coefN,mxREAL);
-	aa2=mxCreateDoubleMatrix(1,aaN,mxREAL);
+	scr=(double *)mxCalloc(nscr+nscr1,sizeof(double));
+	scr1=scr+nscr;
+	aa2=(double *)mxCalloc(aaN+(coefM+aaN)*coefN,sizeof(double));
+	tempYa=aa2+aaN;
 #endif
-	tempYaPr=mxGetPr(tempYa);
-	aa2Pr=mxGetPr(aa2);
 
-	DirtheCalc(ns,aaN,aaOutPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,yaPr,1,scr,scr1);
+	DirtheCalc(ns,aaN,aaOutPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,1,scr,scr1);
 
 /* Create dyda and the temporaty copy of dyda matrix for the spectrum derivatives */
 
-	dyda=mxCreateDoubleMatrix(nvarOK,nafree, mxREAL);
-	dydaPr=mxGetPr(dyda);
-
-	tempDyda=mxCreateDoubleMatrix(nvarOK,nafree, mxREAL);
-	tempDydaPr=mxGetPr(tempDyda);
+	dyda=(double *)mxCalloc(nvarOK*nafree*2,sizeof(double));
+	tempDyda=dyda+nvarOK*nafree;
 
 	/* Copy the sqrt(variance) to the errorbar (for the GULIPS) */ 
-	errorBar=mxCreateDoubleMatrix(nvarOK,1,mxREAL);
-	errorBarPr=mxGetPr(errorBar);
-
+	nR=(nafree*(nafree+1))/2;
+	errorBar=(double *)mxCalloc(nvarOK+nR+nafree+1+nafree,sizeof(double));
 	chi2Pr[0]=0;
 	for (i=0;i<nvarOK;i++) {
 		j=varOK[i];
-		chi2Pr[0]+=(ymPr[j]-yaPr[j])*(ymPr[j]-yaPr[j])/variancePr[j];
-		errorBarPr[i]=sqrt(variancePr[j]);
+		chi2Pr[0]+=(ymPr[j]-ya[j])*(ymPr[j]-ya[j])/variancePr[j];
+		errorBar[i]=sqrt(variancePr[j]);
 	}
 
-	nR=(nafree*(nafree+1))/2;
-	R=mxCreateDoubleMatrix(nR,1,mxREAL);	/* Note: this is right triangular matrix!!! */
-	RPr=mxGetPr(R);
+	R=errorBar+nvarOK;	/* Note: this is right triangular matrix!!! */
+	Y=R+nR;		/* Note: this is number of unknowns (m) times 1) */
+	KhiSqr=Y+nafree;
+	dA=KhiSqr+1;	/* Matrix for the solution of the inverse problem */
 
-	Y=mxCreateDoubleMatrix(nafree,1,mxREAL);	/* Note: this is number of unknowns (m) times 1) */
-	YPr=mxGetPr(Y);
-
-	KhiSqr=mxCreateDoubleMatrix(1,1,mxREAL);
-	KhiSqrPr=mxGetPr(KhiSqr);
-
-	dA = mxCreateDoubleMatrix(1,nafree,mxREAL);	/* Matrix for the solution of the inverse problem */
-	dAPr = mxGetPr(dA);
+	RowStorage=(double *)mxCalloc(nafree+1,sizeof(double)); /*For GULIPS*/
 
 	indicesVector=(long *)mxCalloc(nafree,sizeof(long));
 	for(i=0;i<nafree;i++)
@@ -192,14 +166,14 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	for(j=0;j<nag;j++) {
 		i=ag[j];
 		aaOutPr[i]=log(aaOutPr[i]);
-		plimPr[IND2(0,i,2)]=log(plimPr[IND2(0,i,2)]);
-		plimPr[IND2(1,i,2)]=log(plimPr[IND2(1,i,2)]);
+		plim[IND2(0,i,2)]=log(plim[IND2(0,i,2)]);
+		plim[IND2(1,i,2)]=log(plim[IND2(1,i,2)]);
 	}
 	for(j=0;j<nas;j++) {
 		i=as[j];
 		aaOutPr[i]=asinh(aaOutPr[i]/2.);
-		plimPr[IND2(0,i,2)]=asinh(plimPr[IND2(0,i,2)]/2.);
-		plimPr[IND2(1,i,2)]=asinh(plimPr[IND2(1,i,2)]/2.);
+		plim[IND2(0,i,2)]=asinh(plim[IND2(0,i,2)]/2.);
+		plim[IND2(1,i,2)]=asinh(plim[IND2(1,i,2)]/2.);
 	}
 
 	/* set up thread structure*/
@@ -214,7 +188,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 #endif
 	pth.ns=ns;
 	pth.aaN=aaN;
-	pth.aaPr=aa2Pr;
+	pth.aaPr=aa2;
 	pth.coefPr=coefPr;
 	pth.womM=womM;
 	pth.womPr=womPr;
@@ -223,15 +197,15 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	pth.omPr=omPr;
 	pth.pldfvPr=pldfvPr;
 	pth.pldfvPi=pldfvPi;
-	pth.acfPr=tempYaPr;
+	pth.acfPr=tempYa;
 	pth.nag=nag;
 	pth.ag=ag;
 	pth.nas=nas;
 	pth.as=as;
-	pth.dydaPr=dydaPr;
+	pth.dyda=dyda;
 	pth.nvarOK=nvarOK;
 	pth.varOK=varOK;
-	pth.yaPr=yaPr;
+	pth.ya=ya;
 	pth.aaOutPr=aaOutPr;
 	pth.yaSize=(coefM+aaN)*coefN;
 	pth.afree=afree;
@@ -269,71 +243,71 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 
 		/*Initialise R matrix */
 		for(i=0;i<nR;i++)
-			RPr[i]=0;
+			R[i]=0;
 
 		/*Put sqrt(lambda) in the diagonal elements of R*/
 		for(i=0;i<nafree;i++)
-			RPr[IND(i,i,nafree)]=sqrt(lambda);
+			R[IND(i,i,nafree)]=sqrt(lambda);
 
 		/*Initialise Y matrix */
 		for(i=0;i<nafree;i++)
-			YPr[i]=0;
+			Y[i]=0;
 
 		/* Initialise KhiSqr */
-		KhiSqrPr[0]=0;
+		KhiSqr[0]=0;
 
 		for(i=0;i<nvarOK*nafree;i++)
-			tempDydaPr[i]=dydaPr[i];
+			tempDyda[i]=dyda[i];
 
 		/* Calculate ya-ym (DirtheCalculated measumenets - real measurements)*/ 
 		for(i=0;i<nvarOK;i++)
-		 	tempYaPr[i]=(yaPr[varOK[i]]-ymPr[varOK[i]]);
+		 	tempYa[i]=(ya[varOK[i]]-ymPr[varOK[i]]);
 
 		/* Calculate the solution using GULIPS */
  
-		GULIPS_addmCalc(RPr,YPr,tempDydaPr,tempYaPr,KhiSqrPr,nvarOK,nafree,1,storage,errorBarPr);
-		GULIPS_invRCalc(RPr,nafree);
-		GULIPS_mulCalc(RPr,YPr,dAPr,1,nafree);
-		GULIPS_covCalc(RPr,indicesVector,nafree,1,nafree,tempAlphaPr);
+		GULIPS_addmCalc(R,Y,tempDyda,tempYa,KhiSqr,nvarOK,nafree,1,storage,errorBar,RowStorage);
+		GULIPS_invRCalc(R,nafree);
+		GULIPS_mulCalc(R,Y,dA,1,nafree);
+		GULIPS_covCalc(R,indicesVector,nafree,1,nafree,tempAlpha);
 		for(i=0;i<nafree;i++) for(j=0;j<nafree;j++)
-			alphaPr[IND2(afree[j],afree[i],aaN)]=tempAlphaPr[IND2(j,i,nafree)];
+			alphaPr[IND2(afree[j],afree[i],aaN)]=tempAlpha[IND2(j,i,nafree)];
 
 		/* Store old values chi2, ya and aa*/
-		chi2OldPr[0]=chi2Pr[0];
+		chi2Old=chi2Pr[0];
 	 	for(i=0;i<(coefM+aaN);i++)
-			yaOldPr[i]=yaPr[i];
+			yaOld[i]=ya[i];
 		for(i=0;i<aaN;i++)
-			aaOldPr[i]=aaOutPr[i];
+			aaOld[i]=aaOutPr[i];
 
 		for(i=0;i<nafree;i++) {
 			j=afree[i];
-			aaOutPr[j]+=dAPr[i];
-			if(aaOutPr[j]<plimPr[IND2(0,j,2)]) aaOutPr[j]=plimPr[IND2(0,j,2)];
-			else if(aaOutPr[j]>plimPr[IND2(1,j,2)]) aaOutPr[j]=plimPr[IND2(1,j,2)];
+			aaOutPr[j]+=dA[i];
+			if(aaOutPr[j]<plim[IND2(0,j,2)]) aaOutPr[j]=plim[IND2(0,j,2)];
+			else if(aaOutPr[j]>plim[IND2(1,j,2)]) aaOutPr[j]=plim[IND2(1,j,2)];
 		}
 
 /* logscale pars IH*/
-		for(j=0;j<aaN;j++) aa2Pr[j]=aaOutPr[j];
-		for(j=0;j<nag;j++) aa2Pr[ag[j]]=exp(aa2Pr[ag[j]]);
-		for(j=0;j<nas;j++) aa2Pr[as[j]]=2.*sinh(aa2Pr[as[j]]);
+		for(j=0;j<aaN;j++) aa2[j]=aaOutPr[j];
+		for(j=0;j<nag;j++) aa2[ag[j]]=exp(aa2[ag[j]]);
+		for(j=0;j<nas;j++) aa2[as[j]]=2.*sinh(aa2[as[j]]);
 
-		DirtheCalc(ns,aaN,aa2Pr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,yaPr,0,scr,scr1);
+		DirtheCalc(ns,aaN,aa2,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,0,scr,scr1);
 		chi2Pr[0]=0;
 		for(i=0;i<nvarOK;i++) {
 			j=varOK[i];
-			chi2Pr[0]+=(ymPr[j]-yaPr[j])*(ymPr[j]-yaPr[j])/variancePr[j];
+			chi2Pr[0]+=(ymPr[j]-ya[j])*(ymPr[j]-ya[j])/variancePr[j];
 		}
 
 		maxDeviation=0;
 		for(i=0;i<nafree;i++)
-			maxDeviation=max(ddabs(dAPr[i]),maxDeviation);
+			maxDeviation=max(ddabs(dA[i]),maxDeviation);
 
-		if(chi2Pr[0]>=chi2OldPr[0]) {
-			chi2Pr[0]=chi2OldPr[0];
+		if(chi2Pr[0]>=chi2Old) {
+			chi2Pr[0]=chi2Old;
 			for(i=0;i<(coefM+aaN);i++)
-				yaPr[i]=yaOldPr[i];
+				ya[i]=yaOld[i];
 			for(i=0;i<aaN;i++)
-				aaOutPr[i]=aaOldPr[i];
+				aaOutPr[i]=aaOld[i];
 			lambda*=10;
 			validDer=1;
 			if(maxDeviation<ftolPr[0]) break;
@@ -346,17 +320,17 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	itsPr[0]=its;
 
 /* logscale pars IH*/
-	for(j=0;j<aaN;j++) aa2Pr[j]=1.;
+	for(j=0;j<aaN;j++) aa2[j]=1.;
 	for(j=0;j<nag;j++) {
 		aaOutPr[ag[j]]=exp(aaOutPr[ag[j]]);
-		aa2Pr[ag[j]]=aaOutPr[ag[j]];
+		aa2[ag[j]]=aaOutPr[ag[j]];
 	}
 	for(j=0;j<nas;j++) {
 		aaOutPr[as[j]]=2.*sinh(aaOutPr[as[j]]);
-		aa2Pr[as[j]]=sqrt(4.+aaOutPr[as[j]]*aaOutPr[as[j]]);
+		aa2[as[j]]=sqrt(4.+aaOutPr[as[j]]*aaOutPr[as[j]]);
 	}
 	for(i=0;i<nafree;i++) for(j=0;j<nafree;j++)
-		alphaPr[IND2(afree[j],afree[i],aaN)]*=(aa2Pr[afree[j]]*aa2Pr[afree[i]]);
+		alphaPr[IND2(afree[j],afree[i],aaN)]*=(aa2[afree[j]]*aa2[afree[i]]);
 
 #ifdef THTIME
 	start2=gethrtime(); end1+=(start2-start1+end2);
@@ -392,5 +366,6 @@ void *dirthe_loop(struct pth *pth)
 	DirtheCalc(pth->ns,pth->aaN,pth->aaPr+k,pth->coefPr,pth->womM,pth->womPr,pth->kd2Pr,pth->nom,pth->omPr,pth->pldfvPr,pth->pldfvPi,pth->acfPr+k1,0,pth->scr+k2,pth->scr1+k3);
 
 	for(j=0;j<pth->nvarOK;j++)
-		pth->dydaPr[IND2(j,i,pth->nvarOK)]=((pth->yaPr[pth->varOK[j]]-pth->acfPr[pth->varOK[j]+k1])/0.0001);
+		pth->dyda[IND2(j,i,pth->nvarOK)]=((pth->ya[pth->varOK[j]]-pth->acfPr[pth->varOK[j]+k1])/0.0001);
+	return NULL;
 }
