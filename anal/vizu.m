@@ -98,11 +98,19 @@ elseif strcmp(action,'print') | strcmp(action,'save')
   else
     fig=sprintf('%d-%02d-%02d_%s@%s',START_TIME(1:3),name_expr,name_ant);
     ext='eps';
-    if isdir(DATA_PATH), dirs=DATA_PATH; end
+    if isdir(DATA_PATH)
+      dirs=DATA_PATH;
+      if exist(fullfile(DATA_PATH,'.gup'),'file')
+        load('-mat',fullfile(DATA_PATH,'.gup'),'intper')
+        if intper>0
+          fig=sprintf('%d-%02d-%02d_%s_%d@%s',START_TIME(1:3),name_expr,intper,name_ant);
+        end
+      end
+    end
   end
   file=fullfile(dirs,fig);
   print(gcf,['-d' ext '2c'],[file '.' ext]);
-  if ~i, unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext)), end
+  if ~i, unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext)); end
   if strcmp(action,'print') | strcmp(a3,'print')
     if isempty(a2), dev=local.printer; else, dev=a2; end
     unix(['lp -c -d' dev ' ' file '.' ext ' >/dev/null 2>&1']);
