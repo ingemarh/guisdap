@@ -25,7 +25,7 @@ if isempty(source)
   strategy=sprintf('filter time {%s %s} filter power {min %g kW;}',t1,t2,a_txlim/1000);
   if length(a_integr)==1
     if a_integr
-      strategy=[strategy sprintf(' integrate time {period %d; skip %d}',a_integr,a_skip)];
+      strategy=[strategy sprintf(' integrate time {period %d; skip %d;}',a_integr,a_skip)];
     else
       strategy=[strategy ' integrate move {}'];
     end

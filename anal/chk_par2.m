@@ -99,6 +99,7 @@ end
 a_addr=[];
 a_adstart=[];
 a_adend=[];
+bad_var=0;
 diffran=diff(a_range);  
 for gate=find(diffran>0)
   addr=find(ad_range>a_range(gate) & ad_range<=a_range(gate+1));
@@ -121,6 +122,7 @@ for gate=find(diffran>0)
     % Remove addresses for which variance have not been determined
     if any(~real(d_var1(addr))) & isempty(a_addr)
       fprintf('Warning: Points removed from analysis due to bad variance determination\n')
+      bad_var=1;
     end
     addr=addr(find(real(d_var1(addr))));
   end
@@ -134,10 +136,10 @@ for gate=find(diffran>0)
 end
 
 if isempty(a_addr) & isempty(d_saveintdir)
-  fprintf(' No correlator result memory locations have been selected\n')
-  fprintf(' Check the data selection parameters\n')
-  fprintf(' Execution will be stopped\n')
-  error(' ')
+  fprintf('Warning: No data have been selected\n')
+  if ~bad_var
+    error('Check the data selection parameters')
+  end
 end
 
 %clear fac minrange maxrange code codes lags lpg ranges 
