@@ -5,6 +5,7 @@ a_satch.sigma=4;
 %a_satch.repair=-Inf;
 if strfind(data_path,'32p')
  analysis_do=0;
+ analysis_txpower=8;
  d_saveintdir=result_path;
  d=strfind(d_saveintdir,'AUTO');
  if length(d)==1

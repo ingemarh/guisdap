@@ -116,6 +116,9 @@ if exist('Magic_const')
  a_Magic_const=Magic_const;
 end
 a_NCAR=2;
+if a_realtime & isunix & ~isempty(local.site)
+ a_NCAR=3;
+end
 if exist('NCAR','var')
  NCAR_output
  a_NCAR=NCAR;
