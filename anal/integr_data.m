@@ -69,7 +69,8 @@ while i<length(files)
   lpb=length(d_parbl);
   if lpb==128
     tvec=2:4;                     % parameters holding time 
-    fixed=[1 5:90 92:93 127:128]; % parameters which are not allowed to change
+    fixed=[6 9];                  % parameters which are not allowed to change
+    allow=[11 11]';               % max allowed change of fixed pars
     az=6; el=9; fac=10;           % parameters for antenna pointing
     averaged=[6 9 96:99];         % parameters which are averaged
     accumulated=94;               % parameters which are accumulated
@@ -79,6 +80,7 @@ while i<length(files)
   else
     tvec=1:6;
     fixed=[9:10 42 64];
+    allow=[.11 .11 1000 0]';
     az=10; el=9; fac=1;
     averaged=[8:10 42 63];
     accumulated=[7 64];
@@ -87,10 +89,10 @@ while i<length(files)
     txpower=8; factx=1;
     % do not work on unavailable parameters
     averaged(find(averaged>lpb))=[];
+    allow(find(fixed>lpb))=[];
     fixed(find(fixed>lpb))=[];
     accumulated(find(accumulated>lpb))=[];
   end
-  allow=zeros(size(fixed')); allow(find(fixed==az | fixed==el))=.11*fac;
   d_parbl=col(d_parbl);
   [secs1,year]=tosecs(d_parbl(tvec));
   a_inttime=d_parbl(inttime);
