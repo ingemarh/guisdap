@@ -43,7 +43,7 @@ if isempty(dirlist)
   if unix(cmd)
    msg=['Error listing mat files in ' dirpath ' ' cmd];
   else
-   [dum,list]=textread(d,['%' num2str(length(dpath)) 's%d.mat']);
+   list=sort(textread(d,['%*' num2str(length(dpath)) 's%d.mat']));
   end
   delete(d)
  else
