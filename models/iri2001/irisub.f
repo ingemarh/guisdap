@@ -792,7 +792,8 @@ C
 C then URSI if chosen .....................................
 C
         if(URSIF2) then
-          WRITE(FILNAM,1144) NMONTH+10
+          WRITE(FILNAM,1144) path(1:index(path,' ')-1),NMONTH+10
+c         WRITE(FILNAM,1144) NMONTH+10
           OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,
      &         FORM='FORMATTED')
 c-binary- if binary files than use:

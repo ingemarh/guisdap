@@ -6,7 +6,7 @@ if isempty(ionomodel_first)
 end
 global d_time p_XMITloc
 [tsec,year]=tosecs(d_time(1,:));
-hh=[min(heights)-1 max(heights)+1 1]; if hh(2)-hh(1)>50, hh(3)=0; end
+hh=[min(heights)-1 max(heights)+1 1]; if hh(2)-hh(1)>100, hh(3)=0; end
 m_iri=iri([1 4 3 6 8 9 12],[tsec year],p_XMITloc(1:2),hh);
 altitude=m_iri(:,7);
 tn=msis(altitude*1e3,[tsec/86400 rem(tsec,86400)],p_XMITloc(1:2));
