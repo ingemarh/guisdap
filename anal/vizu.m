@@ -23,7 +23,7 @@ function vizu(action,a2,a3)
 % To reset and start over:
 % >> vizu new [action]
 
-global Time RAN ALT Ne Te Ti Vi Status Az El Pt Tsys name_expr name_ant axs hds
+global Time RAN ALT Ne Te Ti Vi Res Comp Status Az El Pt Tsys name_expr name_ant axs axc hds
 global DATA_PATH PLOT_STATUS LOCATION START_TIME END_TIME MESSAGE1
 global r_RECloc path_tmp path_GUP result_path
 if nargin<2, a2=[]; end
@@ -32,7 +32,8 @@ if nargin==0
   action=[];
 elseif strcmp(action,'new')
   close(findobj('type','figure','userdata',6))
-  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
+  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[]; PLOT_STATUS=[];
+  axs=[]; axc=[];
   action=a2; a2=a3;
 end
 REALT=0;
@@ -80,11 +81,13 @@ end
 
 if isempty(action) | strcmp(action,'verbose')
   if isempty(Time) | OLD_STATUS~=PLOT_STATUS
-    [Time,RAN,ALT,Ne,Te,Ti,Vi,Status Az El Pt,Tsys]=load_param(DATA_PATH);
+    [Time,RAN,ALT,Ne,Te,Ti,Vi Comp Res Status Az El Pt,Tsys]=load_param(DATA_PATH);
   end
-  axs=[];
+  if ~isempty(axs), delete(axs), end
+  if ~isempty(axc), delete(axc), end
+  axs=[]; axc=[];
 elseif strcmp(action,'update')
-  [Time,RAN,ALT,Ne,Te,Ti,Vi,Status Az El Pt,Tsys]=load_param(DATA_PATH,1);
+  [Time,RAN,ALT,Ne,Te,Ti,Vi Comp Res Status Az El Pt,Tsys]=load_param(DATA_PATH,1);
   if isempty(Time)
     disp('Vizu: No new data!'), return
   end
@@ -137,10 +140,12 @@ PLOT_STATUS	=0;		% Status limit (0-3)
 TIME_TICKS	=12; 		% Maximum number of time ticks to print
 MESSAGE2	='Not for publication - see Rules-of-the-road'; % top
 LOCATION	=getenv('HOSTNAME');	% Place where plotting performed
-NE_SCALE 	=10.^[10.0 12.0];	% Scale for Ne (m-3)
+NE_SCALE 	=10.^[10 12];	% Scale for Ne (m-3)
 TE_SCALE	=[0 4000];	% Scale for Te (K)
 TI_SCALE	=[0 3000];	% Scale for Ti (K)
 VI_SCALE	=[-200 200];	% Scale for Vi (m/s)
+RES_SCALE	=[.5 2]; 	% Scale for Res
+COMP_SCALE	=[0 1];		% Scale for Comp
 FIGURE_TITLE	='EISCAT RADAR';% Title for the whole figure
 if ~isempty(Loc)
   LOCATION	=['EISCAT-' Loc];
@@ -188,8 +193,8 @@ if strcmp(action,'verbose')
   START_TIME=minput('Start time',START_TIME);
   END_TIME=minput('  End time',END_TIME);
   if length(GATES)>1
-   ALT_SCALE=[floor(ALT(GATES(1))/10) ceil(ALT(GATES(end))/10)]*10;
-   ALT_SCALE=minput('Altitude scale',ALT_SCALE);
+   ALT_SCALE=[floor(min(ALT(GATES(1,:)))/10) ceil(max(ALT(GATES(end,:)))/10)];
+   ALT_SCALE=minput('Altitude scale',ALT_SCALE*10);
   end
   WHICH_PARAM=minput('Which parameters',WHICH_PARAM,1);
 elseif ~REALT
@@ -212,8 +217,8 @@ elseif strcmpi(name_ant,'uhf') | strcmpi(name_ant,'kir') | strcmpi(name_ant,'kod
 elseif strcmp(name_ant,'VHF')
   FIGURE_TITLE	='EISCAT VHF RADAR';
 end
-option=zeros(7,1);
-% options 'Ne Te Ti Vi AE TT LL'
+option=zeros(9,1);
+% options 'Ne Te Ti Vi AE TT LL Rs Dp'
 if findstr(WHICH_PARAM,'Ne'), option(1)=1; end
 if findstr(WHICH_PARAM,'Te'), option(2)=1; end
 if findstr(WHICH_PARAM,'Ti'), option(3)=1; end
@@ -221,6 +226,8 @@ if findstr(WHICH_PARAM,'Vi'), option(4)=1; end
 if findstr(WHICH_PARAM,'AE'), option(5)=1; end
 if findstr(WHICH_PARAM,'TT') & length(GATES)==1, option(6)=1; end
 if findstr(WHICH_PARAM,'LL') & length(GATES)==1, option(7)=1; end
+if findstr(WHICH_PARAM,'Dp'), option(8)=1; end
+if findstr(WHICH_PARAM,'Rs'), option(9)=1; end
 n_tot=nnz(option);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,8 +272,7 @@ if isempty(findobj('type','figure','userdata',6))
   uimenu('label','Save','callback','if isunix,vizu(''save''),else,printdlg,end');
   uimenu('label','Print','callback','if isunix,vizu(''print''),else,printdlg,end');
 
-  ti=subplot(n_tot+1,1,1);
-  set(ti,'Position',[0.0 0.87 0.95 0.08]);
+  ti=axes('Position',[0.0 0.87 0.95 0.08]);
   set(ti,'Visible','off');
   text('Position',[0.55,0.80],'HorizontalAlignment','center',...
       'VerticalAlignment','top', ...
@@ -277,7 +283,7 @@ if isempty(findobj('type','figure','userdata',6))
       'Color',[.5 .5 .5],'VerticalAlignment','top','String',t1)
   text('Position',[0.86,0.12],'HorizontalAlignment','right',...
       'Color',[.5 .5 .5],'VerticalAlignment','top','String',MESSAGE2)
-  axs=[];
+  axs=[]; axc=[];
   %logo...
   hds(2)=text('Position',[0.55,1.3],'HorizontalAlignment','center',...
       'VerticalAlignment','top','FontSize',24,'FontWeight','bold',...
@@ -376,12 +382,26 @@ if option(4)
   end
  end
 end
+if option(8)
+ if length(GATES)==1
+  [add_plot]=line_plot(add_plot,action,n_tot,height,s,Comp(GATES,:)',[],'Ion Composition (O^+/N_e)',[],CLPos,[]);
+ else
+  [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Comp(GATES,:),COMP_SCALE,Yscale,YTitle,'Ion Composition (O^+/N_e)',CLPos,[]);
+ end
+end
+if option(9)
+ if length(GATES)==1
+  [add_plot]=line_plot(add_plot,action,n_tot,height,s,Res(GATES,:)',[],'Residual',[],CLPos,[]);
+ else
+  [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Res(GATES,:),RES_SCALE,Yscale,YTitle,'Residual',CLPos,'log');
+ end
+end
 if option(5)
  [add_plot]=line_plot(add_plot,action,n_tot,height,s,[Pt Az El Tsys],[0 360],'Radar parameters',{'Power(10kW)' 'Azimuth(\circ)' 'Elevation(\circ)' 'System Temperature (K)'},CLPos,[]);
 %[add_plot]=line_plot(add_plot,action,n_tot,height,s,[Pt/100 [rem(Az+180,360)-180 El]*pi/180],[],'Power and pointing',{'Power(MW)' 'Azimuth(rad)','Elevation(rad)'},CLPos,[]);
 end
 if option(7)
- ll=[El Az RAN(GATES,:)'];
+ ll=[El Az RAN(GATES,:)']; d=find(isnan(Az)); ll(d,2)=0;
  for i=1:size(ll,1), ll(i,:)=loc2gg(r_RECloc,ll(i,:)); end
  [add_plot]=line_plot(add_plot,action,n_tot,height,s,[Pt ll Tsys],[],'Radar parameters',{'Power(10kW)' 'Latitude(\circN)','Longitude(\circE)' 'Altitude(km)' 'System Temperature (K)'},CLPos,[]);
 end
@@ -418,12 +438,10 @@ return
 %%%%% surf_plot function %%%%%%%%%%
 function [add_plot]=surf_plot(add_plot,action,n_tot,height,s,yparam,zparam,zscale,yscale,YTitle,Barlabel,CLPos,lg)
 
-global axs Time
+global axs Time axc
 add_plot=add_plot+1;
 if ~strcmp(action,'update')
-  axe=subplot(n_tot+1,1,add_plot+1);
-  set(axe,'Position',[0.12 0.06+(n_tot-add_plot)*(height+0.03) 0.8 height])
-  axs=[axs axe];
+  axs=[axs axes('Position',[0.12 0.06+(n_tot-add_plot)*(height+0.03) 0.8 height])];
 else
   set(gcf,'currentaxes',axs(add_plot))
 end
@@ -447,7 +465,7 @@ if ~strcmp(action,'update')
     set(gca,'YLim',yscale);
   end
   ylabel(YTitle)
-  my_colorbar(lg)
+  axc=[axc my_colorbar(lg)];
   text('String',Barlabel,'Units','Normalized','Position',[CLPos 0.5],...
       'HorizontalAlignment','Center','Rotation',-90)
 end
@@ -458,9 +476,7 @@ function [add_plot]=line_plot(add_plot,action,n_tot,height,s,yparam,yscale,YTitl
 global axs Time
 add_plot=add_plot+1;
 if ~strcmp(action,'update')
-  axe=subplot(n_tot+1,1,add_plot+1);
-  set(axe,'Position',[0.12 0.06+(n_tot-add_plot)*(height+0.03) 0.6964 height])
-  axs=[axs axe];
+  axs=[axs axes('Position',[0.12 0.06+(n_tot-add_plot)*(height+0.03) 0.6964 height])];
 else
   set(gcf,'currentaxes',axs(add_plot))
 end

@@ -7,8 +7,8 @@ end
 global d_time p_XMITloc
 [tsec,year]=tosecs(d_time(1,:));
 hh=[min(heights)-1 max(heights)+1 1]; if hh(2)-hh(1)>100, hh(3)=0; end
-m_iri=iri([1 4 3 6 8 9 12],[tsec year],p_XMITloc(1:2),hh);
-altitude=m_iri(:,7);
+m_iri=iri([1 4 3 6 8 9 10 12],[tsec year],p_XMITloc(1:2),hh);
+altitude=m_iri(:,8);
 tn=msis(altitude*1e3,[tsec/86400 rem(tsec,86400)],p_XMITloc(1:2));
 d=find(isnan(m_iri(:,2)) & altitude<150);
 if ~isempty(d)
@@ -27,7 +27,7 @@ if ~isempty(d)
 end
 ti=m_iri(:,3);
 te=m_iri(:,2);
-cM2=(m_iri(:,5)+m_iri(:,6))/100;
+cM2=(m_iri(:,5)+m_iri(:,6)+m_iri(:,7))/100;
 cM2(find(altitude>400))=0;
 cM2(find(isnan(cM2)))=1;
 cH=m_iri(:,4)/100;

@@ -60,7 +60,7 @@ n=size(colormap,1);
 if strcmp(lg,'log')
   tt=((0:n)-.5)'*diff(t)/(n-1)+t(1);
   surface([0 1],10.^tt,[tt tt])
-  set(ax,'CLim',t,'ylim',round(10.^t),'yscale','log','layer','top')
+  set(ax,'CLim',t,'ylim',10.^t,'yscale','log','layer','top')
 else
   image([0 1],t,[1:n]')
 % set(ax,'TickDir','in')

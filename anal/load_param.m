@@ -1,4 +1,4 @@
-function [Time,Ran,Alt,Ne,Te,Ti,Vi,Status,Az,El,Pt,Tsys]=...
+function [Time,Ran,Alt,Ne,Te,Ti,Vi,Comp,Res,Status,Az,El,Pt,Tsys]=...
         load_param(data_path,update)
 % @(#)load_param.m	1.2 98/08/04
 % Function to read the plasma parameters from
@@ -42,6 +42,8 @@ Vi	=Ne;
 Time   	=zeros(2,n_tot);
 Alt	=Ne;
 Ran	=Ne;
+Comp	=Ne;
+Res	=Ne;
 Az	=zeros(n_tot,1);
 El	=Az;
 Pt	=Az;
@@ -66,6 +68,8 @@ for i=1:n_tot
     Vi		=[Vi;nant];
     Alt		=[Alt;nant];
     Ran		=[Ran;nant];
+    Res		=[Res;nant];
+    Comp	=[Comp;nant];
     Status	=[Status;nant];
     n_alt=nalt;
   end
@@ -86,6 +90,8 @@ for i=1:n_tot
 
   Alt(n,i) 	=r_h(:,1);
   Ran(n,i) 	=r_range(:,1);
+  Res(n,i) 	=r_res(:,1);
+  Comp(n,i) 	=r_dp(:,1);
   Time(1,i)	=datenum(r_time(1,:));
   Time(2,i)	=datenum(r_time(2,:));
   Status(n,i) 	=r_status(:,1);
