@@ -1,9 +1,9 @@
 startup
 using_x=prod(get(0,'ScreenSize'))-1;
-sites='KSTVL';
+sites='KSTVL'; gfdfile=[path_tmp '.gup'];
 %default values
-if exist([path_tmp '.gup'])
- load([path_tmp '.gup'],'-mat')
+if exist(gfdfile)
+ load(gfdfile,'-mat')
 else
  rt=0;
  [intper,t1,t2,siteid]=auto_parse(0);
@@ -26,10 +26,10 @@ load(fullfile(path_GUP,'matfiles','logo')), plot(y,x,'.k'), axis image
 set(get(gca,'child'),'markersize',10), set(gca,'visible','off')
 pause(1), clf
 x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=240;
-bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','set(bg,''visible'',''off'')','fontsize',14);
+bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','set([bg br],''visible'',''off'')','fontsize',14);
 uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
 uicontrol('Style','pushbutton','string','Save','position',[50 20 40 20],'callback','o=uiputfile;if o,save_setup(o);end','tooltipstring','Save setup in file');
-uicontrol('Style','pushbutton','string','Reset','position',[50 40 40 20],'callback','delete(bg),if exist([path_tmp ''.gup'']),delete([path_tmp ''.gup'']),end,pause(1),analyse','tooltipstring','Reset to default');
+br=uicontrol('Style','pushbutton','string','Reset','position',[50 40 40 20],'callback','clf,if exist(gfdfile),delete(gfdfile),end,pause(1),analyse','tooltipstring','Reset to default');
 set(gca,'position',[0 0 1 1],'visible','off')
 text(0,ty(4),'Dsp expr')
 b(1)=uicontrol('Style','pushbutton','string',name_expr,'position',[x y(4) x1 yh],'value',0,'callback','o=uigetdir(path_exps);if o,[path_exps,name_expr]=fileparts(o);set(b(1),''string'',name_expr),end');
@@ -77,6 +77,6 @@ else
   [ext,ex]=strtok(ex,'#');
   extra=char(extra,ext);
  end
- save([path_tmp '.gup'],'name_expr','siteid','data_path','result_path','t1','t2','rt','intper','path_exps','figs','extra','-mat')
+ save(gfdfile,'name_expr','siteid','data_path','result_path','t1','t2','rt','intper','path_exps','figs','extra','-mat')
  go_on
 end

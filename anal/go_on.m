@@ -31,16 +31,18 @@ if length(strfind(result_path,'AUTO'))>1
  error('"AUTO" result path do not work, please specify')
 elseif datenum(clock)<datenum(t2) & rt==0 & length(local.site)==1
  rt=1;
- if ishandle(bg), set(b(7),'value',1), end
  fprintf('Stop time is in future: Setting RT mode\n')
- if figs(5)==1, figs(5)=2; end
+ if ishandle(bg), set(b(7),'value',1), end
+ if figs(5)==1
+  figs(5)=2;
+  if ishandle(bg), set(b(9),'string',num2str(figs)), end
+ end
 elseif (datenum(clock)>datenum(t2) | length(local.site)~=1) & rt==1
  rt=0;
  if ishandle(bg), set(b(7),'value',0), end
  fprintf('Stop time has passed: Unsetting RT mode\n')
 end
 if ishandle(bg)
- set(b(7),'value',rt)
  set(b([1:6 8:10]),'enable','inactive')
 end
 

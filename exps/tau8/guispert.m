@@ -18,9 +18,12 @@ if exist('sigpath') & strcmp(sigpath,'phased')
  d_var2=d_var2(54339+(1:54339));
  ch_Pt=polyval(polhv(2,:),hv)*1000;
  name_ant='vhfb';
-else
+elseif exist('sigpath')
  [ch_el ch_az ch_gain]=vhf_elaz(90,0,10^4.31/2);
  ch_Pt=polyval(polhv(1,:),hv)*1000;
  name_ant='vhfa';
+else
+ d_data=d_data(1:54339)+d_data(54339+(1:54339));
+ [ch_el ch_az ch_gain]=vhf_elaz(90,0,10^4.31/2);
 end
 clear polhv hv
