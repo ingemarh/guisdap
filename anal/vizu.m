@@ -222,7 +222,7 @@ elseif ~REALT
   DATA_PATH=DATA_PATH(1:end-1);
  end
  [d,dpath]=fileparts(DATA_PATH);
- START_TIME=[sscanf(dpath(1:10),'%4d%2d%2d')' 0 0 0];
+ START_TIME=[sscanf(dpath(1:10),'%4d-%2d-%2d')' 0 0 0];
  END_TIME=START_TIME+[0 0 0 24 0 0];
 end
 if isempty(MESSAGE1)
