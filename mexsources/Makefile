@@ -32,6 +32,9 @@ all: iri msis lib mex6 install
 iri:
 	mex $(MEXOPTS) iri.f $(IRILIB)
 
+geomag:
+	mex $(MEXOPTS) geomag.f $(IRILIB)
+
 msis:
 	mex $(MEXOPTS) msis.f $(MSISLIB)
 

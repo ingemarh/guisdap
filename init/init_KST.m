@@ -68,7 +68,8 @@ else
 end
 
 if exist('N_rcprog')~=1, N_rcprog=1; end
-for d_rcprog=1:N_rcprog
+if exist('B_rcprog')~=1, B_rcprog=1; end
+for d_rcprog=B_rcprog:N_rcprog
   Stime=clock;
 
   if N_rcprog>1, apustr=['_',int2str(d_rcprog)]; else apustr=[]; end
@@ -104,7 +105,10 @@ for d_rcprog=1:N_rcprog
   end
 
   fprintf('\n\n# Defining virtual channels:\n')
-  file=canon([name_expr name_site 'vcinit'],0);
+  file=canon([name_expr name_site apustr 'vcinit'],0);
+  if exist(file)~=2
+    file=canon([name_expr name_site 'vcinit'],0);
+  end
   fprintf('#####\n')
   if exist(file)==2
     eval(file)
@@ -130,8 +134,12 @@ for d_rcprog=1:N_rcprog
   vc_arrange
 
   fprintf('\nDefining lag profiles by executing %s%s_LP:\n',name_expr,name_site)
-  eval(canon([name_expr name_site '_LP'],0))
-  fprintf('\n%s%s_LP passed\n\n',name_expr,name_site)
+  file=canon([name_expr name_site apustr '_LP'],0);
+  if exist(file)~=2
+    file=canon([name_expr name_site '_LP'],0);
+  end
+  eval(file)
+  fprintf('\n%s passed\n\n',file)
 
   fprintf('Time used in initialization:%8.2f min\n',etime(clock,Stime)/60)
   save_GUPvar

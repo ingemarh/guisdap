@@ -703,6 +703,7 @@ C ===============================================================
                                                                                 
         CHARACTER  FSPEC*(*), FOUT*55                                    
         DIMENSION       GH(*)                                        
+        character path*100
 C ---------------------------------------------------------------               
 C       Open coefficient file. Read past first header record.        
 C       Read degree and order of model and Earth's radius.           
@@ -711,7 +712,10 @@ C ---------------------------------------------------------------
 c special for IRIWeb version
 c 667  FORMAT('/usr/local/etc/httpd/cgi-bin/models/IRI/',A12)
 667    FORMAT(A12)
-       OPEN (IU, FILE=FOUT, STATUS='OLD', IOSTAT=IER, ERR=999)     
+c      OPEN (IU, FILE=FOUT, STATUS='OLD', IOSTAT=IER, ERR=999)     
+       call getenv('IRIPATH',path)
+       OPEN (IU, FILE=path(1:index(path,' ')-1)//'/'//FOUT, STATUS='OLD',
+     ,IOSTAT=IER, ERR=999)     
      
        READ (IU, *, IOSTAT=IER, ERR=999)                            
         READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD                 
