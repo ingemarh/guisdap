@@ -33,7 +33,7 @@ if ~isempty(a_code)
  lpgs=find(ismember(lpg_code,a_code));
  lpgc=unique([lpg_cal(lpgs);lpg_bac(lpgs)]);
  lpgc=lpgc(find(lpgc));
- lpgneed=lpgc(find(~ismember(lpgc,a_code)))
+ lpgneed=lpgc(find(~ismember(lpgc,a_code)));
  ad_code(lpg_addr(lpgneed'))=a_code(1);
  lpg_code(lpgneed)=a_code(1);
 end
