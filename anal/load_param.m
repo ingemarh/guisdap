@@ -97,4 +97,5 @@ end
 % Cast azimuth and elevation into range 0-360, 0-90 degrees
 d=find(El>90.1); El(d)=180-El(d); Az(d)=Az(d)+180;
 Az=mod((Az+360),360);
+d=find(El<90.1 & El>89.9); Az(d)=NaN;
 %disp('Done.')

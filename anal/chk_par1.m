@@ -99,7 +99,7 @@ if exist('Magic_const')
  a_Magic_const=Magic_const;
 end
 a_NCAR=0;
-if exist('NCAR')
+if exist('NCAR','var')
  NCAR_output
  a_NCAR=NCAR;
 end
