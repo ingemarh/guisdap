@@ -74,7 +74,7 @@ for i=lp
  end
  d_data(addr)=data;
 end
-lp=find(lpg_lag==0 & lpg_bcs==99);
+lp=setdiff(find(lpg_lag==0 & lpg_bcs=='c'),a_satch.lpg_skip);
 if ~isempty(a_code)
  lp=lp(find(ismember(lpg_code(lp),unique(a_code))));
 end
