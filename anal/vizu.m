@@ -337,7 +337,7 @@ for i=[3 7 9]
  end
 end
 if option(12)
- d=many(par2D(GATES,:,4:5),[0 2000],1);
+ d=many(par2D(GATES,:,4:5),SCALE(4,:),1);
  line_plot(s,reshape(par2D(GATES,:,4:5),[],2),d,'Temperatures (K)',{'Electron' 'Ion'},[])
 end
 for i=[4 5 8]
@@ -347,7 +347,7 @@ for i=[4 5 8]
 end
 if option(6)
  if length(GATES)==1
-  d=many(par2D(GATES,:,6),[-200 200],1);
+  d=many(par2D(GATES,:,6),SCALE(6,:),1);
   line_plot(s,par2D(GATES,:,6)',d,TITLE(6),{'positive away'},[])
  else
   surf_plot(s,y_param(GATES,:),par2D(GATES,:,6),SCALE(6,:),Yscale,YTitle,char(char(TITLE(6)),'         (away)'),[])
@@ -370,7 +370,7 @@ if option(13)
  ll=[par1D(:,[3 2 1]) par2D(GATES,:,1)'];
  for i=1:s, ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
  if size(par1D,2)>3, ll=[ll par1D(:,4)]; end
- d=many(ll,[0 200],1);
+ d=many(ll,[0 310],1);
  line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {'Latitude(\circN)','Longitude(\circE)'} TITLE(2) TITLE1(4)],[])
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -419,7 +419,7 @@ end
 
 if length(axc)<add_plot
  if ~isempty(zscale)
-  set(gca,'CLim',zscale.*(1+5*[-eps eps]));
+  set(gca,'CLim',zscale+5*eps*abs(zscale).*[-1 1]);
  end
  axc=[axc my_colorbar(Barlabel,lg)];
 end
@@ -486,7 +486,7 @@ set(gca,'xtick',xticks)
 datetick(gca,'x',tickform,'keeplimits','keepticks')
 
 if ~isempty(yscale)
- set(gca,'YLim',yscale.*(1+5*[-eps eps]))
+ set(gca,'YLim',yscale+5*eps*abs(yscale).*[-1 1])
 end
 ylabel(YTitle)
 return
