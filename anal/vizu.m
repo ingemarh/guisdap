@@ -243,6 +243,7 @@ elseif strcmp(nameant,'vhf')
  fradar=224e6;
 end
 if strcmp(action,'VERBOSE')
+ Y_PARAM=minput('Y parameter (Ran-1 Alt-2 Lat-3)',Y_PARAM);
  SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res)',SCALE')';
  PLF_SCALE=minput('Scale (plf)',PLF_SCALE);
  RAWNE_SCALE=minput('Scale (rawNe)',RAWNE_SCALE);

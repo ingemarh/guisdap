@@ -46,7 +46,7 @@ else
   a_indold=a_ind;a_ind=a_ind+1; if (a_ind>length(a_integr)), a_ind=1; end
   a_interval=a_interval(2)+a_skip(a_indold)+[0 a_integr(a_ind)];
 end
-if a_integr==0, a_interval(2)=a_end;
+if a_integr<=0, a_interval(2)=a_end;
 elseif a_interval(2)>=a_end; EOF=1; end
 if a_realtime
   if d_filelist(end)<=a_interval(1)
@@ -58,7 +58,7 @@ elseif d_filelist(end)<a_interval(1)
 end
 
 files=d_filelist(find(d_filelist>a_interval(1) & d_filelist<=a_interval(2)));
-if isempty(files) & a_integr==0, EOF=1; return, end
+if isempty(files) & a_integr<=0, EOF=1; return, end
 i=0;
 while i<length(files)
   i=i+1; file=files(i);
@@ -108,13 +108,16 @@ while i<length(files)
     a_tx=a_txold;
     d_parbl(txpower)=a_tx/factx;
   end
-  if a_integr==0
+  if a_integr<=0
     if isempty(a_antold)
       a_antold=a_ant;
       secs=secs1;
       N_averaged=0;
     end
     tdiff=secs1-secs>a_maxgap;
+    if a_integr<0 & exist('starttime','var')
+      tdiff=tdiff | starttime-secs1<a_integr;
+    end
     adiff=a_antold-a_ant;
     a_antold=a_ant;
     if any(fix(adiff/.2)) | tdiff

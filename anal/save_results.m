@@ -26,6 +26,8 @@ if strcmp(i2,'AUTO')
   a_autodir.int='scan';
  elseif a_integr==0
   a_autodir.int='ant';
+ elseif a_integr<0
+  a_autodir.int=['ant' num2str(-a_integr)];
  else
   a_autodir.int=num2str(a_integr);
  end
