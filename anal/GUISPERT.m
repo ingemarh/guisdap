@@ -7,8 +7,9 @@
 % See also: GUIZARD GUIDITOR
 
 % Correct the doppler sign
+d_secs=tosecs(d_time(1,:));
 if (name_site=='V' & d_time(1,1)>2000) | ...
-   (name_site=='L' & d_time(1,1)==2003 & tosecs(d_time(1,:))>6857400)
+   (name_site=='L' & d_time(1,1)==2003 & d_secs>6857400 & d_secs<25660800)
   d_data=conj(d_data);
 end
 
