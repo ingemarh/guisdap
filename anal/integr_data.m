@@ -28,7 +28,7 @@ global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control
 global d_saveintdir
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_satch
-global a_antold a_txold a_elold a_maxgap secs
+global a_antold a_txold a_elold a_maxgap secs a_intfixed
  
 OK=0; EOF=0; jj=0; N_averaged=0;
 d_ExpInfo=[]; d_raw=[];
@@ -63,7 +63,7 @@ i=0;
 while i<length(files)
   i=i+1; file=files(i);
   filename=sprintf('%08d',file);
-  i_averaged=[]; i_var1=[]; i_var2=[];
+  i_averaged=1; i_var1=[]; i_var2=[];
   load(canon([data_path filename],0))
 
   lpb=length(d_parbl);
@@ -72,22 +72,25 @@ while i<length(files)
     fixed=[1 5:90 92:93 127:128]; % parameters which are not allowed to change
     az=6; el=9; fac=10;           % parameters for antenna pointing
     averaged=[6 9 96:99];         % parameters which are averaged
+    accumulated=94;               % parameters which are accumulated
     ORed=95;                      % parameter which is OR'ed
     inttime=94;                   % parameter that holds integration time
     txpower=99; factx=1000;       % parameter that holds transmitter power
   else
     tvec=1:6;
-    fixed=[9:10 42];
+    fixed=[9:10 42 64];
     az=10; el=9; fac=1;
     averaged=[8:10 42 63];
+    accumulated=[7 64];
     ORed=[];
     inttime=7;
     txpower=8; factx=1;
     % do not work on unavailable parameters
     averaged(find(averaged>lpb))=[];
     fixed(find(fixed>lpb))=[];
+    accumulated(find(accumulated>lpb))=[];
   end
-  allow=zeros(size(fixed')); allow(find(fixed==az | fixed==el))=.1*fac;
+  allow=zeros(size(fixed')); %allow(find(fixed==az | fixed==el))=.1*fac;
   d_parbl=col(d_parbl);
   [secs1,year]=tosecs(d_parbl(tvec));
   a_inttime=d_parbl(inttime);
@@ -145,45 +148,51 @@ while i<length(files)
   if dumpOK & ~isempty(a_satch)
     dumpOK=satch(a_ant(1),secs,a_inttime);
   end
-  if length(d_parbl)==128
+  if lpb==128
     if d_parbl(95)~=0, fprintf(' Status word is %g\n',d_parbl(95)), end 
     dumpOK=dumpOK & rem(d_parbl(95),2)==0 & d_parbl(95)~=64;
   end
-  if dumpOK
-    if ~OK  % initialize with the first good dump
-      aver=0; status=0; data=0; d_var1=0; d_var2=0;
-      starttime=secs-a_inttime;    % calculate starttime of first dump
-      OK=1;
-    elseif any(abs(d_parbl(fixed)-prev_parbl(fixed))>allow)
-   %  disp(' change in the parameter block')
-      indfixed=find(d_parbl(fixed)~=prev_parbl(fixed));
-      disp('    param#  previous   current ')
-      indfixed=fixed(indfixed);
-      disp([indfixed',prev_parbl(indfixed),d_parbl(indfixed)]) 
-    end
-    % update with the following files
-    status=bitwiseor(status,d_parbl(ORed),16);
-    if isempty(i_averaged)
-      aver=aver+d_parbl(averaged);
-      data=data+d_data;
-      d_var1=d_var1+d_data.*d_data;
-      d_var2=d_var2+d_data.*conj(d_data);
-      N_averaged=N_averaged+1;
-    else
-      aver=aver+d_parbl(averaged)*i_averaged;
-      data=data+d_data;
-      if isempty(i_var1)
-        d_var1=d_var1+d_data.*d_data;
-        d_var2=d_var2+d_data.*conj(d_data);
-        N_averaged=N_averaged+1;
-      else
-        d_var1=d_var1+i_var1(:);
-        d_var2=d_var2+i_var2(:);
-        N_averaged=N_averaged+i_averaged;
+  if dumpOK & OK
+    indfixed=fixed(find(d_parbl(fixed)-prev_parbl(fixed)>allow));
+    if ~isempty(indfixed)
+      fprintf('Parameter change:')
+      fprintf(' par(%d)=%g[%g];',[indfixed;prev_parbl(indfixed)';d_parbl(indfixed)'])
+      fprintf('\n')
+      if a_intfixed
+       fprintf('analysis_intfixed set: ')
+       if N_averaged==1
+        fprintf('Skipping previous dump\n')
+        OK=0; N_averaged=0;
+       else
+        fprintf('Skipping dump\n')
+        dumpOK=0;
+       end
       end
     end
   end
-  prev_parbl=d_parbl; % update previous parameter block
+  if dumpOK
+    if ~OK  % initialize with the first good dump
+      aver=0; status=0; data=0; d_var1=0; d_var2=0; accum=0;
+      starttime=secs-a_inttime;    % calculate starttime of first dump
+      OK=1;
+    end
+    % update with the following files
+    status=bitwiseor(status,d_parbl(ORed),16);
+    accum=accum+d_parbl(accumulated);
+    data=data+d_data;
+    aver=aver+d_parbl(averaged)*i_averaged;
+    if isempty(i_var1)
+      d_var1=d_var1+d_data.*d_data;
+      d_var2=d_var2+d_data.*conj(d_data);
+    else
+      d_var1=d_var1+i_var1(:);
+      d_var2=d_var2+i_var2(:);
+    end
+    N_averaged=N_averaged+i_averaged;
+    prev_parbl=d_parbl; % update previous parameter block
+  elseif OK
+    d_parbl=prev_parbl;
+  end
   if a_realtime & file==d_filelist(end)
     [EOF,jj]=update_filelist(EOF,jj);
     if EOF, break, end
@@ -194,12 +203,15 @@ end
 if OK, % if at least one good data dump was found
   % update parameter block, accept the last parameter block as starting point
   d_parbl(averaged)=aver/N_averaged;
+  d_parbl(accumulated)=accum;
   d_parbl(ORed)=status;
-  d_parbl(inttime)=secs-starttime;
+  d_parbl(inttime)=tosecs(d_parbl(tvec))-starttime;
   d_data=data;
   if ~isempty(d_saveintdir)
    if N_averaged>1
     i_averaged=N_averaged; i_var1=real(d_var1); i_var2=d_var2;
+   else
+    i_averaged=[];
    end
    file=fullfile(d_saveintdir,sprintf('%08d.mat',fix(secs)));
    save_noglobal(file,d_ExpInfo,d_parbl,d_data,d_raw,i_var1,i_var2,i_averaged)

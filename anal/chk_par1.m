@@ -139,3 +139,7 @@ a_do=1;
 if exist('analysis_do','var')
  a_do=analysis_do;
 end
+a_intfixed=1;
+if exist('analysis_intfixed','var')
+ a_intfixed=analysis_intfixed;
+end

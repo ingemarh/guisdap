@@ -5,7 +5,6 @@
 % so that the data analysis is possible
 
 % names='LLVTKS'; name_site=names(parbl(41)); clear names
-  global calTemp
   if length(d_parbl)<41
     ant_id=1;
   else
@@ -24,9 +23,6 @@
 % starttime of integration 
   time = time - d_parbl(7);
   d_time(1,:) = toYMDHMS(year,time);
-
-  fprintf('\n%s-%s integrated\n',datestr(datenum(d_time(1,:)),0),...
-           datestr(datenum(d_time(2,:)),13))
 
   len = 1;
   ch_Pt = d_parbl(8)*ones(1,len);
