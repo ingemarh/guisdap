@@ -198,7 +198,9 @@ while i<length(files)
   if a_realtime & file.file==d_filelist(end).file
     [EOF,jj]=update_filelist(EOF,jj);
     if EOF, break, end
-    files=d_filelist(find(d_filelist.file>a_interval(1) & d_filelist.file<=a_interval(2)));
+    d=cell2mat({d_filelist.file});
+    files=d_filelist(find(d>a_interval(1) & d<=a_interval(2)));
+%   files=d_filelist(find(d_filelist.file>a_interval(1) & d_filelist.file<=a_interval(2)));
   end
 end
 
@@ -233,7 +235,7 @@ if ~jj
 end
 
 df=getfilelist(data_path,d_filelist(end));
-while isempty(df.file)
+while isempty(df)
   fprintf('.'); pause(mrw)
   [df,msg]=getfilelist(data_path,d_filelist(end));
   j=j+1;
@@ -247,5 +249,5 @@ while isempty(df.file)
     EOF=1; break
   end
 end
-d_filelist=[d_filelist df];
+d_filelist=[d_filelist;df];
 if j>0, fprintf('\n'); end

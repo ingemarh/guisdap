@@ -13,11 +13,12 @@ if isempty(dirpath)
   msg='Empty directory path';
 elseif isunix & a_realtime | strfind(dirpath,'?')
   if ~isempty(newer)
-    newer=sprintf('-newer %s%08d.mat ',dirpath,newer);
+   %newer=sprintf('-newer %s%08d.mat ',dirpath,newer);
+    newer=sprintf('-newer %s/%08d%s ',newer.dir,newer.file,newer.ext);
   end
   template=[row(col('\[0-9]')*ones(1,8)) '.mat\*'];
   d=[tempname '.txt'];
-  cmd=sprintf('find %s -name %s %s-print >%s 2>/dev/null',dirpath(1:end-1),template,newer,d),
+  cmd=sprintf('find %s -name %s %s-print >%s 2>/dev/null',dirpath(1:end-1),template,newer,d);
   if unix(cmd) & unix(cmd)
     msg=['Error listing mat files in ' dirpath ' ' cmd];
   elseif exist(d)

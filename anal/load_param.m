@@ -7,7 +7,7 @@ function [Time,par2D,par1D,rpar2D]=load_param(data_path,status,update)
 % rpar2D[Ran,Alt,RawNe]
 
 global lastfile name_expr r_RECloc name_ant
-if nargin<3, lastfile=0; end
+if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
 if isempty(status), status=0; end
 
@@ -16,8 +16,8 @@ if ~isdir(data_path)
   return
 end
 data_path=fullfile(data_path,filesep);
-list=getfilelist(data_path);
-if nargin>2, list=list(cell2mat({list.file})>lastfile); end
+list=getfilelist(data_path,lastfile);
+%if nargin>2, list=list(cell2mat({list.file})>lastfile); end
 n=length(list);
 ppres=.25; % pp resolution (km)
 
@@ -27,7 +27,7 @@ if n==0
 end
 r_Tsys=[]; r_pp=[];
 n_tot=n;
-lastfile=list(n).file;
+lastfile=list(n);
 
 load(canon(fullfile(list(1).dir,sprintf('%08d%s',list(1).file,list(1).ext)),0))
 n_alt=size(r_param,1);
