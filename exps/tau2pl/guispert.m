@@ -14,7 +14,11 @@ if name_site=='T'
 %%d_data((1:lp)+17134)=d_data((1:lp)+17134)./g;
 %%d_data(1:lp)=mean([d_data(1:lp) d_data(lp+(1:lp))],2)./g;
   d_data(1:lp)=mean([d_data(1:lp) d_data(lp+(1:lp))],2);
+  d_var1(1:lp)=mean([d_var1(1:lp) d_var1(lp+(1:lp))],2);
+  d_var2(1:lp)=mean([d_var2(1:lp) d_var2(lp+(1:lp))],2);
   d_data(lp+(1:lp))=d_data(1:lp);
+  d_var1(lp+(1:lp))=d_var1(1:lp);
+  d_var2(lp+(1:lp))=d_var2(1:lp);
 %%g0=conv(ones(45,1),g)./[1:45 45*ones(1,lp-45-1) 45:-1:1]';
 %%s1=lp;
 %%for l=1:29

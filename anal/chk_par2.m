@@ -2,22 +2,22 @@
 % GUISDAP v.1.60 96-05-27 Copyright Asko Huuskonen and Markku Lehtinen
 %
 
-if exist('analysis_classic')==1,
+if exist('analysis_classic')==1
   a_classic=analysis_classic;
 else
   a_classic=0;
 end
 
 fac=1000/(v_lightspeed/2)/(p_dtau*1e-6);
-if exist('analysis_range')==1,
+if exist('analysis_range')==1
   a_range=analysis_range*fac;
-elseif exist('analysis_altit')==1,
+elseif exist('analysis_altit')==1
   a_range=height_to_range(analysis_altit,ch_el(1));
 else
-  a_range=[0 100000]; 
+  a_range=[0 100000];
 end
  
-if exist('analysis_addr')==1,
+if exist('analysis_addr')==1
   a_addr=analysis_addr;
   a_adstart=analysis_adstart;
   a_adend=[a_adstart(2:length(a_adstart))-1,length(a_addr)];
@@ -26,14 +26,14 @@ elseif a_classic
   minrange=min(a_range);
   maxrange=max(a_range);
   a_range=[];
-  for code=diff_val(lpg_code),
+  for code=diff_val(lpg_code)
     lags=lpg_lag(find(lpg_code==code & lpg_bcs=='s'));
     if max(lags)>0,  % ACF data, analyze these
       lpg=find(lpg_code==code & lpg_bcs=='s' & lpg_lag==max(lags));
       ranges=lpg_h(lpg)+(0:lpg_nt(lpg)-1)*lpg_dt(lpg);
       ranges=ranges(find(ranges>=minrange & ranges<=maxrange));
       lenr=length(ranges);
-      if lenr>0,
+      if lenr>0
         len=length(a_range);
         a_range=[a_range ranges-lpg_dt(lpg)/2 max(ranges)+lpg_dt(lpg)/2 0];
         a_code(code,len+(1:lenr))=ones(1,lenr);
@@ -43,24 +43,24 @@ elseif a_classic
     a_minwidth=zeros(1,length(a_range));
     a_maxwidth=1000000000*ones(1,length(a_range));
   end
-else  
+else
  
   lenr=length(a_range);
   a_minwidth=zeros(1,lenr-1);
-  a_maxwidth=inf*ones(1,lenr-1); 
+  a_maxwidth=inf*ones(1,lenr-1);
 
-  if exist('analysis_minwidth')==1, 
+  if exist('analysis_minwidth')==1
     len=length(analysis_minwidth);
-    if exist('analysis_altit')==1,
+    if exist('analysis_altit')==1
       a_minwidth(1:len)=height_to_range(analysis_minwidth,ch_el(1));
     else
       a_minwidth(1:len)=analysis_minwidth*fac;
     end
   end 
 
-  if exist('analysis_maxwidth')==1, 
+  if exist('analysis_maxwidth')==1
     len=length(analysis_maxwidth);
-    if exist('analysis_altit')==1,
+    if exist('analysis_altit')==1
       a_maxwidth(1:len)=height_to_range(analysis_maxwidth,ch_el(1));
     else
       a_maxwidth(1:len)=analysis_maxwidth*fac;
@@ -70,12 +70,10 @@ else
   a_code=[];
   gates=[];
   codes=[];
-  if exist('analysis_code')==1,
-    if length(analysis_code)<length(a_range)-1;
-      fprintf(' Analysis_code variable is too short and neglected\n')
-    else
+  if exist('analysis_code','var')
+    if length(analysis_code)==length(a_range)
       temp=analysis_code;
-      while any(temp>0);
+      while any(temp>0)
         code=rem(temp,10);
         temp=floor(temp/10);
         ind=find(code>0);
@@ -88,6 +86,9 @@ else
         if len>0; a_code(i,gates(ind))=ones(1,len); end
       end
       clear code temp ind gates codes i
+    elseif max(analysis_code)>max(lpg_code)
+      fprintf('Analysis_code variable not well defined and neglected\n')
+      clear analysis_code
     end
   end
 end
@@ -97,52 +98,29 @@ a_addr=[];
 a_adstart=[];
 a_adend=[];
 diffran=diff(a_range);  
-if a_control(4)==1 & exist('N_averaged') & N_averaged<5
-  dvar1=d_var1+d_data.*d_data/N_averaged;
-  dvar2=d_var2+d_data.*conj(d_data)/N_averaged;
-  N_avtot=Inf;
-  bac=[];
-end
-for gate=find(diffran>0),
+for gate=find(diffran>0)
   addr=find(ad_range>a_range(gate) & ad_range<=a_range(gate+1));
   if ~isempty(addr)
     % Select suitable codes 
-    if length(a_code)>0,
+    if length(a_code)>0
       ind1=[];
       for code=find(a_code(:,gate)==1)';
         ind1=[ind1,find(ad_code(addr)==code)];
       end
       addr=addr(ind1);
+    elseif exist('analysis_code','var')
+      addr=addr(find(ismember(ad_code(addr),analysis_code)));
     end
     % Remove too narrow or too broad responses 
     ind1=find(ad_w(addr)>a_minwidth(gate) & ad_w(addr)<a_maxwidth(gate) );
     addr=addr(ind1);
   end
-  if length(addr)>1 & exist('dvar1')
-    % Last chance to get the variances
-    % Calculate from the profiles: Want at least 6 (accepts 3) points in each
-    ij=ad_lpg(addr); lpg=unique(ij); naddr=[];
-    for i=lpg
-      n=addr(find(i==ij)); ln=length(n)*N_averaged; nn=n; ii=lpg_ri(i); in=0;
-      while ln<5 & ln~=in
-        in=ln;
-        if n(1)-ADDR_SHIFT>lpg_ra(i)
-          n=[n(1)-ii n]; ln=ln+N_averaged;
-        end
-        if (n(end)-ADDR_SHIFT-lpg_ra(i))/ii+1<lpg_nt(i)
-          n=[n n(end)+ii]; ln=ln+N_averaged;
-        end
-      end
-      if ln>2
-        N_avtot=min(N_avtot,ln);
-	if lpg_bac(i), bac=[bac lpg_bac(i)]; end
-        ii=ad_coeff(n)'; in=ii/mean(ii); sii=mean(d_data(n)./in);
-        d_var1(nn)=mean(dvar1(n)./in.^2)-sii.*sii/N_averaged;
-        d_var2(nn)=mean(dvar2(n)./in.^2)-sii.*conj(sii)/N_averaged;
-        naddr=[naddr nn];
-      end
+  if a_control(4)==1
+    % Remove addresses for which variance have not been determined
+    if any(~real(d_var1(addr)))
+      fprintf('Warning: Points removed from analysis due to bad variance determination\n')
     end
-    addr=naddr;
+    addr=addr(find(real(d_var1(addr))));
   end
 
   if length(addr)>1, % store addresses if at least two points found
@@ -151,22 +129,6 @@ for gate=find(diffran>0),
     a_addr=[a_addr,addr-ADDR_SHIFT]; % From matlab indexing to radar indexing
     a_adend=[a_adend,len+length(addr)];
   end
-end
-if exist('dvar1')
-  for i=unique(bac)
-    n=lpg_addr(i)+ADDR_SHIFT;
-    ln=length(n)*N_averaged;
-    if ln>1
-      N_avtot=min(N_avtot,ln);
-      sii=mean(d_data(n));
-      d_var1(n)=mean(dvar1(n))-sii.*sii/N_averaged;
-      d_var2(n)=mean(dvar2(n))-sii.*conj(sii)/N_averaged;
-    end
-  end
-  if N_avtot<5
-    fprintf('Warning: %.0f points may not be enough for reliable variance determination\n',N_avtot)
-  end
-  clear lpg ii ij i naddr sii in n ln nn dvar1 dvar2 N_avtot bac
 end
 
 if length(a_addr)==0

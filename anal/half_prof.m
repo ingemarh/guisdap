@@ -53,9 +53,9 @@ for g_ind=1:length(a_adstart)
   elseif a_control(4)>=2 % calculating variance estimates from ambiguity functions
     % The variance scaling is calculated from the integration time here
     % In fact, it should be based on the loop counter value stored to the data dump
-    Int_time=(d_time(2,3:6)-d_time(1,3:6))*[24*3600;3600;60;1];
-    if Int_time<0, Int_time=Int_time+24*3600; end
+    Int_time=diff(tosecs(d_time));
     Var_scale=(p_rep*p_dtau*1e-6/Int_time);
+    if Var_scale>1, Var_scale=1; end
 
     lpgbac=lpg_bac(diff_val(lpg_cal(lpgs)));
     ind=find(lpg_lag(lpgbac)==0);

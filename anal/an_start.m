@@ -85,6 +85,9 @@ while ~EOF
     if d_rcprog~=old_rcprog | any(old_point~=[ch_el(1) ch_az(1)])
       radar_eq(Ant_eff)	% calculates the radar constant      
     end
+    if a_control(4)==1 & exist('N_averaged') & N_averaged<6
+      var_prof(N_averaged,6)
+    end
     chk_par2
     old_point=[ch_el(1) ch_az(1)];
     old_rcprog=d_rcprog;

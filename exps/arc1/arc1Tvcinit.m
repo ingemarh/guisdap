@@ -1,5 +1,5 @@
 % Complete virtual channel definitions
-N_scan=128;
+N_scan=128*9;
 
 vc_ch=zeros(1,N_scan);
 vc_t1=zeros(1,N_scan);
