@@ -4,7 +4,16 @@ init=
 my="$HOME/gup/mygup"
 mflags="-nojvm -nosplash"
 usage="Usage: guisdap [-a] [-i] [-b] [-B script] [-x] [-t] [-m path] [-g file]"
-matlab="matlab"
+if [ -z "$matlab" ]
+then
+	matlab="matlab"
+fi
+if `$matlab -n | grep "sourced from directory" | grep matlab6`
+then
+	MEXD=mex6
+else
+	MEXD=mex7
+fi
 mex=
 
 TMP=$HOME/tmp
@@ -29,15 +38,10 @@ GUP=`dirname $filename`
 GUP=`dirname $GUP`
 #echo $GUP
 
-if [ -d $GUP/mex7 ]; then
-	mex=$GUP/mex7:
-	if [ -d $GUP/NW/mex7 ]; then
-		mex=$mex$GUP/NW/mex7:
-	fi
-elif [ -d $GUP/mex6 ]; then
-	mex=$GUP/mex6:
-	if [ -d $GUP/NW/mex6 ]; then
-		mex=$mex$GUP/NW/mex6:
+if [ -d $GUP/$MEXD ]; then
+	mex=$GUP/$MEXD:
+	if [ -d $GUP/NW/$MEXD ]; then
+		mex=$mex$GUP/NW/$MEXD:
 	fi
 fi
 
