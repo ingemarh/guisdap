@@ -24,7 +24,7 @@ global a_NCAR a_save a_code a_intfixed a_intallow a_savespec a_txpower
 global a_year a_start a_integr a_integdeffile a_skip a_end a_realtime a_txlim
 global di_figures di_results
 global name_ant calTemp
-global webfile a_autodir, webfile=cell(1);
+global webfile local a_autodir, webfile=cell(1);
 
 global lpg_womscaled k_radar
 
