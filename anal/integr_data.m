@@ -42,7 +42,7 @@ if a_integr==0, a_interval(2)=a_end;
 elseif a_interval(2)>=a_end; EOF=1; end
 if a_realtime
   if d_filelist(end)<a_interval(1)
-    [EOF,jj]=update_filelist(EOF,jj)
+    [EOF,jj]=update_filelist(EOF,jj);
     if EOF, return, end
   end
 elseif d_filelist(end)<a_interval(1)
@@ -175,7 +175,7 @@ while i<length(files)
   end
   prev_parbl=d_parbl; % update previous parameter block
   if a_realtime & file==d_filelist(end)
-    [EOF,jj]=update_filelist(EOF,jj)
+    [EOF,jj]=update_filelist(EOF,jj);
     if EOF, break, end
     files=d_filelist(find(d_filelist>a_interval(1) & d_filelist<=a_interval(2)));
   end

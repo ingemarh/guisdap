@@ -451,14 +451,25 @@ end
 return
 
 function setup_axes(yscale,YTitle)
-global axs height n_tot Time START_TIME END_TIME add_plot
+global axs height n_tot Time START_TIME END_TIME add_plot xticks
 axs=[axs axes('Position',[.12 .06+(n_tot-add_plot)*sum(height) .7 height(1)])];
 set(gca,'xgrid','on','ygrid','on')
 set(gca,'XLim',[datenum(START_TIME) datenum(END_TIME)])
 tickform='HH:MM'; td=datenum(END_TIME)-datenum(START_TIME);
 if td>7, tickform='dd/mm';
 elseif td<.003, tickform='HH:MM:SS'; end
-datetick(gca,'x',tickform,'keeplimits')
+if length(axs)==1
+ fs=get(gca,'fontsize');
+ if strcmp(computer,'SOL2') & ~(prod(get(0,'ScreenSize'))-1)
+  set(gca,'fontsize',fs/12.429) % Matlab bug...
+ end
+ datetick(gca,'x',tickform,'keeplimits')
+ xticks=get(gca,'xtick');
+ set(gca,'fontsize',fs)
+end
+set(gca,'xtick',xticks)
+datetick(gca,'x',tickform,'keeplimits','keepticks')
+
 if ~isempty(yscale)
  set(gca,'YLim',yscale)
 end
