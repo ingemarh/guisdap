@@ -12,7 +12,7 @@ if nargin<2, status=[]; end
 if isempty(status), status=0; end
 
 if ~isdir(data_path)
-  [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path,1);
+  [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path);
   return
 end
 data_path=fullfile(data_path,filesep);

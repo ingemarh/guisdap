@@ -7,16 +7,16 @@ function [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path,fileno)
 % rpar2D [Ran,Alt,Ne]
 
 global name_expr r_RECloc name_ant
-ask=0;
+ask=0; wget=1;
 Time=[]; par2D=[]; par1D=[]; rpar2D=[];
 if nargin<2, fileno=[]; end
 if isempty(fileno), ask=1; fileno=1; end
 
+wget=unix('which curl >/dev/null 2>/dev/null');
 website='http://www.eiscat.se/madrigal/';
 of=tempname;
 ws=['''' website 'experiments/' data_path '/expTab.txt'''];
-%if unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
-if unix(['wget -O ' of ' ' ws ' 2>/dev/null'])
+if (wget & unix(['wget -O ' of ' ' ws ' 2>/dev/null'])) | unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
  return
 end
 [name_expr,kinst]=textread(of,'%*s%*s%s%*s%*s%*s%*s%*s%d%*[^\n]','delimiter',',');
@@ -25,8 +25,7 @@ name_expr=char(name_expr);
 name_expr(strfind(name_expr,'_'))=[];
 name_expr(strfind(name_expr,' '))=[];
 ws=['''' website 'experiments/' data_path '/fileTab.txt'''];
-%if unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
-if unix(['wget -O ' of ' ' ws ' 2>/dev/null'])
+if (wget & unix(['wget -O ' of ' ' ws ' 2>/dev/null'])) | unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
  return
 end
 filename=textread(of,'%s%*[^\n]','delimiter',',');
@@ -57,8 +56,7 @@ for i=fliplr(find(arg=='&' | arg==' '))
 end
 ws=['''' website 'cgi-bin/madDataDisplay'''];
 
-%if unix(['curl -d ' arg ' -o ' of ' -f ' ws ' 2>/dev/null'])
-if unix(['wget --post-data=' arg ' -O ' of ' ' ws ' 2>/dev/null'])
+if (wget & unix(['wget --post-data=' arg ' -O ' of ' ' ws ' 2>/dev/null'])) | unix(['curl -d ' arg ' -o ' of ' -f ' ws ' 2>/dev/null'])
  return
 end
 data=textread(of,'','headerlines',8);
