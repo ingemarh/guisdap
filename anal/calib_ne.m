@@ -19,7 +19,7 @@ end
 if isempty(maxe), maxe=1; end
 if isempty(minel), minel=75; end
 a=vizu('verbose',alt,'P1 AE');
-global Time axs par1D DATA_PATH START_TIME END_TIME
+global Time axs par1D DATA_PATH START_TIME END_TIME r_Magic_const
 d=datevec(Time(1));
 [dd,fo]=get_fo(d(1),d(2));
 t=[]; f=[];
@@ -42,7 +42,7 @@ end
 if ~isempty(t)
  fgup=fullfile(DATA_PATH,'.gup');
  Magic_const=1;
- if exist('r_Magic_const')
+ if ~isempty('r_Magic_const')
   Magic_const=r_Magic_const;
  elseif exist(fgup)
   load(fgup,'-mat')

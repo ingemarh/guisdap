@@ -83,7 +83,7 @@ while i<length(files)
   end
   az=10; el=9;                 % parameters for antenna pointing
   averaged=[8:10 42 63 65];    % parameters which are averaged
-  accumulated=[7 64];          % parameters which are accumulated
+  accumulated=[7 22 64];       % parameters which are accumulated
   inttime=7;                   % parameter that holds integration time
   txpower=8;                   % parameter that holds transmitter power
   vhf=lpb>40 & d_parbl(41)==3; % vhf antenna?
@@ -142,7 +142,7 @@ while i<length(files)
 
   secs=secs1;
   if secs<file.file | file.file-secs>=1 | year~=a_year
-    disp('Filename conflicts with file contents or years do not match')
+    fprintf('Filename %08d conflicts with time inside file: %d %08d\n',file.file,year,secs)
   end
 
   if isreal(d_data) % change to complex

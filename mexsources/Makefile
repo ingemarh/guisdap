@@ -1,7 +1,4 @@
 sys=$(shell uname -s)
-ifndef MATLAB
-MATLAB:=	/opt/matlab7
-endif
 ifndef MEX
 MEX:=	mex
 endif
@@ -10,6 +7,9 @@ MEXD:=	mex7
 endif
 ifeq ($(sys),SunOS)
 #Solaris:
+ifndef MATLAB
+MATLAB:=	/opt/matlab7
+endif
 CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include
 MEXOPTS=-f $(MATLAB)/bin/f90opts.sh
 LDFLAGS= -dy -G -h libguisdap.so -z text

@@ -6,12 +6,12 @@ function [Time,par2D,par1D,rpar2D]=load_param(data_path,status,update)
 % par1D [Az,El,Pt,Tsys,Oppd]
 % rpar2D[Ran,Alt,RawNe]
 
-global lastfile name_expr r_RECloc name_ant
+global lastfile name_expr r_RECloc name_ant r_Magic_const
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
 if isempty(status), status=0; end
 
-if ~isdir(data_path)
+if isempty(strfind(data_path,'*')) & ~isdir(data_path)
   [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path);
   return
 end

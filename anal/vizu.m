@@ -411,7 +411,13 @@ if option(14)
   surf_plot(s,y_param(GATES,:),lf,PLF_SCALE,Yscale,YTitle,'Plasma line frequency (MHz)',[])
  end
  if option(14)>1
-  lf=findpeak(s,y_param(GATES,:),Yscale,lf,16,PLF_SCALE,'Cutoff plasma line frequency (MHz)',fix(option(14)/2)-1);
+  lf=find_plf_peak(s,y_param(GATES,:),Yscale,lf,16,PLF_SCALE,fix(option(14)/2)-1);
+  if fix(option(14)/2)-1
+   surf_plot(s,lf{2}'*ones(1,s),lf{3},[0 max(max(lf{3}))],PLF_SCALE,'Plasma line spectrum (MHz)','Power (any unit)',[])
+  else
+   d=many(lf,PLF_SCALE);
+   line_plot(s,lf,d,'Cutoff plasma line frequency (MHz)',[],[])
+  end
  end
 end
 if option(16)
@@ -420,7 +426,9 @@ if option(16)
   surf_plot(s,y_param(GATES,:),pf,PLF_SCALE,Yscale,YTitle,'Plasma frequency (MHz)',[])
  end
  if option(16)>1
-  pf=findpeak(s,y_param(GATES,:),Yscale,pf,5,PLF_SCALE,'Cutoff plasma frequency (MHz)',0);
+  pf=find_plf_peak(s,y_param(GATES,:),Yscale,pf,5,PLF_SCALE,0);
+  d=many(pf,PLF_SCALE);
+  line_plot(s,pf,d,'Cutoff plasma frequency (MHz)',[],[])
  end
 end
 if option(15)
@@ -598,50 +606,4 @@ if llx>p(1) & p(1)>0 & x(p(1))<l(1)
 end
 if llx>p(2) & p(2)>0 & x(p(2))>l(2)
  l(2)=x(p(2));
-end
-
-function peak=findpeak(s,h,hlim,p,npoly,zscale,ztitl,fft)
-if fft
- %100 kHz, 1km resolution fast but need correction sometimes
- df=.1; lf=round(diff(zscale/df)); freqs=(0:lf-1)/(lf-1)*diff(zscale)+zscale(1);
- df=1/(lf-1)*diff(zscale);
- lf=length(freqs); freq=zeros(length(freqs),s);
- hf=hlim(1):hlim(2); lh=length(hf);
- fmat=zeros(lf,lh); fpow=(hlim(1)./hf).^2;	%take r^2 effect into account
- hf=log(hf); peak=ones(s,2)*NaN;
-else
- peak=ones(s,1)*NaN;
-end
-loghl=log(hlim);
-for i=1:s
- d=find(h(:,i)>hlim(1) & h(:,i)<hlim(2) & isfinite(p(:,i)));
- npol=min(npoly,round(length(d)/2)-1);
- if npol>1
-  logh=log(h(d,i));		%log(h) to reduce noisy high alt
-  [poly,S,mu]=polyfit(logh,p(d,i),npol);
-  %dum=gcf;figure(9),plot(h(d,i),p(d,i),h(d,i),polyval(poly,logh,[],mu),exp(hf),polyval(poly,hf,[],mu)),pause,figure(dum)
-  dpoly=polyder(poly); j=roots(dpoly); hl=(loghl-mu(1))/mu(2);
-  ddpoly=polyder(dpoly);
-  d=find(~imag(j) & j>hl(1) & j<hl(2) & polyval(ddpoly,j)<0);
-  if ~isempty(d)
-   peak(i)=max(polyval(poly,j(d)));	%find cutoff
-  end
-  if fft
-   f=round((polyval(poly,hf,[],mu)-zscale(1))/diff(zscale)*(lf-1));
-   d=find(f>-1 & f<lf & hf>logh(1) & hf<logh(end)); f=f+(0:lh-1)*lf+1;
-   fmat(f(d))=fpow(d);		%"plot" into matrix
-   freq(:,i)=sum(fmat,2);	%integrate along height
-   fmat(f(d))=0;		%reset "plot window"
-   [d,j]=max(freq(:,i)); peak(i,2)=freqs(j);	%find strongest line
-   %dum=gcf;figure(9),hold on,plot(freqs,freq(:,i)),figure(dum)
-  end
- end
-end
-
-if fft
- surf_plot(s,freqs'*ones(1,s),freq,[0 max(max(freq))],zscale,'Plasma line spectrum (MHz)','Power (any unit)',[])
- peak={peak freqs freq};
-else
- d=many(peak,zscale);
- line_plot(s,peak,d,ztitl,[],[])
 end
