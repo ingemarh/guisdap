@@ -32,7 +32,7 @@ end
 % Calculate electron density estimates from zero lags, if available.
 ind=find(lpg_bcs=='s' & lpg_lag==0);
 if ~isempty(a_code)
-  ind=find(ismember(lpg_code(ind),a_code));
+  ind=ind(find(ismember(lpg_code(ind),unique(a_code))));
 end
 if length(ind)>0,
   [pp_profile,pp_range,pp_sigma]=power_prof(lpg_addr(ind)',0);

@@ -24,6 +24,7 @@ elseif name_site=='V'
       hv=max(roots(sum(polhv)));
       ch_Pt=polyval(polhv(a_code,:),hv)*1000;
       [ch_el ch_az ch_gain]=vhf_elaz(ch_el(a_code),12*(a_code-1),10^4.31/2);
+      name_ant=['vhf' 96+a_code];
     else
       [ch_el ch_az ch_gain]=vhf_elaz(ch_el,0,10^4.31/2);
     end

@@ -103,7 +103,7 @@ while ~EOF
     if any(a_simul)
       simul_dump
     else
-      scale_data   
+      scale_data
     end
 
 %**************************************************************************

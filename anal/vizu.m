@@ -220,7 +220,7 @@ if strcmpi(name_ant,'32m') | strcmpi(name_ant,'42m')
 elseif strcmpi(name_ant,'uhf') | strcmpi(name_ant,'kir') | strcmpi(name_ant,'sod')
  FIGURE_TITLE	='EISCAT UHF RADAR';
  fradar=930e6;
-elseif strcmpi(name_ant,'vhf')
+elseif strcmpi(name_ant(1:3),'vhf')
  FIGURE_TITLE	='EISCAT VHF RADAR';
  fradar=224e6;
 end

@@ -19,12 +19,15 @@
 function scale_data
 
 global lpg_ra lpg_ND lpg_cal lpg_bac lpg_T lpg_bcs d_data d_var1 ...
-    d_var2 ADDR_SHIFT calTemp sysTemp
+    d_var2 ADDR_SHIFT calTemp sysTemp a_code lpg_code
 
 %*************** SCALING BY CORRELATOR ALGORITHM FACTORS *****************
 data=d_data;
 d_data=ones(size(data))*NaN;
 lpgs=find(lpg_bcs~='g');% handle all but garbage groups
+if ~isempty(a_code)
+  lpgs=lpgs(find(ismember(lpg_code(lpgs),unique(a_code))));
+end
 for lpg=lpgs
   addr=lpg_addr(lpg);    % result memory addresses for lpg
   addr=addr+ADDR_SHIFT; % To change from radar to Matlab addressing
