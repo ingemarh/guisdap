@@ -112,7 +112,7 @@ dat_m=[]; x0=[];
 
 %calculate diff of profile normalised with std
 S_c=dat/sqrt(N);
-S_c(1:nbigsig)=1e2*S_c(1:nbigsig);
+S_c(1:nbigsig)=1e3*S_c(1:nbigsig);
 mS_c=mean([S_c(1:(end-1)) S_c(2:end)],2);
 dat_s=diff(dat)./mS_c;
 
