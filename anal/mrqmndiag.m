@@ -40,7 +40,8 @@ function [aa,chi2,its,alpha]=mrqmndiag(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_w
   end
   its=0;
   % fit logs
-  ag=1:4; as=5; aa(ag)=log(aa(ag)); aa(as)=asinh(aa(as)/2); %log!
+  ag=1:4; as=[5 (1:2)+4+length(p_m0)];
+  aa(ag)=log(aa(ag)); aa(as)=asinh(aa(as)/2); %log!
   physlim(:,ag)=log(physlim(:,ag)); physlim(:,as)=asinh(physlim(:,as)/2); %log!
 % [aa;variance((end-length(a)+1):end)']
   while its<itmax

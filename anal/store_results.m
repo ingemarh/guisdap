@@ -24,7 +24,8 @@ height=range_to_height(r_range(r_ind),ch_el(1));
 %if status==3 & ~any(physlim(result-err(1:lr),p_m0)) & ~any(physlim(result+err(1:lr),p_m0))
 %  status=0;
 %end
-if p_m0(1)==16, comp=1-sum(result(6:end));
+nion=length(p_m0);
+if p_m0(1)==16, comp=1-sum(result(5+(1:nion-1)));
 else comp=result(find(p_m0==16)+4);
 end
 if isempty(comp), comp=0; end
@@ -41,6 +42,7 @@ if di_results | isempty(r_h)
  fprintf(' %4.1f:%4.1f',res(4)/1e3,er(4)/1e3)
  fprintf(' %4.0f:%3.0f',res(5),er(5))
  fprintf(' %4.2f %5.2f',comp,chi2)
+ fprintf(' %.2f',result(4+nion+find(er(5+nion:lr)~=0)))
  if status==0, str='OK';
  elseif status==1, str='Max iter';
  elseif status==2, str='No fit';
@@ -48,7 +50,7 @@ if di_results | isempty(r_h)
  elseif status==3, str='Fail';
  end
 %fprintf(' %d',len)
- fprintf(' %3s\n',str)
+ fprintf(' %s\n',str)
 end
 
 % Store results to result variables
@@ -114,7 +116,7 @@ if di_figures(3) | name_site=='K' | name_site=='S'
     if all(~isnan(axlim))
       axis(axlim);
     end
-    XTickLabel=['N';'T';'r';'c';'v';'p';'p'];
+    XTickLabel=['N';'T';'r';'c';'v';'p';'p';'B';'D'];
     set(gca,'Xtick',indp,'XTickLabel',XTickLabel(indp))
     title('parameters')
     drawnow

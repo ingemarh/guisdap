@@ -125,35 +125,31 @@ void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acf
 
 	/* Copy matrix AA_IN into p and then use p */
 	
-	nin0Pr = scr1;
-	tit0Pr = nin0Pr+ns*(nion+1);
-	mim0Pr = tit0Pr+ns*(nion+1);
-	psiPr = mim0Pr+ns*(nion+1);
-	viPr = psiPr+ns*(nion+1);
-	specPr = viPr+ns*(nion+1);
-	pPr = specPr+nom*ns;
+	nin0Pr=scr1;
+	tit0Pr=nin0Pr+ns*(nion+1);
+	mim0Pr=tit0Pr+ns*(nion+1);
+	psiPr=mim0Pr+ns*(nion+1);
+	viPr=psiPr+ns*(nion+1);
+	specPr=viPr+ns*(nion+1);
+	pPr=specPr+nom*ns;
 	for(i=0;i<(aaN*ns);i++)
-		pPr[i] = aaPr[i];
+		pPr[i]=aaPr[i];
 	
 	pPr[3]=pPr[3]/sqrt(pPr[1]);
 
 	Transf(pPr,nin0Pr,tit0Pr,mim0Pr,psiPr,viPr,p_m0,nion);
         specCalc(pldfvPr,pldfvPi,nin0Pr,tit0Pr,nion,mim0Pr,psiPr,viPr,kd2Pr[0],scr,nom,omPr,specPr,use_reference);
+	/*add clutter signal*/
+	for(i=0;i<nom;i++) {
+		specPr[i]+=pPr[4+nion]; /*Broadband*/
+		if(omPr[i]==0) specPr[i]+=pPr[5+nion]; /*DC spike*/
+	}
 	/*acf=[p_coeffg.*(f_womega*s);col(aa)];*/
 	
 #ifdef ESSL
 	long acfN = 1;
 	dgemul(womPr,womM,"N",specPr,nom,"N",acfPr,womM,womM,nom,acfN);
 /* Ambiguity fuction is already multiplied by the coefficients, so we don't have to do that any more here!*/
-	acf_ptr = acfPr;coeffg_ptr = coefPr;
-	for(i=0;i<womM;i++)
-	  {
-	    (*acf_ptr) *= (*coeffg_ptr);
-	    acf_ptr++;coeffg_ptr++;
-	  }
-	for(i=0;i<aaN;i++)
-	  acfPr[i+womM]= aaPr[i];
-
 #else	
 /*	for(i=0;i<womM;i++)
 		{
@@ -171,11 +167,11 @@ void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acf
 		
 	mymul('N',womPr,womM,nom,'N',specPr,nom,1,acfPr);
 /* Ambiguity fuction is already multiplied by the coefficients, so we don't have to do that any more here!*/
+#endif
 	acf_ptr = acfPr;coeffg_ptr = coefPr;
 	for(i=0;i<womM;i++,acf_ptr++,coeffg_ptr++)
 	    (*acf_ptr) *= (*coeffg_ptr);
 	for(i=0;i<aaN;i++)
 	  acfPr[i+womM]= aaPr[i];
 
-#endif	
       }

@@ -83,7 +83,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 
 	unsigned long *varOK,nvarOK,*afree,nafree,nth=1;
 	double *tempAlpha,*plim;
-	unsigned long nag=4,ag[]={0,1,2,3},nas=1,as[]={4};
+	unsigned long nag=4,ag[]={0,1,2,3},nas=3,as[]={4,0,0};
 	struct pth pth;
 
 #ifdef THTIME
@@ -95,6 +95,8 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
   	start1=gethrtime();
 #endif
 
+	for(i=1;i<3;i++)
+		as[i]=3+nion+i;
 /* Get the max number of iterations from the matrix */
 
 	itMax=(long)itMaxPr[0];

@@ -35,7 +35,9 @@ while [ -h $filename ]; do
 	fi
 done
 GUP=`dirname $filename`
+if [ $GUP = . ];then GUP=$PWD; fi
 GUP=`dirname $GUP`
+if [ $GUP = . ];then GUP=$PWD; fi
 #echo $GUP
 
 if [ -d $GUP/$MEXD ]; then

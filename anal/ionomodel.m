@@ -24,7 +24,8 @@ if isempty(iono_model), iono_model='giveme'; end
 if isempty(ionomodel_first)
  ionomodel_first=0; modinfo=1;
 end
-if any([7 5]-size(fit_altitude)>0)
+nion=length(p_m0);
+if any([6+nion 5]-size(fit_altitude)>0)
  ff=fit_altitude;
  % Altitudes (h2>h1) where to fit each parameter resp
  % Strucure: h1 h2 hd(transition height) maxerr minerr relerr(relative or static errors)
@@ -33,8 +34,9 @@ if any([7 5]-size(fit_altitude)>0)
              107 1500 0 1e1 0
               90  107 0 1e2 1
                0  Inf 0 1e5 0
-               0    0 0   1 0
-               0    0 0   1 0];
+       repmat([0    0 0   1 0],nion-1,1)
+               0    0 0 1e5 0
+               0    0 0 9e9 0];
  if name_site=='L'
   fit_altitude(2:4,1:2)=[90 Inf;113 1500;0 0];
  elseif name_site=='V'
@@ -54,8 +56,7 @@ heights=max(heights,altitude(1));
 heights=min(heights,altitude(end));
 
 
-nion=length(p_m0);
-apriori=ones(len,4+nion);
+apriori=ones(len,6+nion);
 % Electron density
 apriori(:,1)=exp(inter3(heights2,altitude,log(ne)))';
 
@@ -70,6 +71,9 @@ apriori(:,4)=exp(inter3(heights2,altitude,log(coll)))';
  
 % Ion velocity
 apriori(:,5)=zeros(len,1);
+
+% Clutters
+apriori(:,(1:2)+4+nion)=zeros(len,2);
 
 % Ion composition
 if nion==3 & sum(p_m0-[16 1 30.5])==0
