@@ -28,7 +28,7 @@ global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control
 global d_saveintdir
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_satch
-global a_antold a_maxgap secs a_intfixed a_intallow a_posold fileslist
+global a_antold a_maxgap secs a_intfixed a_intallow a_posold a_nnold fileslist
  
 OK=0; EOF=0; jj=0; N_averaged=0;
 d_ExpInfo=[]; d_raw=[]; txdown=0;
@@ -89,9 +89,10 @@ while i<length(files)
   inttime=7;                   % parameter that holds integration time
   txpower=8;                   % parameter that holds transmitter power
   vhf=lpb>40 & d_parbl(41)==3; % vhf antenna?
-  positive=[9 10 42 63 65];    % parameters which are positive
+  positive=[8 65];             % parameters which are positive
+  non_negative=[9 42 63];      % parameters which are positive
   if vhf
-   positive=[8:10 42 63 65];
+   non_negative=[9 10 42 63];
   end
   % do not work on unavailable parameters
   averaged(find(averaged>lpb))=[];
@@ -99,6 +100,7 @@ while i<length(files)
   fixed(find(fixed>lpb))=[];
   accumulated(find(accumulated>lpb))=[];
   positive(find(positive>lpb))=[];
+  non_negative(find(non_negative>lpb))=[];
 
   [secs1,year]=tosecs(d_parbl(tvec));
   a_inttime=d_parbl(inttime);
@@ -107,6 +109,11 @@ while i<length(files)
    d_parbl(positive(d))=a_posold(d);
   end
   a_posold=d_parbl(positive);
+  d=find(d_parbl(non_negative)<=0);
+  if ~isempty(a_nnold) & ~isempty(d)
+   d_parbl(non_negative(d))=a_nnold(d);
+  end
+  a_nnold=d_parbl(non_negative);
   a_ant=d_parbl([el az]);
   a_tx=d_parbl(txpower);
   if a_integr<=0
@@ -230,7 +237,7 @@ global di_figures data_path b d_filelist
 j=0;
 a_max_rtwait=300; mrw=round(sqrt(a_max_rtwait));
 if ~jj
-  if di_figures(5)
+  if length(di_figures)>4 & di_figures(5)
     try, vizu rtgup; catch, rethrow(lasterror), end
   end
   jj=1; send_www

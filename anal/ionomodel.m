@@ -124,7 +124,9 @@ if nargout>1
   end
   apriori(:,6)=comp_model(heights2,Ne210);
  end
- d=find(ne_from_pp~=0); apriori(d,1)=ne_from_pp(d);
+ if ionomodel_control~=1
+  d=find(ne_from_pp~=0); apriori(d,1)=ne_from_pp(d);
+ end
 
  apriorierror=ones(size(apriori));
  for par=1:size(apriori,2)

@@ -87,11 +87,7 @@ for g_ind=1:length(a_adstart)
   r_range(r_ind)=sum(ad_range(addr+ADDR_SHIFT)./diag_var(reind)')/sum(1 ./diag_var(reind));
 
   ch=1;  kd2=k_radar(ch)^2*p_D0^2; Fscale=k_radar0(ch)/k_radar(ch); % hyi hyi
-  if any(afree==nion+6)
-    small_f_womega=f_womega; small_p_om=p_om;
-  else
-    [small_f_womega,small_p_om]=find_om_grid(aa,f_womega,kd2,Fscale*p_om,pldfvv);
-  end
+  [small_f_womega,small_p_om]=find_om_grid(aa,f_womega,kd2,Fscale*p_om,pldfvv,any(afree==nion+6));
 
   errorlim=a_control(1); status=0;
   if errorlim>0 & errorlim<10000 % To prevent unnecessary error estimation

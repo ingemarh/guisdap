@@ -10,7 +10,7 @@
 % See also: half_prof
 %
 % function [womega,om]=find_om_grid(p,f_womega,kd2,p_om,pldfvv)
-function [womega,om]=find_om_grid(p,f_womega,kd2,p_om,pldfvv)
+function [womega,new_om]=find_om_grid(p,f_womega,kd2,p_om,pldfvv,nostep)
 
 global p_m0
 
@@ -19,30 +19,29 @@ s=spec(nin0,tit0,mim0,psi,vi,kd2,p_om,pldfvv);
 [M,N]=size(f_womega);
 N=floor(N/2)+1;
 
-len=length(p_om);
-dom=0.5*[p_om(2)-p_om(1); p_om(3:len)-p_om(1:len-2); p_om(len)-p_om(len-1)];
-theoref=f_womega*(s.*dom);
-
+lenp=length(p_om);
 start=1;
 istep=1;
 ii=[];
-for i=2:(len-1)/2
-  tii=(len-1)/i;
-  if tii==fix(tii), ii=[ii i]; end
+if ~nostep
+  for i=2:(lenp-1)/2
+    tii=(lenp-1)/i;
+    if tii==fix(tii), ii=[ii i]; end
+  end
 end
-%for i=[2:6 8:2:20 40]
-for i=ii
-  ind=N:i:length(p_om)-start+1;
-  ind=[fliplr(N-i:-i:start) ind];
+for i=[1 ii]
+  ind=[fliplr(N-i:-i:start) N:i:lenp-start+1];
   om=p_om(ind); len=length(om);
   dom=0.5*[om(2)-om(1);om(3:len)-om(1:len-2);om(len)-om(len-1)];
   theo=f_womega(:,ind)*(s(ind).*dom);
-  err=max(abs(theoref-theo))/max(abs(theo));
-% fprintf(' step %.0f, error %.4f\n',i, err);
-  if err>1.5e-3, break, end
-  istep=i;
+  if i==1
+    theoref=theo;
+  else
+    err=max(abs(theoref-theo))/max(abs(theo));
+%   fprintf(' step %.0f, error %.4f\n',i, err);
+    if err>1.5e-3, break, end
+  end
+  istep=i; new_om=om; new_ind=ind; new_dom=dom';
 end
 %if istep>1, fprintf(' Using a coarser frequency axis, one of every %d point used\n',istep), end
-om=p_om(ind); len=length(om);
-dom=0.5*[om(2)-om(1);om(3:len)-om(1:len-2);om(len)-om(len-1)]';
-womega=f_womega(:,ind).*dom(ones(M,1),:);
+womega=f_womega(:,new_ind).*new_dom(ones(M,1),:);

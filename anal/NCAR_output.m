@@ -35,7 +35,19 @@ end
 
 load(matfile)
 % set up absent data value
-AbsentData		=-32767;
+AbsentData=-32767;
+
+KINDAT=6000; mvel=580;
+switch name_site
+  case 'L', KINST=95; % EISCAT Svalbard Radar
+            KINDAT=6800;
+  case 'K', KINST=71; mvel=590; % EISCAT Kiruna UHF
+  case 'T', KINST=72; % EISCAT Tromso UHF
+  case 'S', KINST=73; mvel=590; % EISCAT Sodankyla UHF
+  case 'V', KINST=74; % EISCAT Tromso VHF
+  otherwise, KINST=AbsentData;
+             KINDAT=AbsentData;
+end
 
 % set up NCAR single-valued parameters
 %spar=[Azimuth,Elevation,Scattering_half_angle,System_temperature,...
@@ -46,20 +58,9 @@ sparcod=[130 140 190 482 486];
 %mvarcod=[Altitude(km),Alt(dm),Status,Resid,O+/Ne,...
 %       Log10_Ne,Ti,TeTi,CollFreq,Vi,...
 %     errors...				];
-mvarcod=[110 111 430 420 620 520  550  570  720  580,...
-                            -520 -550 -570 -720 -580];
+mvarcod=[110 111 430 420 620 520  550  570  720 mvel,...
+                            -520 -550 -570 -720 -mvel];
 
-KINDAT	=6000;
-switch name_site
-  case 'L', KINST=95;	% EISCAT Svalbard Radar
-            KINDAT=6800;
-  case 'K', KINST=71;	% EISCAT Kiruna UHF
-  case 'T', KINST=72;	% EISCAT Tromso UHF
-  case 'S', KINST=73;	% EISCAT Sodankyla UHF
-  case 'V', KINST=74;	% EISCAT Tromso VHF
-  otherwise, KINST=AbsentData;
-             KINDAT=AbsentData;
-end
 
 LPROL=16;		% length of prologue
 JPAR =length(sparcod);	% # single-valued parameters

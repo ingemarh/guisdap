@@ -6,10 +6,11 @@ function [Time,par2D,par1D,rpar2D]=load_param(data_path,status,update)
 % par1D [Az,El,Pt,Tsys,Oppd]
 % rpar2D[Ran,Alt,RawNe]
 
-global lastfile name_expr r_RECloc name_ant r_Magic_const
+global lastfile name_expr r_RECloc name_ant r_Magic_const myparams
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
 if isempty(status), status=0; end
+if isempty(myparams), myparams=[1 2 4]; end
 
 if isempty(strfind(data_path,'*')) & ~isdir(data_path)
   [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path);
@@ -62,11 +63,11 @@ for i=1:n_tot
     n_alt=nalt;
   end
   n=1:nalt;
-  d=find(r_status>status); [d1,d2]=find(r_error(d,1:5)>0);
+  d=find(r_status>status); [d1,d2]=find(r_error(d,1:size(r_param,2))>0);
   r_param(d(d1),d2)=NaN;
 % r_param=r_apriori;
   par2D(n,i,[1 2 8 9])=[r_range(:,1) r_h(:,1) r_dp(:,1) r_res(:,1)];
-  par2D(n,i,[3 5 7])=r_param(:,[1 2 4]);
+  par2D(n,i,[3 5 7])=r_param(:,myparams);
   par2D(n,i,[4 6])=[r_param(:,2).*r_param(:,3) -r_param(:,5)];
   Time(:,i)	=datenum(r_time);
   par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]; %10 kW
