@@ -337,7 +337,8 @@ for i=[3 7 9]
  end
 end
 if option(12)
- line_plot(s,reshape(par2D(GATES,:,4:5),[],2),[],'Temperatures (K)',{'Electron' 'Ion'},[])
+ d=many(par2D(GATES,:,4:5),[0 2000],1);
+ line_plot(s,reshape(par2D(GATES,:,4:5),[],2),d,Temperatures (K)',{'Electron' 'Ion'},[])
 end
 for i=[4 5 8]
  if option(i)
@@ -346,7 +347,8 @@ for i=[4 5 8]
 end
 if option(6)
  if length(GATES)==1
-  line_plot(s,par2D(GATES,:,6)',[],TITLE(6),{'positive away'},[])
+  d=many(par2D(GATES,:,6),[-100 100],1);
+  line_plot(s,par2D(GATES,:,6)',d,TITLE(6),{'positive away'},[])
  else
   surf_plot(s,y_param(GATES,:),par2D(GATES,:,6),SCALE(6,:),Yscale,YTitle,char(char(TITLE(6)),'         (away)'),[])
  end
@@ -361,13 +363,14 @@ end
 if option(11)
  ll=par1D(:,[3 1 2:2:end]);
  d=find(ll(:,3)<90.1 & ll(:,3)>89.9); ll(d,2)=NaN;
- d=[0 360]; if any(ll(:)>360), d=[0 min(max(ll(:)),500)]; end
+ d=many(ll,[0 360],1);
  line_plot(s,ll,d,'Radar parameters',TITLE1([3 1 2 4]),[])
 end
 if option(13)
  ll=[par1D(:,[3 2 1]) par2D(GATES,:,1)'];
  for i=1:s, ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
  if size(par1D,2)>3, ll=[ll par1D(:,4)]; end
+ d=many(ll,[0 200],1);
  line_plot(s,ll,[],'Radar parameters',[TITLE1(3) {'Latitude(\circN)','Longitude(\circE)'} TITLE(2) TITLE1(4)],[])
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -388,8 +391,9 @@ return
 %%%%% surf_plot function %%%%%%%%%%
 function surf_plot(s,yparam,zparam,zscale,yscale,YTitle,Barlabel,lg)
 
+zscale=many(zparam,zscale,5,lg);
 if size(zparam,1)==1
- line_plot(s,zparam',[],Barlabel,[],[]);
+ line_plot(s,zparam',zscale,Barlabel,[],[]);
  return
 end
 global Time axs axc add_plot
@@ -499,3 +503,21 @@ b=round([0:n-1]/(n-1)*(nl-1))+1;
 %f=sin(interp1(b,f(1:n,:),1:nl)*pi/2);
 f=tanh(interp1(b,f(1:n,:),1:nl))/tanh(1);
 return
+
+function l=many(x,l,p,lg)
+if nargin<3, p=1; end
+if nargin<4, lg=[]; end
+lx=sum(sum(isfinite(x))); p=p/100;
+if length(p)<2, p=ones(2,1)*p; end
+if strcmp(lg,'log')
+ x=log(x); l=log(l);
+end
+while length(find(x<l(1)))/lx>p(1)
+ l(1)=l(1)-diff(l)/10;
+end
+while length(find(x>l(2)))/lx>p(2)
+ l(2)=l(2)+diff(l)/10;
+end
+if strcmp(lg,'log')
+ l=exp(l);
+end
