@@ -214,11 +214,17 @@ if strcmp(lower(action),'verbose')
  end
  START_TIME=minput('Start time',START_TIME);
  END_TIME=minput('  End time',END_TIME);
- if length(GATES)>1
+ if ~isempty(a2)
+  SCALE(2,:)=a2;
+ elseif length(GATES)>1
   SCALE(2,:)=minput('Altitude scale',10*[floor(min(par2D(GATES(1),:,2))/10) ceil(max(par2D(GATES(end),:,2))/10)]);
  end
- disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Co Nr Lf L1 Ls Pf P1')
- WHICH_PARAM=minput('Choose',WHICH_PARAM,1);
+ if isempty(a3)
+  disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Co Nr Lf L1 Ls Pf P1')
+  WHICH_PARAM=minput('Choose',WHICH_PARAM,1);
+ else
+  WHICH_PARAM=a3;
+ end
 elseif ~REALT
  if strcmp(DATA_PATH(end),filesep)
   DATA_PATH=DATA_PATH(1:end-1);
