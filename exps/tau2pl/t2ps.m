@@ -9,6 +9,11 @@ p_offsetppd=0;
 ch_adcint=[12 12 10];
 ch_filter={'b42d180.fir' 'b42d180.fir' 'b25d150.fir'};
 ch_f=[13 14 4];
+if site=='R'
+ ch_adcint=[12 12];
+ ch_filter={'b42d180.fir' 'b42d180.fir'};
+ ch_f=[13 14];
+end
 for f=1:length(ch_f)
  td_ch(find(td_ch==ch_f(f)))=f;
 end
