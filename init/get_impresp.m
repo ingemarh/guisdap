@@ -14,11 +14,12 @@ function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot) %{
 %   (c) EISCAT Scientific Association
 %=========================================================================    
 
-    global name_site
-    if name_site=='L'
+    [a,b]=fileparts(firpar_file);
+    adc_rate=15;
+    if b(1)=='w'
         adc_rate=10;
-    else
-        adc_rate=15;
+    elseif b(1)~='b'
+        fprintf('Cannot tell ADC rate from fir file, setting %g MHz\n',adc_rate)
     end
     if nargin == 2
         do_plot = 0;
@@ -60,7 +61,7 @@ function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot) %{
     h2 = interp1(t_ddf,ddf,t_ip,'*cubic');
 
     if do_plot
-        getfigure('get_impresp','white');
+        %getfigure('get_impresp','white');
         t_hdf = (0:length(hdf)-1)/adc_rate;
         t_fir = h_dec*(0:length(fir)-1)/adc_rate;
         tlim = [0,t_ddf(end)];
