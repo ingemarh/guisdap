@@ -12,9 +12,16 @@ SHELL=/bin/sh
 filename=$0
 while [ -h $filename ]; do
 	lscmd=`ls -l $filename 2>/dev/null`
-	filename=`echo "$lscmd" | awk '{ print $NF }'`
+	f1=`echo "$lscmd" | awk '{ print $NF }'`
+	fp=`echo "$f1" | awk -F '' '{ print $1 }'`
+	if [ $fp != "/" ];then
+		filename=`dirname $filename`/$f1
+	else
+		filename=$f1
+	fi
 done
-GUP=`echo "$filename" | awk -F/ ' {for (i=2;i<NF-1;i++) printf("/%s",$i)} '`
+GUP=`dirname $filename`
+GUP=`dirname $GUP`
 #echo $GUP
 
 #mex=$GUP/mex6:$GUP/NW/mex6:
