@@ -95,10 +95,19 @@ Le=floor(3/C/.15/p_dtau);
 if Le>1
  wr=conv(wr,ones(Le,1)/Le);
 end
-d=find(wr>min_v);
-d=(d(1)-dt:d(end)+dt);
-wr=wr(d);
-wr_dt=decimate(wr,dt);
+d=find(wr>min_v); d1=d(1)-dt; d2=d(end)+dt; d=rem(d2-d1+1,dt);
+if d
+ if d<dt/2
+  d1=d1+fix(d/2); d2=d2-fix((d+1)/2);
+ else
+  d=dt-d;
+  d1=d1-fix((d+1)/2); d2=d2+fix(d/2);
+ end
+end
+while d2>length(wr)
+ d1=d1+fix(dt/2); d2=d2-fix((dt+1)/2);
+end
+wr_dt=mean(reshape(wr(d1:d2),dt,[]))';
 L=length(wr_dt);
 wr_diff=diff(wr_dt);
 
