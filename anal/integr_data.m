@@ -66,6 +66,7 @@ while i<length(files)
 
   lpb=length(d_parbl);
   if lpb==128
+    tvec=2:4;                     % parameters holding time 
     fixed=[1 5:90 92:93 127:128]; % parameters which are not allowed to change
     az=6; el=9; fac=10;           % parameters for antenna pointing
     averaged=[6 9 96:99];         % parameters which are averaged
@@ -73,6 +74,7 @@ while i<length(files)
     inttime=94;                   % parameter that holds integration time
     txpower=99; factx=1000;       % parameter that holds transmitter power
   else
+    tvec=1:6;
     fixed=[9:10 42];
     az=10; el=9; fac=1;
     averaged=[8:10 42 63];
@@ -85,11 +87,7 @@ while i<length(files)
   end
   allow=zeros(size(fixed')); allow(find(fixed==az | fixed==el))=.1*fac;
   d_parbl=col(d_parbl);
-  if length(d_parbl)==128
-    [secs1,year]=tosecs(d_parbl(2:4));
-  else
-    [secs1,year]=tosecs(d_parbl(1:6));
-  end
+  [secs1,year]=tosecs(d_parbl(tvec));
   a_inttime=d_parbl(inttime);
   a_ant=d_parbl([el az])/fac;
   a_tx=d_parbl(txpower)*factx;
@@ -106,14 +104,16 @@ while i<length(files)
     end
     tdiff=secs1-secs>a_maxgap;
     adiff=a_antold-a_ant;
-    a_antold=a_ant; secs=secs1;
+    a_antold=a_ant;
     if any(fix(adiff/.2)) | tdiff
       if a_ant(1)<89.8 | tdiff
         a_interval(2)=file;
         if tdiff & N_averaged>1
-          a_interval(2)=file-.5;
+          a_interval(2)=file-.5; a_antold=[];
         elseif N_averaged==0
-	  return
+	  secs=secs1; return
+        else
+	  secs=secs1;
         end
         d_parbl=prev_parbl;
         break

@@ -20,13 +20,14 @@
 % See also: CORR_alter, COR_check, COR_caltemp, COR_status, pulse_times, sample_times
 %
 %function COR_fraclp(ra,vc,type,N_gates,Nbits,bitsep,lags,code)
- function COR_fraclp(ra,vc,type,N_gates,Nbits,bitsep,lags,code)
+ function COR_fraclp(ra,vc,type,N_gates,Nbits,bitsep,lags,code,Sample_skip)
 
 global vc_adcint vc_sampling vc_samplingend vc_ba bm_samples bm_next vc_mf
 global lp_t1 lp_t2 lp_h lp_ra lp_nfir lp_fir lp_dec lp_T lp_dt p_dtau
 global lp_nt lp_vc lp_ri lp_bcs lp_code lp_ind lp_indold ra_next ra_prev
 
 if (type~='s'),  error(' Unknown data type in COR_fraclp'), end  
+if nargin<9, Sample_skip=0; end
 
 % Store the first result memory address (calling program might need it)
 ra_prev=ra;
@@ -88,7 +89,7 @@ pulsetimes=pulse_times(vc);
 am=env(vc,pulsetimes(1)+[0:(Nbits-1)]*bitsep+1)'; % 1 added to get +-1 as the result
 
 % Sampling start time
-fs_time=sample_times(vc,type2ind(type));
+fs_time=sample_times(vc,type2ind(type))+Sample_skip*adcint;
 
 index=lp_ind+1; % This is the lag profile number to be used next
 % Now we are ready to handle one lag profile at a time

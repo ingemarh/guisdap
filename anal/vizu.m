@@ -100,7 +100,7 @@ elseif strcmp(action,'print') | strcmp(action,'save')
   print(gcf,['-d' ext '2c'],[file '.' ext]);
   unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
   if strcmp(action,'print')
-    unix(['lp -dcolor ' file '.' ext ' >/dev/null 2>&1']);
+    unix(['lp -c -dcolor ' file '.' ext ' >/dev/null 2>&1']);
     delete([file '.' ext])
   else
     gd=fullfile(matlabroot,'sys','ghostscript',filesep);

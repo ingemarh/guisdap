@@ -65,7 +65,10 @@ while ~EOF
         [ch_el ch_az ch_gain]=vhf_elaz(ch_el,0,ch_gain); % assume boresight beam
         Ant_eff=.64;
       elseif name_site=='L' & ant_id==2
-        ch_gain=(42/32)^2*ch_gain;
+        %ch_gain=(42/32)^2*ch_gain;
+        %ch_gain=(42/32)^2*10^4.25;
+        ch_gain=10^4.52;
+        Ant_eff=.68;
       end
       if a_control(4)>=2, load_GUPvar, end  
       if any(a_simul), simulparblock; end

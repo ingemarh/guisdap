@@ -20,7 +20,7 @@ elseif isunix & a_realtime | strfind(dirpath,'?')
   cmd=sprintf('find %s -name %s %s-print >%s',dirpath(1:end-1),template,newer,d);
   if unix(cmd)
     msg=['Error listing mat files in ' dirpath ' ' cmd];
-  else
+  elseif exist(d)
     list=textread(d,['%*' num2str(length(dirpath)) 's%d.mat']);
   end
   delete(d)
