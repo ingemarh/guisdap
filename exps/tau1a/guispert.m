@@ -29,9 +29,31 @@ elseif isempty(a_code) | length(a_code)==2
  [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
 elseif length(a_code)==1 & a_code==2
  [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),12,10^4.31/2);
+ if (d_date>=datenum(2001,09,17,12,0,0) & d_date<=datenum(2001,09,20,15,0,0))
+  % 17-20 September 2001 - tau1v (really tau1a)
+  % during this period the uhf and vhf were run together in a pseudo-cp2 mode
+  % uhf was pointed az=90 el=75 i.e. east
+  % vhf beam 1 (west panel, cp4 boresight beam) was pointed az=360 (boresight) el 90 (vertical)
+  % vhf beam 2 (east panel, cp4 west beam) was pointed az=360 (boresight) el 75 (north)
+     [ch_el ch_az ch_gain]=vhf_elaz(75,0,10^4.31/2);
+ end
+ if d_date>datenum(2002,8,19,7,0,0) & d_date<datenum(2002,10,04,0,0,0)
+  [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2); 
+ end
  ch_Pt=polyval(polhv(2,:),hv)*1000;
 elseif length(a_code)==1 & a_code==1
  [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
+ if (d_date>=datenum(2001,09,17,12,0,0) & d_date<=datenum(2001,09,20,15,0,0))
+  % 17-20 September 2001 - tau1v (really tau1a)
+  % during this period the uhf and vhf were run together in a pseudo-cp2 mode
+  % uhf was pointed az=90 el=75 i.e. east
+  % vhf beam 1 (west panel, cp4 boresight beam) was pointed az=360 (boresight) el 90 (vertical)
+  % vhf beam 2 (east panel, cp4 west beam) was pointed az=360 (boresight) el 75 (north)
+     [ch_el ch_az ch_gain]=vhf_elaz(90,0,10^4.31/2);
+ end
+ if d_date>datenum(2002,8,19,7,0,0) & d_date<datenum(2002,10,04,0,0,0)
+  [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),3,10^4.31/2);
+ end
  ch_Pt=polyval(polhv(1,:),hv)*1000,
 else
  error('No such analysis_code')

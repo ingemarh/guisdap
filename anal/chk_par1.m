@@ -158,7 +158,7 @@ if exist('analysis_intallow','var')
 end
 if exist('analysis_txpower','var')
  a_txpower=analysis_txpower;
-elseif name_site|='V' & a_year>2004
+elseif name_site~='V' & a_year>2004
  a_txpower=[65 1000];
  fprintf('Using new measured tx power, override with analysis_txpower=8;\n')
 else

@@ -4,6 +4,7 @@
 % See also: GUISPERT GUIZARD
 %
 ch_Pt=ch_Pt(1);
+if ch_el(2)==0, ch_el(2)=ch_el(1); end
 if length(a_code)==1
  polhv=[.6374 -45.17 540.33;.6336 -48.418 790.23;0 0 -ch_Pt(1)/1000];
  hv=max(roots(sum(polhv)));
