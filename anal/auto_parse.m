@@ -42,9 +42,9 @@ else
  set_b=0;
 end
 
-[dum,expid]=fileparts(data_path);
-if isempty(expid), [dum,expid]=fileparts(dum); end
-expid=data_path(length(dum)+2:end);
+[dum,expid,ext]=fileparts(data_path);
+if isempty(expid), [dum,expid,ext]=fileparts(dum); end
+expid=[expid ext];
 [msg,pulse,scan,comment,owner,antenna]=expparts(expid);
 if ~isempty(msg)
  if warn

@@ -21,6 +21,7 @@ ppres=.25; % pp resolution (km)
 if n==0
   Time=[]; par2D=[]; par1D=[]; rpar2D=[]; return
 end
+r_Tsys=[];
 n_tot=n;
 lastfile=filelist(n);
 file=sprintf('%08d',filelist(1));
@@ -30,17 +31,10 @@ n_alt=size(r_param,1);
 npar2D=9; nrpar2D=3;
 par2D	=ones(n_alt,n_tot,npar2D)*NaN;
 Time   	=zeros(2,n_tot);
-if exist('r_Tsys')
-  if exist('r_Offsetppd')
-    par1D=zeros(n_tot,5);
-  else
-    par1D=zeros(n_tot,4);
-    r_Offsetppd=[];
-  end
-else
-  par1D	=zeros(n_tot,3);
-  r_Tsys=[];
+if isempty('r_Tsys') | ~exist('r_Offsetppd')
+  r_Offsetppd=[];
 end
+par1D=zeros(n_tot,length([r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]));
 if nargout>3 & strfind('TVL',name_site) & ~isempty(r_pp)
   n_ralt=length(unique(round(r_pprange/ppres)));
   rpar2D=ones(n_ralt,n_tot,3)*NaN;
