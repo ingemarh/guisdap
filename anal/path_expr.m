@@ -10,4 +10,4 @@ function pathexpr=path_expr
 
 global path_exps name_expr
 
-pathexpr=canon([path_exps name_expr filesep],0);
+pathexpr=fullfile(path_exps,name_expr,filesep);
