@@ -18,5 +18,5 @@ start_GUP,name_expr='tau2'; name_site='R';N_rcprog=1;init_KST;init_GUP
 
 diary off
 load([path_tmp 'timing'])
-delete([path_tmp 'timing'])
+delete([path_tmp 'timing.mat'])
 fprintf('Time used %.0f minutes\n',etime(clock,t)/60)

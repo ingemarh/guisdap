@@ -1,40 +1,49 @@
-C IGRF.FOR, Version 2001.02, July 11, 2001
+c igrf.for, version number can be found at the end of this comment.
+c-----------------------------------------------------------------------        
 C
 C Subroutine IGRF_SUB to compute IGRF parameters for IRI. The file
 C also includes all functions and subroutines required for this
-C computation.
+C computation:
 C igrf_sub, FINDB0, SHELLG, STOER, FELDG, FELDCOF, GETSHC, INTERSHC, 
 C EXTRASHC, INITIZE  
 C
+C UNIT number for reading the IGRF coefficients (in GETSHC) is 14
+C
 C Corrections:
-C-Version-mm/dd/yy-----------------------------------------------
+C 11/01/91 SHELLG: lowest starting point for B0 search is 2  
+C  1/27/92 Adopted to IGRF-91 coeffcients model
+C  2/05/92 Reduce variable names: INTER(P)SHC,EXTRA(P)SHC,INITI(ALI)ZE
+C  8/08/95 Updated to IGRF-45-95; new coeff. DGRF90, IGRF95, IGRF95S
+C  5/31/00 Updated to IGRF-45-00; new coeff.: IGRF00, IGRF00s
+C-Version-mm/dd/yy-Description (Person reporting the correction)
 C 2001.01 05/07/01 initial version
 C 2001.02 07/11/01 replace feldi(xi,h) by feldi (P. Wilkinson)
 C 2001.02 07/11/01 variables EGNR, AGNR,OGNR not used (P. Wilkinson)
-C
+c 2002.01 10/28/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
+C 2002.02 11/08/02 change unit for coefficients to 14
 C
         subroutine igrf_sub(xlat,xlong,year,height,
      &          xl,icode,dipl,babs)
-c----------------------------------------------------------------
-c   INPUT:
-c	xlat	geodatic latitude in degrees
-c	xlong	geodatic longitude in degrees
-c	year	decimal year (year+month/12.0-0.5 or year+day-of-year/365 
-c		or 366 if leap year) 
-c	height	height in km
-c   OUTPUT:
-c	xl	L value
-c	icode	=1  L is correct; =2  L is not correct;
-c		=3  an approximation is used
-c	dip	geomagnetic inclination in degrees
-c	dec	geomagnetic declination in degress
-c----------------------------------------------------------------
+c-----------------------------------------------------------------------        
+c INPUT:
+c    xlat      geodatic latitude in degrees
+c    xlong     geodatic longitude in degrees
+c    year      decimal year (year+month/12.0-0.5 or 
+c                  year+day-of-year/365 or ../366 if leap year) 
+c    height    height in km
+c OUTPUT:
+c    xl        L value
+c    icode      =1  L is correct; =2  L is not correct;
+c               =3  an approximation is used
+c    dip      geomagnetic inclination in degrees
+c    dec      geomagnetic declination in degress
+c-----------------------------------------------------------------------        
 
       REAL              LATI,LONGI
       COMMON/IGRF1/     UMR,ERA,AQUAD,BQUAD
 C
       CALL INITIZE
-	ibbb=0
+      ibbb=0
       ALOG2=ALOG(2.)
       ISTART=1
         lati=xlat
@@ -46,20 +55,20 @@ c
         CALL FELDG(LATI,LONGI,HEIGHT,BNORTH,BEAST,BDOWN,BABS)
         CALL SHELLG(LATI,LONGI,HEIGHT,DIMO,XL,ICODE,BAB1)
 c        DIP=ASIN(BDOWN/BABS)/UMR
-c	 DEC=ASIN(BEAST/SQRT(BEAST*BEAST+BNORTH*BNORTH))/UMR
+c       DEC=ASIN(BEAST/SQRT(BEAST*BEAST+BNORTH*BNORTH))/UMR
 c        DIPL=ATAN(0.5*TAN(DIP*UMR))/UMR
- 	DIPL=ATAN(BDOWN/2.0-sqrt(BNORTH*BNORTH+BEAST*BEAST))/umr
+       DIPL=ATAN(BDOWN/2.0-sqrt(BNORTH*BNORTH+BEAST*BEAST))/umr
       RETURN
       END
 c
 c
 C SHELLIG.FOR, Version 2.0, January 1992
 C
-C 11/01/91-DKB- SHELLG: lowest starting point for B0 search is 2  
-C  1/27/92-DKB- Adopted to IGRF-91 coeffcients model
-C  2/05/92-DKB- Reduce variable-names: INTER(P)SHC,EXTRA(P)SHC,INITI(ALI)ZE
-C  8/08/95-DKB- Updated to IGRF-45-95; new coeff. DGRF90, IGRF95, IGRF95S
-C  5/31/00-DKB- Updated to IGRF-45-00; new coeff.: IGRF00, IGRF00s
+C 11/01/91 SHELLG: lowest starting point for B0 search is 2  
+C  1/27/92 Adopted to IGRF-91 coeffcients model
+C  2/05/92 Reduce variable-names: INTER(P)SHC,EXTRA(P)SHC,INITI(ALI)ZE
+C  8/08/95 Updated to IGRF-45-95; new coeff. DGRF90, IGRF95, IGRF95S
+C  5/31/00 Updated to IGRF-45-00; new coeff.: IGRF00, IGRF00s
 C*********************************************************************
 C  SUBROUTINES FINDB0, SHELLG, STOER, FELDG, FELDCOF, GETSHC,        *
 C       INTERSHC, EXTRASHC, INITIZE                                  *
@@ -165,34 +174,34 @@ C******************PREDICTOR (FIELD LINE TRACING)
 C
 C
       SUBROUTINE SHELLG(GLAT,GLON,ALT,DIMO,FL,ICODE,B0)
-C--------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 C CALCULATES L-VALUE FOR SPECIFIED GEODAETIC COORDINATES, ALTITUDE
 C AND GEMAGNETIC FIELD MODEL.
 C REF: G. KLUGE, EUROPEAN SPACE OPERATIONS CENTER, INTERNAL NOTE 
 C      NO. 67, 1970.
 C      G. KLUGE, COMPUTER PHYSICS COMMUNICATIONS 3, 31-35, 1972
-C--------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 C CHANGES (D. BILITZA, NOV 87):
 C   - USING CORRECT DIPOL MOMENT I.E.,DIFFERENT COMMON/MODEL/
 C   - USING IGRF EARTH MAGNETIC FIELD MODELS FROM 1945 TO 1990
-C--------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 C  INPUT:  ENTRY POINT SHELLG
-C               GLAT  GEODETIC LATITUDE IN DEGREES (NORTH)
-C               GLON  GEODETIC LONGITUDE IN DEGREES (EAST)
-C               ALT   ALTITUDE IN KM ABOVE SEA LEVEL
+C             GLAT  GEODETIC LATITUDE IN DEGREES (NORTH)
+C             GLON  GEODETIC LONGITUDE IN DEGREES (EAST)
+C             ALT   ALTITUDE IN KM ABOVE SEA LEVEL
 C
 C          ENTRY POINT SHELLC
-C               V(3)  CARTESIAN COORDINATES IN EARTH RADII (6371.2 KM)
-C                       X-AXIS POINTING TO EQUATOR AT 0 LONGITUDE
-C                       Y-AXIS POINTING TO EQUATOR AT 90 LONG.
-C                       Z-AXIS POINTING TO NORTH POLE
+C             V(3)  CARTESIAN COORDINATES IN EARTH RADII (6371.2 KM)
+C                     X-AXIS POINTING TO EQUATOR AT 0 LONGITUDE
+C                     Y-AXIS POINTING TO EQUATOR AT 90 LONG.
+C                     Z-AXIS POINTING TO NORTH POLE
 C
-C          DIMO       DIPOL MOMENT IN GAUSS (NORMALIZED TO EARTH RADIUS) 
+C          DIMO     DIPOL MOMENT IN GAUSS (NORMALIZED TO EARTH RADIUS) 
 C
 C          COMMON 
-C               X(3)    NOT USED
-C               H(144)  FIELD MODEL COEFFICIENTS ADJUSTED FOR SHELLG
-C-----------------------------------------------------------------------
+C             X(3)    NOT USED
+C             H(144)  FIELD MODEL COEFFICIENTS ADJUSTED FOR SHELLG
+c-----------------------------------------------------------------------        
 C  OUTPUT: FL           L-VALUE
 C          ICODE        =1 NORMAL COMPLETION
 C                       =2 UNPHYSICAL CONJUGATE POINT (FL MEANINGLESS)
@@ -200,7 +209,7 @@ C                       =3 SHELL PARAMETER GREATER THAN LIMIT UP TO
 C                          WHICH ACCURATE CALCULATION IS REQUIRED;
 C                          APPROXIMATION IS USED.
 C          B0           MAGNETIC FIELD STRENGTH IN GAUSS
-C-----------------------------------------------------------------------
+c-----------------------------------------------------------------------        
       DIMENSION         V(3),U(3,3),P(8,100),SP(3)
       COMMON/IGRF/      X(3),H(144)
       COMMON/FIDB0/     SP
@@ -350,17 +359,17 @@ C-- The minimal allowable value of FI was changed from 1E-15 to 1E-12,
 C-- because 1E-38 is the minimal allowable arg. for ALOG in our envir.
 C-- D. Bilitza, Nov 87.
 C
-11    	FI=0.5*ABS(FI)/SQRT(B0)+1E-12                       
+11          FI=0.5*ABS(FI)/SQRT(B0)+1E-12                       
 C
 C*****COMPUTE L FROM B AND I.  SAME AS CARMEL IN INVAR.  
 C
 C-- Correct dipole moment is used here. D. Bilitza, Nov 87.
 C
       DIMOB0=DIMO/B0
-	arg1=alog(FI)
-	arg2=alog(DIMOB0)
-c	arg = FI*FI*FI/DIMOB0
-c	if(abs(arg).gt.88.0) arg=88.0
+      arg1=alog(FI)
+      arg2=alog(DIMOB0)
+c      arg = FI*FI*FI/DIMOB0
+c      if(abs(arg).gt.88.0) arg=88.0
       XX=3*arg1-arg2
       IF(XX.GT.23.0) GOTO 776   
       IF(XX.GT.11.7) GOTO 775  
@@ -370,19 +379,23 @@ c	if(abs(arg).gt.88.0) arg=88.0
   771 GG=3.33338E-1*XX+3.0062102E-1                                 
       GOTO777                                                          
   772 GG=((((((((-8.1537735E-14*XX+8.3232531E-13)*XX+1.0066362E-9)*XX+  
-     18.1048663E-8)*XX+3.2916354E-6)*XX+8.2711096E-5)*XX+1.3714667E-3)* 
-     2XX+1.5017245E-2)*XX+4.3432642E-1)*XX+6.2337691E-1                 
+     &  8.1048663E-8)*XX+3.2916354E-6)*XX+8.2711096E-5)*XX+ 
+     &  1.3714667E-3)*XX+1.5017245E-2)*XX+4.3432642E-1)*XX+
+     &  6.2337691E-1                 
       GOTO777                                                           
   773 GG=((((((((2.6047023E-10*XX+2.3028767E-9)*XX-2.1997983E-8)*XX-    
-     15.3977642E-7)*XX-3.3408822E-6)*XX+3.8379917E-5)*XX+1.1784234E-3)* 
-     2XX+1.4492441E-2)*XX+4.3352788E-1)*XX+6.228644E-1                  
+     &  5.3977642E-7)*XX-3.3408822E-6)*XX+3.8379917E-5)*XX+ 
+     &  1.1784234E-3)*XX+1.4492441E-2)*XX+4.3352788E-1)*XX+
+     &  6.228644E-1                  
       GOTO777                                                           
   774 GG=((((((((6.3271665E-10*XX-3.958306E-8)*XX+9.9766148E-07)*XX-    
-     11.2531932E-5)*XX+7.9451313E-5)*XX-3.2077032E-4)*XX+2.1680398E-3)* 
-     2XX+1.2817956E-2)*XX+4.3510529E-1)*XX+6.222355E-1                  
+     &  1.2531932E-5)*XX+7.9451313E-5)*XX-3.2077032E-4)*XX+ 
+     &  2.1680398E-3)*XX+1.2817956E-2)*XX+4.3510529E-1)*XX+
+     &  6.222355E-1                  
       GOTO777                                                           
-  775 GG=(((((2.8212095E-8*XX-3.8049276E-6)*XX+2.170224E-4)*XX-6.7310339
-     1E-3)*XX+1.2038224E-1)*XX-1.8461796E-1)*XX+2.0007187E0             
+  775 GG=(((((2.8212095E-8*XX-3.8049276E-6)*XX+2.170224E-4)*XX-
+     &  6.7310339E-3)*XX+1.2038224E-1)*XX-1.8461796E-1)*XX+
+     &  2.0007187E0             
       GOTO777                                                           
   776 GG=XX-3.0460681E0                                                 
   777 FL=EXP(ALOG((1.+EXP(GG))*DIMOB0)/3.0)
@@ -441,15 +454,15 @@ C*****FORM SLOWLY VARYING EXPRESSIONS
 C
 C
       SUBROUTINE FELDG(GLAT,GLON,ALT,BNORTH,BEAST,BDOWN,BABS)           
-C-------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 C CALCULATES EARTH MAGNETIC FIELD FROM SPHERICAL HARMONICS MODEL
 C REF: G. KLUGE, EUROPEAN SPACE OPERATIONS CENTRE, INTERNAL NOTE 61, 
 C      1970.
-C--------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 C CHANGES (D. BILITZA, NOV 87):
 C   - FIELD COEFFICIENTS IN BINARY DATA FILES INSTEAD OF BLOCK DATA
 C   - CALCULATES DIPOL MOMENT
-C--------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 C  INPUT:  ENTRY POINT FELDG
 C               GLAT  GEODETIC LATITUDE IN DEGREES (NORTH)
 C               GLON  GEODETIC LONGITUDE IN DEGREES (EAST)
@@ -468,15 +481,15 @@ C          COMMON /MODEL/ AND /IGRF1/
 C               UMR     = ATAN(1.0)*4./180.   <DEGREE>*UMR=<RADIANT>
 C               ERA     EARTH RADIUS FOR NORMALIZATION OF CARTESIAN 
 C                       COORDINATES (6371.2 KM)
-C               AQUAD, BQUAD   SQUARE OF MAJOR AND MINOR HALF AXIS FOR 
-C                       EARTH ELLIPSOID AS RECOMMENDED BY INTERNATIONAL 
+C               AQUAD, BQUAD   SQUARE OF MAJOR AND MINOR HALF AXIS OF 
+C                       EARTH ELLIPSOID AS RECOMMENDED BY INTERNAT. 
 C                       ASTRONOMICAL UNION (6378.160, 6356.775 KM).
 C               NMAX    MAXIMUM ORDER OF SPHERICAL HARMONICS
 C               TIME    YEAR (DECIMAL: 1973.5) FOR WHICH MAGNETIC 
 C                       FIELD IS TO BE CALCULATED
 C               G(M)    NORMALIZED FIELD COEFFICIENTS (SEE FELDCOF)
 C                       M=NMAX*(NMAX+2)
-C------------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 C  OUTPUT: BABS   MAGNETIC FIELD STRENGTH IN GAUSS
 C          BNORTH, BEAST, BDOWN   COMPONENTS OF THE FIELD WITH RESPECT
 C                 TO THE LOCAL GEODETIC COORDINATE SYSTEM, WITH AXIS
@@ -566,7 +579,7 @@ C*****ENTRY POINT  FELDI  USED FOR L COMPUTATION
 C
 C
         SUBROUTINE FELDCOF(YEAR,DIMO)
-C------------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 C  DETERMINES COEFFICIENTS AND DIPOL MOMENT FROM IGRF MODELS
 C
 C       INPUT:  YEAR    DECIMAL YEAR FOR WHICH GEOMAGNETIC FIELD IS TO
@@ -576,10 +589,11 @@ C                       TO EARTH'S RADIUS) AT THE TIME (YEAR)
 C  D. BILITZA, NSSDC, GSFC, CODE 633, GREENBELT, MD 20771, 
 C       (301)286-9536   NOV 1987.
 C  ### updated to IGRF-2000 version -dkb- 5/31/2000
-C-----------------------------------------------------------------------
+c-----------------------------------------------------------------------        
         CHARACTER*12    FILMOD, FIL1, FIL2           
 C ### FILMOD, DTEMOD arrays +1
-        DIMENSION       GH1(144),GH2(120),GHA(144),FILMOD(13),DTEMOD(13)
+        DIMENSION       GH1(144),GH2(120),GHA(144),FILMOD(13)
+        DIMENSION		DTEMOD(13)
         DOUBLE PRECISION X,F0,F 
         COMMON/bMODEL/   FIL1,NMAX,tajm,GH1
         COMMON/IGRF1/   UMR,ERAD,AQUAD,BQUAD
@@ -599,7 +613,7 @@ C
 C  IS=0 FOR SCHMIDT NORMALIZATION   IS=1 GAUSS NORMALIZATION
 C  IU  IS INPUT UNIT NUMBER FOR IGRF COEFFICIENT SETS
 C
-        IU = 10
+        IU = 14
         IS = 0
 C-- DETERMINE IGRF-YEARS FOR INPUT-YEAR
         tajm = YEAR
@@ -692,11 +706,11 @@ C ---------------------------------------------------------------
 C       Open coefficient file. Read past first header record.        
 C       Read degree and order of model and Earth's radius.           
 C ---------------------------------------------------------------               
-      WRITE(FOUT,667) FSPEC
-c 667  FORMAT('/usr/local/etc/httpd/cgi-bin/natasha/IRI/',A12)
-c 667  FORMAT(A12)
- 667  FORMAT('/usr/local/models/iri2001/',A12)
-        OPEN (IU, FILE=FOUT, STATUS='OLD', IOSTAT=IER, ERR=999)     
+       WRITE(FOUT,667) FSPEC
+c special for IRIWeb version
+c 667  FORMAT('/usr/local/etc/httpd/cgi-bin/models/IRI/',A12)
+667    FORMAT(A12)
+       OPEN (IU, FILE=FOUT, STATUS='OLD', IOSTAT=IER, ERR=999)     
      
        READ (IU, *, IOSTAT=IER, ERR=999)                            
         READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD                 

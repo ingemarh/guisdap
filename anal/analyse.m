@@ -25,7 +25,7 @@ bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback
 uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
 text(0,ty(1),'Dsp expr')
 set(gca,'position',[0 0 1 1],'visible','off')
-b(1)=uicontrol('Style','pushbutton','string',name_expr,'position',[x y(1) x1 yh],'value',0,'callback','o=uigetdir(path_exps),if o,[path_exps,name_expr]=fileparts(o);set(b(1),''string'',name_expr),end');
+b(1)=uicontrol('Style','pushbutton','string',name_expr,'position',[x y(1) x1 yh],'value',0,'callback','o=uigetdir(path_exps);if o,[path_exps,name_expr]=fileparts(o);set(b(1),''string'',name_expr),end');
 text(0,ty(2),'Site')
 b(2)=uicontrol('Style','popupmenu','string','K|S|T|V|L','position',[x y(2) x1 yh],'value',siteid);
 text(0,ty(3),'Data path')

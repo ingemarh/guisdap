@@ -1,11 +1,11 @@
 function dum=t2ps(site)
 eval(['load t_to_ps.txt.' site])
-if site=='T'
- p_rep=443904;
- ch_filter={'b83d90.fir'};
-else
+if site=='L'
  p_rep=1009920/2;
  ch_filter={'w83d60.fir'};
+else
+ p_rep=443904;
+ ch_filter={'b83d90.fir'};
 end
 d=find(t_to_ps(:,1)<p_rep);
 td_t1=t_to_ps(d,1)';

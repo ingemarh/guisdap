@@ -131,7 +131,7 @@ for d_rcprog=1:N_rcprog
 
   fprintf('\nDefining lag profiles by executing %s%s_LP:\n',name_expr,name_site)
   eval(canon([name_expr name_site '_LP'],0))
-  fprintf(['\n%s%s_LP passed\n\n',name_expr,name_site)
+  fprintf('\n%s%s_LP passed\n\n',name_expr,name_site)
 
   fprintf('Time used in initialization:%8.2f min\n',etime(clock,Stime)/60)
   save_GUPvar

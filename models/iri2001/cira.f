@@ -1,4 +1,5 @@
-C cira.for, Version 2001.01, May 7, 2001
+c cira.for, version number can be found at the end of this comment.
+c-----------------------------------------------------------------------
 C
 C   Calculates neutral temperature parameters for IRI using the
 C   MSIS-86/CIRA 1986 Neutral Thermosphere Model. The subroutines
@@ -6,15 +7,16 @@ C   GTS5, GLOBE5 and GLOBL5 developed by A.E. Hedin (2/26/87) were
 C   modified for use in IRI --------- D. Bilitza -------- March 1991
 C
 C Corrections
-C     11/09/99 always calculated Legendre; 'if glat' and 'if stl' taken out;
-C     11/09/99 use UMR, dumr and humr from COMMON 
+C 11/09/99 always calculated Legendre; 'if glat' and 'if stl' taken out
+C 11/09/99 use UMR, dumr and humr from COMMON 
 C Version-mm/dd/yy-------------------------------------------------
 C 2001.01 05/07/01 start of versioning
-C
+c 2002.01 28/10/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
+c-----------------------------------------------------------------------
 C
 
       SUBROUTINE CIRA86(IDAY,SEC,GLAT,GLONG,STL,F107A,TINF,TLB,SIGMA)
-C*******************************************************************
+c-----------------------------------------------------------------------
 C
 C     INPUT:
 C        IDAY - DAY OF YEAR 
@@ -29,12 +31,12 @@ C        TINF - EXOSPHERIC TEMPERATURE (K)
 C        TLB - TEMPERATURE AT LOWER BOUNDARY (K)
 C        SIGMA - SHAPE PARAMETER FOR TEMPERATURE PROFILE
 C
-C **********************************************************************
-      DIMENSION         PLG(9,4)
+c-----------------------------------------------------------------------
+        DIMENSION         PLG(9,4)
         common  /const/umr      /const1/hr,dr
-      DATA      XL/1000./,TLL/1000./
+        DATA      XL/1000./,TLL/1000./
 
-c	data umr/1.74E-2/,hr/0.2618/,dr/1.74e-2
+c      data umr/1.74E-2/,hr/0.2618/,dr/1.74e-2
 cDR,DR2/1.72142E-2,0.0344284/,
 cSR/7.2722E-5/,
 c,HR/.2618/

@@ -14,10 +14,10 @@ t_RECloc=p_RECloc;
 if name_site=='K' | name_site=='S';
   temp=[path_expr name_expr 'R'];
 end
-if exist('d_rcprog')==1, rcp=d_rcprog; else rcp=0; end
-if exist(canon([temp '_' int2str(rcp) 'GUPvar.mat']),0)==2,
+if exist('d_rcprog','var'), rcp=d_rcprog; else rcp=0; end
+if exist(canon([temp '_' int2str(rcp) 'GUPvar.mat'],0),'file')
   load(canon([temp '_' int2str(rcp) 'GUPvar']))
-elseif exist(canon([temp 'GUPvar.mat']),0)==2,
+elseif exist(canon([temp 'GUPvar.mat'],0),'file')
   load(canon([temp 'GUPvar']))
 else
   fprintf(['\n\n\n GUP variable file    ', canon([temp 'GUPvar.mat'],0),'    not found \n\n\n'])

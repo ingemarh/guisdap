@@ -57,15 +57,11 @@ Standard: t,f,f,t,f,f,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t
 Enter 0 to use standard or 1 to enter your own
 0
 Three additional output parameters (number:1-45)
-NmF2  hmF2  NmF1  hmF1  NmE   hmE   NmD   hmD   h05   B0    NVmin hVtop 
-Tpeak
-hTpek T300  T400  T600  T1400 T3000 T120  Ti450 hTeTi sza   sndec dip   
-dipla
-modip dela  Srise Sset  seasn nseas Rz12  cov   B1    M3000 TEC   TECtp 
-IG12
+NmF2  hmF2  NmF1  hmF1  NmE   hmE   NmD   hmD   h05   B0    NVmin hVtop Tpeak
+hTpek T300  T400  T600  T1400 T3000 T120  Ti450 hTeTi sza   sndec dip   dipla
+modip dela  Srise Sset  seasn nseas Rz12  cov   B1    M3000 TEC   TECtp IG12
 F1_pb F107d C1    daynr vdrft foF2r
-or 0,0,0 for default (F1 probability, equ. vert. ion drift, storm/quiet 
-ratio)
+or 0,0,0 for default (F1 probability, equ. vert. ion drift, storm/quiet ratio)
 0,0,0
 
 
@@ -148,6 +144,8 @@ t
 Equat. Vert. Ion Drift: t=not included, f=included
 t
 Sunspot index: t=from file, f=user input.  {t}
+t
+Ionospheric index: t=from file, f=user input. {t}
 t
 Solar Index: t: F107D=COV, f: F107D user input
 t

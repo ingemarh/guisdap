@@ -26,6 +26,8 @@ Ne, foF2: URSI model is used.
 Ne, foF1: probability function used.
 Ne, D: Mechtley/Bilitza
 Ne, foF2: storm model included
+Ion Com.: Using Danilov et al. 1985/95.
+Te: Aeros/ISIS model
 *NE* HST IS NOT EVALUATED BY THE FUNCTION XE3
      CORR.: LIN. APP. BETWEEN HZ=202.2 AND HEF=161.5
 *NE* HST IS NOT EVALUATED BY THE FUNCTION XE3
@@ -49,21 +51,17 @@ upper height [km] for TEC integration (0 for no TEC)
 variable? (1/2/../8 for height/lat/long/year/month/day/day of year/hour)
 2
 begin, end, and stepsize for the selected variable
--60,60,10
+-50,50,10
 Options: t(rue) or f(alse)
 Standard: t,f,f,t,f,f,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t
 Enter 0 to use standard or 1 to enter your own
 0
 Three additional output parameters (number:1-45)
-NmF2  hmF2  NmF1  hmF1  NmE   hmE   NmD   hmD   h05   B0    NVmin hVtop 
-Tpeak
-hTpek T300  T400  T600  T1400 T3000 T120  Ti450 hTeTi sza   sndec dip   
-dipla
-modip dela  Srise Sset  seasn nseas Rz12  cov   B1    M3000 TEC   TECtp 
-IG12
+NmF2  hmF2  NmF1  hmF1  NmE   hmE   NmD   hmD   h05   B0    NVmin hVtop Tpeak
+hTpek T300  T400  T600  T1400 T3000 T120  Ti450 hTeTi sza   sndec dip   dipla
+modip dela  Srise Sset  seasn nseas Rz12  cov   B1    M3000 TEC   TECtp IG12
 F1_pb F107d C1    daynr vdrft foF2r
-or 0,0,0 for default (F1 probability, equ. vert. ion drift, storm/quiet 
-ratio)
+or 0,0,0 for default (F1 probability, equ. vert. ion drift, storm/quiet ratio)
 23,29,30
 
 
@@ -102,6 +100,8 @@ Options: t(rue) or f(alse)
 Standard: t,f,f,t,f,f,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t
 Enter 0 to use standard or 1 to enter your own
 1
+Compute Ne, T, Ni? (enter: t,t,t  if you want all)
+t,f,f
 LAY version: t=standard ver., f=LAY version. {t}
 t
 Ne Topside mod.: t=standard, f=IRI-79 topside {t}
@@ -130,13 +130,15 @@ D: t=old model, f=new options
 t
 Equat. Vert. Ion Drift: t=not included, f=included
 t
-Message output unit: t=(UNIT=6), f=(UNIT=12). {t}
-t
 Sunspot index: t=from file, f=user input.  {t}
+t
+Ionospheric index: t=from file, f=user input. {t}
+t
+Solar Index: t: F107D=COV, f: F107D user input
 t
 UT/LT computation: t=no date change, f=ut_lt subroutine.
 t
-Solar Index: t: F107D=COV, f: F107D user input
+Message output unit: t=(UNIT=6), f=(UNIT=12). {t}
 t
 
 

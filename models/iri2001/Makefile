@@ -6,7 +6,7 @@ sys=$(shell uname -s)
 ifeq ($(sys),SunOS)
 FFLAGS = -KPIC -dalign -mt -silent -e
 else
-FFLAGS = -O4 -fPIC -NC198 -c -static -finit-local-zero
+FFLAGS = -O4 -fPIC -NC198 -c -static -finit-local-zero -ffixed-line-length-132
 endif
 
 A=	.a

@@ -1,45 +1,50 @@
-C IRIDREG.FOR, Version 2001.02, July 11, 2001
+c iridreg.for, version number can be found at the end of this comment.
+c-----------------------------------------------------------------------
 C
 C This file contains the D-region models of Danilov, Rodevich, and
 C Smirnova, Adv. Space Res. 15, #2, 165, 1995 (subroutine DRegion)
 C and the model by Friedrich and Torkar, Adv. Space Res., to be 
 C published, 2001 (subroutine F00 and block data statement).
-C----------------------------------------------------------------------
-C Corrections:
-C-Version-mm/dd/yy-----------------------------------------------------
+c
+c-----------------------------------------------------------------------
+C Corrections/Version Numbers:
+C-Version-mm/dd/yy-description (person reporting correction)
 C 2001.01 05/07/01 initial version
-C 2001.02 07/11/01 new version of F00 as provided by K. Torkar
+C 2001.02 07/11/01 new version of F00 (as provided by K. Torkar)
+c 2002.01 28/10/02 replace TAB/6 blanks, PARAMETER () (D. Simpson)
+c-----------------------------------------------------------------------
 C
 C
       Subroutine DRegion(z,it,f,vKp,f5SW,f6WA,elg)
-c--------------------------------------------------------------------
-c D-region model of Danilov, Rodevich, and Smirnova, Adv. Space Res. 15, 
-C #2, 165, 1995.
+c-----------------------------------------------------------------------
+c D-region model of Danilov, Rodevich, and Smirnova, Adv. Space Res.  
+C 15, #2, 165, 1995.
 C
-C Input:	z    - solar zenith angle in degrees
-C        	it   - season (month)
-C		f    - F10.7 solar radio flux (daily)
-C		vKp  - Kp magnetic index (3-hour)
-C		f5SW - indicator for Stratospheric Warming (SW) conditions
-C			=0 no SW, =0.5 minor SW, =1 major SW
-C		f6WA - indicator for Winter Anomaly (WA) conditions
-C			=0 no WA, =0.5 weak WA, =1 strong WA
+C Input:     z    - solar zenith angle in degrees
+C            it   - season (month)
+C            f    - F10.7 solar radio flux (daily)
+C            vKp  - Kp magnetic index (3-hour)
+C            f5SW - indicator for Stratospheric Warming (SW) conditions
+C                   =0 no SW, =0.5 minor SW, =1 major SW
+C            f6WA - indicator for Winter Anomaly (WA) conditions
+C                   =0 no WA, =0.5 weak WA, =1 strong WA
 C Criteria for SW and WA indicators:
-C 	SW minor: temperature increase at the 30 hPa level by 10 degrees
-C	SA major: the same but by 20 degrees.
-C	The data for each year are published by Karin Labitzke and her group 
-C	in Beilage zur Berliner Wetterkarte.
-C	WA weak: an increase of the absorption in the 2-2.8 MHz range at 
-C		short A3 paths by 15 dB
-C	WA strong: the same by 30 dB.
+C      SW minor:  Temperature increase at the 30 hPa level by 10 deg.
+C      SA major:  The same but by 20 degrees.
+C         Temperature data for each year are published  
+C         in Beilage zur Berliner Wetterkarte (K. Labitzke et al.).
+C      WA weak:   An increase of the absorption in the 2-2.8 MHz  
+C                 range at short A3 paths by 15 dB
+C      WA strong: The same by 30 dB.
 C 
 C       Only for month 12 to 2 (winter).
 C
-C Output:	elg(7)  alog10 of electron density [cm-3] at h=60,65,70,75,
-C			80,85, and 90km
-c------------------------------------------------------------------------
-c		
-      dimension h(7),A0(7),A1(7),A2(7),A3(7),A4(7),A5(7),A6(7),elg(7)
+C Output:      elg(7)  alog10 of electron density [cm-3] at h=60,65,
+C                  70,75,80,85, and 90km
+c-----------------------------------------------------------------------
+c            
+cor   dimension h(7),A0(7),A1(7),A2(7),A3(7),A4(7),A5(7),A6(7),elg(7)
+      dimension A0(7),A1(7),A2(7),A3(7),A4(7),A5(7),A6(7),elg(7)
       data A0/1.0,1.2,1.4,1.5,1.6,1.7,3.0/
       data A1/0.6,0.8,1.1,1.2,1.3,1.4,1.0/
       data A2/0.,0.,0.08,0.12,0.05,0.2,0./
@@ -142,12 +147,12 @@ C
 C
       DATA TABM/0,31,59,90,120,151,181,212,243,273,304,334/
       DATA STEPJ,ISTEPJ/15.0,15/
+C
       NHGT=81
       NLAT=5
       NMON=12
       NZEN=12
       NF10=3
-C
 C
 C     INDICES:
 C     I=HEIGHT, J=LATITUDE, K=MONTH, L=ZANG, M=F10.7
@@ -314,17 +319,17 @@ C     VERSION: 1.1
 C
 C     ------------------------------------------------------------------
 C
+c     PARAMETER (NHGT=81)
+c     PARAMETER (NLAT=5)
+c     PARAMETER (NMON=12)
+c     PARAMETER (NZEN=12)
+c     PARAMETER (NF10=3)
 C
       REAL EDEN,TABHE,TABLA,TABMO,TABZA,TABFL
       COMMON/FIRCOM/EDEN(81,5,12,12,3),
      1              TABHE(81),TABLA(5),TABMO(12),TABZA(12),TABFL(3)
 C
       INTEGER I,J,K,L,M
-c     PARAMETER NHGT=81
-c     PARAMETER NLAT=5
-c     PARAMETER NMON=12
-c     PARAMETER NZEN=12
-c     PARAMETER NF10=3
 C
 C     altitudes in km
       DATA (TABHE(I),I=1,81)/

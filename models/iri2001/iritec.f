@@ -1,9 +1,10 @@
-C IRITEC.FOR, Version 2001.01, May 7, 2001
+c iritec.for, version number can be found at the end of this comment.
+c-----------------------------------------------------------------------        
 C
 C contains IRIT13, IONCORR, IRI_TEC subroutines to computed the 
 C total ionospheric electron content (TEC)
 C
-C ----------------------------------------------------------------
+c-----------------------------------------------------------------------        
 C Corrections
 C
 C  3/25/96 jmag in IRIT13 as input
@@ -13,14 +14,17 @@ C  ?/ ?/99 Ne(h) restricted to values smaller than NmF2 for topside
 C 11/15/99 JF(20) instead of JF(17)
 C 10/16/00 if hr(i) gt hend then hr(i)=hend
 C 12/14/00 jf(30),outf(20,100),oarr(50)
-C -Ver---mm/dd/yy--------------------------------------------------
-C2000.01 05/07/01 current version
-C ----------------------------------------------------------------
+C
+C Version-mm/dd/yy-Description (person reporting correction)
+C 2000.01 05/07/01 current version
+c 2000.02 10/28/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
+c 2000.03 11/08/02 common block1 in iri_tec with F1reg
+c-----------------------------------------------------------------------        
 C
 C
-      subroutine IRIT13(ALATI,ALONG,jmag,jf,iy,md,hour,hbeg,hend,
+        subroutine IRIT13(ALATI,ALONG,jmag,jf,iy,md,hour,hbeg,hend,
      &                          tec,tecb,tect)
-C-----------------------------------------------------------------
+c-----------------------------------------------------------------------        
 c Program for numerical integration of IRI-94 profiles from h=100km
 C to h=alth. 
 C       
@@ -33,25 +37,14 @@ c          hbeg,hend    upper and lower integration limits in km
 C 
 C  OUTPUT: TEC          Total Electron Content in M-2
 C          tecb,tect    percentage of bottomside and topside content
-C------------------------------------------------------------------
-C------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 
         dimension       outf(20,100),oarr(50)
         logical         jf(30)
-c       data            jf/20*.true./
-
-ctest
-c        save
 
 c
 c  select various options and choices for IRI-94
 c
-
-c       jf(2)=.false.           ! no temperatures
-c       jf(3)=.false.           ! no ion composition
-Ctest   jf(4)=.false.           ! Gulyaeva-B0
-c       jf(5)=.false.           ! URSI-88 for foF2
-C       jf(12)=.false.          ! konsol output to file (unit=12)
 
         tec = -111.
         tect= -111.
@@ -60,6 +53,7 @@ C       jf(12)=.false.          ! konsol output to file (unit=12)
 c
 c initialize IRI parameter in COMMON blocks
 c
+
         abeg=hbeg
         aend=hend
         astp=hend-hbeg
@@ -72,52 +66,49 @@ c  stepsize selection 2 (highest accuracy)
 c
 
         call iri_tec (hbeg,hend,2,tec,tect,tecb)
-ctest   call iri_tec (hbeg,hend,0,tec,tect,tecb)
-c
-c  to get ionospheric correction for frequency f/Hz use the following
-C  formula   ioncorr/m = 40.3 * TEC / (f*f)
-c
+
         return
         end
 c
 c
         real function ioncorr(tec,f)
-c-------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 c computes ionospheric correction IONCORR (in m) for given vertical
 c ionospheric electron content TEC (in m-2) and frequency f (in Hz)
-c-------------------------------------------------------------------
+c-----------------------------------------------------------------------        
         ioncorr = 40.3 * tec / (f*f)
         return
         end
 c
 c
         subroutine iri_tec (hstart,hend,istep,tectot,tectop,tecbot)
-C-------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 C subroutine to compute the total ionospheric content
-C   INPUT:      
-C       hstart  altitude (in km) where integration should start
-C       hend    altitude (in km) where integration should end
-C       istep   =0 [fast, but higher uncertainty <5%]
-C               =1 [standard, recommended]
-C               =2 [stepsize of 1km throughout; best TEC, but needs time]
-C   OUTPUT:
-C       tectot  total ionospheric content in tec-units (10^16 m^-2)
-C       tectop  topside content (in %)
-C       tecbot  bottomside content (in %)
+C INPUT:      
+C   hstart  altitude (in km) where integration should start
+C   hend    altitude (in km) where integration should end
+C   istep   =0 [fast, but higher uncertainty <5%]
+C           =1 [standard, recommended]
+C           =2 [stepsize of 1 km; best TEC, longest CPU time]
+C OUTPUT:
+C   tectot  total ionospheric content in tec-units (10^16 m^-2)
+C   tectop  topside content (in %)
+C   tecbot  bottomside content (in %)
 C
-C   The different stepsizes for the numerical integration are defined as
-C   follows (h1=100km, h2=hmF2-10km, h3=hmF2+10km, h4=hmF2+150km, h5=
-C   hmF2+250km):
+C The different stepsizes for the numerical integration are 
+c defined as follows (h1=100km, h2=hmF2-10km, h3=hmF2+10km, 
+c h4=hmF2+150km, h5=hmF2+250km):
 C       istep   h1-h2   h2-h3   h3-h4   h4-h5   h5-hend
 C       0       2.0km   1.0km   2.5km   exponential approximation
 C       1       2.0km   1.0km   2.5km   10.0km  30.0km
 C       2       1.0km   0.5km   1.0km   1.0km   1.0km   
 C
-C--------------------------------------------------------------------
+c-----------------------------------------------------------------------        
 
         logical         expo
         dimension       step(5),hr(6)
-        common  /block1/hmf2,xnmf2,hmf1,dum
+        common  /block1/hmf2,xnmf2,hmf1,f1reg
+        logical     f1reg
 
 ctest   
         save
@@ -132,8 +123,8 @@ ctest
         hr(4) = hmf2+150.
         hr(5) = hmf2+250.
         hr(6) = hend
-	do 2918 i=2,6 
-2918		if (hr(i).gt.hend) hr(i)=hend
+        do 2918 i=2,6 
+2918            if (hr(i).gt.hend) hr(i)=hend
 
         if (istep.eq.0) then 
                 step(1)=2.0
@@ -190,13 +181,13 @@ C
                 if((hx.gt.hmf2).and.(yne.gt.xnmf2)) yne=xnmf2
                 yyy = yne * delx / xnorm
                 i=i+1
-		if(i.lt.6) then
-                	h = hr(i)
-                	hu = hr(i+1)
- 	               	delx = step(i)
-			endif
+            if(i.lt.6) then
+                      h = hr(i)
+                      hu = hr(i+1)
+                            delx = step(i)
+                  endif
         else
-	        hx = h - delx/2.
+              hx = h - delx/2.
                 YNE = XE_1(hx)
                 if((hx.gt.hmf2).and.(yne.gt.xnmf2)) yne=xnmf2
                 yyy = yne * delx / xnorm
@@ -207,7 +198,7 @@ C
                 sumtop = sumtop + yyy
         endif
         if (expo.and.(hh.ge.hr(4))) goto 5
-	if (hh.lt.hend.and.i.lt.6) goto 1
+        if (hh.lt.hend.and.i.lt.6) goto 1
 
         zzz = sumtop + sumbot
         tectop = sumtop / zzz * 100.
