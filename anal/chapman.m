@@ -1,6 +1,6 @@
-function dens=chapman(h,ne,h0,hd)
+function dens=chapman(h,chap)
 dens=0;
-for i=1:length(ne)
- hh=(h0(i)-h)/hd(i);
- dens=dens+ne(i)*exp(1+hh-exp(hh));
+for i=1:size(chap,2)
+  hh=(chap(2,i)-h)/chap(3,i);
+  dens=dens+chap(1,i)*exp(1+hh-exp(hh));
 end

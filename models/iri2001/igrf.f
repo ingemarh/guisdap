@@ -21,6 +21,7 @@ C 2001.02 07/11/01 replace feldi(xi,h) by feldi (P. Wilkinson)
 C 2001.02 07/11/01 variables EGNR, AGNR,OGNR not used (P. Wilkinson)
 c 2002.01 10/28/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
 C 2002.02 11/08/02 change unit for coefficients to 14
+C 2002.03 06/05/03 correct DIPL computation (V. Truhlik)
 C
         subroutine igrf_sub(xlat,xlong,year,height,
      &          xl,icode,dipl,babs)
@@ -57,7 +58,7 @@ c
 c        DIP=ASIN(BDOWN/BABS)/UMR
 c       DEC=ASIN(BEAST/SQRT(BEAST*BEAST+BNORTH*BNORTH))/UMR
 c        DIPL=ATAN(0.5*TAN(DIP*UMR))/UMR
-       DIPL=ATAN(BDOWN/2.0-sqrt(BNORTH*BNORTH+BEAST*BEAST))/umr
+       DIPL=ATAN(BDOWN/2.0/sqrt(BNORTH*BNORTH+BEAST*BEAST))/umr
       RETURN
       END
 c

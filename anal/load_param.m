@@ -58,6 +58,7 @@ for i=1:n_tot
   n=1:nalt;
   d=find(r_status>status); [d1,d2]=find(r_error(d,1:5)>0);
   r_param(d(d1),d2)=NaN;
+% r_param=r_apriori;
   par2D(n,i,[1 2 8 9])=[r_range(:,1) r_h(:,1) r_dp(:,1) r_res(:,1)];
   par2D(n,i,[3 5 7])=r_param(:,[1 2 4]);
   par2D(n,i,[4 6])=[r_param(:,2).*r_param(:,3) -r_param(:,5)];

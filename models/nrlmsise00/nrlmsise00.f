@@ -745,7 +745,8 @@ C      RL=ALOG(B28*PDM(2,2)*ABS(PDL(17,2))/B16)
       RL=PDM(2,2)*PDL(17,2)*(1.+SW(1)*PDL(24,1)*(F107A-150.))
       HC16=PDM(6,2)*PDL(4,2)
       ZC16=PDM(5,2)*PDL(3,2)
-      D(2)=D(2)*CCOR(Z,RL,HC16,ZC16)
+      HC216=PDM(6,2)*PDL(5,2)
+      D(2)=D(2)*CCOR2(Z,RL,HC16,ZC16,HC216)
 C       Chemistry correction
       HCC16=PDM(8,2)*PDL(14,2)
       ZCC16=PDM(7,2)*PDL(13,2)
@@ -790,10 +791,11 @@ C       Correction to specified mixing ratio at ground
    38 CONTINUE
 C      Correction for general departure from diffusive equilibrium above Zlb
       HCC32=PDM(8,4)*PDL(23,2)
+      HCC232=PDM(8,4)*PDL(23,1)
       ZCC32=PDM(7,4)*PDL(22,2)
       RC32=PDM(4,4)*PDL(24,2)*(1.+SW(1)*PDL(24,1)*(F107A-150.))
 C      Net density corrected at Alt
-      D(4)=D(4)*CCOR(Z,RC32,HCC32,ZCC32)
+      D(4)=D(4)*CCOR2(Z,RC32,HCC32,ZCC32,HCC232)
    39 CONTINUE
       IF(MASS.NE.48)   GO TO 90
    40 CONTINUE
@@ -980,7 +982,6 @@ C       Eq. A24a
       SG0(EX)=(G0(AP(2))+(G0(AP(3))*EX+G0(AP(4))*EX*EX+G0(AP(5))*EX**3
      $ +(G0(AP(6))*EX**4+G0(AP(7))*EX**12)*(1.-EX**8)/(1.-EX))
      $ )/SUMEX(EX)
-C
       IF(ISW.NE.64999) CALL TSELEC(SV)
       DO 10 J=1,14
        T(J)=0
@@ -1629,8 +1630,27 @@ C        ZH - altitude of 1/2 R
        RETURN
       END
 C-----------------------------------------------------------------------
+      FUNCTION  CCOR2(ALT, R,H1,ZH,H2)
+C       O&O2 CHEMISTRY/DISSOCIATION CORRECTION FOR MSIS MODELS
+      E1=(ALT-ZH)/H1
+      E2=(ALT-ZH)/H2
+      IF(E1.GT.70. .OR. E2.GT.70.) GO TO 20
+      IF(E1.LT.-70. .AND. E2.LT.-70) GO TO 10
+        EX1=EXP(E1)
+        EX2=EXP(E2)
+        CCOR2=R/(1.+.5*(EX1+EX2))
+        GO TO 50
+   10   CCOR2=R
+        GO TO 50
+   20   CCOR2=0.
+        GO TO 50
+   50 CONTINUE
+      CCOR2=EXP(CCOR2)
+       RETURN
+      END
+C-----------------------------------------------------------------------
       BLOCK DATA GTD7BK
-C       NRLMSISE-00 13-APR-00   
+C          MSISE-00 01-FEB-02   
       COMMON/PARM7/PT1(50),PT2(50),PT3(50),PA1(50),PA2(50),PA3(50),
      $ PB1(50),PB2(50),PB3(50),PC1(50),PC2(50),PC3(50),
      $ PD1(50),PD2(50),PD3(50),PE1(50),PE2(50),PE3(50),
@@ -1646,9 +1666,8 @@ C       NRLMSISE-00 13-APR-00
       COMMON/MAVG7/PAVGM(10)
       COMMON/DATIM7/ISDATE(3),ISTIME(2),NAME(2)
       COMMON/METSEL/IMR
-c     character*4 isdate(3),istime(2),name(2)
       DATA IMR/0/
-      DATA ISDATE/'13-A','PR-0','0   '/,ISTIME/'17:4','6:08'/
+      DATA ISDATE/'01-F','EB-0','2   '/,ISTIME/'15:4','9:27'/
       DATA NAME/'MSIS','E-00'/
 C         TEMPERATURE
       DATA PT1/
@@ -1822,7 +1841,7 @@ C         TLB
      *  0.00000E+00, 0.00000E+00, 0.00000E+00, 0.00000E+00, 0.00000E+00/
 C         O2 DENSITY
       DATA PE1/
-     *  1.38720E+00, 1.44816E-01, 0.00000E+00, 6.07767E-02, 0.00000E+00,
+     *  1.35580E+00, 1.44816E-01, 0.00000E+00, 6.07767E-02, 0.00000E+00,
      *  2.94777E-02, 7.46900E-02, 0.00000E+00,-9.23822E-02, 8.57342E-02,
      *  0.00000E+00, 0.00000E+00, 0.00000E+00, 2.38636E+01, 0.00000E+00,
      *  7.71653E-02, 0.00000E+00, 8.18751E+01, 1.87736E-02, 0.00000E+00,
@@ -2030,12 +2049,12 @@ C          TURBO
      *  4.63830E+00, 1.00000E+00, 0.00000E+00, 0.00000E+00, 0.00000E+00,
      *  0.00000E+00, 0.00000E+00, 0.00000E+00, 0.00000E+00, 0.00000E+00,
      *  0.00000E+00, 0.00000E+00, 0.00000E+00, 0.00000E+00, 0.00000E+00,
-     *  0.00000E+00, 0.00000E+00, 0.00000E+00, 2.93318E-02, 1.18339E-01,
-     *  1.22732E+00, 1.02669E-01, 1.17681E+00, 2.12185E+00, 1.00000E+00,
-     *  1.00000E+00, 1.08607E+00, 1.34836E+00, 1.10016E+00, 7.34129E-01,
-     *  1.15241E+00, 2.22784E+00, 7.95907E-01, 4.03601E+00, 4.39732E+00,
-     *  1.23435E+02,-4.52411E-02, 1.68986E-06, 7.44294E-01, 1.03604E+00,
-     *  1.72783E+02, 1.17681E+00, 2.12185E+00,-7.83697E-01, 9.49154E-01/
+     *  0.00000E+00, 0.00000E+00, 1.28840E+00, 3.10302E-02, 1.18339E-01,
+     *  1.00000E+00, 7.00000E-01, 1.15020E+00, 3.44689E+00, 1.28840E+00,
+     *  1.00000E+00, 1.08738E+00, 1.22947E+00, 1.10016E+00, 7.34129E-01,
+     *  1.15241E+00, 2.22784E+00, 7.95046E-01, 4.01612E+00, 4.47749E+00,
+     *  1.23435E+02,-7.60535E-02, 1.68986E-06, 7.44294E-01, 1.03604E+00,
+     *  1.72783E+02, 1.15020E+00, 3.44689E+00,-7.46230E-01, 9.49154E-01/
 C         LOWER BOUNDARY
       DATA PTM/
      L  1.04130E+03, 3.86000E+02, 1.95000E+02, 1.66728E+01, 2.13000E+02,

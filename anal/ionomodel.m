@@ -13,13 +13,17 @@
 
 function [apriori,apriorierror]=ionomodel(heights,ne_from_pp)
 
-global ionomodel_control iono_model p_m0 fit_altitude name_site
+global ionomodel_control iono_model p_m0 fit_altitude name_site ionomodel_first
 
 len=length(heights);
 heights=col(heights);
+modinfo=0;
 
 if isempty(ionomodel_control), ionomodel_control=0; end
 if isempty(iono_model), iono_model='giveme'; end
+if isempty(ionomodel_first)
+ ionomodel_first=0; modinfo=1;
+end
 if any([7 5]-size(fit_altitude)>0)
  ff=fit_altitude;
  % Altitudes (h2>h1) where to fit each parameter resp
@@ -41,7 +45,7 @@ end
 
 model=['ionomodel_' iono_model];
 if exist([model '.m'])
- [altitude,ne,te,ti,coll,cO,cM2,cH]=feval(model,heights);
+ [altitude,ne,te,ti,coll,cO,cM2,cH]=feval(model,heights,modinfo);
 else
  error(['Undefined ionospheric model: ' iono_model ' (giveme,gup150,iri)']);
 end
@@ -87,22 +91,24 @@ if nion>1
 end
 
 if nargout>1
- if ionomodel_control>5 & nion==2 & sum(p_m0-[30.5 16])==0
+ if ionomodel_control>5 & nion==2 & ~any(p_m0-[30.5 16])
   global pp_height
   if ~isempty(pp_height) & ionomodel_control==7
    global pp_profile p_N0 di_figures
-   nepp=pp_profile*p_N0;
-   forc=log([1e11;300;150;1e11;125;25]);
-   tol=log([10;1.5  ;2  ;10;1.2;1.3]);
-   fac=(pp_height'/210).^2*median(nepp);
+   nepp=pp_profile*p_N0; hpp=pp_height';
+   forc=log([1e11;300;100;1e11;120;25]); %;1e11;170;25]);
+   tol=log([ 10  ;1.5;2  ;10  ;1.3;1.5]);%;10  ;2  ;2]);
+   fac=(hpp/210).^2*median(nepp);
+%  nepp=ne_from_pp; hpp=heights; fac=median(nepp);
    opts=optimset(optimset('fminsearch'),'MaxFunEvals',10000);
-   chaps=exp(fminsearch('fit_chaps',forc,opts,nepp,pp_height',forc,tol,fac,1));
-   Ne210=chapman(210,chaps([1 4]),chaps([2 5]),chaps([3 6]));
-   nepp=chapman(heights2,chaps([1 4]),chaps([2 5]),chaps([3 6]));
+   chap=fminsearch('fit_chaps',forc,opts,nepp,hpp,forc,tol,fac,1);
+   chap=exp(reshape(chap,3,[]));
+   Ne210=chapman(210,chap);
+   nepp=chapman(heights2,chap);
    if di_figures(2)
     hold on,plot(ne_from_pp/1e11,heights2,'g',nepp/1e11,heights2,'b'),hold off,drawnow
-%   max(fit_chaps(log(chaps),nepp,pp_height',forc,tol,fac,0))
-%   hold on,plot(fit_chaps(log(chaps),nepp,pp_height',forc,tol,fac,0),[pp_height,10:10:60],'go'),hold off,drawnow
+%   max(fit_chaps(log(chap),nepp,hpp,forc,tol,fac,0))
+%   hold on,plot(fit_chaps(log(chap),nepp,hpp,forc,tol,fac,0),[hpp',10:10:60],'go'),hold off,drawnow
    end
    ne_from_pp=nepp+1e9;
   elseif ionomodel_control<8
