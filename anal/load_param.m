@@ -3,7 +3,7 @@ function [Time,par2D,par1D,rpar2D]=load_param(data_path,status,update)
 %
 % [Time,par2D,par1D,rpar2D]=load_param(data_path,update)
 % par2D [Ran,Alt,Ne,Te,Ti,Vi,Coll,Comp,Res]
-% par1D [Az,El,Pt,Tsys]
+% par1D [Az,El,Pt,Tsys,Oppd]
 % rpar2D[Ran,Alt,RawNe]
 
 global lastfile name_expr r_RECloc name_ant
@@ -31,7 +31,12 @@ npar2D=9; nrpar2D=3;
 par2D	=ones(n_alt,n_tot,npar2D)*NaN;
 Time   	=zeros(2,n_tot);
 if exist('r_Tsys')
-  par1D	=zeros(n_tot,4);
+  if exist('r_Offsetppd')
+    par1D=zeros(n_tot,5);
+  else
+    par1D=zeros(n_tot,4);
+    r_Offsetppd=[];
+  end
 else
   par1D	=zeros(n_tot,3);
   r_Tsys=[];
@@ -68,7 +73,7 @@ for i=1:n_tot
   par2D(n,i,[3 5 7])=r_param(:,[1 2 4]);
   par2D(n,i,[4 6])=[r_param(:,2).*r_param(:,3) -r_param(:,5)];
   Time(:,i)	=datenum(r_time);
-  par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys)]; %10 kW
+  par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]; %10 kW
   if isfinite(n_ralt)
     [ppr,k,l]=unique(round(r_pprange/ppres)); pp=ppr;
     nalt=length(ppr);

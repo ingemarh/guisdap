@@ -378,9 +378,9 @@ end
 if option(13)
  ll=[par1D(:,[3 2 1]) par2D(GATES,:,1)'];
  for i=1:s, ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
- if size(par1D,2)>3, ll=[ll par1D(:,4)]; end
- d=many(ll,[0 310]);
- line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {'Latitude(\circN)','Longitude(\circE)'} TITLE(2) TITLE1(4)],[])
+ if size(par1D,2)>3, ll=[ll par1D(:,4:end)]; end
+ d=many(ll,[-30 310]);
+ line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {'Latitude (\circN)','Longitude (\circE)'} TITLE(2) TITLE1(4) {'Offset (\mus)'}],[])
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 xlabel('UNIVERSAL TIME')

@@ -50,7 +50,7 @@ do
 		t) mflags=;;
 		x) mex=;;
 		?) echo $usage
-		exit 2;;
+		   exit 2;;
 	esac
 done
 shift `expr $OPTIND - 1`

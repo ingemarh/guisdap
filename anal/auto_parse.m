@@ -62,7 +62,7 @@ else
   if set_b, set(b(1),'string',name_expr), end
  end
  if isempty(antenna)
-  antenna='  '; dum=[];
+  antenna='   '; dum=[];
  else
   dum=strmatch(antenna(1:3),{'kir' 'sod' 'uhf' 'vhf' '32m' '42m' 'esr'});
  end

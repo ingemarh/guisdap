@@ -9,11 +9,12 @@ else
  [intper,t1,t2,siteid]=auto_parse(0);
  if siteid<3
   figs=[0 0 1 0 1];
+  extra='%a_Offsetppd=8;';
  else
   figs=[0 1 0 0 1];
+  extra='%Magic_const=1.1;';
  end
  result_path=fullfile(result_path,'AUTO');
- extra='%Magic_const=1.1;';
 end
 beg=sprintf('%04d %02d %02d  %02d %02d %02d',t1);
 to=sprintf('%04d %02d %02d  %02d %02d %02d',t2);
