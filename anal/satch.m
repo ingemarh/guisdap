@@ -1,6 +1,7 @@
 function OK=satch(el,secs,inttime)
-global lpg_lag lpg_wr lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt vc_penvo
+global lpg_lag lpg_wr lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo
 global d_data a_satch
+global callev calstd
 
 if isempty(lpg_lag)
   OK=1; return
@@ -23,17 +24,17 @@ Nsat=0; j=0; x0max=0;
 n_echo=6; min_v=.065; skip=a_satch.skip;
 
 lp=find(lpg_lag==0 & lpg_bcs==115);
-nclutter(lp)=a_satch.clutter;
-nsp_no_use(lp)=a_satch.repair;
-sigma(lp)=a_satch.sigma;
-lpgused=lp;
+nclutter(1:length(lp))=a_satch.clutter;
+nsp_no_use(1:length(lp))=a_satch.repair;
+sigma(1:length(lp))=a_satch.sigma;
+lpgused=lp; ii=0;
 for i=lp
- j=j+1;
+ j=j+1; ii=ii+1;
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
  N=lpg_ND(i)*inttime/(a_satch.prep*1e-6);
  dat=real(d_data(addr));
- [pb,th,L,x0]=sat_check(sigma(i),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,nclutter(i));
- pb=pb(find(pb<=length(dat)-L+1+nsp_no_use(i)));
+ [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,nclutter(ii));
+ pb=pb(find(pb<=length(dat)-L+1+nsp_no_use(ii)));
  if a_satch.plot
   eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb+round(L/2);'])
  end
@@ -45,25 +46,45 @@ for i=lp
 end
 Nsatb=0;
 lp=find(lpg_lag==0 & (lpg_bcs==98 | lpg_bcs==99));
-sigma(lp)=a_satch.sigmab;
-lpgused=[lpgused lp];
+sigma(1:length(lp))=a_satch.sigmab;
+lpgused=[lpgused lp]; ii=0;
 for i=lp
- j=j+1;
+ j=j+1; ii=ii+1;
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
  dat=real(d_data(addr)); dat_m=median(dat);
  data=dat;
- d=find(data>dat_m+sigma(i)*std(data));
+ d=find(data>dat_m+sigma(ii)*std(data));
  d1=d;
  while ~isempty(d)
   data(d)=dat_m;
   Nsatb=Nsatb+length(d);
-  d=find(data>dat_m+sigma(i)*std(data));
+  d=find(data>dat_m+sigma(ii)*std(data));
   d1=[d1;d];
  end
  if a_satch.plot
   eval(['dat' num2str(j) '=dat; pc' num2str(j) '=d1;'])
  end
  d_data(addr)=data;
+end
+lp=find(lpg_lag==0 & lpg_bcs==99);
+sigma(1:length(lp))=a_satch.sigmab;
+ii=0;
+if isempty(callev), callev=ones(size(lp))*Inf; calstd=callev; end
+for i=lp
+ ii=ii+1;
+ addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
+ cal=real(d_data(addr))/lpg_ND(i);
+ b=lpg_bac(i);
+ bac=median(real(d_data((skip:lpg_nt(b)-1)*lpg_ri(b)+lpg_ra(b)+1)))/lpg_ND(b);
+ newlev=mean(cal)-bac;
+ d=(newlev-callev(ii))/calstd(ii);
+ if d>sigma(ii)
+   fprintf('Sat filling cal, %.1f, replacing...\n',d)
+   d_data(addr)=lpg_ND(i)*(bac+callev(ii));
+ else
+   calstd(ii)=std(cal);
+   callev(ii)=newlev;
+ end
 end
 if Nsat>0 %| Nsatb>0
  if a_satch.plot
@@ -154,7 +175,7 @@ th=th(1+L:end-L,:); pb=pb-L;
 
 x0=y; x=x0; n_sat=0; l=ceil(L/2);
 
-opts=optimset('fminsearch'); opts=optimset(opts,'display','off');
+opts=optimset(optimset('fminsearch'),'display','off');
 while length(x)>n_sat & ~isempty(x0)
 %make a profile with echoes replaced by polynoms
   dat_m=dat;

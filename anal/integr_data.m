@@ -186,14 +186,8 @@ while i<length(files)
 end
 
 if OK, % if at least one good data dump was found
-  if a_control(4)==1 & N_averaged<2,
-    fprintf('One dump is not enough for variance determination\n')
-    fprintf('Skipping this integration period. Command ''analysis_control(4)=2''\n')
-    fprintf('in the startup file will enable the analysis\n')
-    OK=0;
-    return
-  elseif a_control(4)==1 & N_averaged<5,
-    disp(sprintf('Warning: %.0f dumps may not be enough for reliable variance determination\n',N_averaged))
+  if a_control(4)==1 & N_averaged<5
+    fprintf('Warning: %.0f dump%s may not be enough for reliable variance determination\n',N_averaged,(N_averaged>1)*'s')
   end
 
   % update parameter block, accept the last parameter block as starting point

@@ -21,9 +21,9 @@ if name_site=='T' | name_site=='L'
  d_data=[sum(reshape(d_data(1:npp*nslic),npp,nslic),2);sum(reshape(d_data(npp*nslic+(1:npr*nslic)),npr,nslic),2);d_data((nsig+1):end)];
  if a_control(4)==1
    if exist('N_averaged')
-     nsig=npp+npr;
-     d_var1=[d_var1(1:nsig)-d_data(1:nsig).*d_data(1:nsig)/N_averaged/nslic;d_var1((nsig+1):end)];
-     d_var2=[d_var2(1:nsig)-d_data(1:nsig).*conj(d_data(1:nsig))/N_averaged/nslic;d_var2((nsig+1):end)];
+     nsig=npp+npr; N_averaged=N_averaged*nslic;
+     d_var1=[d_var1(1:nsig)-d_data(1:nsig).*d_data(1:nsig)/N_averaged;d_var1((nsig+1):end)];
+     d_var2=[d_var2(1:nsig)-d_data(1:nsig).*conj(d_data(1:nsig))/N_averaged;d_var2((nsig+1):end)];
    else
      d_var1=[sum(reshape(d_var1(1:npp*nslic),npp,nslic),2);sum(reshape(d_var1(npp*nslic+(1:npr*nslic)),npr,nslic),2);d_var1((nsig+1):end)];
      d_var2=[sum(reshape(d_var2(1:npp*nslic),npp,nslic),2);sum(reshape(d_var2(npp*nslic+(1:npr*nslic)),npr,nslic),2);d_var2((nsig+1):end)];

@@ -110,7 +110,32 @@ for gate=find(diffran>0),
     end
     % Remove too narrow or too broad responses 
     ind1=find(ad_w(addr)>a_minwidth(gate) & ad_w(addr)<a_maxwidth(gate) );
-    addr=addr(ind1); 
+    addr=addr(ind1);
+  end
+  if length(addr)>1 & a_control(4)==1 & exist('N_averaged') & N_averaged<5
+    % Last chance to get the variances
+    % Calculate from the profiles: Need at least 3 points in each
+    ij=ad_lpg(addr); lpg=unique(ij); naddr=[]; ladlpg=length(ad_lpg);
+    for i=lpg
+      n=addr(find(i==ij)); ln=length(n); nn=n; ii=lpg_ri(i);
+      if n(1)>ii & ad_lpg(n(1)-ii)==i
+        n=[n(1)-ii n]; ln=ln+1;
+      end
+      if n(end)+ii<=ladlpg & ad_lpg(n(end)+ii)==i
+        n=[n n(end)+ii]; ln=ln+1;
+      end
+      if max(ln,N_averaged)>2
+        if ln>N_averaged
+          ii=ad_coeff(n)'; in=ii/mean(ii);
+          ii=d_data(n)./in; sii=sum(ii);
+          d_var1(nn)=(sum(ii.*ii)-sii.*sii/ln)/(ln-1);
+          d_var2(nn)=(sum(ii.*conj(ii))-sii.*conj(sii)/ln)/(ln-1);
+        end
+        naddr=[naddr nn];
+      end
+    end
+    addr=naddr;
+    clear lpg ii ij i naddr sii in n ln nn
   end
 
   if length(addr)>1, % store addresses if at least two points found
@@ -121,7 +146,7 @@ for gate=find(diffran>0),
   end
 end
 
-if length(a_addr)==0,
+if length(a_addr)==0
   fprintf(' No correlator result memory locations have been selected\n')
   fprintf(' Check the data selection parameters\n')
   fprintf(' Execution will be stopped\n')
