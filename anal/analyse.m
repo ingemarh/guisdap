@@ -80,6 +80,6 @@ else
   [ext,ex]=strtok(ex,'#');
   extra=char(extra,ext);
  end
- save(gfdfile,'name_expr','siteid','data_path','result_path','t1','t2','rt','intper','path_exps','figs','extra','-mat')
+ save_noglobal(gfdfile,name_expr,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
  go_on
 end
