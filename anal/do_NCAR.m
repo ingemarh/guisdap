@@ -12,8 +12,10 @@ function do_NCAR(path,ascbin,ant)
 global result_path name_expr
 
 if nargin<3, ant=[]; end
-if nargin<2, ascbin=3; end
-if nargin<1, path=result_path; end
+if nargin<2, ascbin=[]; end
+if nargin<1, path=[]; end
+if isempty(path), path=result_path; end
+if isempty(ascbin), ascbin=3; end
 
 path=fullfile(path,filesep);
 list=getfilelist(path);

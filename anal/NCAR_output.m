@@ -24,10 +24,10 @@ elseif isempty(NCAR_fid)
   if nargin<3, NCAR_binary=[]; end
   if nargin<2, NCAR_ascii=[]; end
   if ~isempty(NCAR_ascii)
-    NCAR_fid(1)=fopen(NCAR_ascii,'a');
+    NCAR_fid(1)=fopen(NCAR_ascii,'w');
   end
   if ~isempty(NCAR_binary)
-    NCAR_fid(2)=fopen(NCAR_binary,'a','b');
+    NCAR_fid(2)=fopen(NCAR_binary,'w','b');
   end
 elseif ~NCAR_fid(1) & ~isempty(NCAR_ascii)
   NCAR_fid(1)=fopen(NCAR_ascii,'w');

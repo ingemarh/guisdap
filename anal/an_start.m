@@ -153,6 +153,7 @@ t_stop(1)
 t_result
 if a_NCAR
   NCAR_output
+  do_NCAR([],a_NCAR)
 end
 if di_figures(5)
   vizu('new','rtgup')
