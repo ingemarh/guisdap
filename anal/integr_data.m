@@ -33,6 +33,9 @@ OK=0; EOF=0; jj=0; N_averaged=0;
 if a_ind==0
   a_inttime=60;
   a_ind=1;
+  a_cycle=sum(a_integr+a_skip);
+  i=fix((d_filelist(1)-a_start)/a_cycle);
+  if i, a_start=a_start+i*a_cycle; end
   a_interval=a_start+[0 a_integr(1)];
   a_oldtime=0;
 else

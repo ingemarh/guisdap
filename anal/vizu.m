@@ -337,7 +337,7 @@ for i=[3 7 9]
  end
 end
 if option(12)
- d=many(par2D(GATES,:,4:5),SCALE(4,:),1);
+ d=many(par2D(GATES,:,4:5),SCALE(4,:));
  line_plot(s,reshape(par2D(GATES,:,4:5),[],2),d,'Temperatures (K)',{'Electron' 'Ion'},[])
 end
 for i=[4 5 8]
@@ -347,7 +347,7 @@ for i=[4 5 8]
 end
 if option(6)
  if length(GATES)==1
-  d=many(par2D(GATES,:,6),SCALE(6,:),1);
+  d=many(par2D(GATES,:,6),SCALE(6,:));
   line_plot(s,par2D(GATES,:,6)',d,TITLE(6),{'positive away'},[])
  else
   surf_plot(s,y_param(GATES,:),par2D(GATES,:,6),SCALE(6,:),Yscale,YTitle,char(char(TITLE(6)),'         (away)'),[])
@@ -363,14 +363,14 @@ end
 if option(11)
  ll=par1D(:,[3 1 2:2:end]);
  d=find(ll(:,3)<90.1 & ll(:,3)>89.9); ll(d,2)=NaN;
- d=many(ll,[0 360],1);
+ d=many(ll,[0 360]);
  line_plot(s,ll,d,'Radar parameters',TITLE1([3 1 2 4]),[])
 end
 if option(13)
  ll=[par1D(:,[3 2 1]) par2D(GATES,:,1)'];
  for i=1:s, ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
  if size(par1D,2)>3, ll=[ll par1D(:,4)]; end
- d=many(ll,[0 310],1);
+ d=many(ll,[0 310]);
  line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {'Latitude(\circN)','Longitude(\circE)'} TITLE(2) TITLE1(4)],[])
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -391,7 +391,7 @@ return
 %%%%% surf_plot function %%%%%%%%%%
 function surf_plot(s,yparam,zparam,zscale,yscale,YTitle,Barlabel,lg)
 
-zscale=many(zparam,zscale,5,lg);
+zscale=many(zparam,zscale);
 if size(zparam,1)==1
  line_plot(s,zparam',zscale,Barlabel,[],lg);
  return
@@ -508,22 +508,17 @@ b=round([0:n-1]/(n-1)*(nl-1))+1;
 f=tanh(interp1(b,f(1:n,:),1:nl))/tanh(1);
 return
 
-function l=many(x,l,p,lg)
+function l=many(x,l,p)
 global manylim
-if nargin<3, p=1; end
-if nargin<4, lg=[]; end
-lx=sum(sum(isfinite(x))); p=p/100;
-if length(p)<2, p=ones(2,1)*p; end
-p=p*manylim;
-if strcmp(lg,'log')
- x=log(x); l=log(l);
+if nargin<3, p=sqrt(min(size(x))); end
+lx=prod(size(x));
+x=sort(x(find(isfinite(x))));
+llx=length(x);
+p=p/100; if length(p)<2, p=ones(1,2)*p; end
+p=round([1 llx]+[1 -1].*p*manylim*lx);
+if llx>p(1) & p(1)>0 & x(p(1))<l(1)
+ l(1)=x(p(1));
 end
-while length(find(x<l(1)))/lx>p(1)
- l(1)=l(1)-diff(l)/10;
-end
-while length(find(x>l(2)))/lx>p(2)
- l(2)=l(2)+diff(l)/10;
-end
-if strcmp(lg,'log')
- l=exp(l);
+if llx>p(2) & p(2)>0 & x(p(2))>l(2)
+ l(2)=x(p(2));
 end
