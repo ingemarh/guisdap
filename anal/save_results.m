@@ -12,6 +12,7 @@ global r_ind r_range r_param r_error r_res r_status r_dp
 global r_apriori r_apriorierror
 global pp_range pp_sigma
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid
+global webfile
 
 if length(d_time)>0
   filename=sprintf('%08d',fix(tosecs(d_time(2,:))));
@@ -80,10 +81,7 @@ if a_NCAR
  NCAR_output(file,i1,i2)
  if findstr(i1,'latest')
   fclose(NCAR_fid(1)); NCAR_fid(1)=0;
-  [i,d]=unix('ps | grep curl | grep -v grep');
-  if i
-    unix(['curl -s -F file=@' i1 ' "http://www.eiscat.com/raw/rtg/upload.cgi" >/dev/null &']);
-  end
+  webfile(2)=cellstr(i1);
  end
 end
 

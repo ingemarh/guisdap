@@ -1,6 +1,6 @@
-function handle=my_colorbar(lg)
+function handle=my_colorbar(label,lg)
 
-if nargin<1 | isempty(lg), lg='linear'; end
+if nargin<2 | isempty(lg), lg='linear'; end
 ax=[];
 
 % Determine color limits by context.  If any axes child is an image
@@ -40,14 +40,15 @@ if strcmp(get(gcf,'NextPlot'),'replace'),
   set(gcf,'NextPlot','add')
 end
 
-stripe=0.03; edge=0.08; 
 
 if isempty(ax)
   pos=get(h,'Position');
-  [az,el]=view;
-  if all([az,el]==[0 90]), space=0.02; else, space=.1; end
-  set(h,'Position',[pos(1) pos(2) pos(3)*(1-stripe-edge-space) pos(4)])
-  rect=[pos(1)+(1-stripe-edge)*pos(3) pos(2) stripe*pos(3) pos(4)];
+% stripe=0.03; edge=0.08; 
+% [az,el]=view;
+% if all([az,el]==[0 90]), space=0.02; else, space=.1; end
+% set(h,'Position',[pos(1) pos(2) pos(3)*(1-stripe-edge-space) pos(4)])
+% rect=[pos(1)+(1-stripe-edge)*pos(3) pos(2) stripe*pos(3) pos(4)];
+  rect=[pos(1)+1.02*pos(3) pos(2) .035*pos(3) pos(4)];
 
   % Create axes for stripe
   ax=axes('Position', rect);
@@ -70,6 +71,7 @@ else
 end
 
 set(ax,'userdata',h,'YaxisLoc','right','xtick',[])
+ylabel(label,'Rotation',-90,'VerticalAlignment','baseline')
 set(gcf,'CurrentAxes',h)
 set(gcf,'Nextplot','Replace')
 

@@ -26,10 +26,9 @@ function  [OK,EOF]=integr_data(txlim)
  
 global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control 
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
-global a_txlim a_realtime a_inttime di_figures
-global b
+global a_txlim a_realtime a_inttime
  
-OK=0; EOF=0; j=0; jj=0;
+OK=0; EOF=0; jj=0;
 if a_ind==0
   a_inttime=60;
   a_ind=1;
@@ -42,27 +41,9 @@ end
 if a_integr==0, a_interval(2)=a_end;
 elseif a_interval(2)>=a_end; EOF=1; end
 if a_realtime
-  a_max_rtwait=300; mrw=round(sqrt(a_max_rtwait));
   if d_filelist(end)<a_interval(1)
-    if di_figures(5)
-     try, vizu rtgup; catch, disp(lasterr), end, jj=1;
-    end
-    df=getfilelist(data_path,d_filelist(end));
-    while isempty(df)
-      fprintf('.'); pause(mrw)
-      [df,msg]=getfilelist(data_path,d_filelist(end));
-      j=j+1;
-      if j>mrw
-        msg=sprintf('No new data in %ds',a_max_rtwait);
-      elseif ~isempty(b) & ishandle(b(7)) & ~get(b(7),'value')
-        msg='Aborting RT';
-      end
-      if ~isempty(msg)
-        fprintf('\n%s\n',msg)
-        EOF=1; return
-      end
-    end
-    d_filelist=[d_filelist(end) df];
+    [EOF,jj]=update_filelist(EOF,jj)
+    if EOF, return, end
   end
 elseif d_filelist(end)<a_interval(1)
   EOF=1; return
@@ -194,32 +175,13 @@ while i<length(files)
   end
   prev_parbl=d_parbl; % update previous parameter block
   if a_realtime & file==d_filelist(end)
-    j=0; df=getfilelist(data_path,file);
-    while isempty(df) & j<mrw
-      if jj==0 & di_figures(5)
-        try, vizu rtgup; catch, disp(lasterr), end, jj=1;
-      else
-        fprintf('.'); pause(mrw)
-      end
-      j=j+1;
-      [df,msg]=getfilelist(data_path,file);
-      if j>mrw
-        msg=sprintf('No new data in %ds',a_max_rtwait);
-      elseif ~isempty(b) & ishandle(b(7)) & ~get(b(7),'value')
-        msg='Aborting RT';
-      end
-      if ~isempty(msg)
-        fprintf('\n%s\n',msg);
-        EOF=1; break
-      end
-    end
-    d_filelist=[d_filelist df];
+    [EOF,jj]=update_filelist(EOF,jj)
+    if EOF, break, end
     files=d_filelist(find(d_filelist>a_interval(1) & d_filelist<=a_interval(2)));
   end
 end
-if j>0, fprintf('\n'); end
 
-if OK,  % if at least one good data dump was found
+if OK, % if at least one good data dump was found
   if a_control(4)==1 & N_averaged<2,
     fprintf('One dump is not enough for variance determination\n')
     fprintf('Skipping this integration period. Command ''analysis_control(4)=2''\n')
@@ -238,3 +200,32 @@ if OK,  % if at least one good data dump was found
   d_var1=d_var1-data.*data/N_averaged;
   d_var2=d_var2-data.*conj(data)/N_averaged;
 end
+
+function [EOF,jj]=update_filelist(EOF,jj)
+global di_figures data_path b d_filelist
+j=0;
+a_max_rtwait=300; mrw=round(sqrt(a_max_rtwait));
+if ~jj
+  if di_figures(5)
+    try, vizu rtgup; catch, disp(lasterr), end
+  end
+  jj=1; send_www
+end
+
+df=getfilelist(data_path,d_filelist(end));
+while isempty(df)
+  fprintf('.'); pause(mrw)
+  [df,msg]=getfilelist(data_path,d_filelist(end));
+  j=j+1;
+  if j>mrw
+    msg=sprintf('No new data in %ds',a_max_rtwait);
+  elseif ~isempty(b) & ishandle(b(7)) & ~get(b(7),'value')
+    msg='Aborting RT';
+  end
+  if ~isempty(msg)
+    fprintf('\n%s',msg)
+    EOF=1; break
+  end
+end
+d_filelist=[d_filelist df];
+if j>0, fprintf('\n'); end

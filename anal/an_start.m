@@ -147,3 +147,4 @@ if di_figures(5)
   vizu('new','rtgup')
   vizu('save')
 end
+send_www

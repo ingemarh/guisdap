@@ -23,16 +23,17 @@ function vizu(action,a2,a3)
 % To reset and start over:
 % >> vizu new [action]
 
-global Time RAN ALT Ne Te Ti Vi Coll Res Comp Status Az El Pt Tsys name_expr name_ant axs axc hds
-global DATA_PATH PLOT_STATUS LOCATION START_TIME END_TIME MESSAGE1
-global r_RECloc path_tmp path_GUP result_path
+global Time par2D par1D rpar2D name_expr name_ant axs axc hds
+global height n_tot add_plot
+global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1
+global r_RECloc path_tmp path_GUP result_path webfile
 if nargin<2, a2=[]; end
 if nargin<3, a3=[]; end
 if nargin==0
   action=[];
 elseif strcmp(action,'new')
   close(findobj('type','figure','userdata',6))
-  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[]; PLOT_STATUS=[];
+  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
   axs=[]; axc=[];
   action=a2; a2=a3;
 end
@@ -52,14 +53,7 @@ if strcmp(action,'rtgup')
   REALT=1;
 end
 
-% Save previous values (if any) and (re)load variables from config file
-
-if ~isempty(PLOT_STATUS)
-  OLD_STATUS=PLOT_STATUS;
-else
-  OLD_STATUS=-99;
-end
-CLPos=1.15;
+PLOT_STATUS=0;		% Status limit (0-3)
 if isempty(DATA_PATH)
   if strcmp(action,'verbose')
     DATA_PATH=minput('Data path',result_path,1);
@@ -80,19 +74,18 @@ if isempty(DATA_PATH)
 end
 
 if isempty(action) | strcmp(action,'verbose')
- if isempty(Time) | OLD_STATUS~=PLOT_STATUS
-  [Time,RAN,ALT,Ne,Te,Ti,Vi Coll Comp Res Status Az El Pt,Tsys]=load_param(DATA_PATH);
+ if isempty(Time)
+  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS);
  end
  if ~isempty(axs), delete(axs), end
  if ~isempty(axc), delete(axc), end
  axs=[]; axc=[];
 elseif strcmp(action,'update')
- [Time,RAN,ALT,Ne,Te,Ti,Vi Coll Comp Res Status Az El Pt,Tsys]=load_param(DATA_PATH,1);
+ [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
  if isempty(Time)
   disp('Vizu: No new data!'), return
  end
  set(0,'currentfig',findobj('type','figure','userdata',6))
- OLD_STATUS=99;
 elseif strcmp(action,'print') | strcmp(action,'save')
  if isunix
   set(hds(2:3),'visible','off')
@@ -131,112 +124,117 @@ end
 %%%%%%%%%%%%%%%% Parameters %%%%%%%%
 WHICH_PARAM='Ne Te Ti Vi AE';  % Select parameters to plot (AE=Az,El,Power)
 %%%%%%%%%% Y-Axis scales %%%%%%%%%%
-Y_PARAM		='Altitude';	% Y-Axis parameter
-ALT_SCALE	=[80 600];	% Scale for Altitude (km)
-RAN_SCALE	=[150 900];	% Scale for Range (km)
-LAT_SCALE	=[65 78];	% Scale for Geog. Latitude (deg)
+Y_PARAM=2;	% Y-Axis parameter
 %%%%%%%%%%%%%%%% Plot options %%%%%
-PLOT_STATUS	=0;		% Status limit (0-3)
-TIME_TICKS	=12; 		% Maximum number of time ticks to print
+TITLE={'Range (km)','Altitude (km)','Electron Density (m^{-3})',...
+	'Electron Temperature (K)','Ion Temperature (K)',...
+	'Ion Drift Velocity (ms^{-1})','Collision frequency (Hz)',...
+	'Ion Composition (O^+/N_e)','Residual'};
+TITLE1={'Azimuth(\circ)','Elevation(\circ)','Power (10kW)',...
+	'System Temperature (K)'};
+SCALE =[80 600		% Altitude km
+	50 900		% Range km
+	10.^[10 12]	% Ne m-3
+	0 4000		% Te K
+	0 3000		% Ti K
+	-200 200	% Vi m/s
+	10.^[0 5]	% collision freq Hz
+	0 1		% Comp
+	.1 10]; 	% Res
+PLF_SCALE	=[0 10];	% Langmuir freq MHz
+RAWNE_SCALE	=10.^[9 12];	% Raw Ne
+LAT_SCALE	=[65 78];	% Geogr Lat deg
 MESSAGE2	='Not for publication - see Rules-of-the-road'; % top
 LOCATION	=getenv('HOSTNAME');	% Place where plotting performed
-NE_SCALE 	=10.^[10 12];	% Scale for Ne (m-3)
-TE_SCALE	=[0 4000];	% Scale for Te (K)
-TI_SCALE	=[0 3000];	% Scale for Ti (K)
-VI_SCALE	=[-200 200];	% Scale for Vi (m/s)
-RES_SCALE	=[.5 2]; 	% Scale for Res
-COMP_SCALE	=[0 1];		% Scale for Comp
-PLF_SCALE	=[0 10];	% Scale for Langmuir freq (MHz)
-COLL_SCALE	=10.^[1 6];	% Scale for collision freq (Hz)
 FIGURE_TITLE	='EISCAT RADAR';% Title for the whole figure
 if ~isempty(Loc)
-  LOCATION	=['EISCAT-' Loc];
+ LOCATION	=['EISCAT-' Loc];
 end
 stretchSecs	=31;	% Number of seconds to stretch data points
+FS	=10;		% Font size
+TL	=[0.01 0.025];	% Tick size
+height(2)=.03;		% Panel separation
 
 %% Individual experiment setup %%%%
 if REALT
- VI_SCALE=[-400 400];
- ALT_SCALE=[80 800];
+ SCALE(6,:)=[-400 400];
+ SCALE(2,:)=[80 800];
 else
- if any(El<75), VI_SCALE=[-500 500]; end
- if all(El<35), VI_SCALE=[-1000 1000]; end
- if all(El>75), ALT_SCALE=[80 800]; end
+ if any(par1D(:,2)<75), SCALE(6,:)=[-500 500]; end
+ if all(par1D(:,2)<35), SCALE(6,:)=[-1000 1000]; end
+ if all(par1D(:,2)>75), SCALE(2,:)=[80 800]; end
  if strcmp(name_expr,'CP4B')
-  WHICH_BEAM=minput('Which beam','N',1);  
-  ALT_SCALE=[250 1100];
-  if strcmp(WHICH_BEAM,'N')
+  SCALE(2,:)=[250 1100];
+  if strcmp(minput('Which beam','N',1),'N')
    GATES=[21:40];
   else
    GATES=[1:20];
   end
- elseif strcmp(name_expr,'gup0')
-  ALT_SCALE=[150 800];
  end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~exist('GATES')
-  GATES=1:size(ALT,1);
+ GATES=1:size(par2D,1);
 end
 if length(GATES)==1
-  WHICH_PARAM='Ne TT Vi LL';
+ WHICH_PARAM='Ne TT Vi LL';
 end
 
 %%%%%%%%%% Time scales %%%%%%%%%%%%%
 if strcmp(action,'verbose')
 % name_expr=minput('Experiment name',name_expr,1);
-  if isempty(name_ant)
-    name_ant=minput('Which antenna','32m',1);
-  end
-  if isempty(START_TIME)
-    START_TIME=floor(datevec(Time(1,1)));
-    END_TIME=ceil(datevec(Time(2,end)));
-  end
-  START_TIME=minput('Start time',START_TIME);
-  END_TIME=minput('  End time',END_TIME);
-  if length(GATES)>1
-   ALT_SCALE=[floor(min(ALT(GATES(1,:)))/10) ceil(max(ALT(GATES(end,:)))/10)];
-   ALT_SCALE=minput('Altitude scale',ALT_SCALE*10);
-  end
-  disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Lf Co')
-  WHICH_PARAM=minput('Choose',WHICH_PARAM,1);
+ if isempty(name_ant)
+  name_ant=minput('Which antenna','32m',1);
+ end
+ if isempty(START_TIME)
+  START_TIME=floor(datevec(Time(1,1)));
+  END_TIME=ceil(datevec(Time(2,end)));
+ end
+ START_TIME=minput('Start time',START_TIME);
+ END_TIME=minput('  End time',END_TIME);
+ if length(GATES)>1
+  SCALE(2,:)=minput('Altitude scale',10*[floor(min(par2D(GATES(1),:,2))/10) ceil(max(par2D(GATES(end),:,2))/10)]);
+ end
+ disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Lf Co Nr')
+ WHICH_PARAM=minput('Choose',WHICH_PARAM,1);
 elseif ~REALT
-  if strcmp(DATA_PATH(end),filesep)
-    DATA_PATH=DATA_PATH(1:end-1);
-  end
-  [d,dpath]=fileparts(DATA_PATH);
-  START_TIME=[str2num(dpath(1:4)) str2num(dpath(6:7)) str2num(dpath(9:10)) 0 0 0];
-  END_TIME=START_TIME+[0 0 0 24 0 0];
-  name_ant=dpath(end-2:end);
+ if strcmp(DATA_PATH(end),filesep)
+  DATA_PATH=DATA_PATH(1:end-1);
+ end
+ [d,dpath]=fileparts(DATA_PATH);
+ START_TIME=[str2num(dpath(1:4)) str2num(dpath(6:7)) str2num(dpath(9:10)) 0 0 0];
+ END_TIME=START_TIME+[0 0 0 24 0 0];
+ name_ant=dpath(end-2:end);
 end
 if isempty(MESSAGE1)
-  MESSAGE1=minput('Type of experiment','CP',1);
+ MESSAGE1=minput('Type of experiment','CP',1);
 end
 if strcmpi(name_ant,'32m') | strcmpi(name_ant,'42m')
-  FIGURE_TITLE	='EISCAT SVALBARD RADAR';
-  stretchSecs	=65;
-  fradar=500e6;
+ FIGURE_TITLE	='EISCAT SVALBARD RADAR';
+ stretchSecs	=65;
+ fradar=500e6;
 elseif strcmpi(name_ant,'uhf') | strcmpi(name_ant,'kir') | strcmpi(name_ant,'sod')
-  FIGURE_TITLE	='EISCAT UHF RADAR';
-  fradar=930e6;
+ FIGURE_TITLE	='EISCAT UHF RADAR';
+ fradar=930e6;
 elseif strcmpi(name_ant,'vhf')
-  FIGURE_TITLE	='EISCAT VHF RADAR';
-  fradar=224e6;
+ FIGURE_TITLE	='EISCAT VHF RADAR';
+ fradar=224e6;
 end
 option=zeros(20,1);
-if findstr(WHICH_PARAM,'Ne'), option(1)=1; end
-if findstr(WHICH_PARAM,'Te'), option(2)=1; end
-if findstr(WHICH_PARAM,'Ti'), option(3)=1; end
-if findstr(WHICH_PARAM,'Vi'), option(4)=1; end
-if findstr(WHICH_PARAM,'AE'), option(5)=1; end
-if findstr(WHICH_PARAM,'TT') & length(GATES)==1, option(6)=1; end
-if findstr(WHICH_PARAM,'LL') & length(GATES)==1, option(7)=1; end
+if findstr(WHICH_PARAM,'Ne'), option(3)=1; end
+if findstr(WHICH_PARAM,'Te'), option(4)=1; end
+if findstr(WHICH_PARAM,'Ti'), option(5)=1; end
+if findstr(WHICH_PARAM,'Vi'), option(6)=1; end
+if findstr(WHICH_PARAM,'AE'), option(11)=1; end
+if findstr(WHICH_PARAM,'TT') & length(GATES)==1, option(12)=1; end
+if findstr(WHICH_PARAM,'LL') & length(GATES)==1, option(13)=1; end
 if findstr(WHICH_PARAM,'O+'), option(8)=1; end
 if findstr(WHICH_PARAM,'Rs'), option(9)=1; end
-if findstr(WHICH_PARAM,'Lf'), option(10)=1; end
-if findstr(WHICH_PARAM,'Co'), option(11)=1; end
+if findstr(WHICH_PARAM,'Lf'), option(14)=1; end
+if findstr(WHICH_PARAM,'Co'), option(7)=1; end
+if findstr(WHICH_PARAM,'Nr') & ~isempty(rpar2D), option(15)=1; end
 n_tot=nnz(option);
-
+if n_tot>6, FS=8; height(2)=.02; TL=TL/2; end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % to label plot to match window selected
 
@@ -261,222 +259,181 @@ t1=['Produced@' LOCATION ', ' date];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if isempty(findobj('type','figure','userdata',6))
-  figure
-  if ~prod(get(0,'ScreenSize'))-1 & strcmp(version('-release'),'13')
-    close(gcf),figure; % Matlab R13 bug
-  end
-  set(gcf,'Position',[400 30 587 807],'DefaultAxesFontSize',10,...
-   'DefaultAxesTickDir','out','DefaultTextFontSize',10,'UserData',6,...
+ figure
+ if ~prod(get(0,'ScreenSize'))-1 & strcmp(version('-release'),'13')
+  close(gcf),figure; % Matlab R13 bug
+ end
+ set(gcf,'Position',[400 30 587 807],'DefaultAxesFontSize',FS,...
+   'DefaultAxesTickDir','out','DefaultTextFontSize',FS,'UserData',6,...
    'DefaultAxesXMinorTick','off','defaultaxesbox','on',...
+   'DefaultAxesTickLength',TL,...
    'renderer','painters','PaperPosition',[0.4 0.7 20.65 28.4],...
    'DefaultAxesFontName','Helvetica','DefaultTextFontName','Helvetica',...
    'DefaultAxeslayer','top','DefaultsurfaceEdgeColor','none',...
+   'DefaultTextHorizontalAlignment','center',...
    'Name',['GUISDAP results from ',DATA_PATH])
 % set(gcf,'PaperType','A4','PaperUnits','centimeters','NumberTitle','off',...
 %  'defaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
-  uimenu('label','Update','callback','vizu(''update'')');
-  uimenu('label','Edit','callback','vizu(''verbose'')');
-  uimenu('label','Save','callback','if isunix,vizu(''save''),else,printdlg,end');
-  uimenu('label','Print','callback','if isunix,vizu(''print''),else,printdlg,end');
+ uimenu('label','Update','callback','vizu(''update'')');
+ uimenu('label','Edit','callback','vizu(''verbose'')');
+ uimenu('label','Save','callback','if isunix,vizu(''save''),else,printdlg,end');
+ uimenu('label','Print','callback','if isunix,vizu(''print''),else,printdlg,end');
 
-  ti=axes('Position',[0.0 0.87 0.95 0.08]);
-  set(ti,'Visible','off');
-  text('Position',[0.55,0.80],'HorizontalAlignment','center',...
-      'VerticalAlignment','top', ...
+ ti=axes('Position',[0.0 0.87 0.95 0.08]);
+ set(ti,'Visible','off');
+ text('Position',[0.55,0.80],'VerticalAlignment','top', ...
       'String',FIGURE_TITLE,'FontSize',16,'FontWeight','bold')
-  hds=text('Position',[0.55,0.4],'HorizontalAlignment','center',...
-      'VerticalAlignment','top','String',t2,'FontSize',12,'Interpreter','none');
-  text('Position',[0.125,0.12],'HorizontalAlignment','left',...
+ hds=text('Position',[0.55,0.4],'VerticalAlignment','top',...
+      'String',t2,'FontSize',12,'Interpreter','none');
+ text('Position',[0.125,0.12],'HorizontalAlignment','left',...
       'Color',[.5 .5 .5],'VerticalAlignment','top','String',t1)
-  text('Position',[0.86,0.12],'HorizontalAlignment','right',...
+ text('Position',[0.86,0.12],'HorizontalAlignment','right',...
       'Color',[.5 .5 .5],'VerticalAlignment','top','String',MESSAGE2)
-  axs=[]; axc=[];
-  %logo...
-  hds(2)=text('Position',[0.55,1.3],'HorizontalAlignment','center',...
-      'VerticalAlignment','top','FontSize',24,'FontWeight','bold',...
-      'String','EISCAT Scientific Association');
-  load(fullfile(path_GUP,'matfiles','logo'))
-  axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
-  hds(3)=get(gca,'child'); set(hds(3),'markersize',1)
-  set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
+ axs=[]; axc=[];
+ %logo...
+ hds(2)=text('Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
+      'FontWeight','bold','String','EISCAT Scientific Association');
+ load(fullfile(path_GUP,'matfiles','logo'))
+ axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
+ hds(3)=get(gca,'child'); set(hds(3),'markersize',1)
+ set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
 else
-  set(hds(1),'string',t2)
+ set(hds(1),'string',t2)
 end
+add_plot=0;
+height(1)=(0.80-(n_tot-1)*height(2))/n_tot;
+colormap(myb(78,1));
+s=size(par2D,2);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Determine the Y-Axis parameter
-
-if upper(Y_PARAM(1))=='R'
-  Y='RAN';
-  YTitle='Range (km)';
-elseif upper(Y_PARAM(1))=='M'
-  Y='GML';
-  YTitle='Geomag. lat.';
-  g=[73.60086 73.52204 73.44751 73.36974 73.29306 ...
-     73.21563 73.13813 73.06375 72.98671 72.91084 ...
-     72.84470 72.70182 72.47776 72.25554 72.03100 ...
-     71.81182 71.59326 71.37448 71.15875 70.94426 ...
-     70.72778 70.42110 70.02116 69.66894];
-  GML=repmat(g,1,910);
-else
-  Y='ALT';
-  YTitle='Altitude (km)';
+if Y_PARAM<3
+ YTitle=TITLE(Y_PARAM);
+ y_param=par2D(:,:,Y_PARAM);
+ Yscale=SCALE(Y_PARAM,:);
+elseif Y_PARAM==3
+ YTitle='Latitude (\circN)';
+ y_param=par2D(:,:,1);
+ ll=par1D(:,[2 1]);
+ for i=1:s,for j=1:size(y_param,1)
+  d=loc2gg(r_RECloc,[ll(i,:) y_param(j,i)]); y_param(j,i)=d(1);
+ end,end
+ Yscale=[];
 end
-
-y_param=eval(Y);
-if exist([Y '_SCALE'])
-  Yscale=eval([Y '_SCALE']);
-else
-  Yscale=[];
-end;
-add_plot=0;
-height=(0.80-(n_tot-1)*0.03)/n_tot;
-colormap(myb(78,1));
-s=size(Status,2);
-if OLD_STATUS~=PLOT_STATUS
-  i=find(Status>PLOT_STATUS);
-  Ne(i)=NaN; Te(i)=NaN; Ti(i)=NaN; Vi(i)=NaN;
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Plot the parameters
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if stretchSecs & s>1
  dt=(Time(1,2:end)-Time(2,1:end-1));
  d=find(dt>0 & dt<=stretchSecs/86399);
  Time(2,d)=Time(2,d)+dt(d)/2;
  Time(1,d+1)=Time(2,d);
 end
-if option(1)
- [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Ne(GATES,:),NE_SCALE,Yscale,YTitle,'Electron Density (m^{-3})',CLPos,'log');
-end
-if option(6)
- [add_plot]=line_plot(add_plot,action,n_tot,height,s,[Te(GATES,:);Ti(GATES,:)]',[],'Temperatures (K)',{'Electron' 'Ion'},CLPos,[]);
-end
-if option(2)
- [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Te(GATES,:),TE_SCALE,Yscale,YTitle,'Electron Temperature (K)',CLPos,[]);
-end
-if option(3)
- [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Ti(GATES,:),TI_SCALE,Yscale,YTitle,'Ion Temperature (K)',CLPos,[]);
-end
-if option(4)
- if length(GATES)==1
-  if VI_SCALE(1)<VI_SCALE(2)
-   [add_plot]=line_plot(add_plot,action,n_tot,height,s,Vi(GATES,:)',[],'Ion Drift Velocity (ms^{-1})',{'positive away'},CLPos,[]);
-  else
-   [add_plot]=line_plot(add_plot,action,n_tot,height,s,-Vi(GATES,:)',[],'Ion Drift Velocity (ms^{-1})',{'positive towards'},CLPos,[]);
-  end
- else
-  if VI_SCALE(1)<VI_SCALE(2)
-   [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Vi(GATES,:),VI_SCALE,Yscale,YTitle,'Ion Velocity (ms^{-1})',CLPos,[]);
-   text('String','(away)','Units','Normalized','Position',[CLPos-.025 0.5],...
-       'HorizontalAlignment','Center','Rotation',-90)
-  else
-   [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),-Vi(GATES,:),-VI_SCALE,Yscale,YTitle,'Ion Velocity (ms^{-1})',CLPos,[]);
-   text('String','(towards)','Units','Normalized','Position',[CLPos-.025 0.5],...
-       'HorizontalAlignment','Center','Rotation',-90)
-  end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plot the parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+for i=[3 7 9]
+ if option(i)
+ surf_plot(s,y_param(GATES,:),par2D(GATES,:,i),SCALE(i,:),Yscale,YTitle,TITLE(i),'log')
  end
 end
+if option(12)
+ line_plot(s,reshape(par2D(GATES,:,4:5),[],2),[],'Temperatures (K)',{'Electron' 'Ion'},[])
+end
+for i=[4 5 8]
+ if option(i)
+  surf_plot(s,y_param(GATES,:),par2D(GATES,:,i),SCALE(i,:),Yscale,YTitle,TITLE(i),[])
+ end
+end
+if option(6)
+ if length(GATES)==1
+  line_plot(s,par2D(GATES,:,6)',[],TITLE(6),{'positive away'},[])
+ else
+  surf_plot(s,y_param(GATES,:),par2D(GATES,:,6),SCALE(6,:),Yscale,YTitle,char(char(TITLE(6)),'         (away)'),[])
+ end
+end
+if option(14)
+ ll=8.98e-6*sqrt(par2D(GATES,:,3)).*sqrt(1+3*7.52e5*(fradar/3e8)^2*par2D(GATES,:,4)./par2D(GATES,:,3));
+ surf_plot(s,y_param(GATES,:),ll,PLF_SCALE,Yscale,YTitle,'Plasma line frequency (MHz)',[])
+end
+if option(15)
+ surf_plot(s,rpar2D(:,:,Y_PARAM),rpar2D(:,:,3),RAWNE_SCALE,Yscale,YTitle,'Raw electron density (m^{-3})','log')
+end
 if option(11)
- [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Coll(GATES,:),COLL_SCALE,Yscale,YTitle,'Collision frequency (Hz)',CLPos,'log');
+ ll=par1D(:,[3 1 2:2:end]);
+ d=find(ll(:,3)<90.1 & ll(:,3)>89.9); ll(d,2)=NaN;
+ line_plot(s,ll,[0 360],'Radar parameters',TITLE1([3 1 2 4]),[])
 end
-if option(8)
- [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Comp(GATES,:),COMP_SCALE,Yscale,YTitle,'Ion Composition (O^+/N_e)',CLPos,[]);
-end
-if option(10)
- plf=8.98e-6*sqrt(Ne).*sqrt(1+3*7.52e5*(fradar/3e8)^2*Te./Ne);
- [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),plf(GATES,:),PLF_SCALE,Yscale,YTitle,'Plasma line frequency (MHz)',CLPos,[]);
-end
-if option(9)
- [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Res(GATES,:),RES_SCALE,Yscale,YTitle,'Residual',CLPos,'log');
-end
-if option(5)
- d=find(El<90.1 & El>89.9); Az(d)=NaN;
- [add_plot]=line_plot(add_plot,action,n_tot,height,s,[Pt Az El Tsys],[0 360],'Radar parameters',{'Power(10kW)' 'Azimuth(\circ)' 'Elevation(\circ)' 'System Temperature (K)'},CLPos,[]);
-end
-if option(7)
- ll=[El Az RAN(GATES,:)'];
- for i=1:size(ll,1), ll(i,:)=loc2gg(r_RECloc,ll(i,:)); end
- [add_plot]=line_plot(add_plot,action,n_tot,height,s,[Pt ll Tsys],[],'Radar parameters',{'Power(10kW)' 'Latitude(\circN)','Longitude(\circE)' 'Altitude(km)' 'System Temperature (K)'},CLPos,[]);
+if option(13)
+ ll=[par1D(:,[3 2 1]) par2D(GATES,:,1)'];
+ for i=1:s, ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
+ if size(par1D,2)>3, ll=[ll par1D(:,4)]; end
+ line_plot(s,ll,[],'Radar parameters',[TITLE1(3) {'Latitude(\circN)','Longitude(\circE)'} TITLE(2) TITLE1(4)],[])
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-if ~strcmp(action,'update')
-  set(axs,'xgrid','on','ygrid','on')
-  set(axs,'XLim',[datenum(START_TIME) datenum(END_TIME)])
-  tickform='HH:MM'; td=datenum(END_TIME)-datenum(START_TIME);
-  if td>7, tickform='dd/mm';
-  elseif td<.003, tickform='HH:MM:SS'; end
-  for i=axs
-    datetick(i,'x',tickform,'keeplimits')
-  end
-  xlabel('UNIVERSAL TIME')
-end
-
+xlabel('UNIVERSAL TIME')
 drawnow
 if REALT & ~isempty(Loc) & a_realtime & isunix
-  if prod(get(0,'ScreenSize'))-1;
-    flag='-dpng'; flag2='-r72';
-  else
-    flag='-dpng256'; flag2=[];
-  end
-  pngfile=sprintf('%sGup_%s.png',path_tmp,name_ant);
-  print(gcf,flag,flag2,pngfile)
-  [i,d]=unix('ps | grep curl | grep -v grep');
-  if i
-    unix(['curl -s -F file=@' pngfile ' "http://www.eiscat.com/raw/rtg/upload.cgi" >/dev/null &']);
-  end
+ if prod(get(0,'ScreenSize'))-1;
+  flag='-dpng'; flag2='-r72';
+ else
+  flag='-dpng256'; flag2=[];
+ end
+ pngfile=sprintf('%sGup_%s.png',path_tmp,name_ant);
+ print(gcf,flag,flag2,pngfile)
+ webfile(1)=cellstr(pngfile);
 end
 return
 
 %%%%% surf_plot function %%%%%%%%%%
-function [add_plot]=surf_plot(add_plot,action,n_tot,height,s,yparam,zparam,zscale,yscale,YTitle,Barlabel,CLPos,lg)
+function surf_plot(s,yparam,zparam,zscale,yscale,YTitle,Barlabel,lg)
 
 if size(zparam,1)==1
- [add_plot]=line_plot(add_plot,action,n_tot,height,s,zparam',[],Barlabel,[],CLPos,[]);
+ line_plot(s,zparam',[],Barlabel,[],[]);
  return
 end
-global axs Time axc
+global Time axs axc add_plot
 add_plot=add_plot+1;
-if ~strcmp(action,'update')
-  axs=[axs axes('Position',[0.12 0.06+(n_tot-add_plot)*(height+0.03) 0.8 height])];
+if length(axs)<add_plot
+ setup_axes(yscale,YTitle)
 else
-  set(gcf,'currentaxes',axs(add_plot))
+ set(gcf,'currentaxes',axs(add_plot))
 end
   
 if strcmp(lg,'log')
-  zparam(find(zparam<=0))=eps;
-  zparam=log10(zparam); zscale=log10(zscale);
+ zparam(find(zparam<=0))=eps;
+ zparam=log10(zparam); zscale=log10(zscale);
 end
 dy=diff(yparam)/2; yparam=[yparam-[dy(1,:);dy];yparam(end,:)+dy(end,:)];
 zparam=[zparam;zparam(end,:)];
 o2=ones(1,2);
 for i=1:s
-  surface(Time(:,i),yparam(:,i)*o2,zparam(:,i)*o2)
+ surface(Time(:,i),yparam(:,i)*o2,zparam(:,i)*o2)
 end
 
-if ~strcmp(action,'update')
-  if ~isempty(zscale)
-    set(gca,'CLim',zscale);
-  end
-  if ~isempty(yscale)
-    set(gca,'YLim',yscale);
-  end
-  ylabel(YTitle)
-  axc=[axc my_colorbar(lg)];
-  text('String',Barlabel,'Units','Normalized','Position',[CLPos 0.5],...
-      'HorizontalAlignment','Center','Rotation',-90)
+if length(axc)<add_plot
+ if ~isempty(zscale)
+  set(gca,'CLim',zscale);
+ end
+ axc=[axc my_colorbar(Barlabel,lg)];
 end
 return
 
 %%%%% line_plot function %%%%%%%%%%
-function [add_plot]=line_plot(add_plot,action,n_tot,height,s,yparam,yscale,YTitle,Clabel,CLPos,lg)
-global axs Time
+function line_plot(s,yparam,yscale,YTitle,Clabel,lg)
+global Time axs add_plot
 add_plot=add_plot+1;
-if ~strcmp(action,'update')
-  axs=[axs axes('Position',[0.12 0.06+(n_tot-add_plot)*(height+0.03) 0.6964 height])];
+if length(axs)<add_plot
+ setup_axes(yscale,YTitle)
+ if strcmp(lg,'log')
+  set(gca,'Yscale','log')
+ end
+ jj=0;
+ for j=1:size(yparam,2)
+  if ~isempty(Clabel) & any(isfinite(yparam(:,j)))
+   color=get(gca,'ColorOrder'); jj=jj+1;
+   text('String',char(Clabel(j)),'Units','Normalized',...
+        'Position',[1+.025*jj 0.5],'Rotation',-90,'Color',color(j,:))
+  end
+ end
 else
-  set(gcf,'currentaxes',axs(add_plot))
+ set(gcf,'currentaxes',axs(add_plot))
 end
 
 o2=ones(2,1);
@@ -489,28 +446,23 @@ if s>1
   d1=d(i)+1;
  end
 else
- for i=1:s
-  line(Time(:,i),o2*yparam(i,:))
- end
+ line(Time,o2*yparam)
 end
+return
 
-if ~strcmp(action,'update')
-  if strcmp(lg,'log')
-    set(gca,'Yscale','log')
-  end
-  if ~isempty(yscale)
-    set(gca,'YLim',yscale)
-  end
-  for j=1:size(yparam,2)
-    ylabel(YTitle)
-    if ~isempty(Clabel)
-      color=get(gca,'ColorOrder');
-      text('String',char(Clabel(j)),'Units','Normalized',...
-          'Position',[1+.025*j 0.5],'HorizontalAlignment','Center',...
-          'Rotation',-90,'Color',color(j,:))
-    end
-  end
+function setup_axes(yscale,YTitle)
+global axs height n_tot Time START_TIME END_TIME add_plot
+axs=[axs axes('Position',[.12 .06+(n_tot-add_plot)*sum(height) .7 height(1)])];
+set(gca,'xgrid','on','ygrid','on')
+set(gca,'XLim',[datenum(START_TIME) datenum(END_TIME)])
+tickform='HH:MM'; td=datenum(END_TIME)-datenum(START_TIME);
+if td>7, tickform='dd/mm';
+elseif td<.003, tickform='HH:MM:SS'; end
+datetick(gca,'x',tickform,'keeplimits')
+if ~isempty(yscale)
+ set(gca,'YLim',yscale)
 end
+ylabel(YTitle)
 return
 
 function f=myb(nl,cut)
