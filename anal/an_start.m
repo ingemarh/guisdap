@@ -136,7 +136,8 @@ while ~EOF
 %******************************************************************
 
     clear_results
-    half_prof 
+    half_prof
+    GUIDITOR
     save_results
 
     if di_figures(4)

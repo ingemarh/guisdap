@@ -4,7 +4,7 @@
 % script for GUISPERTs and other power users. Put here any commands by
 % which you wish to change the data before the analysis is started
 %
-% See also: GUIZARD
+% See also: GUIZARD GUIDITOR
 
 % Correct the doppler sign
 if (name_site=='V' & d_time(1,1)>2000) | ...
