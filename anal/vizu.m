@@ -248,6 +248,7 @@ if strcmp(action,'VERBOSE')
  PLF_SCALE=minput('Scale (plf)',PLF_SCALE);
  RAWNE_SCALE=minput('Scale (rawNe)',RAWNE_SCALE);
  LAT_SCALE=minput('Scale (lat)',LAT_SCALE);
+ manylim=Inf;
  stretchSecs=minput('Strech secs',stretchSecs);
 end
 option=zeros(20,1);
