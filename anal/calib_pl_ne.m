@@ -4,7 +4,7 @@ function ratio=calib_pl_ne(pl_dir,expt,gate,plots)
 % Calibration routine of radar constant using simultaneous wide band plasma
 % lines and GUISDAP results
 % input: pl_dir Directory containing integrated plasma lines (needed)
-%        expt   Name of experiement (or guessed from pl_dir)
+%        expt   Name of experiment (or guessed from pl_dir)
 %        plots  Display a number of plots for internal checks
 % output: ratio Vector containing
 %                Density ratio
@@ -20,17 +20,17 @@ if strcmp(expt,'steffe') | (isempty(expt) & strfind(pl_dir,'steffe'))
  nfft=128; nint=2; ngates=1;
  freq=[-4 -5.3 4 5.3]*1e6; dt=0.6e-6; invert=-1;
  ran=[182 423.9]; fradar=500e6;
- maxe=2; ele=81.6; updown=0:1;
- startad=1; gate=1;
+ maxe=2; ele=81.6; updown=0:1; nup_d=2;
+ startad=1; gate=1; skip_if=0;
 elseif strcmp(expt,'tau8') | (isempty(expt) & strfind(pl_dir,'tau8'))
  nfft=128; nint=2; ngates=4;
  freq=4.1*1e6; dt=0.6e-6; invert=-1;
  ran=[53.3 272.4;193.4 412.5;333.4 552.5;473.3 692.4]; fradar=224e6;
- maxe=2; ele=90; updown=0;
- startad=108679;
+ maxe=2; ele=0; updown=0; nup_d=1;
+ startad=108679; skip_if=1;
  if isempty(gate), gate=2; end
 else
- error('No such experiement defined')
+ error('No such experiment defined')
 end
 if isempty(gate), gate=1; end
 
@@ -43,11 +43,12 @@ nfreq=length(freq);
 
 re=6370; ratio=[];
 %First guess of altitudes (Not very important)
-alt=re*sqrt(1+ran(:,gate)/re.*(ran(:,gate)/re+2*sin(ele/57.2957795)))-re;
+alt=re*sqrt(1+ran(gate,:)/re.*(ran(gate,:)/re+2*sin(ele/57.2957795)))-re;
+if ele==0, alt=[150 450]; end
 %Read in the analysed data
 lf=vizu('verbose',alt,'L1 AE');
 for i=1:2
- hlim(:,i)=ran(i,gate)*(ran(i,gate)/re+2*sin(par1D(:,2)/57.2957795));
+ hlim(:,i)=ran(gate,i)*(ran(gate,i)/re+2*sin(par1D(:,2)/57.2957795));
 end
 hlim=re*sqrt(1+hlim/re)-re;
 fgup=fullfile(DATA_PATH,'.gup');
@@ -100,10 +101,14 @@ if plots
  plot([filt_shape spec_shape]), pause
 end
 interf_spec=spec_shape-filt_shape;
+if skip_if
+ interf_spec(find(interf_spec~=0))=NaN;
+%filt_shape=spec_shape;
+end
 
 %Find a timevarying background (Use Tsys instead?)
 fp=reshape(median(plspec,1),nfreq,[]);
-fr=mean(spec_shape,1)./median(spec_shape,1);
+%fr=mean(spec_shape,1)./median(spec_shape,1);
 %fp=fp.*(fr'*ones(1,nfl));
 nplspec=zeros(size(plspec));
 spnorm=median(filt_shape,1);
@@ -123,12 +128,15 @@ plsig=reshape(plsig,nfft,nfreq,[]);
 
 %Find frequencies of the maximum point
 freq_scale=invert*(-nfft/2:nfft/2-1)/dt/nfft;
-df=-diff(freq_scale(1:2));
+df=abs(diff(freq_scale(1:2)));
 if plots
  plot(freq_scale'*ones(1,nfreq)+ones(nfft,1)*freq,plsig(:,:,round(nfl/2))), pause
 end
+freq_meas=10e-6*abs([freq_scale(1)+freq freq_scale(end)+freq]);
+freq_meas=[min(floor(freq_meas)) max(ceil(freq_meas))]/10;
+
 plpeak=ones(2,nfl,nfreq)*NaN;
-s=std(plsig(:));
+s=std(plsig(find(isfinite(plsig))));
 for j=1:nfreq
  for i=1:nfl
   [a,b]=max(plsig(:,j,i));
@@ -142,9 +150,9 @@ if isempty(find(isfinite(plpeak)))
 end
 plpeak_c=ones(nfl,2)*NaN;
 for i=updown
- [a,b]=max(plpeak(2,:,(1:nfreq/2)+i*nfreq/2),[],3);
+ [a,b]=max(plpeak(2,:,(1:nup_d)+i*nup_d),[],3);
  for j=1:nfl
-  plpeak_c(j,i+1)=plpeak(1,j,b(j)+i*nfreq/2);
+  plpeak_c(j,i+1)=plpeak(1,j,b(j)+i*nup_d);
  end
 end
 plf=ones(nfl,1)*NaN;
@@ -155,10 +163,10 @@ if length(updown)==2
  end
  plf(d)=mean(abs(plpeak_c(d,:)),2)/1e6;
 else
- plf=abs(plpeak_c(d,:)),updown)/1e6;
+ plf=abs(plpeak_c(:,1+updown))/1e6;
 end
 if plots
- plot([abs(plpeak_c) plf]), pause
+ plot([abs(plpeak_c)/1e6 plf]), pause
 end
 
 % We have (lf Time) vs (plf p_time), now do the comparison and
@@ -174,12 +182,17 @@ for i=d'
  end
 end
 if isempty(ip), error('No overlapping times GUISDAP vs PL'), end
-s=size(Time,2); h=par2D(:,:,2); r0=1; mr=1;
-pmax=ceil(max(plf));
+s=size(Time,2); h=par2D(:,:,2); r0=1; mr=1; mrpp=100;
+pmax=ceil(max(plf)); freq_th=[0 10];
 while mr==r0 | abs(mr-1)>.01
+ mrp=abs(mr-1);
+ if mrp>mrpp
+  error('Cannot fit this')
+ end
+ if mr~=r0, mrpp=mrp; end
  mr=mr*r0; r0=mr;
  lf=8.98e-6*sqrt(par2D(:,:,3))/mr.*sqrt(1+3*7.52e5*(fradar/3e8)^2*par2D(:,:,4)./par2D(:,:,3)*mr^2);
- lf=find_plf_peak(s,h,hlim,lf,16,[0 10],1);
+ lf=find_plf_peak(s,h,hlim,lf,16,freq_th,1);
  peak_lf=lf{1}(:,2);
  r=peak_lf(il)./plf(ip); r2=r.*2;
  mr2=median(r2); sr2=std(r2);
@@ -198,13 +211,14 @@ while mr==r0 | abs(mr-1)>.01
   hx=xlabel('Measured plasmaline peak (MHz)');
   set(hx,'color','green'), set(hy,'color','blue')
   set(gca,'xlim',[0 pmax],'ylim',[0 pmax]), axis square
+  freq_th=freq_meas;
  end
 end
 mr2=(mr*r0)^2; sr2=sr2*mr2;
 text(3,.5,sprintf('Density ratio=%.2f (%.2f)',mr2,sr2))
 newMagic=Magic_const/mr2;
 %Need some overshoot for Te changes
-better_guess=newMagic*exp(-log(mr2)/15); % 15 OK for 22May04
+better_guess=newMagic*exp(-log(mr2)/15); % 15 OK for 22May04 ESR
 if abs(mr2-1)>.01
  fprintf('Try Magic_const=%.2f; (%.2f)\n',better_guess,newMagic)
 end
