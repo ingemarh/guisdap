@@ -37,7 +37,11 @@ cM2(find(isnan(cM2)))=1;
 cH=m_iri(:,4)/100;
 d=find(isnan(cH));
 d1=find(isfinite(cH));
-cH(d)=inter3(altitude(d),[0;altitude(d1);4000],[0;cH(d1);1])';
+if isempty(d1)
+ cH(:)=0;
+else 
+ cH(d)=inter3(altitude(d),[0;altitude(d1);4000],[0;cH(d1);1])';
+end
 cO=1-(cM2+cH);
 coll=1.63e-16*tn(:,2)+2.99e-16*tn(:,3)+4.28e-16*tn(:,4); %only molaculars
 coll(find(coll<1))=1;
