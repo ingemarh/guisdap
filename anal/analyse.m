@@ -24,9 +24,9 @@ figure(5)
 clf
 set(5,'Name','GUISDAP for dummies','userdata',5,'Position',[40 170 350 390],'NumberTitle','off','defaulttextunit','pixel','toolbar','auto')
 %load(fullfile(path_GUP,'matfiles','logo')), plot(y,x,'.k'), axis image
-%set(get(gca,'child'),'markersize',10), set(gca,'visible','off')
-guisdaplogo(1)
-waitforbuttonpress, clf
+%set(get(gca,'child'),'markersize',10), set(gca,'visible','off'), pause(1)
+guisdaplogo(1), text(-.4,-.6,'Press mouse to continue'), waitforbuttonpress
+clf
 x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=240;
 bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','set([bg br],''visible'',''off'')','fontsize',14);
 uicontrol('Style','pushbutton','string','?','position',[0 40 20 20],'callback',['web http://www.eiscat.com/GUISDAP/doc/howto' num2str(GUP_ver*10) '.html'],'tooltipstring','Get some help');

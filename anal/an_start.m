@@ -30,7 +30,10 @@ nat_const
 get_ADDRSHIFT
 init_graphics
 spektri_init % Loads in plasma dispersion function table
-name_antennas={'32m','42m','vhf','uhf','kir','sod'};
+name_antennas={'32m' '42m' 'vhf' 'uhf' 'kir' 'sod'};
+radar_freqs=[500 500 224 930 930 930]*1e6;
+radar_gains=10.^[4.25 4.48 4.31 4.81 4.81 4.81];
+radar_effs=[.66 .68 .64 .66 .66 .66];
 
 old_rcprog=-1; old_point=[-1 -1];
 EOF=0;
@@ -39,7 +42,7 @@ while ~EOF
   if any(a_simul)
     OK=1;EOF=1;
   else
-    if a_rawdata,
+    if a_rawdata
       [OK,EOF]=integr_NW;
     else
       [OK,EOF,N_averaged]=integr_data;
@@ -63,16 +66,13 @@ while ~EOF
     if d_rcprog~=old_rcprog | ((name_site=='K' | name_site=='S') & any(fix((old_point-[ch_el(1) ch_az(1)])/.05)))
       name_ant=char(name_antennas(ant_id));
       load_initfile
-      Ant_eff=.66;
-      if name_site=='V'
-        [ch_el ch_az ch_gain]=vhf_elaz(ch_el,0,ch_gain); % assume boresight beam
-        Ant_eff=.64;
-      elseif name_site=='L' & ant_id==2
-        %ch_gain=(42/32)^2*ch_gain;
-        ch_gain=(42/32)^2*10^4.25;
-        %ch_gain=10^4.52;
-        Ant_eff=.68;
+      read_antpar=[radar_freqs(ant_id) radar_gains(ant_id)];
+      if any(abs(1-read_antpar./[ch_fradar(1) ch_gain(1)])>.1)
+        ch_fradar=read_antpar(1)*ones(size(ch_fradar));
+        ch_gain=read_antpar(2)*ones(size(ch_gain));
+        fprintf('Warning: Changed radar freq and antenna gain from init\n')
       end
+      Ant_eff=radar_effs(ant_id);
       if a_control(4)>=2, load_GUPvar, end  
       if any(a_simul), simulparblock; end
       if exist('GUIZARD')==2, GUIZARD, end

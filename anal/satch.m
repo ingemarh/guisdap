@@ -9,7 +9,7 @@ end
 if ~isfield(a_satch,'filled')
   if ~isfield(a_satch,'sigma'), a_satch.sigma=4; end	% detection limit sig
   if ~isfield(a_satch,'sigmab'), a_satch.sigmab=3; end	% det lim bac+cal
-  if ~isfield(a_satch,'sigmac'), a_satch.sigmac=3; end	% det lim cal fill
+  if ~isfield(a_satch,'sigmac'), a_satch.sigmac=Inf; end% det lim cal fill
   if ~isfield(a_satch,'calsecs'), a_satch.calsecs=99; end% time lim cal fill
   if ~isfield(a_satch,'skip'), a_satch.skip=0; end	% no points to skip
   if ~isfield(a_satch,'clutter'), a_satch.clutter=0; end% no clutter red points
@@ -70,47 +70,53 @@ lpgused=[lpgused lp]; ii=0;
 for i=lp
  j=j+1; ii=ii+1;
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
- dat=real(d_data(addr)); dat_m=median(dat);
- data=dat;
- d=find(data>dat_m+sigma(ii)*std(data));
- d1=d;
- while ~isempty(d)
-  data(d)=dat_m;
-  Nsatb=Nsatb+length(d);
+ if length(addr)>1
+  dat=real(d_data(addr)); dat_m=median(dat);
+  data=dat;
   d=find(data>dat_m+sigma(ii)*std(data));
-  d1=[d1;d];
+  d1=d;
+  while ~isempty(d)
+   data(d)=dat_m;
+   Nsatb=Nsatb+length(d);
+   d=find(data>dat_m+sigma(ii)*std(data));
+   d1=[d1;d];
+  end
+  if a_satch.plot
+   eval(['dat' num2str(j) '=dat; pc' num2str(j) '=d1;'])
+  end
+  d_data(addr)=data;
  end
- if a_satch.plot
-  eval(['dat' num2str(j) '=dat; pc' num2str(j) '=d1;'])
- end
- d_data(addr)=data;
 end
 
 %check cal filled (Unstable, uses prevoius dump)
-lp=setdiff(find(lpg_lag==0 & lpg_bcs=='c'),a_satch.lpg_skip);
-if ~isempty(a_code)
- lp=lp(find(ismember(lpg_code(lp),unique(a_code))));
-end
-sigma(1:length(lp))=a_satch.sigmac;
-ii=0;
-if isempty(calold) | calold.secs-secs>a_satch.calsecs
- calold.lev=ones(size(lp))*Inf; calold.std=calold.lev;
-end
-calold.secs=secs;
-for i=lp
- ii=ii+1;
- addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
- cal=real(d_data(addr))/lpg_ND(i);
- b=lpg_bac(i);
- bac=median(real(d_data((skip:lpg_nt(b)-1)*lpg_ri(b)+lpg_ra(b)+1)))/lpg_ND(b);
- newlev=(mean(cal)-bac)/inttime;
- d=(newlev-calold.lev(ii))/calold.std(ii);
- if d>sigma(ii)
-   fprintf('Sat filling cal, %.1f, replacing...\n',d)
-   d_data(addr)=lpg_ND(i)*(bac+inttime*calold.lev(ii));
- else
-   calold.std(ii)=std(cal);
-   calold.lev(ii)=newlev;
+if isfinite(a_satch.sigmac)
+ lp=setdiff(find(lpg_lag==0 & lpg_bcs=='c'),a_satch.lpg_skip);
+ if ~isempty(a_code)
+  lp=lp(find(ismember(lpg_code(lp),unique(a_code))));
+ end
+ sigma(1:length(lp))=a_satch.sigmac;
+ ii=0;
+ if isempty(calold) | calold.secs-secs>a_satch.calsecs
+  calold.lev=ones(size(lp))*Inf; calold.std=calold.lev;
+ end
+ calold.secs=secs;
+ for i=lp
+  ii=ii+1;
+  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
+  if ~isempty(addr)
+   cal=real(d_data(addr))/lpg_ND(i);
+   b=lpg_bac(i);
+   bac=median(real(d_data((skip:lpg_nt(b)-1)*lpg_ri(b)+lpg_ra(b)+1)))/lpg_ND(b);
+   newlev=(mean(cal)-bac)/inttime;
+   d=(newlev-calold.lev(ii))/calold.std(ii);
+   if d>sigma(ii)
+    fprintf('Sat filling cal, %.1f, replacing...\n',d)
+    d_data(addr)=lpg_ND(i)*(bac+inttime*calold.lev(ii));
+   else
+    calold.std(ii)=std(cal);
+    calold.lev(ii)=newlev;
+   end
+  end
  end
 end
 

@@ -1,6 +1,6 @@
 function [altitude,n_electr,t_electr,ti,coll,cO,cM2,cH]=ionomodel(heights,minfo)
 if minfo
- fprintf('\n** The model uses the GIVEME model for Summer 1996**\n')
+ fprintf('** The model uses the GIVEME model for Summer 1996**\n')
 end
 global path_GUP
 file=canon(fullfile(path_GUP,'matfiles','summer1996'),0);

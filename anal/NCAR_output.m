@@ -87,7 +87,7 @@ if exist('r_Tsys')
 else
   tsys=AbsentData;
 end
-spar=[sparcod;round([m_az*100 m_el*100 r_SCangle*180/pi tsys r_Pt/1000])];
+spar=[sparcod;round([[m_az m_el r_SCangle*180/pi]*100 tsys r_Pt/1000])];
 
 % Assemble output vector of codes and values for the multi-valued parameters
 var=real([log10(r_param(:,1))*1e3 r_param(:,2) r_param(:,3)*1e3 log10(r_param(:,4))*1e3 -r_param(:,5)]);

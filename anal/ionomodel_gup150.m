@@ -1,7 +1,7 @@
 function [altitude,ne,te,ti,coll,cO,cM2,cH]=ionomodel(heights,modinfo)
 global ionomodel_control
 if modinfo
- fprintf('\n** This ionomodel uses the guisdap-1.50 model**\n')
+ fprintf('** This ionomodel uses the guisdap-1.50 model**\n')
 end
 heights=[min(heights)-1:max(1,mean(diff(sort(heights)))):max(heights)+1]';
 if ionomodel_control==2; % constant SNR

@@ -1,6 +1,6 @@
 function [altitude,ne,te,ti,coll,cO,cM2,cH]=ionomodel(heights,modinfo)
 if modinfo
- fprintf('\n** The model uses the IRI-2001 model at the tx position**\n')
+ fprintf('** The model uses the IRI-2001 model at the tx position**\n')
 end
 global d_time p_XMITloc
 [tsec,year]=tosecs(d_time(1,:));
