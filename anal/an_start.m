@@ -25,6 +25,7 @@ t_init
 t_start(1)
 
 globals          % Defines (nearly) all global variables 
+global t_file
 chk_par1
 nat_const
 get_ADDRSHIFT
@@ -151,6 +152,7 @@ while ~EOF
   end 
 
 end
+if exist(t_file,'file'), delete(t_file), end
 if ~isempty(a_addr)
   t_stop(1)
   t_result

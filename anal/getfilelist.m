@@ -38,6 +38,10 @@ else
   for j=1:length(dirs)
     dirlist=dir(fullfile(dp,dirs(j).name,'*.mat'));
     dirlen=length(dirlist);
+    if ~dirlen
+     dirlist=dir(fullfile(dp,dirs(j).name,'*.mat.bz2'));
+     dirlen=length(dirlist);
+    end
     l=zeros(dirlen,1);
     for i=dirlen:-1:1
       l(i)=sscanf(dirlist(i).name,'%8d');
