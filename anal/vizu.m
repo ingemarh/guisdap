@@ -13,9 +13,9 @@ function [varargout]=vizu(action,a2,a3)
 % To update the plot with new files:
 % >> vizu update
 % To send the figure to the default printer:
-% >> vizu print
+% >> vizu print [printer]
 % To save the current figure in .eps and .png formats:
-% >> vizu save
+% >> vizu save [extra tail]
 % To get more selection possibilities
 % >> vizu verbose
 % To get even more selection possibilities
@@ -98,17 +98,19 @@ elseif strcmp(action,'print') | strcmp(action,'save')
   if strcmp(action,'print')
     fig=sprintf('vizu%06d',round(rand*1e6)); ext='ps';
   else
-    fig=sprintf('%d-%02d-%02d_%s@%s',START_TIME(1:3),name_expr,name_ant);
+    fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
     ext='eps';
     if isdir(DATA_PATH)
       dirs=DATA_PATH;
       if exist(fullfile(DATA_PATH,'.gup'),'file')
         load('-mat',fullfile(DATA_PATH,'.gup'),'intper')
         if intper>0
-          fig=sprintf('%d-%02d-%02d_%s_%d@%s',START_TIME(1:3),name_expr,intper,name_ant);
+          fig=sprintf('%s_%d',fig,intper);
         end
       end
     end
+    if ~isempty(a2), fig=sprintf('%s_%s',fig,a2); end
+    fig=sprintf('%s@%s',fig,name_ant);
   end
   file=fullfile(dirs,fig);
   print(gcf,['-d' ext '2c'],[file '.' ext]);
