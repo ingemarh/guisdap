@@ -35,7 +35,7 @@ else
   par1D	=zeros(n_tot,3);
   r_Tsys=[];
 end
-if nargout>3 & findstr('TVL',name_site) & ~isempty(r_pp)
+if nargout>3 & strfind('TVL',name_site) & ~isempty(r_pp)
   n_ralt=length(r_pp);
   rpar2D=ones(n_ralt,n_tot,3)*NaN;
   re=6370;

@@ -11,7 +11,7 @@ global r_h
 global r_ind r_range r_param r_error r_res r_status r_dp
 global r_apriori r_apriorierror
 global pp_range pp_sigma
-global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid
+global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
 global webfile
 
 if length(d_time)>0
@@ -19,9 +19,16 @@ if length(d_time)>0
 else
   filename='00000000';
 end
-i1=findstr(result_path,'AUTO');
+i1=strfind(result_path,'AUTO');
 if ~isempty(i1)
- result_dir=sprintf('%d-%02d-%02d_%s@%s%s',d_time(2,1:3),name_expr,name_ant,filesep);
+ if length(a_integr)>1
+  aint='scan';
+ elseif a_integr==0
+  aint='ant';
+ else
+  aint=num2str(a_integr);
+ end
+ result_dir=sprintf('%d-%02d-%02d_%s_%s@%s%s',d_time(2,1:3),name_expr,aint,name_ant,filesep);
  result_path=[result_path(1:i1-1) result_dir];
 end
 if isempty(r_h)
@@ -79,7 +86,7 @@ if a_NCAR
  end
  if a_NCAR>1, i2=[file0 'bin']; end
  NCAR_output(file,i1,i2)
- if findstr(i1,'latest')
+ if strfind(i1,'latest')
   fclose(NCAR_fid(1)); NCAR_fid(1)=0;
   webfile(2)=cellstr(i1);
  end

@@ -50,7 +50,7 @@ b(10)=uicontrol('Style','edit','string',extra,'position',[x 50 x2 100],'max',100
 else
  path_exps=minput('Path exps',path_exps,'s');
  name_expr=minput('Dsp exp',name_expr,'s');
- siteid=findstr(minput('Site',sites(siteid),'s'),sites);
+ siteid=strfind(sites,minput('Site',sites(siteid),'s'));
  data_path=minput('Data path',data_path,'s');
  t1=minput('Start time',t1);
  t2=minput('End time',t2);

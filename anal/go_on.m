@@ -19,7 +19,7 @@ else
  extra=get(b(10),'string');
  save([path_tmp '.gup'],'name_expr','siteid','data_path','result_path','t1','t2','rt','intper','path_exps','figs','extra','-mat')
 end
-if length(findstr(result_path,'AUTO'))>1
+if length(strfind(result_path,'AUTO'))>1
  error('"AUTO" result path do not work, please specify')
 end
 analysis_start=t1; analysis_end=t2; analysis_integr=intper; %for guisdap int
