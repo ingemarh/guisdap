@@ -80,17 +80,15 @@ r_h=col(range_to_height(r_range,ch_el(1)));
 r_range=col(r_range)*(p_dtau*1e-6*v_lightspeed/2/1000);
 r_Tsys=sysTemp;
 
-rstatus=r_status; clear global r_status, r_status=rstatus; % 'clever' matlab...
-
 if ~di_results
  fprintf('Status: '); fprintf('%d',r_status); fprintf('\n');
 end
 
 file=canon([result_path filename]);
-save(file,'r_ver','name_expr','name_site','name_ant','r_time','r_az','r_el',...
-     'r_Pt','r_m0','r_range','r_h','r_param','r_error','r_res','r_status',...
-     'r_dp','r_apriori','r_apriorierror','r_pp','r_pprange','r_XMITloc',...
-     'r_RECloc','r_SCangle','r_Tsys','r_Offsetppd')
+save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,...
+     r_Pt,r_m0,r_range,r_h,r_param,r_error,r_res,r_status,...
+     r_dp,r_apriori,r_apriorierror,r_pp,r_pprange,r_XMITloc,...
+     r_RECloc,r_SCangle,r_Tsys,r_Offsetppd)
 if a_NCAR
  file0=sprintf('%sNCAR_%d-%02d-%02d_%s@%s.',result_path,d_time(2,1:3),...
       name_expr,name_ant);
@@ -113,6 +111,5 @@ if a_NCAR
 end
 
 % save file name to "filelist.dat"
-listfid=fopen([result_path 'filelist.dat'],'a');
-fprintf(listfid,'%s\n',filename); fclose(listfid);
-clear r_status, global r_status, r_status=rstatus; % 'clever' matlab...
+%listfid=fopen([result_path 'filelist.dat'],'a');
+%fprintf(listfid,'%s\n',filename); fclose(listfid);

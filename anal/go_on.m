@@ -24,7 +24,7 @@ else
  [siteid,t1,t2,rt,intper,figs,extra,data_path,result_path]=save_setup;
 end
 if ~isnan(bg)
- save([path_tmp '.gup'],'name_expr','siteid','data_path','result_path','t1','t2','rt','intper','path_exps','figs','extra','-mat')
+ save_noglobal([path_tmp '.gup'],name_expr,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
 end
 sites='KSTVLLL'; name_site=sites(siteid);
 if length(strfind(result_path,'AUTO'))>1

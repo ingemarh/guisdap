@@ -17,7 +17,7 @@ if d_date<datenum(2003,11,11,21,15,0)
       if ~exist('pos_cp2','var')
         global d_filelist
         d=rem(d_filelist-tosecs([2003 11 11 9 0 0]),3*128);
-        pos_cp2=ceil(ceil([27.6 26.8 27.6]/6.4)*6.4)+[1 3 5]*64,
+        pos_cp2=ceil(ceil([27.6 26.8 27.6]/6.4)*6.4)+[1 3 5]*64;
         d=find((d>64 & d<=pos_cp2(1)) | (d>64*3 & d<=pos_cp2(2)) | (d>64*5 & d<=pos_cp2(3)));
         d_filelist(d)=[];
         pos_cp2=[144 171.6 171.6;66.66 90 63.2];

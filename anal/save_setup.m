@@ -2,8 +2,6 @@ function [siteid,t1,t2,rt,intper,figs,extra,data_path,result_path]=save_setup(fi
 global path_tmp b
 
 if isempty(b) | ~ishandle(b(1))
- global data_path name_expr path_exps result_path
- dpath=data_path; nexpr=name_expr; pexps=path_exps; rpath=result_path; % 'clever' matlab...
  load([path_tmp '.gup'],'-mat')
 else
  global path_exps name_expr
@@ -25,9 +23,6 @@ if nargin>0
  if strcmp(i,'.m')
   save_m(file,name_expr,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
  else
-  save(file,'name_expr','siteid','data_path','result_path','t1','t2','rt','intper','path_exps','figs','extra','-mat')
+  save_noglobal(file,name_expr,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
  end
-end
-if exist('rpath','var')
- data_path=dpath; name_expr=nexpr; path_exps=pexps; result_path=rpath; % 'clever' matlab...
 end
