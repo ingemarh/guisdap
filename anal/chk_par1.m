@@ -21,6 +21,13 @@ result_path=fullfile(result_path,filesep);
 path_GUP=fullfile(path_GUP,filesep);
 path_exps=fullfile(path_exps,filesep);
 path_tmp=fullfile(path_tmp,filesep);
+if ~isempty(d_saveintdir)
+ d_saveintdir=fullfile(d_saveintdir,filesep);
+ if ~exist(d_saveintdir,'dir')
+  [i,j]=fileparts(d_saveintdir(1:end-1));
+  mkdir(i,j)
+ end
+end
 
 % The first if-block tries to locate the data source and produces variables 
 % necessary for integration:

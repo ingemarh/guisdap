@@ -218,7 +218,8 @@ if OK, % if at least one good data dump was found
    else
     i_averaged=[];
    end
-   file=fullfile(d_saveintdir,sprintf('%08d.mat',fix(secs)));
+   file=[d_saveintdir sprintf('%08d.mat',fix(secs))];
+   disp(file)
    save_noglobal(file,d_ExpInfo,d_parbl,d_data,d_raw,i_var1,i_var2,i_averaged)
   end
   d_var1=d_var1-data.*data/N_averaged;
