@@ -1,4 +1,4 @@
-% GUISPERT.m: special hacks - makes some more space available
+% GUISPERT.m: special hacks
 % GUISDAP v8.1  03-04-30 Copyright EISCAT
 %
 % script for GUISPERTs and other power users. Put here any commands by
@@ -11,6 +11,9 @@ d_secs=tosecs(d_time(1,:));
 if (strcmp(name_ant(1:3),'vhf') & d_time(1,1)>2000) | ...
    (strcmp(name_ant(2:3),'2m') & d_time(1,1)==2003 & d_secs>6857400 & d_secs<25660800)
   d_data=conj(d_data);
+end
+if strcmp(name_ant(1:3),'vhf') & ~exist('Magic_const')
+ a_Magic_const=1.35;
 end
 
 % Range not always recorded
@@ -30,8 +33,8 @@ end
 %  Pt=Pt*2
 %end
 
-if(strcmp(name_ant(1:3),'uhf')
- d_date=datenum(1,:);
+if strcmp(name_ant(1:3),'uhf')
+ d_date=datenum(d_date(1,:));
  if (d_date>=datenum(2000,05,01) & d_date<=datenum(2001,03,01)) | ...
     (d_date>=datenum(2001,06,28) & d_date<=datenum(2001,10,15,13,31,00)) 
 % The 1 March date is still a guess. After Feb 6 but before March 9.

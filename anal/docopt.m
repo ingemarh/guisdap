@@ -1,76 +1,43 @@
 function [doccmd,options,docpath] = docopt
-%DOCOPT Web browser defaults.
-%	DOCOPT is an M-file that you or your system manager can edit
-%	to specify the web browser to use, and also the location of
-%	the MATLAB online documentation, for those platforms that do
-%	not support the Java-based Desktop GUIs.  (See the Release
-%	Notes for information about these platforms.)  Normally, the
-%	Desktop's Help browser is used by the DOC and WEB functions
-%	to display HTML content, and the documentation location is
-%	specified in the Desktop's Preferences window.  DOCOPT also
-%	can be used to specify the web browser to use when the WEB
-%	function is issued with the -BROWSER option.  DOCOPT is
-%	applicable on Unix platforms only.
+%DOCOPT Web browser for UNIX platforms.
+%   DOCOPT is an M-file that you or your system manager can edit
+%   to specify the Web browser to use with MATLAB. It is used
+%   for the WEB function with the -BROWSER option. It is also used
+%   for links to external Web sites from the the Help browser
+%   and from Web menu items. DOCOPT applies only to non-Macintosh
+%   UNIX platforms.
 %
-%	[DOCCMD,OPTIONS,DOCPATH] = DOCOPT returns three strings DOCCMD,
-%	OPTIONS, and DOCPATH.
-%	DOCCMD is a string containing the command that DOC or WEB uses
-%	to invoke a web browser (in place of the Desktop's Help browser).
-%	Its default is:
+%   DOCCMD = DOCOPT returns a string containing the command that
+%   WEB -BROWSER uses to invoke a Web browser. Its default is netscape.
 %
-%	   Unix:      netscape
-%      Mac:       internet explorer
-%	   Windows:   -na-
+%   To use a different browser, edit docopt.m and change line 51:
 %
-%	OPTIONS is a string containing additional configuration options
-%	that are to accompany the invocation of DOCCMD when the DOC
-%	command is called. Its default is:
+%   50 elseif isunix
+%   51 %    doccmd = '';
 %
-%	   Unix:      ''
-%	   Mac:       -na-
-%	   Windows:   -na-
+%   Remove the comment symbol. In the quotes, enter the command
+%   that launches your Web browser, and save the file. For example
 %
-%	DOCPATH is a string containing the path to the MATLAB online
-%	documentation files. If DOCPATH is empty, the DOC function
-%	looks for help files in the default location.
+%   51      doccmd = 'mozilla';
 %
-%       Configuration on Unix:
-%       ---------------------
-%       1. For global defaults edit and replace this file, i.e.
-%              $MATLAB/toolbox/local/docopt.m
-%       2. For personal preferences which override the values set
-%          in 1. copy this file, i.e.
-%              $MATLAB/toolbox/local/docopt.m
-%          to
-%              $HOME/matlab/docopt.m
-%          and make your changes there.  In MATLAB, the Unix commands
-%          to make the directory and do the copy are:
+%   specifies Mozilla as the Web browser MATLAB uses.
 %
-%               !mkdir $HOME/matlab
-%               !cp $MATLAB/toolbox/local/docopt.m $HOME/matlab
-%
-%          For the changes to take effect in the current MATLAB
-%          session, be sure that $HOME/matlab is on your MATLABPATH.
-%          This will be the case if this directory existed prior to
-%          starting up MATLAB.  If it does not exist on your path in
-%          the current session type:
-%
-%               addpath([getenv('HOME') '/matlab'])
-%
-%          to add it to the beginning of your MATLABPATH.
-%
-%	See also DOC.
+%	See also DOC, HELPBROWSER, WEB.
 
+%   Copyright 1984-2004 The MathWorks, Inc.
+%   The MathWorks, Inc. grants permission for Licensee to modify
+%   this file.  Licensee's use of such modified file is subject
+%   to the terms and conditions of The MathWorks, Inc. Software License
+%   Booklet.
 % $Revision$  $Date$
 
 % Intialize options to empty matrices
-doccmd = []; options = []; docpath = [];
 global local
-doccmd=local.browser;
+doccmd = local.browser; options = []; docpath = [];
 
-% This file automatically defaults to the options and doccmd shown above
-% in the online help text. If you would like to set the options or doccmd
-% default to be different from those shown above, enter it after this
+% This file automatically defaults to the doccmd shown above
+% in the online help text. If you would like to set the doccmd
+% default to be different from that shown above, enter it after this
 % paragraph.
 
 %---> Start of your own changes to the defaults here (if needed)
@@ -80,7 +47,7 @@ cname = computer;
 if (strncmp(cname,'MAC',3))      % MAC
 %   doccmd = '';
 %   options = '';
-%   docpath = '';  
+%   docpath = '';
 elseif isunix                   % UNIX
 %   doccmd = '';
 %   options = '';
@@ -103,15 +70,15 @@ end
 cname = computer;
 
 if isempty(doccmd)
-    
+
     if (strncmp(cname,'MAC',3))  % For MAC
-        doccmd = 'internet explorer';
+        doccmd = '';
     elseif isunix % For Unix
-        doccmd = 'netscape'; 
+        doccmd = 'netscape';
     end
 
-	% For Windows
-	if ispc, doccmd = ''; end
+    % For Windows
+   if ispc, doccmd = ''; end
 
 end
 
@@ -119,10 +86,10 @@ if isempty(options)
 
 	% For Unix
 	options = '';
-    
-    % For Mac
-    if (strncmp(cname,'MAC',3)), options = ''; end
-        
+
+	% For Mac
+	if (strncmp(cname,'MAC',3)), options = ''; end
+
 	% For Windows
 	if ispc, options = ''; end
 
