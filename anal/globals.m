@@ -20,7 +20,7 @@ global d_data d_parbl d_rcprog d_time d_filelist
 global d_var1 d_var2 % sig_var1 sig_var2
 
 global a_addr a_adstart a_adend a_control a_ind a_Magic_const
-global a_NCAR a_save a_code a_intfixed a_intallow a_savespec
+global a_NCAR a_save a_code a_intfixed a_intallow a_savespec a_txpower
 global a_year a_start a_integr a_integdeffile a_skip a_end a_realtime a_txlim
 global di_figures di_results
 global name_ant calTemp

@@ -27,7 +27,7 @@ function  [OK,EOF,N_averaged]=integr_data(txlim)
 global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control 
 global d_saveintdir
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
-global a_txlim a_realtime a_satch
+global a_txlim a_realtime a_satch a_txpower
 global a_antold a_maxgap secs a_intfixed a_intallow a_posold a_nnold fileslist
  
 OK=0; EOF=0; jj=0; N_averaged=0;
@@ -87,7 +87,6 @@ while i<length(files)
   averaged=[8:10 42 63 65];    % parameters which are averaged
   accumulated=[7 22 64];       % parameters which are accumulated
   inttime=7;                   % parameter that holds integration time
-  txpower=8;                   % parameter that holds transmitter power
   vhf=lpb>40 & d_parbl(41)==3; % vhf antenna?
   positive=[8 65];             % parameters which are positive
   non_negative=[9 42 63];      % parameters which are positive
@@ -115,7 +114,7 @@ while i<length(files)
   end
   a_nnold=d_parbl(non_negative);
   a_ant=d_parbl([el az]);
-  a_tx=d_parbl(txpower);
+  a_tx=d_parbl(a_txpower(1))*a_txpower(2);
   if a_integr<=0
     if isempty(a_antold)
       a_antold=a_ant;
