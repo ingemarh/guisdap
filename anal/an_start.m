@@ -56,7 +56,7 @@ while ~EOF
 %****************************************************************************
 
   if OK
-    if d_rcprog~=old_rcprog | ((name_site=='K' | name_site=='S') & any(old_point~=[ch_el(1) ch_az(1)]))
+    if d_rcprog~=old_rcprog | ((name_site=='K' | name_site=='S') & any(fix((old_point-[ch_el(1) ch_az(1)])/.05)))
       name_ant={'32m','42m','vhf','uhf','kir','sod'};
       name_ant=char(name_ant(ant_id));
       load_initfile

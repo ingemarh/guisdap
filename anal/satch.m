@@ -8,7 +8,8 @@ if isempty(lpg_lag)
 end
 if ~isfield(a_satch,'filled')
   if ~isfield(a_satch,'sigma'), a_satch.sigma=4; end	% detection limit sig
-  if ~isfield(a_satch,'sigmab'), a_satch.sigmab=3; end	% detection limit cal
+  if ~isfield(a_satch,'sigmab'), a_satch.sigmab=3; end	% det lim bac+cal
+  if ~isfield(a_satch,'sigmac'), a_satch.sigmac=9; end	% det lim cal fill
   if ~isfield(a_satch,'skip'), a_satch.skip=0; end	% no points to skip
   if ~isfield(a_satch,'clutter'), a_satch.clutter=0; end% no clutter red points
   if ~isfield(a_satch,'repair'), a_satch.repair=0; end	% for alt codes
@@ -25,6 +26,7 @@ C=tan(el*pi/180);
 Nsat=0; j=0; x0max=0;
 n_echo=6; min_v=.065; skip=a_satch.skip;
 
+%check signal
 lp=setdiff(find(lpg_lag==0 & (lpg_bcs=='s' | lpg_bcs=='x')),a_satch.lpg_skip);
 if ~isempty(a_code)
  lp=lp(find(ismember(lpg_code(lp),unique(a_code))));
@@ -49,6 +51,8 @@ for i=lp
  end
  Nsat=Nsat+length(pb);
 end
+
+%check back and cal
 Nsatb=0;
 lp=setdiff(find(lpg_lag==0 & (lpg_bcs=='b' | lpg_bcs=='c')),a_satch.lpg_skip);
 if ~isempty(a_code)
@@ -74,11 +78,13 @@ for i=lp
  end
  d_data(addr)=data;
 end
+
+%check cal filled (Unstable, uses prevoius dump)
 lp=setdiff(find(lpg_lag==0 & lpg_bcs=='c'),a_satch.lpg_skip);
 if ~isempty(a_code)
  lp=lp(find(ismember(lpg_code(lp),unique(a_code))));
 end
-sigma(1:length(lp))=a_satch.sigmab;
+sigma(1:length(lp))=a_satch.sigmac;
 ii=0;
 if isempty(callev), callev=ones(size(lp))*Inf; calstd=callev; end
 for i=lp
@@ -97,6 +103,8 @@ for i=lp
    callev(ii)=newlev;
  end
 end
+
+%report the result
 if Nsat>0 %| Nsatb>0
  if a_satch.plot
   figure(a_satch.plot), set(gcf,'Name','Satellites detected')
