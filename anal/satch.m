@@ -49,14 +49,14 @@ lpgused=[lpgused lp];
 for i=lp
  j=j+1;
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
- dat=real(d_data(addr));
+ dat=real(d_data(addr)); dat_m=median(dat);
  data=dat;
- [d,dat_m]=sat_check_cal(sigma(i),data);
+ d=find(data>dat_m+sigma(i)*std(data));
  d1=d;
  while ~isempty(d)
   data(d)=dat_m;
   Nsatb=Nsatb+length(d);
-  [d,dat_m]=sat_check_cal(sigma(i),data);
+  d=find(data>dat_m+sigma(i)*std(data));
   d1=[d1;d];
  end
  if a_satch.plot
@@ -77,10 +77,6 @@ if a_satch.plot & (Nsat>0 )%| Nsatb>0)
 end
 OK=Nsat==0;
 return
-
-function [d,dat_m]=sat_check_cal(sigma,data)
-dat_m=median(data);
-d=find(data>dat_m+sigma*std(data));
 
 function [pb,dat_m,L]=sat_check(sigma,n_echo,min_v,wr,dt,dat,N,C,nbigsig)
 global p_dtau

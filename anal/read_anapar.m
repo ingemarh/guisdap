@@ -1,4 +1,4 @@
-global iono_model fit_altitude a_satch
+global iono_model fit_altitude a_satch a_Offsetppd
  iono_model='iri';
  if exist('iri')~=3, iono_model='giveme'; end
  fit_altitude=[0 Inf;80 Inf;107 1500;90 107;0 Inf];

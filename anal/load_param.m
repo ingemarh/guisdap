@@ -36,7 +36,7 @@ else
   r_Tsys=[];
 end
 if nargout>3 & strfind('TVL',name_site) & ~isempty(r_pp)
-  n_ralt=length(r_pp);
+  n_ralt=length(unique(round(r_pp)));
   rpar2D=ones(n_ralt,n_tot,3)*NaN;
   re=6370;
 else
@@ -64,17 +64,22 @@ for i=1:n_tot
   Time(:,i)	=datenum(r_time);
   par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys)]; %10 kW
   if isfinite(n_ralt)
-    nalt=size(r_pp,1);
+    [ppr,k,l]=unique(round(r_pprange)); pp=ppr;
+    nalt=length(ppr);
+    for n=1:nalt
+      d=find(l==n);
+      ppr(n)=mean(r_pprange(d));
+      pp(n)=mean(r_pp(d));
+    end
     if nalt>n_ralt
       rpar2D=[rpar2D;ones(nalt-n_ralt,n_tot,nrpar2D)*NaN];
       n_ralt=nalt;
     end
-    [r_pprange,d]=sort(r_pprange);
     n=1:nalt;
-    rpar2D(n,i,1)=r_pprange;
-    x=r_pprange/re;
+    rpar2D(n,i,1)=ppr;
+    x=ppr/re;
     rpar2D(n,i,2)=re*sqrt(1+x.*(x+2*sin(r_el/57.2957795)))-re;
-    rpar2D(n,i,3)=r_pp(d);
+    rpar2D(n,i,3)=pp;
   end
 end
 % Cast azimuth and elevation into range 0-360, 0-90 degrees
