@@ -1,0 +1,386 @@
+DECO 2.0
+1	1493418
+72234
+179
+% Channel=1 type=0 data_start=0 vec_len=97 max_lag=-1 res_mult=16 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_raw vector 0 - 3103
+1	R	1	0	6208	0	0	0	0	194	0	0	3104	0	7	 2 32 97 0 0 16 0 
+% Channel=1 type=1 data_start=0 vec_len=15 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 0 - 14
+2	G	1	6208	15	0	0	1	0	15	0	0	15	0	0	 
+% Channel=1 type=1 data_start=0 vec_len=15 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 15 - 29
+3	G	1	6223	15	0	0	1	0	15	0	15	15	0	0	 
+% Channel=1 type=1 data_start=0 vec_len=32 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 30 - 61
+4	G	1	6238	32	0	0	1	0	32	0	30	32	0	0	 
+% Channel=1 type=1 data_start=0 vec_len=338 max_lag=6 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 62 - 2406
+5	G	1	6270	2366	0	6	1	0	338	0	62	2345	0	0	 
+% Channel=1 type=1 data_start=0 vec_len=16 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 2407 - 2422
+6	G	1	8636	16	0	0	1	0	16	0	2407	16	0	0	 
+% Channel=1 type=1 data_start=0 vec_len=447 max_lag=6 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 2423 - 5530
+7	G	1	8652	3129	0	6	1	0	447	0	2423	3108	0	0	 
+% Channel=1 type=1 data_start=0 vec_len=370 max_lag=35 res_mult=32 sub_div=1 do_zlag=1 lag_incr=1 fir_len=0
+% Data position in d_data vector 5531 - 26575
+8	I	1	11781	13320	0	5	6	2	459	0	5531	21045	0	16	 1 -1 1 1 1 -1 1 -1 -1 -1 -1 -1 1 1 1 -1 
+% Data position in d_data vector 5531 - 26575
+9	I	1	25101	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 1 1 1 -1 1 1 1 -1 -1 -1 -1 1 1 1 
+% Data position in d_data vector 5531 - 26575
+10	I	1	38421	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 -1 1 1 -1 -1 1 1 1 -1 1 1 -1 -1 -1 
+% Data position in d_data vector 5531 - 26575
+11	I	1	51741	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 -1 1 1 -1 -1 -1 -1 1 -1 1 -1 -1 -1 1 
+% Data position in d_data vector 5531 - 26575
+12	I	1	65061	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 1 -1 1 -1 -1 -1 1 1 1 1 -1 1 1 1 
+% Data position in d_data vector 5531 - 26575
+13	I	1	78381	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 1 -1 1 -1 -1 1 -1 1 1 1 1 1 1 -1 
+% Data position in d_data vector 5531 - 26575
+14	I	1	91701	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 -1 -1 1 -1 1 1 -1 -1 1 -1 -1 -1 -1 1 
+% Data position in d_data vector 5531 - 26575
+15	I	1	105021	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 -1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 -1 -1 
+% Data position in d_data vector 5531 - 26575
+16	I	1	118341	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 1 1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 
+% Data position in d_data vector 5531 - 26575
+17	I	1	131661	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 1 1 -1 -1 -1 1 1 1 1 -1 1 -1 -1 1 
+% Data position in d_data vector 5531 - 26575
+18	I	1	144981	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 -1 1 -1 -1 1 1 1 -1 1 1 -1 1 1 -1 
+% Data position in d_data vector 5531 - 26575
+19	I	1	158301	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 -1 1 -1 -1 1 -1 -1 -1 1 1 1 1 1 1 
+% Data position in d_data vector 5531 - 26575
+20	I	1	171621	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 1 -1 -1 -1 1 -1 1 -1 -1 1 1 -1 -1 1 
+% Data position in d_data vector 5531 - 26575
+21	I	1	184941	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 1 -1 -1 -1 1 1 -1 -1 -1 1 -1 -1 -1 -1 
+% Data position in d_data vector 5531 - 26575
+22	I	1	198261	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 -1 -1 -1 -1 -1 1 -1 1 -1 -1 1 1 1 1 
+% Data position in d_data vector 5531 - 26575
+23	I	1	211581	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 1 1 -1 
+% Data position in d_data vector 5531 - 26575
+24	I	1	224901	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 1 1 1 1 -1 -1 -1 -1 1 -1 1 -1 1 1 
+% Data position in d_data vector 5531 - 26575
+25	I	1	238221	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 1 1 1 1 -1 1 1 -1 1 -1 -1 -1 1 -1 
+% Data position in d_data vector 5531 - 26575
+26	I	1	251541	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 -1 1 1 1 1 1 1 1 1 1 1 1 -1 1 
+% Data position in d_data vector 5531 - 26575
+27	I	1	264861	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 -1 1 1 1 1 -1 -1 1 1 1 -1 1 -1 -1 
+% Data position in d_data vector 5531 - 26575
+28	I	1	278181	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 1 -1 1 1 1 -1 1 1 -1 1 -1 -1 1 -1 
+% Data position in d_data vector 5531 - 26575
+29	I	1	291501	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 1 -1 1 1 1 1 -1 1 -1 1 1 -1 1 1 
+% Data position in d_data vector 5531 - 26575
+30	I	1	304821	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 -1 -1 1 1 -1 1 -1 -1 -1 -1 -1 1 -1 -1 
+% Data position in d_data vector 5531 - 26575
+31	I	1	318141	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 -1 -1 1 1 -1 -1 1 -1 -1 -1 1 1 -1 1 
+% Data position in d_data vector 5531 - 26575
+32	I	1	331461	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 1 1 -1 1 1 -1 -1 1 -1 -1 -1 1 -1 1 
+% Data position in d_data vector 5531 - 26575
+33	I	1	344781	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 1 1 -1 1 1 1 1 1 -1 -1 1 1 -1 -1 
+% Data position in d_data vector 5531 - 26575
+34	I	1	358101	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 -1 1 -1 1 -1 1 1 -1 -1 1 -1 -1 1 1 
+% Data position in d_data vector 5531 - 26575
+35	I	1	371421	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 -1 1 -1 1 -1 -1 -1 -1 -1 1 1 -1 1 -1 
+% Data position in d_data vector 5531 - 26575
+36	I	1	384741	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 1 -1 -1 1 -1 -1 1 -1 1 1 1 1 -1 -1 
+% Data position in d_data vector 5531 - 26575
+37	I	1	398061	13320	0	5	6	2	459	0	5531	21045	1	16	 1 1 1 -1 -1 1 -1 1 -1 -1 1 1 -1 1 -1 1 
+% Data position in d_data vector 5531 - 26575
+38	I	1	411381	13320	0	5	6	2	459	0	5531	21045	1	16	 1 -1 -1 -1 -1 1 1 1 -1 1 1 -1 1 -1 1 -1 
+% Data position in d_data vector 5531 - 26575
+39	I	1	424701	13320	0	5	6	2	459	0	5531	21045	2	16	 1 1 -1 -1 -1 1 1 -1 1 1 1 -1 -1 -1 1 1 
+% Channel=1 type=5 data_start=689 vec_len=256 max_lag=-1 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 26946 - 27201
+40	K	1	438021	32768	0	5	6	0	256	0	26946	256	0	2	 256 128 
+% Channel=2 type=0 data_start=0 vec_len=33 max_lag=-1 res_mult=16 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_raw vector 3104 - 4159
+41	R	1	470789	2112	0	0	6	0	66	0	3104	1056	0	7	 2 32 33 0 0 16 0 
+% Channel=2 type=5 data_start=533 vec_len=256 max_lag=-1 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 27202 - 27457
+42	K	1	472901	32768	0	0	6	0	256	0	27202	256	0	2	 256 128 
+% Channel=2 type=1 data_start=0 vec_len=771 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 27458 - 28228
+43	G	1	505669	771	0	0	1	0	771	0	27458	771	0	0	 
+% Channel=2 type=1 data_start=0 vec_len=78 max_lag=31 res_mult=32 sub_div=1 do_zlag=1 lag_incr=1 fir_len=0
+% Data position in d_data vector 28229 - 31018
+44	I	1	506440	2496	0	15	2	2	107	0	28229	2790	0	16	 1 -1 1 1 1 -1 1 -1 -1 -1 -1 -1 1 1 1 -1 
+% Data position in d_data vector 28229 - 31018
+45	I	1	508936	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 1 1 1 -1 1 1 1 -1 -1 -1 -1 1 1 1 
+% Data position in d_data vector 28229 - 31018
+46	I	1	511432	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 -1 1 1 -1 -1 1 1 1 -1 1 1 -1 -1 -1 
+% Data position in d_data vector 28229 - 31018
+47	I	1	513928	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 -1 1 1 -1 -1 -1 -1 1 -1 1 -1 -1 -1 1 
+% Data position in d_data vector 28229 - 31018
+48	I	1	516424	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 1 -1 1 -1 -1 -1 1 1 1 1 -1 1 1 1 
+% Data position in d_data vector 28229 - 31018
+49	I	1	518920	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 1 -1 1 -1 -1 1 -1 1 1 1 1 1 1 -1 
+% Data position in d_data vector 28229 - 31018
+50	I	1	521416	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 -1 -1 1 -1 1 1 -1 -1 1 -1 -1 -1 -1 1 
+% Data position in d_data vector 28229 - 31018
+51	I	1	523912	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 -1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 -1 -1 
+% Data position in d_data vector 28229 - 31018
+52	I	1	526408	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 1 1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 
+% Data position in d_data vector 28229 - 31018
+53	I	1	528904	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 1 1 -1 -1 -1 1 1 1 1 -1 1 -1 -1 1 
+% Data position in d_data vector 28229 - 31018
+54	I	1	531400	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 -1 1 -1 -1 1 1 1 -1 1 1 -1 1 1 -1 
+% Data position in d_data vector 28229 - 31018
+55	I	1	533896	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 -1 1 -1 -1 1 -1 -1 -1 1 1 1 1 1 1 
+% Data position in d_data vector 28229 - 31018
+56	I	1	536392	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 1 -1 -1 -1 1 -1 1 -1 -1 1 1 -1 -1 1 
+% Data position in d_data vector 28229 - 31018
+57	I	1	538888	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 1 -1 -1 -1 1 1 -1 -1 -1 1 -1 -1 -1 -1 
+% Data position in d_data vector 28229 - 31018
+58	I	1	541384	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 -1 -1 -1 -1 -1 1 -1 1 -1 -1 1 1 1 1 
+% Data position in d_data vector 28229 - 31018
+59	I	1	543880	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 1 1 -1 
+% Data position in d_data vector 28229 - 31018
+60	I	1	546376	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 1 1 1 1 -1 -1 -1 -1 1 -1 1 -1 1 1 
+% Data position in d_data vector 28229 - 31018
+61	I	1	548872	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 1 1 1 1 -1 1 1 -1 1 -1 -1 -1 1 -1 
+% Data position in d_data vector 28229 - 31018
+62	I	1	551368	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 -1 1 1 1 1 1 1 1 1 1 1 1 -1 1 
+% Data position in d_data vector 28229 - 31018
+63	I	1	553864	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 -1 1 1 1 1 -1 -1 1 1 1 -1 1 -1 -1 
+% Data position in d_data vector 28229 - 31018
+64	I	1	556360	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 1 -1 1 1 1 -1 1 1 -1 1 -1 -1 1 -1 
+% Data position in d_data vector 28229 - 31018
+65	I	1	558856	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 1 -1 1 1 1 1 -1 1 -1 1 1 -1 1 1 
+% Data position in d_data vector 28229 - 31018
+66	I	1	561352	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 -1 -1 1 1 -1 1 -1 -1 -1 -1 -1 1 -1 -1 
+% Data position in d_data vector 28229 - 31018
+67	I	1	563848	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 -1 -1 1 1 -1 -1 1 -1 -1 -1 1 1 -1 1 
+% Data position in d_data vector 28229 - 31018
+68	I	1	566344	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 1 1 -1 1 1 -1 -1 1 -1 -1 -1 1 -1 1 
+% Data position in d_data vector 28229 - 31018
+69	I	1	568840	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 1 1 -1 1 1 1 1 1 -1 -1 1 1 -1 -1 
+% Data position in d_data vector 28229 - 31018
+70	I	1	571336	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 -1 1 -1 1 -1 1 1 -1 -1 1 -1 -1 1 1 
+% Data position in d_data vector 28229 - 31018
+71	I	1	573832	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 -1 1 -1 1 -1 -1 -1 -1 -1 1 1 -1 1 -1 
+% Data position in d_data vector 28229 - 31018
+72	I	1	576328	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 1 -1 -1 1 -1 -1 1 -1 1 1 1 1 -1 -1 
+% Data position in d_data vector 28229 - 31018
+73	I	1	578824	2496	0	15	2	2	107	0	28229	2790	1	16	 1 1 1 -1 -1 1 -1 1 -1 -1 1 1 -1 1 -1 1 
+% Data position in d_data vector 28229 - 31018
+74	I	1	581320	2496	0	15	2	2	107	0	28229	2790	1	16	 1 -1 -1 -1 -1 1 1 1 -1 1 1 -1 1 -1 1 -1 
+% Data position in d_data vector 28229 - 31018
+75	I	1	583816	2496	0	15	2	2	107	0	28229	2790	2	16	 1 1 -1 -1 -1 1 1 -1 1 1 1 -1 -1 -1 1 1 
+% Channel=2 type=1 data_start=0 vec_len=200 max_lag=17 res_mult=32 sub_div=1 do_zlag=1 lag_incr=1 fir_len=0
+% Data position in d_data vector 31097 - 35863
+76	I	1	586312	3600	0	8	2	2	229	0	31097	4767	0	16	 1 -1 1 1 1 -1 1 -1 -1 -1 -1 -1 1 1 1 -1 
+% Data position in d_data vector 31097 - 35863
+77	I	1	589912	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 1 1 1 -1 1 1 1 -1 -1 -1 -1 1 1 1 
+% Data position in d_data vector 31097 - 35863
+78	I	1	593512	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 -1 1 1 -1 -1 1 1 1 -1 1 1 -1 -1 -1 
+% Data position in d_data vector 31097 - 35863
+79	I	1	597112	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 -1 1 1 -1 -1 -1 -1 1 -1 1 -1 -1 -1 1 
+% Data position in d_data vector 31097 - 35863
+80	I	1	600712	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 1 -1 1 -1 -1 -1 1 1 1 1 -1 1 1 1 
+% Data position in d_data vector 31097 - 35863
+81	I	1	604312	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 1 -1 1 -1 -1 1 -1 1 1 1 1 1 1 -1 
+% Data position in d_data vector 31097 - 35863
+82	I	1	607912	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 -1 -1 1 -1 1 1 -1 -1 1 -1 -1 -1 -1 1 
+% Data position in d_data vector 31097 - 35863
+83	I	1	611512	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 -1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 -1 -1 
+% Data position in d_data vector 31097 - 35863
+84	I	1	615112	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 1 1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 
+% Data position in d_data vector 31097 - 35863
+85	I	1	618712	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 1 1 -1 -1 -1 1 1 1 1 -1 1 -1 -1 1 
+% Data position in d_data vector 31097 - 35863
+86	I	1	622312	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 -1 1 -1 -1 1 1 1 -1 1 1 -1 1 1 -1 
+% Data position in d_data vector 31097 - 35863
+87	I	1	625912	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 -1 1 -1 -1 1 -1 -1 -1 1 1 1 1 1 1 
+% Data position in d_data vector 31097 - 35863
+88	I	1	629512	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 1 -1 -1 -1 1 -1 1 -1 -1 1 1 -1 -1 1 
+% Data position in d_data vector 31097 - 35863
+89	I	1	633112	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 1 -1 -1 -1 1 1 -1 -1 -1 1 -1 -1 -1 -1 
+% Data position in d_data vector 31097 - 35863
+90	I	1	636712	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 -1 -1 -1 -1 -1 1 -1 1 -1 -1 1 1 1 1 
+% Data position in d_data vector 31097 - 35863
+91	I	1	640312	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 1 1 -1 
+% Data position in d_data vector 31097 - 35863
+92	I	1	643912	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 1 1 1 1 -1 -1 -1 -1 1 -1 1 -1 1 1 
+% Data position in d_data vector 31097 - 35863
+93	I	1	647512	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 1 1 1 1 -1 1 1 -1 1 -1 -1 -1 1 -1 
+% Data position in d_data vector 31097 - 35863
+94	I	1	651112	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 -1 1 1 1 1 1 1 1 1 1 1 1 -1 1 
+% Data position in d_data vector 31097 - 35863
+95	I	1	654712	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 -1 1 1 1 1 -1 -1 1 1 1 -1 1 -1 -1 
+% Data position in d_data vector 31097 - 35863
+96	I	1	658312	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 1 -1 1 1 1 -1 1 1 -1 1 -1 -1 1 -1 
+% Data position in d_data vector 31097 - 35863
+97	I	1	661912	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 1 -1 1 1 1 1 -1 1 -1 1 1 -1 1 1 
+% Data position in d_data vector 31097 - 35863
+98	I	1	665512	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 -1 -1 1 1 -1 1 -1 -1 -1 -1 -1 1 -1 -1 
+% Data position in d_data vector 31097 - 35863
+99	I	1	669112	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 -1 -1 1 1 -1 -1 1 -1 -1 -1 1 1 -1 1 
+% Data position in d_data vector 31097 - 35863
+100	I	1	672712	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 1 1 -1 1 1 -1 -1 1 -1 -1 -1 1 -1 1 
+% Data position in d_data vector 31097 - 35863
+101	I	1	676312	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 1 1 -1 1 1 1 1 1 -1 -1 1 1 -1 -1 
+% Data position in d_data vector 31097 - 35863
+102	I	1	679912	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 -1 1 -1 1 -1 1 1 -1 -1 1 -1 -1 1 1 
+% Data position in d_data vector 31097 - 35863
+103	I	1	683512	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 -1 1 -1 1 -1 -1 -1 -1 -1 1 1 -1 1 -1 
+% Data position in d_data vector 31097 - 35863
+104	I	1	687112	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 1 -1 -1 1 -1 -1 1 -1 1 1 1 1 -1 -1 
+% Data position in d_data vector 31097 - 35863
+105	I	1	690712	3600	0	8	2	2	229	0	31097	4767	1	16	 1 1 1 -1 -1 1 -1 1 -1 -1 1 1 -1 1 -1 1 
+% Data position in d_data vector 31097 - 35863
+106	I	1	694312	3600	0	8	2	2	229	0	31097	4767	1	16	 1 -1 -1 -1 -1 1 1 1 -1 1 1 -1 1 -1 1 -1 
+% Data position in d_data vector 31097 - 35863
+107	I	1	697912	3600	0	8	2	2	229	0	31097	4767	2	16	 1 1 -1 -1 -1 1 1 -1 1 1 1 -1 -1 -1 1 1 
+% Channel=4 type=0 data_start=0 vec_len=98 max_lag=-1 res_mult=16 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_raw vector 4160 - 7295
+108	R	1	701512	6272	0	0	2	0	196	0	4160	3136	0	7	 2 32 98 370 0 16 0 
+% Channel=4 type=1 data_start=0 vec_len=370 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 36064 - 36433
+109	G	1	707784	370	0	0	1	0	370	0	36064	370	0	0	 
+% Channel=4 type=1 data_start=0 vec_len=383 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 36434 - 36816
+110	G	1	708154	383	0	0	1	0	383	0	36434	383	0	0	 
+% Channel=4 type=1 data_start=0 vec_len=371 max_lag=29 res_mult=32 sub_div=1 do_zlag=1 lag_incr=1 fir_len=0
+% Data position in d_data vector 36817 - 53521
+111	I	1	708537	11130	0	9	3	2	415	0	36817	16705	0	16	 1 -1 1 1 1 -1 1 -1 -1 -1 -1 -1 1 1 1 -1 
+% Data position in d_data vector 36817 - 53521
+112	I	1	719667	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 1 1 1 -1 1 1 1 -1 -1 -1 -1 1 1 1 
+% Data position in d_data vector 36817 - 53521
+113	I	1	730797	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 -1 1 1 -1 -1 1 1 1 -1 1 1 -1 -1 -1 
+% Data position in d_data vector 36817 - 53521
+114	I	1	741927	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 -1 1 1 -1 -1 -1 -1 1 -1 1 -1 -1 -1 1 
+% Data position in d_data vector 36817 - 53521
+115	I	1	753057	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 1 -1 1 -1 -1 -1 1 1 1 1 -1 1 1 1 
+% Data position in d_data vector 36817 - 53521
+116	I	1	764187	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 1 -1 1 -1 -1 1 -1 1 1 1 1 1 1 -1 
+% Data position in d_data vector 36817 - 53521
+117	I	1	775317	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 -1 -1 1 -1 1 1 -1 -1 1 -1 -1 -1 -1 1 
+% Data position in d_data vector 36817 - 53521
+118	I	1	786447	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 -1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 -1 -1 
+% Data position in d_data vector 36817 - 53521
+119	I	1	797577	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 1 1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 
+% Data position in d_data vector 36817 - 53521
+120	I	1	808707	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 1 1 -1 -1 -1 1 1 1 1 -1 1 -1 -1 1 
+% Data position in d_data vector 36817 - 53521
+121	I	1	819837	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 -1 1 -1 -1 1 1 1 -1 1 1 -1 1 1 -1 
+% Data position in d_data vector 36817 - 53521
+122	I	1	830967	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 -1 1 -1 -1 1 -1 -1 -1 1 1 1 1 1 1 
+% Data position in d_data vector 36817 - 53521
+123	I	1	842097	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 1 -1 -1 -1 1 -1 1 -1 -1 1 1 -1 -1 1 
+% Data position in d_data vector 36817 - 53521
+124	I	1	853227	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 1 -1 -1 -1 1 1 -1 -1 -1 1 -1 -1 -1 -1 
+% Data position in d_data vector 36817 - 53521
+125	I	1	864357	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 -1 -1 -1 -1 -1 1 -1 1 -1 -1 1 1 1 1 
+% Data position in d_data vector 36817 - 53521
+126	I	1	875487	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 1 1 -1 
+% Data position in d_data vector 36817 - 53521
+127	I	1	886617	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 1 1 1 1 -1 -1 -1 -1 1 -1 1 -1 1 1 
+% Data position in d_data vector 36817 - 53521
+128	I	1	897747	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 1 1 1 1 -1 1 1 -1 1 -1 -1 -1 1 -1 
+% Data position in d_data vector 36817 - 53521
+129	I	1	908877	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 -1 1 1 1 1 1 1 1 1 1 1 1 -1 1 
+% Data position in d_data vector 36817 - 53521
+130	I	1	920007	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 -1 1 1 1 1 -1 -1 1 1 1 -1 1 -1 -1 
+% Data position in d_data vector 36817 - 53521
+131	I	1	931137	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 1 -1 1 1 1 -1 1 1 -1 1 -1 -1 1 -1 
+% Data position in d_data vector 36817 - 53521
+132	I	1	942267	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 1 -1 1 1 1 1 -1 1 -1 1 1 -1 1 1 
+% Data position in d_data vector 36817 - 53521
+133	I	1	953397	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 -1 -1 1 1 -1 1 -1 -1 -1 -1 -1 1 -1 -1 
+% Data position in d_data vector 36817 - 53521
+134	I	1	964527	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 -1 -1 1 1 -1 -1 1 -1 -1 -1 1 1 -1 1 
+% Data position in d_data vector 36817 - 53521
+135	I	1	975657	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 1 1 -1 1 1 -1 -1 1 -1 -1 -1 1 -1 1 
+% Data position in d_data vector 36817 - 53521
+136	I	1	986787	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 1 1 -1 1 1 1 1 1 -1 -1 1 1 -1 -1 
+% Data position in d_data vector 36817 - 53521
+137	I	1	997917	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 -1 1 -1 1 -1 1 1 -1 -1 1 -1 -1 1 1 
+% Data position in d_data vector 36817 - 53521
+138	I	1	1009047	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 -1 1 -1 1 -1 -1 -1 -1 -1 1 1 -1 1 -1 
+% Data position in d_data vector 36817 - 53521
+139	I	1	1020177	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 1 -1 -1 1 -1 -1 1 -1 1 1 1 1 -1 -1 
+% Data position in d_data vector 36817 - 53521
+140	I	1	1031307	11130	0	9	3	2	415	0	36817	16705	1	16	 1 1 1 -1 -1 1 -1 1 -1 -1 1 1 -1 1 -1 1 
+% Data position in d_data vector 36817 - 53521
+141	I	1	1042437	11130	0	9	3	2	415	0	36817	16705	1	16	 1 -1 -1 -1 -1 1 1 1 -1 1 1 -1 1 -1 1 -1 
+% Data position in d_data vector 36817 - 53521
+142	I	1	1053567	11130	0	9	3	2	415	0	36817	16705	2	16	 1 1 -1 -1 -1 1 1 -1 1 1 1 -1 -1 -1 1 1 
+% Channel=4 type=5 data_start=102 vec_len=256 max_lag=-1 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 53893 - 54148
+143	K	1	1064697	32768	0	9	3	0	256	0	53893	256	0	2	 256 128 
+% Channel=5 type=0 data_start=0 vec_len=98 max_lag=-1 res_mult=16 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_raw vector 7296 - 10431
+144	R	1	1097465	6272	0	0	3	0	196	0	7296	3136	0	7	 2 32 98 370 0 16 0 
+% Channel=5 type=5 data_start=102 vec_len=256 max_lag=-1 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 54149 - 54404
+145	K	1	1103737	32768	0	0	3	0	256	0	54149	256	0	2	 256 128 
+% Channel=5 type=1 data_start=0 vec_len=370 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 54405 - 54774
+146	G	1	1136505	370	0	0	1	0	370	0	54405	370	0	0	 
+% Channel=5 type=1 data_start=0 vec_len=383 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position in d_data vector 54775 - 55157
+147	G	1	1136875	383	0	0	1	0	383	0	54775	383	0	0	 
+% Channel=5 type=1 data_start=0 vec_len=371 max_lag=29 res_mult=32 sub_div=1 do_zlag=1 lag_incr=1 fir_len=0
+% Data position in d_data vector 55158 - 71862
+148	I	1	1137258	11130	0	9	3	2	415	0	55158	16705	0	16	 1 -1 1 1 1 -1 1 -1 -1 -1 -1 -1 1 1 1 -1 
+% Data position in d_data vector 55158 - 71862
+149	I	1	1148388	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 1 1 1 -1 1 1 1 -1 -1 -1 -1 1 1 1 
+% Data position in d_data vector 55158 - 71862
+150	I	1	1159518	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 -1 1 1 -1 -1 1 1 1 -1 1 1 -1 -1 -1 
+% Data position in d_data vector 55158 - 71862
+151	I	1	1170648	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 -1 1 1 -1 -1 -1 -1 1 -1 1 -1 -1 -1 1 
+% Data position in d_data vector 55158 - 71862
+152	I	1	1181778	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 1 -1 1 -1 -1 -1 1 1 1 1 -1 1 1 1 
+% Data position in d_data vector 55158 - 71862
+153	I	1	1192908	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 1 -1 1 -1 -1 1 -1 1 1 1 1 1 1 -1 
+% Data position in d_data vector 55158 - 71862
+154	I	1	1204038	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 -1 -1 1 -1 1 1 -1 -1 1 -1 -1 -1 -1 1 
+% Data position in d_data vector 55158 - 71862
+155	I	1	1215168	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 -1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 -1 -1 
+% Data position in d_data vector 55158 - 71862
+156	I	1	1226298	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 1 1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 
+% Data position in d_data vector 55158 - 71862
+157	I	1	1237428	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 1 1 -1 -1 -1 1 1 1 1 -1 1 -1 -1 1 
+% Data position in d_data vector 55158 - 71862
+158	I	1	1248558	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 -1 1 -1 -1 1 1 1 -1 1 1 -1 1 1 -1 
+% Data position in d_data vector 55158 - 71862
+159	I	1	1259688	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 -1 1 -1 -1 1 -1 -1 -1 1 1 1 1 1 1 
+% Data position in d_data vector 55158 - 71862
+160	I	1	1270818	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 1 -1 -1 -1 1 -1 1 -1 -1 1 1 -1 -1 1 
+% Data position in d_data vector 55158 - 71862
+161	I	1	1281948	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 1 -1 -1 -1 1 1 -1 -1 -1 1 -1 -1 -1 -1 
+% Data position in d_data vector 55158 - 71862
+162	I	1	1293078	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 -1 -1 -1 -1 -1 1 -1 1 -1 -1 1 1 1 1 
+% Data position in d_data vector 55158 - 71862
+163	I	1	1304208	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 1 1 -1 
+% Data position in d_data vector 55158 - 71862
+164	I	1	1315338	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 1 1 1 1 -1 -1 -1 -1 1 -1 1 -1 1 1 
+% Data position in d_data vector 55158 - 71862
+165	I	1	1326468	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 1 1 1 1 -1 1 1 -1 1 -1 -1 -1 1 -1 
+% Data position in d_data vector 55158 - 71862
+166	I	1	1337598	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 -1 1 1 1 1 1 1 1 1 1 1 1 -1 1 
+% Data position in d_data vector 55158 - 71862
+167	I	1	1348728	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 -1 1 1 1 1 -1 -1 1 1 1 -1 1 -1 -1 
+% Data position in d_data vector 55158 - 71862
+168	I	1	1359858	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 1 -1 1 1 1 -1 1 1 -1 1 -1 -1 1 -1 
+% Data position in d_data vector 55158 - 71862
+169	I	1	1370988	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 1 -1 1 1 1 1 -1 1 -1 1 1 -1 1 1 
+% Data position in d_data vector 55158 - 71862
+170	I	1	1382118	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 -1 -1 1 1 -1 1 -1 -1 -1 -1 -1 1 -1 -1 
+% Data position in d_data vector 55158 - 71862
+171	I	1	1393248	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 -1 -1 1 1 -1 -1 1 -1 -1 -1 1 1 -1 1 
+% Data position in d_data vector 55158 - 71862
+172	I	1	1404378	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 1 1 -1 1 1 -1 -1 1 -1 -1 -1 1 -1 1 
+% Data position in d_data vector 55158 - 71862
+173	I	1	1415508	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 1 1 -1 1 1 1 1 1 -1 -1 1 1 -1 -1 
+% Data position in d_data vector 55158 - 71862
+174	I	1	1426638	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 -1 1 -1 1 -1 1 1 -1 -1 1 -1 -1 1 1 
+% Data position in d_data vector 55158 - 71862
+175	I	1	1437768	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 -1 1 -1 1 -1 -1 -1 -1 -1 1 1 -1 1 -1 
+% Data position in d_data vector 55158 - 71862
+176	I	1	1448898	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 1 -1 -1 1 -1 -1 1 -1 1 1 1 1 -1 -1 
+% Data position in d_data vector 55158 - 71862
+177	I	1	1460028	11130	0	9	3	2	415	0	55158	16705	1	16	 1 1 1 -1 -1 1 -1 1 -1 -1 1 1 -1 1 -1 1 
+% Data position in d_data vector 55158 - 71862
+178	I	1	1471158	11130	0	9	3	2	415	0	55158	16705	1	16	 1 -1 -1 -1 -1 1 1 1 -1 1 1 -1 1 -1 1 -1 
+% Data position in d_data vector 55158 - 71862
+179	I	1	1482288	11130	0	9	3	2	415	0	55158	16705	2	16	 1 1 -1 -1 -1 1 1 -1 1 1 1 -1 -1 -1 1 1 

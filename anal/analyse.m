@@ -1,6 +1,6 @@
 startup
 using_x=prod(get(0,'ScreenSize'))-1;
-sites='KSTVL'; gfdfile=[path_tmp '.gup'];
+sites='KSTVLX'; gfdfile=[path_tmp '.gup'];
 %default values
 if exist(gfdfile)
  load(gfdfile,'-mat')

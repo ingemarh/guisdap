@@ -142,3 +142,6 @@ a_intfixed=1;
 if exist('analysis_intfixed','var')
  a_intfixed=analysis_intfixed;
 end
+if exist('analysis_intallow','var')
+ a_intallow=analysis_intallow;
+end

@@ -28,7 +28,7 @@ global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control
 global d_saveintdir
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_satch
-global a_antold a_txold a_elold a_maxgap secs a_intfixed
+global a_antold a_txold a_elold a_maxgap secs a_intfixed a_intallow
  
 OK=0; EOF=0; jj=0; N_averaged=0;
 d_ExpInfo=[]; d_raw=[];
@@ -75,6 +75,9 @@ while i<length(files)
   tvec=1:6;                    % parameters holding time
   fixed=[9 10 42 64];          % parameters which are not allowed to change
   allow=[.11 .11 1000 0]';     % max allowed change of fixed pars
+  if ~isempty(a_intallow)
+   allow(1:length(a_intallow))=a_intallow;
+  end
   az=10; el=9;                 % parameters for antenna pointing
   averaged=[8:10 42 63 65];    % parameters which are averaged
   accumulated=[7 64];          % parameters which are accumulated
