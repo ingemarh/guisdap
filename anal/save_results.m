@@ -12,7 +12,7 @@ global r_ind r_range r_param r_error r_res r_status r_dp r_Offsetppd
 global r_apriori r_apriorierror
 global pp_range pp_sigma
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
-global webfile a_save local b
+global webfile a_save local
 global a_autodir di_figures START_TIME
 
 if length(d_time)>0 & a_save
@@ -52,18 +52,14 @@ if isempty(r_h)
   result_path=fullfile(i1,result_dir,filesep);
  end
  if ~exist(result_path,'dir')
-  [i1,i2]=fileparts(result_path(1:end-1)); mkdir(i1,i2)
+  [i1,i2,i3]=fileparts(result_path(1:end-1)); mkdir(i1,[i2 i3])
  elseif ~isempty(dir([result_path '*.mat']))
   beep
   fprintf('\n********** %s is not empty! **********\n\n',result_path)
  end
  if ~strcmp(path_tmp,result_path)
-  if ~isempty(b) & ishandle(b(1))
-%  save_setup([result_path 'gfd_setup.m']);
-   save_setup([result_path '.gup']);
-  elseif exist([path_tmp '.gup'],'file')
-   copyfile([path_tmp '.gup'],result_path,'f')
-  end
+  save_setup([result_path '.gup']);
+  save_setup([result_path 'gfd_setup.m']);
  end
 end
 

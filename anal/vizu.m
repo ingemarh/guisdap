@@ -90,7 +90,8 @@ elseif strcmp(action,'update')
  set(0,'currentfig',findobj('type','figure','userdata',6))
 elseif strcmp(action,'print') | strcmp(action,'save')
  if isunix
-  set(hds(2:3),'visible','off')
+  [i,j]=unix('which addlogo.sh');
+  if ~i, set(hds(2:3),'visible','off'), end
   dirs=path_tmp(1:end-1);
   if strcmp(action,'print')
     fig=sprintf('vizu%06d',round(rand*1e6)); ext='ps';
@@ -101,7 +102,7 @@ elseif strcmp(action,'print') | strcmp(action,'save')
   end
   file=fullfile(dirs,fig);
   print(gcf,['-d' ext '2c'],[file '.' ext]);
-  unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
+  if ~i, unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext)), end
   if strcmp(action,'print') | strcmp(a3,'print')
     if isempty(a2), dev=local.printer; else, dev=a2; end
     unix(['lp -c -d' dev ' ' file '.' ext ' >/dev/null 2>&1']);
@@ -114,7 +115,7 @@ elseif strcmp(action,'print') | strcmp(action,'save')
       fullfile(gd,'bin',lower(computer),'gs'),gd,gd,file,file,ext));
     fprintf('Created %s.%s and .png\n',file,ext)
   end
-  set(hds(2:3),'visible','on')
+  if ~i, set(hds(2:3),'visible','on'), end
  elseif strcmp(action,'print')
   print(gcf,'-dwinc');
  else
@@ -183,6 +184,7 @@ else
 end
 if strcmp(name_expr,'arcd')
  SCALE(2,:)=[59 139]; WHICH_PARAM='Nr AE';
+ if any(par1D(:,2)<90), SCALE(2,1)=50; end
 elseif strcmp(name_expr,'dlayer')
  SCALE(2,:)=[59 121]; WHICH_PARAM='Ne AE';
 end
@@ -212,7 +214,7 @@ elseif ~REALT
   DATA_PATH=DATA_PATH(1:end-1);
  end
  [d,dpath]=fileparts(DATA_PATH);
- START_TIME=[str2num(dpath(1:4)) str2num(dpath(6:7)) str2num(dpath(9:10)) 0 0 0];
+ START_TIME=[sscanf(dpath(1:10),'%4d%2d%2d')' 0 0 0];
  END_TIME=START_TIME+[0 0 0 24 0 0];
 end
 if isempty(MESSAGE1)
