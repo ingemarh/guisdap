@@ -124,7 +124,7 @@ if NCAR_fid(2)
   fwrite(NCAR_fid(2),[LTOT KREC prol row(spar') row(Multivar')],'short');
 end
 
-if strfind('TVL',name_site) & ~isempty(r_pp)
+if strfind('TVL',name_site) & exist('r_pp') & ~isempty(r_pp)
 %power profiles
  mvarcod=[120 121 505];
  KINDAT=KINDAT+1;

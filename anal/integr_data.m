@@ -31,7 +31,7 @@ global a_txlim a_realtime a_satch
 global a_antold a_txold a_elold a_maxgap secs a_intfixed a_intallow
  
 OK=0; EOF=0; jj=0; N_averaged=0;
-d_ExpInfo=[]; d_raw=[];
+d_ExpInfo=[]; d_raw=[]; txdown=0;
 if a_ind==0
   a_ind=1;
   a_cycle=sum(a_integr+a_skip);
@@ -150,7 +150,7 @@ while i<length(files)
 
   dumpOK=(a_tx>=a_txlim);
   if ~dumpOK
-    fprintf('Tx down\n')
+    if ~txdown, fprintf('Tx down\n'), txdown=1; end
   elseif ~isempty(a_satch)
     dumpOK=satch(a_ant(1),secs,a_inttime);
   end

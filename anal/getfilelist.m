@@ -18,10 +18,11 @@ elseif isunix & a_realtime | strfind(dirpath,'?')
   template=[row(col('\[0-9]')*ones(1,8)) '.mat'];
   d=[tempname '.txt'];
   cmd=sprintf('find %s -name %s %s-print >%s',dirpath(1:end-1),template,newer,d);
-  if unix(cmd)
+  if unix(cmd) & unix(cmd)
     msg=['Error listing mat files in ' dirpath ' ' cmd];
   elseif exist(d)
-    list=textread(d,['%*' num2str(length(dirpath)) 's%d.mat']);
+    try, list=textread(d,['%*' num2str(length(dirpath)) 's%d.mat']);
+    catch, list=[]; end
   end
   delete(d)
 else

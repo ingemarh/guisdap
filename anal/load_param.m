@@ -25,7 +25,7 @@ ppres=.25; % pp resolution (km)
 if n==0
   Time=[]; par2D=[]; par1D=[]; rpar2D=[]; return
 end
-r_Tsys=[];
+r_Tsys=[]; r_pp=[];
 n_tot=n;
 lastfile=filelist(n);
 file=sprintf('%08d',filelist(1));

@@ -5,6 +5,9 @@
 %
 ch_Pt=ch_Pt(1);
 d_date=datenum(d_time(1,:));
+if exist('skip_upper_tail','var') & skip_upper_tail
+  lpg_bcs(find(lpg_h>3200 & lpg_h<3800 & lpg_nt==2))='x';
+end 
 if d_date<datenum(2003,11,11,21,15,0)
   if ant_id==1
     name_ant='42m'; ch_el=81.6; ch_az=181; calTemp=163;
