@@ -1,4 +1,4 @@
-function [Time,Ran,Alt,Ne,Te,Ti,Vi,Comp,Res,Status,Az,El,Pt,Tsys]=...
+function [Time,Ran,Alt,Ne,Te,Ti,Vi,Coll,Comp,Res,Status,Az,El,Pt,Tsys]=...
         load_param(data_path,update)
 % @(#)load_param.m	1.2 98/08/04
 % Function to read the plasma parameters from
@@ -39,6 +39,7 @@ Ti	=Ne;
 Te	=Ne;
 Status	=Ne;
 Vi	=Ne;
+Coll	=Ne;
 Time   	=zeros(2,n_tot);
 Alt	=Ne;
 Ran	=Ne;
@@ -66,6 +67,7 @@ for i=1:n_tot
     Ti		=[Ti;nant];
     Te		=[Te;nant];
     Vi		=[Vi;nant];
+    Coll	=[Coll;nant];
     Alt		=[Alt;nant];
     Ran		=[Ran;nant];
     Res		=[Res;nant];
@@ -77,6 +79,7 @@ for i=1:n_tot
   Ne(n,i)   	=r_param(:,1);
   Ti(n,i)	=r_param(:,2);
   Te(n,i)	=r_param(:,2).*r_param(:,3);
+  Coll(n,i)	=r_param(:,4);
   
   % if the data file contains NCAR velocities, use them, otherwise
   % invert the sign of the velocity since the GUISDAp convention is
@@ -101,7 +104,6 @@ for i=1:n_tot
   if ~isempty(Tsys), Tsys(i)=median(r_Tsys); end
 end
 % Cast azimuth and elevation into range 0-360, 0-90 degrees
-d=find(El>90.1); El(d)=180-El(d); Az(d)=Az(d)+180;
+d=find(El>90); El(d)=180-El(d); Az(d)=Az(d)+180;
 Az=mod((Az+360),360);
-d=find(El<90.1 & El>89.9); Az(d)=NaN;
 %disp('Done.')

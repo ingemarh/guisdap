@@ -23,7 +23,7 @@ function vizu(action,a2,a3)
 % To reset and start over:
 % >> vizu new [action]
 
-global Time RAN ALT Ne Te Ti Vi Res Comp Status Az El Pt Tsys name_expr name_ant axs axc hds
+global Time RAN ALT Ne Te Ti Vi Coll Res Comp Status Az El Pt Tsys name_expr name_ant axs axc hds
 global DATA_PATH PLOT_STATUS LOCATION START_TIME END_TIME MESSAGE1
 global r_RECloc path_tmp path_GUP result_path
 if nargin<2, a2=[]; end
@@ -80,19 +80,19 @@ if isempty(DATA_PATH)
 end
 
 if isempty(action) | strcmp(action,'verbose')
-  if isempty(Time) | OLD_STATUS~=PLOT_STATUS
-    [Time,RAN,ALT,Ne,Te,Ti,Vi Comp Res Status Az El Pt,Tsys]=load_param(DATA_PATH);
-  end
-  if ~isempty(axs), delete(axs), end
-  if ~isempty(axc), delete(axc), end
-  axs=[]; axc=[];
+ if isempty(Time) | OLD_STATUS~=PLOT_STATUS
+  [Time,RAN,ALT,Ne,Te,Ti,Vi Coll Comp Res Status Az El Pt,Tsys]=load_param(DATA_PATH);
+ end
+ if ~isempty(axs), delete(axs), end
+ if ~isempty(axc), delete(axc), end
+ axs=[]; axc=[];
 elseif strcmp(action,'update')
-  [Time,RAN,ALT,Ne,Te,Ti,Vi Comp Res Status Az El Pt,Tsys]=load_param(DATA_PATH,1);
-  if isempty(Time)
-    disp('Vizu: No new data!'), return
-  end
-  set(0,'currentfig',findobj('type','figure','userdata',6))
-  OLD_STATUS=99;
+ [Time,RAN,ALT,Ne,Te,Ti,Vi Coll Comp Res Status Az El Pt,Tsys]=load_param(DATA_PATH,1);
+ if isempty(Time)
+  disp('Vizu: No new data!'), return
+ end
+ set(0,'currentfig',findobj('type','figure','userdata',6))
+ OLD_STATUS=99;
 elseif strcmp(action,'print') | strcmp(action,'save')
  if isunix
   set(hds(2:3),'visible','off')
@@ -146,6 +146,8 @@ TI_SCALE	=[0 3000];	% Scale for Ti (K)
 VI_SCALE	=[-200 200];	% Scale for Vi (m/s)
 RES_SCALE	=[.5 2]; 	% Scale for Res
 COMP_SCALE	=[0 1];		% Scale for Comp
+PLF_SCALE	=[0 10];	% Scale for Langmuir freq (MHz)
+COLL_SCALE	=10.^[1 6];	% Scale for collision freq (Hz)
 FIGURE_TITLE	='EISCAT RADAR';% Title for the whole figure
 if ~isempty(Loc)
   LOCATION	=['EISCAT-' Loc];
@@ -196,7 +198,8 @@ if strcmp(action,'verbose')
    ALT_SCALE=[floor(min(ALT(GATES(1,:)))/10) ceil(max(ALT(GATES(end,:)))/10)];
    ALT_SCALE=minput('Altitude scale',ALT_SCALE*10);
   end
-  WHICH_PARAM=minput('Which parameters',WHICH_PARAM,1);
+  disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Lf Co')
+  WHICH_PARAM=minput('Choose',WHICH_PARAM,1);
 elseif ~REALT
   if strcmp(DATA_PATH(end),filesep)
     DATA_PATH=DATA_PATH(1:end-1);
@@ -209,16 +212,18 @@ end
 if isempty(MESSAGE1)
   MESSAGE1=minput('Type of experiment','CP',1);
 end
-if strcmp(name_ant,'32m') | strcmp(name_ant,'42m')
+if strcmpi(name_ant,'32m') | strcmpi(name_ant,'42m')
   FIGURE_TITLE	='EISCAT SVALBARD RADAR';
   stretchSecs	=65;
-elseif strcmpi(name_ant,'uhf') | strcmpi(name_ant,'kir') | strcmpi(name_ant,'kod')
+  fradar=500e6;
+elseif strcmpi(name_ant,'uhf') | strcmpi(name_ant,'kir') | strcmpi(name_ant,'sod')
   FIGURE_TITLE	='EISCAT UHF RADAR';
-elseif strcmp(name_ant,'VHF')
+  fradar=930e6;
+elseif strcmpi(name_ant,'vhf')
   FIGURE_TITLE	='EISCAT VHF RADAR';
+  fradar=224e6;
 end
-option=zeros(9,1);
-% options 'Ne Te Ti Vi AE TT LL Rs Dp'
+option=zeros(20,1);
 if findstr(WHICH_PARAM,'Ne'), option(1)=1; end
 if findstr(WHICH_PARAM,'Te'), option(2)=1; end
 if findstr(WHICH_PARAM,'Ti'), option(3)=1; end
@@ -226,8 +231,10 @@ if findstr(WHICH_PARAM,'Vi'), option(4)=1; end
 if findstr(WHICH_PARAM,'AE'), option(5)=1; end
 if findstr(WHICH_PARAM,'TT') & length(GATES)==1, option(6)=1; end
 if findstr(WHICH_PARAM,'LL') & length(GATES)==1, option(7)=1; end
-if findstr(WHICH_PARAM,'Dp'), option(8)=1; end
+if findstr(WHICH_PARAM,'O+'), option(8)=1; end
 if findstr(WHICH_PARAM,'Rs'), option(9)=1; end
+if findstr(WHICH_PARAM,'Lf'), option(10)=1; end
+if findstr(WHICH_PARAM,'Co'), option(11)=1; end
 n_tot=nnz(option);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -324,7 +331,7 @@ end;
 add_plot=0;
 height=(0.80-(n_tot-1)*0.03)/n_tot;
 colormap(myb(78,1));
-s=size(Status);
+s=size(Status,2);
 if OLD_STATUS~=PLOT_STATUS
   i=find(Status>PLOT_STATUS);
   Ne(i)=NaN; Te(i)=NaN; Ti(i)=NaN; Vi(i)=NaN;
@@ -333,75 +340,62 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plot the parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if stretchSecs & s(2)>1
+if stretchSecs & s>1
  dt=(Time(1,2:end)-Time(2,1:end-1));
  d=find(dt>0 & dt<=stretchSecs/86399);
  Time(2,d)=Time(2,d)+dt(d)/2;
  Time(1,d+1)=Time(2,d);
 end
 if option(1)
- if length(GATES)==1
-  [add_plot]=line_plot(add_plot,action,n_tot,height,s,Ne(GATES,:)',[],'Electron Density (m^{-3})',[],CLPos,[]);
- else
-  [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Ne(GATES,:),NE_SCALE,Yscale,YTitle,'Electron Density (m^{-3})',CLPos,'log');
- end
+ [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Ne(GATES,:),NE_SCALE,Yscale,YTitle,'Electron Density (m^{-3})',CLPos,'log');
 end
 if option(6)
-  [add_plot]=line_plot(add_plot,action,n_tot,height,s,[Te(GATES,:);Ti(GATES,:)]',[],'Temperatures (K)',{'Electron' 'Ion'},CLPos,[]);
+ [add_plot]=line_plot(add_plot,action,n_tot,height,s,[Te(GATES,:);Ti(GATES,:)]',[],'Temperatures (K)',{'Electron' 'Ion'},CLPos,[]);
 end
 if option(2)
- if length(GATES)==1
-  [add_plot]=line_plot(add_plot,action,n_tot,height,s,Te(GATES,:)',[],'Electron Temperature (K)',[],CLPos,[]);
- else
-  [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Te(GATES,:),TE_SCALE,Yscale,YTitle,'Electron Temperature (K)',CLPos,[]);
- end
+ [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Te(GATES,:),TE_SCALE,Yscale,YTitle,'Electron Temperature (K)',CLPos,[]);
 end
 if option(3)
- if length(GATES)==1
-  [add_plot]=line_plot(add_plot,action,n_tot,height,s,Ti(GATES,:)',[],'Ion Temperature (K)',[],CLPos,[]);
- else
-  [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Ti(GATES,:),TI_SCALE,Yscale,YTitle,'Ion Temperature (K)',CLPos,[]);
- end
+ [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Ti(GATES,:),TI_SCALE,Yscale,YTitle,'Ion Temperature (K)',CLPos,[]);
 end
 if option(4)
  if length(GATES)==1
   if VI_SCALE(1)<VI_SCALE(2)
-    [add_plot]=line_plot(add_plot,action,n_tot,height,s,Vi(GATES,:)',[],'Ion Drift Velocity (ms^{-1})',{'positive away'},CLPos,[]);
+   [add_plot]=line_plot(add_plot,action,n_tot,height,s,Vi(GATES,:)',[],'Ion Drift Velocity (ms^{-1})',{'positive away'},CLPos,[]);
   else
-    [add_plot]=line_plot(add_plot,action,n_tot,height,s,-Vi(GATES,:)',[],'Ion Drift Velocity (ms^{-1})',{'positive towards'},CLPos,[]);
+   [add_plot]=line_plot(add_plot,action,n_tot,height,s,-Vi(GATES,:)',[],'Ion Drift Velocity (ms^{-1})',{'positive towards'},CLPos,[]);
   end
  else
   if VI_SCALE(1)<VI_SCALE(2)
-    [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Vi(GATES,:),VI_SCALE,Yscale,YTitle,'Ion Velocity (ms^{-1})',CLPos,[]);
-    text('String','(away)','Units','Normalized','Position',[CLPos-.025 0.5],...
-        'HorizontalAlignment','Center','Rotation',-90)
+   [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Vi(GATES,:),VI_SCALE,Yscale,YTitle,'Ion Velocity (ms^{-1})',CLPos,[]);
+   text('String','(away)','Units','Normalized','Position',[CLPos-.025 0.5],...
+       'HorizontalAlignment','Center','Rotation',-90)
   else
-    [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),-Vi(GATES,:),-VI_SCALE,Yscale,YTitle,'Ion Velocity (ms^{-1})',CLPos,[]);
-    text('String','(towards)','Units','Normalized','Position',[CLPos-.025 0.5],...
-        'HorizontalAlignment','Center','Rotation',-90)
+   [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),-Vi(GATES,:),-VI_SCALE,Yscale,YTitle,'Ion Velocity (ms^{-1})',CLPos,[]);
+   text('String','(towards)','Units','Normalized','Position',[CLPos-.025 0.5],...
+       'HorizontalAlignment','Center','Rotation',-90)
   end
  end
 end
+if option(11)
+ [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Coll(GATES,:),COLL_SCALE,Yscale,YTitle,'Collision frequency (Hz)',CLPos,'log');
+end
 if option(8)
- if length(GATES)==1
-  [add_plot]=line_plot(add_plot,action,n_tot,height,s,Comp(GATES,:)',[],'Ion Composition (O^+/N_e)',[],CLPos,[]);
- else
-  [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Comp(GATES,:),COMP_SCALE,Yscale,YTitle,'Ion Composition (O^+/N_e)',CLPos,[]);
- end
+ [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Comp(GATES,:),COMP_SCALE,Yscale,YTitle,'Ion Composition (O^+/N_e)',CLPos,[]);
+end
+if option(10)
+ plf=8.98e-6*sqrt(Ne).*sqrt(1+3*7.52e5*(fradar/3e8)^2*Te./Ne);
+ [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),plf(GATES,:),PLF_SCALE,Yscale,YTitle,'Plasma line frequency (MHz)',CLPos,[]);
 end
 if option(9)
- if length(GATES)==1
-  [add_plot]=line_plot(add_plot,action,n_tot,height,s,Res(GATES,:)',[],'Residual',[],CLPos,[]);
- else
-  [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Res(GATES,:),RES_SCALE,Yscale,YTitle,'Residual',CLPos,'log');
- end
+ [add_plot]=surf_plot(add_plot,action,n_tot,height,s,y_param(GATES,:),Res(GATES,:),RES_SCALE,Yscale,YTitle,'Residual',CLPos,'log');
 end
 if option(5)
+ d=find(El<90.1 & El>89.9); Az(d)=NaN;
  [add_plot]=line_plot(add_plot,action,n_tot,height,s,[Pt Az El Tsys],[0 360],'Radar parameters',{'Power(10kW)' 'Azimuth(\circ)' 'Elevation(\circ)' 'System Temperature (K)'},CLPos,[]);
-%[add_plot]=line_plot(add_plot,action,n_tot,height,s,[Pt/100 [rem(Az+180,360)-180 El]*pi/180],[],'Power and pointing',{'Power(MW)' 'Azimuth(rad)','Elevation(rad)'},CLPos,[]);
 end
 if option(7)
- ll=[El Az RAN(GATES,:)']; d=find(isnan(Az)); ll(d,2)=0;
+ ll=[El Az RAN(GATES,:)'];
  for i=1:size(ll,1), ll(i,:)=loc2gg(r_RECloc,ll(i,:)); end
  [add_plot]=line_plot(add_plot,action,n_tot,height,s,[Pt ll Tsys],[],'Radar parameters',{'Power(10kW)' 'Latitude(\circN)','Longitude(\circE)' 'Altitude(km)' 'System Temperature (K)'},CLPos,[]);
 end
@@ -438,6 +432,10 @@ return
 %%%%% surf_plot function %%%%%%%%%%
 function [add_plot]=surf_plot(add_plot,action,n_tot,height,s,yparam,zparam,zscale,yscale,YTitle,Barlabel,CLPos,lg)
 
+if size(zparam,1)==1
+ [add_plot]=line_plot(add_plot,action,n_tot,height,s,zparam',[],Barlabel,[],CLPos,[]);
+ return
+end
 global axs Time axc
 add_plot=add_plot+1;
 if ~strcmp(action,'update')
@@ -453,7 +451,7 @@ end
 dy=diff(yparam)/2; yparam=[yparam-[dy(1,:);dy];yparam(end,:)+dy(end,:)];
 zparam=[zparam;zparam(end,:)];
 o2=ones(1,2);
-for i=1:s(2)
+for i=1:s
   surface(Time(:,i),yparam(:,i)*o2,zparam(:,i)*o2)
 end
 
@@ -482,16 +480,16 @@ else
 end
 
 o2=ones(2,1);
-if s(2)>1
+if s>1
  d1=1;
- d=[find(Time(1,2:end)-Time(2,1:end-1)>0) s(2)];
+ d=[find(Time(1,2:end)-Time(2,1:end-1)>0) s];
  nc=size(yparam,2);
  for i=1:length(d)
   line(col(Time(:,d1:d(i))),reshape(o2*row(yparam(d1:d(i),:)),2*(d(i)-d1+1),nc))
   d1=d(i)+1;
  end
 else
- for i=1:s(2)
+ for i=1:s
   line(Time(:,i),o2*yparam(i,:))
  end
 end
