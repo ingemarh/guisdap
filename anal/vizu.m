@@ -18,6 +18,8 @@ function [varargout]=vizu(action,a2,a3)
 % >> vizu save
 % To get more selection possibilities
 % >> vizu verbose
+% To get even more selection possibilities
+% >> vizu VERBOSE
 % To run realtime inside guisdap
 % >> vizu rtgup
 % To reset and start over:
@@ -61,7 +63,7 @@ end
 
 PLOT_STATUS=0;		% Status limit (0-3)
 if isempty(DATA_PATH)
-  if strcmp(action,'verbose')
+  if strcmp(lower(action),'verbose')
     DATA_PATH=minput('Data path',result_path,1);
   elseif ~REALT
     if isdir(action)
@@ -79,7 +81,7 @@ if isempty(DATA_PATH)
   end
 end
 
-if isempty(action) | strcmp(action,'verbose')
+if isempty(action) | strcmp(lower(action),'verbose')
  if isempty(Time)
   [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS);
  end
@@ -204,7 +206,7 @@ if length(GATES)==1
  WHICH_PARAM='Ne TT Vi LL';
 end
 %%%%%%%%%% Time scales %%%%%%%%%%%%%
-if strcmp(action,'verbose')
+if strcmp(lower(action),'verbose')
 % name_expr=minput('Experiment name',name_expr,1);
  if isempty(START_TIME)
   START_TIME=floor(datevec(Time(1,1)));
@@ -239,6 +241,13 @@ elseif strcmp(nameant,'uhf') | strcmp(nameant,'kir') | strcmp(nameant,'sod')
 elseif strcmp(nameant,'vhf')
  FIGURE_TITLE='EISCAT VHF RADAR';
  fradar=224e6;
+end
+if strcmp(action,'VERBOSE')
+ SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res)',SCALE')';
+ PLF_SCALE=minput('Scale (plf)',PLF_SCALE);
+ RAWNE_SCALE=minput('Scale (rawNe)',RAWNE_SCALE);
+ LAT_SCALE=minput('Scale (lat)',LAT_SCALE);
+ stretchSecs=minput('Strech secs',stretchSecs);
 end
 option=zeros(20,1);
 if findstr(WHICH_PARAM,'Ne'), option(3)=1; end
@@ -347,7 +356,11 @@ elseif Y_PARAM==3
 end
 if stretchSecs & s>1
  dt=(Time(1,2:end)-Time(2,1:end-1));
- d=find(dt>0 & dt<=stretchSecs/86399);
+ if stretchSecs==1
+  d=find(dt>0 & dt<=median(dt)+1/86399);
+ else
+  d=find(dt>0 & dt<=stretchSecs/86399);
+ end
  if ~isempty(d)
   Time(2,d)=Time(2,d)+dt(d)/2;
   Time(1,d+1)=Time(2,d);
