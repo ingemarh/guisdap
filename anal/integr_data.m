@@ -48,7 +48,7 @@ end
 if a_integr==0, a_interval(2)=a_end;
 elseif a_interval(2)>=a_end; EOF=1; end
 if a_realtime
-  if d_filelist(end)<a_interval(1)
+  if d_filelist(end)<=a_interval(1)
     [EOF,jj]=update_filelist(EOF,jj);
     if EOF, return, end
   end
