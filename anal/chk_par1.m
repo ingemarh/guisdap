@@ -111,3 +111,11 @@ end
 if exist('display_results')
  di_results=display_results; 
 end
+
+a_save=1;
+if exist('analysis_save','var')
+ a_save=analysis_save;
+ if ~a_save
+  di_figures(5)=0; result_path=path_tmp;
+ end
+end

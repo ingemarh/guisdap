@@ -12,9 +12,9 @@ global r_ind r_range r_param r_error r_res r_status r_dp
 global r_apriori r_apriorierror
 global pp_range pp_sigma
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
-global webfile
+global webfile a_save
 
-if length(d_time)>0
+if length(d_time)>0 & a_save
   filename=sprintf('%08d',fix(tosecs(d_time(2,:))));
 else
   filename='00000000';
