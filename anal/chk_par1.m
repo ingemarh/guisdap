@@ -71,10 +71,9 @@ else
   if ~a_realtime
     recurse(strfind(recurse,'?'))='*';
   end
-  while strfind(recurse,'**')
-    for i=fliplr(strfind(recurse,'**'))
-      recurse(i+1)=[];
-    end
+  i=strfind(recurse,'**');
+  for i=fliplr(i)
+    recurse(i+1)=[];
   end
   if isempty(dir([data_path '*.mat']))
     data_path=fullfile(data_path,recurse,filesep);

@@ -148,7 +148,9 @@ while i<length(files)
   end
 
   dumpOK=(a_tx>=a_txlim);
-  if dumpOK & ~isempty(a_satch)
+  if ~dumpOK
+    fprintf('Tx down\n')
+  elseif ~isempty(a_satch)
     dumpOK=satch(a_ant(1),secs,a_inttime);
   end
   if lpb==128
