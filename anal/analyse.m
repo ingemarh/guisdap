@@ -22,7 +22,7 @@ load(fullfile(path_GUP,'matfiles','logo')), plot(y,x,'.k'), axis image
 set(get(gca,'child'),'markersize',10), set(gca,'visible','off')
 pause(1), clf
 x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=200;
-bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','set(bg,''visible'',''off'');try,go_on(b),catch,disp(lasterr),end','fontsize',14);
+bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','set(bg,''visible'',''off'')','fontsize',14);
 uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
 text(0,ty(1),'Dsp expr')
 set(gca,'position',[0 0 1 1],'visible','off')
@@ -46,6 +46,7 @@ text(0,ty(9),'Disp figures')
 b(9)=uicontrol('Style','edit','string',num2str(figs),'position',[x y(9) x2 yh],'tooltipstring','datadump powerprofile fits parameters vizu');
 text(0,100,'Special')
 b(10)=uicontrol('Style','edit','string',extra,'position',[x 50 x2 100],'max',100,'HorizontalAlignment','left','tooltipstring','Matlab commands!');
+ go_on(bg)
 else
  path_exps=minput('Path exps',path_exps,'s');
  name_expr=minput('Dsp exp',name_expr,'s');

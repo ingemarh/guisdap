@@ -81,16 +81,17 @@ while i<length(files)
   end
   a_inttime=d_parbl(inttime);
   if a_integr==0
+    a_ant=d_parbl([el az])/fac;
     if ~exist('a_antold','var')
-      a_antold=d_parbl([el az])/fac;
+      a_antold=a_ant;
       secs=secs1;
       N_averaged=0;
-      maxmissingdumps=3;
+      a_maxgap=30;
     end
-    tdiff=secs1-secs>a_inttime*maxmissingdumps;
-    if any(fix((a_antold-d_parbl([el az])/fac)/.1)) | tdiff
-      a_antold=d_parbl([el az])/fac;
-      if a_antold(1)<89.9 | tdiff
+    tdiff=secs1-secs>a_maxgap;
+    if any(fix((a_antold-a_ant)/.1)) | tdiff
+      a_antold=a_ant;
+      if a_ant(1)<89.9 | tdiff
         d_parbl=prev_parbl;
         a_interval(2)=file;
         if N_averaged>1
@@ -112,11 +113,10 @@ while i<length(files)
     d_data=d_data(1:2:lendata)+sqrt(-1)*d_data(2:2:lendata);
   end
 
+  dumpOK=(d_parbl(txpower)*factx>=a_txlim);
   if length(d_parbl)==128
     if d_parbl(95)~=0, fprintf(' Status word is %g\n',d_parbl(95)), end 
-    dumpOK=rem(d_parbl(95),2)==0 & d_parbl(95)~=64;
-  else
-    dumpOK=(d_parbl(txpower)*factx>=a_txlim);
+    dumpOK=dumpOK & rem(d_parbl(95),2)==0 & d_parbl(95)~=64;
   end
   if ~OK & dumpOK,  % initialize with the first good dump
     first_parbl=d_parbl;         % save the first parameter block
@@ -146,7 +146,7 @@ while i<length(files)
     OK=1;
   elseif OK & dumpOK,  % update with the following files
     if any(abs(d_parbl(fixed)-prev_parbl(fixed))>allow)
-   %  warning(' change in the parameter block')
+   %  disp(' change in the parameter block')
       indfixed=find(d_parbl(fixed)~=prev_parbl(fixed));
       disp('    param#  previous   current ')
       indfixed=fixed(indfixed);
@@ -207,7 +207,7 @@ j=0;
 a_max_rtwait=300; mrw=round(sqrt(a_max_rtwait));
 if ~jj
   if di_figures(5)
-    try, vizu rtgup; catch, disp(lasterr), end
+    try, vizu rtgup; catch, rethrow(lasterror), end
   end
   jj=1; send_www
 end

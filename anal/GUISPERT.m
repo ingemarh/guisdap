@@ -1,10 +1,17 @@
 % GUISPERT.m: special hacks - makes some more space available
-% GUISDAP v1.81   03-01-30 Copyright EISCAT
+% GUISDAP v8.1  03-04-30 Copyright EISCAT
 %
 % script for GUISPERTs and other power users. Put here any commands by
 % which you wish to change the data before the analysis is started
 %
 % See also: GUIZARD
+
+% Correct the doppler sign at specific times
+if name_site=='L' & d_time(1,1)==2003 & tosecs(d_time(1,:))>6857400
+  d_data=conj(d_data);
+end
+
+% Range not always recorded
 if isempty(ch_range) & (name_site=='K' | name_site=='S')
   global v_lightspeed
   if exist('ch_height','var')

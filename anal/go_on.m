@@ -1,11 +1,15 @@
-function go_on(b)
-global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path
+function go_on(bg)
+global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path b
 go_die=0;
 
-if nargin<1 | length(b)<10
+if nargin<1 | ~ishandle(bg)
  load([path_tmp '.gup'],'-mat')
  if nargin>0, go_die=1; end
 else
+ while strcmp(get(bg,'visible'),'on')
+  pause(1)
+  if ~ishandle(bg), return, end
+ end
  siteid=get(b(2),'value');
  t1=str2num(get(b(4),'string'));
  t2=str2num(get(b(5),'string'));

@@ -29,7 +29,7 @@ if isempty(r_h)
   [i1,i2]=fileparts(result_path(1:end-1)); mkdir(i1,i2)
  elseif ~isempty(ls(result_path))
   beep
-  fprintf('\n*********** %s is not empty! ***********\n\n',result_path)
+  fprintf('\n********** %s is not empty! **********\n\n',result_path)
  end
  if ~strcmp(path_tmp,result_path) & exist([path_tmp '.gup'],'file')
   copyfile([path_tmp '.gup'],result_path,'f')

@@ -51,7 +51,7 @@ if isempty(dirlist)
  else
   try, list=reshape(dirlist,length(dpath)+12,[])';
   list=sort(str2num(list(:,length(dpath)+(1:8))))';
-  catch, dirlist, msg(lasterr); list=[]; end
+  catch, dirlist, msg=lasterr; list=[]; end
  end
  return
 end
