@@ -31,7 +31,7 @@ nat_const
 get_ADDRSHIFT
 init_graphics
 
-rcprog_old=-1;
+old_rcprog=-1; old_point=[-1 -1];
 EOF=0;
 while ~EOF
  
@@ -52,16 +52,12 @@ while ~EOF
     end
   end
 
-%*******************************************************************************
-%
+%****************************************************************************
 % At this point, an integrated complex data dump is stored in variable d_data
-% To study the contents of the data by graphical and other means, e.g.
-% ind=1:length(d_data)-1; plot(ind-1,real(d_data(ind)));
-%
-%*******************************************************************************
+%****************************************************************************
 
   if OK
-    if d_rcprog~=rcprog_old | name_site=='K' | name_site=='S' 
+    if d_rcprog~=old_rcprog | ((name_site=='K' | name_site=='S') & any(old_point~=[ch_el(1) ch_az(1)]))
       name_ant={'32m','42m','vhf','uhf','kir','sod'};
       name_ant=char(name_ant(ant_id));
       load_initfile
@@ -79,7 +75,6 @@ while ~EOF
       form_adpar
       spektri_init % Loads in plasma dispersion function table
       constants
-      rcprog_old=d_rcprog;
       % Removing uncessary variables
       clear lpg_wom vc_Aenv vc_Apenv vc_penvabs vc_penv vc_penvo
     end
@@ -87,29 +82,24 @@ while ~EOF
       run([path_expr 'guispert'])
     end
     force2ch, GUISPERT
-    radar_eq(Ant_eff)	% calculates the radar constant      
+    if d_rcprog~=old_rcprog | any(old_point~=[ch_el(1) ch_az(1)])
+      radar_eq(Ant_eff)	% calculates the radar constant      
+    end
     chk_par2
-    
-    if any(a_simul),
+    old_point=[ch_el(1) ch_az(1)];
+    old_rcprog=d_rcprog;
+
+    if any(a_simul)
       simul_dump
     else
       scale_data   
     end
 
-%*******************************************************************************
-%
-% Now the data has been scaled by calibration, so that it appears in units of K
-% ind=0:length(d_data)-2; plot(ind,real(d_data(ind))); %This would show the data
-%
-%*******************************************************************************
-
+%**************************************************************************
+% The data has been scaled by calibration, so that it appears in units of K
+% Now subtract the background
+%**************************************************************************
     subr_backgr   
-
-%*******************************************************************************
-%
-% At this point one finds background subtracted data in vector d_data
-%
-%*******************************************************************************
 
     if di_figures(1)
       figure(di_figures(1)); clf;
@@ -123,17 +113,13 @@ while ~EOF
       xlabel('Address'); ylabel('Power [K]'); grid; drawnow
       clear indr indi
     end
-
     get_apriori(any(a_simul))
-
 %*******************************************************************************
-%
 % The get_apriori call calculated the raw electron density profile. 
 % It is stored in variables
 % pp_range   : range to power measurements
 % pp_profile : Ne with a priori temperature ratio model
 % pp_sigma   : Ne with Te=Ti
-%
 %*******************************************************************************
     if exist('ionomodel_control') & ionomodel_control==3
       ionomodel_control=0;
