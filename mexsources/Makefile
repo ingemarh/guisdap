@@ -6,10 +6,12 @@ ifeq ($(sys),SunOS)
 #Solaris:
 FFLAGS=-fast
 CFLAGS=-fast -KPIC -DANSI_C -I$(MATLAB)/extern/include
+MEXOPTS=-f $(MATLAB)/bin/f90opts.sh
 else
 #Linux
 FFLAGS=-O -s
 CFLAGS= -O -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
+MEXOPTS=
 endif
 
 #The rest
@@ -22,10 +24,10 @@ mex_Directory = ../mex6
 all: iri msis lib mex6 install
 
 iri:
-	mex iri.f $(IRILIB)
+	mex $(MEXOPTS) iri.f $(IRILIB)
 
 msis:
-	mex msis.f $(MSISLIB)
+	mex $(MEXOPTS) msis.f $(MSISLIB)
 
 lib:
 	$(COMPILE.c) mrqmndiag_worker.c dirthe_worker.c GULIPS_addm_worker.c GULIPS_cov_worker.c GULIPS_invR_worker.c GULIPS_mul_worker.c spec_worker.c transf_worker.c
