@@ -5,7 +5,10 @@ function res=canon(fn,output);
 
 if nargin==1, output=1; end
 res=fn;
-if strfind(res,'?')
-  res=ls([res '.mat']); res(find(res<32))=[];
+if strfind(fn,'?')
+  fn=[fn '.mat']; j=0;
+  while ~exist(res) & j<9
+    res=ls(fn); res(find(res<32))=[]; j=j+1;
+  end
 end
 if output, disp(['canon: ' res]), end
