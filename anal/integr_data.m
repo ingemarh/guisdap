@@ -186,10 +186,6 @@ while i<length(files)
 end
 
 if OK, % if at least one good data dump was found
-  if a_control(4)==1 & N_averaged<5
-    fprintf('Warning: %.0f dump%s may not be enough for reliable variance determination\n',N_averaged,(N_averaged>1)*'s')
-  end
-
   % update parameter block, accept the last parameter block as starting point
   d_parbl(averaged)=aver/N_averaged;     
   d_parbl(ORed)=status;

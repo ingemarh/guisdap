@@ -97,6 +97,11 @@ a_addr=[];
 a_adstart=[];
 a_adend=[];
 diffran=diff(a_range);  
+if a_control(4)==1 & exist('N_averaged') & N_averaged<5
+  dvar1=d_var1+d_data.*d_data/N_averaged;
+  dvar2=d_var2+d_data.*conj(d_data)/N_averaged;
+  N_avtot=Inf;
+end
 for gate=find(diffran>0),
   addr=find(ad_range>a_range(gate) & ad_range<=a_range(gate+1));
   if ~isempty(addr)
@@ -112,30 +117,30 @@ for gate=find(diffran>0),
     ind1=find(ad_w(addr)>a_minwidth(gate) & ad_w(addr)<a_maxwidth(gate) );
     addr=addr(ind1);
   end
-  if length(addr)>1 & a_control(4)==1 & exist('N_averaged') & N_averaged<5
+  if length(addr)>1 & exist('dvar1')
     % Last chance to get the variances
-    % Calculate from the profiles: Need at least 3 points in each
-    ij=ad_lpg(addr); lpg=unique(ij); naddr=[]; ladlpg=length(ad_lpg);
+    % Calculate from the profiles: Want at least 6 (accepts 3) points in each
+    ij=ad_lpg(addr); lpg=unique(ij); naddr=[];
     for i=lpg
-      n=addr(find(i==ij)); ln=length(n); nn=n; ii=lpg_ri(i);
-      if n(1)>ii & ad_lpg(n(1)-ii)==i
-        n=[n(1)-ii n]; ln=ln+1;
-      end
-      if n(end)+ii<=ladlpg & ad_lpg(n(end)+ii)==i
-        n=[n n(end)+ii]; ln=ln+1;
-      end
-      if max(ln,N_averaged)>2
-        if ln>N_averaged
-          ii=ad_coeff(n)'; in=ii/mean(ii);
-          ii=d_data(n)./in; sii=sum(ii);
-          d_var1(nn)=(sum(ii.*ii)-sii.*sii/ln)/(ln-1);
-          d_var2(nn)=(sum(ii.*conj(ii))-sii.*conj(sii)/ln)/(ln-1);
+      n=addr(find(i==ij)); ln=length(n)*N_averaged; nn=n; ii=lpg_ri(i); in=0;
+      while ln<5 & ln~=in
+        in=ln;
+        if n(1)-ADDR_SHIFT>lpg_ra(i)
+          n=[n(1)-ii n]; ln=ln+N_averaged;
         end
+        if (n(end)-ADDR_SHIFT-lpg_ra(i))/ii+1<lpg_nt(i)
+          n=[n n(end)+ii]; ln=ln+N_averaged;
+        end
+      end
+      if ln>2
+        N_avtot=min(N_avtot,ln);
+        ii=ad_coeff(n)'; in=ii/mean(ii); sii=mean(d_data(n)./in);
+        d_var1(nn)=mean(dvar1(n)./in.^2)-sii.*sii/N_averaged;
+        d_var2(nn)=mean(dvar2(n)./in.^2)-sii.*conj(sii)/N_averaged;
         naddr=[naddr nn];
       end
     end
     addr=naddr;
-    clear lpg ii ij i naddr sii in n ln nn
   end
 
   if length(addr)>1, % store addresses if at least two points found
@@ -144,6 +149,12 @@ for gate=find(diffran>0),
     a_addr=[a_addr,addr-ADDR_SHIFT]; % From matlab indexing to radar indexing
     a_adend=[a_adend,len+length(addr)];
   end
+end
+if exist('dvar1')
+  if N_avtot<5
+    fprintf('Warning: %.0f points may not be enough for reliable variance determination\n',N_avtot)
+  end
+  clear lpg ii ij i naddr sii in n ln nn dvar1 dvar2 N_avtot
 end
 
 if length(a_addr)==0
