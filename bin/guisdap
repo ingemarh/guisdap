@@ -3,7 +3,7 @@ tail=
 init=
 my="$HOME/gup/mygup"
 mflags="-nojvm -nosplash"
-usage="Usage: guisdap [-a] [-i] [-b] [-x] [-m path] [matlabflags]"
+usage="Usage: guisdap [-a] [-i] [-b] [-x] [-t] [-m path]"
 matlab="matlab"
 
 TMPDIR=$HOME/tmp
@@ -20,7 +20,7 @@ GUP=`echo "$filename" | awk -F/ ' {for (i=2;i<NF-1;i++) printf("/%s",$i)} '`
 #mex=$GUP/mex6:$GUP/NW/mex6:
 mex=$GUP/mex6:
 
-while getopts aibxm: flag
+while getopts aibxtr: flag
 do
 	case $flag in
 		a) tail="-r analyse";;
@@ -31,6 +31,7 @@ do
 		   matlab="nohup $matlab"
 		   ;;
 		m) my="$OPTARG";;
+		t) unset DISPLAY;;
 		x) mex=;;
 		?) echo $usage
 		exit 2;;
