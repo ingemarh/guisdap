@@ -24,9 +24,7 @@ for i=1:4
    F=1; while ~isempty(find(used==F)), F=F+1; end
    figure(F), clf
    set(F,'Position',Positions(i,:),'NumberTitle','off','Name',Names(i,:),'UserData',i);
-   set(F,'DefaultAxesFontName','helvetica','DefaultTextFontName','helvetica')
    set(F,'DefaultAxesFontWeight','bold','DefaultTextFontWeight','bold')
-   set(F,'DefaultAxesFontSize',14,'DefaultTextFontSize',14)
    used=[used;F];
   end
   di_figures(i)=F;

@@ -51,12 +51,16 @@ p_ND=1;
 p_XMITloc=[69.583 19.21 .030];  % Latitude, longitude, altitude
 if name_site=='T' | name_site=='V' 
   p_RECloc=[69.583 19.21 .030];
+  %p_RECloc=[69.586453 19.227428 0.0865];
 elseif name_site=='K'
   p_RECloc=[67.863 20.44 .412];
+  %p_RECloc=[67.860658 20.435222 0.4179];
 elseif name_site=='S' | name_site=='R'
   p_RECloc=[67.367 26.65 .180];
+  %p_RECloc=[67.363683 26.627081 0.1973];
 elseif name_site=='L'
   p_RECloc=[78.153 16.029 .438];
+  %p_RECloc=[78.15313 16.02875 0.445];
   p_XMITloc=p_RECloc;
 end
 

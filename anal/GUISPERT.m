@@ -13,7 +13,7 @@ if (strcmp(name_ant(1:3),'vhf') & d_time(1,1)>2000) | ...
   d_data=conj(d_data);
 end
 if strcmp(name_ant(1:3),'vhf') & ~exist('Magic_const')
- a_Magic_const=1.35;
+ a_Magic_const=1.367;
 end
 
 % Range not always recorded

@@ -1,3 +1,5 @@
 function finish()
 global local
-delete([local.tfile '*'])
+if isstruct(local)
+  delete([local.tfile '*'])
+end

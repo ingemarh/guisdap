@@ -45,7 +45,7 @@ local.site=getenv('EISCATSITE');
 local.host=getenv('HOSTNAME');
 local.browser='netscape';
 local.matlabversion=str2num(version('-release'));
-local.tfile=tempname;
+if ~isfield(local,'tfile'), local.tfile=tempname; end
 switch local.site
  case 'K'
   data_path='/data1/';
