@@ -1,5 +1,5 @@
 % guispert.m: special experiment specific hacks
-% GUISDAP v1.80   02-04-30 Copyright EISCAT
+% GUISDAP v8.2   03-10-30 Copyright EISCAT
 %
 % See also: GUISPERT GUIZARD
 %
@@ -11,19 +11,15 @@ else
  hv=max(roots(sum(polhv)));
 end
 
-if exist('sigpath') & strcmp(sigpath,'phased')
+if isempty(a_code) | length(a_code)==2
+ [ch_el ch_az ch_gain]=vhf_elaz(90,0,10^4.31/2);
+elseif length(a_code)==1 & a_code==2
  [ch_el ch_az ch_gain]=vhf_elaz(90,12,10^4.31/2);
- d_data=d_data(54339+(1:54339));
- d_var1=d_var1(54339+(1:54339));
- d_var2=d_var2(54339+(1:54339));
  ch_Pt=polyval(polhv(2,:),hv)*1000;
- name_ant='vhfb';
-elseif exist('sigpath')
+elseif length(a_code)==1 & a_code==1
  [ch_el ch_az ch_gain]=vhf_elaz(90,0,10^4.31/2);
- ch_Pt=polyval(polhv(1,:),hv)*1000;
- name_ant='vhfa';
+ ch_Pt=polyval(polhv(1,:),hv)*1000,
 else
- d_data=d_data(1:54339)+d_data(54339+(1:54339));
- [ch_el ch_az ch_gain]=vhf_elaz(90,0,10^4.31/2);
+ error('No such analysis_code')
 end
 clear polhv hv
