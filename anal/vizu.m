@@ -338,7 +338,7 @@ for i=[3 7 9]
 end
 if option(12)
  d=many(par2D(GATES,:,4:5),[0 2000],1);
- line_plot(s,reshape(par2D(GATES,:,4:5),[],2),d,Temperatures (K)',{'Electron' 'Ion'},[])
+ line_plot(s,reshape(par2D(GATES,:,4:5),[],2),d,'Temperatures (K)',{'Electron' 'Ion'},[])
 end
 for i=[4 5 8]
  if option(i)
@@ -347,7 +347,7 @@ for i=[4 5 8]
 end
 if option(6)
  if length(GATES)==1
-  d=many(par2D(GATES,:,6),[-100 100],1);
+  d=many(par2D(GATES,:,6),[-200 200],1);
   line_plot(s,par2D(GATES,:,6)',d,TITLE(6),{'positive away'},[])
  else
   surf_plot(s,y_param(GATES,:),par2D(GATES,:,6),SCALE(6,:),Yscale,YTitle,char(char(TITLE(6)),'         (away)'),[])
@@ -371,7 +371,7 @@ if option(13)
  for i=1:s, ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
  if size(par1D,2)>3, ll=[ll par1D(:,4)]; end
  d=many(ll,[0 200],1);
- line_plot(s,ll,[],'Radar parameters',[TITLE1(3) {'Latitude(\circN)','Longitude(\circE)'} TITLE(2) TITLE1(4)],[])
+ line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {'Latitude(\circN)','Longitude(\circE)'} TITLE(2) TITLE1(4)],[])
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 xlabel('UNIVERSAL TIME')
@@ -393,7 +393,7 @@ function surf_plot(s,yparam,zparam,zscale,yscale,YTitle,Barlabel,lg)
 
 zscale=many(zparam,zscale,5,lg);
 if size(zparam,1)==1
- line_plot(s,zparam',zscale,Barlabel,[],[]);
+ line_plot(s,zparam',zscale,Barlabel,[],lg);
  return
 end
 global Time axs axc add_plot
@@ -419,7 +419,7 @@ end
 
 if length(axc)<add_plot
  if ~isempty(zscale)
-  set(gca,'CLim',zscale);
+  set(gca,'CLim',zscale.*(1+5*[-eps eps]));
  end
  axc=[axc my_colorbar(Barlabel,lg)];
 end
@@ -486,7 +486,7 @@ set(gca,'xtick',xticks)
 datetick(gca,'x',tickform,'keeplimits','keepticks')
 
 if ~isempty(yscale)
- set(gca,'YLim',yscale)
+ set(gca,'YLim',yscale.*(1+5*[-eps eps]))
 end
 ylabel(YTitle)
 return
