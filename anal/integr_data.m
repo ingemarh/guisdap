@@ -90,7 +90,7 @@ while i<length(files)
     fixed(find(fixed>lpb))=[];
     accumulated(find(accumulated>lpb))=[];
   end
-  allow=zeros(size(fixed')); %allow(find(fixed==az | fixed==el))=.1*fac;
+  allow=zeros(size(fixed')); allow(find(fixed==az | fixed==el))=.11*fac;
   d_parbl=col(d_parbl);
   [secs1,year]=tosecs(d_parbl(tvec));
   a_inttime=d_parbl(inttime);
