@@ -27,7 +27,7 @@ function  [OK,EOF,N_averaged]=integr_data(txlim)
 global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control 
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_satch
-global a_antold a_txold a_maxgap secs
+global a_antold a_txold a_elold a_maxgap secs
  
 OK=0; EOF=0; jj=0; N_averaged=0;
 if a_ind==0
@@ -89,6 +89,12 @@ while i<length(files)
   [secs1,year]=tosecs(d_parbl(tvec));
   a_inttime=d_parbl(inttime);
   a_ant=d_parbl([el az])/fac;
+  if a_ant(1)>0
+    a_elold=a_ant(1);
+  elseif ~isempty(a_elold)
+    a_ant(1)=a_elold;
+    d_parbl(el)=a_ant(1)*fac;
+  end
   a_tx=d_parbl(txpower)*factx;
   if a_tx>=0
     a_txold=a_tx;
