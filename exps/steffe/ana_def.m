@@ -5,5 +5,9 @@ a_satch.sigma=4;
 %a_satch.repair=-Inf;
 if strfind(data_path,'32p')
  analysis_do=0;
- d_saveintdir=fullfile(path_tmp,sprintf('steffe_%s_int@32p',datestr(analysis_start,29)));
+ d_saveintdir=result_path;
+ d=strfind(d_saveintdir,'AUTO');
+ if length(d)==1
+  d_saveintdir=[d_saveintdir(1:d-1) sprintf('%s_%s_%d@32p',datestr(analysis_start,29),name_expr,analysis_integr(1))];
+ end
 end

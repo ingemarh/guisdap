@@ -12,8 +12,12 @@ if (strcmp(name_ant(1:3),'vhf') & d_time(1,1)>2000) | ...
    (strcmp(name_ant(2:3),'2m') & d_time(1,1)==2003 & d_secs>6857400 & d_secs<25660800)
   d_data=conj(d_data);
 end
-if strcmp(name_ant(1:3),'vhf') & ~exist('Magic_const')
- a_Magic_const=1.367;
+if ~exist('Magic_const')
+ if strcmp(name_ant(1:3),'vhf')
+  a_Magic_const=1.367;
+ elseif strcmp(name_ant(1:3),'42m')
+  a_Magic_const=1.61;
+ end
 end
 
 % Range not always recorded

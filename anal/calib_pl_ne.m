@@ -26,7 +26,7 @@ end
 hlim=re*sqrt(1+hlim/re)-re;
 fgup=fullfile(DATA_PATH,'.gup');
 Magic_const=1;
-if ~isempty('r_Magic_const')
+if ~isempty(r_Magic_const)
  Magic_const=r_Magic_const;
 elseif exist(fgup)
  load(fgup,'-mat')
@@ -35,10 +35,14 @@ end
 
 %Get plasmaline data
 disp('Reading plasmaline data')
-fl=getfilelist(fullfile(pl_dir,filesep));
+[fl,msg]=getfilelist(fullfile(pl_dir,filesep));
+if msg, error(msg), end
 d=cell2mat({fl.file});
 fl=fl(find(d>tosecs(datevec(Time(1))) & d<=tosecs(datevec(Time(end)))));
 nfl=length(fl);
+if nfl==0
+ error('You stupid! Choose a better data set.')
+end
 plspec=zeros(nfft,nfreq,nfl);
 p_time=zeros(2,nfl);
 for i=1:nfl
@@ -63,7 +67,7 @@ fd2=-std(d2);
 for i=1:nfreq
  d=find(d2(:,i)<2*fd2(i));
  for j=d'
-  filt_shape(j+(1:3),i)=interp1([-3:-1 5:7],fsh(j+9+[-3:-1 5:7],i),1:3,'spline');
+  filt_shape(j+(1:3),i)=interp1([-3:-1 5:7]',fsh(j+9+[-3:-1 5:7],i),(1:3)','spline');
  end
 end
 if plots
@@ -107,6 +111,9 @@ for j=1:nfreq
   end
  end
 end
+if isempty(find(isfinite(plpeak)))
+ error('No plasma lines found')
+end
 plpeak_c=ones(nfl,2)*NaN;
 for i=0:1
  [a,b]=max(plpeak(2,:,(1:nfreq/2)+i*nfreq/2),[],3);
@@ -116,6 +123,9 @@ for i=0:1
 end
 plf=ones(nfl,1)*NaN;
 d=find(abs(sum(plpeak_c,2))<5*df);
+if isempty(d)
+ error('No simultanous up- and downshifted plasma lines found')
+end
 plf(d)=mean(abs(plpeak_c(d,:)),2)/1e6;
 if plots
  plot([abs(plpeak_c) plf]), pause
@@ -133,6 +143,7 @@ for i=d'
   ip=[ip i]; il=[il j];
  end
 end
+if isempty(ip), error('No overlapping times GUISDAP vs PL'), end
 s=size(Time,2); h=par2D(:,:,2); r0=1; mr=1;
 pmax=ceil(max(plf));
 while mr==r0 | abs(mr-1)>.01
