@@ -22,13 +22,13 @@
 %
 % See also: an_start integrate
 % function  [OK,EOF]=integr_data
-function  [OK,EOF]=integr_data(txlim)
+function  [OK,EOF,N_averaged]=integr_data(txlim)
  
 global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control 
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_inttime
  
-OK=0; EOF=0; jj=0;
+OK=0; EOF=0; jj=0; N_averaged=0;
 if a_ind==0
   a_inttime=60;
   a_ind=1;

@@ -41,7 +41,7 @@ while ~EOF
     if a_rawdata,
       [OK,EOF]=integr_NW;
     else
-      [OK,EOF]=integr_data;
+      [OK,EOF,N_averaged]=integr_data;
     end
     if OK
       if length(d_parbl)==128
