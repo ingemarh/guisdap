@@ -101,6 +101,7 @@ if a_control(4)==1 & exist('N_averaged') & N_averaged<5
   dvar1=d_var1+d_data.*d_data/N_averaged;
   dvar2=d_var2+d_data.*conj(d_data)/N_averaged;
   N_avtot=Inf;
+  bac=[];
 end
 for gate=find(diffran>0),
   addr=find(ad_range>a_range(gate) & ad_range<=a_range(gate+1));
@@ -134,6 +135,7 @@ for gate=find(diffran>0),
       end
       if ln>2
         N_avtot=min(N_avtot,ln);
+	if lpg_bac(i), bac=[bac lpg_bac(i)]; end
         ii=ad_coeff(n)'; in=ii/mean(ii); sii=mean(d_data(n)./in);
         d_var1(nn)=mean(dvar1(n)./in.^2)-sii.*sii/N_averaged;
         d_var2(nn)=mean(dvar2(n)./in.^2)-sii.*conj(sii)/N_averaged;
@@ -151,10 +153,20 @@ for gate=find(diffran>0),
   end
 end
 if exist('dvar1')
+  for i=unique(bac)
+    n=lpg_addr(i)+ADDR_SHIFT;
+    ln=length(n)*N_averaged;
+    if ln>1
+      N_avtot=min(N_avtot,ln);
+      sii=mean(d_data(n));
+      d_var1(n)=mean(dvar1(n))-sii.*sii/N_averaged;
+      d_var2(n)=mean(dvar2(n))-sii.*conj(sii)/N_averaged;
+    end
+  end
   if N_avtot<5
     fprintf('Warning: %.0f points may not be enough for reliable variance determination\n',N_avtot)
   end
-  clear lpg ii ij i naddr sii in n ln nn dvar1 dvar2 N_avtot
+  clear lpg ii ij i naddr sii in n ln nn dvar1 dvar2 N_avtot bac
 end
 
 if length(a_addr)==0
