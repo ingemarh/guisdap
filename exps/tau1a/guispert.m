@@ -12,10 +12,10 @@ else
 end
 
 d_date=datenum(d_time(1,:));
-if d_date<datenum(2003,12,1,0,0,0)
- ch_el=90;
+if d_date<datenum(2001,12,1,0,0,0)
+ ch_el=30;
 end
-if length(d_data)<83908
+if length(d_data)<20872
  a_code=1;
 elseif isempty(a_code) | length(a_code)==2
  [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
