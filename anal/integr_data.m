@@ -76,6 +76,7 @@ while i<length(files)
     ORed=95;                      % parameter which is OR'ed
     inttime=94;                   % parameter that holds integration time
     txpower=99; factx=1000;       % parameter that holds transmitter power
+    vhf=0;                        % vhf special, not used for old kst yet
   else
     tvec=1:6;
     fixed=[9:10 42 64];
@@ -89,6 +90,7 @@ while i<length(files)
     averaged(find(averaged>lpb))=[];
     fixed(find(fixed>lpb))=[];
     accumulated(find(accumulated>lpb))=[];
+    vhf=lpb>40 & d_parbl(41)==3;
   end
   allow=zeros(size(fixed')); allow(find(fixed==az | fixed==el))=.11*fac;
   d_parbl=col(d_parbl);
@@ -96,10 +98,16 @@ while i<length(files)
   a_inttime=d_parbl(inttime);
   a_ant=d_parbl([el az])/fac;
   if a_ant(1)>0
-    a_elold=a_ant(1);
+    a_elold(1)=a_ant(1);
   elseif ~isempty(a_elold)
-    a_ant(1)=a_elold;
+    a_ant(1)=a_elold(1);
     d_parbl(el)=a_ant(1)*fac;
+  end
+  if vhf & a_ant(2)>0
+    a_elold(2)=a_ant(2);
+  elseif vhf & length(a_elold)>1
+    a_ant(2)=a_elold(2);
+    d_parbl(az)=a_ant(2)*fac;
   end
   a_tx=d_parbl(txpower)*factx;
   if a_tx>=0
