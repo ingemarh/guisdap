@@ -17,29 +17,31 @@ elseif isunix
   end
   template=[row(col('\[0-9]')*ones(1,8)) '.mat'];
   d=[tempname '.txt'];
-  cmd=sprintf('find %s -name %s %s-print >%s',dirpath,template,newer,d);
+  cmd=sprintf('find %s -name %s %s-print >%s',dirpath(1:end-1),template,newer,d);
   if unix(cmd)
     msg=['Error listing mat files in ' dirpath ' ' cmd];
   else
     list=textread(d,['%*' num2str(length(dirpath)) 's%d.mat']);
   end
   delete(d)
-% list=ls([dpath template]);
-% list(find(dirlist<32))=[];
-% if isempty(list)
-%   msg=['No mat files in ' dirpath];
-% else
-%   list=reshape(list,length(dpath)+12,[])';
-%   list=str2num(list(:,length(dpath)+(1:8)));
-% end
-elseif ~exist(dirpath,'dir')
-  msg=[dirpath ' is not a directory'];
 else
-  dirlist=dir([dirpath '*.mat']);
-  dirlen=length(dirlist);
-  list=zeros(dirlen,1);
-  for i=dirlen:-1:1
-    list(i)=sscanf(dirlist(i).name,'%8d');
+  dirpath=dirpath(1:end-1);
+  i=strfind(dirpath,'*');
+  if i
+    dirs=dir(dirpath);
+    dp=fileparts(dirpath);
+  else
+    dirs.name=dirpath;
+    dp=[];
+  end
+  for j=1:length(dirs)
+    dirlist=dir(fullfile(dp,dirs(j).name,'*.mat'));
+    dirlen=length(dirlist);
+    l=zeros(dirlen,1);
+    for i=dirlen:-1:1
+      l(i)=sscanf(dirlist(i).name,'%8d');
+    end
+    list=[list;l];
   end
   if isempty(list)
     msg=[dirpath ' - No valid mat files'];

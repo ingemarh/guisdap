@@ -10,5 +10,13 @@ if strfind(fn,'?')
   while ~exist(res) & j<9
     res=ls(fn); res(find(res<32))=[]; j=j+1;
   end
+elseif strfind(fn,'*')
+  [dirs,fn]=fileparts(res);
+  dp=fileparts(dirs);
+  dirs=dir(dirs);
+  for i=1:length(dirs)
+    res=fullfile(dp,dirs(i).name,[fn '.mat']);
+    if ~isempty(dir(res)), break, end
+  end
 end
 if output, disp(['canon: ' res]), end

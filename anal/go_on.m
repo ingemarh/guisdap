@@ -26,7 +26,11 @@ analysis_start=t1; analysis_end=t2; analysis_integr=intper; %for guisdap int
 analysis_txlimit=100e3; analysis_realtime=rt;
 
 sites='KSTVL'; name_site=sites(siteid);
-recurse=sprintf('%04d????_??',t1(1));
+if isunix
+ recurse=sprintf('%04d????_??',t1(1));
+else
+ recurse=sprintf('%04d****_**',t1(1));
+end
 i1=fix(t1/10); i2=fix(t2/10);
 if t1(2)==t2(2)
  recurse(5:6)=sprintf('%02d',t1(2));
@@ -42,6 +46,11 @@ if t1(2)==t2(2)
  end
 elseif i1(2)==i2(2)
  recurse(5)=sprintf('%d',i1(2));
+end
+while ~isunix & strfind(recurse,'**')
+  for i=fliplr(strfind(recurse,'**'))
+    recurse(i+1)=[];
+  end
 end
 
 read_anapar
