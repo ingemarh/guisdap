@@ -32,6 +32,9 @@
   ch_Pt = d_parbl(8)*ones(1,len);
   ch_el = d_parbl(9)*ones(1,len);
   ch_az = d_parbl(10)*ones(1,len);
+  if name_site=='V'
+   ch_el = d_parbl(9:10);
+  end
   if length(d_parbl)>41 & (name_site=='K' | name_site=='S')
     ch_range=d_parbl(42)/1000*ones(1,len);
   else
