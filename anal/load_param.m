@@ -64,7 +64,7 @@ for i=1:n_tot
   Time(:,i)	=datenum(r_time);
   par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys)]; %10 kW
   if isfinite(n_ralt)
-    [ppr,k,l]=unique(round(r_pprange)); pp=ppr;
+    [ppr,k,l]=unique(round(r_pprange*5)); pp=ppr;
     nalt=length(ppr);
     for n=1:nalt
       d=find(l==n);

@@ -171,6 +171,11 @@ else
   end
  end
 end
+if strcmp(name_expr,'arcd')
+ SCALE(2,:)=[59 139]; WHICH_PARAM='Nr AE'; GATES=[];
+elseif strcmp(name_expr,'dlayer')
+ SCALE(2,:)=[59 121]; WHICH_PARAM='Ne AE';
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~exist('GATES')
  GATES=1:size(par2D,1);
@@ -178,7 +183,6 @@ end
 if length(GATES)==1
  WHICH_PARAM='Ne TT Vi LL';
 end
-
 %%%%%%%%%% Time scales %%%%%%%%%%%%%
 if strcmp(action,'verbose')
 % name_expr=minput('Experiment name',name_expr,1);
@@ -357,7 +361,7 @@ end
 if option(11)
  ll=par1D(:,[3 1 2:2:end]);
  d=find(ll(:,3)<90.1 & ll(:,3)>89.9); ll(d,2)=NaN;
- d=[0 360]; if any(ll>360), d=[]; end
+ d=[0 360]; if any(ll(:)>360), d=[0 min(max(ll(:)),500)]; end
  line_plot(s,ll,d,'Radar parameters',TITLE1([3 1 2 4]),[])
 end
 if option(13)
