@@ -93,7 +93,7 @@ while ~EOF
     for sig=find(lpg_bcs=='s')
       lp=lpg_lp(sig); addr=ADDR_SHIFT+lpg_addr(sig);
       vc=min(lp_vc(lp(1)),length(ch_Pt));
-      ad_coeff(addr)=ad_coeff_no_Pt(addr)*ch_Pt(vc)/a_Magic_const;
+      ad_coeff(addr)=ad_coeff_no_Pt(addr)*ch_Pt(vc);
     end
     ad_coeff=ad_coeff/a_Magic_const; % compensate for all the inaccuracies in the numeric constants
 
