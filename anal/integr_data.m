@@ -27,17 +27,20 @@ function  [OK,EOF,N_averaged]=integr_data(txlim)
 global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control 
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_inttime a_satch
-%global a_antold secs
+global a_antold a_maxgap secs
  
 OK=0; EOF=0; jj=0; N_averaged=0;
 if a_ind==0
   a_inttime=60;
   a_ind=1;
   a_cycle=sum(a_integr+a_skip);
-  i=fix((d_filelist(1)-a_start)/a_cycle);
-  if i>0, a_start=a_start+i*a_cycle; end
+  if a_cycle>0
+    i=fix((d_filelist(1)-a_start)/a_cycle);
+    if i>0, a_start=a_start+i*a_cycle; end
+  end
   a_interval=a_start+[0 a_integr(1)];
   a_oldtime=0;
+  a_maxgap=30;
 else
   a_indold=a_ind;a_ind=a_ind+1; if (a_ind>length(a_integr)), a_ind=1; end
   a_interval=a_interval(2)+a_skip(a_indold)+[0 a_integr(a_ind)];
@@ -86,21 +89,23 @@ while i<length(files)
   a_inttime=d_parbl(inttime);
   a_ant=d_parbl([el az])/fac;
   if a_integr==0
-    if ~exist('a_antold','var')
+    if isempty(a_antold)
       a_antold=a_ant;
       secs=secs1;
       N_averaged=0;
-      a_maxgap=30;
     end
     tdiff=secs1-secs>a_maxgap;
-    if any(fix((a_antold-a_ant)/.1)) | tdiff
-      a_antold=a_ant;
+    adiff=a_antold-a_ant;
+    a_antold=a_ant; secs=secs1;
+    if any(fix(adiff/.1)) | tdiff
       if a_ant(1)<89.9 | tdiff
-        d_parbl=prev_parbl;
         a_interval(2)=file;
-        if N_averaged>1
+        if tdiff & N_averaged>1
           a_interval(2)=file-.5;
+        elseif N_averaged==0
+	  return
         end
+        d_parbl=prev_parbl;
         break
       end
     end
