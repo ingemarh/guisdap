@@ -84,7 +84,12 @@ r_Tsys=sysTemp(isfinite(sysTemp));
 r_Magic_const=a_Magic_const;
 
 if ~di_results
- fprintf('Status: '); fprintf('%d',r_status); fprintf('\n');
+ fprintf('Status: '); fprintf('%d',r_status);
+ if length(r_status)<65
+  fprintf(' %.1fMW %.0f/%.0f %.0fK\n',r_Pt/1e6,r_az,r_el,median(r_Tsys));
+ else
+  fprintf('\n');
+ end
 end
 
 file=[result_path filename];

@@ -6,7 +6,7 @@
 % If you want this to executed every time you invoke matlab,
 % add reference to start_GUP to your personal startup file
 
-clear all, clear global
+clear all, clear global, clear functions
 
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local
 GUP_ver=8.4;

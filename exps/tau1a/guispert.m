@@ -15,6 +15,14 @@ d_date=datenum(d_time(1,:));
 if d_date<datenum(2001,12,1,0,0,0)
  ch_el=30;
 end
+if d_date>datenum(2001,3,9,0,0,0) & d_date<datenum(2001,3,18,0,0,0) & lpg_ra(438)==20304
+ %data dump changed due to error
+ lpg_ra(438:end)=lpg_ra(438:end)+20;
+ lpg_ra(440:end)=lpg_ra(440:end)+20;
+ lpg_ra(877:end)=lpg_ra(877:end)+20;
+ form_adpar
+ a_satch.lpg_skip=438:length(lpg_ra);
+end
 if length(d_data)<20872
  a_code=1;
 elseif isempty(a_code) | length(a_code)==2
