@@ -1,6 +1,5 @@
 % an_start: Main program for the data analysis
-% GUISDAP v.1.60 96-05-27 Copyright Asko Huuskonen and Markku Lehtinen
-% IH:ionomodel_control control
+% GUISDAP v.8.2 03-08-27 Copyright EISCAT, Huuskonen&Lehtinen
 % Main program for the data analysis. The most important operations performed are
 % routine name:  action:
 % chk_par1       1) transforms the user supplied control parameters to internal parameters
@@ -125,22 +124,18 @@ while ~EOF
       clear indr indi
     end
     get_apriori(any(a_simul))
-%*******************************************************************************
+%******************************************************************
 % The get_apriori call calculated the raw electron density profile. 
 % It is stored in variables
 % pp_range   : range to power measurements
 % pp_profile : Ne with a priori temperature ratio model
 % pp_sigma   : Ne with Te=Ti
-%*******************************************************************************
-    if exist('ionomodel_control') & ionomodel_control==3
-      ionomodel_control=0;
-    end
+%******************************************************************
 
     clear_results
-%**************************************** 				
     half_prof 
-%**************************************** 
     save_results
+
     if di_figures(4)
       figure(di_figures(4))
       plot_fit('panel',[1 1 1 0 1],[-inf inf 10*ceil((max(r_h)-min(r_h))/100)]);

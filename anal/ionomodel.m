@@ -1,35 +1,36 @@
 % ionomodel.m: user-supplied ionospheric model
-%included ionomodel_control==6 aposteriori comp values
 % GUISDAP v.1.80 01-07-27 Copyright EISCAT, Huuskonen&Lehtinen
 % 
 % 'ionomodel' is a user-supplied function which for a given set of heights
 % outputs the plasma parameters (Ne, Ti, Te/Ti, coll, [O+]/Ne, velocity)
 % with their a priori uncertainties. This simple example is static, a more complete
 % model might use the date and time values to modify the model.
+% ionomodel_control==6 comp=f(sun)
+%                    7 comp=f(rawne)
+%                    8 comp=f(modelne)
 %
-% function [apriori, apriorierror]=ionomodel(heights);
+% function [apriori,apriorierror]=ionomodel(heights);
 
-function [apriori, apriorierror]=ionomodel(heights);
+function [apriori,apriorierror]=ionomodel(heights,ne_from_pp)
 
 global ionomodel_control iono_model p_m0 fit_altitude name_site
 
 len=length(heights);
 heights=col(heights);
 
-if nargout==2, error=1; else, error=0; end
 if isempty(ionomodel_control), ionomodel_control=0; end
 if isempty(iono_model), iono_model='giveme'; end
-if any([7 6]-size(fit_altitude)>0)
+if any([7 5]-size(fit_altitude)>0)
  ff=fit_altitude;
  % Altitudes (h2>h1) where to fit each parameter resp
  % Strucure: h1 h2 hd(transition height) maxerr minerr relerr(relative or static errors)
- fit_altitude=[0  Inf 0 1e3 0 1
-              80  Inf 0 1e4 0 0
-             107 1500 0 1e1 0 0
-              90  107 0 1e2 0 1
-               0  Inf 0 1e5 0 0
-               0    0 0   1 0 0
-               0    0 0   1 0 0];
+ fit_altitude=[0  Inf 0 1e2 1
+              80  Inf 0 1e4 0
+             107 1500 0 1e1 0
+              90  107 0 1e2 1
+               0  Inf 0 1e5 0
+               0    0 0   1 0
+               0    0 0   1 0];
  if name_site=='L'
   fit_altitude(2:4,1:2)=[90 Inf;113 1500;0 0];
  elseif name_site=='V'
@@ -85,16 +86,44 @@ if nion>1
  end
 end
 
-if error
+if nargout>1
+ if ionomodel_control>5 & nion==2 & sum(p_m0-[30.5 16])==0
+  global pp_height
+  if ~isempty(pp_height) & ionomodel_control==7
+   global pp_profile p_N0 di_figures
+   nepp=pp_profile*p_N0;
+   forc=log([1e11;300;150;1e11;125;25]);
+   tol=log([10;1.5  ;2  ;10;1.2;1.3]);
+   fac=(pp_height'/210).^2*median(nepp);
+   opts=optimset(optimset('fminsearch'),'MaxFunEvals',10000);
+   chaps=exp(fminsearch('fit_chaps',forc,opts,nepp,pp_height',forc,tol,fac,1));
+   Ne210=chapman(210,chaps([1 4]),chaps([2 5]),chaps([3 6]));
+   nepp=chapman(heights2,chaps([1 4]),chaps([2 5]),chaps([3 6]));
+   if di_figures(2)
+    hold on,plot(ne_from_pp/1e11,heights2,'g',nepp/1e11,heights2,'b'),hold off,drawnow
+%   max(fit_chaps(log(chaps),nepp,pp_height',forc,tol,fac,0))
+%   hold on,plot(fit_chaps(log(chaps),nepp,pp_height',forc,tol,fac,0),[pp_height,10:10:60],'go'),hold off,drawnow
+   end
+   ne_from_pp=nepp+1e9;
+  elseif ionomodel_control<8
+   global d_time p_XMITloc
+   tsec=tosecs(d_time(1,:));
+   Ne210=[tsec p_XMITloc(1:2)];
+  else
+   Ne210=exp(inter3(210,altitude,log(ne)))';
+  end
+  apriori(:,6)=comp_model(heights2,Ne210);
+ end
+ d=find(ne_from_pp~=0); apriori(d,1)=ne_from_pp(d);
+
  apriorierror=ones(size(apriori));
  for par=1:size(apriori,2)
   h1=fit_altitude(par,1); h2=fit_altitude(par,2); hd=fit_altitude(par,3)+eps;
   err=(tanh((heights-h1)/hd)+tanh((h2-heights)/hd))/2;
-  apriorierror(:,par)=err*fit_altitude(par,4)+fit_altitude(par,5);
-  if fit_altitude(par,6)
-    apriorierror(:,par)=apriorierror(:,par).*apriori(:,par);
-  end 
+  apriorierror(:,par)=err*fit_altitude(par,4);
  end
+ par=find(fit_altitude(:,5));
+ apriorierror(:,par)=apriorierror(:,par).*apriori(:,par);
 %apriori([1 end],:)
 %apriorierror([1 end],:)
 end 
