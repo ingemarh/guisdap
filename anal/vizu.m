@@ -24,7 +24,7 @@ function vizu(action,a2,a3)
 % >> vizu new [action]
 
 global Time par2D par1D rpar2D name_expr name_ant axs axc hds
-global height n_tot add_plot
+global height n_tot add_plot manylim
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1
 global r_RECloc path_tmp path_GUP result_path webfile
 if nargin<2, a2=[]; end
@@ -37,7 +37,7 @@ elseif strcmp(action,'new')
   Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
   action=a2; a2=a3;
 end
-REALT=0;
+REALT=0; manylim=1;
 Loc=getenv('EISCATSITE');
 if strcmp(action,'rtgup')
   global a_year a_start a_end a_realtime
@@ -50,7 +50,7 @@ if strcmp(action,'rtgup')
     action='update';
   end
   DATA_PATH=result_path; MESSAGE1='RT';
-  REALT=1;
+  REALT=1; manylim=Inf;
 end
 
 PLOT_STATUS=0;		% Status limit (0-3)
@@ -400,8 +400,10 @@ global Time axs axc add_plot
 add_plot=add_plot+1;
 if length(axs)<add_plot
  setup_axes(yscale,YTitle)
+ set(gca,'UserData',zscale)
 else
  set(gcf,'currentaxes',axs(add_plot))
+ zscale=get(gca,'UserData');
 end
   
 if strcmp(lg,'log')
@@ -429,6 +431,7 @@ global Time axs add_plot
 add_plot=add_plot+1;
 if length(axs)<add_plot
  setup_axes(yscale,YTitle)
+ set(gca,'UserData',yscale)
  if strcmp(lg,'log')
   set(gca,'Yscale','log')
  end
@@ -442,6 +445,7 @@ if length(axs)<add_plot
  end
 else
  set(gcf,'currentaxes',axs(add_plot))
+ yscale=get(gca,'UserData');
 end
 
 o2=ones(2,1);
@@ -505,10 +509,12 @@ f=tanh(interp1(b,f(1:n,:),1:nl))/tanh(1);
 return
 
 function l=many(x,l,p,lg)
+global manylim
 if nargin<3, p=1; end
 if nargin<4, lg=[]; end
 lx=sum(sum(isfinite(x))); p=p/100;
 if length(p)<2, p=ones(2,1)*p; end
+p=p*manylim;
 if strcmp(lg,'log')
  x=log(x); l=log(l);
 end
