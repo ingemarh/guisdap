@@ -109,7 +109,7 @@ a_Magic_const=1;
 if exist('Magic_const')
  a_Magic_const=Magic_const;
 end
-a_NCAR=0;
+a_NCAR=2;
 if exist('NCAR','var')
  NCAR_output
  a_NCAR=NCAR;
@@ -118,7 +118,8 @@ if exist('analysis_code','var')
  a_code=analysis_code;
 end
 
-di_figures=[0 0 0 0 0]; di_results=1;
+di_figures=[0 0 0 0 0]; di_results=0;
+if name_site=='S' | name_site=='K', di_results=1; end
 if exist('display_figures'), 
  di_figures(1:length(display_figures))=display_figures;
 end

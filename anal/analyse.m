@@ -1,18 +1,40 @@
 startup
 using_x=prod(get(0,'ScreenSize'))-1;
+sites='KSTVL?';
 %default values
-name_expr='Dsp expr';
-t1=[2002 12 01 00 00 00];
-t2=[2002 12 01 23 59 59];
-rt=0; siteid=1; intper=0;
-figs=zeros(1,5);
-extra='display_results=0;';
 if exist([path_tmp '.gup'])
  load([path_tmp '.gup'],'-mat')
+else
+ name_expr='AUTO';
+ t1=clock; t1=[t1(1) 1 1 0 0 0]; t2=[t1(1) 12 31 24 0 0];
+ rt=0; intper=-1;
+ siteid=findstr(sites,local.site);
+ if isempty(siteid)
+  siteid=6;
+ else
+  d=dir(data_path); td=zeros(size(d));
+  if ~isempty(d)
+   for n=1:length(d)
+    if isempty(expparts(d(n).name))
+     td(n)=datenum(d(n).date);
+    end
+   end
+   if any(td)
+    [n,n]=max(td); data_path=fullfile(data_path,d(n).name);
+    td=datevec(td(n)); t1(2)=td(2); t2(2)=td(2);
+   end
+  end
+ end
+ if siteid<3
+  figs=[0 0 1 0 1];
+ else
+  figs=[0 1 0 0 1];
+ end
+ result_path=fullfile(result_path,'AUTO');
+ extra='%Magic_const=1.1;';
 end
 beg=sprintf('%04d %02d %02d  %02d %02d %02d',t1);
 to=sprintf('%04d %02d %02d  %02d %02d %02d',t2);
-sites='KSTVL';
 if using_x & isempty(get(0,'UserData'))
 global b
 figure(5)
@@ -26,6 +48,7 @@ bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback
 uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
 text(0,ty(1),'Dsp expr')
 uicontrol('Style','pushbutton','string','Save','position',[50 20 40 20],'callback','o=uiputfile;if o,save_setup(o);end','tooltipstring','Save setup in file');
+uicontrol('Style','pushbutton','string','Reset','position',[50 40 40 20],'callback','delete(bg),if exist([path_tmp ''.gup'']),delete([path_tmp ''.gup'']),end,pause(1),analyse','tooltipstring','Reset to default');
 set(gca,'position',[0 0 1 1],'visible','off')
 b(1)=uicontrol('Style','pushbutton','string',name_expr,'position',[x y(1) x1 yh],'value',0,'callback','o=uigetdir(path_exps);if o,[path_exps,name_expr]=fileparts(o);set(b(1),''string'',name_expr),end');
 text(0,ty(2),'Site')
@@ -42,7 +65,7 @@ b(6)=uicontrol('Style','pushbutton','string',result_path,'position',[x y(6) x2 y
 text(0,ty(7),'Real time')
 b(7)=uicontrol('Style','togglebutton','string','RT','position',[x y(7) x1 yh],'value',rt);
 text(0,ty(8),'Integration time')
-b(8)=uicontrol('Style','edit','string',num2str(intper),'position',[x y(8) x1 yh],'tooltipstring','0=antenna move');
+b(8)=uicontrol('Style','edit','string',num2str(intper),'position',[x y(8) x1 yh],'tooltipstring','0=antenna move;-1=automatic');
 text(0,ty(9),'Disp figures')
 b(9)=uicontrol('Style','edit','string',num2str(figs),'position',[x y(9) x2 yh],'tooltipstring','datadump powerprofile fits parameters vizu');
 text(0,100,'Special')

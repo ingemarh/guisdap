@@ -19,23 +19,25 @@ function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot) %{
         adc_rate=10;
     else
         adc_rate=15;
-    end        
+    end
     if nargin == 2
         do_plot = 0;
     elseif nargin < 2 | nargin > 3
         error('Wrong number of input arguments')
-    end        
+    end
 
     if ~isnumeric(p_dtau)
         error('Invalid argument -- p_dtau must be numeric')
-    end        
+    end
 
     [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file); 
     if ~isempty(msg)
-        error(msg);
-    end        
-    fir = fir/max(fir);    
-    
+        error(msg)
+    elseif firpar_file(1)=='b'
+        adc_rate=15;
+    end
+    fir = fir/max(fir);
+
     hdf = hcic(h_order,h_dec); hdf = hdf/max(abs(hdf));
 
     fir2 = insertz(fir,h_dec - 1); fir2 = fir2/max(abs(fir2));
@@ -45,7 +47,7 @@ function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot) %{
     t_ddf = (0:length(ddf)-1)/adc_rate;
 
 % Find times (t_ip) for the interpolated points.
-    
+
     tcenter = t_ddf(end)/2;
     a = p_dtau/2;
     t2 = tcenter - a;
@@ -54,7 +56,7 @@ function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot) %{
     t1 = t2 - n*p_dtau;
     t4 = t3 + n*p_dtau;
     t_ip = t1:p_dtau:t4;
-    
+ 
     h2 = interp1(t_ddf,ddf,t_ip,'*cubic');
 
     if do_plot
@@ -64,24 +66,24 @@ function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot) %{
         tlim = [0,t_ddf(end)];
 
         subplot(2,1,1)
-        plot(t_hdf,hdf,t_fir,fir);
-        set(gca,'XLimMode','manual','XLim',tlim,'Box','off');
+        plot(t_hdf,hdf,t_fir,fir)
+        set(gca,'XLimMode','manual','XLim',tlim,'Box','off')
         [path,name,ext,ver] = fileparts(firpar_file);
         title(name)
-        ylabel('HDF & FIR');
+        ylabel('HDF & FIR')
 
         subplot(2,1,2)
         plot(t_ddf,ddf,'r',t_ip,h2,'ro')
-        set(gca,'XLimMode','manual','XLim',tlim,'Box','off');
-        ylabel('DDF');
+        set(gca,'XLimMode','manual','XLim',tlim,'Box','off')
+        ylabel('DDF')
         xlabel('time [\mus]')
     end
-    
+ 
     if nargout > 0
         impresp = h2;
         t0 = t1;
-    end    
-    
+    end
+
 %}main
 
 
@@ -94,28 +96,28 @@ function [key,val] = token(s)
 
     [key,s] = strtok(s);
     if isempty(key), return, end
-    
+
     if isempty(s), return, end
-    
+ 
     [val1, s] = strtok(s);
     if isempty(val1), return, end
-    
+ 
     val1 = sscanf(val1,'%i');
     if isempty(val1), return, end
     val(1) = val1;
-    
+ 
     if ~strcmp(key,'TAP'), return, end
-    
+ 
     if isempty(s), val = []; return, end
-    
+
     [val2, s] = strtok(s);
     if isempty(val2), val = []; return, end
     val2 = sscanf(val2,'%i');
     if isempty(val2), val = []; return, end
     val(2) = val2;
 %}token  
-        
-        
+ 
+ 
 function s = strip(ss)
 %---------------------
     %STRIP remove trailing and leading blanks
@@ -130,7 +132,7 @@ function s = strip(ss)
     k= findstr(s,t);
     if k > 1
         s(1:k-1)= [];
-    end    
+    end
 
 
 function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
@@ -144,30 +146,30 @@ function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
     [fid,msg] = fopen(firpar_file);
     if fid < 1
         msg = [firpar_file ': ', msg];
-        return;
-    end    
-    
+        return
+    end
+ 
     k = 0;
     while 1
         line = fgetl(fid);
         if ~isstr(line), break,end
         line = strip(line);
         if ~isempty(line) & line(1) ~= '%'
-            k= k+1; L{k} = line;        
+            k= k+1; L{k} = line;
         end
-    end    
+    end
 
     fclose(fid);
-           
+ 
     if k == 0
         msg = [firpar_file ' appears empty'];
-        return;
-    end    
-    
+        return
+    end
+
     if isempty(strmatch('FIRPAR_VS 0.1',L,'exact'))
         msg = 'Illegal format - ''FIRPAR_VS 0.1'' not found';
-        return; 
-    end                         
+        return
+    end
 
     key_list = {'TAP'; 'H_STAGES'; 'H_DRATE'; 'F_DRATE'; 'F_TAPS'; 'F_ESYM'};
     val_list = -1 * ones(length(key_list),1);
@@ -177,8 +179,8 @@ function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
         [key,val] = token(L{k});
         if isempty(val)
             msg = [ L{k} ' - invalid format' ];
-            return;
-        end            
+            return
+        end
         key_index = strmatch(key,key_list,'exact');
         if ~isempty(key_index)
             if key_index == 1
@@ -186,23 +188,23 @@ function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
             elseif key_index > 1
                 val_list(key_index) = val;
             end
-        end    
-    end          
-    
+        end
+    end
+ 
     if ~tap
         msg = 'TAPs not defined';
         return
     else
-        negs = find(tap >= 2^19 );    
+        negs = find(tap >= 2^19 );
         tap(negs) = tap(negs) - 2^20;
-    end    
+    end
 
     f_esym = val_list(6);
     h_order = val_list(2);
     h_dec  = val_list(3)+1;
-    f_dec = val_list(4)+1; 
+    f_dec = val_list(4)+1;
     f_taps = val_list(5)+1;
-    
+ 
     if f_esym == 1
         if rem(f_taps,2) == 0                % 23 Feb 2001 Jm
             taps = [tap tap(end:-1:1)];      %
@@ -213,17 +215,17 @@ function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
         taps = [tap tap(end-1:-1:1)];
     else
         msg = '''F_ESYM'' not defined';
-        return;
-    end        
+        return
+    end
 
     if f_taps ~= length(taps)
         msg = sprintf('Number of TAPs (%d) does not match number of defined TAPs (%d)',...
                        f_taps,length(taps));
-        return;
-    end    
+        return
+    end
 
     fir = taps;
-%}get_fir       
+%}get_fir
 
 
 function  h = hcic(K,M)
@@ -237,9 +239,9 @@ function  h = hcic(K,M)
 
     h1= ones(1,M);
     h= h1;
-    for i= 1:(K-1),
+    for i= 1:(K-1)
        h= conv(h,h1);
-    end;
+    end
 
     h= h/fftceil(sum(h));
 %}hcic 
@@ -251,7 +253,7 @@ function y= insertz(x,M)
 %    insert M zeros between elements of x
 % ---------------------------------------
 
-   if M < 1, y = x; return; end
+   if M < 1, y = x; return, end
 
    L= (length(x)-1)*(M+1) + 1;
    y= zeros(1,L);
@@ -266,6 +268,5 @@ function n = fftceil(m)
         error('Invalid number of input argumements')
     end
 
-    n = 2^(nextpow2(m));    
+    n = 2^(nextpow2(m));
 %}
-

@@ -44,7 +44,7 @@ while ~EOF
     end
     if OK
       if length(d_parbl)==128
-	decodeparblock_nd
+        decodeparblock_nd
       else
         decodeparblock
       end
@@ -156,6 +156,10 @@ if a_NCAR
 end
 if di_figures(5)
   vizu('new','rtgup')
-  vizu('save')
+  if di_figures(5)>1
+    vizu('save',[],'print')
+  else
+    vizu('save')
+  end
 end
 send_www

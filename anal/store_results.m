@@ -8,7 +8,7 @@ function store_results(aa,meas,var,result,alpha,chi2,status,kd2,p_coeffg,f_womeg
 global a_priori a_priorierror ad_lpg p_RECloc
 global ch_el di_fit g_ind
 global lpg_lag di_figures di_results
-global r_range r_status r_param r_dp r_error r_res r_apriori r_apriorierror r_ind p_m0
+global r_range r_status r_param r_dp r_error r_res r_apriori r_apriorierror r_ind p_m0 r_h
 
 % Scale residual and Xfer results to physical units
 
@@ -28,7 +28,7 @@ else comp=result(find(p_m0==16)+4);
 end
 if isempty(comp), comp=0; end
 
-if di_results
+if di_results | isempty(r_h)
  % Print results to the console
  if rem(r_ind,20)==1
    fprintf(' alt   Ne/1e11      Ti     Te/Ti    coll/1e3   velocity [O+]/Ne resid status\n')

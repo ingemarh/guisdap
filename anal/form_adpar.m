@@ -1,5 +1,5 @@
 % form_adpar.m: Utility to calculate ad_parameters
-% GUISDAP v.1.60 96-05-27 Copyright Asko Huuskonen and Markku Lehtinen
+% GUISDAP v.8.2 03-09-27 Copyright EISCAT, Huuskonen&Lehtinen
 %
 % This internal routine calculates certain parameters for each memory location in advance
 % so that they can be obtained rapidly later
@@ -13,6 +13,7 @@ function form_adpar
 
 global lpg_ra lpg_nt lpg_ri lpg_bcs lpg_h lpg_dt lpg_w lpg_code
 global ad_range ad_w ad_code ad_lpg ad_coeff ADDR_SHIFT
+global a_code lpg_bac lpg_cal
 
 len=max(lpg_ra+(lpg_nt-1).*lpg_ri)+1;
 ad_range=zeros(1,len); ad_w=zeros(1,len);
@@ -25,4 +26,14 @@ for sig=find(lpg_bcs=='s')
   ad_w(addr)=lpg_w(sig)*ones(len,1);
   ad_code(addr)=lpg_code(sig)*ones(len,1);
   ad_lpg(addr)=sig*ones(len,1);
+end
+
+if ~isempty(a_code)
+%may need to change code for calibration purposes
+ lpgs=find(ismember(lpg_code,a_code));
+ lpgc=unique([lpg_cal(lpgs);lpg_bac(lpgs)]);
+ lpgc=lpgc(find(lpgc));
+ lpgneed=lpgc(find(~ismember(lpgc,a_code)))
+ ad_code(lpg_addr(lpgneed'))=a_code(1);
+ lpg_code(lpgneed)=a_code(1);
 end

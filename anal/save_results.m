@@ -12,7 +12,7 @@ global r_ind r_range r_param r_error r_res r_status r_dp
 global r_apriori r_apriorierror
 global pp_range pp_sigma
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
-global webfile a_save
+global webfile a_save local b
 global a_autodir di_figures START_TIME
 
 if length(d_time)>0 & a_save
@@ -36,7 +36,11 @@ elseif isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
  end
  if di_figures(5)
   vizu('new','rtgup')
-  vizu('save')
+  if di_figures(5)>1
+    vizu('save',[],'print')
+  else
+    vizu('save')
+  end
   START_TIME=[];
  end
  r_h=[];
@@ -53,8 +57,13 @@ if isempty(r_h)
   beep
   fprintf('\n********** %s is not empty! **********\n\n',result_path)
  end
- if ~strcmp(path_tmp,result_path) & exist([path_tmp '.gup'],'file')
-  copyfile([path_tmp '.gup'],result_path,'f')
+ if ~strcmp(path_tmp,result_path)
+  if ~isempty(b) & ishandle(b(1))
+%  save_setup([result_path 'gfd_setup.m']);
+   save_setup([result_path '.gup']);
+  elseif exist([path_tmp '.gup'],'file')
+   copyfile([path_tmp '.gup'],result_path,'f')
+  end
  end
 end
 
@@ -92,8 +101,8 @@ if a_NCAR
  i1=[]; i2=[];
  if rem(a_NCAR,2)
   i1=[file0 'asc'];
-  if a_realtime & isunix & ~isempty(getenv('EISCATSITE'))
-   i1=[path_tmp 'latest_' name_ant '.asc'];
+  if a_realtime & isunix & ~isempty(local.site)
+   i1=[path_tmp 'latest_' name_ant(1:3) '.asc'];
    if exist(i1,'file')
     delete(i1)
    end

@@ -66,7 +66,7 @@ apriori(:,2)=inter3(heights,altitude,ti)';
 apriori(:,3)=inter3(heights,altitude,te)'./apriori(:,2);
  
 % Ion-neutral collision frequency
-apriori(:,4)=inter3(heights,altitude,coll)';
+apriori(:,4)=exp(inter3(heights2,altitude,log(coll)))';
  
 % Ion velocity
 apriori(:,5)=zeros(len,1);

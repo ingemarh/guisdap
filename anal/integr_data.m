@@ -26,12 +26,11 @@ function  [OK,EOF,N_averaged]=integr_data(txlim)
  
 global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control 
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
-global a_txlim a_realtime a_inttime a_satch
+global a_txlim a_realtime a_satch
 global a_antold a_txold a_maxgap secs
  
 OK=0; EOF=0; jj=0; N_averaged=0;
 if a_ind==0
-  a_inttime=60;
   a_ind=1;
   a_cycle=sum(a_integr+a_skip);
   if a_cycle>0
@@ -146,7 +145,7 @@ while i<length(files)
     prev_parbl=d_parbl;          % initialize the previous parameter block
     aver=d_parbl(averaged);      % initialize averaging
     status=d_parbl(ORed);        % save the status word
-    starttime=secs-d_parbl(inttime); % calculate starttime of first dump
+    starttime=secs-a_inttime;    % calculate starttime of first dump
     if (exist('pre_integrated') == 1), 
       aver=d_parbl(averaged)*i_averaged; % initialize averaging
       data=d_data;

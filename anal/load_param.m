@@ -44,6 +44,11 @@ else
   n_ralt=NaN;
   rpar2D=[];
 end
+if isempty(name_ant)
+  antennas=['uhf kir sod vhf esr'];
+  i=(strfind('TKSVL',name_site)-1)*4+1;
+  name_ant=antennas(i:i+2);
+end
 for i=1:n_tot
   file=sprintf('%08d',filelist(i));
   

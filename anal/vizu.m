@@ -26,7 +26,7 @@ function vizu(action,a2,a3)
 global Time par2D par1D rpar2D name_expr name_ant axs axc hds
 global height n_tot add_plot manylim
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1
-global r_RECloc path_tmp path_GUP result_path webfile
+global r_RECloc path_tmp path_GUP result_path webfile local owner
 if nargin<2, a2=[]; end
 if nargin<3, a3=[]; end
 if nargin==0
@@ -38,7 +38,7 @@ elseif strcmp(action,'new')
   action=a2; a2=a3;
 end
 REALT=0; manylim=1;
-Loc=getenv('EISCATSITE');
+Loc=local.site;
 if strcmp(action,'rtgup')
   global a_year a_start a_end a_realtime a_autodir
   if isempty(START_TIME)
@@ -55,6 +55,7 @@ if strcmp(action,'rtgup')
     action='update';
   end
   DATA_PATH=result_path; MESSAGE1='RT';
+  if ~isempty(owner), MESSAGE1=owner; end
   REALT=1; manylim=Inf;
 end
 
@@ -90,23 +91,27 @@ elseif strcmp(action,'update')
 elseif strcmp(action,'print') | strcmp(action,'save')
  if isunix
   set(hds(2:3),'visible','off')
+  dirs=path_tmp(1:end-1);
   if strcmp(action,'print')
-    fig=sprintf('vizu%06d',round(rand*1e6)); dirs=path_tmp(1:end-1); ext='ps';
+    fig=sprintf('vizu%06d',round(rand*1e6)); ext='ps';
   else
     fig=sprintf('%d-%02d-%02d_%s@%s',START_TIME(1:3),name_expr,name_ant);
-    dirs=DATA_PATH; ext='eps';
+    ext='eps';
+    if isdir(DATA_PATH), dirs=DATA_PATH; end
   end
   file=fullfile(dirs,fig);
   print(gcf,['-d' ext '2c'],[file '.' ext]);
   unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
-  if strcmp(action,'print')
-    unix(['lp -c -dcolor ' file '.' ext ' >/dev/null 2>&1']);
-    delete([file '.' ext])
-  else
+  if strcmp(action,'print') | strcmp(a3,'print')
+    if isempty(a2), dev=local.printer; else, dev=a2; end
+    unix(['lp -c -d' dev ' ' file '.' ext ' >/dev/null 2>&1']);
+    if strcmp(action,'print'), delete([file '.' ext]), end
+  end
+  if strcmp(action,'save')
     gd=fullfile(matlabroot,'sys','ghostscript',filesep);
 %   unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',...
     unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=png256 -g580x820 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',...
-      fullfile(gd,'bin',getenv('ARCH'),'gs'),gd,gd,file,file,ext));
+      fullfile(gd,'bin',lower(computer),'gs'),gd,gd,file,file,ext));
     fprintf('Created %s.%s and .png\n',file,ext)
   end
   set(hds(2:3),'visible','on')
@@ -149,7 +154,7 @@ PLF_SCALE	=[0 10];	% Langmuir freq MHz
 RAWNE_SCALE	=10.^[9 12];	% Raw Ne
 LAT_SCALE	=[65 78];	% Geogr Lat deg
 MESSAGE2	='Not for publication - see Rules-of-the-road'; % top
-LOCATION	=getenv('HOSTNAME');	% Place where plotting performed
+LOCATION	=local.host;	% Place where plotting performed
 FIGURE_TITLE	='EISCAT RADAR';% Title for the whole figure
 if ~isempty(Loc)
  LOCATION	=['EISCAT-' Loc];
@@ -209,19 +214,12 @@ elseif ~REALT
  [d,dpath]=fileparts(DATA_PATH);
  START_TIME=[str2num(dpath(1:4)) str2num(dpath(6:7)) str2num(dpath(9:10)) 0 0 0];
  END_TIME=START_TIME+[0 0 0 24 0 0];
-%name_ant=dpath(end-2:end);
-end
-if isempty(name_ant)
- antennas=['uhf kir sod vhf 32m 42m'];
- i=(strfind('TKSVL',name_site)-1)*4+1;
- disp(['Antenna: ' antennas]);
- name_ant=minput('Which antenna',antennas(i:i+2),1);
 end
 if isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);
 end
 nameant=lower(name_ant(1:3));
-if strcmp(nameant,'32m') | strcmp(nameant,'42m')
+if strcmp(nameant,'32m') | strcmp(nameant,'42m') | strcmp(nameant,'esr')
  FIGURE_TITLE='EISCAT SVALBARD RADAR';
  stretchSecs=65;
  fradar=500e6;
@@ -393,7 +391,7 @@ if REALT & ~isempty(Loc) & a_realtime & isunix
  else
   flag='-dpng256'; flag2=[];
  end
- pngfile=sprintf('%sGup_%s.png',path_tmp,name_ant);
+ pngfile=sprintf('%sGup_%s.png',path_tmp,name_ant(1:3));
  print(gcf,flag,flag2,pngfile)
  webfile(1)=cellstr(pngfile);
 end

@@ -2,22 +2,22 @@
 % GUISDAP v.1.60 96-05-27 Copyright Asko Huuskonen and Markku Lehtinen
 %
 
-if exist('analysis_classic')==1
+if exist('analysis_classic')
   a_classic=analysis_classic;
 else
   a_classic=0;
 end
 
 fac=1000/(v_lightspeed/2)/(p_dtau*1e-6);
-if exist('analysis_range')==1
+if exist('analysis_range')
   a_range=analysis_range*fac;
-elseif exist('analysis_altit')==1
+elseif exist('analysis_altit')
   a_range=height_to_range(analysis_altit,ch_el(1));
 else
   a_range=[0 100000];
 end
  
-if exist('analysis_addr')==1
+if exist('analysis_addr')
   a_addr=analysis_addr;
   a_adstart=analysis_adstart;
   a_adend=[a_adstart(2:length(a_adstart))-1,length(a_addr)];
@@ -49,18 +49,18 @@ else
   a_minwidth=zeros(1,lenr-1);
   a_maxwidth=inf*ones(1,lenr-1);
 
-  if exist('analysis_minwidth')==1
+  if exist('analysis_minwidth')
     len=length(analysis_minwidth);
-    if exist('analysis_altit')==1
+    if exist('analysis_altit')
       a_minwidth(1:len)=height_to_range(analysis_minwidth,ch_el(1));
     else
       a_minwidth(1:len)=analysis_minwidth*fac;
     end
   end 
 
-  if exist('analysis_maxwidth')==1
+  if exist('analysis_maxwidth')
     len=length(analysis_maxwidth);
-    if exist('analysis_altit')==1
+    if exist('analysis_altit')
       a_maxwidth(1:len)=height_to_range(analysis_maxwidth,ch_el(1));
     else
       a_maxwidth(1:len)=analysis_maxwidth*fac;

@@ -8,7 +8,7 @@
 
 clear all, clear global
 
-global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path
+global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local
 GUP_ver=8.2;
 fprintf('GUISDAP vs. %g by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
 if exist('mrqmndiag')~=3
@@ -21,9 +21,7 @@ path_GUP=fileparts(fileparts(path_GUP));
 path_tmp=tempdir;
 path_exps=fullfile(path_GUP,'exps',filesep);
 result_path=fullfile(filesep,'analysis','results',filesep);
-if ~exist(result_path,'dir'), result_path=path_tmp; end
 data_path=fullfile(filesep,'data',filesep);
-if ~exist(data_path,'dir'), data_path=path_tmp; end
 
 format compact
 format short g
@@ -40,3 +38,28 @@ set(0,'defaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
 set(0,'defaultFigurePaperType','A4')
 set(0,'defaultFigurePaperUnits','centimeters')
 set(0,'defaultaxescolor','none')
+
+%localities
+local.printer='color';
+local.site=getenv('EISCATSITE');
+local.host=getenv('HOSTNAME');
+switch local.site
+ case 'K'
+  data_path='/data1/';
+ case 'S'
+  data_path='/data1/';
+  local.printer='phaser';
+ case 'T'
+  local.printer='hp4550';
+ case 'L'
+  data_path='/data2/';
+ case 'HQ'
+  local.printer='hpclj';
+ otherwise
+  local.site=[];
+  if ~isempty(getenv('LPDEST'))
+   local.printer=getenv('LPDEST');
+  end
+end
+if ~exist(data_path,'dir'), data_path=path_tmp; end
+if ~exist(result_path,'dir'), result_path=path_tmp; end
