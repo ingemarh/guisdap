@@ -57,6 +57,7 @@ b(10)=uicontrol('Style','edit','string',extra,'position',[x 30 x2 120],'max',100
 else
  dpath=minput('Data path',data_path,'s');
  if ~strcmp(dpath,data_path)
+  data_path=dpath;
   [intp,tt1,tt2,sitid]=auto_parse;
   if tt1, t1=tt1; t2=tt2; end
   if ~isempty(intp), intper=intp; end
