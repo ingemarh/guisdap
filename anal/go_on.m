@@ -1,22 +1,29 @@
 function go_on(bg)
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path b
 go_die=0;
+if nargin<1, bg=NaN; end
 
-if nargin<1 | ~ishandle(bg)
- load([path_tmp '.gup'],'-mat')
+if ~ishandle(bg)
+ if isstr(bg) & exist(bg)
+  i=which(bg); if ~isempty(i), bg=i; end
+  [i,i,i]=fileparts(bg);
+  if strcmp(i,'.m')
+   run(bg);
+  else
+   load(bg,'-mat')
+  end
+ else
+  bg=NaN; load([path_tmp '.gup'],'-mat')
+ end
  if nargin>0, go_die=1; end
 else
  while strcmp(get(bg,'visible'),'on')
   pause(1)
   if ~ishandle(bg), return, end
  end
- siteid=get(b(2),'value');
- t1=str2num(get(b(4),'string'));
- t2=str2num(get(b(5),'string'));
- rt=get(b(7),'value');
- intper=str2num(get(b(8),'string'));
- figs=str2num(get(b(9),'string'));
- extra=get(b(10),'string');
+ [siteid,t1,t2,rt,intper,figs,extra,data_path,result_path]=save_setup;
+end
+if ~isnan(bg)
  save([path_tmp '.gup'],'name_expr','siteid','data_path','result_path','t1','t2','rt','intper','path_exps','figs','extra','-mat')
 end
 if length(strfind(result_path,'AUTO'))>1

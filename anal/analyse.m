@@ -25,6 +25,7 @@ x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=240;
 bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','set(bg,''visible'',''off'')','fontsize',14);
 uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
 text(0,ty(1),'Dsp expr')
+uicontrol('Style','pushbutton','string','Save','position',[50 20 40 20],'callback','o=uiputfile;if o,save_setup(o);end','tooltipstring','Save setup in file');
 set(gca,'position',[0 0 1 1],'visible','off')
 b(1)=uicontrol('Style','pushbutton','string',name_expr,'position',[x y(1) x1 yh],'value',0,'callback','o=uigetdir(path_exps);if o,[path_exps,name_expr]=fileparts(o);set(b(1),''string'',name_expr),end');
 text(0,ty(2),'Site')

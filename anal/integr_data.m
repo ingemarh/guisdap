@@ -64,7 +64,8 @@ while i<length(files)
   filename=sprintf('%08d',file);
   load(canon([data_path filename],0))
 
-  if length(d_parbl)==128
+  lpb=length(d_parbl);
+  if lpb==128
     fixed=[1 5:90 92:93 127:128]; % parameters which are not allowed to change
     az=6; el=9; fac=10;           % parameters for antenna pointing
     averaged=[6 9 96:99];         % parameters which are averaged
@@ -72,12 +73,15 @@ while i<length(files)
     inttime=94;                   % parameter that holds integration time
     txpower=99; factx=1000;       % parameter that holds transmitter power
   else
-    fixed=[9:10];
+    fixed=[9:10 42];
     az=10; el=9; fac=1;
-    averaged=[8:10];
+    averaged=[8:10 42 63];
     ORed=[];
     inttime=7;
     txpower=8; factx=1;
+    % do not work on unavailable parameters
+    averaged(find(averaged>lpb))=[];
+    fixed(find(fixed>lpb))=[];
   end
   allow=zeros(size(fixed')); allow(find(fixed==az | fixed==el))=.1*fac;
   d_parbl=col(d_parbl);
