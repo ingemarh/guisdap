@@ -62,7 +62,7 @@ while ~EOF
 
   if OK
     if d_rcprog~=rcprog_old | name_site=='K' | name_site=='S' 
-      name_ant={'32m','42m','uhf','vhf','kir','sod'};
+      name_ant={'32m','42m','vhf','uhf','kir','sod'};
       name_ant=char(name_ant(ant_id));
       load_initfile
       Ant_eff=.66;
