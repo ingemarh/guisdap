@@ -1,27 +1,53 @@
-function ratio=calib_pl_ne(pl_dir,expt,plots)
+function ratio=calib_pl_ne(pl_dir,expt,gate,plots)
+% function ratio=calib_pl_ne(pl_dir,expt,plots)
+% GUISDAP 8.4  8 Oct 2004  Copyright EISCAT
+% Calibration routine of radar constant using simultaneous wide band plasma
+% lines and GUISDAP results
+% input: pl_dir Directory containing integrated plasma lines (needed)
+%        expt   Name of experiement (or guessed from pl_dir)
+%        plots  Display a number of plots for internal checks
+% output: ratio Vector containing
+%                Density ratio
+%                Error bar of dens ratio
+%                Calculated new Magic constant
+%                Emperical best guess taking Te changes into account
+%                Number of "good" points used
+% see also CALIB_NE
 if nargin<2, expt=[]; end
-if nargin<3, plots=[]; end
+if nargin<3, gate=[]; end
+if nargin<4, plots=[]; end
 if strcmp(expt,'steffe') | (isempty(expt) & strfind(pl_dir,'steffe'))
- nfft=128; nfreq=4; nint=2;
- freq=[-4 -5.3 4 5.3]*1e6; dt=0.6e-6;
+ nfft=128; nint=2; ngates=1;
+ freq=[-4 -5.3 4 5.3]*1e6; dt=0.6e-6; invert=-1;
  ran=[182 423.9]; fradar=500e6;
- maxe=2; ele=81.6;
+ maxe=2; ele=81.6; updown=0:1;
+ startad=1; gate=1;
+elseif strcmp(expt,'tau8') | (isempty(expt) & strfind(pl_dir,'tau8'))
+ nfft=128; nint=2; ngates=4;
+ freq=4.1*1e6; dt=0.6e-6; invert=-1;
+ ran=[53.3 272.4;193.4 412.5;333.4 552.5;473.3 692.4]; fradar=224e6;
+ maxe=2; ele=90; updown=0;
+ startad=108679;
+ if isempty(gate), gate=2; end
 else
  error('No such experiement defined')
 end
+if isempty(gate), gate=1; end
 
 %pl_dir='/home/ingemar/gup/mydata/steffel_int_CP@32p/';
 %res_dir='gup/results/2004-05-2*_steffe_60@42m/';
 %assume similar integration!
 global Time par1D par2D axs r_Magic_const DATA_PATH
+edge_dist=10; wrap=9;
+nfreq=length(freq);
 
-%First guess of altitudes (Not very important)
 re=6370; ratio=[];
-alt=re*sqrt(1+ran/re.*(ran/re+2*sin(ele/57.2957795)))-re;
+%First guess of altitudes (Not very important)
+alt=re*sqrt(1+ran(:,gate)/re.*(ran(:,gate)/re+2*sin(ele/57.2957795)))-re;
 %Read in the analysed data
 lf=vizu('verbose',alt,'L1 AE');
 for i=1:2
- hlim(:,i)=ran(i)*(ran(i)/re+2*sin(par1D(:,2)/57.2957795));
+ hlim(:,i)=ran(i,gate)*(ran(i,gate)/re+2*sin(par1D(:,2)/57.2957795));
 end
 hlim=re*sqrt(1+hlim/re)-re;
 fgup=fullfile(DATA_PATH,'.gup');
@@ -49,8 +75,8 @@ for i=1:nfl
  filename=fullfile(fl(i).dir,sprintf('%08d%s',fl(i).file,fl(i).ext));
  load(canon(filename,0))
  p_time(:,i)=datenum(d_parbl(1:6)')+[-d_parbl(7)/86400;0];
- d=reshape(sum(reshape(real(d_data),nfft,nint,nfreq),2),nfft,nfreq)/d_parbl(22);
- plspec(:,:,i)=d([nfft/2+1:nfft 1:nfft/2],:);
+ d=sum(reshape(real(d_data(startad:end)),nfft,ngates,nint,nfreq),3)/d_parbl(22);
+ plspec(:,:,i)=reshape(d([nfft/2+1:nfft 1:nfft/2],gate,1,:),nfft,nfreq);
 end
 if plots
  figure(9)
@@ -61,13 +87,13 @@ end
 disp('Removing noise')
 spec_shape=median(plspec,3);
 filt_shape=spec_shape;
-fsh=[filt_shape(end-8:end,:);filt_shape;filt_shape(1:9,:)];
+fsh=[filt_shape(end-wrap+1:end,:);filt_shape;filt_shape(1:wrap,:)];
 d2=diff(filt_shape,2);
 fd2=-std(d2);
 for i=1:nfreq
  d=find(d2(:,i)<2*fd2(i));
  for j=d'
-  filt_shape(j+(1:3),i)=interp1([-3:-1 5:7]',fsh(j+9+[-3:-1 5:7],i),(1:3)','spline');
+  filt_shape(j+(1:3),i)=interp1([-3:-1 5:7]',fsh(j+wrap+[-3:-1 5:7],i),(1:3)','spline');
  end
 end
 if plots
@@ -96,17 +122,17 @@ plsig=reshape(plsig,nfft*nfreq,[])./(filt_shape(:)*ones(1,nfl));
 plsig=reshape(plsig,nfft,nfreq,[]);
 
 %Find frequencies of the maximum point
-freq_scale=-(-nfft/2:nfft/2-1)/dt/nfft; % inverted on plasmabox
+freq_scale=invert*(-nfft/2:nfft/2-1)/dt/nfft;
 df=-diff(freq_scale(1:2));
 if plots
- plot(freq_scale'*ones(1,nfreq)+ones(nfft,1)*freq,plsig(:,:,330)), pause
+ plot(freq_scale'*ones(1,nfreq)+ones(nfft,1)*freq,plsig(:,:,round(nfl/2))), pause
 end
 plpeak=ones(2,nfl,nfreq)*NaN;
 s=std(plsig(:));
 for j=1:nfreq
  for i=1:nfl
   [a,b]=max(plsig(:,j,i));
-  if a>s & b>10 & b<nfft-9
+  if a>s & b>edge_dist & b<nfft-edge_dist+1
    plpeak(:,i,j)=[freq_scale(b)+freq(j);a];
   end
  end
@@ -115,18 +141,22 @@ if isempty(find(isfinite(plpeak)))
  error('No plasma lines found')
 end
 plpeak_c=ones(nfl,2)*NaN;
-for i=0:1
+for i=updown
  [a,b]=max(plpeak(2,:,(1:nfreq/2)+i*nfreq/2),[],3);
  for j=1:nfl
   plpeak_c(j,i+1)=plpeak(1,j,b(j)+i*nfreq/2);
  end
 end
 plf=ones(nfl,1)*NaN;
-d=find(abs(sum(plpeak_c,2))<5*df);
-if isempty(d)
- error('No simultanous up- and downshifted plasma lines found')
+if length(updown)==2
+ d=find(abs(sum(plpeak_c,2))<5*df);
+ if isempty(d)
+  error('No simultanous up- and downshifted plasma lines found')
+ end
+ plf(d)=mean(abs(plpeak_c(d,:)),2)/1e6;
+else
+ plf=abs(plpeak_c(d,:)),updown)/1e6;
 end
-plf(d)=mean(abs(plpeak_c(d,:)),2)/1e6;
 if plots
  plot([abs(plpeak_c) plf]), pause
 end
@@ -178,4 +208,4 @@ better_guess=newMagic*exp(-log(mr2)/15); % 15 OK for 22May04
 if abs(mr2-1)>.01
  fprintf('Try Magic_const=%.2f; (%.2f)\n',better_guess,newMagic)
 end
-ratio=[mr2 sr2 newMagic better_guess];
+ratio=[mr2 sr2 newMagic better_guess length(good)];
