@@ -121,7 +121,7 @@ while i<length(files)
     adiff=a_antold-a_ant;
     a_antold=a_ant;
     if any(fix(adiff/.2)) | tdiff
-      if a_ant(1)<89.8 | tdiff
+      if a_ant(1)<89.8 | a_ant(1)+adiff(1)<89.8 | tdiff
         a_interval(2)=file;
         if tdiff & N_averaged>1
           a_interval(2)=file-.5; a_antold=[];
@@ -132,6 +132,8 @@ while i<length(files)
         end
         d_parbl=prev_parbl;
         break
+      else
+        allow(find(fixed==az))=Inf;
       end
     end
   end
