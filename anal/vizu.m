@@ -357,7 +357,8 @@ end
 if option(11)
  ll=par1D(:,[3 1 2:2:end]);
  d=find(ll(:,3)<90.1 & ll(:,3)>89.9); ll(d,2)=NaN;
- line_plot(s,ll,[0 360],'Radar parameters',TITLE1([3 1 2 4]),[])
+ d=[0 360]; if any(ll>360), d=[]; end
+ line_plot(s,ll,d,'Radar parameters',TITLE1([3 1 2 4]),[])
 end
 if option(13)
  ll=[par1D(:,[3 2 1]) par2D(GATES,:,1)'];
