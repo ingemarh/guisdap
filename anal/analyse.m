@@ -28,6 +28,7 @@ set(get(gca,'child'),'markersize',10), set(gca,'visible','off')
 pause(1), clf
 x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=240;
 bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','set([bg br],''visible'',''off'')','fontsize',14);
+uicontrol('Style','pushbutton','string','?','position',[0 40 20 20],'callback',['web http://www.eiscat.com/GUISDAP/doc/howto' num2str(GUP_ver*10) '.html'],'tooltipstring','Get some help');
 uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
 uicontrol('Style','pushbutton','string','Save','position',[50 20 40 20],'callback','o=uiputfile;if o,save_setup(o);end','tooltipstring','Save setup in file');
 br=uicontrol('Style','pushbutton','string','Reset','position',[50 40 40 20],'callback','clf,if exist(gfdfile),delete(gfdfile),end,pause(1),analyse','tooltipstring','Reset to default');
@@ -48,7 +49,7 @@ b(6)=uicontrol('Style','pushbutton','string',result_path,'position',[x y(6) x2 y
 text(0,ty(7),'Real time')
 b(7)=uicontrol('Style','togglebutton','string','RT','position',[x y(7) x1 yh],'value',rt);
 text(0,ty(8),'Integration time')
-b(8)=uicontrol('Style','edit','string',num2str(intper),'position',[x y(8) x1 yh],'tooltipstring','0=antenna move;-1=automatic');
+b(8)=uicontrol('Style','edit','string',num2str(intper),'position',[x y(8) x1 yh],'tooltipstring','0=antenna move');
 text(0,ty(9),'Disp figures')
 b(9)=uicontrol('Style','edit','string',num2str(figs),'position',[x y(9) x2 yh],'tooltipstring','datadump powerprofile fits parameters vizu');
 text(0,100,'Special')

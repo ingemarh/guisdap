@@ -9,7 +9,7 @@
 clear all, clear global
 
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local
-GUP_ver=8.2;
+GUP_ver=8.3;
 fprintf('GUISDAP vs. %g by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
 if exist('mrqmndiag')~=3
  fprintf('***** using no mex routine enhancements *****\n')
@@ -43,9 +43,11 @@ set(0,'defaultaxescolor','none')
 local.printer='color';
 local.site=getenv('EISCATSITE');
 local.host=getenv('HOSTNAME');
+local.browser='netscape';
 switch local.site
  case 'K'
   data_path='/data1/';
+  local.browser='mozilla';
  case 'S'
   data_path='/data1/';
   local.printer='phaser';
@@ -54,11 +56,15 @@ switch local.site
  case 'L'
   data_path='/data2/';
  case 'HQ'
+  local.browser='mozilla';
   local.printer='hpclj';
  otherwise
-  local.site=[];
+  local.site=[]; local.browser=[];
   if ~isempty(getenv('LPDEST'))
    local.printer=getenv('LPDEST');
+  end
+  if ~isempty(getenv('BROWSER'))
+   local.browser=getenv('BROWSER');
   end
 end
 if ~exist(data_path,'dir'), data_path=path_tmp; end
