@@ -1,0 +1,41 @@
+% GUISDAP v1.80
+%
+% The startup file for GUISDAP. 
+% Defines the GUP version number and certain global variables
+% namely:   GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path 
+% If you want this to executed every time you invoke matlab,
+% add reference to start_GUP to your personal startup file
+
+clear all, clear global
+
+global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path
+GUP_ver=8.1;
+fprintf('GUISDAP vs. %4.2f by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
+
+path_GUP=which('start_GUP','-all');
+if iscell(path_GUP), path_GUP=char(path_GUP(end)); end
+path_GUP=fileparts(fileparts(path_GUP));
+path_tmp=getenv('TMPDIR');
+if isempty(path_tmp), path_tmp=fullfile(filesep,'tmp'); end
+path_tmp=fullfile(path_tmp,filesep);
+path_exps=fullfile(path_GUP,'exps',filesep);
+result_path=fullfile(filesep,'analysis','results',filesep);
+if ~exist(result_path,'dir'), result_path=path_tmp; end
+data_path=fullfile(filesep,'data',filesep);
+if ~exist(data_path,'dir'), data_path=path_tmp; end
+
+format compact
+format short g
+set(0,'defaultaxesxminortick','on')
+set(0,'defaultaxesyminortick','on')
+set(0,'defaultfigurenumbertitle','off')
+set(0,'defaultfigureSelectionHighlight','off')
+set(0,'defaultfiguremenubar','none')
+set(0,'defaultfiguretoolbar','figure')
+set(0,'defaultuicontrolfontsize',10)
+set(0,'defaultaxesfontsize',12)
+set(0,'defaulttextfontsize',12)
+set(0,'defaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
+set(0,'defaultFigurePaperType','A4')
+set(0,'defaultFigurePaperUnits','centimeters')
+set(0,'defaultaxescolor','none')

@@ -1,0 +1,214 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   GUP ver. 1.0      Sodankyla  8. June 1990                       %
+%   copyright Markku Lehtinen                                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcount\hour \newcount\hours  \newcount\minute
+\def\clock#1{\hour=#1\hours=#1\minute=#1\divide\hours by 60 \hour=\hours 
+\multiply\hours by 60 \advance\minute by -\hours  
+\ifnum\minute<10 \number\hour.0\number\minute\else					        
+\number\hour.\number\minute\fi}
+
+\def\today{\ifcase\month\or January \or February\or March\or April\or May
+\or June\or July\or August\or September\or October\or November\or December\fi
+\space\number\day, \number\year}
+
+\headline={{\sevensy $\clubsuit$\sevenrm~  GUISDAP documentation: {\jobname.tex}
+\hskip 0.5truecm \GUPlocation \hskip 0.5truecm  \today\ at
+\clock\time\hfill} }
+
+% fonts for different headings                                     		
+\font\chfont=cmbx12 scaled \magstep1 % main chapters font
+\font\sfont=cmr10 scaled\magstep1    % subchapters font
+\font\sbsfont=cmr10                  % subsubn font
+		
+% rows for the table of contents are made here
+\def\lead{\leaders\hbox to 12pt{\hfill.\hfill}\hfill}
+\def\entry:#1\page#2\\{\hbox to\hsize{{\hskip30pt\sfont#1}\hfill#2}} 
+
+\def\listting#1{%
+%\write2{#1 \number\pageno}
+{\baselineskip=8pt\parskip=0pt\parindent=1cm\line{}%
+  {#1\par}
+  \par\begingroup\setupverbatim\input#1 \endgroup\par\medskip}
+		\catcode`\_=8\endgroup
+		
+% save name to toc file
+\edef\save{\string\entry:#1%
+  \string\page\noexpand\folio\string\\}%
+\write\toc\expandafter{\save}
+
+}
+\def\listing{\begingroup\par\catcode`\_=\other\catcode`\@=\other\tt\listting}
+
+\vsize=9.5in\parindent=0pc\parskip=6pt
+
+% macros for table of contents
+
+\def\tochead{\centerline{\chfont Table of contents}}
+\def\ch#1:#2\page#3\\{\vskip5pt minus3pt\leftline{\chfont#1.#2}}
+\def\se#1:#2\page#3\\{\hbox to\hsize{{\sfont\quad
+#1.#2}\lead#3}}
+ \def\sbs#1:#2\page#3\\{\hbox to\hsize{{\sbsfont\qquad
+#1.#2}\lead#3}}
+%chapter without number 
+\def\oth:#1\page#2\\{\hbox to\hsize{{\chfont#1}\lead#2}} 
+
+\def\str:#1\\{\leftline{\chfont#1}}
+ 
+\newcount\chnum  % chapter number
+\chnum=0
+\newcount\snum   % subnumber
+\newcount\sbsnum % subsubnumber!
+
+% stuff for toc without a page number
+\def\strange#1{
+\edef\save{\string\str:#1%
+  \string\\}%
+\write\toc\expandafter{\save}}
+
+
+\def\other#1{
+\leftline{\chfont  #1}
+\edef\save{\string\oth:#1%
+  \string\page\noexpand\folio \string\\}%
+\write\toc\expandafter{\save}}
+
+\def\chapter#1{\global\advance\chnum by1
+\global\snum=0 \sbsnum=0
+\leftline{\chfont \the\chnum. #1}
+\edef\save{\string\ch\the\chnum:#1%
+  \string\page\noexpand\folio\string\\}%
+\write\toc\expandafter{\save}}
+
+\def\section#1{%
+\global\advance\snum by1 \sbsnum=0
+{\leftline{\sfont \the\chnum.\the\snum. #1}}
+\edef\save{%
+  \string\se\the\chnum.\the\snum:% 
+  #1\string\page\noexpand\folio\string\\}%
+\write\toc\expandafter{\save}}
+
+\def\sbsection#1{%
+\global\advance\sbsnum by1
+{\leftline{\sbsfont \the\chnum.\the\snum.\the\sbsnum. #1 }}
+\edef\save{%
+  \string\sbs
+    \the\chnum.\the\snum.\the\sbsnum:% 
+ #1\string\page\noexpand\folio
+  \string\\}%
+\write\toc\expandafter{\save}}
+
+\def\readtoc{
+\immediate\closeout\toc
+\immediate\openin\toc=\jobname.toc
+\ifeof\toc
+   \message{! No file \jobname.toc;}
+\else
+   \tochead 
+   \input\jobname.toc \vfill\eject
+\fi
+\immediate\closein\toc}
+% start to write the toc file
+\newwrite\toc
+\immediate\openout\toc=\jobname.toc
+
+
+% ----------------------------------------------------------------
+% Making INDEX file
+\font\indfont=cmr8 scaled \magstep0
+\def\ind:#1\page#2\\{\hbox to\hsize{{\indfont#1}\hfill#2}} 
+
+\def\index#1{#1
+\edef\save{\string\ind:#1%
+  \string\page\noexpand\folio \string\\}%
+\write\indfile\expandafter{\save}}
+\def\indhead{\centerline{\indfont Index}}
+
+
+\def\readindfile{
+\immediate\closeout\indfile
+\immediate\openin\indfile=\jobname.ind
+\ifeof\indfile
+   \message{! No file \jobname.ind;}
+\else
+   \indhead 
+   \input\jobname.ind
+			\vfill\eject
+\fi
+\immediate\closein\ind}
+
+% open index file:
+\newwrite\indfile
+\immediate\openout\indfile=\jobname.ind
+
+% -----------------------------------------------------------------
+
+
+%Fljande macron anvnds d man vill f ut \TeX-kommandon
+%i klartext.  @text@ ger text i fonten \tt med alla kontroll-
+%tecken och dylika bevarade (\TeX\ frstr sig endast p kommandot
+%@ i denna mode). Man kan ocks utnyttja \begintt ... \endtt fr
+%att beskriva kommandon, d r ocks \obeylines och \obeyspaces
+%aktiva. Om man vill anvnda vissa \TeX-kommandon men vill
+%ocks displaya ngot i en-kolumn-tabell-form kan man anvnda
+%\begindisplay ...\cr ...\cr \enddisplay
+%           Om du vill anvnda \begintt...\endtt fr text som inte
+%       ryms p en sida, kan du ocks anvnda \beginlines...\endlines.
+%       Varje rad mste d brjas och avslutas med kommandot @.
+\newcount\linenumber
+\def\clearlinenumber{\linenumber=2}
+\def\lineno{\advance\linenumber by 1$_{\number\linenumber}$}
+\clearlinenumber
+%
+\newskip\verbatimindent \verbatimindent=1.5cm
+\newskip\ttglue{\tt \global\ttglue=.5em plus.25em minus.15em}
+\def\@{\char'100 }
+%
+\outer\def\begindisplay{\obeylines\startdisplay}
+{\obeylines\gdef\startdisplay#1
+    {\catcode`\^^M=5$$#1\halign\bgroup&\hskip\verbatimindent##\hfil\cr}}
+\outer\def\enddisplay{\crcr\egroup$$}
+%
+\chardef\other=12
+\def\ttverbatim{\begingroup 
+  \ifmmode%
+ 		  \catcode`\_=\other\mathcode`\_="0274\tt 
+%    \catcode`\_=\active
+		\else
+				\catcode`\\=\other \catcode`\{=\other
+    \catcode`\}=\other \catcode`\$=\other \catcode`\&=\other
+    \catcode`\#=\other \catcode`\%=\other \catcode`\~=\other
+    \catcode`\_=\other \catcode`\^=\other\catcode`\*=\other\catcode`\==\other
+    \obeyspaces \obeylines \tt
+		\fi}
+{\obeyspaces\gdef {\ }}
+%
+\outer\def\begintt{$$\let\par=\endgraf \ttverbatim \parskip=0pt
+    \catcode`\@=0 \parindent=\verbatimindent \rightskip=-5pc \ttfinish}
+{\catcode`\@=0 @catcode`@\=\other % @ is temporary escape character
+    @obeylines % end of line is active
+    @gdef@ttfinish#1^^M#2\endtt{#1@vbox{#2}@endgroup$$}}
+%
+\def\aaa{{\tt\char66 }}
+%\mathcode`\@=\active
+\catcode`\@=\active
+{\obeylines\gdef@{\ttverbatim\spaceskip=\ttglue\let^^M=\ \let@=\endgroup}}
+%
+\def\beginlines{\par\begingroup\nobreak\medskip\parindent=0pt
+   \kern1pt\nobreak \obeylines \everypar{\strut}}
+\def\endlines{\kern1pt\endgroup\medbreak\noindent}
+%
+\def\verbstyle{\parindent=3pc\parskip=0pt}
+
+\font\ttsmall=cmtt8
+%\font\numbering=Times at 5pt
+\font\numbering=cmr5
+\def\uncatcodesspecial{\def\do##1{\catcode`##1=12 }\dospecials}
+\newcount\lineno
+\def\setupverbatim{\ttsmall\lineno=0
+  \def\par{\leavevmode\endgraf} \catcode`\`=\active
+  \obeylines \uncatcodesspecial \obeyspaces
+  \everypar{\advance \lineno by 1\hbox to1cm{\numbering\the\lineno\hfill}}}
+{\obeyspaces\global\let =\ } 
+  {\catcode`\`=\active \gdef`{\relax\lq}}
+		

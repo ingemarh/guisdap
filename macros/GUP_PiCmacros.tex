@@ -1,0 +1,115 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   GUP ver. 1.0      Sodankyla  8. June 1990                       %
+%   copyright Markku Lehtinen                                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Macros to calculate units in the case where they are to be determined
+% from axis dimensions (in mm) and limits (in user coordinates).
+% If \xwidth or \ywidth is zero, no units are calculated and the user
+% must himself specify the \xunit or \yunit parameters
+\newdimen\dima\newdimen\dimb\newdimen\dimc\newdimen\helpdim
+\def\s{ }
+
+% Finds labellable tick values:
+\def\calculateaxislimits{
+\def\xlastlabel{}\def\xunits{}\def\yunits{}
+% xamax, xlastlabel
+\dima=\xmax pt\advance\dima by 0.00001 pt
+\dimb=-\xnumberinterval pt
+\loop\ifdim\dima<0pt
+  \advance\dima by \xnumberinterval pt \advance\dimb by -\xnumberinterval pt
+\repeat
+\loop\ifdim\dima>0pt
+  \advance\dima by -\xnumberinterval pt \advance\dimb by \xnumberinterval pt
+\repeat
+\placevalueinpts of <\dimb> in {\xamax}
+\advance \dimb by -\xnumberinterval pt
+\placevalueinpts of <\dimb> in {\xlastlabel} 
+% xamin:
+\dima=\xmin pt\advance\dima by -0.00001pt\dimb=0pt
+\loop\ifdim\dima<0pt
+  \advance\dima by \xnumberinterval pt \advance\dimb by -\xnumberinterval pt
+\repeat
+\loop\ifdim\dima>0pt
+  \advance\dima by -\xnumberinterval pt \advance\dimb by \xnumberinterval pt
+\repeat
+\placevalueinpts of <\dimb> in {\xamin}
+% yamax:
+\def\ynumberinterval{1 }
+\dima=\ymax pt\advance\dima by 0.00001pt
+\dimb=-\ynumberinterval pt
+\loop\ifdim\dima<0pt
+  \advance\dima by \ynumberinterval pt \advance\dimb by -\ynumberinterval pt
+\repeat
+\loop\ifdim\dima>0pt
+  \advance\dima by -\ynumberinterval pt \advance\dimb by \ynumberinterval pt
+\repeat
+\placevalueinpts of <\dimb> in {\yamax}
+% yamin:
+\dima=\ymin pt\advance\dima by -0.00001pt \dimb=0pt
+\loop\ifdim\dima<0pt
+  \advance\dima by \ynumberinterval pt \advance\dimb by -\ynumberinterval pt
+\repeat
+\loop\ifdim\dima>0pt
+  \advance\dima by -\ynumberinterval pt \advance\dimb by \ynumberinterval pt
+\repeat
+\placevalueinpts of <\dimb> in {\yamin}
+\ifdim \dimb < 1pt \def\yamin{1 } \fi % special handling for y=0
+} % end of calculateaxislimits
+
+% Calculates scales of the picture.
+% If \xwidth is defined, resulting picture size is specified by it
+% else picture size is calculated from \xunit and (\xmax-\xmin)
+\def\calcunits{
+% xunit:
+\ifnum\xwidth =0\else
+\dima=\xmin pt\dimb=\xmax pt\advance\dimb by -\dima
+\dima=\xwidth pt\Divide <\dima> by <\dimb> forming  <\dimc> 
+\placevalueinpts of <\dimc> in {\xunit} \fi %\show\xunits
+\ifnum \ywidth =0\else
+\dima=\ymin pt\dimb=\ymax pt\advance\dimb by -\dima
+\dima=\ywidth pt\Divide <\dima> by <\dimb> forming  <\dimc> 
+\placevalueinpts of <\dimc> in {\yunit} \fi
+}
+
+% Macro for giving values in a compact way:
+\def\xticks #1 #2 #3 #4 #5 #6 #7 {%
+\def\xmin{#1}\def\xamin{#2}%
+\def\xnumberinterval{#3}\def\xtickinterval{#4}%
+\def\xlastlabel{#5}\def\xamax{#6}\def\xmax{#7}}
+
+% Macro that transfers relevant TeX parameters to PS interpreter so
+% that necessary scaling calculations can be made in PS.
+\def\parsfromTeXtoPS{
+/xunit{\xunit\s 1000 div}def/yunit{\yunit\s }def
+/xref{\xmin\s 1000 mul}def/yref{\ymin\s }def
+/xmin{\xmin\s 1000 mul}def/xmax{\xmax\s 1000 mul}def
+/ymin{\ymin\s }def/ymax{\ymax\s }def
+}
+
+% Macro to set up PiCTeX world in terms of the picture scale variables used
+\def\setdefaultsystem{% defines standard PiCTeX world in variables defined
+\setcoordinatesystem units <\xunit mm,\yunit mm> 
+     point at {\xmin} {\ymin} %point inside page
+\setplotarea x from {\xmin} to {\xmax}, y from {\ymin} to {\ymax}
+}
+
+% Macro that can be redefined by the user to add some additional elements
+% to the picture (e.g. axis ticks, titles etc.)
+\def\addtopict{}
+\def\addtoPS{}
+
+% Macro that draws a combined PiCTeX / PostScript picture 
+% so that PiCTeX coordinates can be used in Postscript code
+\def\GUPPiC{
+%\vskip 3mm plus 3mm minus 2mm
+\calculateaxislimits
+\calcunits
+\beginpicture
+\setdefaultsystem
+\GUPPiCspecials
+\grid 1 1
+\addtopict
+\endpicture
+%\vskip 3mm plus 3mm minus 2mm
+}
+\def\addtopict{}

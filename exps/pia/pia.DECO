@@ -1,0 +1,78 @@
+DECO 2.0
+1	99420
+15056
+34
+% Channel=1 type=1 data_start=0 vec_len=206 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position 0 - 205
+1	G	1	0	206	0	0	1	0	206	0	0	206	0	0	
+% Channel=1 type=1 data_start=0 vec_len=206 max_lag=29 res_mult=8 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position 206 - 7463
+2	H	1	206	6180	1	2	10	2	225	0	206	7258	0	3	 1 1 1 
+% Data position 206 - 7463
+3	H	1	6386	6180	1	2	10	2	225	0	206	7258	1	3	 1 1 -1 
+% Data position 206 - 7463
+4	H	1	12566	6180	1	2	10	2	225	0	206	7258	1	3	 1 -1 1 
+% Data position 206 - 7463
+5	H	1	18746	6180	1	2	10	2	225	0	206	7258	1	3	 1 -1 -1 
+% Data position 206 - 7463
+6	H	1	24926	6180	1	2	10	2	225	0	206	7258	1	3	 1 1 -1 
+% Data position 206 - 7463
+7	H	1	31106	6180	1	2	10	2	225	0	206	7258	1	3	 1 1 1 
+% Data position 206 - 7463
+8	H	1	37286	6180	1	2	10	2	225	0	206	7258	1	3	 1 -1 -1 
+% Data position 206 - 7463
+9	H	1	43466	6180	1	2	10	2	225	0	206	7258	2	3	 1 -1 1 
+% Channel=2 type=1 data_start=0 vec_len=8 max_lag=0 res_mult=8 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position 7464 - 7471
+10	G	1	49646	8	0	0	1	0	8	0	7464	8	0	0	
+% Data position 7472 - 7479
+11	G	1	49654	8	0	0	1	0	8	0	7472	8	0	0	
+% Data position 7480 - 7487
+12	G	1	49662	8	0	0	1	0	8	0	7480	8	0	0	
+% Data position 7488 - 7495
+13	G	1	49670	8	0	0	1	0	8	0	7488	8	0	0	
+% Data position 7496 - 7503
+14	G	1	49678	8	0	0	1	0	8	0	7496	8	0	0	
+% Data position 7504 - 7511
+15	G	1	49686	8	0	0	1	0	8	0	7504	8	0	0	
+% Data position 7512 - 7519
+16	G	1	49694	8	0	0	1	0	8	0	7512	8	0	0	
+% Data position 7520 - 7527
+17	G	1	49702	8	0	0	1	0	8	0	7520	8	0	0	
+% Channel=3 type=1 data_start=0 vec_len=206 max_lag=0 res_mult=1 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position 7528 - 7733
+18	G	1	49710	206	0	0	1	0	206	0	7528	206	0	0	
+% Channel=3 type=1 data_start=0 vec_len=206 max_lag=29 res_mult=8 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position 7734 - 14991
+19	H	1	49916	6180	1	2	10	2	225	0	7734	7258	0	3	 1 1 1 
+% Data position 7734 - 14991
+20	H	1	56096	6180	1	2	10	2	225	0	7734	7258	1	3	 1 1 -1 
+% Data position 7734 - 14991
+21	H	1	62276	6180	1	2	10	2	225	0	7734	7258	1	3	 1 -1 1 
+% Data position 7734 - 14991
+22	H	1	68456	6180	1	2	10	2	225	0	7734	7258	1	3	 1 -1 -1 
+% Data position 7734 - 14991
+23	H	1	74636	6180	1	2	10	2	225	0	7734	7258	1	3	 1 1 -1 
+% Data position 7734 - 14991
+24	H	1	80816	6180	1	2	10	2	225	0	7734	7258	1	3	 1 1 1 
+% Data position 7734 - 14991
+25	H	1	86996	6180	1	2	10	2	225	0	7734	7258	1	3	 1 -1 -1 
+% Data position 7734 - 14991
+26	H	1	93176	6180	1	2	10	2	225	0	7734	7258	2	3	 1 -1 1 
+% Channel=4 type=1 data_start=0 vec_len=8 max_lag=0 res_mult=8 sub_div=1 do_zlag=0 lag_incr=1 fir_len=0
+% Data position 14992 - 14999
+27	G	1	99356	8	0	0	1	0	8	0	14992	8	0	0	
+% Data position 15000 - 15007
+28	G	1	99364	8	0	0	1	0	8	0	15000	8	0	0	
+% Data position 15008 - 15015
+29	G	1	99372	8	0	0	1	0	8	0	15008	8	0	0	
+% Data position 15016 - 15023
+30	G	1	99380	8	0	0	1	0	8	0	15016	8	0	0	
+% Data position 15024 - 15031
+31	G	1	99388	8	0	0	1	0	8	0	15024	8	0	0	
+% Data position 15032 - 15039
+32	G	1	99396	8	0	0	1	0	8	0	15032	8	0	0	
+% Data position 15040 - 15047
+33	G	1	99404	8	0	0	1	0	8	0	15040	8	0	0	
+% Data position 15048 - 15055
+34	G	1	99412	8	0	0	1	0	8	0	15048	8	0	0	

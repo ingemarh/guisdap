@@ -1,0 +1,67 @@
+% COR_uprog: lag profiles from a uniprog type correlator algorithm
+% GUISDAP v.1.60 96-05-27 Copyright Asko Huuskonen and Markku Lehtinen
+%
+% User specified input parameters:
+% ra      : First result memory address to use
+% ri      : result memory address increment
+% vc      : virtual channel number
+% type    : lag profile type, all allowed 's','b','c','o','x'
+% gating  : number of successive crossed products added to the same memory location
+% N_gates : number of gates for zero lag, the number will be smaller for longer lags
+% lags    : Lag  values in us
+% N_skipped : number of samples skipped at the beginning of the sample vector (often =0)
+% code     : user specified code number
+% Output is stored in the lp_xxx parameters (global)
+%
+% See also: CORR_uprog, COR_pp, COR_check, COR_caltemp, COR_status, pulse_times, sample_times
+%
+%function COR_uprog(ra,ri,vc,type,gating,N_gates,lags,N_skipped,code)
+ function COR_uprog(ra,ri,vc,type,gating,N_gates,lags,N_skipped,code)
+
+global p_dtau vc_adcint vc_mf
+global lp_t1 lp_t2  lp_dt lp_h lp_nfir lp_fir lp_dec lp_T lp_nt 
+global lp_vc lp_ra lp_ri lp_bcs lp_code lp_ind lp_indold ra_next ra_prev
+
+if (type~='b' & type~='c' & type~='s' & type~='o' & type~='x'),
+  error([' Unknown data type in COR_uprog: ' type])
+end  
+
+ra_prev=ra;
+
+adcint=vc_adcint(vc); lags=lags/p_dtau; 
+COR_check(lags,adcint)
+
+N_lags=length(lags);
+index=(lp_ind+1):(lp_ind+N_lags);
+
+lp_T(index)=COR_caltemp(type)*ones(1,N_lags);
+
+% find first when pulses are transmitted and samples are taken
+pulsetimes=pulse_times(vc);
+t1=sample_times(vc,type2ind(type));
+if vc_mf(vc)>0, % Compensate for the delay caused by matched filter
+  t1=t1+(vc_mf(vc)-1)*adcint;
+end
+
+t1=(t1(1)+N_skipped*adcint)*ones(1,N_lags);
+lp_t1(index)=t1;
+lp_h(index)=t1-pulsetimes(1);
+  
+% finally parameters common to all types
+lp_t2(index)=t1+lags;
+lp_dt(index)=adcint*ones(1,N_lags);
+lp_nfir(index)=gating*ones(1,N_lags);
+lp_fir(1:gating,index)=ones(gating,N_lags);
+lp_dec(index)=gating*ones(1,N_lags);
+lp_nt(index)=N_gates-lags/adcint/gating;
+lp_vc(index)=vc*ones(1,N_lags);
+lp_ra(index)=ra+ri*cumsum([0,lp_nt(index(1:N_lags-1))]);
+lp_ri(index)=ri*ones(1,N_lags);
+lp_bcs(index)=type*ones(1,N_lags);
+lp_code(index)=code*ones(1,N_lags);
+lp_ind=lp_ind+N_lags;
+
+% first result memory location not used
+ra_next=max(lp_ra(index)+(lp_nt(index)-1).*lp_ri(index))+1;
+
+COR_status('COR_uprog',vc,type,index)

@@ -1,0 +1,51 @@
+nr_stc=8;
+% Channel one noipp=192 => 5 sec dump
+channel	=	1	;
+	type=1;
+		vec_len=206;
+		max_lag=0;
+		data_start=0;
+	end_type
+	type=1;
+		vec_len=206;
+		max_lag=29;
+		code_len=3;
+		n_frac=10;
+		ac_file=pia.ac;
+		data_start=0;
+		res_mult=8;
+	end_type
+end_chan
+channel =       2;
+	type=1;
+		vec_len=8;
+		max_lag=0;
+		data_start=0;
+		res_mult=8;
+	end_type
+end_chan
+channel	=	3	;
+	type=1;
+		vec_len=206;
+		max_lag=0;
+		data_start=0;
+	end_type
+	type=1;
+		vec_len=206;
+		max_lag=29;
+		code_len=3;
+		n_frac=10;
+		ac_file=pia.ac;
+		data_start=0;
+		res_mult=8;
+	end_type
+end_chan
+channel =       4;
+	type=1;
+		vec_len=8;
+		max_lag=0;
+		data_start=0;
+		res_mult=8;
+	end_type
+end_chan
+

@@ -1,0 +1,68 @@
+#!/bin/sh
+tail=
+init=
+my="$HOME/gup/mygup"
+mflags="-nojvm -nosplash"
+usage="Usage: guisdap [-a] [-i] [-b] [-x] [-m path] [matlabflags]"
+matlab="matlab"
+
+TMPDIR=$HOME/tmp
+SHELL=/bin/sh
+#find GUP
+filename=$0
+while [ -h $filename ]; do
+	lscmd=`ls -l $filename 2>/dev/null`
+	filename=`echo "$lscmd" | awk '{ print $NF }'`
+done
+GUP=`echo "$filename" | awk -F/ ' {for (i=2;i<NF-1;i++) printf("/%s",$i)} '`
+#echo $GUP
+
+#mex=$GUP/mex6:$GUP/NW/mex6:
+mex=$GUP/mex6:
+
+while getopts aibxm: flag
+do
+	case $flag in
+		a) tail="-r analyse";;
+		i) init=":$GUP/init";;
+		b) tail="-r go_on(0) >/dev/null 2>&1 &"
+		   unset DISPLAY
+		   mflags=
+		   matlab="nohup $matlab"
+		   ;;
+		m) my="$OPTARG";;
+		x) mex=;;
+		?) echo $usage
+		exit 2;;
+	esac
+done
+shift `expr $OPTIND - 1`
+
+if [ "$*" != "" ];then
+	mflags=$*
+fi
+
+if [ ! -d $my ];then
+	my=
+else
+	my=$my:
+fi
+
+MATLABPATH=$my$mex$GUP/anal$init
+IRIPATH=$GUP/models/iri2001
+
+sys=`uname -s`
+case $sys in
+	SunOS)
+		PATH=/usr/bin:/usr/local/bin:$GUP/bin
+		LD_LIBRARY_PATH=$GUP/lib:$GUP/NW/lib:/opt/SUNWspro/lib:/usr/local/ssl/lib
+		;;
+	Linux)
+		LD_LIBRARY_PATH=$GUP/lib:$GUP/NW/lib
+		PATH=$PATH:$GUP/bin
+		;;
+esac
+
+#echo "$matlab $mflags $tail"
+export TMPDIR MATLABPATH IRIPATH PATH LD_LIBRARY_PATH SHELL
+$matlab $mflags $tail

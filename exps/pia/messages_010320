@@ -1,0 +1,301 @@
+Mar 18 20:09:00 u5011 unix: NFS server t45001 not responding still trying
+Mar 18 20:09:03 u5011 last message repeated 1 time
+Mar 18 20:15:39 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 18 20:15:39 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 18 20:16:52 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 18 20:16:52 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 18 20:18:02 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 18 20:18:02 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 18 20:21:22 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 18 20:21:22 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 18 20:22:32 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 18 20:22:32 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 18 20:24:03 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 18 20:24:03 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 07:33:13 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 07:33:13 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 07:34:21 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 07:34:21 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 07:35:31 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 07:35:31 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 07:38:52 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 07:38:52 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 07:40:03 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 07:40:03 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 07:41:34 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 07:41:34 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 07:48:16 u5011 unix: NFS server t45001 ok
+Mar 19 07:48:16 u5011 last message repeated 1 time
+Mar 19 07:48:16 u5011 unix: NFS server t45001 not responding still trying
+Mar 19 07:48:16 u5011 unix: NFS server t45001 ok
+Mar 19 07:48:16 u5011 unix: NFS server t45001 not responding still trying
+Mar 19 07:48:16 u5011 unix: NFS server t45001 ok
+Mar 19 08:35:35 u5011 unix: SunOS Release 5.7 Version Generic_106541-02 [UNIX(R) System V Release 4.0]
+Mar 19 08:35:35 u5011 unix: Copyright (c) 1983-1998, Sun Microsystems, Inc.
+Mar 19 08:35:35 u5011 unix: Ethernet address = 0:80:42:b:a7:5d
+Mar 19 08:35:35 u5011 unix: mem = 262144K (0x10000000)
+Mar 19 08:35:35 u5011 unix: avail mem = 253927424
+Mar 19 08:35:35 u5011 unix: root nexus = FORCE,CPU-50(UltraSPARC-IIi 300MHz)
+Mar 19 08:35:35 u5011 unix: pci0 at root: UPA 0x1f 0x0
+Mar 19 08:35:35 u5011 unix: pci0 is /pci@1f,0
+Mar 19 08:35:35 u5011 unix: PCI-device: pci@2,1, simba0
+Mar 19 08:35:35 u5011 unix: SUNW,hme1: CheerIO 2.0 (Rev Id = c1) Found
+Mar 19 08:35:35 u5011 unix: PCI-device: network@1,1, hme1
+Mar 19 08:35:35 u5011 unix: hme1 is /pci@1f,0/pci@2,1/network@1,1
+Mar 19 08:35:35 u5011 unix: PCI-device: network@1,1, hme0
+Mar 19 08:35:35 u5011 unix: hme0 is /pci@1f,0/network@1,1
+Mar 19 08:35:35 u5011 unix: Requesting Internet address for 0:80:42:b:a7:5d
+Mar 19 08:35:38 u5011 unix: SUNW,hme0: Using Internal Transceiver
+Mar 19 08:35:38 u5011 unix: SUNW,hme0: 100 Mbps full-duplex Link Up
+Mar 19 08:35:40 u5011 unix: Found my IP address: 81f21f4a (129.242.31.74)
+Mar 19 08:35:40 u5011 unix: hostname: u5011
+Mar 19 08:35:40 u5011 unix: domainname: eiscat.uit.no
+Mar 19 08:35:50 u5011 unix: root on t45001:/export/root/u5011 fstype nfsdyn
+Mar 19 08:35:50 u5011 unix: VME: Universe rev. 1 at 0x704c8000
+Mar 19 08:35:50 u5011 unix: VME: LCA rev. 2 at 0xfffa8000
+Mar 19 08:35:50 u5011 unix: FRCvme V2.4.1 VME Nexus 
+Mar 19 08:35:50 u5011 unix: PCI-device: vme@5, VME0
+Mar 19 08:35:50 u5011 unix: PCI-device: ebus@1, ebus0
+Mar 19 08:35:50 u5011 unix: su0 at ebus0: offset 14,3803f8
+Mar 19 08:35:50 u5011 unix: su0 is /pci@1f,0/ebus@1/su@14,3803f8
+Mar 19 08:35:50 u5011 unix: su1 at ebus0: offset 14,3602f8
+Mar 19 08:35:50 u5011 unix: su1 is /pci@1f,0/ebus@1/su@14,3602f8
+Mar 19 08:35:50 u5011 unix: keyboard is </pci@1f,0/ebus@1/su@14,3803f8> major <37> minor <0>
+Mar 19 08:35:50 u5011 unix: mouse is </pci@1f,0/ebus@1/su@14,3602f8> major <37> minor <1>
+Mar 19 08:35:50 u5011 unix: se0 at ebus0: offset 14,400000
+Mar 19 08:35:50 u5011 unix: se0 is /pci@1f,0/ebus@1/se@14,400000
+Mar 19 08:35:50 u5011 unix: stdin is </pci@1f,0/ebus@1/se@14,400000:a> major <20> minor <0>
+Mar 19 08:35:50 u5011 unix: stdout is </pci@1f,0/ebus@1/se@14,400000:a> major <20> minor <0>
+Mar 19 08:35:50 u5011 unix: cpu0: SUNW,UltraSPARC-IIi (upaid 0 impl 0x12 ver 0x13 clock 300 MHz)
+Mar 19 08:35:54 u5011 unix: dump on /dev/swap size 256 MB
+Mar 19 08:35:56 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 08:35:56 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 08:39:02 u5011 unix: pseudo-device: pm0
+Mar 19 08:39:02 u5011 unix: pm0 is /pseudo/pm@0
+Mar 19 08:39:02 u5011 unix: pseudo-device: tod0
+Mar 19 08:39:02 u5011 unix: tod0 is /pseudo/tod@0
+Mar 19 08:39:02 u5011 unix: pseudo-device: vol0
+Mar 19 08:39:02 u5011 unix: vol0 is /pseudo/vol@0
+Mar 19 08:39:02 u5011 unix: vmeplus0: using peek for read() syscall
+Mar 19 08:39:02 u5011 unix: vmeplus0: using poke for write() syscall
+Mar 19 08:39:02 u5011 unix: vmeplus0 at vme0: space 0xad,0 and space 0xbd,0 and space 0x8d,0 and vme16d16,0x0 and vme24d16,0x0 and vme32d16,0x0 and vme16d32,0x0 and vme24d32,0x0 and vme32d32,0x0 and space 0x3f,0 and space 0x3c,0 and space 0xf,0 and space 0xc,0 and space 0x20,0 and space 0xaf,0 and space 0x2f,0 and space 0x6f,0 and space 0x90,0 and space 0x91,0 and space 0x10,0 and space 0x11,0 and space 0x50,0 and space 0x51,0 VME level 6 vector 0x50 sparc ipl 11, VME level 3 vector 0x52 sparc ipl 5, VME level 3 vector 0x50 sparc ipl 5, VME level 4 vector 0x1 sparc ipl 7, VME level 4 vector 0x2 sparc ipl 7, VME level 4 vector 0x3 sparc ipl 7
+Mar 19 08:39:02 u5011 unix: vmeplus0 is /pci@1f,0/vme@5/vmeplus@ad,0
+Mar 19 08:39:03 u5011 unix: SIOCSIFDSTADDR: IFF_POINTOPOINT not set
+Mar 19 08:39:03 u5011 unix: /pci@1f,0/pci@2,1/scsi@4 (glm1):
+Mar 19 08:39:03 u5011 	Rev. 4 Symbios 53c875 found.
+Mar 19 08:39:03 u5011 unix: PCI-device: scsi@4, glm1
+Mar 19 08:39:03 u5011 unix: glm1 is /pci@1f,0/pci@2,1/scsi@4
+Mar 19 08:39:03 u5011 unix: /pci@1f,0/scsi@4 (glm0):
+Mar 19 08:39:03 u5011 	Rev. 4 Symbios 53c875 found.
+Mar 19 08:39:03 u5011 unix: PCI-device: scsi@4, glm0
+Mar 19 08:39:03 u5011 unix: glm0 is /pci@1f,0/scsi@4
+Mar 19 10:44:12 u5011 unix: vmefdma0 at vme0: space 0xad,0 and space 0xbd,0 and space 0x8d,0 and vme16d16,0x0 and vme24d16,0x0 and vme32d16,0x0 and vme16d32,0x0 and vme24d32,0x0 and vme32d32,0x0 and space 0x3f,0 and space 0x3c,0 and space 0xf,0 and space 0xc,0 and space 0x20,0
+Mar 19 10:44:12 u5011 unix: vmefdma0 is /pci@1f,0/vme@5/vmefdma@ad,0
+Mar 19 10:47:58 u5011 unix: WARNING: Spurious VMEbus interrupt on level 4, vec 1
+Mar 19 10:48:02 u5011 lag_wrap[1022]: Interrupt missed 825 and 832
+Mar 19 10:48:02 u5011 lag_wrap[1022]: Interrupt missed 825 and 832
+Mar 19 10:48:04 u5011 lag_wrap[1022]: Interrupt missed 830 and 832
+Mar 19 10:48:04 u5011 lag_wrap[1022]: Interrupt missed 830 and 832
+Mar 19 10:53:01 u5011 unix: WARNING: Spurious VMEbus interrupt on level 4, vec 1
+Mar 19 10:53:02 u5011 lag_wrap[1097]: Interrupt missed 289 and 832
+Mar 19 10:53:01 u5011 last message repeated 1 time
+Mar 19 10:53:02 u5011 lag_wrap[1097]: Interrupt missed 289 and 832
+Mar 19 10:53:04 u5011 lag_wrap[1097]: Interrupt missed 830 and 832
+Mar 19 10:53:04 u5011 lag_wrap[1097]: Interrupt missed 830 and 832
+Mar 19 10:54:58 u5011 unix: WARNING: Spurious VMEbus interrupt on level 4, vec 3
+Mar 19 10:55:02 u5011 lag_wrap[1155]: Interrupt missed 825 and 832
+Mar 19 10:55:02 u5011 lag_wrap[1155]: Interrupt missed 825 and 832
+Mar 19 10:55:04 u5011 lag_wrap[1155]: Interrupt missed 830 and 832
+Mar 19 10:55:04 u5011 lag_wrap[1155]: Interrupt missed 830 and 832
+Mar 19 10:55:37 u5011 lag_wrap[1155]: Interrupt missed 826 and 832
+Mar 19 10:55:37 u5011 lag_wrap[1155]: Interrupt missed 826 and 832
+Mar 19 10:57:58 u5011 unix: WARNING: Spurious VMEbus interrupt on level 4, vec 1
+Mar 19 10:58:02 u5011 lag_wrap[1195]: Interrupt missed 825 and 832
+Mar 19 10:58:02 u5011 lag_wrap[1195]: Interrupt missed 825 and 832
+Mar 19 10:58:04 u5011 lag_wrap[1195]: Interrupt missed 829 and 832
+Mar 19 10:58:04 u5011 lag_wrap[1195]: Interrupt missed 829 and 832
+Mar 19 13:52:28 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 13:52:28 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 13:53:14 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 13:53:14 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 13:53:25 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 13:53:25 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 13:53:28 u5011 unix: NFS server t45001 not responding still trying
+Mar 19 13:53:47 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 13:53:47 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 13:54:00 u5011 unix: NFS server t45001 not responding still trying
+Mar 19 13:55:19 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 13:55:19 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:02:42 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:02:42 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:03:53 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:03:53 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:05:03 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:05:03 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:08:23 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:08:23 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:09:33 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:09:33 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:11:05 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:11:05 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:18:40 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:18:40 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:19:25 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:19:25 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:19:36 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:19:36 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:19:59 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:19:59 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:21:30 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 14:21:30 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 14:24:52 u5011 unix: NFS server t45001 ok
+Mar 19 14:24:52 u5011 last message repeated 1 time
+Mar 19 14:24:52 u5011 unix: NFS server t45001 not responding still trying
+Mar 19 14:24:52 u5011 unix: NFS server t45001 ok
+Mar 19 17:01:34 u5011 unix: SunOS Release 5.7 Version Generic_106541-02 [UNIX(R) System V Release 4.0]
+Mar 19 17:01:34 u5011 unix: Copyright (c) 1983-1998, Sun Microsystems, Inc.
+Mar 19 17:01:34 u5011 unix: Ethernet address = 0:80:42:b:a7:5d
+Mar 19 17:01:34 u5011 unix: mem = 262144K (0x10000000)
+Mar 19 17:01:34 u5011 unix: avail mem = 253927424
+Mar 19 17:01:34 u5011 unix: root nexus = FORCE,CPU-50(UltraSPARC-IIi 300MHz)
+Mar 19 17:01:34 u5011 unix: pci0 at root: UPA 0x1f 0x0
+Mar 19 17:01:34 u5011 unix: pci0 is /pci@1f,0
+Mar 19 17:01:34 u5011 unix: PCI-device: pci@2,1, simba0
+Mar 19 17:01:34 u5011 unix: SUNW,hme1: CheerIO 2.0 (Rev Id = c1) Found
+Mar 19 17:01:34 u5011 unix: PCI-device: network@1,1, hme1
+Mar 19 17:01:34 u5011 unix: hme1 is /pci@1f,0/pci@2,1/network@1,1
+Mar 19 17:01:34 u5011 unix: PCI-device: network@1,1, hme0
+Mar 19 17:01:34 u5011 unix: hme0 is /pci@1f,0/network@1,1
+Mar 19 17:01:34 u5011 unix: Requesting Internet address for 0:80:42:b:a7:5d
+Mar 19 17:01:37 u5011 unix: SUNW,hme0: Using Internal Transceiver
+Mar 19 17:01:37 u5011 unix: SUNW,hme0: 100 Mbps full-duplex Link Up
+Mar 19 17:01:39 u5011 unix: Found my IP address: 81f21f4a (129.242.31.74)
+Mar 19 17:01:39 u5011 unix: hostname: u5011
+Mar 19 17:01:39 u5011 unix: domainname: eiscat.uit.no
+Mar 19 17:01:49 u5011 unix: root on t45001:/export/root/u5011 fstype nfsdyn
+Mar 19 17:01:49 u5011 unix: VME: Universe rev. 1 at 0x704c8000
+Mar 19 17:01:49 u5011 unix: VME: LCA rev. 2 at 0xfffa8000
+Mar 19 17:01:49 u5011 unix: FRCvme V2.4.1 VME Nexus 
+Mar 19 17:01:49 u5011 unix: PCI-device: vme@5, VME0
+Mar 19 17:01:49 u5011 unix: PCI-device: ebus@1, ebus0
+Mar 19 17:01:49 u5011 unix: su0 at ebus0: offset 14,3803f8
+Mar 19 17:01:49 u5011 unix: su0 is /pci@1f,0/ebus@1/su@14,3803f8
+Mar 19 17:01:49 u5011 unix: su1 at ebus0: offset 14,3602f8
+Mar 19 17:01:49 u5011 unix: su1 is /pci@1f,0/ebus@1/su@14,3602f8
+Mar 19 17:01:49 u5011 unix: keyboard is </pci@1f,0/ebus@1/su@14,3803f8> major <37> minor <0>
+Mar 19 17:01:49 u5011 unix: mouse is </pci@1f,0/ebus@1/su@14,3602f8> major <37> minor <1>
+Mar 19 17:01:49 u5011 unix: se0 at ebus0: offset 14,400000
+Mar 19 17:01:49 u5011 unix: se0 is /pci@1f,0/ebus@1/se@14,400000
+Mar 19 17:01:49 u5011 unix: stdin is </pci@1f,0/ebus@1/se@14,400000:a> major <20> minor <0>
+Mar 19 17:01:49 u5011 unix: stdout is </pci@1f,0/ebus@1/se@14,400000:a> major <20> minor <0>
+Mar 19 17:01:49 u5011 unix: cpu0: SUNW,UltraSPARC-IIi (upaid 0 impl 0x12 ver 0x13 clock 300 MHz)
+Mar 19 17:01:53 u5011 unix: dump on /dev/swap size 256 MB
+Mar 19 17:01:55 u5011 unix: SUNW,hme1: Using Internal Transceiver
+Mar 19 17:01:55 u5011 unix: SUNW,hme1: 100 Mbps full-duplex Link Up
+Mar 19 17:05:02 u5011 unix: pseudo-device: pm0
+Mar 19 17:05:02 u5011 unix: pm0 is /pseudo/pm@0
+Mar 19 17:05:02 u5011 unix: pseudo-device: tod0
+Mar 19 17:05:02 u5011 unix: tod0 is /pseudo/tod@0
+Mar 19 17:05:03 u5011 unix: pseudo-device: vol0
+Mar 19 17:05:03 u5011 unix: vol0 is /pseudo/vol@0
+Mar 19 17:05:03 u5011 unix: vmeplus0: using peek for read() syscall
+Mar 19 17:05:03 u5011 unix: vmeplus0: using poke for write() syscall
+Mar 19 17:05:03 u5011 unix: vmeplus0 at vme0: space 0xad,0 and space 0xbd,0 and space 0x8d,0 and vme16d16,0x0 and vme24d16,0x0 and vme32d16,0x0 and vme16d32,0x0 and vme24d32,0x0 and vme32d32,0x0 and space 0x3f,0 and space 0x3c,0 and space 0xf,0 and space 0xc,0 and space 0x20,0 and space 0xaf,0 and space 0x2f,0 and space 0x6f,0 and space 0x90,0 and space 0x91,0 and space 0x10,0 and space 0x11,0 and space 0x50,0 and space 0x51,0 VME level 6 vector 0x50 sparc ipl 11, VME level 3 vector 0x52 sparc ipl 5, VME level 3 vector 0x50 sparc ipl 5, VME level 4 vector 0x1 sparc ipl 7, VME level 4 vector 0x2 sparc ipl 7, VME level 4 vector 0x3 sparc ipl 7
+Mar 19 17:05:03 u5011 unix: vmeplus0 is /pci@1f,0/vme@5/vmeplus@ad,0
+Mar 19 17:05:04 u5011 unix: SIOCSIFDSTADDR: IFF_POINTOPOINT not set
+Mar 19 17:05:04 u5011 unix: /pci@1f,0/pci@2,1/scsi@4 (glm1):
+Mar 19 17:05:04 u5011 	Rev. 4 Symbios 53c875 found.
+Mar 19 17:05:04 u5011 unix: PCI-device: scsi@4, glm1
+Mar 19 17:05:04 u5011 unix: glm1 is /pci@1f,0/pci@2,1/scsi@4
+Mar 19 17:05:04 u5011 unix: /pci@1f,0/scsi@4 (glm0):
+Mar 19 17:05:04 u5011 	Rev. 4 Symbios 53c875 found.
+Mar 19 17:05:04 u5011 unix: PCI-device: scsi@4, glm0
+Mar 19 17:05:04 u5011 unix: glm0 is /pci@1f,0/scsi@4
+Mar 19 17:30:58 u5011 unix: vmefdma0 at vme0: space 0xad,0 and space 0xbd,0 and space 0x8d,0 and vme16d16,0x0 and vme24d16,0x0 and vme32d16,0x0 and vme16d32,0x0 and vme24d32,0x0 and vme32d32,0x0 and space 0x3f,0 and space 0x3c,0 and space 0xf,0 and space 0xc,0 and space 0x20,0
+Mar 19 17:30:58 u5011 unix: vmefdma0 is /pci@1f,0/vme@5/vmefdma@ad,0
+Mar 19 17:53:58 u5011 unix: WARNING: Spurious VMEbus interrupt on level 4, vec 3
+Mar 19 17:54:04 u5011 lag_wrap[794]: Interrupt missed 1721 and 1728
+Mar 19 17:54:04 u5011 lag_wrap[794]: Interrupt missed 1721 and 1728
+Mar 19 17:54:09 u5011 lag_wrap[794]: Interrupt missed 1725 and 1728
+Mar 19 17:54:09 u5011 lag_wrap[794]: Interrupt missed 1725 and 1728
+Mar 19 17:55:05 u5011 unix: WARNING: Spurious VMEbus interrupt on level 4, vec 1
+Mar 19 17:55:09 u5011 lag_wrap[831]: Interrupt missed 1376 and 1728
+Mar 19 17:55:09 u5011 lag_wrap[831]: Interrupt missed 1376 and 1728
+Mar 19 17:55:14 u5011 lag_wrap[831]: Interrupt missed 1724 and 1728
+Mar 19 17:55:14 u5011 lag_wrap[831]: Interrupt missed 1724 and 1728
+Mar 19 18:05:04 u5011 lag_wrap[831]: Interrupt missed 1726 and 1728
+Mar 19 18:05:04 u5011 lag_wrap[831]: Interrupt missed 1726 and 1728
+Mar 19 18:14:04 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 18:14:04 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 18:36:34 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 18:36:34 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 18:41:39 u5011 lag_wrap[831]: Interrupt missed 3 and 1728
+Mar 19 18:41:39 u5011 lag_wrap[831]: Interrupt missed 3 and 1728
+Mar 19 18:41:39 u5011 lag_wrap[831]: Interrupt missed 159 and 1728
+Mar 19 18:41:39 u5011 lag_wrap[831]: Interrupt missed 159 and 1728
+Mar 19 18:59:09 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 18:59:09 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 19:21:39 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 19:21:39 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 19:44:09 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 19:44:09 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 20:05:04 u5011 lag_wrap[831]: Interrupt missed 1727 and 1728
+Mar 19 20:05:04 u5011 lag_wrap[831]: Interrupt missed 1727 and 1728
+Mar 19 20:06:39 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 20:06:39 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 20:29:09 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 20:29:09 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 20:51:39 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 20:51:39 u5011 lag_wrap[831]: Interrupt missed 1722 and 1728
+Mar 19 23:01:12 u5011 unix: WARNING: Spurious VMEbus interrupt on level 4, vec 1
+Mar 19 23:01:15 u5011 lag_wrap[1795]: Interrupt missed 17 and 27
+Mar 19 23:01:15 u5011 lag_wrap[1795]: Interrupt missed 17 and 27
+Mar 20 07:40:51 u5011 unix: WARNING: Spurious VMEbus interrupt on level 4, vec 1
+Mar 20 07:40:53 u5011 lag_wrap[3416]: Interrupt missed 16 and 27
+Mar 20 07:40:53 u5011 lag_wrap[3416]: Interrupt missed 16 and 27
+Mar 20 15:37:33 u5011 bsd-gw[4889]: Error reading from connection: Bad file number
+Mar 20 15:50:45 u5011 bsd-gw[4934]: Error reading from connection: Bad file number
+Mar 20 16:11:19 u5011 unix: WARNING: Spurious VMEbus interrupt on level 4, vec 1
+Mar 20 16:11:24 u5011 lag_wrap[5048]: Interrupt missed 1721 and 1728
+Mar 20 16:11:24 u5011 lag_wrap[5048]: Interrupt missed 1721 and 1728
+Mar 20 16:11:29 u5011 lag_wrap[5048]: Interrupt missed 1725 and 1728
+Mar 20 16:11:29 u5011 lag_wrap[5048]: Interrupt missed 1725 and 1728
+Mar 20 16:17:54 u5011 lag_wrap[5097]: Interrupt missed 1721 and 1728
+Mar 20 16:17:54 u5011 lag_wrap[5097]: Interrupt missed 1721 and 1728
+Mar 20 16:17:59 u5011 lag_wrap[5097]: Interrupt missed 1725 and 1728
+Mar 20 16:17:59 u5011 lag_wrap[5097]: Interrupt missed 1725 and 1728
+Mar 20 16:21:39 u5011 lag_wrap[5097]: Interrupt missed 1722 and 1728
+Mar 20 16:21:39 u5011 lag_wrap[5097]: Interrupt missed 1722 and 1728
+Mar 20 16:44:09 u5011 lag_wrap[5097]: Interrupt missed 1722 and 1728
+Mar 20 16:44:09 u5011 lag_wrap[5097]: Interrupt missed 1722 and 1728
+Mar 20 16:50:58 u5011 unix: WARNING: Spurious VMEbus interrupt on level 4, vec 1
+Mar 20 16:51:04 u5011 lag_wrap[5230]: Interrupt missed 1721 and 1728
+Mar 20 16:51:04 u5011 lag_wrap[5230]: Interrupt missed 1721 and 1728
+Mar 20 16:51:09 u5011 lag_wrap[5230]: Interrupt missed 1725 and 1728
+Mar 20 16:51:09 u5011 lag_wrap[5230]: Interrupt missed 1725 and 1728
+Mar 20 17:06:34 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 17:06:34 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 17:29:04 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 17:29:04 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 17:51:34 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 17:51:34 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 18:14:09 u5011 lag_wrap[5230]: Interrupt missed 1721 and 1728
+Mar 20 18:14:09 u5011 lag_wrap[5230]: Interrupt missed 1721 and 1728
+Mar 20 18:30:34 u5011 lag_wrap[5230]: Interrupt missed 1725 and 1728
+Mar 20 18:30:34 u5011 lag_wrap[5230]: Interrupt missed 1725 and 1728
+Mar 20 18:36:39 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 18:36:39 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 18:59:09 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 18:59:09 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 19:05:04 u5011 lag_wrap[5230]: Interrupt missed 1727 and 1728
+Mar 20 19:05:04 u5011 lag_wrap[5230]: Interrupt missed 1727 and 1728
+Mar 20 19:21:39 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 19:21:39 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 19:44:09 u5011 lag_wrap[5230]: Interrupt missed 1721 and 1728
+Mar 20 19:44:09 u5011 lag_wrap[5230]: Interrupt missed 1721 and 1728
+Mar 20 20:06:39 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 20:06:39 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 20:29:09 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 20:29:09 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 20:51:39 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728
+Mar 20 20:51:39 u5011 lag_wrap[5230]: Interrupt missed 1722 and 1728

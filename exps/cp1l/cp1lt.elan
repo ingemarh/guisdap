@@ -1,0 +1,120 @@
+#############################################################################
+# cp1lt.elan
+#
+#   EROS3 script for cp1lt experiment. 
+#
+#   Versions: 1.00  Initial version, Aug 2000
+#
+# 18-Aug-2000 AW
+# Matlab data file layout !!!!!OBS 0 indexed!!!!
+# The physical channels are directly mapped to the cp1lt.tlan file
+# so CH1 and CH1OFF means that start and stop sampling on the physical ch. 1
+# 0-239 	Signal power profile 240 samples, physical ch 1
+# 240-359 	Background power profile 120 samples, physical ch 1
+# 360-386 	Calibration power profile 27 samples, physical ch 1
+# 387-10486 	Signal longpulse 25 lag 416 samples, physical ch 2
+# 10487-15236 	Background longpulse 25 lag 202 samples, physical ch 2
+# 15237-15262 	Calibration longpulse power profile 26 samples, physical ch 2
+# 15263-15571 	Signal AC code power profile 309 samples, physical ch 3
+# 15572-34429 	Signal AC code lag profiles 45 lag 
+#		285 samples fractionality 3 physical ch 3
+# 34430-34738 	Signal Power profile 309 samples physical ch 4
+# 34739-35014 	Background Power profile 276 samples physical ch 4
+# 35015-35053 	Calibration Power profile 39 samples physical ch 4
+#############################################################################
+
+proc cp1lt { azim  elev  altitude } {
+
+    set Azim  $azim                 ;# These values will go to parameter block
+    set Elev  $elev                 ;# 
+    set Altitude $altitude          ; 
+    set CalTemp 182                 ;#Changed on 25/1_01 from 150 K
+
+    #############
+    # Definitions
+    #############
+
+    set SYS uhf
+    set XDIR /kst/exp/cp1lt
+    set FIR /kst/dsp/fir
+
+    set Expname  "cp1lt"
+    set Expid    "kst0 cp1lt 1.00"       
+    set Corrfile $XDIR/${Expname}.fil
+    set Iper_us  5000000
+    set Data_Disk "/data1"          ;# Disk to save data to
+    set Filter12 $FIR/b25d150.fir     ;# +-25kHz filter for 10 usec sampling
+    #set Filter34 $FIR/b25d315.fir     ;# +-25kHz filter for 21 usec sampling
+    set Filter34 $FIR/b75d105.fir     ;# +-75kHz filter for 7 usec sampling
+
+    set NCO1 $XDIR/ch1_cp1.nco
+    set NCO2 $XDIR/ch2_cp1.nco
+    set NCO3 $XDIR/ch3_cp1.nco
+    set NCO4 $XDIR/ch4_cp1.nco
+    
+    #############
+    # Actual work
+    #############
+
+    # Stop receiver --
+
+
+    SYNC -10
+
+    stopradar -all
+    stopdata
+    mount $Data_Disk		;#Mount the defined data disk
+    # Load radar controller --
+    loadradar rec -loopc 8 -sync 3200 -file $XDIR/${Expname}_${SYS}.rbin  -prog1 0    
+	            ;# 8 <==> for 5 sec integration period
+
+    loadradar trans -loopc 8 -sync 3200 -file $XDIR/${Expname}_${SYS}.tbin -prog1 0 
+
+    # Load filters --
+
+    loadfilter $Filter12 ch1,2
+    loadfilter $Filter34 ch3,4
+
+    # Set frequencies --
+
+    loadfrequency $NCO1 ch1
+    loadfrequency $NCO2 ch2
+    loadfrequency $NCO3 ch3
+    loadfrequency $NCO4 ch4
+
+   setfrequency ch1, ch2, ch3, ch4 12.0
+
+    # Start radar controllers --
+
+    SYNC 2
+    armradar rec -prog1
+    armradar trans -prog1
+    startradar EXPSTART 5.00       
+#	pointdirection 183.2 77.2 Changed on 5/2-01
+	pointrheight $Azim $Elev $Altitude
+    # Poke antenna parameters to rtcommon ---------------------------------------
+
+    #rtpoke ant azim $Azim elev $Elev caltemp $CalTemp
+    rtpoke ant  caltemp $CalTemp
+
+    # Start data access ---------------------------------------------------------
+
+    SYNC 4
+
+    startdata $Corrfile $Expid $Iper_us
+
+    # Start recording ------------------------------------------------------------
+
+    SYNC 4
+##    disablerecording
+
+    # Infinite loop, to be keep the experiment alive ---------------------------
+
+    DO -1 {
+        DISP "[TimeStamp now -noyear] -- $Expname running"
+        SYNC 60
+    }    
+};#cp1lt
+
+
+cp1lt 183.8 77.1 292.9

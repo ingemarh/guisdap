@@ -1,0 +1,102 @@
+#############################################################################
+# tau8v.elan
+#
+# EROS3 script for tau8v experiment. 
+# Split beam VHF experiment for vertical pointing
+# This experiment is based on the tau1v version
+# A fractionality of 7 is used and a sampling speed of 12 us
+# 55 lags are calculated
+# RF duty is 9.83%
+# Fully decoded height region ~230-1400 km
+# Partially decoded height region ~50-230 km
+#
+# Versions: 1.00  Initial version, Nov 2001
+#
+# 10-Dev-2001 IH/AW
+#############################################################################
+
+proc tau8v { azim  elev } {
+
+    set Azim  $azim                 ;# These values will go to parameter block
+    set Elev  $elev                 ;# 
+
+    #############
+    # Definitions
+    #############
+
+	set Sys vhf
+    set XDIR /kst/exp/tau8v
+    set FIR /kst/dsp/fir
+	set Data_Disk  "/data2"
+    set Expname  "tau8v"              
+    set Expid    "kst0 tau8v 1.00"       
+    set Corrfile $XDIR/$Expname.fil
+    set Iper_us  5000000
+
+    set Filter $FIR/b25d210.fir     ;# +-25kHz filter for 14 usec sampling
+
+    set NCO1 $XDIR/ch1_tau8v.nco
+    set NCO2 $XDIR/ch2_tau8v.nco
+    
+    setfrequency ch1,ch2,ch4,ch5  12.0
+    #############
+    # Actual work
+    #############
+
+    # Stop receiver --
+
+    SYNC -10
+
+    stopradar -rec
+    stopradar -trans
+    stopdata
+	mount $Data_Disk
+
+    # Load radar controller --
+
+    loadradar rec -loopc 6 -sync 3200 -file $XDIR/${Expname}_${Sys}.rbin  -prog1 0    
+    loadradar trans -loopc 6 -sync 3200 -file $XDIR/${Expname}_${Sys}.tbin -prog1 0     
+
+    # Load filters --
+
+    loadfilter $Filter ch1,2,4,5
+
+    # Set frequencies --
+
+    loadfrequency $NCO1 ch1
+    loadfrequency $NCO2 ch2
+    loadfrequency $NCO1 ch4
+    loadfrequency $NCO2 ch5
+
+
+    # Start radar controllers --
+
+    SYNC 2
+    armradar rec -prog1
+    armradar trans -prog1
+    startradar EXPSTART 5.00   
+
+    # Poke antenna parameters to rtcommon ---------------------------------------
+
+    rtpoke ant azim $Azim elev $Elev caltemp 280
+
+    # Start data access ---------------------------------------------------------
+
+    SYNC 4
+
+    startdata $Corrfile $Expid $Iper_us
+
+    # Start recording ------------------------------------------------------------
+
+    SYNC 4
+    disablerecording
+
+    # Infinite loop, to be keep the experiment alive ---------------------------
+
+    DO -1 {
+        DISP "[TimeStamp now -noyear] -- $Expname running"
+        SYNC 60
+    }    
+};#tau8v
+
+tau8v 0 90

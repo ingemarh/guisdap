@@ -1,0 +1,18 @@
+% timing diagram picture add-ons
+
+\def\addtopict{%
+\axis left invisible label {\hskip 5mm} / 
+\iffalse\axis bottom ticks 
+  numbered from {\xamin} to {\xlastlabel} by {\xnumberinterval}
+  withvalues {\xamax ms} / at {\xamax} / 
+  unlabeled short from {\xamin} to {\xamax} by {\xtickinterval}
+/ \fi
+\ifaxis\axis bottom ticks 
+  numbered from {\xmin} to {\xmax} by {\xnumberinterval}
+  unlabeled short from {\xmin} to {\xmax} by {\xtickinterval}
+/ \fi
+\axis right ticks numbered short from {\yamin} to {\yamax} by 1 /
+\ifdim \ymin pt<0pt \axis right ticks short withvalues {mf} / at 0 / / \fi
+\axis top invisible label {\title} /
+}
+\def\addtoPS{/xdenseinterval{\xdenseinterval\s}def }

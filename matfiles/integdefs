@@ -1,0 +1,9 @@
+ignore-status amplitude, heater, vhf-antenna-motion transmitter
+input-type raw-file
+output-type none
+var-est true
+par-merge (or,95) (average,96:99)
+integration-type summed
+debug-level 2
+status-messages y
+allow-vert-rot true

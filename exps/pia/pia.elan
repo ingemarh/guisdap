@@ -1,0 +1,109 @@
+# -*- tcl -*-
+#############################################################################
+# pia.elan
+#
+#   EROS3 script for pia experiment. 
+#
+#   Versions: 1.00  Initial version, Sep 2000
+#
+#############################################################################
+proc pia { azim  elev } {
+
+    set Azim  $azim                 ;# These values will go to parameter block
+    set Elev  $elev                 ;# 
+
+    #############
+    # Definitions
+    #############
+
+    set XDIR /kst/exp/pia
+    set FIR /kst/dsp/fir
+    set RADAR uhf
+    set Expname  "pia"              
+    set Expid    "kst0 pia 1.00"       
+    set Corrfile $XDIR/${Expname}.fil
+    set Iper_us  5000000
+
+    set Filter $FIR/b35d150.fir     ;# +-35kHz filter for 10 usec sampling
+
+    set NCO1 $XDIR/ch1_pia.nco
+    set NCO2 $XDIR/ch2_pia.nco
+    set NCO3 $XDIR/ch3_pia.nco
+    set NCO4 $XDIR/ch4_pia.nco
+
+    #############
+    # Actual work
+    #############
+
+    # Stop receiver --
+
+    SYNC -10
+
+    stopradar -all
+    stopdata
+
+    # Load radar controller --
+
+    loadradar rec -loopc 216 -sync 60800 -file $XDIR/${Expname}_uhf.rbin -prog1 0
+    loadradar trans -loopc 216 -sync 60800 -file $XDIR/${Expname}_uhf.tbin -prog1 0
+
+
+    # Load filters --
+
+    loadfilter $Filter ch1
+    loadfilter $Filter ch2
+    loadfilter $Filter ch3
+    loadfilter $Filter ch4
+
+    # Set frequencies --
+
+    loadfrequency $NCO1 ch1
+    loadfrequency $NCO2 ch2
+    loadfrequency $NCO3 ch3
+    loadfrequency $NCO4 ch4
+
+#   setfrequency ch1, ch2, ch3, ch4 12.0
+ 
+    # Start radar controllers --
+
+    SYNC 2
+    armradar rec -prog1
+    armradar trans -prog1
+    startradar EXPSTART 5.00
+
+    # Poke antenna parameters to rtcommon -----------------------------------
+
+    changemode 0
+    rtpoke ant caltemp 182
+
+    # Start data access -----------------------------------------------------
+
+    SYNC 4
+    mount /data2
+    startdata $Corrfile $Expid $Iper_us
+
+    # Start recording -------------------------------------------------------
+
+    SYNC 4
+    disablerecording
+
+    # Infinite loop, to be keep the experiment alive ------------------------
+
+    set sync 10
+
+    DO -1 {
+#	DISP "[TimeStamp now -noyear] -- $Expname running"
+#	pointdirection $Azim 90
+#	SYNC $sync
+#	DO 4 {
+#	    moveelevation -3
+#	    printantenna
+#	    SYNC $sync
+#	}
+#	moveelevation +6
+	SYNC $sync
+    }    
+};
+
+
+pia 183.8 90

@@ -1,0 +1,2819 @@
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 1 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	0
+AT	1	CHQPULS,AD1L,AD2R,STFIR
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% +++
+AT	520 	PHA0 		% -
+AT	604 	PHA180 		% +
+AT	688 	PHA0 		% -----
+AT	1108 	PHA180 		% +++
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% +++
+AT	4030 	BRX5 		% -
+AT	4114 	BRX5OFF 		% +
+AT	4198 	BRX5 		% -----
+AT	4618 	BRX5OFF 		% +++
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 1 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	13020
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% +++
+AT	520 	PHA0 		% -
+AT	604 	PHA180 		% +
+AT	688 	PHA0 		% -----
+AT	1108 	PHA180 		% +++
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% +++
+AT	4030 	BRX5 		% -
+AT	4114 	BRX5OFF 		% +
+AT	4198 	BRX5 		% -----
+AT	4618 	BRX5OFF 		% +++
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 2 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	26040
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +++++
+AT	520 	PHA0 		% -
+AT	604 	PHA180 		% +++
+AT	856 	PHA0 		% ----
+AT	1192 	PHA180 		% ++ ++
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +++++
+AT	4030 	BRX5 		% -
+AT	4114 	BRX5OFF 		% +++
+AT	4366 	BRX5 		% ----
+AT	4702 	BRX5OFF 		% ++ ++
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 2 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	39060
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +++++
+AT	520 	PHA0 		% -
+AT	604 	PHA180 		% +++
+AT	856 	PHA0 		% ----
+AT	1192 	PHA180 		% ++ ++
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +++++
+AT	4030 	BRX5 		% -
+AT	4114 	BRX5OFF 		% +++
+AT	4366 	BRX5 		% ----
+AT	4702 	BRX5OFF 		% ++ ++
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 3 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	52080
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% --
+AT	352 	PHA180 		% ++
+AT	520 	PHA0 		% --
+AT	688 	PHA180 		% +++
+AT	940 	PHA0 		% -
+AT	1024 	PHA180 		% ++
+AT	1192 	PHA0 		% -- --
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% --
+AT	3862 	BRX5OFF 		% ++
+AT	4030 	BRX5 		% --
+AT	4198 	BRX5OFF 		% +++
+AT	4450 	BRX5 		% -
+AT	4534 	BRX5OFF 		% ++
+AT	4702 	BRX5 		% -- --
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 3 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	65100
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% --
+AT	352 	PHA180 		% ++
+AT	520 	PHA0 		% --
+AT	688 	PHA180 		% +++
+AT	940 	PHA0 		% -
+AT	1024 	PHA180 		% ++
+AT	1192 	PHA0 		% -- --
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% --
+AT	3862 	BRX5OFF 		% ++
+AT	4030 	BRX5 		% --
+AT	4198 	BRX5OFF 		% +++
+AT	4450 	BRX5 		% -
+AT	4534 	BRX5OFF 		% ++
+AT	4702 	BRX5 		% -- --
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 4 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	78120
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% -
+AT	352 	PHA180 		% ++
+AT	520 	PHA0 		% ----
+AT	856 	PHA180 		% +
+AT	940 	PHA0 		% -
+AT	1024 	PHA180 		% +
+AT	1108 	PHA0 		% ---
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% -
+AT	3862 	BRX5OFF 		% ++
+AT	4030 	BRX5 		% ----
+AT	4366 	BRX5OFF 		% +
+AT	4450 	BRX5 		% -
+AT	4534 	BRX5OFF 		% +
+AT	4618 	BRX5 		% ---
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 4 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	91140
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% -
+AT	352 	PHA180 		% ++
+AT	520 	PHA0 		% ----
+AT	856 	PHA180 		% +
+AT	940 	PHA0 		% -
+AT	1024 	PHA180 		% +
+AT	1108 	PHA0 		% ---
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% -
+AT	3862 	BRX5OFF 		% ++
+AT	4030 	BRX5 		% ----
+AT	4366 	BRX5OFF 		% +
+AT	4450 	BRX5 		% -
+AT	4534 	BRX5OFF 		% +
+AT	4618 	BRX5 		% ---
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 5 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	104160
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% +
+AT	352 	PHA0 		% -
+AT	436 	PHA180 		% +
+AT	520 	PHA0 		% ---
+AT	772 	PHA180 		% ++++
+AT	1108 	PHA0 		% -
+AT	1192 	PHA180 		% ++ ++
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% +
+AT	3862 	BRX5 		% -
+AT	3946 	BRX5OFF 		% +
+AT	4030 	BRX5 		% ---
+AT	4282 	BRX5OFF 		% ++++
+AT	4618 	BRX5 		% -
+AT	4702 	BRX5OFF 		% ++ ++
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 5 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	117180
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% +
+AT	352 	PHA0 		% -
+AT	436 	PHA180 		% +
+AT	520 	PHA0 		% ---
+AT	772 	PHA180 		% ++++
+AT	1108 	PHA0 		% -
+AT	1192 	PHA180 		% ++ ++
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% +
+AT	3862 	BRX5 		% -
+AT	3946 	BRX5OFF 		% +
+AT	4030 	BRX5 		% ---
+AT	4282 	BRX5OFF 		% ++++
+AT	4618 	BRX5 		% -
+AT	4702 	BRX5OFF 		% ++ ++
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 6 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	130200
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +++
+AT	352 	PHA0 		% -
+AT	436 	PHA180 		% +
+AT	520 	PHA0 		% --
+AT	688 	PHA180 		% +
+AT	772 	PHA0 		% -
+AT	856 	PHA180 		% ++++++
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +++
+AT	3862 	BRX5 		% -
+AT	3946 	BRX5OFF 		% +
+AT	4030 	BRX5 		% --
+AT	4198 	BRX5OFF 		% +
+AT	4282 	BRX5 		% -
+AT	4366 	BRX5OFF 		% ++++++
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 6 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	143220
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +++
+AT	352 	PHA0 		% -
+AT	436 	PHA180 		% +
+AT	520 	PHA0 		% --
+AT	688 	PHA180 		% +
+AT	772 	PHA0 		% -
+AT	856 	PHA180 		% ++++++
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +++
+AT	3862 	BRX5 		% -
+AT	3946 	BRX5OFF 		% +
+AT	4030 	BRX5 		% --
+AT	4198 	BRX5OFF 		% +
+AT	4282 	BRX5 		% -
+AT	4366 	BRX5OFF 		% ++++++
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 7 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	156240
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% ---
+AT	436 	PHA180 		% +
+AT	520 	PHA0 		% -
+AT	604 	PHA180 		% ++
+AT	772 	PHA0 		% --
+AT	940 	PHA180 		% +
+AT	1024 	PHA0 		% ----
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% ---
+AT	3946 	BRX5OFF 		% +
+AT	4030 	BRX5 		% -
+AT	4114 	BRX5OFF 		% ++
+AT	4282 	BRX5 		% --
+AT	4450 	BRX5OFF 		% +
+AT	4534 	BRX5 		% ----
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 7 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	169260
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% ---
+AT	436 	PHA180 		% +
+AT	520 	PHA0 		% -
+AT	604 	PHA180 		% ++
+AT	772 	PHA0 		% --
+AT	940 	PHA180 		% +
+AT	1024 	PHA0 		% ----
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% ---
+AT	3946 	BRX5OFF 		% +
+AT	4030 	BRX5 		% -
+AT	4114 	BRX5OFF 		% ++
+AT	4282 	BRX5 		% --
+AT	4450 	BRX5OFF 		% +
+AT	4534 	BRX5 		% ----
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 8 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	182280
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% --
+AT	436 	PHA180 		% +
+AT	520 	PHA0 		% -
+AT	604 	PHA180 		% +
+AT	688 	PHA0 		% -
+AT	772 	PHA180 		% +
+AT	856 	PHA0 		% -
+AT	940 	PHA180 		% +
+AT	1024 	PHA0 		% -
+AT	1108 	PHA180 		% +
+AT	1192 	PHA0 		% -- --
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% --
+AT	3946 	BRX5OFF 		% +
+AT	4030 	BRX5 		% -
+AT	4114 	BRX5OFF 		% +
+AT	4198 	BRX5 		% -
+AT	4282 	BRX5OFF 		% +
+AT	4366 	BRX5 		% -
+AT	4450 	BRX5OFF 		% +
+AT	4534 	BRX5 		% -
+AT	4618 	BRX5OFF 		% +
+AT	4702 	BRX5 		% -- --
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 8 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	195300
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% --
+AT	436 	PHA180 		% +
+AT	520 	PHA0 		% -
+AT	604 	PHA180 		% +
+AT	688 	PHA0 		% -
+AT	772 	PHA180 		% +
+AT	856 	PHA0 		% -
+AT	940 	PHA180 		% +
+AT	1024 	PHA0 		% -
+AT	1108 	PHA180 		% +
+AT	1192 	PHA0 		% -- --
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% --
+AT	3946 	BRX5OFF 		% +
+AT	4030 	BRX5 		% -
+AT	4114 	BRX5OFF 		% +
+AT	4198 	BRX5 		% -
+AT	4282 	BRX5OFF 		% +
+AT	4366 	BRX5 		% -
+AT	4450 	BRX5OFF 		% +
+AT	4534 	BRX5 		% -
+AT	4618 	BRX5OFF 		% +
+AT	4702 	BRX5 		% -- --
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 9 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	208320
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% ++
+AT	436 	PHA0 		% -----
+AT	856 	PHA180 		% ++
+AT	1024 	PHA0 		% ---- ----
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% ++
+AT	3946 	BRX5 		% -----
+AT	4366 	BRX5OFF 		% ++
+AT	4534 	BRX5 		% ---- ----
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 9 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	221340
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% ++
+AT	436 	PHA0 		% -----
+AT	856 	PHA180 		% ++
+AT	1024 	PHA0 		% ---- ----
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% ++
+AT	3946 	BRX5 		% -----
+AT	4366 	BRX5OFF 		% ++
+AT	4534 	BRX5 		% ---- ----
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 10 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	234360
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++++
+AT	436 	PHA0 		% ---
+AT	688 	PHA180 		% ++++
+AT	1024 	PHA0 		% -
+AT	1108 	PHA180 		% +
+AT	1192 	PHA0 		% --
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++++
+AT	3946 	BRX5 		% ---
+AT	4198 	BRX5OFF 		% ++++
+AT	4534 	BRX5 		% -
+AT	4618 	BRX5OFF 		% +
+AT	4702 	BRX5 		% --
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 10 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	247380
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++++
+AT	436 	PHA0 		% ---
+AT	688 	PHA180 		% ++++
+AT	1024 	PHA0 		% -
+AT	1108 	PHA180 		% +
+AT	1192 	PHA0 		% --
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++++
+AT	3946 	BRX5 		% ---
+AT	4198 	BRX5OFF 		% ++++
+AT	4534 	BRX5 		% -
+AT	4618 	BRX5OFF 		% +
+AT	4702 	BRX5 		% --
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 11 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	260400
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% --
+AT	352 	PHA180 		% +
+AT	436 	PHA0 		% --
+AT	604 	PHA180 		% +++
+AT	856 	PHA0 		% -
+AT	940 	PHA180 		% ++
+AT	1108 	PHA0 		% -
+AT	1192 	PHA180 		% ++
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% --
+AT	3862 	BRX5OFF 		% +
+AT	3946 	BRX5 		% --
+AT	4114 	BRX5OFF 		% +++
+AT	4366 	BRX5 		% -
+AT	4450 	BRX5OFF 		% ++
+AT	4618 	BRX5 		% -
+AT	4702 	BRX5OFF 		% ++
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 11 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	273420
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% --
+AT	352 	PHA180 		% +
+AT	436 	PHA0 		% --
+AT	604 	PHA180 		% +++
+AT	856 	PHA0 		% -
+AT	940 	PHA180 		% ++
+AT	1108 	PHA0 		% -
+AT	1192 	PHA180 		% ++
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% --
+AT	3862 	BRX5OFF 		% +
+AT	3946 	BRX5 		% --
+AT	4114 	BRX5OFF 		% +++
+AT	4366 	BRX5 		% -
+AT	4450 	BRX5OFF 		% ++
+AT	4618 	BRX5 		% -
+AT	4702 	BRX5OFF 		% ++
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 12 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	286440
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% -
+AT	352 	PHA180 		% +
+AT	436 	PHA0 		% --
+AT	604 	PHA180 		% +
+AT	688 	PHA0 		% ---
+AT	940 	PHA180 		% +++++ +++++
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% -
+AT	3862 	BRX5OFF 		% +
+AT	3946 	BRX5 		% --
+AT	4114 	BRX5OFF 		% +
+AT	4198 	BRX5 		% ---
+AT	4450 	BRX5OFF 		% +++++ +++++
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 12 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	299460
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% -
+AT	352 	PHA180 		% +
+AT	436 	PHA0 		% --
+AT	604 	PHA180 		% +
+AT	688 	PHA0 		% ---
+AT	940 	PHA180 		% +++++ +++++
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% -
+AT	3862 	BRX5OFF 		% +
+AT	3946 	BRX5 		% --
+AT	4114 	BRX5OFF 		% +
+AT	4198 	BRX5 		% ---
+AT	4450 	BRX5OFF 		% +++++ +++++
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 13 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	312480
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% +
+AT	352 	PHA0 		% ---
+AT	604 	PHA180 		% +
+AT	688 	PHA0 		% -
+AT	772 	PHA180 		% +
+AT	856 	PHA0 		% --
+AT	1024 	PHA180 		% ++
+AT	1192 	PHA0 		% --
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% +
+AT	3862 	BRX5 		% ---
+AT	4114 	BRX5OFF 		% +
+AT	4198 	BRX5 		% -
+AT	4282 	BRX5OFF 		% +
+AT	4366 	BRX5 		% --
+AT	4534 	BRX5OFF 		% ++
+AT	4702 	BRX5 		% --
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 13 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	325500
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% +
+AT	352 	PHA0 		% ---
+AT	604 	PHA180 		% +
+AT	688 	PHA0 		% -
+AT	772 	PHA180 		% +
+AT	856 	PHA0 		% --
+AT	1024 	PHA180 		% ++
+AT	1192 	PHA0 		% --
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% +
+AT	3862 	BRX5 		% ---
+AT	4114 	BRX5OFF 		% +
+AT	4198 	BRX5 		% -
+AT	4282 	BRX5OFF 		% +
+AT	4366 	BRX5 		% --
+AT	4534 	BRX5OFF 		% ++
+AT	4702 	BRX5 		% --
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 14 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	338520
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +++
+AT	352 	PHA0 		% ---
+AT	604 	PHA180 		% ++
+AT	772 	PHA0 		% ---
+AT	1024 	PHA180 		% +
+AT	1108 	PHA0 		% --- ---
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +++
+AT	3862 	BRX5 		% ---
+AT	4114 	BRX5OFF 		% ++
+AT	4282 	BRX5 		% ---
+AT	4534 	BRX5OFF 		% +
+AT	4618 	BRX5 		% --- ---
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 14 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	351540
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +++
+AT	352 	PHA0 		% ---
+AT	604 	PHA180 		% ++
+AT	772 	PHA0 		% ---
+AT	1024 	PHA180 		% +
+AT	1108 	PHA0 		% --- ---
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +++
+AT	3862 	BRX5 		% ---
+AT	4114 	BRX5OFF 		% ++
+AT	4282 	BRX5 		% ---
+AT	4534 	BRX5OFF 		% +
+AT	4618 	BRX5 		% --- ---
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 15 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	364560
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% ------
+AT	688 	PHA180 		% +
+AT	772 	PHA0 		% -
+AT	856 	PHA180 		% +
+AT	940 	PHA0 		% --
+AT	1108 	PHA180 		% +++ +++
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% ------
+AT	4198 	BRX5OFF 		% +
+AT	4282 	BRX5 		% -
+AT	4366 	BRX5OFF 		% +
+AT	4450 	BRX5 		% --
+AT	4618 	BRX5OFF 		% +++ +++
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 15 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	377580
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% ------
+AT	688 	PHA180 		% +
+AT	772 	PHA0 		% -
+AT	856 	PHA180 		% +
+AT	940 	PHA0 		% --
+AT	1108 	PHA180 		% +++ +++
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% ------
+AT	4198 	BRX5OFF 		% +
+AT	4282 	BRX5 		% -
+AT	4366 	BRX5OFF 		% +
+AT	4450 	BRX5 		% --
+AT	4618 	BRX5OFF 		% +++ +++
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 16 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	390600
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% ------
+AT	772 	PHA180 		% ++
+AT	940 	PHA0 		% ---
+AT	1192 	PHA180 		% ++
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% ------
+AT	4282 	BRX5OFF 		% ++
+AT	4450 	BRX5 		% ---
+AT	4702 	BRX5OFF 		% ++
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 16 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	403620
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% ------
+AT	772 	PHA180 		% ++
+AT	940 	PHA0 		% ---
+AT	1192 	PHA180 		% ++
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% ------
+AT	4282 	BRX5OFF 		% ++
+AT	4450 	BRX5 		% ---
+AT	4702 	BRX5OFF 		% ++
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 17 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	416640
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% ++++
+AT	604 	PHA0 		% ----
+AT	940 	PHA180 		% +
+AT	1024 	PHA0 		% -
+AT	1108 	PHA180 		% +
+AT	1192 	PHA0 		% -
+AT	1276 	PHA180 		% + +
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% ++++
+AT	4114 	BRX5 		% ----
+AT	4450 	BRX5OFF 		% +
+AT	4534 	BRX5 		% -
+AT	4618 	BRX5OFF 		% +
+AT	4702 	BRX5 		% -
+AT	4786 	BRX5OFF 		% + +
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 17 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	429660
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% ++++
+AT	604 	PHA0 		% ----
+AT	940 	PHA180 		% +
+AT	1024 	PHA0 		% -
+AT	1108 	PHA180 		% +
+AT	1192 	PHA0 		% -
+AT	1276 	PHA180 		% + +
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% ++++
+AT	4114 	BRX5 		% ----
+AT	4450 	BRX5OFF 		% +
+AT	4534 	BRX5 		% -
+AT	4618 	BRX5OFF 		% +
+AT	4702 	BRX5 		% -
+AT	4786 	BRX5OFF 		% + +
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 18 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	442680
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++++++
+AT	604 	PHA0 		% -
+AT	688 	PHA180 		% ++
+AT	856 	PHA0 		% -
+AT	940 	PHA180 		% +
+AT	1024 	PHA0 		% ---
+AT	1276 	PHA180 		% +
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++++++
+AT	4114 	BRX5 		% -
+AT	4198 	BRX5OFF 		% ++
+AT	4366 	BRX5 		% -
+AT	4450 	BRX5OFF 		% +
+AT	4534 	BRX5 		% ---
+AT	4786 	BRX5OFF 		% +
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 18 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	455700
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++++++
+AT	604 	PHA0 		% -
+AT	688 	PHA180 		% ++
+AT	856 	PHA0 		% -
+AT	940 	PHA180 		% +
+AT	1024 	PHA0 		% ---
+AT	1276 	PHA180 		% +
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++++++
+AT	4114 	BRX5 		% -
+AT	4198 	BRX5OFF 		% ++
+AT	4366 	BRX5 		% -
+AT	4450 	BRX5OFF 		% +
+AT	4534 	BRX5 		% ---
+AT	4786 	BRX5OFF 		% +
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 19 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	468720
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% --
+AT	352 	PHA180 		% +++++++++++
+AT	1276 	PHA0 		% -
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% --
+AT	3862 	BRX5OFF 		% +++++++++++
+AT	4786 	BRX5 		% -
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 19 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	481740
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% --
+AT	352 	PHA180 		% +++++++++++
+AT	1276 	PHA0 		% -
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% --
+AT	3862 	BRX5OFF 		% +++++++++++
+AT	4786 	BRX5 		% -
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 20 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	494760
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% -
+AT	352 	PHA180 		% ++++
+AT	688 	PHA0 		% --
+AT	856 	PHA180 		% +++
+AT	1108 	PHA0 		% -
+AT	1192 	PHA180 		% +
+AT	1276 	PHA0 		% - -
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% -
+AT	3862 	BRX5OFF 		% ++++
+AT	4198 	BRX5 		% --
+AT	4366 	BRX5OFF 		% +++
+AT	4618 	BRX5 		% -
+AT	4702 	BRX5OFF 		% +
+AT	4786 	BRX5 		% - -
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 20 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	507780
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% -
+AT	352 	PHA180 		% ++++
+AT	688 	PHA0 		% --
+AT	856 	PHA180 		% +++
+AT	1108 	PHA0 		% -
+AT	1192 	PHA180 		% +
+AT	1276 	PHA0 		% - -
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% -
+AT	3862 	BRX5OFF 		% ++++
+AT	4198 	BRX5 		% --
+AT	4366 	BRX5OFF 		% +++
+AT	4618 	BRX5 		% -
+AT	4702 	BRX5OFF 		% +
+AT	4786 	BRX5 		% - -
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 21 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	520800
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% +
+AT	352 	PHA0 		% -
+AT	436 	PHA180 		% +++
+AT	688 	PHA0 		% -
+AT	772 	PHA180 		% ++
+AT	940 	PHA0 		% -
+AT	1024 	PHA180 		% +
+AT	1108 	PHA0 		% --
+AT	1276 	PHA180 		% +
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% +
+AT	3862 	BRX5 		% -
+AT	3946 	BRX5OFF 		% +++
+AT	4198 	BRX5 		% -
+AT	4282 	BRX5OFF 		% ++
+AT	4450 	BRX5 		% -
+AT	4534 	BRX5OFF 		% +
+AT	4618 	BRX5 		% --
+AT	4786 	BRX5OFF 		% +
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 21 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	533820
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% +
+AT	352 	PHA0 		% -
+AT	436 	PHA180 		% +++
+AT	688 	PHA0 		% -
+AT	772 	PHA180 		% ++
+AT	940 	PHA0 		% -
+AT	1024 	PHA180 		% +
+AT	1108 	PHA0 		% --
+AT	1276 	PHA180 		% +
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% +
+AT	3862 	BRX5 		% -
+AT	3946 	BRX5OFF 		% +++
+AT	4198 	BRX5 		% -
+AT	4282 	BRX5OFF 		% ++
+AT	4450 	BRX5 		% -
+AT	4534 	BRX5OFF 		% +
+AT	4618 	BRX5 		% --
+AT	4786 	BRX5OFF 		% +
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 22 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	546840
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +++
+AT	352 	PHA0 		% -
+AT	436 	PHA180 		% ++++
+AT	772 	PHA0 		% -
+AT	856 	PHA180 		% +
+AT	940 	PHA0 		% -
+AT	1024 	PHA180 		% ++
+AT	1192 	PHA0 		% -
+AT	1276 	PHA180 		% + +
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +++
+AT	3862 	BRX5 		% -
+AT	3946 	BRX5OFF 		% ++++
+AT	4282 	BRX5 		% -
+AT	4366 	BRX5OFF 		% +
+AT	4450 	BRX5 		% -
+AT	4534 	BRX5OFF 		% ++
+AT	4702 	BRX5 		% -
+AT	4786 	BRX5OFF 		% + +
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 22 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	559860
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +++
+AT	352 	PHA0 		% -
+AT	436 	PHA180 		% ++++
+AT	772 	PHA0 		% -
+AT	856 	PHA180 		% +
+AT	940 	PHA0 		% -
+AT	1024 	PHA180 		% ++
+AT	1192 	PHA0 		% -
+AT	1276 	PHA180 		% + +
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +++
+AT	3862 	BRX5 		% -
+AT	3946 	BRX5OFF 		% ++++
+AT	4282 	BRX5 		% -
+AT	4366 	BRX5OFF 		% +
+AT	4450 	BRX5 		% -
+AT	4534 	BRX5OFF 		% ++
+AT	4702 	BRX5 		% -
+AT	4786 	BRX5OFF 		% + +
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 23 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	572880
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% ---
+AT	436 	PHA180 		% ++
+AT	604 	PHA0 		% -
+AT	688 	PHA180 		% +
+AT	772 	PHA0 		% -----
+AT	1192 	PHA180 		% +
+AT	1276 	PHA0 		% - -
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% ---
+AT	3946 	BRX5OFF 		% ++
+AT	4114 	BRX5 		% -
+AT	4198 	BRX5OFF 		% +
+AT	4282 	BRX5 		% -----
+AT	4702 	BRX5OFF 		% +
+AT	4786 	BRX5 		% - -
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 23 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	585900
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% ---
+AT	436 	PHA180 		% ++
+AT	604 	PHA0 		% -
+AT	688 	PHA180 		% +
+AT	772 	PHA0 		% -----
+AT	1192 	PHA180 		% +
+AT	1276 	PHA0 		% - -
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% ---
+AT	3946 	BRX5OFF 		% ++
+AT	4114 	BRX5 		% -
+AT	4198 	BRX5OFF 		% +
+AT	4282 	BRX5 		% -----
+AT	4702 	BRX5OFF 		% +
+AT	4786 	BRX5 		% - -
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 24 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	598920
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% --
+AT	436 	PHA180 		% ++
+AT	604 	PHA0 		% --
+AT	772 	PHA180 		% +
+AT	856 	PHA0 		% ---
+AT	1108 	PHA180 		% ++
+AT	1276 	PHA0 		% -
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% --
+AT	3946 	BRX5OFF 		% ++
+AT	4114 	BRX5 		% --
+AT	4282 	BRX5OFF 		% +
+AT	4366 	BRX5 		% ---
+AT	4618 	BRX5OFF 		% ++
+AT	4786 	BRX5 		% -
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 24 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	611940
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% --
+AT	436 	PHA180 		% ++
+AT	604 	PHA0 		% --
+AT	772 	PHA180 		% +
+AT	856 	PHA0 		% ---
+AT	1108 	PHA180 		% ++
+AT	1276 	PHA0 		% -
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% --
+AT	3946 	BRX5OFF 		% ++
+AT	4114 	BRX5 		% --
+AT	4282 	BRX5OFF 		% +
+AT	4366 	BRX5 		% ---
+AT	4618 	BRX5OFF 		% ++
+AT	4786 	BRX5 		% -
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 25 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	624960
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% ++
+AT	436 	PHA0 		% -
+AT	520 	PHA180 		% ++
+AT	688 	PHA0 		% --
+AT	856 	PHA180 		% +
+AT	940 	PHA0 		% ---
+AT	1192 	PHA180 		% +
+AT	1276 	PHA0 		% -
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% ++
+AT	3946 	BRX5 		% -
+AT	4030 	BRX5OFF 		% ++
+AT	4198 	BRX5 		% --
+AT	4366 	BRX5OFF 		% +
+AT	4450 	BRX5 		% ---
+AT	4702 	BRX5OFF 		% +
+AT	4786 	BRX5 		% -
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 25 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	637980
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% ++
+AT	436 	PHA0 		% -
+AT	520 	PHA180 		% ++
+AT	688 	PHA0 		% --
+AT	856 	PHA180 		% +
+AT	940 	PHA0 		% ---
+AT	1192 	PHA180 		% +
+AT	1276 	PHA0 		% -
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% ++
+AT	3946 	BRX5 		% -
+AT	4030 	BRX5OFF 		% ++
+AT	4198 	BRX5 		% --
+AT	4366 	BRX5OFF 		% +
+AT	4450 	BRX5 		% ---
+AT	4702 	BRX5OFF 		% +
+AT	4786 	BRX5 		% -
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 26 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	651000
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++++
+AT	436 	PHA0 		% -
+AT	520 	PHA180 		% +++++
+AT	940 	PHA0 		% --
+AT	1108 	PHA180 		% ++
+AT	1276 	PHA0 		% - -
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++++
+AT	3946 	BRX5 		% -
+AT	4030 	BRX5OFF 		% +++++
+AT	4450 	BRX5 		% --
+AT	4618 	BRX5OFF 		% ++
+AT	4786 	BRX5 		% - -
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 26 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	664020
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++++
+AT	436 	PHA0 		% -
+AT	520 	PHA180 		% +++++
+AT	940 	PHA0 		% --
+AT	1108 	PHA180 		% ++
+AT	1276 	PHA0 		% - -
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++++
+AT	3946 	BRX5 		% -
+AT	4030 	BRX5OFF 		% +++++
+AT	4450 	BRX5 		% --
+AT	4618 	BRX5OFF 		% ++
+AT	4786 	BRX5 		% - -
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 27 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	677040
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% --
+AT	352 	PHA180 		% +
+AT	436 	PHA0 		% -
+AT	520 	PHA180 		% +
+AT	604 	PHA0 		% -
+AT	688 	PHA180 		% ++
+AT	856 	PHA0 		% --
+AT	1024 	PHA180 		% +
+AT	1108 	PHA0 		% --
+AT	1276 	PHA180 		% + +
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% --
+AT	3862 	BRX5OFF 		% +
+AT	3946 	BRX5 		% -
+AT	4030 	BRX5OFF 		% +
+AT	4114 	BRX5 		% -
+AT	4198 	BRX5OFF 		% ++
+AT	4366 	BRX5 		% --
+AT	4534 	BRX5OFF 		% +
+AT	4618 	BRX5 		% --
+AT	4786 	BRX5OFF 		% + +
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 27 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	690060
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% --
+AT	352 	PHA180 		% +
+AT	436 	PHA0 		% -
+AT	520 	PHA180 		% +
+AT	604 	PHA0 		% -
+AT	688 	PHA180 		% ++
+AT	856 	PHA0 		% --
+AT	1024 	PHA180 		% +
+AT	1108 	PHA0 		% --
+AT	1276 	PHA180 		% + +
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% --
+AT	3862 	BRX5OFF 		% +
+AT	3946 	BRX5 		% -
+AT	4030 	BRX5OFF 		% +
+AT	4114 	BRX5 		% -
+AT	4198 	BRX5OFF 		% ++
+AT	4366 	BRX5 		% --
+AT	4534 	BRX5OFF 		% +
+AT	4618 	BRX5 		% --
+AT	4786 	BRX5OFF 		% + +
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 28 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	703080
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% -
+AT	352 	PHA180 		% +
+AT	436 	PHA0 		% -
+AT	520 	PHA180 		% +
+AT	604 	PHA0 		% -----
+AT	1024 	PHA180 		% ++
+AT	1192 	PHA0 		% -
+AT	1276 	PHA180 		% +
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% -
+AT	3862 	BRX5OFF 		% +
+AT	3946 	BRX5 		% -
+AT	4030 	BRX5OFF 		% +
+AT	4114 	BRX5 		% -----
+AT	4534 	BRX5OFF 		% ++
+AT	4702 	BRX5 		% -
+AT	4786 	BRX5OFF 		% +
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 28 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	716100
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% -
+AT	352 	PHA180 		% +
+AT	436 	PHA0 		% -
+AT	520 	PHA180 		% +
+AT	604 	PHA0 		% -----
+AT	1024 	PHA180 		% ++
+AT	1192 	PHA0 		% -
+AT	1276 	PHA180 		% +
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% -
+AT	3862 	BRX5OFF 		% +
+AT	3946 	BRX5 		% -
+AT	4030 	BRX5OFF 		% +
+AT	4114 	BRX5 		% -----
+AT	4534 	BRX5OFF 		% ++
+AT	4702 	BRX5 		% -
+AT	4786 	BRX5OFF 		% +
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 29 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	729120
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% +
+AT	352 	PHA0 		% --
+AT	520 	PHA180 		% +
+AT	604 	PHA0 		% --
+AT	772 	PHA180 		% +
+AT	856 	PHA0 		% -
+AT	940 	PHA180 		% ++++
+AT	1276 	PHA0 		% - -
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% +
+AT	3862 	BRX5 		% --
+AT	4030 	BRX5OFF 		% +
+AT	4114 	BRX5 		% --
+AT	4282 	BRX5OFF 		% +
+AT	4366 	BRX5 		% -
+AT	4450 	BRX5OFF 		% ++++
+AT	4786 	BRX5 		% - -
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 29 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	742140
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% -
+AT	268 	PHA180 		% +
+AT	352 	PHA0 		% --
+AT	520 	PHA180 		% +
+AT	604 	PHA0 		% --
+AT	772 	PHA180 		% +
+AT	856 	PHA0 		% -
+AT	940 	PHA180 		% ++++
+AT	1276 	PHA0 		% - -
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% -
+AT	3778 	BRX5OFF 		% +
+AT	3862 	BRX5 		% --
+AT	4030 	BRX5OFF 		% +
+AT	4114 	BRX5 		% --
+AT	4282 	BRX5OFF 		% +
+AT	4366 	BRX5 		% -
+AT	4450 	BRX5OFF 		% ++++
+AT	4786 	BRX5 		% - -
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 30 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	755160
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +++
+AT	352 	PHA0 		% --
+AT	520 	PHA180 		% +
+AT	604 	PHA0 		% -
+AT	688 	PHA180 		% +
+AT	772 	PHA0 		% --
+AT	940 	PHA180 		% ++
+AT	1108 	PHA0 		% -
+AT	1192 	PHA180 		% +
+AT	1276 	PHA0 		% -
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +++
+AT	3862 	BRX5 		% --
+AT	4030 	BRX5OFF 		% +
+AT	4114 	BRX5 		% -
+AT	4198 	BRX5OFF 		% +
+AT	4282 	BRX5 		% --
+AT	4450 	BRX5OFF 		% ++
+AT	4618 	BRX5 		% -
+AT	4702 	BRX5OFF 		% +
+AT	4786 	BRX5 		% -
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 30 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	768180
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +++
+AT	352 	PHA0 		% --
+AT	520 	PHA180 		% +
+AT	604 	PHA0 		% -
+AT	688 	PHA180 		% +
+AT	772 	PHA0 		% --
+AT	940 	PHA180 		% ++
+AT	1108 	PHA0 		% -
+AT	1192 	PHA180 		% +
+AT	1276 	PHA0 		% -
+AT	1360 	PHA180 		% + 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +++
+AT	3862 	BRX5 		% --
+AT	4030 	BRX5OFF 		% +
+AT	4114 	BRX5 		% -
+AT	4198 	BRX5OFF 		% +
+AT	4282 	BRX5 		% --
+AT	4450 	BRX5OFF 		% ++
+AT	4618 	BRX5 		% -
+AT	4702 	BRX5OFF 		% +
+AT	4786 	BRX5 		% -
+AT	4870 	BRX5OFF 		% + 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 31 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	781200
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% ----
+AT	520 	PHA180 		% +++
+AT	772 	PHA0 		% -
+AT	856 	PHA180 		% ++
+AT	1024 	PHA0 		% -
+AT	1108 	PHA180 		% +
+AT	1192 	PHA0 		% -
+AT	1276 	PHA180 		% +
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% ----
+AT	4030 	BRX5OFF 		% +++
+AT	4282 	BRX5 		% -
+AT	4366 	BRX5OFF 		% ++
+AT	4534 	BRX5 		% -
+AT	4618 	BRX5OFF 		% +
+AT	4702 	BRX5 		% -
+AT	4786 	BRX5OFF 		% +
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 31 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	794220
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% +
+AT	184 	PHA0 		% ----
+AT	520 	PHA180 		% +++
+AT	772 	PHA0 		% -
+AT	856 	PHA180 		% ++
+AT	1024 	PHA0 		% -
+AT	1108 	PHA180 		% +
+AT	1192 	PHA0 		% -
+AT	1276 	PHA180 		% +
+AT	1360 	PHA0 		% - 
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% +
+AT	3694 	BRX5 		% ----
+AT	4030 	BRX5OFF 		% +++
+AT	4282 	BRX5 		% -
+AT	4366 	BRX5OFF 		% ++
+AT	4534 	BRX5 		% -
+AT	4618 	BRX5OFF 		% +
+AT	4702 	BRX5 		% -
+AT	4786 	BRX5OFF 		% +
+AT	4870 	BRX5 		% - 
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 32 SUBCYCLE 1 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	807240
+AT	5	BUFLIP
+AT	9	NCOSEL1
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F6
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% ---
+AT	520 	PHA180 		% ++
+AT	688 	PHA0 		% -
+AT	772 	PHA180 		% +++
+AT	1024 	PHA0 		% ---
+AT	1276 	PHA180 		% + +
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% ---
+AT	4030 	BRX5OFF 		% ++
+AT	4198 	BRX5 		% -
+AT	4282 	BRX5OFF 		% +++
+AT	4534 	BRX5 		% ---
+AT	4786 	BRX5OFF 		% + +
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+%%%%%%%%%%%%%%%%%%%%
+%% IPP 32 SUBCYCLE 2 
+%%%%%%%%%%%%%%%%%%%%
+SETTCR	820260
+AT	5	BUFLIP
+AT	9	NCOSEL2
+AT	10	RXPROT,LOPROT
+AT	55	BEAMON,F9
+%%%%
+%%%% - RF TRANSMISSION -
+%%%%
+AT	100 	RFON,PHA180 		% ++
+AT	268 	PHA0 		% ---
+AT	520 	PHA180 		% ++
+AT	688 	PHA0 		% -
+AT	772 	PHA180 		% +++
+AT	1024 	PHA0 		% ---
+AT	1276 	PHA180 		% + +
+AT	1444	RFOFF,PHA0
+AT	1454	BEAMOFF
+AT	1494	RXPOFF
+AT	1514	LOPOFF
+%%%% SIGNAL RECEPTION
+AT	1780	CH1,CH2,CH4,CH5
+%% The next long block is a replica of the transmitter code
+%% used for test purposes
+AT	3610 	BRX4,B5OFF 		% ++
+AT	3778 	BRX5 		% ---
+AT	4030 	BRX5OFF 		% ++
+AT	4198 	BRX5 		% -
+AT	4282 	BRX5OFF 		% +++
+AT	4534 	BRX5 		% ---
+AT	4786 	BRX5OFF 		% + +
+AT	4954	BRX4OFF,BRX5
+%% test tranmission block stop here
+AT	10180	ALLOFF
+%%%%  GAINCHANNEL SAMPLES ON CH2
+AT	12638	CALON
+AT	12678	CH1,CH2,CH4,CH5
+AT	12972	ALLOFF,CALOFF
+AT	13015	STC
+SETTCR	0
+AT	833280	REP

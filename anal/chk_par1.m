@@ -1,0 +1,113 @@
+% chk_par1: Interface betwen the user supplied and internal control parameters 
+% GUISDAP v.1.81 03-02-27 Copyright EISCAT, Huuskonen&Lehtinen
+% 
+% chk_par1 is the main interface between the user supplied control parameters and
+% the internal GUISDAP control parameters. There is mostly a one-to-one correspondence
+% between the parameters e.g.
+% User parameter   GUISDAP parameter
+% analysis_altit    a_altit
+% analysis_integr   a_integr
+% display_figures   di_figures
+% integ_deffile     a_integdeffile
+% The user parameters are local to the workspace whereas the GUISDAP parameters are global
+% If any of the user parameters is not specified, or empty, the corresponding GUISDAP
+% parameter will get the values specified in the routine.
+%
+% See also: an_start globals chk_par2
+
+% make sure that the various path names have directory separators at the end
+data_path=fullfile(data_path,filesep);
+result_path=fullfile(result_path,filesep);
+path_GUP=fullfile(path_GUP,filesep);
+path_exps=fullfile(path_exps,filesep);
+path_tmp=fullfile(path_tmp,filesep);
+
+% The first if-block tries to locate the data source and produces variables 
+% necessary for integration:
+
+a_simul=[];
+if exist('analysis_simul')
+ % The second branch is for simulated data to be calculated from the theory
+ % The presence of the variable a_simul is the flag, which is used later
+ % a_simul(1): integration time
+ % a_simul(2): controls the start time in steps of 7200 s, i.e. 2 hours.
+ % a_simul(3): The transmitter power
+ % a_simul(4): The background temperature
+ % a_simul(5:6): Antenna azimuth and elevation
+ a_simul=[0 1 1.2e6 100 300 180 90 ];
+ a_simul(1:length(analysis_simul))=analysis_simul;
+ a_year=2222;
+ a_start=7200*a_simul(2);
+ a_end=7200*a_simul(2)+a_simul(1);
+else
+ if exist('analysis_integr'),
+  a_integr=analysis_integr;
+ else
+  a_skip=zeros(size(a_integr));
+ end
+ if exist('analysis_realtime'),
+  a_realtime=analysis_realtime;
+ else
+  a_realtime=0;
+ end
+ if exist('analysis_txlimit'),
+  a_txlim=analysis_txlimit;
+ else
+  a_txlim=0;
+ end
+ if exist('analysis_skip'),
+  a_skip=analysis_skip;
+ else
+  a_skip=zeros(size(a_integr));
+ end
+ if ~exist('recurse','var'), recurse=[]; end 
+
+ if exist('PI_init')==3
+  a_rawdata=1; % This flags that NW's package is to be used
+  NW2
+ else
+  % The normal case where it is expeced the data are matlab files
+  a_rawdata=0;
+  [d_filelist,msg,data_path]=getfilelist(data_path,recurse);
+  if ~isempty(msg)
+   error(msg)
+  end
+  a_start=tosecs(analysis_start); % the programs uses internally only seconds,
+  a_end  =tosecs(analysis_end);   % counted from the beginning of year
+  a_year=analysis_start(1);
+  a_ind=0;
+ end
+end
+
+a_control=[100000 0.01 10 1];
+% a_control(1)  No fit is tried, if the error of Ne is larger than (1) at the start
+% a_control(2)  Fitting is stopped when step for all parameters is less than (2)
+% a_control(3)  Maximum number of iterations
+% a_control(4)  Variance calculation
+%               = 1 when variance estimated from data
+%               = 2 when variance estimated using ambiguity functions
+if exist('analysis_control')
+ ind=find(analysis_control>0);
+ a_control(ind)=analysis_control(ind);
+end
+if any(a_simul) & a_control(4)==1
+ a_control(4)=2;
+end
+
+a_Magic_const=1;
+if exist('Magic_const')
+ a_Magic_const=Magic_const;
+end
+a_NCAR=0;
+if exist('NCAR')
+ NCAR_output
+ a_NCAR=NCAR;
+end
+
+di_figures=[0 0 0 0 0]; di_results=1;
+if exist('display_figures'), 
+ di_figures(1:length(display_figures))=display_figures;
+end
+if exist('display_results')
+ di_results=display_results; 
+end

@@ -1,0 +1,5 @@
+#!/bin/csh -f
+# AH 08.06.1992
+
+cc tlan2ps.c etlan.c -o TLAN2PS
+drag TLAN2PS ~/bin/

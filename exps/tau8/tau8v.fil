@@ -1,0 +1,75 @@
+nr_stc=64;
+% Signal channel
+channel=1;
+type=1;
+	vec_len=600;
+	data_start=0;
+	max_lag=5;
+end_type
+type=1;
+% We will do 32 subcycles
+	vec_len=600;
+	data_start=0;
+	max_lag=47;
+	code_len=16;
+	res_mult=32;
+	sub_int=2;
+	n_frac=6;
+	ac_file=tau8v.ac;
+end_type
+type=1;
+	vec_len=21;
+	max_lag=0;
+	data_start=600;
+end_type
+end_chan
+% Gain channel
+channel=2;
+type=1;
+	vec_len=600;
+	max_lag=5;
+	data_start=0;
+end_type
+type=1;
+	vec_len=21;
+	max_lag=0;
+	data_start=600;
+end_type
+end_chan
+% Signal channel
+channel=4;
+type=1;
+	vec_len=600;
+	data_start=0;
+	max_lag=5;
+end_type
+type=1;
+% We will do 32 subcycles
+	vec_len=600;
+	data_start=0;
+	max_lag=47;
+	code_len=16;
+	res_mult=32;
+	sub_int=2;
+	n_frac=6;
+	ac_file=tau8v.ac;
+end_type
+type=1;
+	vec_len=21;
+	max_lag=0;
+	data_start=600;
+end_type
+end_chan
+% Gain channel
+channel=5;
+type=1;
+	vec_len=600;
+	max_lag=5;
+	data_start=0;
+end_type
+type=1;
+	vec_len=21;
+	max_lag=0;
+	data_start=600;
+end_type
+end_chan
