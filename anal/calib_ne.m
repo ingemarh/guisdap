@@ -42,7 +42,9 @@ end
 if ~isempty(t)
  fgup=fullfile(DATA_PATH,'.gup');
  Magic_const=1;
- if exist(fgup)
+ if exist('r_Magic_const')
+  Magic_const=r_Magic_const;
+ elseif exist(fgup)
   load(fgup,'-mat')
   for i=1:size(extra,1),eval(extra(i,:));end
  end

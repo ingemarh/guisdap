@@ -13,7 +13,7 @@ global r_apriori r_apriorierror
 global pp_range pp_sigma
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
 global webfile a_save local
-global a_autodir di_figures START_TIME
+global a_autodir di_figures START_TIME a_Magic_const
 
 if length(d_time)>0 & a_save
   filename=sprintf('%08d.mat',fix(tosecs(d_time(2,:))));
@@ -81,6 +81,7 @@ r_pprange=col(pp_range)*(p_dtau*1e-6*v_lightspeed/2/1000);
 r_h=col(range_to_height(r_range,ch_el(1)));
 r_range=col(r_range)*(p_dtau*1e-6*v_lightspeed/2/1000);
 r_Tsys=sysTemp(isfinite(sysTemp));
+r_Magic_const=a_Magic_const;
 
 if ~di_results
  fprintf('Status: '); fprintf('%d',r_status); fprintf('\n');
@@ -91,7 +92,7 @@ disp(file)
 save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,...
      r_Pt,r_m0,r_range,r_h,r_param,r_error,r_res,r_status,...
      r_dp,r_apriori,r_apriorierror,r_pp,r_pprange,r_XMITloc,...
-     r_RECloc,r_SCangle,r_Tsys,r_Offsetppd)
+     r_RECloc,r_SCangle,r_Tsys,r_Offsetppd,r_Magic_const)
 if a_NCAR
  file0=sprintf('%sNCAR_%d-%02d-%02d_%s@%s.',result_path,d_time(2,1:3),...
       name_expr,name_ant);

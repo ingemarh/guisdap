@@ -8,8 +8,8 @@
 
 % Correct the doppler sign
 d_secs=tosecs(d_time(1,:));
-if (name_site=='V' & d_time(1,1)>2000) | ...
-   (name_site=='L' & d_time(1,1)==2003 & d_secs>6857400 & d_secs<25660800)
+if (strcmp(name_ant(1:3),'vhf') & d_time(1,1)>2000) | ...
+   (strcmp(name_ant(2:3),'2m') & d_time(1,1)==2003 & d_secs>6857400 & d_secs<25660800)
   d_data=conj(d_data);
 end
 
@@ -30,27 +30,18 @@ end
 %  Pt=Pt*2
 %end
 
-  % The 1 March date in the next if statement is still a guess. After Feb 6 but before March 9.
-
-    if (name_site=='T' & ...
-         ( datenum(d_time(1,1),d_time(1,2),d_time(1,3)) >= datenum(2000,05,01) & ...
-           datenum(d_time(1,1),d_time(1,2),d_time(1,3)) <= datenum(2001,03,01)   ) ...
-       | ...
-         ( datenum(d_time(1,1),d_time(1,2),d_time(1,3)) >= datenum(2001,06,28) & ...
-           datenum(d_time(1,1),d_time(1,2),d_time(1,3),d_time(1,4),d_time(1,5),d_time(1,6)) ...
-                                                        <= datenum(2001,10,15,13,31,00) )... 
-       )
-
-      fprintf('GUISPERT: doubling uhf tx power estimate\n')
-      ch_Pt =ch_Pt*2;
-  
-  % Between April 2 and April 10 2001, the UHF transmitter ran with only one klystron,
-  % but this was not reflected in the power values recorded in the parameter block.
-  % Should only affect the UP run on April 3-4.
-
-    elseif datenum(d_time(1,1),d_time(1,2),d_time(1,3)) >= datenum(2001,4,2) ...
-          & datenum(d_time(1,1),d_time(1,2),d_time(1,3)) <= datenum(2001,4,10) 
-      fprintf('GUISPERT: halving uhf tx power estimate\n')
-      ch_Pt = ch_Pt / 2.0;
-    end  
-
+if(strcmp(name_ant(1:3),'uhf')
+ d_date=datenum(1,:);
+ if (d_date>=datenum(2000,05,01) & d_date<=datenum(2001,03,01)) | ...
+    (d_date>=datenum(2001,06,28) & d_date<=datenum(2001,10,15,13,31,00)) 
+% The 1 March date is still a guess. After Feb 6 but before March 9.
+     fprintf('GUISPERT: doubling uhf tx power estimate\n')
+     ch_Pt=ch_Pt*2;
+ elseif d_date>=datenum(2001,4,2) & d_date<=datenum(2001,4,10) 
+% 2-10 April 2001, the UHF transmitter ran with only one klystron, but this was
+% not reflected in the power values recorded in the parameter block.
+% Should only affect the UP run on April 3-4.
+  fprintf('GUISPERT: halving uhf tx power estimate\n')
+  ch_Pt=ch_Pt/2;
+ end
+end
