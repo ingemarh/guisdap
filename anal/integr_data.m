@@ -156,10 +156,10 @@ while i<length(files)
     dumpOK=dumpOK & rem(d_parbl(95),2)==0 & d_parbl(95)~=64;
   end
   if dumpOK & OK
-    indfixed=fixed(find(d_parbl(fixed)-prev_parbl(fixed)>allow));
+    indfixed=fixed(find(abs(d_parbl(fixed)-prev_parbl(fixed))>allow));
     if ~isempty(indfixed)
       fprintf('Parameter change:')
-      fprintf(' par(%d)=%g[%g];',[indfixed;prev_parbl(indfixed)';d_parbl(indfixed)'])
+      fprintf(' par(%d)=%g[%g];',[indfixed;d_parbl(indfixed)';prev_parbl(indfixed)'])
       fprintf('\n')
       if a_intfixed
        fprintf('analysis_intfixed set: ')
