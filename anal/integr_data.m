@@ -97,8 +97,8 @@ while i<length(files)
     tdiff=secs1-secs>a_maxgap;
     adiff=a_antold-a_ant;
     a_antold=a_ant; secs=secs1;
-    if any(fix(adiff/.1)) | tdiff
-      if a_ant(1)<89.9 | tdiff
+    if any(fix(adiff/.2)) | tdiff
+      if a_ant(1)<89.8 | tdiff
         a_interval(2)=file;
         if tdiff & N_averaged>1
           a_interval(2)=file-.5;
