@@ -7,8 +7,8 @@
 % See also: GUIZARD
 
 % Correct the doppler sign
-if name_site=='V' & d_time(1,1)>2000 | ...
-   name_site=='L' & d_time(1,1)==2003 & tosecs(d_time(1,:))>6857400
+if (name_site=='V' & d_time(1,1)>2000) | ...
+   (name_site=='L' & d_time(1,1)==2003 & tosecs(d_time(1,:))>6857400)
   d_data=conj(d_data);
 end
 

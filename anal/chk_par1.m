@@ -68,7 +68,8 @@ else
  else
   % The normal case where it is expeced the data are matlab files
   a_rawdata=0;
-  [d_filelist,msg,data_path]=getfilelist(data_path,recurse);
+  data_path=fullfile(data_path,recurse,filesep);
+  [d_filelist,msg]=getfilelist(data_path);
   if ~isempty(msg)
    error(msg)
   end

@@ -81,9 +81,6 @@ if isempty(action) | strcmp(action,'verbose')
  if ~isempty(axc), delete(axc), axc=[]; end
 elseif strcmp(action,'update')
  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
- if isempty(Time)
-  disp('Vizu: No new data!'), return
- end
  set(0,'currentfig',findobj('type','figure','userdata',6))
 elseif strcmp(action,'print') | strcmp(action,'save')
  if isunix
@@ -118,6 +115,9 @@ elseif strcmp(action,'print') | strcmp(action,'save')
   fprintf('Created %s.%s\n',file,ext)
  end
  return
+end
+if isempty(Time)
+  disp('Vizu: No new data!'), return
 end
 
 %%%%%%%%%%%%%%%% Parameters %%%%%%%%
