@@ -8,7 +8,7 @@ if [ -z "$matlab" ]
 then
 	matlab="matlab"
 fi
-if `$matlab -n | grep "sourced from directory" | grep matlab6`
+if `$matlab -n | grep "sourced from directory" | grep matlab6 >/dev/null 2>&1`
 then
 	MEXD=mex6
 else

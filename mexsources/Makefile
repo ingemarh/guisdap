@@ -2,7 +2,7 @@ sys=$(shell uname -s)
 ifndef MEX
 MEX:=	mex
 endif
-ifndef MEXDIR
+ifndef MEXD
 MEXD:=	mex7
 endif
 ifeq ($(sys),SunOS)
