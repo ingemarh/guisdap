@@ -29,7 +29,12 @@ GUP=`dirname $filename`
 GUP=`dirname $GUP`
 #echo $GUP
 
-if [ -d $GUP/mex6 ]; then
+if [ -d $GUP/mex7 ]; then
+	mex=$GUP/mex7:
+	if [ -d $GUP/NW/mex7 ]; then
+		mex=$mex$GUP/NW/mex7:
+	fi
+elif [ -d $GUP/mex6 ]; then
 	mex=$GUP/mex6:
 	if [ -d $GUP/NW/mex6 ]; then
 		mex=$mex$GUP/NW/mex6:

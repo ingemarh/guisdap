@@ -1,6 +1,6 @@
 sys=$(shell uname -s)
 ifndef MATLAB
-MATLAB:=	/opt/matlab6
+MATLAB:=	/opt/matlab7
 endif
 ifeq ($(sys),SunOS)
 #Solaris:
@@ -21,13 +21,13 @@ M=	$(PWD)/../lib
 IRILIB=	-L$M -liri
 MSISLIB=	-L$M -lmsis
 GUPLIB=	-L$M -lguisdap
-mex_Directory = ../mex6
+mex_Directory = ../mex7
 ifeq ($(th),1)
 CFLAGS:=	$(CFLAGS) -DGUPTHREAD
 GUPLIB:=	$(GUPLIB) -lpthread
 endif
 
-all: iri msis lib mex6 install
+all: iri msis lib mex install
 
 iri:
 	mex $(MEXOPTS) iri.f $(IRILIB)
@@ -44,7 +44,7 @@ lib:
 	$(AR) cr $M/libguisdap.a *.o
 	$(RM) *.o
 
-mex6:
+mex:
 	mex -DANSI_C mrqmndiag.c $(GUPLIB)
 	mex -DANSI_C dirthe.c $(GUPLIB)
 	mex -DANSI_C spec.c $(GUPLIB)

@@ -717,7 +717,7 @@ C ASCII-related statements.
 c
 7797    URSIFO=URSIF2
         call getenv('IRIPATH',path)
-        WRITE(FILNAM,104) path(1:index(path,' ')-1),NMONTH+10
+        WRITE(FILNAM,104) path(1:index(path,' ')-1),MONTH+10
 104         FORMAT(a,'/ccir',I2,'.asc')
 c       WRITE(FILNAM,104) MONTH+10
 c104         FORMAT('ccir',I2,'.asc')
@@ -733,6 +733,7 @@ c-binary- if binary files than use:
 c-binary-     &          FORM='UNFORMATTED')
 c
         READ(IUCCIR,4689) F2,FM3
+        write(*,*)
 4689    FORMAT(1X,4E15.8)
 c-binary- if binary files than use:
 c-binary-        READ(IUCCIR) F2,FM3
@@ -758,6 +759,7 @@ c-binary- if binary files than use:
 c-binary-     &         FORM='UNFORMATTED')
 
           READ(IUCCIR,4689) F2
+        write(*,*)
 c-binary- if binary files than use:
 c-binary-          READ(IUCCIR) F2
 
@@ -783,6 +785,7 @@ c-binary- if binary files than use:
 c-binary-     &          FORM='unFORMATTED')
 
         READ(IUCCIR,4689) F2N,FM3N
+        write(*,*)
 c-binary- if binary files than use:
 c-binary-        READ(IUCCIR) F2N,FM3N
 

@@ -44,6 +44,7 @@ local.printer='color';
 local.site=getenv('EISCATSITE');
 local.host=getenv('HOSTNAME');
 local.browser='netscape';
+local.matlabversion=str2num(version('-release'));
 switch local.site
  case 'K'
   data_path='/data1/';
