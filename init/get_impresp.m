@@ -1,4 +1,4 @@
-function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot) %{
+function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot)
 
 %GET_IMPRESP - Get impulse response from ESR filter definition file.
 %[IMPRESP, T0] = GET_IMPRESP(FIRDEF_FILE,P_DTAU,PLOT_FLAG)
@@ -85,11 +85,8 @@ function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot) %{
         t0 = t1;
     end
 
-%}main
-
 
 function [key,val] = token(s)
-%----------------------------
 % expected syntax: key value1 [value2]
 
     key = [];
@@ -116,8 +113,6 @@ function [key,val] = token(s)
     val2 = sscanf(val2,'%i');
     if isempty(val2), val = []; return, end
     val(2) = val2;
-%}token  
- 
  
 function s = strip(ss)
 %---------------------
@@ -137,7 +132,6 @@ function s = strip(ss)
 
 
 function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
-%{---------------------------------------------------------------
 
     fir = [];
     hec = [];
@@ -226,11 +220,9 @@ function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
     end
 
     fir = taps;
-%}get_fir
 
 
 function  h = hcic(K,M)
-%{
 %--------------------------------------------------
 %   h= hcic(K,M)
 %   impulse response of the HSP43220 CIC filter,
@@ -245,14 +237,11 @@ function  h = hcic(K,M)
     end
 
     h= h/fftceil(sum(h));
-%}hcic 
 
 
 function y= insertz(x,M)
-%{---------------------------------------
 % y= INSERTZ(x,M)
 %    insert M zeros between elements of x
-% ---------------------------------------
 
    if M < 1, y = x; return, end
 
@@ -260,14 +249,10 @@ function y= insertz(x,M)
    y= zeros(1,L);
    y( rem(0:L-1,M+1) == 0 ) = x;
 
-%}insertz
-
 
 function n = fftceil(m)
-%{----------------------
     if nargin ~= 1
         error('Invalid number of input argumements')
     end
 
     n = 2^(nextpow2(m));
-%}

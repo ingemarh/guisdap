@@ -19,7 +19,7 @@ if exist('d_rcprog','var')
   GUPvarfile=[temp '_' int2str(d_rcprog) 'GUPvar'];
   GUPvarfil=canon(GUPvarfile,0);
 end
-if ~exist(initfil,'var') | ~exist(GUPvarfil,'file')
+if ~exist(GUPvarfil,'var') | ~exist(GUPvarfil,'file')
   GUPvarfile=[temp 'GUPvar'];
   GUPvarfil=canon(GUPvarfile,0);
 end
