@@ -47,7 +47,7 @@ end
 for i=1:n_tot
   file=sprintf('%08d',filelist(i));
   
-  clear('r_*','name_*')
+% clear('r_*','name_*')
   load(canon([data_path file],0))
   
   nalt=size(r_param,1);

@@ -9,7 +9,7 @@ function vizu(action,a2,a3)
 % To plot with default dir names:
 % >> vizu
 % To plot without interaction:
-% >> vizu dir exp_type
+% >> vizu dir exp_type antenna
 % To update the plot with new files:
 % >> vizu update
 % To send the figure to the default printer:
@@ -66,6 +66,7 @@ if isempty(DATA_PATH)
     if isdir(action)
       DATA_PATH=action; action=[];
       if isstr(a2), MESSAGE1=a2; end
+      if isstr(a3), name_ant=a3; end
     else
       disp(['Available data directories in ' result_path]);
       dirs=dir(result_path);
@@ -211,8 +212,10 @@ elseif ~REALT
 %name_ant=dpath(end-2:end);
 end
 if isempty(name_ant)
- disp('Antenna: 32m 42m vhf uhf kir sod');
- name_ant=minput('Which antenna','32m',1);
+ antennas=['uhf kir sod vhf 32m 42m'];
+ i=(strfind('TKSVL',name_site)-1)*4+1;
+ disp(['Antenna: ' antennas]);
+ name_ant=minput('Which antenna',antennas(i:i+2),1);
 end
 if isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);
@@ -330,8 +333,10 @@ end
 if stretchSecs & s>1
  dt=(Time(1,2:end)-Time(2,1:end-1));
  d=find(dt>0 & dt<=stretchSecs/86399);
- Time(2,d)=Time(2,d)+dt(d)/2;
- Time(1,d+1)=Time(2,d);
+ if ~isempty(d)
+  Time(2,d)=Time(2,d)+dt(d)/2;
+  Time(1,d+1)=Time(2,d);
+ end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plot the parameters
