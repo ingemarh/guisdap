@@ -124,7 +124,7 @@ while ~EOF
       xlabel('Address'); ylabel('Power [K]'); grid; drawnow
       clear indr indi
     end
-    if ~isempty(a_addr)
+    if ~isempty(a_addr) & ch_Pt(1)>0
       get_apriori(any(a_simul))
 %******************************************************************
 % The get_apriori call calculated the raw electron density profile. 
