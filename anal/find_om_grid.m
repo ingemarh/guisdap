@@ -24,33 +24,25 @@ dom=0.5*[p_om(2)-p_om(1); p_om(3:len)-p_om(1:len-2); p_om(len)-p_om(len-1)];
 theoref=f_womega*(s.*dom);
 
 start=1;
-%for i=[2:4:20]
-%  om=p_om(i:1:length(p_om)-i+1);
-%  len=length(om);
-%  dom=0.5*[om(2)-om(1); om(3:len)-om(1:len-2); om(len)-om(len-1)];
-%  theo=f_womega(:,i:1:length(p_om)-i+1)*(s(i:1:length(p_om)-i+1).*dom);
-%  err=max(abs(theoref-theo))/max(abs(theo));
-%%  disp([i, err]);
-%  if err>1e-3, break; end;
-%  start=i;
-%end
-
-
 istep=1;
-for i=[2:6 8:2:20 40]
+ii=[];
+for i=2:(len-1)/2
+  tii=(len-1)/i;
+  if tii==fix(tii), ii=[ii i]; end
+end
+%for i=[2:6 8:2:20 40]
+for i=ii
   ind=N:i:length(p_om)-start+1;
-  ind=[fliplr(N-i:-i:start), ind];
-  om=p_om(ind);
-  len=length(om);
-  dom=0.5*[om(2)-om(1); om(3:len)-om(1:len-2); om(len)-om(len-1)];
+  ind=[fliplr(N-i:-i:start) ind];
+  om=p_om(ind); len=length(om);
+  dom=0.5*[om(2)-om(1);om(3:len)-om(1:len-2);om(len)-om(len-1)];
   theo=f_womega(:,ind)*(s(ind).*dom);
   err=max(abs(theoref-theo))/max(abs(theo));
-%  fprintf(' step %.0f, error %.4f\n',i, err);
-  if err>1.5e-3, break; end
+% fprintf(' step %.0f, error %.4f\n',i, err);
+  if err>1.5e-3, break, end
   istep=i;
 end
-%if istep>1, fprintf(' Using a coarser frequency axis, one of every %.0g point used\n',istep), end
-om=p_om(ind);
-len=length(om);
-dom=0.5*[om(2)-om(1); om(3:len)-om(1:len-2); om(len)-om(len-1)]';
+%if istep>1, fprintf(' Using a coarser frequency axis, one of every %d point used\n',istep), end
+om=p_om(ind); len=length(om);
+dom=0.5*[om(2)-om(1);om(3:len)-om(1:len-2);om(len)-om(len-1)]';
 womega=f_womega(:,ind).*dom(ones(M,1),:);

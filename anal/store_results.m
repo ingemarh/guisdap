@@ -8,8 +8,8 @@ function store_results(aa,meas,var,result,alpha,chi2,status,kd2,p_coeffg,f_womeg
 global a_priori a_priorierror p_RECloc
 global ch_el di_fit g_ind
 global lpg_dt p_dtau di_figures di_results
-global r_range r_status r_param r_dp r_error r_res r_apriori r_apriorierror r_ind p_m0 r_h r_Offsetppd
-global name_site
+global r_range r_status r_param r_dp r_error r_res r_apriori r_apriorierror r_ind p_m0 r_h r_Offsetppd r_om r_spec
+global name_site a_savespec
 
 % Scale residual and Xfer results to physical units
 
@@ -78,32 +78,48 @@ if di_figures(3) | name_site=='K' | name_site=='S'
     fprintf('Offset: %d us  ',r_Offsetppd(r_ind))
   end
 end
+if di_figures(3)<0 | a_savespec
+  %first reduce the inverse problem
+  lpg=unique(lpgs); nlpgs=length(lpgs); nlpg=length(lpg); nom=length(p_om);
+  F=zeros(nlpg*2,nom); M=zeros(nlpg*2,1); V=M;
+  MM=(meas(1:len)-fb_womega*result(5+nion))./p_coeffg;
+  MV=var(1:len)./p_coeffg.^2;
+  for i=1:nlpg
+    d=find(lpgs==lpg(i));
+    for j=0:1
+      F(i+j*nlpg,:)=f_womega(d(1)+j*nlpgs,:); mv=MV(d+j*nlpgs);
+      if any(mv)
+        smv=sum(1./mv);
+        M(i+j*nlpg)=sum(MM(d+j*nlpgs)./mv)/smv; V(i+j*nlpg)=1/smv;
+      else
+        M(i+j*nlpg)=sum(MM(d+j*nlpgs));
+      end
+    end
+  end
+  %Then invert the f_wom matrix
+  i=1; if a_savespec, i=a_savespec; end
+  [u,s,v]=svd(F,0); dlds=diff(log(diag(s))); id=find(dlds<-i);
+  %id=find(dlds<median(dlds)*20); %Well 10xmedian
+  if isempty(id), id=length(dlds)+1; end
+  f_wim=v(:,1:id(1))*inv(s(1:id(1),1:id(1)))*u(:,1:id(1))';
+  %f_wim=pinv(F,norm(F)/10);
+  mspec=f_wim*M; vspec=sqrt(f_wim.^2*V); % diagonal variances
+  if a_savespec
+    if r_ind==1
+      r_om=p_om; r_spec=mspec;
+    else
+      ur_om=unique([r_om;p_om]);
+      d1=ismember(ur_om,p_om); d2=ismember(ur_om,r_om);
+      msp(find(d1))=mspec; msp(find(~d1))=NaN;
+      r_spec(find(d2),:)=r_spec; r_spec(find(~d2),:)=NaN;
+      r_spec=[r_spec msp']; r_om=ur_om;
+    end
+  end
+end
 if di_figures(3)
   drawnow, figure(abs(di_figures(3))),%clf
   subplot('Position',[.1 .1 .7 .8])
   if di_figures(3)<0
-    lpg=unique(lpgs); nlpgs=length(lpgs); nlpg=length(lpg);
-    F=zeros(nlpg*2,size(f_womega,2)); M=zeros(nlpg*2,1); V=M;
-    MM=(meas(1:len)-fb_womega*result(5+nion))./p_coeffg;
-    MV=var(1:len)./p_coeffg.^2;
-    for i=1:nlpg
-      d=find(lpgs==lpg(i)); d1=d(1);
-      for j=0:1
-        F(i+j*nlpg,:)=f_womega(d1+j*nlpgs,:);
-        mv=MV(d+j*nlpgs);
-        if any(mv)
-          smv=sum(1./mv);
-          M(i+j*nlpg)=sum(MM(d+j*nlpgs)./mv)/smv;
-          V(i+j*nlpg)=1/smv;
-        else
-          M(i+j*nlpg)=sum(MM(d+j*nlpgs));
-        end
-      end
-    end
-    %[u,s,v]=svd(F,0); ds=diag(s); id=find(ds>ds(1)/10); % 10% Well...
-    %f_wim=v(:,id)*inv(s(id,id))*u(:,id)';
-    f_wim=pinv(F,norm(F)/10);
-    mspec=f_wim*M; vspec=sqrt(f_wim.^2*V); % diagonal variances
     [nin0,tit0,mim0,psi,vi]=transf(result,p_m0);
     tspec=spec(nin0,tit0,mim0,psi,vi,kd2,p_om,pldfvv);
     f0=find(p_om==0); tspec(f0)=result(6+nion)+tspec(f0);

@@ -137,8 +137,12 @@ a_save=1;
 if exist('analysis_save','var')
  a_save=analysis_save;
  if ~a_save
-  di_figures(5)=0; result_path=path_tmp;
+  a_NCAR=0; di_figures(5)=0; result_path=path_tmp;
  end
+end
+a_savespec=0;
+if exist('analysis_savespec','var')
+ a_savespec=analysis_savespec;
 end
 
 a_do=1;

@@ -140,8 +140,12 @@ while ~EOF
       save_results
 
       if di_figures(4)
-        drawnow, figure(di_figures(4))
-        plot_fit('panel',[1 1 1 0 1],[-inf inf 10*ceil((max(r_h)-min(r_h))/100)]);
+        drawnow, figure(abs(di_figures(4)))
+	if di_figures(4)<0 & a_savespec
+          plot_specs
+	else
+          plot_fit('panel',[1 1 1 0 1],[-inf inf 10*ceil((max(r_h)-min(r_h))/100)]);
+	end
         drawnow 
       end
     end

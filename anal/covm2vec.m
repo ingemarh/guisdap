@@ -8,16 +8,18 @@
 %
 % See also: vec2covm
 %function covvec=covm2vec(errmatr)
- function covvec=covm2vec(errmatr)
+function covvec=covm2vec(errmatr)
 
- er=sqrt(diag(errmatr));  % These are the errors of the parameters
- covm=errmatr./(er*er'+eps);     % These are the covariances
+er=sqrt(diag(errmatr));  %These are the errors of the parameters
+d=find(er~=0);
+covm=errmatr;
+covm(d,d)=errmatr(d,d)./(er(d)*er(d)'); %These are the covariances
 
- len=length(er);
- covvec=zeros(1,len*(len+1)/2);
- covvec(1:len)=er';
- ind=len;
- for i=1:len-1
-   covvec(ind+(1:(len-i)))=diag(covm,i)';
-   ind=ind+len-i;
- end
+len=length(er);
+covvec=zeros(1,len*(len+1)/2);
+covvec(1:len)=er';
+ind=len;
+for i=1:len-1
+  covvec(ind+(1:(len-i)))=diag(covm,i)';
+  ind=ind+len-i;
+end

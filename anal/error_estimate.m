@@ -1,7 +1,7 @@
 % error_estimate.m: Calculates error estimates for inversion of dirthe
 % GUISDAP v.1.60 96-05-27 Copyright Asko Huuskonen and Markku Lehtinen
 %
-  function [error,correl,alpha]=error_estimate(aa,variance,kd2,p_coeffg,f_womega,p_om,pldfvv,fb_womega)
+  function [err,correl,alpha]=error_estimate(aa,variance,kd2,p_coeffg,f_womega,p_om,pldfvv,fb_womega)
   
   global p_m0
  
@@ -35,6 +35,7 @@
 al=inv(alpha);
 alpha=zeros(length(aa)); alpha(va,va)=al;
 alpha=alpha.*(errfac*errfac'); %log!
-error=sqrt(diag(alpha))';
-correl=alpha./(error'*error+eps);
+err=sqrt(diag(alpha))';
+correl=alpha;
+correl(va,va)=alpha(va,va)./(err(va)'*err(va));
 %warning(warning_state);
