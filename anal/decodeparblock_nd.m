@@ -11,11 +11,11 @@
 if d_parbl(128)>4 & d_parbl(128)<=10,
   % The site information
   names=['K';'T';'V';'S'];
-  ant_id=[5 3 4 6]; ant_id=ant_id(d_parbl(1));
+  ant_id=[5 4 3 6]; ant_id=ant_id(d_parbl(1));
   if isempty(name_site) | name_site~='V'
     name_site=names(d_parbl(1));
   end
-  if name_site=='V', ant_id=4; end
+  if name_site=='V', ant_id=3; end
 
   % Put the remote receiver locations to GUP variables
   % Why? Because the remote sites may have common initialization file

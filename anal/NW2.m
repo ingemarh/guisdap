@@ -14,15 +14,23 @@ if isempty(source)
   else
     rr=[];
   end
-  if ~isempty(recurse)
-    rr=['recurse ' recurse ';' rr];
-  end
-  source=sprintf('gupmat {%s %s directory %s; %s}',t1,t2,data_path,rr);
-  strategy=sprintf('filter time {%s %s} filter power {min %g kW;}',t1,t2,a_txlim/1000);
-  if a_integr
-    strategy=[strategy sprintf(' integrate time {period %d;}',a_integr)];
+  if strfind(data_path,'@')
+    if ~isempty(recurse)
+      rr=['recurse ' recurse ';' rr];
+    end
+    source=sprintf('gupmat {%s %s directory %s; %s}',t1,t2,data_path,rr);
   else
-    strategy=[strategy ' integrate move {}'];
+    source=sprintf('EISCAT dtst {%s %s directory %s; site %s; %s}',t1,t2,data_path,name_site,rr);
+  end
+  strategy=sprintf('filter time {%s %s} filter power {min %g kW;}',t1,t2,a_txlim/1000);
+  if length(a_integr)==1
+    if a_integr
+      strategy=[strategy sprintf(' integrate time {period %d; skip %d}',a_integr,a_skip)];
+    else
+      strategy=[strategy ' integrate move {}'];
+    end
+  elseif isempty(strategy)
+    error('No default setup for scan cycle exists yet: Define a strategy!')
   end
   clear rr t1 t2
 end
