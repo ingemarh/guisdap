@@ -16,7 +16,7 @@ function [msg,pulse,scan,comment,type,antenna]=expparts(s)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-msg=''; pulse=''; scan=''; comment=''; type=''; antenna='';
+msg=[]; pulse=[]; scan=[]; comment=[]; type=[]; antenna=[];
 
 % remove possible leading and trailing blanks
 s=deblank(fliplr(s));
@@ -45,19 +45,15 @@ K0=find(s=='@');
 if length(K0)>1
   msg='misplaced @';
   return
-elseif isempty(K0)
-  msg='ANTENNA missing';
-  return
-end
-antnames={'uhf','kir','sod','vhf','32m','42m','esr'};
-[msg,antenna]=check_type(s(K0+1:end),antnames);
-if ~isempty(msg)
-  return
+elseif ~isempty(K0)
+  antnames={'uhf','kir','sod','vhf','32m','42m','esr'};
+  [msg,antenna]=check_type(s(K0+1:end),antnames);
+  if ~isempty(msg)
+    return
+  end
+  s=s(1:K0-1);
 end
 
-% The string up to the '@' is:
-
-s=s(1:K0-1);
 while s(end)=='_' & ~isempty(s)
   s=s(1:end-1);
 end
