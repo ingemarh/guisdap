@@ -23,33 +23,33 @@ end
 [i1,i2]=fileparts(result_path(1:end-1));
 if strcmp(i2,'AUTO')
  if length(a_integr)>1
-  aint='scan';
+  a_autodir.int='scan';
  elseif a_integr==0
-  aint='ant';
+  a_autodir.int='ant';
  else
-  aint=num2str(a_integr);
+  a_autodir.int=num2str(a_integr);
  end
- a_autodir.date=d_time(2,1:3); a_autodir.int=aint;
-elseif isstruct(a_autodir) & any(d_time(2,1:3)-a_autodir.date)
+elseif isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
  if a_NCAR
   NCAR_output
-  do_NCAR(result_path,a_NCAR)
+  do_NCAR([],a_NCAR)
  end
  if di_figures(5)
   vizu('new','rtgup')
   vizu('save')
   START_TIME=[];
  end
- a_autodir.date=d_time(2,1:3); r_h=[];
+ r_h=[];
 end
 if isempty(r_h)
  if isstruct(a_autodir)
+  a_autodir.date=d_time(2,1:3);
   result_dir=sprintf('%d-%02d-%02d_%s_%s@%s%s',a_autodir.date,name_expr,a_autodir.int,name_ant,filesep);
   result_path=fullfile(i1,result_dir,filesep);
  end
  if ~exist(result_path,'dir')
   [i1,i2]=fileparts(result_path(1:end-1)); mkdir(i1,i2)
- elseif ~isempty(dir(result_path))
+ elseif ~isempty(dir([result_path '*.mat']))
   beep
   fprintf('\n********** %s is not empty! **********\n\n',result_path)
  end
