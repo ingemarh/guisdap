@@ -6,10 +6,12 @@ ifeq ($(sys),SunOS)
 #Solaris:
 CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include
 MEXOPTS=-f $(MATLAB)/bin/f90opts.sh
+LDFLAGS= -dy -G -h libguisdap.so -z text
 else
 #Linux
 CFLAGS=-O3 -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
 MEXOPTS=
+LDFLAGS= -shared
 endif
 
 th=$(shell if [ -f /usr/include/pthread.h ]; then echo 1;else echo 0;fi)
@@ -35,7 +37,7 @@ msis:
 
 lib:
 	$(COMPILE.c) mrqmndiag_worker.c dirthe_worker.c GULIPS_addm_worker.c GULIPS_cov_worker.c GULIPS_invR_worker.c GULIPS_mul_worker.c spec_worker.c transf_worker.c addr_covar_worker.c
-	$(LD) -o $M/libguisdap.so -dy -G -h libguisdap.so -z text *.o
+	$(LD) -o $M/libguisdap.so $(LDFLAGS) *.o
 	$(AR) cr $M/libguisdap.a *.o
 	$(RM) *.o
 
