@@ -16,9 +16,9 @@ global webfile a_save local
 global a_autodir di_figures START_TIME
 
 if length(d_time)>0 & a_save
-  filename=sprintf('%08d',fix(tosecs(d_time(2,:))));
+  filename=sprintf('%08d.mat',fix(tosecs(d_time(2,:))));
 else
-  filename='00000000';
+  filename='00000000.mat';
 end
 [i1,i2]=fileparts(result_path(1:end-1));
 if strcmp(i2,'AUTO')
