@@ -14,12 +14,11 @@ t_RECloc=p_RECloc;
 if name_site=='K' | name_site=='S'
   temp=[path_expr name_expr 'R'];
 end
-GUPvarfil=tempname;
 if exist('d_rcprog','var')
   GUPvarfile=[temp '_' int2str(d_rcprog) 'GUPvar'];
   GUPvarfil=canon(GUPvarfile,0);
-end  
-if ~exist(GUPvarfil,'file')
+end
+if ~exist(initfil,'var') | ~exist(GUPvarfil,'file')
   GUPvarfile=[temp 'GUPvar'];
   GUPvarfil=canon(GUPvarfile,0);
 end
@@ -29,10 +28,8 @@ if exist(GUPvarfil,'file')
 else
   error(['GUP variable file ' GUPvarfile '.mat not found'])
 end
-if GUP_iniver<1.52,
-  fprintf('*\n*\n* Files produced by GUP version %.2f not usable\n', GUP_iniver)
-  fprintf('* Please, reinitialize the experiment with GUP 1.52 or later\n*\n*\n')
-  error('')
+if GUP_iniver<1.52
+  error(sprintf('Files produced by GUP vs %.2f not usable: Reinitialise!',GUP_iniver))
 end
 
 if max(lp_nfir)>1

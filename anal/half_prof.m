@@ -4,7 +4,6 @@
 % Main analysis routine, NOT documented yet, sorry
 %function half_prof 
 function half_prof 
-t_start(2)
 
 global a_addr a_adstart a_adend a_control ad_lpg ad_coeff ad_range ADDR_SHIFT 
 global d_data d_var1 d_var2 d_time p_rep p_dtau ch_el di_fit
@@ -95,7 +94,6 @@ for g_ind=1:length(a_adstart)
   end
   if status==0 % Now proceed to the fitting routine
     tol=a_control(2); maxiter=a_control(3);
-    t_start(3)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if a_control(4)<=2
       [result,chi2,iter,alpha]=mrqmndiag(aa,measurement,variance,tol,maxiter,...
@@ -105,7 +103,6 @@ for g_ind=1:length(a_adstart)
               kd2,p_coeffg,small_f_womega,small_p_om,pldfvv);
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    t_stop(3)
     status=(iter>=maxiter);
     if status==0 & (any(result(afree)-eps<=physlim(1,afree)) | any(result(afree)+eps>=physlim(2,afree)))
       status=3;
@@ -117,4 +114,3 @@ for g_ind=1:length(a_adstart)
   store_results(aa,measurement,variance,real(result),ralpha,chi2,status,...
                 kd2,p_coeffg,small_f_womega,small_p_om,pldfvv);
 end
-t_stop(2)

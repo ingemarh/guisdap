@@ -12,7 +12,6 @@ if length(pldfv)==0,
   load(canon(fullfile(path_GUP,'matfiles','pldfv')));
 end
 
- % t_start(5)
   accur=4;
   res=z;
   z=z(:);
@@ -41,4 +40,3 @@ end
     z(f2)=y;
   end                                % if length(f2) >0
   res(:)=z;
-%t_stop(5)

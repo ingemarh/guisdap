@@ -1,9 +1,10 @@
 function [day,fo]=get_fo(y,m)
+global local
 t=clock;
 if nargin==0
  y=t(1); m=t(2);
 end
-of=tempname;
+of=local.tfile;
 
 %get the foF2 file
 www='http://dynamite.eiscat.uit.no/';

@@ -14,8 +14,6 @@
 % See also: spec, transf
 function theo=dirthe(param,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0)
 
-t_start(4)
-
 param=real(param); % hyi hyi
 
 %nonphys=physlim(param,p_m0);
@@ -24,4 +22,3 @@ param=real(param); % hyi hyi
 s=spec(nin0,tit0,mim0,psi,vi,kd2,p_om,pldfvv);
 
 theo=[p_coeffg.*(f_womega*s);col(param)];
-t_stop(4)

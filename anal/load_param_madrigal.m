@@ -6,7 +6,7 @@ function [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path,fileno)
 % par1D [Az,El,Pt,Tsys]
 % rpar2D [Ran,Alt,Ne]
 
-global name_expr r_RECloc name_ant
+global name_expr r_RECloc name_ant local
 ask=0; wget=1;
 Time=[]; par2D=[]; par1D=[]; rpar2D=[];
 if nargin<2, fileno=[]; end
@@ -14,7 +14,7 @@ if isempty(fileno), ask=1; fileno=1; end
 
 wget=unix('which curl >/dev/null 2>/dev/null');
 website='http://www.eiscat.se/madrigal/';
-of=tempname;
+of=local.tfile;
 ws=['''' website 'experiments/' data_path '/expTab.txt'''];
 if (wget & unix(['wget -O ' of ' ' ws ' 2>/dev/null'])) | unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
  return

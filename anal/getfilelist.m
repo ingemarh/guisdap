@@ -2,7 +2,7 @@ function [list,msg]=getfilelist(dirpath,newer)
 
 % [list,msg]= getfilelist(dirpath,newer)
 
-global path_tmp a_realtime
+global a_realtime local
 
 list=[]; msg=''; dirlist=[];
 if nargin<2
@@ -17,7 +17,7 @@ elseif isunix & a_realtime | strfind(dirpath,'?')
     i=sprintf('-newer %s/%08d%s ',newer.dir,newer.file,newer.ext);
   end
   template=[row(col('\[0-9]')*ones(1,8)) '.mat\*'];
-  d=[tempname '.txt'];
+  d=[local.tfile '.txt'];
   cmd=sprintf('find %s -name %s%s-print >%s 2>/dev/null',dirpath(1:end-1),template,i,d);
   if unix(cmd) & unix(cmd)
     msg=['Error listing mat files in ' dirpath ' ' cmd];

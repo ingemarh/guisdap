@@ -14,12 +14,11 @@ temp=[path_expr name_expr name_site];
 if name_site=='K' | name_site=='S';
   temp=[path_expr name_expr 'R'];
 end
-initfil=tempname;
 if exist('d_rcprog','var')
   initfile=[temp '_' int2str(d_rcprog) 'init'];
   initfil=canon(initfile,0);
-end  
-if ~exist(initfil,'file')
+end
+if ~exist(initfil,'var') | ~exist(initfil,'file')
   initfile=[temp 'init'];
   initfil=canon(initfile,0);
 end

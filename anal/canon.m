@@ -3,25 +3,22 @@
 %
 function fn=canon(fn,output);
 
-global t_file
+global local
 if nargin==1, output=1; end
 ext='.mat';
-if isempty(t_file)
- t_file=[tempname ext];
-end
 if isempty(strfind(fn,ext))
   fn=[fn ext];
 end
-if ~exist(fn,'file')
-  if exist([fn '.bz2'])
+if ~strfind(fn,'.bz2') & ~strfind(fn,'.gz') & ~exist(fn,'file')
+  if exist([fn '.bz2'],'file')
     fn=[fn '.bz2'];
-  elseif exist([fn '.gz'])
+  elseif exist([fn '.gz'],'file')
     fn=[fn '.gz'];
   end
 end
 if output, disp(['canon: ' fn]), end
 if strfind(fn,'.bz2') & isunix
-  unix(['bunzip2 -c ' fn ' >' t_file]); fn=t_file;
+  unix(['bunzip2 -c ' fn ' >' local.tfile ext]); fn=[local.tfile ext];
 elseif strfind(fn,'.gz') & isunix
-  unix(['gunzip -c ' fn ' >' t_file]); fn=t_file;
+  unix(['gunzip -c ' fn ' >' local.tfile ext]); fn=[local.tfile ext];
 end
