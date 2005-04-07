@@ -37,10 +37,9 @@ load(matfile)
 % set up absent data value
 AbsentData=-32767;
 
-KINDAT=6000; mvel=580;
+KINDAT=6800; mvel=580;
 switch name_site
   case 'L', KINST=95; % EISCAT Svalbard Radar
-            KINDAT=6800;
   case 'K', KINST=71; mvel=590; % EISCAT Kiruna UHF
   case 'T', KINST=72; % EISCAT Tromso UHF
   case 'S', KINST=73; mvel=590; % EISCAT Sodankyla UHF
