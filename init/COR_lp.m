@@ -48,7 +48,8 @@ lp_t2(index)=t1+lags;
 lp_dt(index)=adcint*ones(1,N_lags);
 lp_nfir(index)=gating+lags/adcint;
 for i=index
-  lp_fir(1:lp_nfir(i),i)=ones(lp_nfir(i),1); end
+  lp_fir(1:lp_nfir(i),i)=ones(lp_nfir(i),1);
+end
 lp_dec(index)=(gating+overlap)*ones(1,N_lags);
 lp_nt(index)=N_gates*ones(1,N_lags);
 lp_vc(index)=vc*ones(1,N_lags);

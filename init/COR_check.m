@@ -12,18 +12,18 @@ function COR_check(lags,adcint,bitsep)
 
 global p_dtau
 
-err=0;
+err=0; laglim=10000*eps;
 % Check if lag values are exact multiples of p_dtau
-ind=find(abs(lags-round(lags))>1000*eps);
-if length(ind)>0,
+ind=find(abs(lags-round(lags))>laglim);
+if length(ind)>0
    fprintf('Error: All lag values are not exact multiples of p_dtau of %5.2f us\n',p_dtau)
-   for lag=lags;
+   for lag=lags
    fprintf('Lag %4.0f divided by p_dtau is %5.1f\n',lag*p_dtau,lag);end
    err=1;
 end
 
 % Check if lag values are exact multiples of adcint
-ind=find(abs(lags-round(lags/adcint)*adcint)>1000*eps); 
+ind=find(abs(lags-round(lags/adcint)*adcint)>laglim); 
 if length(ind)>0,
    fprintf('Error: All lag values are not exact multiples of adcint of %5.1f us\n',adcint)
    for lag=lags;fprintf('Lag %4.0f divided by adcint is %5.1f\n',lag,lag/adcint);end
@@ -32,7 +32,7 @@ end
 
 if nargin==3,
   % Check if lag values are exact multiples of bitsep
-  ind=find(abs(lags-round(lags/bitsep)*bitsep)>1000*eps); 
+  ind=find(abs(lags-round(lags/bitsep)*bitsep)>laglim); 
   if length(ind)>0,
     fprintf('Error: All lag values are not exact multiples of bitsep of %5.2f us\n',bitsep)
     for lag=lags;fprintf('Lag %4.0f divided by bitsep is %5.1f\n',lag,lag/bitsep);end
