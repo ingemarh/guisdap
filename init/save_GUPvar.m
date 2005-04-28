@@ -23,4 +23,7 @@ str=[str ' vc_ch vc_env vc_envo vc_p vc_adcint vc_sampling lp_dec lp_firsto lp_n
 str=[str ' lp_T lp_bcs lp_code lp_dt lp_h lp_nt lp_ra lp_ri lp_t1 lp_t2 lp_vc'];
 
 eval(str);
+if isunix
+ unix(['gzip -9 ' GUPvarfile '.mat']);
+end
 disp([GUPvarfile ' saved']);
