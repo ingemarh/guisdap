@@ -1,0 +1,14 @@
+N_SCAN=length(vc_ch);
+
+COR_init(N_SCAN*(64+1+1),63)
+for vc=1:N_SCAN
+  COR_pp(2756,1,vc,'s',1,90,0,1)
+  COR_fdalt(1000,vc,'s',27,0,0,64,3,0,(0:63)*3,1)
+  if rem(vc,2)==1
+    COR_pp(500,1,vc,'c',1,500,0,1)
+  else
+    COR_pp(0,1,vc,'b',1,500,0,1)
+  end
+end
+
+COR_end
