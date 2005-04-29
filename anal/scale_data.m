@@ -41,20 +41,29 @@ end
 calibs=diff_val(lpg_cal(lpgs));      % find all different values
 calibs=calibs(find(calibs>0)); % Accept non-zero values
 scale=zeros(size(lpg_cal));
-sysTemp=[];
-
-for cal=calibs
+if ~isempty(calTemp)
+ sysTemp=[];
+ for cal=calibs
   bac=lpg_bac(cal);
   bac_power=median(d_data(lpg_addr(bac)+ADDR_SHIFT));
   cal_power=median(d_data(lpg_addr(cal)+ADDR_SHIFT));
   scale(cal)=(cal_power-bac_power)/calTemp;
   sysTemp=[sysTemp;bac_power/scale(cal)];
+ end
+elseif ~isempty(sysTemp)
+%*********************** OR BY BACKGROUND POWER ************************
+ for cal=calibs
+  bac=lpg_bac(cal);
+  bac_power=median(d_data(lpg_addr(bac)+ADDR_SHIFT));
+  scale(cal)=bac_power/sysTemp;
+ end
+else
+ error('No calibration temperature')
 end
-
 for lpg=lpgs
-  cal=lpg_cal(lpg);
-  addr=lpg_addr(lpg)+ADDR_SHIFT; % To change from radar to Matlab addressing
-  d_data(addr)=d_data(addr)/scale(cal);
-  d_var1(addr)=d_var1(addr)/(scale(cal)*scale(cal));
-  d_var2(addr)=d_var2(addr)/(scale(cal)*scale(cal));
+ cal=lpg_cal(lpg);
+ addr=lpg_addr(lpg)+ADDR_SHIFT; % To change from radar to Matlab addressing
+ d_data(addr)=d_data(addr)/scale(cal);
+ d_var1(addr)=d_var1(addr)/(scale(cal)*scale(cal));
+ d_var2(addr)=d_var2(addr)/(scale(cal)*scale(cal));
 end

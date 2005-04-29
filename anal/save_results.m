@@ -12,7 +12,7 @@ global r_ind r_range r_param r_error r_res r_status r_dp r_Offsetppd
 global r_apriori r_apriorierror
 global pp_range pp_sigma
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
-global webfile a_save local
+global webfile a_save local a_gfd
 global a_autodir di_figures START_TIME a_Magic_const
 
 if length(d_time)>0 & a_save
@@ -63,7 +63,7 @@ if isempty(r_h)
   beep
   fprintf('\n********** %s is not empty! **********\n\n',result_path)
  end
- if ~strcmp(path_tmp,result_path)
+ if a_gfd & ~strcmp(path_tmp,result_path)
   save_setup([result_path '.gup']);
   save_setup([result_path 'gfd_setup.m']);
  end

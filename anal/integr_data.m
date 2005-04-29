@@ -44,6 +44,8 @@ if a_ind==0
   a_interval=a_start+[0 a_integr(1)];
   a_oldtime=0;
   a_maxgap=30;
+  a_posold=zeros(1,9);
+  a_nnold=zeros(1,9);
 else
   a_indold=a_ind; a_ind=a_ind+1; if a_ind>length(a_integr), a_ind=1; end
   a_interval=a_interval(2)+a_skip(a_indold)+[0 a_integr(a_ind)];
@@ -104,12 +106,12 @@ while i<length(files)
   [secs1,year]=tosecs(d_parbl(tvec));
   a_inttime=d_parbl(inttime);
   d=find(d_parbl(positive)<0);
-  if ~isempty(a_posold) & ~isempty(d)
+  if ~isempty(d)
    d_parbl(positive(d))=a_posold(d);
   end
   a_posold=d_parbl(positive);
   d=find(d_parbl(non_negative)<=0);
-  if ~isempty(a_nnold) & ~isempty(d)
+  if ~isempty(d)
    d_parbl(non_negative(d))=a_nnold(d);
   end
   a_nnold=d_parbl(non_negative);

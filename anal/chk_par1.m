@@ -170,3 +170,7 @@ end
 if length(a_txpower)==1
  if a_txpower(1)==65, a_txpower(2)=1e3; else, a_txpower(2)=1; end
 end
+sysTemp=[];
+if exist('analysis_Tsys','var')
+ sysTemp=analysis_Tsys;
+end
