@@ -7,6 +7,14 @@ p_rep=180000*2;
 ch_Pt=ch_Pt(1);
 if name_site=='K' | name_site=='S'
   ch_height=292.9;
+  if length(d_data)<2400
+    d=find(lpg_lag>23*12);
+    if lpg_bcs(1)=='s'
+      lpg_bcs(d)='g';
+      form_adpar
+      lpg_ra([509:511])=[1967 2031 2287];
+    end
+  end
 elseif name_site=='T'
   d_data(1:728)=d_data(1:728)+d_data(728+(1:728));
 % g=gainfit(d_data(34956:35683));

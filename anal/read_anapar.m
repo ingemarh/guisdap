@@ -15,7 +15,7 @@ if name_site=='T' | name_site=='L' | name_site=='V'
  analysis_altit=first+cumsum(altd);
  analysis_maxwidth=[altd(2:end) altd(end)];
 else
- analysis_range=0:500:1000;
+ analysis_range=(0:1)*1000;
 end
 
 if exist([path_expr 'ana_def.m'])==2
