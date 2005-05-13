@@ -25,7 +25,7 @@ function [varargout]=vizu(action,a2,a3)
 % To reset and start over:
 % >> vizu new [action]
 
-global Time par2D par1D rpar2D name_expr name_ant axs axc hds
+global Time par2D par1D rpar2D name_expr name_ant axs axc hds maxdy
 global height n_tot add_plot manylim
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1
 global r_RECloc path_tmp path_GUP result_path webfile local owner
@@ -178,6 +178,7 @@ if ~isempty(Loc)
  LOCATION	=['EISCAT-' Loc];
 end
 stretchSecs	=65;	% Number of seconds to stretch data points
+maxdy	=Inf;		% Max diff in y to stretch data points
 FS	=10;		% Font size
 TL	=[0.01 0.025];	% Tick size
 height(2)=.03;		% Panel separation
@@ -202,8 +203,10 @@ end
 if strcmp(name_expr,'arcd')
  SCALE(2,:)=[59 139]; WHICH_PARAM='Nr AE';
  if any(par1D(:,2)<90), SCALE(2,1)=50; end
-elseif strcmp(name_expr,'dlayer')  | strfind(name_expr,'cp6')
- SCALE(2,:)=[59 121]; WHICH_PARAM='Ne AE';
+elseif strfind('dlayer cp6',name_expr)
+ SCALE(2:3,:)=[59 121;10.^[9 12]]; WHICH_PARAM='Ne AE';
+elseif strcmp(name_expr,'manda')
+ SCALE(2:3,:)=[58 240;10.^[9 12]]; WHICH_PARAM='Ne AE'; maxdy=70;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~exist('GATES')
@@ -214,7 +217,6 @@ if length(GATES)==1
 end
 %%%%%%%%%% Time scales %%%%%%%%%%%%%
 if strcmp(lower(action),'verbose')
-% name_expr=minput('Experiment name',name_expr,1);
  if isempty(START_TIME)
   START_TIME=floor(datevec(Time(1,1)));
   END_TIME=ceil(datevec(Time(2,end)));
@@ -238,7 +240,6 @@ elseif ~REALT
  end
  [d,dpath]=fileparts(DATA_PATH);
  START_TIME=datevec(median(Time(:))); START_TIME(4:6)=[0 0 0];
-%START_TIME=[sscanf(dpath(1:10),'%4d-%2d-%2d')' 0 0 0];
  END_TIME=START_TIME+[0 0 0 24 0 0];
 end
 if isempty(MESSAGE1)
@@ -482,7 +483,7 @@ if size(zparam,1)==1
  line_plot(s,zparam',zscale,Barlabel,[],lg);
  return
 end
-global Time axs axc add_plot
+global Time axs axc add_plot maxdy
 add_plot=add_plot+1;
 if length(axs)<add_plot
  setup_axes(yscale,YTitle)
@@ -500,7 +501,16 @@ dy=diff(yparam)/2; yparam=[yparam-[dy(1,:);dy];yparam(end,:)+dy(end,:)];
 zparam=[zparam;zparam(end,:)];
 o2=ones(1,2);
 for i=1:s
- surface(Time(:,i),yparam(:,i)*o2,zparam(:,i)*o2)
+ yp=yparam(:,i); zp=zparam(:,i);
+ dy=diff(yp);
+ d=find(dy>maxdy);
+ if ~isempty(d)
+  d=d(1:2:end);
+  yp(d+1)=yp(d+2)-dy(d+2);
+  [yp,j]=sort([yp;yp(d)+dy(d-1);yp(d)+dy(d-1)+eps]);
+  zp=[zp;zp(d);NaN*ones(size(dy))]; zp=zp(j);
+ end
+ surface(Time(:,i),yp*o2,zp*o2)
 end
 
 if length(axc)<add_plot

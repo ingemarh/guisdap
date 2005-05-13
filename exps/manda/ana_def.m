@@ -1,16 +1,17 @@
 % Analysis defaults
 if name_site=='V'
   fit_altitude=[0 Inf;120 Inf;350 1500;0 0;100 Inf];
-  first=50; last=600; d1=3; d2=2; n1=15;
+  first=50; last=600; d1=.45; d2=1; n1=100;
   h1=230;
 elseif name_site=='T'
   fit_altitude=[0 Inf;100 Inf;130 1500;0 0;90 Inf];
-  first=50; last=600; d1=3; d2=1; n1=15;
+  first=50; last=600; d1=.45; d2=1; n1=100;
   h1=230;
 elseif name_site=='L'
   fit_altitude=[0 Inf;100 Inf;130 1500;0 0;90 Inf];
-  first=50; last=600; d1=3; d2=1; n1=15;
+  first=50; last=600; d1=.75; d2=1; n1=60;
   h1=210;
+  a_satch.clutter=88;
 end
 if name_site=='T' | name_site=='L' | name_site=='V'
  a_satch.lpg_skip=[3:97 3603:3665];
