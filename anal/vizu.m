@@ -172,6 +172,7 @@ Y_TYPE	='linear';	% Y scale type
 PLF_SCALE	=[0 10];	% Langmuir freq MHz
 RAWNE_SCALE	=10.^[9 12];	% Raw Ne
 LAT_SCALE	=[65 78];	% Geogr Lat deg
+AE_SCALE	=[0 360];	% Radar parms
 MESSAGE2	='Not for publication - see Rules-of-the-road'; % top
 LOCATION	=local.host;	% Place where plotting performed
 FIGURE_TITLE	='EISCAT RADAR';% Title for the whole figure
@@ -260,11 +261,12 @@ elseif strcmp(nameant,'vhf')
 end
 if strcmp(action,'VERBOSE')
  Y_PARAM=minput('Y parameter (Ran-1 Alt-2 Lat-3)',Y_PARAM);
- Y_TYPE=minput('Y scale type',Y_TYPE);
+ Y_TYPE=minput('Y scale type',Y_TYPE,1);
  SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res)',SCALE')';
  PLF_SCALE=minput('Scale (plf)',PLF_SCALE);
  RAWNE_SCALE=minput('Scale (rawNe)',RAWNE_SCALE);
  LAT_SCALE=minput('Scale (lat)',LAT_SCALE);
+ AE_SCALE=minput('Scale (AzEl)',AE_SCALE);
  manylim=Inf;
  stretchSecs=minput('Strech secs',stretchSecs);
 end
@@ -441,7 +443,7 @@ end
 if option(11)
  ae=par1D(:,[3 1 2:2:end]);
  d=find(ae(:,3)<90.1 & ae(:,3)>89.9); ae(d,2)=NaN;
- d=many(ae,[0 360]);
+ d=many(ae,AE_SCALE);
  line_plot(s,ae,d,'Radar parameters',TITLE1([3 1 2 4]),[])
 end
 if option(13)
