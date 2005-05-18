@@ -33,10 +33,10 @@ if GUP_iniver<1.52
   error(sprintf('Files produced by GUP vs %.2f not usable: Reinitialise!',GUP_iniver))
 end
 
-if max(lp_nfir)>1
-  lp_fir=cumsum(full(lp_firsto));
-else 
+if max(lp_nfir)==1 | isa(lp_firsto,'int8')
   lp_fir=lp_firsto;
+else 
+  lp_fir=cumsum(full(lp_firsto));
 end
 p_RECloc=t_RECloc;
 clear t_RECloc GUPvarfile GUPvarfil

@@ -5,10 +5,10 @@
 
 GUP_iniver=GUP_ver;
 
-if max(lp_nfir)>1
-  lp_firsto=sparse(diff([zeros(size(lp_vc));lp_fir]));
-else 
+if max(lp_nfir)==1 | isa(lp_fir,'int8')
   lp_firsto=lp_fir;
+else 
+  lp_firsto=sparse(diff([zeros(size(lp_vc));lp_fir]));
 end
 
 if ~exist('apustr'), apustr=''; end
@@ -24,6 +24,6 @@ str=[str ' lp_T lp_bcs lp_code lp_dt lp_h lp_nt lp_ra lp_ri lp_t1 lp_t2 lp_vc'];
 
 eval(str);
 if isunix
- unix(['gzip -9 ' GUPvarfile '.mat']);
+ unix(['gzip -f9 ' GUPvarfile '.mat']);
 end
 disp([GUPvarfile ' saved']);

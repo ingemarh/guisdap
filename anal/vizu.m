@@ -27,7 +27,7 @@ function [varargout]=vizu(action,a2,a3)
 
 global Time par2D par1D rpar2D name_expr name_ant axs axc hds maxdy
 global height n_tot add_plot manylim
-global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1
+global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
 global r_RECloc path_tmp path_GUP result_path webfile local owner
 if nargin<2, a2=[]; end
 if nargin<3, a3=[]; end
@@ -168,6 +168,7 @@ SCALE =[50 900		% Range km
 	10.^[0 5]	% collision freq Hz
 	0 1		% Comp
 	.1 10]; 	% Res
+Y_TYPE	='linear';	% Y scale type
 PLF_SCALE	=[0 10];	% Langmuir freq MHz
 RAWNE_SCALE	=10.^[9 12];	% Raw Ne
 LAT_SCALE	=[65 78];	% Geogr Lat deg
@@ -259,6 +260,7 @@ elseif strcmp(nameant,'vhf')
 end
 if strcmp(action,'VERBOSE')
  Y_PARAM=minput('Y parameter (Ran-1 Alt-2 Lat-3)',Y_PARAM);
+ Y_TYPE=minput('Y scale type',Y_TYPE);
  SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res)',SCALE')';
  PLF_SCALE=minput('Scale (plf)',PLF_SCALE);
  RAWNE_SCALE=minput('Scale (rawNe)',RAWNE_SCALE);
@@ -483,7 +485,7 @@ if size(zparam,1)==1
  line_plot(s,zparam',zscale,Barlabel,[],lg);
  return
 end
-global Time axs axc add_plot maxdy
+global Time axs axc add_plot maxdy Y_TYPE
 add_plot=add_plot+1;
 if length(axs)<add_plot
  setup_axes(yscale,YTitle)
@@ -511,6 +513,17 @@ for i=1:s
   zp=[zp;zp(d);NaN*ones(size(dy))]; zp=zp(j);
  end
  surface(Time(:,i),yp*o2,zp*o2)
+end
+if strcmp(Y_TYPE,'log')
+ ny=length(get(gca,'ytick'));
+ set(gca,'yscale',Y_TYPE)
+ if length(get(gca,'ytick'))<ny
+  yl=log10(get(gca,'ylim'));
+  yl=logspace(yl(1),yl(2),ny);
+  yll=10.^floor(log10(yl));
+  yl=round(yl./yll).*yll;
+  set(gca,'ytick',unique(yl))
+ end
 end
 
 if length(axc)<add_plot

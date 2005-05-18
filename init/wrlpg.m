@@ -30,7 +30,7 @@ for lp=lps
     if length(wsum)<maxr,wsum(maxr,1)=0;end;
     for ind=1:lp_nfir(lp)
       R=round(r+(ind-1)*lp_dt(lp)+dummyrange);
-      wsum(R)=wsum(R)+lp_fir(ind,lp)*w;
+      wsum(R)=wsum(R)+double(lp_fir(ind,lp))*w;
     end
   else
     fprintf('For lag profile %.0f the range ambiguity function is empty\n',lp)
