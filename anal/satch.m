@@ -68,9 +68,10 @@ end
 sigma(1:length(lp))=a_satch.sigmab;
 lpgused=[lpgused lp]; ii=0;
 for i=lp
- j=j+1; ii=ii+1;
+ ii=ii+1;
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
  if length(addr)>1
+  j=j+1;
   dat=real(d_data(addr)); dat_m=median(dat);
   data=dat;
   d=find(data>dat_m+sigma(ii)*std(data));
