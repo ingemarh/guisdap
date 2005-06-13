@@ -4,14 +4,22 @@
 % See also: GUISPERT GUIZARD
 %
 %ch_Pt=ch_Pt(1)/2;
+d_date=datenum(d_time(1,:));
 if ch_Pt(1)==0
  polhv=[0;0]; hv=0;
 else
  polhv=[.6374 -45.17 540.33;.6336 -48.418 790.23;0 0 -ch_Pt(1)/1000];
  hv=max(roots(sum(polhv)));
 end
-
-d_date=datenum(d_time(1,:));
+if d_date>datenum(2002,8,12,0,0,0) & d_date<datenum(2002,8,18,0,0,0)
+ %read hv from txlog
+ if ~exist('txlog','var')
+  txlog=get_tx('VAB0802a.txt',[53]);
+  d=find(txlog(:,2)<25); txlog(d,2)=25; %ch_Pt<0
+ end
+ hv=interp1(txlog(:,1),txlog(:,2),mean(datenum(d_time)),'nearest');
+ polhv=[.6374 -45.17 540.33;.6336 -48.418 790.23];
+end
 if d_date<datenum(2001,12,1,0,0,0)
  ch_el=30;
 end
@@ -54,7 +62,9 @@ elseif length(a_code)==1 & a_code==1
  if d_date>datenum(2002,8,19,7,0,0) & d_date<datenum(2002,10,04,0,0,0)
   [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),3,10^4.31/2);
  end
- ch_Pt=polyval(polhv(1,:),hv)*1000,
+ if d_date<datenum(2002,11,04,0,0,0) | d_date>datenum(2002,11,05,06,0,0) % whole antenna to side-a  
+   ch_Pt=polyval(polhv(1,:),hv)*1000;
+ end
 else
  error('No such analysis_code')
 end

@@ -7,15 +7,15 @@ ch_Pt=ch_Pt(1);
 if name_site=='V' | name_site=='T'
  npp=330; npr1=420; npr2=34596; nslic=1;  %pg_bcs(5)='x';
  d_date=datenum(d_time(1,:));
- % Oct 2003
- if d_date>=datenum(2003,10,28,16,18,0) & d_date<=datenum(2003,10,28,16,40,0)
-  ch_el=70;
- elseif d_date>=datenum(2003,10,28,20,11,0) & d_date<=datenum(2003,10,28,22,0,0)
-  ch_el=90;
- elseif d_date>=datenum(2003,10,30,4,5,0) & d_date<=datenum(2003,10,30,17,21,0)
-  ch_el=60;
- end
  if strcmp(name_ant(1:3),'vhf')
+  % Oct 2003
+  if d_date>=datenum(2003,10,28,16,18,0) & d_date<=datenum(2003,10,28,16,40,0)
+   ch_el=70;
+  elseif d_date>=datenum(2003,10,28,20,11,0) & d_date<=datenum(2003,10,28,22,0,0)
+   ch_el=90;
+  elseif d_date>=datenum(2003,10,30,4,5,0) & d_date<=datenum(2003,10,30,17,21,0)
+   ch_el=60;
+  end
   [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
  end
 end
