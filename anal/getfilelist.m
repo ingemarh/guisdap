@@ -42,7 +42,7 @@ else
     dp=fileparts(dirpath);
     dirs=dir(dirpath);
   else
-    dp=[];
+    dp='';
     dirs.name=dirpath;
   end
   for j=1:length(dirs)
