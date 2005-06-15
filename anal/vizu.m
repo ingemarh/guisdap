@@ -208,7 +208,7 @@ if strcmp(name_expr,'arcd')
 elseif strfind('dlayer cp6',name_expr)
  SCALE(2:3,:)=[59 121;10.^[9 12]]; WHICH_PARAM='Ne AE';
 elseif strcmp(name_expr,'manda')
- SCALE(2:3,:)=[58 240;10.^[9 12]]; WHICH_PARAM='Ne AE'; maxdy=70;
+ SCALE(2:3,:)=[58 500;10.^[9 12]]; WHICH_PARAM='Ne AE'; maxdy=70; Y_TYPE='log';
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~exist('GATES')
@@ -521,7 +521,7 @@ if strcmp(Y_TYPE,'log')
  set(gca,'yscale',Y_TYPE)
  if length(get(gca,'ytick'))<ny
   yl=log10(get(gca,'ylim'));
-  yl=logspace(yl(1),yl(2),ny);
+  yl=logspace(yl(1),yl(2),round(ny*1.3));
   yll=10.^floor(log10(yl));
   yl=round(yl./yll).*yll;
   set(gca,'ytick',unique(yl))
