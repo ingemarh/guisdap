@@ -11,14 +11,12 @@ end
 
 if ~exist('apustr'), apustr=''; end
 PSfile=[path_expr name_expr name_site apustr 'pat_PS'];
-str=['save ' PSfile];
+saveflag='';
 if local.matlabversion>=14
- str=[str ' -v6'];
+ saveflag='-v6';
 end
 
-str=[str ' p_* td_* ch_*'];
-
-eval(str);
+save(PSfile,'p_*','td_*','ch_*',saveflag);
 disp([PSfile ' saved']);
 
-clear PSfile str
+clear PSfile

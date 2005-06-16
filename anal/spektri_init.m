@@ -4,11 +4,7 @@
 % See also: spec
 %
 % function spektri_init
-  function spektri_init
-  
- global pldfvv path_GUP
-
+function spektri_init
+global pldfvv path_GUP
 % Contains the plasma dispersion function values for interpolation
-% eval(canon(['load ' path_GUP 'matfiles:pldfv.mat']));
 load(canon(fullfile(path_GUP,'matfiles','pldfvv')));
-

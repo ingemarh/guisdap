@@ -13,5 +13,16 @@ for varno=1:length(varargin)
   varlist=[varlist ' ' varname];
  end
 end
-if local.matlabversion>=14, varflags=[' -v6' varflags]; end
-eval(['save ' varfile varlist varflags])
+if strfind(varfile,' ')
+ clear varargin varlist varflags varno vartemp varname
+ if local.matlabversion>=14
+  clear local
+  save(varfile,'-mat','-v6')
+ else
+  clear local
+  save(varfile,'-mat')
+ end
+else
+ if local.matlabversion>=14, varflags=[' -v6' varflags]; end
+ eval(['save ' varfile varlist varflags])
+end
