@@ -180,7 +180,7 @@ if ~isempty(Loc)
  LOCATION	=['EISCAT-' Loc];
 end
 stretchSecs	=65;	% Number of seconds to stretch data points
-maxdy	=Inf;		% Max diff in y to stretch data points
+maxdy	=Inf;		% Max diff in y stretch data points
 FS	=10;		% Font size
 TL	=[0.01 0.025];	% Tick size
 height(2)=.03;		% Panel separation
@@ -260,13 +260,24 @@ elseif strcmp(nameant,'vhf')
  fradar=224e6;
 end
 if strcmp(action,'VERBOSE')
- Y_PARAM=minput('Y parameter (Ran-1 Alt-2 Lat-3)',Y_PARAM);
- Y_TYPE=minput('Y scale type',Y_TYPE,1);
+ GATES=minput('Gates',GATES);
+ if length(GATES)>1
+  Y_PARAM=minput('Y parameter (Ran-1 Alt-2 Lat-3)',Y_PARAM);
+  if Y_PARAM==3
+   LAT_SCALE=minput('Scale (lat)',LAT_SCALE);
+  end
+  Y_TYPE=minput('Y scale type',Y_TYPE,1);
+ end
  SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res)',SCALE')';
- PLF_SCALE=minput('Scale (plf)',PLF_SCALE);
- RAWNE_SCALE=minput('Scale (rawNe)',RAWNE_SCALE);
- LAT_SCALE=minput('Scale (lat)',LAT_SCALE);
- AE_SCALE=minput('Scale (AzEl)',AE_SCALE);
+ if findstr(WHICH_PARAM,'P') | findstr(WHICH_PARAM,'L')
+  PLF_SCALE=minput('Scale (plf)',PLF_SCALE);
+ end
+ if findstr(WHICH_PARAM,'Nr')
+  RAWNE_SCALE=minput('Scale (rawNe)',RAWNE_SCALE);
+ end
+ if findstr(WHICH_PARAM,'AE')
+  AE_SCALE=minput('Scale (AzEl)',AE_SCALE);
+ end
  manylim=Inf;
  stretchSecs=minput('Strech secs',stretchSecs);
 end
