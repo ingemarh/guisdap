@@ -34,7 +34,7 @@ Nsat=0; j=0; x0max=0;
 n_echo=6; min_v=.065; skip=a_satch.skip;
 
 %check signal
-lp=setdiff(find(lpg_lag==0 & (lpg_bcs=='s' | lpg_bcs=='x')),a_satch.lpg_skip);
+lp=setdiff(find(lpg_lag==0 & (lpg_bcs=='s' | lpg_bcs=='x') & lpg_bac~=0),a_satch.lpg_skip);
 if ~isempty(a_code)
  lp=lp(find(ismember(lpg_code(lp),unique(a_code))));
 end

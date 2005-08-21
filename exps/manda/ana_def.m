@@ -14,7 +14,6 @@ elseif name_site=='L'
   a_satch.clutter=88;
 end
 if name_site=='T' | name_site=='L' | name_site=='V'
- a_satch.lpg_skip=[3:97 3603:3665];
  a_satch.skip=1;
  altd=[0 ones(1,n1)*d1 d1:d2:(sqrt((last-first)*2*d2))];
  analysis_range=first+cumsum(altd);
