@@ -155,7 +155,11 @@ end
 if ~isempty(a_addr)
   if a_NCAR
     NCAR_output
-    do_NCAR([],a_NCAR)
+    if a_realtime & isunix & ~isempty(local.site)
+      do_NCAR([],2)
+    else
+      do_NCAR([],a_NCAR)
+    end
   end
   if di_figures(5)
     vizu('new','rtgup')
