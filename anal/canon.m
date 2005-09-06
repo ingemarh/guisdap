@@ -17,8 +17,8 @@ if isempty(strfind(fn,'.bz2')) & isempty(strfind(fn,'.gz')) & ~exist(fn,'file')
   end
 end
 if output, disp(['canon: ' fn]), end
-if strfind(fn,'.bz2') & isunix
-  unix(['bunzip2 -c ' fn ' >' local.tfile ext]); fn=[local.tfile ext];
-elseif strfind(fn,'.gz') & isunix
-  unix(['gunzip -c ' fn ' >' local.tfile ext]); fn=[local.tfile ext];
+if strfind(fn,'.bz2')
+  system(['bunzip2 -c ' fn ' >' local.tfile ext]); fn=[local.tfile ext];
+elseif strfind(fn,'.gz')
+  system(['gunzip -c ' fn ' >' local.tfile ext]); fn=[local.tfile ext];
 end

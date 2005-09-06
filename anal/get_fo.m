@@ -8,12 +8,13 @@ of=local.tfile;
 
 %get the foF2 file
 www='http://dynamite.eiscat.uit.no/';
-wget=(['wget -O ' of ' %s%s >/dev/null 2>&1']);
+%wget=(['wget -O ' of ' %s%s >/dev/null 2>&1']);
+wget=(['wget -O ' of ' %s%s']);
 fof2_link=sprintf('a-a/jww/AUTO/archive/DSND%02d%02d.FEF',rem(y,100),m);
-i=unix(sprintf(wget,www,fof2_link));
+[i,devnull]=system(sprintf(wget,www,fof2_link));
 if i & y==t(1)
  fof2_link='jww/AUTO/autodsnd.fef';
- i=unix(sprintf(wget,www,fof2_link));
+ [i,devnull]=system(sprintf(wget,www,fof2_link));
 end
 
 if ~i

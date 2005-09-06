@@ -342,8 +342,10 @@ if isempty(findobj('type','figure','userdata',6))
 %  'defaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
  uimenu('label','Update','callback','vizu(''update'')');
  uimenu('label','Edit','callback','vizu(''verbose'')');
- uimenu('label','Save','callback','if isunix,vizu(''save''),else,printdlg,end');
- uimenu('label','Print','callback','if isunix,vizu(''print''),else,printdlg,end');
+ if isunix
+  uimenu('label','Save','callback','vizu(''save'')');
+  uimenu('label','Print','callback','vizu(''print'')');
+ end
 
  ti=axes('Position',[0.0 0.87 0.95 0.08]);
  set(ti,'Visible','off');

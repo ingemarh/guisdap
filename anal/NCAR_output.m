@@ -34,8 +34,10 @@ elseif ~NCAR_fid(1) & ~isempty(NCAR_ascii)
 end
 
 load(matfile)
-% set up absent data value
+% set up absent data values
 AbsentData=-32767;
+ModelData=-32766;
+BadData=32767;
 
 KINDAT=6800; mvel=580;
 switch name_site
@@ -94,12 +96,12 @@ var=real([log10(r_param(:,1))*1e3 r_param(:,2) r_param(:,3)*1e3 log10(r_param(:,
 evar=real([log10(r_error(:,1))*1e3 r_error(:,2) r_error(:,3)*1e3 log10(r_param(:,4))*1e3 r_error(:,5)]);
 mvar=var;
 % only output results for fit parameter 0
-d=find(r_status~=0); var(d,:)=AbsentData; evar(d,:)=AbsentData;
-d=find(r_error(:,1:5)==0); evar(d)=AbsentData; var(d)=mvar(d);
+d=find(r_status~=0); var(d,:)=BadData; evar(d,:)=BadData;
+d=find(r_error(:,1:5)==0); evar(d)=ModelData; var(d)=mvar(d);
 pos=[fix(r_h) rem(r_h,1)*1e4];
 mvar=round([pos r_status [r_res(:,1) r_dp]*1e3 var evar]);
 % replace infinities and all values > 32767
-mvar(find(~isfinite(mvar) | abs(mvar)>-AbsentData))=AbsentData;
+mvar(find(~isfinite(mvar) | abs(mvar)>BadData))=BadData;
 Multivar=[mvarcod;mvar];
  
 if NCAR_fid(1)
@@ -134,7 +136,7 @@ if strfind('TVL',name_site) & exist('r_pp') & ~isempty(r_pp)
  var=real(log10(r_pp(:,1))*1e3);
  pos=[fix(r_pprange) rem(r_pprange,1)*1e4];
  mvar=round([pos var]);
- mvar(find(~isfinite(mvar) | abs(mvar)>-AbsentData))=AbsentData;
+ mvar(find(~isfinite(mvar) | abs(mvar)>BadData))=BadData;
  Multivar=[mvarcod;mvar];
  if NCAR_fid(1)
   KREC=1101;

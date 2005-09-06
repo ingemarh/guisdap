@@ -12,7 +12,7 @@ if nargin<2, status=[]; end
 if isempty(status), status=0; end
 if isempty(myparams), myparams=[1 2 4]; end
 
-if isunix & isempty(strfind(data_path,'*')) & ~isdir(data_path)
+if isempty(strfind(data_path,'*')) & ~isdir(data_path)
   [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path);
   return
 end

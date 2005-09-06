@@ -12,11 +12,17 @@ Time=[]; par2D=[]; par1D=[]; rpar2D=[];
 if nargin<2, fileno=[]; end
 if isempty(fileno), ask=1; fileno=1; end
 
-wget=unix('which curl >/dev/null 2>/dev/null');
+[wget,devnull]=system('which curl');
+if wget
+ cmd1='wget'; cmd2=' -O '; cmd3=' '; cmd4=' --post-data=';
+else
+ cmd1='curl'; cmd2=' -o '; cmd3=' -f '; cmd4=' -d ';
+end
 website='http://www.eiscat.se/madrigal/';
 of=local.tfile;
 ws=['''' website 'experiments/' data_path '/expTab.txt'''];
-if (wget & unix(['wget -O ' of ' ' ws ' 2>/dev/null'])) | unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
+[mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
+if mad
  return
 end
 [name_expr,kinst]=textread(of,'%*s%*s%s%*s%*s%*s%*s%*s%d%*[^\n]','delimiter',',');
@@ -25,7 +31,8 @@ name_expr=char(name_expr);
 name_expr(strfind(name_expr,'_'))=[];
 name_expr(strfind(name_expr,' '))=[];
 ws=['''' website 'experiments/' data_path '/fileTab.txt'''];
-if (wget & unix(['wget -O ' of ' ' ws ' 2>/dev/null'])) | unix(['curl -o ' of ' -f ' ws ' 2>/dev/null'])
+[mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
+if mad
  return
 end
 filename=textread(of,'%s%*[^\n]','delimiter',',');
@@ -56,7 +63,8 @@ for i=fliplr(find(arg=='&' | arg==' '))
 end
 ws=['''' website 'cgi-bin/madDataDisplay'''];
 
-if (wget & unix(['wget --post-data=' arg ' -O ' of ' ' ws ' 2>/dev/null'])) | unix(['curl -d ' arg ' -o ' of ' -f ' ws ' 2>/dev/null'])
+[mad,devnull]=system([cmd1 cmd4 arg cmd2 of cmd3 ws]);
+if mad
  return
 end
 data=textread(of,'','headerlines',8);

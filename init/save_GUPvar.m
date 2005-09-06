@@ -23,7 +23,5 @@ save(GUPvarfile,'GUP_iniver','ch_fradar','ch_gain','p_dtau','p_rep','p_ND',...
  'vc_sampling','lp_dec','lp_firsto','lp_nfir','lp_T','lp_bcs','lp_code',...
  'lp_dt','lp_h','lp_nt','lp_ra','lp_ri','lp_t1','lp_t2','lp_vc',saveflag)
 
-if isunix
- unix(['gzip -f9 ' GUPvarfile '.mat']);
-end
+system(['gzip -f9 ' GUPvarfile '.mat']);
 disp([GUPvarfile ' saved']);
