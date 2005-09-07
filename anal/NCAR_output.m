@@ -37,7 +37,7 @@ load(matfile)
 % set up absent data values
 AbsentData=-32767;
 ModelData=-32766;
-BadData=32767;
+BadData=-32767; % madrigal cannot handle +32767
 
 KINDAT=6800; mvel=580;
 switch name_site
