@@ -6,19 +6,20 @@
 % function code=Barker(Nbits);
 function code=Barker(Nbits);
 
-if Nbits==3,
+if Nbits==3
   code=[1 1 -1]';
-elseif Nbits==4,
+elseif Nbits==4
   code=[1 1 -1 1]';
-elseif Nbits==5,
+elseif Nbits==5
   code=[1 1 1 -1 1]';
-elseif Nbits==7,
+elseif Nbits==7
   code=[1 1 1 -1 -1 1 -1]';
-elseif Nbits==11,
+elseif Nbits==11
   code=[1 1 1 -1 -1 -1 1 -1 -1 1 -1]';
-elseif Nbits==13,
+elseif Nbits==13
   code=[1 1 1 1 1 -1 -1 1 1 -1 1 -1 1]';
+elseif exist('FIRcode')
+  code=col(FIRcode(Nbits));
 else
-  fprintf('%.0f bit Barker code not available',Nbits)
-  error(' ')
+  error(sprintf('%.0f bit Barker code not available',Nbits))
 end
