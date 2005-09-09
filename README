@@ -1,23 +1,23 @@
-GUISDAP 8.2
+GUISDAP 8.4
 
 This release of guisdap contains several new features and bugfixes,
-but users everything is made compatible with older versions (hopefully).
-It has been developed and tested using Matlab 6.5, so there may (or may
-not) be some problems with older Matlab versions.
+but everything is made compatible with older versions (hopefully).
+The package should be compatible with Matlab versions higher then 6.5,
+but there may (or may not) be some problems on specific platforms.
 
-
-Installing
-
-Guisdap-8.2 is somewhat easier to install than the previous version.
-It has been succesfully installed on Solaris (Forte 7) and linux (gcc 3).
+Install
+Guisdap-8.4 has been succesfully installed on Solaris (Forte 7) and
+linux (gcc 3), and the makefiles are written for those systems.
 Other architectures may have to change the makefiles, if you want speed,
-othervise it should run without the compiled routines.
+othervise it should run without the compiled routines. On Windows
+systems it is recommended to run under the cygwin environment for
+best compabilitiy.
 Please report any changes needed for other systems.
 
 untar the distribution at your favourite place
 cd into the guisdap directory
 if you want the speed improvements the mex utility provides:
- make "lib" and "mex6" directories
+ make "lib" and "mex7" (or "mex6") directories
  cd models/iri2001
  "make" (should be gnu-make)
  cd ../nrlmsise00
@@ -30,56 +30,41 @@ Integration of historic KST data is done using the Nigel Wade integration
 package which you have to install separately. Provided are paths to
 NW/mex6 for the mex files and NW/lib for the libraries.
 
-Provided are also a searchpath to ~/gup/mygup where your personal
-files should go.
-
+Provided is also a searchpath to ~/gup/mygup where your personal
+and edited distribution files should go.
 
 Running
 
-Running analysis is simplier than before.
 At the prompt, type "guisdap --help" to see all the switches available.
 Normal analysis is done running "guisdap -a" which will bring up a
 window with some entries to fill in. (Hopefully selfexplained)
 This is the same as "guisdap" and then "analyse". When finished hit "GO".
-
-As usual, you are on your own initialising experiments. If someone writes
-or have a manual for this, I gladly debug and include it. In any case,
-the initialisation scripts are avaiable with "guisdap -i".
-
+A more detailed instruction can be found pressing the '?' button.
 
 New features
 
--The built-in integration have been improved with a satellite
- checking routine (normally disabled) ignoring dumps flagged to contain
- point targets. See anal/satch.m for controlling parameters.
--An alternate way of measuring variances on the data has been developed,
- making it possible to analyse a few or single integrated dumps, without
- the need of slow theoretical variance calculations. (Only for the built-in
- integration)
--The use of the parameter "analysis_code" has been extended to control
- what parts of the data to be analysed, which is useful in splitted and
- sliced experiments. Can also be used for experiments run with several
- modes, for example cp1.
--Machinery for correction of gain variation to experiments containing
- gain channels.
--Numerous visible and hidden improvements and refinements
+-Calibration routines for Tromso using the EISCAT dynasonde is provided,
+ calib_ne. Calibrations using measured plasmalines for VHF and ESR is
+ prepared for the tau8 and steffe experiments, calib__pl_ne.
+-Correlation in frequency domain as done in the experiments is
+ simulated with the COR_fdalt routine.
+-A new site named 'X' should be used for IPP switching
+ experiments on ESR for analysis of the 42m signals as done in the hilde
+ experiment.
+-Two more parameters to fit for is provided, extra broadband noise and a
+ DC spike. These have been used for longpulse experiments behaiving oddly,
+ but might be used in other situations also.
+-A utility, guisdap_spec, to study how the IS spectrum used
+ in GUISDAP behaves for provided plasma parameters is added.
+-The plots during the analysis have been extended as it is possible
+ to plot the fit in frequency instead of lag domain,
+ display_figures(3)=-1, and for all heights using
+ display_figures(4)=-1 together with analysis_savespec>0.
+ The inversion can be sensitive to the tuning parameter
+ but analysis_savespec=1 should work for most experiments.
+-Numerous hidden improvements and refinements
 
-
-Default parameters
-
-In the analysis there are a number of parameters extracted from the data.
-Which parameters depends on the experiment, altitude and radar. The default
-settings given below can be overridden by the "fit_altitude" parameter.
-
-			UHF (930 MHz)	VHF (224 MHz)	ESR (500 MHz)
-Electron density	All heights	All heights	All heights
-Ion temperature		Above 80 km	Above 100 km	Above 90 km
-Temperature ratio	107-1500 km	120-1500 km	113-1500 km
-Collision frequency	90-107 km	Never		Never
-Ion drift velocity	All heights	All heights	All heights
-Ion composition		Never		Never		Never
-
-
-Further information and bugfixes can be found at www.eiscat.com
+Further information and bugfixes can be found at www.eiscat.se
 
 Good gup!
+Ingemar Häggström
