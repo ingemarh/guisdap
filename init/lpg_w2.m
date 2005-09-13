@@ -43,9 +43,9 @@ for lp=lpg_lp(lpg)
   end
   if length(r)>0,
     maxr=r(end)+(lp_nfir(lp)-1)*lp_dt(lp);
-    if rows(ww_lag)<maxr,
-      ww_lag(rows(ww_lag)+1:maxr,:)=0;
-      ww_om(rows(ww_om)+1:maxr,:)=0;
+    if size(ww_lag,1)<maxr,
+      ww_lag(size(ww_lag,1)+1:maxr,:)=0;
+      ww_om(size(ww_om,1)+1:maxr,:)=0;
     end;
     ii=[];
     for j=L, ii=[ii find(j==wL)]; end
@@ -59,4 +59,4 @@ for lp=lpg_lp(lpg)
   end
 end
 fprintf('\n')
-wS=1:rows(ww_lag);
+wS=1:size(ww_lag,1);

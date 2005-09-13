@@ -29,10 +29,17 @@ is also not the model of preference for specialized tropospheric work. It is
 rather for studies that reach across several atmospheric boundaries.
 
 Availability: 
-(1) FORTRAN source code is available as file nrlmsise00.txt in this directory, and 
-(2) also available from http://uap-www.nrl.navy.mil/models_web/msis/msis_home.htm. 
-(3) A C version of the code was provided by D. Brodowski and is available in directory /nrlmsis00_c_version, or can be downloaded
-(4) from D. Brodowski's site at http://www.brodo.de/english/pub/nrlmsise/
+(1) FORTRAN source code is available in this directory:
+nrlmsise00_driver.for  Example driver program  
+                       (f77 -o nrlmsis nrlmsise00_driver.for nrlmsise00_sub.for)
+nrlmsise00_output.for  Output from driver program 
+nrlmsise00_sub.for     NRLMSISE90 FORTRAN subroutines
+
+(2) FORTRAN source code is also available from http://uap-www.nrl.navy.mil/models_web/msis/msis_home.htm. 
+
+(3) A C version of the code was provided by D. Brodowski and is available in directory 
+/nrlmsis00_c_version, or can be downloaded from D. Brodowski's site at 
+http://www.brodo.de/english/pub/nrlmsise/
 
 National Space Science Data Center / Dieter Bilitza / bilitza@gsfc.ansa.gov /Nov 5,01
 

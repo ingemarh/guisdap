@@ -86,6 +86,8 @@ C 2000.15 01/27/03 change F1_prob output; Te-IK for fix h and ELTE(h)
 C 2000.16 02/04/03 along<0 -> along=along+360; F1 occ for hmf1&foF1
 C 2000.17 02/05/03 zyear =12.97 (Dec 31); idayy=#days per year
 C 2000.18 02/06/03 jf(27) for IG12 user input; all F1 prob in oar
+C 2000.19 07/14/04 covsat<188 instead of covsat=<f(IG)<188
+C 2000.20 02/09/05 declare INVDIP as real                F. Morgan
 C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
@@ -236,7 +238,7 @@ C*****************************************************************
 C*****************************************************************
 C*****************************************************************
       INTEGER    DAYNR,DDO,DO2,SEASON,SEADAY
-      REAL       LATI,LONGI,MO2,MO,MODIP,NMF2,MAGBR,   
+      REAL       LATI,LONGI,MO2,MO,MODIP,NMF2,MAGBR,INVDIP,   
      &               NMF1,NME,NMD,MM,MLAT,MLONG,NOBO2
       CHARACTER  FILNAM*12
 c-web-for webversion

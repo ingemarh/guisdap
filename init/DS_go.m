@@ -45,7 +45,7 @@ if isempty(DS_signs)
   end
 else
   ES_signs=DS_signs;
-  ES_Ncycles=cols(ES_signs);
+  ES_Ncycles=size(ES_signs,2);
 end
 
 ES_Ncycles=DS_choose(DS_Ncycles,ES_Ncycles);
@@ -98,8 +98,8 @@ end
 
 %% Lags
 if ~isempty(ES_signs)
-%  ES_Lags=ES_adcint*ES_Barker:ES_adcint*ES_Barker:(ES_bitlen*length(ES_bitseq)*rows(ES_signs)-1);
-  ES_Lags=0:ES_adcint*ES_Barker:(ES_bitlen*length(ES_bitseq)*rows(ES_signs)-1);
+%  ES_Lags=ES_adcint*ES_Barker:ES_adcint*ES_Barker:(ES_bitlen*length(ES_bitseq)*size(ES_signs,1)-1);
+  ES_Lags=0:ES_adcint*ES_Barker:(ES_bitlen*length(ES_bitseq)*size(ES_signs,1)-1);
 elseif ~isempty(ES_set)
   ES_Lags=multipulse(ES_set)*(ES_Barker*ES_bitlen+ES_gaplen);
 elseif ~isempty(ES_Npulses)
@@ -252,7 +252,7 @@ for SCAN=1:ES_Ncycles
 
     code_next=ES_label;
     if ~isempty(ES_signs)
-      XMIT_pulse(ES_channel,XMITtime,ES_signs(:,1+rem(SCAN-1,cols(ES_signs))),ES_bitseq,ES_bitlen),
+      XMIT_pulse(ES_channel,XMITtime,ES_signs(:,1+rem(SCAN-1,size(ES_signs,2))),ES_bitseq,ES_bitlen),
     elseif ~isempty(ES_set)
       XMIT_mp(ES_channel,XMITtime,ES_set,ES_bitlen,ES_gaplen,ES_bitseq)
     elseif ~isempty(ES_Npulses)
@@ -268,7 +268,7 @@ for SCAN=1:ES_Ncycles
     REC_sampling(RECtime,ES_adcint),
 
     if ~isempty(ES_signs)
-      CORR_alter(ES_Gates,ES_gating,ES_Lags,rows(ES_signs))
+      CORR_alter(ES_Gates,ES_gating,ES_Lags,size(ES_signs,1))
     elseif ~isempty(ES_set)
       CORR_mp(ES_gating,ES_Gates,ES_Lags)
     elseif ~isempty(ES_Npulses) & (all(ES_Lags==0) | ES_gating==1)
@@ -297,7 +297,7 @@ ra_next=max(lp_ra(lps)+(lp_nt(lps)-1).*lp_ri(lps))+1;
 
 % This addition in not used in standard experiments:
 % Build for ESR testing!
-for BC_loop=2:rows(ES_Bcycles)
+for BC_loop=2:size(ES_Bcycles,1)
   BC_STARTaddr=ra_next;
   lp_start=lp_ind;
   for SCAN=1:ES_Ncycles

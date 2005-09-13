@@ -7,9 +7,10 @@ c corrections
 c-version-mm/dd/yy------------------------------------------------------
 c 2000.01 05/07/01 initial version
 c 2000.02 07/11/01 line 210: do i=1,100 instead of i=2,100 (K. Tokar)
-c 2000.03 28/12/01 output oar(39) for IG12 (R. Conkright, NGDC, NOAA)
-c 2000.04 28/10/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
+c 2000.03 12/28/01 output oar(39) for IG12 (R. Conkright, NGDC, NOAA)
+c 2000.04 10/28/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
 c 2000.05 02/06/03 Ne(Te) only 300,400; foF1 and hmF1 output corr.
+c 2000.06 01/19/05 (.not.jf(20)) instead of (..jf(2)) (G. Schiralli)
 c
       INTEGER           pad1,pad2,pad3
       DIMENSION         outf(20,100),oar(50,100),jfi(6)
@@ -283,7 +284,7 @@ c
 
         if(jf(19)) then
               f1opt='Scotto-97 no L'
-              if(.not.jf(2)) f1opt='Scotto-97 with L'
+              if(.not.jf(20)) f1opt='Scotto-97 with L'
         else
               f1opt='IRI-95'
         endif

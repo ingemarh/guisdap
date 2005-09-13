@@ -103,7 +103,7 @@ for code=codes;
 
 end
 
-if rows(lpg_bac)>1
+if size(lpg_bac,1)>1
   ind=find(lpg_bac(2,:));
   fprintf('\n More than one background lag profile group found for lpg(s) \n')
   fprintf(' %.0f', ind)
@@ -111,7 +111,7 @@ if rows(lpg_bac)>1
   lpg_bac=lpg_bac(1,:);
 end
 
-if rows(lpg_cal)>1
+if size(lpg_cal,1)>1
   ind=find(lpg_cal(2,:));
   fprintf('\n More than one calibration lag profile group found for lpg(s) \n')
   fprintf(' %.0f', ind)
