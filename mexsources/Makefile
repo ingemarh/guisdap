@@ -16,7 +16,12 @@ LDFLAGS= -dy -G -h libguisdap.so -z text
 else
 #Linux
 CFLAGS=-O3 -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
-MEXOPTS=
+ifeq ($(FC),f95)
+FC=gfortran
+else
+FC=g77
+endif
+MEXOPTS=-f f95opts.sh FC=$(FC)
 LDFLAGS= -shared
 endif
 
@@ -50,11 +55,11 @@ lib:
 	$(RM) *.o
 
 mex:
-	$(MEX) -DANSI_C mrqmndiag.c $(GUPLIB)
-	$(MEX) -DANSI_C dirthe.c $(GUPLIB)
-	$(MEX) -DANSI_C spec.c $(GUPLIB)
-	$(MEX) -DANSI_C transf.c $(GUPLIB)
-	$(MEX) -DANSI_C addr_covar.c $(GUPLIB)
+	$(MEX) $(MEXOPTS) -DANSI_C mrqmndiag.c $(GUPLIB)
+	$(MEX) $(MEXOPTS) -DANSI_C dirthe.c $(GUPLIB)
+	$(MEX) $(MEXOPTS) -DANSI_C spec.c $(GUPLIB)
+	$(MEX) $(MEXOPTS) -DANSI_C transf.c $(GUPLIB)
+	$(MEX) $(MEXOPTS) -DANSI_C addr_covar.c $(GUPLIB)
 
 install:
 	mv *.mex* ../${MEXD}

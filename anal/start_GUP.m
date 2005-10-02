@@ -11,9 +11,6 @@ clear all, clear global, clear functions
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local
 GUP_ver=8.4;
 fprintf('GUISDAP vs. %g by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
-if exist('mrqmndiag')~=3
- fprintf('***** using no mex routine enhancements *****\n')
-end
 
 path_GUP=which('start_GUP','-all');
 if iscell(path_GUP), path_GUP=char(path_GUP(end)); end
@@ -71,3 +68,6 @@ switch local.site
 end
 if ~exist(data_path,'dir'), data_path=path_tmp; end
 if ~exist(result_path,'dir'), result_path=path_tmp; end
+if exist('mrqmndiag')~=3
+ fprintf('***** using no mex routine enhancements *****\n')
+end
