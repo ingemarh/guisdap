@@ -40,12 +40,14 @@ if exist('analysis_simul')
  % a_simul(2): controls the start time in steps of 7200 s, i.e. 2 hours.
  % a_simul(3): The transmitter power
  % a_simul(4): The background temperature
- % a_simul(5:6): Antenna azimuth and elevation
- a_simul=[0 1 1.2e6 100 300 180 90 ];
+ % a_simul(5:7): Antenna range, azimuth and elevation
+ % a_simul(8): The calibration temperature
+ a_simul=[0 1 1.2e6 100 300 180 90 210];
  a_simul(1:length(analysis_simul))=analysis_simul;
  a_year=2222;
  a_start=7200*a_simul(2);
  a_end=7200*a_simul(2)+a_simul(1);
+ analysis_control(4)=2;
 else
  if exist('analysis_integr'),
   a_integr=analysis_integr;
@@ -106,9 +108,6 @@ a_control=[100000 0.01 10 1];
 if exist('analysis_control')
  ind=find(analysis_control>0);
  a_control(ind)=analysis_control(ind);
-end
-if any(a_simul) & a_control(4)==1
- a_control(4)=2;
 end
 
 a_Magic_const=1;

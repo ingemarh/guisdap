@@ -95,7 +95,8 @@ for ind=ii
       if i==0, nt=NG; end
     else
       signs=sgns(1:end-i);
-      t1=fs_time(1)+(NG+i-frac)*bitsep;
+      %t1=fs_time(1)+(NG+i-frac)*bitsep;
+      t1=fs_time(1)+NG*bitsep+(i-frac)*adcint;
     end
     nfir=length(signs);
     if nfir>0
