@@ -28,7 +28,8 @@ global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control
 global d_saveintdir
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_satch a_txpower
-global a_antold a_maxgap secs a_intfixed a_intallow a_posold a_nnold fileslist
+global a_intfixed a_intallow
+peristent a_antold a_maxgap secs a_posold a_nnold fileslist
  
 OK=0; EOF=0; jj=0; N_averaged=0;
 d_ExpInfo=[]; d_raw=[]; txdown=0;
@@ -42,7 +43,6 @@ if a_ind==0
     if i>0, a_start=a_start+i*a_cycle; end
   end
   a_interval=a_start+[0 a_integr(1)];
-  a_oldtime=0;
   a_maxgap=30;
   a_posold=zeros(1,9);
   a_nnold=zeros(1,9);
@@ -236,7 +236,11 @@ end
 function [EOF,jj]=update_filelist(EOF,jj)
 global di_figures data_path b d_filelist
 j=0;
-a_max_rtwait=300; mrw=round(sqrt(a_max_rtwait));
+if ~isempty(b) & ishandle(b(7))
+ a_max_rtwait=a_end-d_filelist(end).file; mrw=30;
+else
+ a_max_rtwait=300; mrw=round(sqrt(a_max_rtwait));
+end
 if ~jj
   if length(di_figures)>4 & di_figures(5)
     try, vizu rtgup; catch, rethrow(lasterror), end
@@ -249,10 +253,16 @@ while isempty(df)
   fprintf('.'); pause(mrw)
   [df,msg]=getfilelist(data_path,d_filelist(end));
   j=j+1;
-  if j>mrw
+  if j>a_max_rtwait/mrw
     msg=sprintf('No new data in %ds',a_max_rtwait);
-  elseif ~isempty(b) & ishandle(b(7)) & ~get(b(7),'value')
+  elseif ~isempty(b)
+   if ishandle(b(7)) & get(b(7),'value')
+    if j==10
+     fprintf('Release RT button to finish analysis');
+    end
+   else
     msg='Aborting RT';
+   end
   end
   if ~isempty(msg)
     fprintf('\n%s',msg)

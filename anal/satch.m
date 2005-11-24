@@ -30,7 +30,7 @@ if ~a_satch.do
 end
 
 C=tan(el*pi/180);
-Nsat=0; j=0; x0max=0;
+Nsat=0; j=0; x0max=0; pbmax=NaN;
 n_echo=6; min_v=.065; skip=a_satch.skip;
 
 %check signal
@@ -48,13 +48,14 @@ for i=lp
  N=lpg_ND(i)*inttime/(a_satch.prep*1e-6);
  dat=real(d_data(addr));
  [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,nclutter(ii));
- pb=pb(find(pb<=length(dat)-L+1+nsp_no_use(ii)));
+ ind=find(pb<=length(dat)-L+1+nsp_no_use(ii));
+ pb=pb(ind); x0=x0(ind);
  if a_satch.plot
   eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb+round(L/2);'])
  end
  if ~isempty(th)
   d_data(addr)=th;
-  x0max=max([x0max;x0]);
+  [x0max,ind]=max([x0max;x0]); pbmax=[pb pbmax]; pbmax=pbmax(ind);
  end
  Nsat=Nsat+length(pb);
 end
@@ -134,7 +135,7 @@ if Nsat>0 %| Nsatb>0
   end
   drawnow
  end
- fprintf('Warning: Satellite detection (%d %.1f) -- skipping dump\n',Nsat,x0max)
+ fprintf('Warning: Satellite detection (%d %.1f %d) -- skipping dump\n',Nsat,x0max,pbmax)
 end
 OK=Nsat==0;
 return
