@@ -269,7 +269,7 @@ if strcmp(action,'VERBOSE')
   Y_TYPE=minput('Y scale type',Y_TYPE,1);
  end
  SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res)',SCALE')';
- if findstr(WHICH_PARAM,'P') | findstr(WHICH_PARAM,'L')
+ if [findstr(WHICH_PARAM,'P') findstr(WHICH_PARAM,'L')]
   PLF_SCALE=minput('Scale (plf)',PLF_SCALE);
  end
  if findstr(WHICH_PARAM,'Nr')
