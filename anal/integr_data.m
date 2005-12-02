@@ -29,7 +29,7 @@ global d_saveintdir
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_satch a_txpower
 global a_intfixed a_intallow
-peristent a_antold a_maxgap secs a_posold a_nnold fileslist
+persistent a_antold a_maxgap secs a_posold a_nnold fileslist
  
 OK=0; EOF=0; jj=0; N_averaged=0;
 d_ExpInfo=[]; d_raw=[]; txdown=0;
@@ -234,7 +234,7 @@ if OK, % if at least one good data dump was found
 end
 
 function [EOF,jj]=update_filelist(EOF,jj)
-global di_figures data_path b d_filelist
+global di_figures data_path b d_filelist a_end
 j=0;
 if ~isempty(b) & ishandle(b(7))
  a_max_rtwait=a_end-d_filelist(end).file; mrw=30;

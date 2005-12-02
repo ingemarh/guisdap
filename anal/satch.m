@@ -55,7 +55,7 @@ for i=lp
  end
  if ~isempty(th)
   d_data(addr)=th;
-  [x0max,ind]=max([x0max;x0]); pbmax=[pb pbmax]; pbmax=pbmax(ind);
+  [x0max,ind]=max([x0max;x0]); pbmax=[pbmax;pb]; pbmax=pbmax(ind);
  end
  Nsat=Nsat+length(pb);
 end
