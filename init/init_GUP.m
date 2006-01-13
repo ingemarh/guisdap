@@ -1,6 +1,6 @@
 % init_GUP.m: Main program to find lag profile groups and calculate ambiguity functions
-% GUISDAP v.1.60 96-05-27 Copyright Asko Huuskonen and Markku Lehtinen
-% 
+% GUISDAP v.8.1 06-01-27 Copyright EISCAT, Huuskonen&Lehtinen
+%
 % Main program to find lag profile groups and calculate ambiguity functions
 % Script and functions called:
 % load_GUPvar : load GUISDAP experiment definition variables from a file
@@ -15,59 +15,43 @@
 %
 % See also: load_GUPvar read_specpar nat_const constants lpg_tex save_toinitfile
 %
-% See also: findlpg find_vcgroups find_calibrations ambcalc lpgwrcalc lpgwomcalc 
+% See also: findlpg find_vcgroups find_calibrations ambcalc lpgwrcalc lpgwomcalc
 
 clf, hold off
 glob_GUP
 
-% Chdir to the experiment directory, store the present path as a return address
-original_path=pwd;
-fprintf('\n\nChdir to the experiment directory: %s\n',path_expr)
+fprintf('\nChdir to the experiment directory: %s\n',path_expr)
 cd(path_expr)
 
 nat_const
 
 if exist('N_rcprog')~=1, N_rcprog=1; end
-for d_rcprog=1:N_rcprog
+if exist('B_rcprog')~=1, B_rcprog=1; end
+for d_rcprog=B_rcprog:N_rcprog
   Stime=clock;
 
   if N_rcprog>1, apustr=['_',int2str(d_rcprog)]; else apustr=[]; end
   load_GUPvar
 
-  read_specpar 
+  read_specpar
   constants
 
   findlpg
   find_vcgroups
   find_calibrations
-  ambcalc,    
+  ambcalc
 
-  if all(p_XMITloc==p_RECloc) % Monostatic case
-    lpgwrcalc,  
-    lpgwomcalc,
-  else
-    disp([' Bistatic measurement:'])
-%   Assume that the scattering volume is always completely filled
-%   vc_Aenv=ones(600,length(vc_ch)); % For unit length
-%   fir=lp_fir; lp_fir=abs(lp_fir);
-%   lpgwomcalc, 
-%   lp_fir=fir;vc_Aenv=zeros(size(vc_env));
-%   vc_Aenv=zeros(size(vc_env));
-% New for gup-1.70
-    lpgwrcalc,  
-    lpgwomcalc, 
-  end
+  lpgwrcalc
+  lpgwomcalc
 
   plot(p_om,real(lpg_wom)), drawnow
-  lpg_tex
-  fprintf('  Time used in initialisation:%8.2f min\n',etime(clock,Stime)/60)
-  save_toinitfile 
+  %lpg_tex
+  save_toinitfile
 
-  fprintf('Radar controller program %g ready\n',d_rcprog) 
+  fprintf('Time used in initialisation:%8.2f min\n',etime(clock,Stime)/60)
+  fprintf('Radar controller program %g ready\n',d_rcprog)
 end
-%fprintf(['\nChdir back to the original directory ', original_path,'\n'])
-%cd(original_path)
 fprintf('\n*****************************************************\n')
 fprintf('*\n*\n* Execute plot_wr to see the range ambiguity functions\n')
 fprintf('*\n*\n******************************************************\n')
-clear original_path Stime d_rcprog
+clear Stime d_rcprog

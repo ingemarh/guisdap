@@ -173,3 +173,7 @@ sysTemp=[];
 if exist('analysis_Tsys','var')
  sysTemp=analysis_Tsys;
 end
+a_rcprog=1;
+if exist('analysis_rcprog','var')
+ a_rcprog=analysis_rcprog;
+end

@@ -13,6 +13,7 @@ if ~isfield(a_satch,'filled')
   if ~isfield(a_satch,'calsecs'), a_satch.calsecs=99; end% time lim cal fill
   if ~isfield(a_satch,'skip'), a_satch.skip=0; end	% no points to skip
   if ~isfield(a_satch,'clutter'), a_satch.clutter=0; end% no clutter red points
+  if ~isfield(a_satch,'clutfac'), a_satch.clutfac=1000; end% amount of clutter
   if ~isfield(a_satch,'repair'), a_satch.repair=0; end	% for alt codes
   if ~isfield(a_satch,'prep'), a_satch.prep=max(vc_penvo); end% p_rep
   if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
@@ -47,11 +48,11 @@ for i=lp
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
  N=lpg_ND(i)*inttime/(a_satch.prep*1e-6);
  dat=real(d_data(addr));
- [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,nclutter(ii));
+ [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,[nclutter(ii) a_satch.clutfac]);
  ind=find(pb<=length(dat)-L+1+nsp_no_use(ii));
- pb=pb(ind); x0=x0(ind);
+ pb=pb(ind)+round(L/2); x0=x0(ind);
  if a_satch.plot
-  eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb+round(L/2);'])
+  eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb;'])
  end
  if ~isempty(th)
   d_data(addr)=th;
@@ -147,7 +148,7 @@ dat_m=[]; x0=[];
 
 %calculate diff of profile normalised with std
 S_c=dat/sqrt(N);
-S_c(1:nbigsig)=1e3*S_c(1:nbigsig);
+S_c(1:nbigsig)=nbigsig(2)*S_c(1:nbigsig(1));
 mS_c=mean([S_c(1:(end-1)) S_c(2:end)],2);
 dat_s=diff(dat)./mS_c;
 

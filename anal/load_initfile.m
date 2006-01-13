@@ -19,7 +19,7 @@ if exist('d_rcprog','var')
   initfile=[temp '_' int2str(d_rcprog) 'init'];
   initfil=canon(initfile,0);
 end
-if ~exist(initfil,'var') | ~exist(initfil,'file')
+if ~exist('initfil','var') | ~exist(initfil,'file')
   initfile=[temp 'init'];
   initfil=canon(initfile,0);
 end

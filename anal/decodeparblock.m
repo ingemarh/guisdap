@@ -5,7 +5,8 @@
 % so that the data analysis is possible
 
 % names='LLVTKS'; name_site=names(parbl(41)); clear names
-if length(d_parbl)<41
+lpb=length(d_parbl);
+if lpb<41
   ant_id=1;
 else
   ant_id=d_parbl(41);
@@ -13,7 +14,12 @@ else
     ant_id=3; % For the May2000 data
   end
 end
-d_rcprog = 1;
+if lpb>57 & d_parbl(58)>0
+  d_rcprog=d_parbl(58);
+else
+  d_rcprog=a_rcprog;
+end
+ 
 if name_site=='K'
   p_RECloc=[67.863, 20.44, .412];
 elseif name_site=='S'
@@ -34,7 +40,7 @@ ch_az=d_parbl(10)*ones(1,len);
 if name_site=='V'
  ch_el=d_parbl(9:10);
 end
-if length(d_parbl)>41 & (name_site=='K' | name_site=='S')
+if lpb>41 & (name_site=='K' | name_site=='S')
   ch_range=d_parbl(42)/1000*ones(1,len);
 else
   ch_range=[];

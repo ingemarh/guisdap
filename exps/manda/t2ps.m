@@ -1,5 +1,13 @@
-function dum=t2ps(site)
-eval(['load t_to_ps.txt.' lower(site)])
+function dum=t2ps(site,rc)
+if nargin<2, rc=0; end
+t2psfile='t_to_ps.txt';
+if rc==0
+ apustr='';
+else
+ apustr=['_' int2str(rc)];
+end
+t2psfile=['t_to_ps.txt' apustr '.' lower(site)];
+t_to_ps=load(t2psfile,'-ascii');
 name_expr='manda';
 td_t1=t_to_ps(:,1)';
 td_t2=t_to_ps(:,2)';

@@ -35,12 +35,11 @@ for ind=1:length(lpg_ra),
   lpg_bcs(ind)=cheq(lp_bcs(lpg));
   lpg_code(ind)=cheq(lp_code(lpg));
 
-  fprintf(['lpg=%3.0f code=%1.0f type=',setstr(lpg_bcs(ind))],ind,lpg_code(ind));
-  fprintf(' lag=%3.0f dt=%3.0f', p_dtau*lpg_lag(ind), p_dtau*lpg_dt(ind));
-  fprintf(' ND=%2.0f h=%5.0f',  lpg_ND(ind), p_dtau*lpg_h(ind));
-  fprintf(' T=%3.0f nt=%3.0f',  lpg_T(ind),   lpg_nt(ind));
-  fprintf(' ra=%3.0f ri=%2.0f',lpg_ra(ind), lpg_ri(ind));
-  fprintf('\n');
+  fprintf('lpg=%d code=%d type=%c',ind,lpg_code(ind),lpg_bcs(ind));
+  fprintf(' lag=%.0f dt=%.0f',p_dtau*lpg_lag(ind),p_dtau*lpg_dt(ind));
+  fprintf(' ND=%d h=%5.0f',lpg_ND(ind),p_dtau*lpg_h(ind));
+  fprintf(' T=%.0f nt=%3d',lpg_T(ind),lpg_nt(ind));
+  fprintf(' ra=%d ri=%d\n',lpg_ra(ind),lpg_ri(ind));
 
   addr=lpg_addr(ind);sto=addr+1;
   if max(sto)>length(ad_lpg); ad_lpg(max(sto))=0; end
