@@ -11,7 +11,7 @@ elseif name_site=='L'
   fit_altitude=[0 Inf;100 Inf;130 1500;0 0;90 Inf];
   first=50; last=600; d1=.75; d2=1; n1=60;
   h1=210; h2=370;
-  if analysis_start(1)>2005 | analysis_start(2)>11
+  if expver>1
     h1=[140 310]; h2=[270 460];
   else
     h1=210; h2=370;
@@ -19,7 +19,6 @@ elseif name_site=='L'
   a_satch.clutter=88;
   a_satch.clutfac=10;
   a_satch.sigma=3;
-  a_satch.plot=8;
 end
 if name_site=='T' | name_site=='L' | name_site=='V'
  a_satch.repair=63; % do not repair

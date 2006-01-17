@@ -78,6 +78,7 @@ while ~EOF
       % Removing uncessary variables
       clear lpg_wom vc_Aenv vc_Apenv vc_penvabs vc_penv vc_penvo ad_coeff_no_Pt
     end
+    ch_Pt=ch_Pt(1)*ones(size(ch_fradar));
     if exist([path_expr 'guispert.m'])==2
       run([path_expr 'guispert'])
     end
@@ -87,12 +88,12 @@ while ~EOF
     if ~exist('ad_coeff_no_Pt','var')
       ad_coeff_no_Pt=radar_eq(Ant_eff); % calculates the radar constant      
     end
+    ch_PtM=ch_Pt./a_Magic_const; %compensate for any inaccuracies
     for sig=find(lpg_bcs=='s')
       lp=lpg_lp(sig); addr=ADDR_SHIFT+lpg_addr(sig);
-      vc=min(lp_vc(lp(1)),length(ch_Pt));
-      ad_coeff(addr)=ad_coeff_no_Pt(addr)*ch_Pt(vc);
+      vc=min(lp_vc(lp(1)),length(ch_PtM));
+      ad_coeff(addr)=ad_coeff_no_Pt(addr)*ch_PtM(vc);
     end
-    ad_coeff=ad_coeff/a_Magic_const; % compensate for all the inaccuracies in the numeric constants
 
     if a_control(4)==1 & exist('N_averaged') & N_averaged<6
       var_prof(N_averaged,6)

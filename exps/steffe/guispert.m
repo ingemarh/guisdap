@@ -3,7 +3,6 @@
 %
 % See also: GUISPERT GUIZARD
 %
-ch_Pt=ch_Pt(1);
 d_date=datenum(d_time(1,:));
 if exist('skip_upper_tail','var') & skip_upper_tail
   lpg_bcs(find(lpg_h>3200 & lpg_h<3800 & lpg_nt==2))='x';

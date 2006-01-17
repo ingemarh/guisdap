@@ -1,12 +1,12 @@
 startup
 using_x=prod(get(0,'ScreenSize'))-1;
-sites='KSTVLX'; gfdfile=[path_tmp '.gup'];
+sites='KSTVLX'; gfdfile=[path_tmp '.gup']; expver=1;
 %default values
 if exist(gfdfile)
  load(gfdfile,'-mat')
 else
  rt=0;
- [intper,t1,t2,siteid]=auto_parse(0);
+ [intper,t1,t2,siteid,expver]=auto_parse(0);
  if siteid<3
   figs=[0 0 1 0 1];
   extra='%a_Offsetppd=8;';
@@ -27,7 +27,7 @@ set(5,'Name','GUISDAP for dummies','userdata',5,'Position',[40 170 350 390],'Num
 %set(get(gca,'child'),'markersize',10), set(gca,'visible','off'), pause(1)
 guisdaplogo(1), text(-.4,-.6,'Press mouse to continue'), waitforbuttonpress
 clf
-x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=240;
+x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=240; x3=40;
 bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','if strcmp(get(bg,''string''),''GO''),set(bg,''string'',''pause'',''fontsize'',10),else,waitforbuttonpress,end','fontsize',14);
 uicontrol('Style','pushbutton','string','?','position',[0 40 20 20],'callback',['web http://www.eiscat.com/GUISDAP/doc/howto' num2str(GUP_ver*10) '.html'],'tooltipstring','Get some help');
 uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
@@ -55,12 +55,14 @@ text(0,ty(9),'Disp figures')
 b(9)=uicontrol('Style','edit','string',num2str(figs),'position',[x y(9) x2 yh],'tooltipstring','datadump powerprofile fits parameters vizu');
 text(0,100,'Special')
 b(10)=uicontrol('Style','edit','string',extra,'position',[x 30 x2 120],'max',100,'HorizontalAlignment','left','tooltipstring','Matlab commands!');
+text(x+x1+x3,ty(4),'Vs')
+b(11)=uicontrol('Style','popupmenu','string',num2str((1:9)'),'position',[x+2*x1 y(4) x3 yh],'value',expver);
  go_on(bg)
 else
  dpath=minput('Data path',data_path,'s');
  if ~strcmp(dpath,data_path)
   data_path=dpath;
-  [intp,tt1,tt2,sitid]=auto_parse;
+  [intp,tt1,tt2,sitid,expver]=auto_parse;
   if tt1, t1=tt1; t2=tt2; end
   if ~isempty(intp), intper=intp; end
   if ~isempty(sitid), siteid=sitid; end
@@ -69,6 +71,7 @@ else
  t2=minput('End time',t2);
  path_exps=minput('Path exps',path_exps,'s');
  name_expr=minput('Dsp exp',name_expr,'s');
+ expver=minput('Exp version',expver);
  siteid=strfind(sites,minput('Site',sites(siteid),'s'));
  result_path=minput('Result path',result_path,'s');
  rt=minput('Realtime (0/1)',rt);
@@ -81,6 +84,6 @@ else
   [ext,ex]=strtok(ex,'#');
   extra=char(extra,ext);
  end
- save_noglobal(gfdfile,name_expr,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
+ save_noglobal(gfdfile,name_expr,expver,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
  go_on
 end

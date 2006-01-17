@@ -5,9 +5,9 @@
 
   function ad_coeff=radar_eq(eff)
 
-  global ch_fradar  ch_gain  ch_Pt ch_az ch_el p_XMITloc p_RECloc
+  global ch_fradar ch_gain ch_Pt ch_az ch_el p_XMITloc p_RECloc
   global v_lightspeed v_electronradius v_Boltzmann p_dtau p_R0 p_N0 
-  global ad_range ad_w a_Magic_const
+  global ad_range ad_w
   global lpg_h lpg_w lpg_code lpg_bcs lp_vc vc_ch
   global ADDR_SHIFT name_site 
   global sc_angle sc_R0 sc_R1 ch_range k_radar k_radar0

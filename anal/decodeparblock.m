@@ -33,15 +33,14 @@ d_time(2,:)=toYMDHMS(year,time);
 time=time-d_parbl(7);
 d_time(1,:)=toYMDHMS(year,time);
 
-len=1;
-ch_Pt=d_parbl(a_txpower(1))*a_txpower(2)*ones(1,len);
-ch_el=d_parbl(9)*ones(1,len);
-ch_az=d_parbl(10)*ones(1,len);
+ch_Pt=d_parbl(a_txpower(1))*a_txpower(2);
+ch_el=d_parbl(9);
+ch_az=d_parbl(10);
 if name_site=='V'
  ch_el=d_parbl(9:10);
 end
 if lpb>41 & (name_site=='K' | name_site=='S')
-  ch_range=d_parbl(42)/1000*ones(1,len);
+  ch_range=d_parbl(42)/1000;
 else
   ch_range=[];
 end

@@ -7,6 +7,7 @@ if ~ishandle(bg)
  if isstr(bg) & exist(bg)
   i=which(bg); if ~isempty(i), bg=i; end
   [i,i,i]=fileparts(bg);
+  expver=1; %Backward compability
   if strcmp(i,'.m')
    run(bg);
   else
@@ -21,10 +22,10 @@ else
   pause(1)
   if ~ishandle(bg), return, end
  end
- [siteid,t1,t2,rt,intper,figs,extra,data_path,result_path]=save_setup;
+ [siteid,t1,t2,rt,intper,figs,extra,data_path,result_path,expver]=save_setup;
 end
 if ~isnan(bg)
- save_noglobal([path_tmp '.gup'],name_expr,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
+ save_noglobal([path_tmp '.gup'],name_expr,expver,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
 end
 sites='KSTVLLL'; name_site=sites(siteid);
 if length(strfind(result_path,'AUTO'))>1
@@ -46,8 +47,8 @@ if ishandle(bg)
  set(b([1:6 8:10]),'enable','inactive')
 end
 
-analysis_start=t1; analysis_end=t2; analysis_integr=intper; %for guisdap int
-analysis_txlimit=100e3; analysis_realtime=rt;
+analysis_start=t1; analysis_end=t2; analysis_integr=intper;
+analysis_txlimit=100e3; analysis_realtime=rt; analysis_rcprog=expver;
 
 if isunix
  recurse=sprintf('%04d????_??',t1(1));

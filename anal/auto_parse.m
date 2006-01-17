@@ -1,8 +1,8 @@
-function [intper,t1,t2,siteid]=auto_parse(warn)
+function [intper,t1,t2,siteid,expver]=auto_parse(warn)
 global path_exps name_expr name_site data_path b owner local
 if nargin<1, warn=1; end
 sites='KSTVLLL';
-t1=[]; t2=[]; intper=[]; siteid=[];
+t1=[]; t2=[]; intper=[]; siteid=[]; expver=1;
 if warn==2
  o=uigetdir(data_path);
  if o
@@ -60,6 +60,13 @@ else
  else
   name_expr=nameexpr;
   if set_b, set(b(1),'string',name_expr), end
+  expver=str2num(strtok(comment,'.'));
+  if isempty(expver) 
+   if warn, disp('Unable to set the experiment version, please specify'), end
+   expver=1;
+  else
+   if set_b, set(b(11),'value',expver), end
+  end
  end
  if isempty(antenna)
   antenna='   '; dum=[];

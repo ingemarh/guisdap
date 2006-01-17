@@ -72,6 +72,7 @@ shift `expr $OPTIND - 1`
 
 if [ -z "$mflags" ];then
 	unset DISPLAY
+	mflags="-nodisplay"
 fi
 if [ "$*" != "" ];then
 	mflags=$*

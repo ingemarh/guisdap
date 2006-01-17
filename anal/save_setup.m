@@ -1,4 +1,4 @@
-function [siteid,t1,t2,rt,intper,figs,extra,data_path,result_path]=save_setup(file)
+function [siteid,t1,t2,rt,intper,figs,extra,data_path,result_path,expver]=save_setup(file)
 global path_tmp b
 
 if isempty(b) | ~ishandle(b(1))
@@ -14,6 +14,7 @@ else
  intper=str2num(get(b(8),'string'));
  figs=str2num(get(b(9),'string'));
  extra=get(b(10),'string');
+ expver=get(b(11),'value');
  if size(extra,2)>10
   while all(extra(:,end)==32), extra(:,end)=[]; end
  elseif isempty(extra)
@@ -24,8 +25,8 @@ end
 if nargin>0
  [i,i,i]=fileparts(file);
  if strcmp(i,'.m')
-  save_m(file,name_expr,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
+  save_m(file,name_expr,expver,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
  else
-  save_noglobal(file,name_expr,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
+  save_noglobal(file,name_expr,expver,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
  end
 end
