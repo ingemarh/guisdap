@@ -83,7 +83,7 @@ else
  if isempty(scan)
  elseif strmatch(scan,{'cp2' 'cp3' 'cp4' 'lowelnorth2' 'fix2'},'exact')
   intper=0;
- elseif strmatch(scan,{'cp6' 'cp1' 'cp7' 'fixed' 'bore' 'lowel' 'zenith'},'exact')
+ elseif strfind(scan,'42') | strmatch(scan,{'cp6' 'cp1' 'cp7' 'fixed' 'bore' 'lowel' 'zenith'},'exact')
   intper=60;
  elseif strmatch(scan,{'lowelnorth1' 'lowelsouth1' 'lowelsouth2' 'lowelsouth3'},'exact')
   intper=120;

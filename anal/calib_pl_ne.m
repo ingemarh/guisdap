@@ -79,8 +79,8 @@ nfl=length(fl);
 if nfl==0
  error('You stupid! Choose a better data set.')
 end
-endadd=startad+(nfft+nlag)*ngates*nint*nfreq/length(startadd);
-add=[]; for i=1:length(startadd), add=[add startadd(i):endadd(i)]; end
+endad=startad+(nfft+nlag)*ngates*nint*nfreq/length(startad)-1;
+add=[]; for i=1:length(startad), add=[add startad(i):endad(i)]; end
 if nlag>0, nfft=2*nlag; end
 plspec=zeros(nfft,nfreq,nfl);
 p_time=zeros(2,nfl);
@@ -90,7 +90,7 @@ for i=1:nfl
  p_time(:,i)=datenum(d_parbl(1:6)')+[-d_parbl(7)/86400;0];
  if nlag>0
   d=sum(reshape(d_data(add),nlag,ngates,nint,nfreq),3)/d_parbl(22);
-  d=real(fft(conj(flipdim(d,2));d,[],2));
+  d=real(fft([conj(flipdim(d,2));d],[],2));
  else
   d=sum(reshape(real(d_data(add)),nfft,ngates,nint,nfreq),3)/d_parbl(22);
  end
@@ -239,4 +239,5 @@ better_guess=newMagic*exp(-log(mr2)/15); % 15 OK for 22May04 ESR
 if abs(mr2-1)>.01
  fprintf('Try Magic_const=%.2f; (%.2f)\n',better_guess,newMagic)
 end
+%text(3,.2,sprintf('Try Magic const=%.2f (%.2f)',newMagic,better_guess))
 ratio=[mr2 sr2 newMagic better_guess length(good)];
