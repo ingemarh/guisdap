@@ -16,14 +16,23 @@ function ratio=calib_pl_ne(pl_dir,expt,gate,plots)
 if nargin<2, expt=[]; end
 if nargin<3, gate=[]; end
 if nargin<4, plots=[]; end
-if strcmp(expt,'steffe') | (isempty(expt) & strfind(pl_dir,'steffe'))
- nfft=128; nint=2; ngates=1;
- freq=[-4 -5.3 4 5.3]*1e6; dt=0.6e-6; invert=-1;
- ran=[182 423.9]; fradar=500e6;
- maxe=2; ele=81.6; updown=0:1; nup_d=2;
- startad=1; gate=1; skip_if=0;
-elseif strcmp(expt,'tau8') | (isempty(expt) & strfind(pl_dir,'tau8'))
- nfft=128; nint=2; ngates=4;
+if isempty(expt), expt=pl_dir; end
+if strfind(expt,'steffe')
+ if strfind(expt,'2.')
+  nfft=0; nint=1; ngates=1; nlag=240;
+  freq=[-4.8 4.8]*1e6; dt=0.4e-6; invert=-1;
+  ran=[69 300;170 400;270 501]; fradar=500e6;
+  maxe=2; ele=81.6; updown=0:1; nup_d=2;
+  startad=[1 48165]+19*240+18*2048; gate=2; skip_if=0;
+ else
+  nfft=128; nint=2; ngates=1; nlag=0;
+  freq=[-4 -5.3 4 5.3]*1e6; dt=0.6e-6; invert=-1;
+  ran=[182 423.9]; fradar=500e6;
+  maxe=2; ele=81.6; updown=0:1; nup_d=2;
+  startad=1; gate=1; skip_if=0;
+ end
+elseif strfind(expt,'tau8')
+ nfft=128; nint=2; ngates=4; nlag=0;
  freq=4.1*1e6; dt=0.6e-6; invert=-1;
  ran=[53.3 272.4;193.4 412.5;333.4 552.5;473.3 692.4]; fradar=224e6;
  maxe=2; ele=0; updown=0; nup_d=1;
@@ -54,7 +63,7 @@ hlim=re*sqrt(1+hlim/re)-re;
 fgup=fullfile(DATA_PATH,'.gup');
 Magic_const=1;
 if ~isempty(r_Magic_const)
- Magic_const=r_Magic_const;
+ Magic_const=mean(r_Magic_const);
 elseif exist(fgup)
  load(fgup,'-mat')
  for i=1:size(extra,1),eval(extra(i,:));end
@@ -70,13 +79,21 @@ nfl=length(fl);
 if nfl==0
  error('You stupid! Choose a better data set.')
 end
+endadd=startad+(nfft+nlag)*ngates*nint*nfreq/length(startadd);
+add=[]; for i=1:length(startadd), add=[add startadd(i):endadd(i)]; end
+if nlag>0, nfft=2*nlag; end
 plspec=zeros(nfft,nfreq,nfl);
 p_time=zeros(2,nfl);
 for i=1:nfl
  filename=fullfile(fl(i).dir,sprintf('%08d%s',fl(i).file,fl(i).ext));
  load(canon(filename,0))
  p_time(:,i)=datenum(d_parbl(1:6)')+[-d_parbl(7)/86400;0];
- d=sum(reshape(real(d_data(startad:end)),nfft,ngates,nint,nfreq),3)/d_parbl(22);
+ if nlag>0
+  d=sum(reshape(d_data(add),nlag,ngates,nint,nfreq),3)/d_parbl(22);
+  d=real(fft(conj(flipdim(d,2));d,[],2));
+ else
+  d=sum(reshape(real(d_data(add)),nfft,ngates,nint,nfreq),3)/d_parbl(22);
+ end
  plspec(:,:,i)=reshape(d([nfft/2+1:nfft 1:nfft/2],gate,1,:),nfft,nfreq);
 end
 if plots

@@ -90,11 +90,11 @@ if isempty(type_msg)
   end
 end
 
-% (6) Check for Comment (Starts vid a Capital or number)
+% (6) Check for ONE Comment (Starts vid a Capital or number)
 
 C=s(K+1);
-K1=find((C>64 & C<91) | (C>47 & C<58));
-if length(K1)==1
+K1=max(find((C>64 & C<91) | (C>47 & C<58)));
+if ~isempty(K1)
   comment=s(K(K1)+1:end);
   s=s(1:K(K1)-1);
   K=find(s=='_');
@@ -102,9 +102,6 @@ if length(K1)==1
     pulse=s;
     return
   end
-elseif length(K1)>1
-  msg='To many COMMENTs';
-  return
 end
 
 % (7) Now we have PULSE_SCAN left (or PUL_SE_SCAN)
