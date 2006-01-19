@@ -20,9 +20,9 @@ else
   d_rcprog=a_rcprog;
 end
  
-if name_site=='K'
+if ant_id==5
   p_RECloc=[67.863, 20.44, .412];
-elseif name_site=='S'
+elseif ant_id==6
   p_RECloc=[67.367, 26.65, .180];
 end
 
@@ -36,10 +36,11 @@ d_time(1,:)=toYMDHMS(year,time);
 ch_Pt=d_parbl(a_txpower(1))*a_txpower(2);
 ch_el=d_parbl(9);
 ch_az=d_parbl(10);
-if name_site=='V'
- ch_el=d_parbl(9:10);
+if ant_id==3
+  ch_el=d_parbl(9:10);
+  ch_az=zeros(size(ch_el));
 end
-if lpb>41 & (name_site=='K' | name_site=='S')
+if lpb>41 & (ant_id==5 | ant_id==6)
   ch_range=d_parbl(42)/1000;
 else
   ch_range=[];
