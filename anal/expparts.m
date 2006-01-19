@@ -27,9 +27,6 @@ s=deblank(fliplr(s));
 if isempty(s)
   msg='empty';
   return
-elseif length(s) > 32
-  msg='too long';
-  return
 elseif s(1)=='_' | s(1)=='@'
   msg='PULSE missing';
   return

@@ -1,7 +1,7 @@
 function [intper,t1,t2,siteid,expver]=auto_parse(warn)
 global path_exps name_expr name_site data_path b owner local
 if nargin<1, warn=1; end
-sites='KSTVLLL';
+sites='KSTVLLLL';
 t1=[]; t2=[]; intper=[]; siteid=[]; expver=1;
 if warn==2
  o=uigetdir(data_path);
@@ -71,7 +71,7 @@ else
  if isempty(antenna)
   antenna='   '; dum=[];
  else
-  dum=strmatch(antenna(1:3),{'kir' 'sod' 'uhf' 'vhf' '32m' '42m' 'esr'});
+  dum=strmatch(antenna(1:3),{'kir' 'sod' 'uhf' 'vhf' '32m' '42m' '32p' 'esr'});
  end
  if isempty(dum)
   if warn, disp('Unable to set the site, please specify'), end

@@ -19,11 +19,12 @@ if nargin<4, plots=[]; end
 if isempty(expt), expt=pl_dir; end
 if strfind(expt,'steffe')
  if strfind(expt,'2.')
-  nfft=0; nint=1; ngates=1; nlag=240;
+  nfft=0; nint=1; ngates=3; nlag=240;
   freq=[-4.8 4.8]*1e6; dt=0.4e-6; invert=-1;
   ran=[69 300;170 400;270 501]; fradar=500e6;
-  maxe=2; ele=81.6; updown=0:1; nup_d=2;
-  startad=[1 48165]+19*240+18*2048; gate=2; skip_if=0;
+  maxe=2; ele=81.6; updown=0:1; nup_d=1;
+  startad=[1 48165]+19*240+18*2048; skip_if=0;
+  if isempty(gate), gate=2; end
  else
   nfft=128; nint=2; ngates=1; nlag=0;
   freq=[-4 -5.3 4 5.3]*1e6; dt=0.6e-6; invert=-1;
@@ -89,16 +90,20 @@ for i=1:nfl
  load(canon(filename,0))
  p_time(:,i)=datenum(d_parbl(1:6)')+[-d_parbl(7)/86400;0];
  if nlag>0
-  d=sum(reshape(d_data(add),nlag,ngates,nint,nfreq),3)/d_parbl(22);
-  d=real(fft([conj(flipdim(d,2));d],[],2));
+  d=sum(reshape(d_data(add),ngates,nlag,nint,nfreq),3)/d_parbl(22);
+  d=reshape(d(gate,:,1,:),nlag,nfreq);
+  d=real(fft([d;zeros(1,nfreq);conj(d(nlag:-1:2,:))]));
+  d=d([nfft/2+1:nfft 1:nfft/2],:);
  else
   d=sum(reshape(real(d_data(add)),nfft,ngates,nint,nfreq),3)/d_parbl(22);
+  d=reshape(d([nfft/2+1:nfft 1:nfft/2],gate,1,:),nfft,nfreq);
  end
- plspec(:,:,i)=reshape(d([nfft/2+1:nfft 1:nfft/2],gate,1,:),nfft,nfreq);
+ plspec(:,:,i)=d;
 end
 if plots
- figure(9)
+ ogcf=gcf; figure(9)
  imagesc(reshape(plspec,nfft*nfreq,[])), pause
+ set(0,'currentfigure',ogcf)
 end
 
 %Get spectral shape and find interferences
@@ -115,7 +120,9 @@ for i=1:nfreq
  end
 end
 if plots
+ ogcf=gcf; figure(9)
  plot([filt_shape spec_shape]), pause
+ set(0,'currentfigure',ogcf)
 end
 interf_spec=spec_shape-filt_shape;
 if skip_if
@@ -138,7 +145,9 @@ nplspec=reshape(reshape(nplspec,nfft*nfreq,[])+interf_spec(:)*ones(1,nfl),nfft,n
 %Remove background and normalise signal
 plsig=plspec-nplspec;
 if plots
+ ogcf=gcf; figure(9)
  imagesc(reshape(plsig,nfft*nfreq,[])), pause
+ set(0,'currentfigure',ogcf)
 end
 plsig=reshape(plsig,nfft*nfreq,[])./(filt_shape(:)*ones(1,nfl));
 plsig=reshape(plsig,nfft,nfreq,[]);
@@ -147,7 +156,9 @@ plsig=reshape(plsig,nfft,nfreq,[]);
 freq_scale=invert*(-nfft/2:nfft/2-1)/dt/nfft;
 df=abs(diff(freq_scale(1:2)));
 if plots
+ ogcf=gcf; figure(9)
  plot(freq_scale'*ones(1,nfreq)+ones(nfft,1)*freq,plsig(:,:,round(nfl/2))), pause
+ set(0,'currentfigure',ogcf)
 end
 freq_meas=10e-6*abs([freq_scale(1)+freq freq_scale(end)+freq]);
 freq_meas=[min(floor(freq_meas)) max(ceil(freq_meas))]/10;
@@ -183,7 +194,9 @@ else
  plf=abs(plpeak_c(:,1+updown))/1e6;
 end
 if plots
+ ogcf=gcf; figure(9)
  plot([abs(plpeak_c)/1e6 plf]), pause
+ set(0,'currentfigure',ogcf)
 end
 
 % We have (lf Time) vs (plf p_time), now do the comparison and
