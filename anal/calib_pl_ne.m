@@ -162,6 +162,30 @@ if plots
 end
 freq_meas=10e-6*abs([freq_scale(1)+freq freq_scale(end)+freq]);
 freq_meas=[min(floor(freq_meas)) max(ceil(freq_meas))]/10;
+%make pl_matrix
+fres=.1; %100kHz
+nplf=round(diff(freq_meas)/fres)+1;
+plm=zeros(nplf,nfl);
+pln=zeros(nplf,1);
+for j=1:nfreq
+ f=round((1e-6*abs(freq_scale+freq(j))-freq_meas(1))/fres)+1;
+ for i=1:nfft
+  pln(f(i))=pln(f(i))+1;
+  for k=1:nfl
+   plm(f(i),k)=plm(f(i),k)+plsig(i,j,k);
+  end
+ end
+end
+for j=1:nplf
+ if pln(j)==0
+  plm(j,:)=NaN;
+ else
+  for k=1:nfl
+   plm(j,k)=plm(j,k)/pln(j);
+  end
+ end
+end
+plm=plm/max(max(plm))*length(get(gcf,'colormap'));
 
 plpeak=ones(2,nfl,nfreq)*NaN;
 s=std(plsig(find(isfinite(plsig))));
@@ -230,10 +254,16 @@ while mr==r0 | abs(mr-1)>.01
  bad=find(abs(r2-mr2)>maxe*sr2);
  mr=median(r(good)); sr2=std(r2(good));
  if r0==1
-  set(gcf,'currentaxes',axs(1))
-  hold on
-  plot(mean(p_time),plf,'+g',mean(Time),peak_lf,'+b')
-  hold off
+  set(gcf,'currentaxes',axs(1),'renderer','zbuffer','colormap',1-gray)
+  set(gca,'nextplot','add')
+  plot(mean(p_time)+eps,plf,'+g',mean(Time),peak_lf,'+b')
+  hp=findobj(gca,'type','line');
+  set(hp,'erase','none')
+  sf=(0:nplf)'*(diff(freq_meas)+fres)/nplf+freq_meas(1)-.5*fres;
+  for i=1:nfl
+   surface(p_time(:,i),sf,[plm(:,i);plm(end,i)]*ones(1,2))
+  end
+  set(gca,'nextplot','replace')
   set(gcf,'currentaxes',axs(2))
   rx=[0 pmax];
   plot(plf(ip(good)),peak_lf(il(good)),'o',plf(ip(bad)),peak_lf(il(bad)),'o',rx,rx*mr,'-',rx,rx,'-')
