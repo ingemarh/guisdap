@@ -167,24 +167,17 @@ fres=.1; %100kHz
 nplf=round(diff(freq_meas)/fres)+1;
 plm=zeros(nplf,nfl);
 pln=zeros(nplf,1);
+sf=(0:nplf-1)*(diff(freq_meas)+fres)/nplf+freq_meas(1);
 for j=1:nfreq
  f=round((1e-6*abs(freq_scale+freq(j))-freq_meas(1))/fres)+1;
  for i=1:nfft
   pln(f(i))=pln(f(i))+1;
-  for k=1:nfl
-   plm(f(i),k)=plm(f(i),k)+plsig(i,j,k);
-  end
+  plm(f(i),:)=plm(f(i),:)+reshape(plsig(i,j,:),1,[]);
  end
 end
-for j=1:nplf
- if pln(j)==0
-  plm(j,:)=NaN;
- else
-  for k=1:nfl
-   plm(j,k)=plm(j,k)/pln(j);
-  end
- end
-end
+d=find(pln>0); plm(d,:)=plm(d,:)./(pln(d)*ones(1,nfl));
+d=find(pln==0); plm(d,:)=[]; sf(d)=[];
+d=find(plm<0); plm(d)=0;
 plm=plm/max(max(plm))*length(get(gcf,'colormap'));
 
 plpeak=ones(2,nfl,nfreq)*NaN;
@@ -237,7 +230,7 @@ for i=d'
 end
 if isempty(ip), error('No overlapping times GUISDAP vs PL'), end
 s=size(Time,2); h=par2D(:,:,2); r0=1; mr=1; mrpp=100;
-pmax=ceil(max(plf)); freq_th=[0 10];
+freq_th=[0 10];
 while mr==r0 | abs(mr-1)>.01
  mrp=abs(mr-1);
  if mrp>mrpp
@@ -259,12 +252,12 @@ while mr==r0 | abs(mr-1)>.01
   plot(mean(p_time)+eps,plf,'+g',mean(Time),peak_lf,'+b')
   hp=findobj(gca,'type','line');
   set(hp,'erase','none')
-  sf=(0:nplf)'*(diff(freq_meas)+fres)/nplf+freq_meas(1)-.5*fres;
   for i=1:nfl
-   surface(p_time(:,i),sf,[plm(:,i);plm(end,i)]*ones(1,2))
+   surface(p_time(:,i),[sf 2*sf(end)-sf(end-1)]'-fres/2,[plm(:,i);plm(end,i)]*ones(1,2))
   end
   set(gca,'nextplot','replace')
   set(gcf,'currentaxes',axs(2))
+  pmax=ceil(max([plf;peak_lf(il(good))]));
   rx=[0 pmax];
   plot(plf(ip(good)),peak_lf(il(good)),'o',plf(ip(bad)),peak_lf(il(bad)),'o',rx,rx*mr,'-',rx,rx,'-')
   hy=ylabel(sprintf('Calculated plasmaline peak (MHz)  Magic const=%g',Magic_const));
