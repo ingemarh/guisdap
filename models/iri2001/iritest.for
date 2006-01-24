@@ -11,6 +11,7 @@ c 2000.03 12/28/01 output oar(39) for IG12 (R. Conkright, NGDC, NOAA)
 c 2000.04 10/28/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
 c 2000.05 02/06/03 Ne(Te) only 300,400; foF1 and hmF1 output corr.
 c 2000.06 01/19/05 (.not.jf(20)) instead of (..jf(2)) (G. Schiralli)
+c 2000.07 01/11/06 added comma in "F5.1,'{user"
 c
       INTEGER           pad1,pad2,pad3
       DIMENSION         outf(20,100),oar(50,100),jfi(6)
@@ -383,7 +384,7 @@ c
      &          4X,F5.1,'{user provided input}')
 2121    format('Ionospheric-Effective Solar Index IG12',16X,F5.1)
 2231    format('Ionospheric-Effective Solar Index IG12',16X,
-     &          F5.1'{user provided input}')
+     &          F5.1,'{user provided input}')
 213     format('Peak Densities/cm-3: NmF2=',F9.1,'   NmF1=',F9.1,
      &          '   NmE=',F9.1)
 214     format('Peak Heights/km:     hmF2=',F9.2,'   hmF1=',F9.2,

@@ -383,7 +383,7 @@ c
      &          4X,F5.1,'{user provided input}')
 2121    format('Ionospheric-Effective Solar Index IG12',16X,F5.1)
 2231    format('Ionospheric-Effective Solar Index IG12',16X,
-     &          F5.1'{user provided input}')
+     &          F5.1,'{user provided input}')
 213     format('Peak Densities/cm-3: NmF2=',F9.1,'   NmF1=',F9.1,
      &          '   NmE=',F9.1)
 214     format('Peak Heights/km:     hmF2=',F9.2,'   hmF1=',F9.2,

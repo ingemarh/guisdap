@@ -1,4 +1,4 @@
-c irine.for, version number can be found at the end of this comment.
+c irisubne.for, version number can be found at the end of this comment.
 c-----------------------------------------------------------------------        
 C 
 C Special version of IRISUB.FOR for computation of Ne and TEC only
@@ -90,6 +90,7 @@ C 2000.17 02/05/03 zyear =12.97 (Dec 31); idayy=#days per year
 C 2000.18 02/06/03 jf(27) for IG12 user input; all F1 prob in oar
 C 2000.19 07/14/04 covsat<188 instead of covsat=<f(IG)<188
 C 2000.20 02/09/05 declare INVDIP as real                F. Morgan
+C 2000.21 11/09/05 replace B0B1 with BCOEF               T. Gulyaeva
 C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
@@ -246,7 +247,7 @@ c      CHARACTER FILNAM*53
       DIMENSION  ARIG(3),RZAR(3),F(3),RIF(4),E(4),XDELS(4),DNDS(4),
      &  FF0(988),XM0(441),F2(13,76,2),FM3(9,49,2),ddens(3,7),elg(7),
      &  FF0N(988),XM0N(441),F2N(13,76,2),FM3N(9,49,2),INDAP(13),
-     &  AMP(4),HXL(4),SCL(4),B0B1(5),XSM(4),MM(5),DTI(4),AHH(7),
+     &  AMP(4),HXL(4),SCL(4),XSM(4),MM(5),DTI(4),AHH(7),
      &  STTE(6),DTE(5),ATE(7),TEA(6),XNAR(2),param(2),OARR(50),
      &  OUTF(20,100),PG1O(80),PG2O(32),PG3O(80),PF1O(12),PF2O(4),
      &  PF3O(12),HO(4),MO(5),DDO(4),HO2(2),MO2(3),DO2(2),DION(7)
@@ -268,8 +269,6 @@ c      CHARACTER FILNAM*53
      &   /iounit/konsol,monito
 
       EXTERNAL          XE1,XE2,XE3_1,XE4_1,XE5,XE6,TEDER
-
-      DATA      B0B1  /.755566,.778596,.797332,.812928,.826146/
 
         save
 
@@ -916,8 +915,9 @@ c
                 B1=3
                 call ROGUL(SEADAY,XHI,SEAX,GRAT)
                 if(NIGHT) GRAT=0.91-HMF2/4000.
+                BCOEF=B1*(B1*(0.0046*B1-0.0548)+0.2546)+0.3606
                 B0CNEW=HMF2*(1.-GRAT)
-                B0=B0CNEW/B0B1(1)
+                B0=B0CNEW/BCOEF
         else
                 B1=HPOL(HOUR,1.9,2.6,SAX,SUX,1.,1.)
                 B0 = B0_98(HOUR,SAX,SUX,NSEASN,RSSN,LONGI,MODIP)
