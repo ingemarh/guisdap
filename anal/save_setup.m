@@ -24,6 +24,7 @@ end
 
 if nargin>0
  [i,i,i]=fileparts(file);
+ if ~exist('extra','var'), extra=' '; end
  if strcmp(i,'.m')
   save_m(file,name_expr,expver,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
  else

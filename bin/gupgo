@@ -1,0 +1,95 @@
+#!/bin/sh
+wd=$HOME/webgup
+wwwreq="anareg.txt"
+locreq="anareq_done.txt"
+wwwsite="http://www.eiscat.se/schedule"
+
+cd $wd
+wget $wwwsite/$wwwreq -O $wwwreq 2>/dev/null
+if cmp -s $wwwreq $locreq
+then
+ echo "All already done"
+ exit 0
+else
+ QUERY_STRING=`comm -2 -3 $wwwreq $locreq | head -n1`
+fi
+echo $QUERY_STRING >> $locreq
+
+QUERY_STRING=`echo $QUERY_STRING | sed s/%3A/:/g | sed s/%2F/"\/"/g | sed s/%40/@/g | sed s/%5B/[/g | sed s/%5D/]/g | sed s/%0./#/g`
+eval `echo $QUERY_STRING | sed  y/"&"/" "/`
+datapath=`echo $datapath | sed s/%3B/\;/g | sed y/+/\ /`
+t=`echo $t | sed y/+/\ /`
+extra=`echo $extra | sed s/%28/\(/g | sed s/%29/\)/ | sed s/%3B/\;/g | sed s/%3D/=/g | sed s/%26/"\&"/g | sed s/%7B/\{/g | sed s/%7D/\}/g  | sed s/%5E/^/g | sed s/%7E/~/g | sed s/%27/\'\'/g | sed s/%3C/\</g | sed s/%3E/\>/g | sed s/%2C/,/g | sed y/+/\ / | sed s/%2B/+/g | sed s/%25/%/g`
+
+atpos=`expr index "$resultpath" "@"`
+if [ -z $resultpath ] || [ $atpos -eq 0 ]
+then
+ echo "Nowhere to send results"
+ exit 1
+fi
+rundir=www$RANDOM
+mkdir $rundir
+cd $rundir
+gfdfil=gfd.m
+respath="./AUTO"
+for tar in $datapath
+do
+ wget -O - "$tar" 2>/dev/null | tar xf -
+done
+ls | grep information | xargs rm -rf
+datapath=`ls`
+touch $gfdfil
+
+ed $gfdfil 2>/dev/null <<!
+a
+name_expr='$name_expr';
+siteid=$siteid;
+data_path='$datapath';
+result_path='$respath';
+t1=[$t 0 0 0];
+t2=[$t 24 0 0];
+rt=0;
+intper=$intper;
+path_exps='/opt/guisdap8/exps/';
+figs=[0 0 0 0 1];
+extra=[' $extra'];
+.
+w
+q
+!
+guisdap -tg $gfdfil >gupout.txt
+rm -rf $datapath $gfdfil
+resdir=`ls -d [12]*`
+mv gupout.txt $resdir
+inhouse="@eiscat.se @eiscat.irf.se @eiscat.sgo.fi @eiscat.uit.no @esr.eiscat.no"
+datrep="Denis.Alcayde@cesr.fr steve@mail.eiscat.rl.ac.uk Cesar.La.Hoz@phys.uit.no hans.nilsson@irf.se Ritva.Kuula@oulu.fi nozawa@stelab.nagoya-u.ac.jp mike@eiscat.uit.no"
+
+trusted=0
+mh=`expr substr $resultpath $atpos 99`
+for eis in $inhouse
+do
+ if [ "$eis" = "$mh" ]
+ then
+  trusted=1
+ fi
+done 
+set nocasematch
+for eis in $datrep
+do
+ if [ "$eis" = "$resultpath" ]
+ then
+  trusted=1
+ fi
+done 
+if [ $trusted -eq 0 ]
+then
+ rm -f $resdir/*.mat $resdir/*.m $resdir/.gup $resdir/*.eps
+fi
+tar zcf $resdir.tgz $resdir
+rm -rf $resdir
+mail -s "Analysis results" -a $resdir.tgz $resultpath <<!
+Enclosed you find the requested analysis.
+EISCAT
+!
+cd ..
+rm -rf $rundir

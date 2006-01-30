@@ -60,7 +60,7 @@ do
 		   mflags=
 		   matlab="nohup $matlab"
 		   ;;
-		g) tail="-r go_on $OPTARG";;
+		g) tail="-r go_on('$OPTARG')";;
 		m) my="$OPTARG";;
 		t) mflags=;;
 		x) mex=;;
