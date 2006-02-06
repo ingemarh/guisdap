@@ -1,21 +1,21 @@
 startup
 using_x=prod(get(0,'ScreenSize'))-1;
-sites='KSTVLX'; gfdfile=[path_tmp '.gup']; expver=1;
 %default values
+rt=0;
+[intper,t1,t2,siteid,expver]=auto_parse(0);
+if siteid<3
+ figs=[0 0 1 0 1];
+ extra='%a_Offsetppd=8;';
+else
+ figs=[0 1 0 0 1];
+ extra='%Magic_const=1.1;';
+end
+result_path=fullfile(result_path,'AUTO');
+gfdfile=[path_tmp '.gup'];
 if exist(gfdfile)
  load(gfdfile,'-mat')
-else
- rt=0;
- [intper,t1,t2,siteid,expver]=auto_parse(0);
- if siteid<3
-  figs=[0 0 1 0 1];
-  extra='%a_Offsetppd=8;';
- else
-  figs=[0 1 0 0 1];
-  extra='%Magic_const=1.1;';
- end
- result_path=fullfile(result_path,'AUTO');
 end
+sites='KSTVLX';
 beg=sprintf('%04d %02d %02d  %02d %02d %02d',t1);
 to=sprintf('%04d %02d %02d  %02d %02d %02d',t2);
 if using_x & isempty(get(0,'UserData'))

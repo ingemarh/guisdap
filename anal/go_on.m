@@ -75,7 +75,6 @@ end
 read_anapar
 display_figures=figs;
 analysis_control=[1 .01 100 1];
-for i=1:size(extra,1),eval(extra(i,:));end
 if rt & isunix
  [k,now]=unix('date -u "+%Y %m %d %H %M %S"');
  now=datenum(analysis_start)-datenum(str2num(now));
@@ -84,5 +83,15 @@ if rt & isunix
   fprintf('Waiting %.1f minutes for exp start...\n',now/60), pause(now)
  end
 end
-an_start
-if go_die, quit, end
+if go_die
+ try
+  for i=1:size(extra,1),eval(extra(i,:));end
+  an_start
+ catch
+  disp(lasterr)
+ end
+ quit
+else
+ for i=1:size(extra,1),eval(extra(i,:));end
+ an_start
+end

@@ -1,19 +1,46 @@
 #!/bin/sh
-wd=$HOME/webgup
+wd=/analysis/webgup
 wwwreq="anareg.txt"
 locreq="anareq_done.txt"
 wwwsite="http://www.eiscat.se/schedule"
+export PATH=$PATH:/usr/local/bin
+
+fsiz() {
+	filesize=`ls -l $1 | awk '{print $5}'`
+	#return `ls -l $1 | awk '{print $5}'`
+}
+mail_it() {
+	nail -s "Analysis results" -r "GUISDAP <ingemar@eiscat.se>" $* <<!
+Enclosed you find the requested analysis.
+EISCAT
+!
+}
 
 cd $wd
-wget $wwwsite/$wwwreq -O $wwwreq 2>/dev/null
+if ! wget $wwwsite/$wwwreq -O $wwwreq 2>/dev/null
+then
+ echo "Could not reach HQ"
+ exit 0
+fi
 if cmp -s $wwwreq $locreq
 then
- echo "All already done"
+ #echo "All already done"
  exit 0
 else
- QUERY_STRING=`comm -2 -3 $wwwreq $locreq | head -n1`
+ QUERY_STRING=`comm -23 $wwwreq $locreq | head -n1`
+fi
+fsiz $wwwreq
+nsiz=$filesize
+fsiz $locreq
+echo "$nsiz $filesize"
+if [ -z $QUERY_STRING ] || [ $nsiz -lt $filesize ]
+then
+ echo "New list"
+ cp $wwwreq $locreq
+ exit 0
 fi
 echo $QUERY_STRING >> $locreq
+
 
 QUERY_STRING=`echo $QUERY_STRING | sed s/%3A/:/g | sed s/%2F/"\/"/g | sed s/%40/@/g | sed s/%5B/[/g | sed s/%5D/]/g | sed s/%0./#/g`
 eval `echo $QUERY_STRING | sed  y/"&"/" "/`
@@ -26,70 +53,127 @@ if [ -z $resultpath ] || [ $atpos -eq 0 ]
 then
  echo "Nowhere to send results"
  exit 1
+else
+ echo "$resultpath"
 fi
 rundir=www$RANDOM
 mkdir $rundir
 cd $rundir
 gfdfil=gfd.m
-respath="./AUTO"
 for tar in $datapath
 do
  wget -O - "$tar" 2>/dev/null | tar xf -
 done
 ls | grep information | xargs rm -rf
 datapath=`ls`
+if [ -z $datapath ]
+then
+ echo "No data defined"
+ exit 1
+fi
 touch $gfdfil
+maxsize=3000000
+if [ $maxfsize ]
+then
+ maxsize=$(($maxfsize*750000)) #uuencoding maxes file ~25% bigger 
+fi
 
 ed $gfdfil 2>/dev/null <<!
 a
 name_expr='$name_expr';
 siteid=$siteid;
 data_path='$datapath';
-result_path='$respath';
+result_path='AUTO';
 t1=[$t 0 0 0];
 t2=[$t 24 0 0];
 rt=0;
 intper=$intper;
-path_exps='/opt/guisdap8/exps/';
+path_exps=[path_GUP '/exps/'];
 figs=[0 0 0 0 1];
 extra=[' $extra'];
 .
 w
 q
 !
-guisdap -tg $gfdfil >gupout.txt
+guisdap -tg $gfdfil " -c /opt/matlab7/etc/license.dat" >gupout.txt
 rm -rf $datapath $gfdfil
+gzip -9 gupout.txt
+filelist="gupout.txt.gz"
 resdir=`ls -d [12]*`
-mv gupout.txt $resdir
-inhouse="@eiscat.se @eiscat.irf.se @eiscat.sgo.fi @eiscat.uit.no @esr.eiscat.no"
-datrep="Denis.Alcayde@cesr.fr steve@mail.eiscat.rl.ac.uk Cesar.La.Hoz@phys.uit.no hans.nilsson@irf.se Ritva.Kuula@oulu.fi nozawa@stelab.nagoya-u.ac.jp mike@eiscat.uit.no"
-
-trusted=0
-mh=`expr substr $resultpath $atpos 99`
-for eis in $inhouse
-do
- if [ "$eis" = "$mh" ]
- then
-  trusted=1
- fi
-done 
-set nocasematch
-for eis in $datrep
-do
- if [ "$eis" = "$resultpath" ]
- then
-  trusted=1
- fi
-done 
-if [ $trusted -eq 0 ]
+if [ $resdir ]
 then
- rm -f $resdir/*.mat $resdir/*.m $resdir/.gup $resdir/*.eps
+ nextfile=`ls $resdir/NCAR*`
+ if [ $nextfile ]
+ then
+  mv $resdir/NCAR* .
+  bzip2 -9 NCAR*
+ fi
+ inhouse="@eiscat.se @eiscat.irf.se @eiscat.sgo.fi @eiscat.uit.no @esr.eiscat.no"
+ datrep="denis.alcayde@cesr.fr steve@mail.eiscat.rl.ac.uk cesar.la.hoz@phys.uit.no hans.nilsson@irf.se ritva.kuula@oulu.fi nozawa@stelab.nagoya-u.ac.jp mike@eiscat.uit.no"
+
+ trusted=0
+ mh=`expr substr $resultpath $atpos 99`
+ for eis in $inhouse
+ do
+  if [ "$eis" = "$mh" ]
+  then
+   trusted=1
+  fi
+ done 
+ for eis in $datrep
+ do
+  if [ "$eis" = "$resultpath" ]
+  then
+   trusted=1
+  fi
+ done 
+ nextfile=`ls $resdir/*.png`
+ if [ $nextfile ]
+ then
+  mv $resdir/*.png $resdir/*.eps .
+  filelist="`ls *.png` $filelist"
+ elif [ $trusted -eq 0 ]
+ then
+  trusted=2
+ fi
+ if [ $trusted -eq 1 ]
+ then
+  bzip2 -9 *.eps 
+  tar cf - $resdir | bzip2 -9c > $resdir.tar.bz2
+ elif [ $trusted -eq 0 ]
+ then
+  ps2pdf *.eps
+  filelist="$filelist `ls *.pdf`"
+ fi
+ filelist="$filelist `ls *.bz2`"
+ rm -rf $resdir
 fi
-tar zcf $resdir.tgz $resdir
-rm -rf $resdir
-mail -s "Analysis results" -a $resdir.tgz $resultpath <<!
-Enclosed you find the requested analysis.
-EISCAT
-!
+flist=""
+for fil in $filelist
+do
+ fsiz $fil
+ if [ $filesize -gt $maxsize ]
+ then
+  split -db $maxsize $fil $fil.
+  flist="$flist `ls $fil.*`"
+ else
+  flist="$flist $fil"
+ fi
+done
+nsiz=0
+matt=""
+for fil in $flist
+do
+ fsiz $fil
+ if [ $((msiz+filesize)) -gt $maxsize ] && [ $nsiz -ne 0 ]
+ then
+  mail_it $matt $resultpath
+  matt=""
+  nsiz=0
+ fi
+ matt="$matt -a $fil"
+ nsiz=$((nsiz+filesize))
+done
+mail_it $matt $resultpath
 cd ..
-rm -rf $rundir
+#rm -rf $rundir
