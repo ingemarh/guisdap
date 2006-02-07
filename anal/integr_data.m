@@ -37,7 +37,11 @@ if a_ind==0
   a_ind=1;
   a_cycle=sum(a_integr+a_skip);
   d=cell2mat({d_filelist.file});
-  d_filelist(find(d<=a_start | d>a_end))=[];
+  d=find(d<=a_start | d>a_end);
+  if length(d)==length(d_filelist)
+    d=d(1:end-1);
+  end
+  d_filelist(d)=[];
   if a_cycle>0
     i=fix((d_filelist(1).file-a_start)/a_cycle);
     if i>0, a_start=a_start+i*a_cycle; end

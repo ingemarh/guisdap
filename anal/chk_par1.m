@@ -25,7 +25,7 @@ if ~isempty(d_saveintdir)
  d_saveintdir=fullfile(d_saveintdir,filesep);
  if ~exist(d_saveintdir,'dir')
   [i,j]=fileparts(d_saveintdir(1:end-1));
-  mkdir(i,j)
+  if isempty(i), mkdir(j), else, mkdir(i,j), end
  end
 end
 

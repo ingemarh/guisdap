@@ -58,7 +58,8 @@ if isempty(r_h)
   result_path=fullfile(i1,result_dir,filesep);
  end
  if ~exist(result_path,'dir')
-  [i1,i2,i3]=fileparts(result_path(1:end-1)); mkdir(i1,[i2 i3])
+  [i1,i2,i3]=fileparts(result_path(1:end-1));
+  if isempty(i1), mkdir([i2 i3]), else, mkdir(i1,[i2 i3]), end
  elseif ~isempty(dir([result_path '*.mat']))
   beep
   fprintf('\n********** %s is not empty! **********\n\n',result_path)
