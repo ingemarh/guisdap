@@ -17,21 +17,27 @@ if nargin<2, expt=[]; end
 if nargin<3, gate=[]; end
 if nargin<4, plots=[]; end
 if isempty(expt), expt=pl_dir; end
-if strfind(expt,'steffe')
- if strfind(expt,'2.')
-  nfft=0; nint=1; ngates=3; nlag=240;
-  freq=[-4.8 4.8]*1e6; dt=0.4e-6; invert=-1;
-  ran=[69 300;170 400;270 501]; fradar=500e6;
-  maxe=2; ele=81.6; updown=0:1; nup_d=1;
-  startad=[1 48165]+19*240+18*2048; skip_if=0;
-  if isempty(gate), gate=2; end
- else
-  nfft=128; nint=2; ngates=1; nlag=0;
-  freq=[-4 -5.3 4 5.3]*1e6; dt=0.6e-6; invert=-1;
-  ran=[182 423.9]; fradar=500e6;
-  maxe=2; ele=81.6; updown=0:1; nup_d=2;
-  startad=1; gate=1; skip_if=0;
- end
+if strfind(expt,'steffe2')
+ nfft=0; nint=1; ngates=3; nlag=175;
+ freq=[-3.8 -5.4 3.8 5.4]*1e6; dt=0.6e-6; invert=-1;
+ ran=[47 314;189 455;330 597]; fradar=500e6;
+ maxe=2; ele=81.6; updown=0:1; nup_d=2;
+ startad=(0:3)*19619+10*175+9*1536; skip_if=0;
+ if isempty(gate), gate=2; end
+elseif strfind(expt,'plwin')
+ nfft=0; nint=1; ngates=3; nlag=240;
+ freq=[-4.8 4.8]*1e6; dt=0.4e-6; invert=-1;
+ ran=[69 300;170 400;270 501]; fradar=500e6;
+ maxe=2; ele=81.6; updown=0:1; nup_d=1;
+ startad=[1 48165]+19*240+18*2048; skip_if=0;
+ if isempty(gate), gate=2; end
+ %freq=freq(1); updown=0; startad=startad(1);
+elseif strfind(expt,'steffe')
+ nfft=128; nint=2; ngates=1; nlag=0;
+ freq=[-4 -5.3 4 5.3]*1e6; dt=0.6e-6; invert=-1;
+ ran=[182 423.9]; fradar=500e6;
+ maxe=2; ele=81.6; updown=0:1; nup_d=2;
+ startad=1; gate=1; skip_if=0;
 elseif strfind(expt,'tau8')
  nfft=128; nint=2; ngates=4; nlag=0;
  freq=4.1*1e6; dt=0.6e-6; invert=-1;
@@ -40,7 +46,7 @@ elseif strfind(expt,'tau8')
  startad=108679; skip_if=1;
  if isempty(gate), gate=2; end
 else
- error('No such experiment defined')
+ error('No such experiment defined (steffe2,steffe,plwin,tau8)')
 end
 if isempty(gate), gate=1; end
 

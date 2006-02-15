@@ -42,12 +42,17 @@ calibs=diff_val(lpg_cal(lpgs));      % find all different values
 calibs=calibs(find(calibs>0)); % Accept non-zero values
 scale=zeros(size(lpg_cal));
 if ~isempty(calTemp)
+ cT=calTemp;
  sysTemp=[];
  for cal=calibs
   bac=lpg_bac(cal);
   bac_power=median(d_data(lpg_addr(bac)+ADDR_SHIFT));
   cal_power=median(d_data(lpg_addr(cal)+ADDR_SHIFT));
-  scale(cal)=(cal_power-bac_power)/calTemp;
+  if length(cT)>1
+    scale(cal)=(cal_power-bac_power)/cT(lpg_code(cal));
+  else
+    scale(cal)=(cal_power-bac_power)/cT;
+  end
   sysTemp=[sysTemp;bac_power/scale(cal)];
  end
 elseif ~isempty(sysTemp)

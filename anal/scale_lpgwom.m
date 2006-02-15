@@ -12,7 +12,7 @@
 function scale_lpgwom
 
 global lpg_wom lpg_womscaled lpg_bcs lpg_ND
-global lpg_Ap lp_vc vc_Ap lpg_lag lpg_bac
+global lpg_Ap lp_vc lpg_lag lpg_bac
 
 lpg_womscaled=zeros(size(lpg_wom));
 for lpg=find(lpg_bcs=='s')
