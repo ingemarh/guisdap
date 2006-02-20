@@ -39,7 +39,7 @@ end
 
 if strcmp(name_ant(1:3),'uhf')
  d_date=datenum(d_time(1,:));
- if (d_date>=datenum(2000,05,01) & d_date<=datenum(2001,02,08)) | ...
+ if (d_date>=datenum(2000,10,01) & d_date<=datenum(2001,02,08)) | ...
     (d_date>=datenum(2001,06,28) & d_date<=datenum(2001,10,15,13,31,00)) 
      fprintf('GUISPERT: doubling uhf tx power estimate\n')
      ch_Pt=ch_Pt*2;

@@ -39,4 +39,4 @@ else
   lp_fir=cumsum(full(lp_firsto));
 end
 p_RECloc=t_RECloc;
-clear t_RECloc GUPvarfile GUPvarfil
+clear t_RECloc GUPvarfil
