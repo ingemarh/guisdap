@@ -30,7 +30,7 @@ if exist('B_rcprog')~=1, B_rcprog=1; end
 for d_rcprog=B_rcprog:N_rcprog
   Stime=clock;
 
-  if N_rcprog>1, apustr=['_',int2str(d_rcprog)]; else apustr=[]; end
+  apustr=['_',int2str(d_rcprog)];
   load_GUPvar
 
   read_specpar
@@ -46,6 +46,7 @@ for d_rcprog=B_rcprog:N_rcprog
 
   plot(p_om,real(lpg_wom)), drawnow
   %lpg_tex
+  if ~strfind(GUPvarfile,apustr), apustr=''; end
   save_toinitfile
 
   fprintf('Time used in initialisation:%8.2f min\n',etime(clock,Stime)/60)
