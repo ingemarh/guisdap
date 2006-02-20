@@ -18,8 +18,9 @@ if d_date>datenum(2000,09,06,12,0,0) & d_date<datenum(2000,09,06,23,0,0)
   d=find(txlog(:,2)<25); txlog(d,2)=25; %ch_Pt<0
  end
  hv=interp1(txlog(:,1),txlog(:,2),mean(datenum(d_time)),'nearest');
- ch_Pt=polyval(polhv,hv)*1000;
+ ch_Pt=polyval(polhv,hv)*1000/2;
  fprintf('GUISPERT: HV=%g kV -> TX=%.1f MW\n',hv,ch_Pt/1e6)
+ d=find(analysis_altit<270); analysis_altit(d)=[]; analysis_maxwidth(d)=[];
 end
 
 if name_site=='K' && d_date>datenum(2001,04,02) & d_date<datenum(2001,06,25)
