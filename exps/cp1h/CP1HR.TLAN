@@ -1,0 +1,57 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   ***  T A R L A N  P R O G R A M M E   F O R   R E M O T E S  ***
+%
+%    COMMON PROGRAM CP-1-I AND CP-2-D
+%
+%    FILE: (CP)CP-1-I-R:TLAN
+%
+%    LAST ALTERED:  5 JANUARY 1989 BY M.RIETVELD
+%
+%    WRITTEN FOR THE NOISE INJECTION SYSTEM USED SINCE JUNE 1986
+%    AT THE REMOTE SITES. IF THIS FILE IS TESTED IN TROMSO SYSTEM
+%    THE NOISE INJECTION DOES NOT APPEAR.
+%
+%    NO OF TIMING AND SIGNAL GATES = 5
+%    SIGSAMPLES                    = 32
+%    MAXLAG                        = 29  (30 LAGS)
+%    MARGIN (OVERLAPPING)          =-10
+%    CALPRODUCTS                   = 300
+%    SAMPLING INTERVAL             = 10 US
+%
+%    CH3 PULSE TRANSMITTED AT 6700, CH4 PULSE TRANSMITTED AT 7051
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AT 1 RECEV
+AT 5 CH3,CH4
+AT 3290 ALLOFF,HCAL          %300+29 BACKGROUND SAMPLES TAKEN
+%                            %THE FIRST BACKGROUND GATE
+AT 3400 CH3,CH4
+AT 5185 ALLOFF,CALOFF        %150+29 SAMPLES TAKEN DURING HORIZONTAL
+%                            %INPUT INJECTION
+AT 5700 CH3
+AT 6051 CH4                  %SHIFTED BY 351 US
+AT 6895 CH3OFF
+AT 7246 CH4OFF,VCAL          %120 SAMPLES (5*32-4*10) ARE TAKEN FOR TIMING AND
+%                            %SIGNAL GATES. THIS CAN BE THOUGHT AS THREE BLOCKS
+%                            % = 44+32+44 FROM WHICH THE BLOCK OF 32 SAMPLES
+%                            %CONTAINS THE TARGET SIGNAL.
+%                            %TIMING MARGIN IS 15 US, SO THE LEADING EDGE
+%                            %OF THE CH3 PULSE MUST APPEAR (IN THE ADC-UNIT) AT
+%                            % 5700+(44-1)*10-15 = 5700+415 = 6115
+%                            %THE FILTER DELAY IS ABOUT 20 US. AS A CONSEQUENCE
+%                            %THE LEADING EDGE MUST ILLUMINATE  THE ANTENNA
+%                            %ALREADY AT 6095. THE PULSE IS TRANSMITTED AT 6700.
+%                            %THE OFFSETT-PPD IS THUS 6700-6095=605
+%
+AT 7815 CH3,CH4
+AT 9600 ALLOFF,CALOFF        %150+29 SAMPLES TAKEN DURING VERTICAL
+%                            %INPUT INJECTION
+AT 9650 CH3,CH4
+AT 12900 STC                 %300+29 SAMPLES
+AT 12935 ALLOFF              %THE SECOND BACKGROUND GATE
+%
+AT 12975 BUFLIP
+%
+AT 13000 REP
+
