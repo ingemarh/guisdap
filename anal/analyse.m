@@ -56,7 +56,7 @@ b(9)=uicontrol('Style','edit','string',num2str(figs),'position',[x y(9) x2 yh],'
 text(0,100,'Special')
 b(10)=uicontrol('Style','edit','string',extra,'position',[x 30 x2 120],'max',100,'HorizontalAlignment','left','tooltipstring','Matlab commands!');
 text(x+x1+x3,ty(4),'Vs')
-b(11)=uicontrol('Style','popupmenu','string',num2str((1:9)'),'position',[x+2*x1 y(4) x3 yh],'value',expver);
+b(11)=uicontrol('Style','popupmenu','string',num2str((0:9)'),'position',[x+2*x1 y(4) x3 yh],'value',expver+1);
  go_on(bg)
 else
  dpath=minput('Data path',data_path,'s');

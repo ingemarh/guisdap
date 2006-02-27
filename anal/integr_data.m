@@ -134,7 +134,7 @@ while i<length(files)
     adiff=a_antold-a_ant;
     a_antold=a_ant;
     if any(fix(adiff/.2)) | tdiff
-      if a_ant(1)<89.8 | a_ant(1)+adiff(1)<89.8 | tdiff
+      if a_ant(1)<89.8 | a_ant(1)>90.2 | a_ant(1)+adiff(1)<89.8 | a_ant(1)-adiff(1)>90.2 | tdiff
         a_interval(2)=file.file;
         if tdiff & N_averaged>1
           a_interval(2)=file.file-.5; a_antold=[];
