@@ -1,0 +1,309 @@
+                                                                                
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+%                                                                            %  
+%        S P - E I - A L T C P 1 - T  : D E S C                              %  
+%                                                                            %  
+%        Gudmund Wannberg, EISCAT HQ, February 27, 1991                       % 
+%                                                                            %  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+                                                                                
+1. General information                                                          
+                                                                                
+  The SP-EI-ALTCP1 experiment is a prototype for a next generation CP-1/CP-2    
+code. It makes extensive use of the new signal processing hardware which has    
+been installed in the EISCAT system over the past two years. The E region       
+data rate is increased by about 20 % in the power profile part and by as        
+much as 100 - 200 % in the spectral data. This is accomplished at the cost      
+of a minor reduction in Tromsº F region statistics (about -15 %), which is      
+caused mainly by the transmission of only one long pulse/IPP rather than        
+two, as in the current CP-1 versions. So as not to compromise the tristatic     
+velocity statistics, the remote sites are programmed to receive both the        
+long pulse and also the alternating code transmission which produces the        
+E region spectral data in Tromsº. This causes a net increase of the number      
+of spectral estimates per unit time at the remote sites of about 70 % relative  
+to the current CP-1.                                                            
+                                                                                
+  The integration time is set to 5 seconds, which may be useful in highly       
+dynamic situations (auroral substorms etc.). IT MUST NOT BE CHANGED NEITHER     
+FROM THE EROS CONSOLE NOR THROUGH A CHANGE TO THE 'START-RADAR' COMMAND IN THE  
+:ELAN FILE; ANY CHANGES WILL CAUSE THE ALTERNATING CODE PART OF THE EXPERIMENT  
+TO FAIL. IF A DIFFERENT INTEGRATION TIME IS DESIRED THE TARLAN CODE GENERATOR   
+PROGRAM "ATC-1" MUST BE USED TO CREATE A NEW :TLAN FILE ADAPTED TO THE NEW      
+INTEGRATION TIME !!                                                             
+                                                                                
+                                                                                
+2. System configuration                                                         
+                                                                                
+  This experiment uses all eight channels of the receiver. The PDF filters      
+should be installed so:                                                         
+                                                              Used for          
+                                                                                
+CH1 and CH2       Linear phase, 25 kHz BW, lower crate       F region PP        
+                                                                                
+CH3 and CH4       Butterworth,  25 kHz BW, upper crate       F region LPACF     
+                                                                                
+CH5 to  CH8       Linear phase, 25 kHz BW, lower crate       D and E reg PP     
+                                                             + alt. codes       
+                                                                                
+  The three channel groups should be internally balanced for gain to within     
+one decibel. It is permissible to completely attenuate out faulty channels      
+within a group in an emergency. This causes a data loss of 50 % per channel     
+in the F region groups but only a 25 % per channel loss in the D,E region       
+group.                                                                          
+                                                                                
+  In every IPP pulses are transmitted on four different frequencies, i.e.       
+one frequency each for the FPP and FACF groups and two frequencies for          
+the D,E region group (one for the PP and the other for the alternating code).   
+In the next cycle, all frequencies are changed and the pattern is repeated,     
+now of course using different receiver channels. Towards the end of each        
+cycle, all channels which are due for use in the next cycle are calibrated.     
+                                                                                
+  A new member of the 16 baud strong condition alternating code set is          
+transmitted every two IPPs, so it takes 64 IPPs to complete the set. At the     
+end of such a set, the frequency/channel pair used for the D,E region PP is     
+interchanged with the pair used for the alternating code (this happens about    
+twice a second). The result of this operation is that the D,E PP and the        
+ACFs measured with the alternating code are automatically intercalibrated       
+in an average sense. Decoding of the alternating code data is fully automatic   
+and performed by special purpose hardware in the correlator, which is           
+partly controlled from the correlator microprogram and partly from the          
+radar controller (the :TLAN and :TCOD files contain special 'bit' commands      
+to this effect).                                                                
+                                                                                
+CAUTION: Because of the intricate commutations of channels and frequencies      
+used in the experiment, it is inadvisable to attempt to change a frequency      
+or channel by editing of the :TLAN file. A special "TARLAN generator" program   
+has been written for this purpose. It is still not quite debugged and should    
+be used only in cooperation with the author, UGW at EISCAT HQ, who will be      
+pleased to offer help and advice.                                               
+                                                                                
+                                                                                
+3. Data dump structure, SP-EI-ALTCP1-T                                          
+                                                                                
+  The data dump contains five different blocks of data, namely                  
+                                                                                
+                   i) An ungated power profile for the D and E regions,         
+                      also serving as zero lags for the ACFs in block (iii),    
+                  ii) A "variance profile" computed from the undecoded          
+                      samples taken from the alternating code modulation,       
+                 iii) Incomplete ACFs derived from the alternating code,        
+                  iv) A gated, coarse resolution power profile for the          
+                      F region,                                                 
+                   v) Conventional long pulse ACF data.                         
+                                                                                
+   The dump is 2036 complex double integers long ; the SCANCOUNT value is       
+stored in dump address 2035.                                                    
+                                                                                
+                                                                                
+                                                                                
+3.1  D and E region power profile block                                         
+                                                                                
+  This block contains ungated power profile data which also doubles as          
+the zero lags for the ACFs stored in block (iii). Specifically, there are       
+                                                                                
+     90  (S+B) gates    at addresses 0000-0089                                  
+     60    B   gates    at addresses 0090-0149                                  
+     10  (B+C) gates    at addresses 0150-0159                                  
+                                                                                
+  Gate no. 9 at address 0008 coincides in range with A/C ACF gate no. 1         
+in block (iii). Data from two frequencies/channels are added; this is the       
+only block in the dump that employs channel adding!                             
+                                                                                
+                                                                                
+3.2  Variance profile data block                                                
+                                                                                
+  This block contains 76 power estimates at addresses 0160-0235. Its use        
+is further described below.                                                     
+                                                                                
+                                                                                
+3.3. Alternating code ACF block                                                 
+                                                                                
+  This block is very straightforward. It contains                               
+                                                                                
+     61  S gates (lags 1-15) at addresses 0240-1154, IT weighting, Ns = 16      
+      2  B gates (lags 1-15) at addresses 1155-1184, IT weighting, Ns = 16      
+                                                                                
+      IT = inverse triangular, w(l) = Ns - l  where l is the lag index          
+                                                                                
+  No channel adding is applied (one channel only per IPP).                      
+                                                                                
+NOTE: these gates contain NO zero lag - this cannot be unambiguously            
+estimated from the alternating code. Note also that the mean of the back-       
+ground is zero if the algorithm works properly, so background subtraction       
+is neither necessary nor recommended in this block (it would just increase      
+the variance !).                                                                
+                                                                                
+  Recently, the RTGRAPH has been upgraded so that if <NO. OF SKIP WORDS>:=-1    
+a zero lag is extrapolated from the data and the ACF displayed with this        
+included. This allows you to display also power spectra with a proper           
+baseline level. The present :GDEF file for -ALTCP1 uses this feature.           
+                                                                                
+                                                                                
+3.4. F region power profile block                                               
+                                                                                
+  This block contains (S+B), B and (B+C) gates that exactly match those         
+of the current CP-1-I-T low resolution power profile in range coverage,         
+gate separation and range extent - only P-P resolution and the order of         
+the subblocks are different:                                                    
+                                                                                
+      80 (S+B) gates  at addresses 1181-1260                                    
+      40   B   gates  at addresses 1261-1300                                    
+       6 (B+C) gates  at addresses 1301-1306                                    
+                                                                                
+  Gate adding is used; three neighbouring estimates sampled 10 us apart         
+are added to form each gate in the output. No channel adding is applied.        
+                                                                                
+                                                                                
+3.5. Long pulse ACF block                                                       
+                                                                                
+   The gating parameters used in this block are identical to those of the       
+current CP-1-I-T LPACF, which should facilitate the adaption of existing        
+analysis software to the new program. Specifically, the block contains          
+                                                                                
+   21 S+B gates (lags 0-25) at addresses 1307 - 1852, GS weighting, Ns = 15,    
+    6  B  gates (lags 0-25) at addresses 1853 - 2008, GS weighting, Ns = 15,    
+    1 B+C gate  (lag 0    ) at addresses 2009 - 2034, GS weighting, Ns = 15.    
+                                                                                
+      GS = Gen-System ,        w(l) = Ns + l  where l is the lag index          
+                                                                                
+    NO adding of channels is used in this block.                                
+                                                                                
+NOTE: the only real difference between this data block and the output of        
+a CP-1-I-T experiment is the ORDER of the sub-blocks, plus the fact that        
+only one channel is received per IPP.                                           
+                                                                                
+                                                                                
+4. Data properties                                                              
+                                                                                
+4.1. D/E region power profile                                                   
+                                                                                
+ This is a very simple power profile data vector. It is derived from two        
+21 us pulses transmitted immediately after each other on two different          
+frequencies in the first half of each IPP. The frequency used for the first     
+pulse is later used for the alternating code which is transmitted in the        
+second half of each IPP. The frequencies are commutated according to a          
+relatively complicated scheme from one IPP to the next, but this ensures        
+that all frequencies used for the PP pulses are eventually also used for        
+the alternating code; hence the power profiles and the ACFs computed from       
+the code are automatically gain balanced and the PP can be used as a zeero      
+lag profile for the ACF series (which does not contain lag 0).                  
+                                                                                
+  The PP channels are sampled at a 1/21 us rate and, as mentioned above,        
+two channels are added in the dump. No gate adding is performed. The            
+filters are 25 kHz linear phase ones. The range coverage is 64.65 - 345.00      
+km and the range increment/gate is 3.15 km.                                     
+                                                                                
+                                                                                
+4.2. Variance profile                                                           
+                                                                                
+  This data block is included in the hope that it may become useful in the      
+analysis of the alternating code ACF data. It contains a series of raw          
+power estimates derived from all the samples used by the decoding process       
+(there are 76 of them in this case of a 16 bit code and 61 gates) and so        
+it can be understood as an "ambiguous lag-0 profile". An advanced analysis      
+routine might attempt to estimate the true variance of each lagged product      
+in the decoded ACFs by starting from this ambiguous power profile.              
+                                                                                
+  The first point in the variance profile corresponds to a sample taken         
+as the leading edge of the coded pulse passes 90 km range. As the modulation    
+is 336 us long, the power in this point is an average over 50.4 km, and         
+the lower boundary of this first point is just below 40 km range. Some          
+ground clutter may be expected to occur in the first few points. This,          
+if present, will also affect the first few ACF gates. It remains to be          
+seen to what degree this corrupts the data.                                     
+                                                                                
+                                                                                
+4.3. Alternating code ACF                                                       
+                                                                                
+ The alternating-code ACF data is derived from a 16 baud, strong condition      
+alternating code set using a baud length of 21 us. A total of four different    
+frequencies and four receiver channels are used for this modulation, and        
+each of the 32 sequences that make up the code set is repeated  on              
+two different frequencies. It takes slightly less than one-half second          
+to complete the full set; this is consequently also the time during which       
+the target (ie the ionosphere) must be assumed to be stationary in an           
+average sense, for the technique to produce dependable results.                 
+                                                                                
+  Sampling is at 21 us/sample, filters used are 25 kHz linear phase.            
+The lag extent is from 21 - 315 us and the lag increment 21 us.                 
+                                                                                
+  Fitting for velocity should be straightforward - the zero lag is not          
+used anyway in the velocity estimator. Fitting for density requires an          
+estimate of the zero lag. This can be taken from the power profile in           
+block (i), which is measured through the same receiver channels and on the      
+same frequencies as the alternating code - it is consequently automatically     
+intercalibrated with the nonzero lags and can be patched into the zero lag      
+locations of the ACFs after proper scaling. The relative weight of the PP       
+is 2, but remember that it must be background subtracted also !                 
+                                                                                
+  PP gate no. 9 corresponds to ACF gate no. 1, which is at 89.95 km range.      
+The range increment/gate is 3.15 km.                                            
+                                                                                
+                                                                                
+4.4. F region power profile                                                     
+                                                                                
+  This power profile is mainly intended as a replacement for the 2*29 us        
+power profile in the current CP-1-I-T. The number of gates, range coverage      
+and gating all are identical to the CP-1-I version. The modulation is           
+slightly different - as there is more freedom with respect to how long          
+the transmit pulses can be made in -ALTCP1, we have decided to use just         
+one, 40 us pulse per IPP rather than the two, 29 us pulses of CP-1. The         
+p-p range resolution of this modulation is thus slightly coarser than           
+in the previous version, about 9 km, but the FWHM is only marginally in-        
+creased. Only one channel per IPP is used.                                      
+                                                                                
+                                                                                
+4.5. Long pulse ACF                                                             
+                                                                                
+  The signal carrying part of this block is arranged to behave exactly          
+the same as the CP-1-I-T, i.e. the series of gates is computed with a           
+volume index of 15 and a max. lag of 25. The first gate is centered on          
+150 km range. Six background gates are computed instead of five; they           
+are all fully independent.                                                      
+                                                                                
+ The noise calibration part of this data is quite different from that of        
+CP-1-I - it contains a computed zero lag with the proper weight relative        
+to the other gates, but all higher lags are forced to zero in the output.       
+There is a reason for this: If one computes only the zero lag, only 15          
+noise samples are required, but if one were to compute the full ACF from        
+samples taken during the noise injection period, 73 samples would be            
+required! Omitting everything but the zero lag computation thus enables         
+us to save a considerable amount of time, namely (73-15)*10 us = 580 us,        
+in the calibration phase of the experiment. This represents a significant       
+increase in the effective duty cycle of the experiment. At the same time,       
+the output format is consistent with that of the other ACFs in the block.       
+Note, however, that in RTGRAPH it is impossible to display the calibration      
+gate using background subtraction - all lags except lag 0 will come out         
+negative in this case......                                                     
+                                                                                
+ The sampling increment is 10 us, hence the lag extent is from 0 - 250 us.      
+25 kHz Butterworth filters with a nominal risetime of 24 us are used, which     
+leads to oversampling and a substantial correlation between neighbouring lags.  
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                

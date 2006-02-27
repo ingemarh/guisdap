@@ -1,0 +1,108 @@
+\input GUP_docinit
+\input\pathGUPmacros GUPheader
+\def\nameexpr{CP1K}\def\namesite{T}\def\pathexpr{\pathGUP exps\sep \nameexpr\sep}
+                                                                                  
+\newif \ifaxis \axistrue
+\def\GUPPiCdatafile{\pathexpr\nameexpr\namesite pat_PS.m }
+\def\GUPPiCmacrofile{\pathGUPmacros tdPiCmacros.ps }
+
+\input \pathGUPmacros tdPiCmacros
+                                     
+\def\xmin{0.0 }\def\xmax{31.0 }
+\def\ymin{-0.5 }\def\ymax{8.5 }
+\def\xnumberinterval{2.0 }\def\xtickinterval{1 }\def\xdenseinterval{500 }
+\def\yunit{4 }
+\def\title{EISCAT ALTCP1 coding scheme, first two cycles}%
+\def\xwidth{160 }\def\ywidth{0}
+\GUPPiC\vfill
+
+\def\xmin{15.0 }\def\xmax{23.0 }
+\def\ymin{0.5 }\def\ymax{7.5 }
+\def\xnumberinterval{2.0 }\def\xtickinterval{1 }\def\xdenseinterval{500 }
+\def\yunit{4 }
+\def\title{First half of the second cycle}%
+\def\xwidth{160 }\def\ywidth{0}
+\GUPPiC\vfill
+
+\def\xmin{15.0 }\def\xmax{17.0 }
+\def\ymin{0.5 }\def\ymax{7.5 }
+\def\xnumberinterval{0.5 }\def\xtickinterval{0.1 }\def\xdenseinterval{20 }
+\def\yunit{4 }
+\def\title{Long pulse and power profiles}%
+\def\xwidth{160 }\def\ywidth{0}
+\GUPPiC\vfill
+
+\def\xmin{19.8 }\def\xmax{21.0 }
+\def\ymin{ 3.5 }\def\ymax{5.5 }
+\def\xnumberinterval{0.2 }\def\xtickinterval{0.1 }\def\xdenseinterval{20 }
+\def\yunit{4 }
+\def\title{One alternating code}%
+\def\xwidth{160 }\def\ywidth{0}
+\GUPPiC\vfill
+
+\beginsection EISCAT \nameexpr{} range ambiguity functions
+
+\def\GUPPiCdatafile{\pathexpr\nameexpr\namesite wr_i.ps }%
+\def\GUPPiCmacrofile{\pathGUPmacros WrPiCmacros.ps }%
+
+{$$
+\hbox to 160mm{
+\def\addtopict{%
+\axis top invisible label {EISCAT \nameexpr\ range ambiguity functions} / %
+\axis bottom ticks numbered from {\xmin} to {\xmax} by 0.2 %
+      unlabeled short from {\xmin} to {\xmax} by 0.1 / %
+}%
+\def\addtoPS{}
+
+\def\xmin{0.2 }\def\xmax{1.3 }%
+\def\ymin{0 }\def\ymax{2200 }%
+\def\xwidth{70 }\def\ywidth{200 }%
+\GUPPiC
+\hfill
+
+\def\addtopict{%
+\axis top invisible label {EISCAT \nameexpr\ range ambiguity functions} / %
+\axis bottom ticks numbered from {\xmin} to {\xmax} by 0.2 %
+      unlabeled short from {\xmin} to {\xmax} by 0.1 / %
+}%
+\def\addtoPS{}
+
+\def\xmin{0.2 }\def\xmax{1.0 }%
+\def\ymin{0 }\def\ymax{160 }%
+\def\xwidth{70 }\def\ywidth{200 }%
+\GUPPiC
+}
+$$}
+
+\end
+\def\addtopict{%
+\axis left invisible label {\hskip 5mm} / %
+\axis top invisible label {EISCAT \nameexpr\ range ambiguity functions} / %
+\axis bottom ticks numbered from {\xmin} to {\xmax} by 0.2 %
+      unlabeled short from {\xmin} to {\xmax} by 0.1 / %
+\axis right ticks numbered from 0 to {\ymax} by 8 %
+      unlabeled short from {\ymin} to {\ymax} by 2 / %
+}%
+\def\addtoPS{}
+
+\def\xmin{0.2 }\def\xmax{1.0 }%
+\def\ymin{0 }\def\ymax{72 }%
+\def\xwidth{100 }\def\ywidth{200 }%
+\GUPPiC\vfill\eject
+                  
+\def\addtopict{%
+\axis left invisible label {\hskip 5mm} / %
+\axis top invisible label {EISCAT \nameexpr\ range ambiguity functions} / %
+\axis bottom ticks numbered from {\xmin} to {\xmax} by 0.2 %
+      unlabeled short from {\xmin} to {\xmax} by 0.1 / %
+\axis right ticks numbered from 0 to {\ymax} by 20 %
+      unlabeled short from {\ymin} to {\ymax} by 5 / %
+}%
+\def\addtoPS{}
+
+\def\xmin{0.5 }\def\xmax{1.5 }%
+\def\ymin{70}\def\ymax{280 }%
+\def\xwidth{100 }\def\ywidth{200 }%
+\GUPPiC\vfill\eject
+                  
+\end
