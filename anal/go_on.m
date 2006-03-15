@@ -74,7 +74,6 @@ end
 
 read_anapar
 display_figures=figs;
-analysis_control=[1 .01 100 1];
 if rt & isunix
  [k,now]=unix('date -u "+%Y %m %d %H %M %S"');
  now=datenum(analysis_start)-datenum(str2num(now));

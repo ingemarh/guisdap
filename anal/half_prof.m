@@ -90,10 +90,10 @@ for g_ind=1:length(a_adstart)
   [small_f_womega,small_p_om]=find_om_grid(aa,f_womega,kd2,Fscale*p_om,pldfvv,any(afree==nion+6));
 
   errorlim=a_control(1); status=0;
-  if errorlim>0 & errorlim<10000 % To prevent unnecessary error estimation
+  if errorlim>0 % To prevent unnecessary error estimation
     % Check if the error of Ne larger than given limit when the fit is started
     [error,correl,alpha]=error_estimate(aa,variance,kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega);
-    if error(1)/aa(1) > errorlim, result=aa; chi2=inf; status=2; end % No fit done
+    if error(1)/aa(1)>errorlim, result=aa; chi2=inf; status=2; end % No fit done
   end
   if status==0 % Now proceed to the fitting routine
     tol=a_control(2); maxiter=a_control(3);

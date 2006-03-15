@@ -98,7 +98,7 @@ else
  end
 end
 
-a_control=[100000 0.01 10 1];
+a_control=[1 0.01 10 1];
 % a_control(1)  No fit is tried, if the error of Ne is larger than (1) at the start
 % a_control(2)  Fitting is stopped when step for all parameters is less than (2)
 % a_control(3)  Maximum number of iterations
