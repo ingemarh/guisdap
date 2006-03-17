@@ -1,4 +1,5 @@
 function peak=find_plf_peak(s,h,hlim,p,npoly,zscale,fft)
+global fpp_plot
 if fft
  %100 kHz, 1km resolution fast but need correction sometimes
  df=.1; lf=round(diff(zscale/df)); freqs=(0:lf-1)/(lf-1)*diff(zscale)+zscale(1);
@@ -11,6 +12,9 @@ else
  peak=ones(s,1)*NaN;
 end
 loghl=log(hlim);
+if fpp_plot
+ oldfig=gcf; figure(9)
+end
 for i=1:s
  if size(hlim,1)>=s
   d=find(h(:,i)>hlim(i,1) & h(:,i)<hlim(i,2) & isfinite(p(:,i)));
@@ -21,7 +25,9 @@ for i=1:s
  if npol>1
   logh=log(h(d,i));		%log(h) to reduce noisy high alt
   [poly,S,mu]=polyfit(logh,p(d,i),npol);
-  %dum=gcf;figure(9),plot(h(d,i),p(d,i),h(d,i),polyval(poly,logh,[],mu),exp(hf),polyval(poly,hf,[],mu)),pause,figure(dum)
+  if any(fpp_plot==i) & ~fft
+   plot(h(d,i),p(d,i),h(d,i),polyval(poly,logh,[],mu)),drawnow
+  end
   dpoly=polyder(poly); j=roots(dpoly); hl=(loghl-mu(1))/mu(2);
   ddpoly=polyder(dpoly);
   d=find(~imag(j) & j>hl(1) & j<hl(2) & polyval(ddpoly,j)<0);
@@ -35,9 +41,14 @@ for i=1:s
    freq(:,i)=sum(fmat,2);	%integrate along height
    fmat(f(d))=0;		%reset "plot window"
    [d,j]=max(freq(:,i)); peak(i,2)=freqs(j);	%find strongest line
-   %dum=gcf;figure(9),hold on,plot(freqs,freq(:,i)),figure(dum)
+   if any(fpp_plot==i)
+    hold on,plot(freqs,freq(:,i))
+   end
   end
  end
+end
+if fpp_plot
+ figure(oldfig)
 end
 
 if fft

@@ -1,4 +1,4 @@
-function mr2=calib_ne(F,alt,maxe,minel)
+function mr2=calib_ne(F,alt,maxe,minel,folim,fpplt)
 %function mr2=calib_ne(F,alt,maxe,minel)
 %calib_ne.m: Utility to check the analysis against the dynasonde
 % GUISDAP v.8.3 04-05-27 Copyright EISCAT
@@ -6,7 +6,12 @@ function mr2=calib_ne(F,alt,maxe,minel)
 %         alt: Altitude range, default 90-140, 180-500 resp.
 %         maxe: Maximum error allowed, default 1 (* std)
 %         minel: Minimum elevation allowed, default 75
+%         folim: Frequency range allowed, default [0 Inf]
+%         fpplt: Indices to display the parabolic fits of plfs
 % Output: mr2: [Density_ratio Error NewMagic_const]
+global fpp_plot
+if nargin<6, fpplt=[]; end
+if nargin<5, folim=[]; end
 if nargin<4, minel=[]; end
 if nargin<3, maxe=[]; end
 if nargin<2, alt=[]; end
@@ -18,12 +23,14 @@ if isempty(alt)
 end
 if isempty(maxe), maxe=1; end
 if isempty(minel), minel=75; end
+if isempty(folim), folim=[0 Inf]; end
+fpp_plot=fpplt;
 a=vizu('verbose',alt,'P1 AE');
 global Time axs par1D DATA_PATH START_TIME END_TIME r_Magic_const
 d=datevec(Time(1));
 [dd,fo]=get_fo(d(1),d(2));
 t=[]; f=[];
-d=find(dd>datenum(START_TIME) & dd<datenum(END_TIME));
+d=find(dd>datenum(START_TIME) & dd<datenum(END_TIME) & fo>folim(1) & fo<folim(2));
 dd=dd(d); fo=fo(d,:);
 if ~isempty(dd)
  set(gcf,'currentaxes',axs(1))
@@ -39,7 +46,9 @@ if ~isempty(dd)
   end
  end
 end
-if ~isempty(t)
+if isempty(t)
+ fprintf('Could not find any valid dynasond foF2 for these times\n')
+else
  fgup=fullfile(DATA_PATH,'.gup');
  Magic_const=1;
  if ~isempty(r_Magic_const)
@@ -66,7 +75,5 @@ if ~isempty(t)
  if abs(mr2-1)>.005
   fprintf('Try Magic_const=%.2f;\n',Magic_const/mr2)
  end
-else
- fprintf('Could not find any valid dynasond foF2 for these times\n')
 end
 mr2=[mr2 sr2 Magic_const/mr2];
