@@ -86,24 +86,24 @@ for g_ind=1:length(a_adstart)
   reind=1:length(addr); % Real parts and diagonal only needed in altitude calculation!
   r_range(r_ind)=sum(ad_range(addr+ADDR_SHIFT)./diag_var(reind)')/sum(1 ./diag_var(reind));
 
-  ch=1;  kd2=k_radar(ch)^2*p_D0^2; Fscale=k_radar0(ch)/k_radar(ch); % hyi hyi
+  ch=1; kd2=k_radar(ch)^2*p_D0^2; Fscale=k_radar0(ch)/k_radar(ch); % hyi hyi
   [small_f_womega,small_p_om]=find_om_grid(aa,f_womega,kd2,Fscale*p_om,pldfvv,any(afree==nion+6));
 
   errorlim=a_control(1); status=0;
   if errorlim>0 % To prevent unnecessary error estimation
     % Check if the error of Ne larger than given limit when the fit is started
     [error,correl,alpha]=error_estimate(aa,variance,kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega);
-    if error(1)/aa(1)>errorlim, result=aa; chi2=inf; status=2; end % No fit done
+    if error(1)/aa(1)>errorlim, result=aa; chi2=Inf; status=2; end % No fit done
   end
   if status==0 % Now proceed to the fitting routine
     tol=a_control(2); maxiter=a_control(3);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if a_control(4)<=2
       [result,chi2,iter,alpha]=mrqmndiag(aa,measurement,variance,tol,maxiter,...
-              kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,p_m0,physlim,fb_womega);
+          kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,p_m0,physlim,fb_womega);
     else
       [result,chi2,iter,alpha]=mrqmn(aa,measurement,variance,tol,maxiter,...
-              kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega);
+          kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega);
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     status=(iter>=maxiter);

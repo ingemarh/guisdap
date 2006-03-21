@@ -28,7 +28,7 @@ global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control
 global d_saveintdir
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_satch a_txpower
-global a_intfixed a_intallow
+global a_intfixed a_intallow a_intfixforce
 persistent a_antold a_maxgap secs a_posold a_nnold fileslist
  
 OK=0; EOF=0; jj=0; N_averaged=0;
@@ -167,6 +167,15 @@ while i<length(files)
     if ~txdown, fprintf('Tx down\n'), txdown=1; end
   elseif ~isempty(a_satch)
     dumpOK=satch(a_ant(1),secs,a_inttime);
+  end
+  if ~isempty(a_intfixforce)
+    d=find(a_intfixforce);
+    if find(abs(d_parbl(fixed(d))-a_intfixforce(d))>allow(d))
+      fprintf('Parameter bad:')
+      fprintf(' par(%d)=%g[%g];',[fixed(d);d_parbl(fixed(d))';a_intfixforce(d)'])
+      fprintf('\n')
+      dumpOK=0;
+    end
   end
   if dumpOK & OK
     indfixed=fixed(find(abs(d_parbl(fixed)-prev_parbl(fixed))>allow));

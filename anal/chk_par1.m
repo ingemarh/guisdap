@@ -158,6 +158,9 @@ end
 if exist('analysis_intallow','var')
  a_intallow=analysis_intallow;
 end
+if exist('analysis_intfixforce','var')
+ a_intfixforce=analysis_intfixforce;
+end
 if exist('analysis_txpower','var')
  a_txpower=analysis_txpower;
 elseif name_site~='V' & a_year>2004

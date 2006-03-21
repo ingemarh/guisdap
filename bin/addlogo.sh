@@ -1,4 +1,21 @@
 #!/bin/sh
+
+pos1=780
+rot1=
+if [ $landscape ]
+then
+	pos1=180
+	rot1="90 rotate"
+	ed $1/$2.$3 <<!
+/%%BeginObject
+/landscapeMode
+a
+1 .9 scale 0 600 translate
+.
+w
+q
+!
+fi
 ed $1/$2.$3 <<!
 /%%Title
 c
@@ -91,14 +108,14 @@ show
 }def
 
 .
- 
+
 /%%EndObject
 /end
 a
  
 gsave
 newpath
-86 780 translate 3.0 3.0 scale ^eiscatlogo
+86 $pos1 translate $rot1 3.0 3.0 scale ^eiscatlogo
 13 -3 translate .9 .9 scale ^engaddress
 grestore
 .

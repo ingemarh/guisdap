@@ -10,6 +10,9 @@ if strfind(data_path,'32p')
  analysis_txpower=8;
  d_saveintdir=result_path;
  d=strfind(d_saveintdir,'AUTO');
+ if expver==2
+  analysis_intfixforce(4)=160;
+ end
  if length(d)==1
   d_saveintdir=[d_saveintdir(1:d-1) sprintf('%s_%s%d_%d@32p',datestr(analysis_start,29),name_expr,expver,analysis_integr(1))];
  end
