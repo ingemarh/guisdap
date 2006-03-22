@@ -34,7 +34,7 @@ p_dtau=1;
 if name_site=='T' | name_site=='K' | name_site=='S' | name_site=='R'
   ch_gain=10^4.81;
   ch_fradar=931.5e6;
-elseif name_site=='L'
+elseif name_site=='L' | name_site=='P'
   ch_gain=10^4.25;
 % ch_gain=10^4.48; % esr-2?
   ch_fradar=500e6;
@@ -58,7 +58,7 @@ elseif name_site=='K'
 elseif name_site=='S' | name_site=='R'
   p_RECloc=[67.367 26.65 .180];
   %p_RECloc=[67.363683 26.627081 0.1973];
-elseif name_site=='L'
+elseif name_site=='L' | name_site=='P'
   p_RECloc=[78.153 16.029 .438];
   %p_RECloc=[78.15313 16.02875 0.445];
   p_XMITloc=p_RECloc;
@@ -95,7 +95,7 @@ for d_rcprog=B_rcprog:N_rcprog
   end  
 
   global td_am td_ch td_t1 td_t2 c_f
-  if name_site=='T' | name_site=='V' | name_site=='L'
+  if name_site=='T' | name_site=='V' | name_site=='L' | name_site=='P'
     load_PS(d_rcprog,N_rcprog)
   else
     load_PSrem

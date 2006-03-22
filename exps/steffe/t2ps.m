@@ -1,5 +1,6 @@
-function dum=t2ps(site,rc)
+function dum=t2ps(site,rc,p)
 if nargin<2, rc=0; end
+if nargin<3, p=0; end
 t2psfile='t_to_ps.txt';
 if rc==0
  apustr='';
@@ -15,9 +16,18 @@ if rc==2
  td_am=t_to_ps(:,3)';
  td_ch=t_to_ps(:,4)';
  p_rep=300000;
- ch_adcint=[15 15];
- ch_filter={'b30d225.fir' 'b30d225.fir'};
- ch_f=[1 2];
+ if p
+  ch_adcint=[.6];
+  ch_filter={'w600d6.fir'};
+  ch_f=[1];
+  sig=find(td_ch==1 & td_am==2);
+  td_t1(sig)=td_t1(sig)+100;
+  site='P';
+ else
+  ch_adcint=[15 15];
+  ch_filter={'b30d225.fir' 'b30d225.fir'};
+  ch_f=[1 2];
+ end
 
  cal=find(td_ch==3);
  td_t1(cal)=td_t1(cal)+2;
