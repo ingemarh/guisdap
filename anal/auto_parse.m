@@ -65,7 +65,7 @@ else
    if warn, disp('Unable to set the experiment version, please specify'), end
    expver=1;
   else
-   if set_b, set(b(11),'value',expver), end
+   if set_b, set(b(11),'value',expver+1), end
   end
  end
  if isempty(antenna)

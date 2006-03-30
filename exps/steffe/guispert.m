@@ -74,7 +74,7 @@ if length(d_data)>34863 & d_rcprog==2
 end
 if d_rcprog==2
   ng=length(ch_gain)/2;
-  glp=1696
+  glp=1696;
   grps=[1 1 lpg_h(1);2 1695 lpg_h(1)+lpg_w(1)/2
         1696 1697 lpg_h(1696)
         1698 1698 lpg_h(1698);1699 2314 lpg_h(1698)+lpg_w(1698)/2
