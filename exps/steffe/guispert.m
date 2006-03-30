@@ -31,7 +31,7 @@ if d_date<datenum(2003,11,11,21,15,0)
 end
 if length(d_data)>34863 & d_rcprog==2
   calTemp=[163 163 228 228];
-  if length(lpg_ND)<2600
+  if length(lpg_ND)<2599
     nsh=length(lpg_ND);
     nsh2=length(lp_vc);
     nsh3=length(d_data)/2;
@@ -71,4 +71,23 @@ if length(d_data)>34863 & d_rcprog==2
 
     ch_gain=[ch_gain ch_gain*0.64];
   end
+end
+if d_rcprog==2
+  ng=length(ch_gain)/2;
+  glp=1696
+  grps=[1 1 lpg_h(1);2 1695 lpg_h(1)+lpg_w(1)/2
+        1696 1697 lpg_h(1696)
+        1698 1698 lpg_h(1698);1699 2314 lpg_h(1698)+lpg_w(1698)/2
+        2315 2315 lpg_h(2315);2316 2598 lpg_h(2315)+lpg_w(2315)/2];
+  for i=1:ng
+    gaincorrect(glp,grps)
+    glp=glp+2598; grps(:,1:2)=grps(:,1:2)+2598;
+  end
+else
+  glp=767;
+  grps=[1 1 lpg_h(1);2 768 lpg_h(1)+lpg_w(1)/2
+        767 768 lpg_h(767)
+        769 769 lpg_h(769);770 1129 lpg_h(769)+lpg_w(769)/2
+        1130 1130 lpg_h(1130);1131 1412 lpg_h(1130)+lpg_w(1130)/2];
+  gaincorrect(glp,grps)
 end

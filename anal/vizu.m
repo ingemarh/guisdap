@@ -326,7 +326,7 @@ t1=['Produced@' LOCATION ', ' date];
 drawnow
 if isempty(findobj('type','figure','userdata',6))
  figure
- if ~prod(get(0,'ScreenSize'))-1 & local.matlabversion==13
+ if ~prod(get(0,'ScreenSize'))-1 & round(10*local.matlabversion)==65
   close(gcf),figure; % Matlab R13 bug
  end
  set(gcf,'Position',[400 30 587 807],'DefaultAxesFontSize',FS,...

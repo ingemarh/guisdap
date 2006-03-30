@@ -19,7 +19,7 @@ vcg_penvabs=vc_penvabs(:,ind);
 if ~exist('apustr'), apustr=''; end
 initfile=[path_expr name_expr name_site apustr 'init'];
 saveflag='';
-if local.matlabversion>=14
+if local.matlabversion>=7
  saveflag='-v6';
 end
 

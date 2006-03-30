@@ -79,6 +79,9 @@ while ~EOF
       clear lpg_wom vc_Aenv vc_Apenv vc_penvabs vc_penv vc_penvo ad_coeff_no_Pt
     end
     ch_Pt=ch_Pt(1)*ones(size(ch_fradar));
+    if a_control(4)==1 & exist('N_averaged') & N_averaged<6
+      var_prof(N_averaged,6)
+    end
     if exist([path_expr 'guispert.m'])==2
       run([path_expr 'guispert'])
     end
@@ -95,9 +98,6 @@ while ~EOF
       ad_coeff(addr)=ad_coeff_no_Pt(addr)*ch_PtM(vc);
     end
 
-    if a_control(4)==1 & exist('N_averaged') & N_averaged<6
-      var_prof(N_averaged,6)
-    end
     chk_par2
     old_point=[ch_el(1) ch_az(1)];
     old_rcprog=d_rcprog;

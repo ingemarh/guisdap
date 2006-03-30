@@ -41,7 +41,10 @@ local.printer='color';
 local.site=getenv('EISCATSITE');
 local.host=getenv('HOSTNAME');
 local.browser='netscape';
-local.matlabversion=str2num(version('-release'));
+matver=ver('matlab'); matver=matver.Version;
+d=strfind(matver,'.'); matver(d(2:end))=[];
+local.matlabversion=str2num(matver);
+clear matver d
 if ~isfield(local,'tfile'), local.tfile=tempname; end
 switch local.site
  case 'K'

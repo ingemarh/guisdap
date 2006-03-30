@@ -14,7 +14,7 @@ end
 if ~exist('apustr'), apustr=''; end
 GUPvarfile=[path_expr name_expr name_site apustr 'GUPvar'];
 saveflag='';
-if local.matlabversion>=14
+if local.matlabversion>=7
  saveflag='-v6';
 end
 

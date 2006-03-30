@@ -31,7 +31,7 @@ lp_nfir=zeros(1,nlp);
 try
  lp_fir=zeros(nfir,nlp);
 catch
- if local.matlabversion>=14
+ if local.matlabversion>=7
   lp_fir=zeros(nfir,nlp,'int8');
  else
   lp_fir=repmat(int8(zeros(1,nlp)),nfir,1);

@@ -12,7 +12,7 @@ end
 if ~exist('apustr'), apustr=''; end
 PSfile=[path_expr name_expr name_site apustr 'pat_PS'];
 saveflag='';
-if local.matlabversion>=14
+if local.matlabversion>=7
  saveflag='-v6';
 end
 
