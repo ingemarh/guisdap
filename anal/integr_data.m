@@ -25,7 +25,7 @@
 function  [OK,EOF,N_averaged]=integr_data(txlim)
  
 global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control 
-global d_saveintdir
+global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce
@@ -232,15 +232,19 @@ if OK, % if at least one good data dump was found
   d_parbl(accumulated)=accum;
   d_parbl(inttime)=tosecs(d_parbl(tvec))-starttime;
   d_data=data;
-  if ~isempty(d_saveintdir)
+  if ~isempty(d_saveint)
    if N_averaged>1
     i_averaged=N_averaged; i_var1=real(d_var1); i_var2=d_var2;
    else
     i_averaged=[];
    end
-   file=[d_saveintdir sprintf('%08d.mat',fix(secs))];
+   file=[d_saveint.dir sprintf('%08d.mat',fix(secs))];
    disp(file)
-   save_noglobal(file,d_ExpInfo,d_parbl,d_data,d_raw,i_var1,i_var2,i_averaged)
+   if d_saveint.var
+    save_noglobal(file,d_ExpInfo,d_parbl,d_data,d_raw,i_var1,i_var2,i_averaged)
+   else
+    save_noglobal(file,d_ExpInfo,d_parbl,d_data)
+   end
   end
   d_var1=d_var1-data.*data/N_averaged;
   d_var2=d_var2-data.*conj(data)/N_averaged;

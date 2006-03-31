@@ -21,11 +21,14 @@ result_path=fullfile(result_path,filesep);
 path_GUP=fullfile(path_GUP,filesep);
 path_exps=fullfile(path_exps,filesep);
 path_tmp=fullfile(path_tmp,filesep);
-if ~isempty(d_saveintdir)
- d_saveintdir=fullfile(d_saveintdir,filesep);
- if ~exist(d_saveintdir,'dir')
-  [i,j]=fileparts(d_saveintdir(1:end-1));
+if ~isempty(d_saveint)
+ d_saveint.dir=fullfile(d_saveint.dir,filesep);
+ if ~exist(d_saveint.dir,'dir')
+  [i,j]=fileparts(d_saveint.dir(1:end-1));
   if isempty(i), mkdir(j), else, mkdir(i,j), end
+ end
+ if ~isfield(d_saveint,'var')
+  d_saveint.var=1;
  end
 end
 

@@ -135,7 +135,7 @@ for gate=find(diffran>0)
   end
 end
 
-if isempty(a_addr) & isempty(d_saveintdir)
+if isempty(a_addr) & isempty(d_saveint)
   fprintf('Warning: No data have been selected\n')
   if ~bad_var
     error('Check the data selection parameters')

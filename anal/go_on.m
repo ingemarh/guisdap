@@ -1,5 +1,5 @@
 function go_on(bg)
-global path_GUP path_exps path_tmp name_expr name_site data_path result_path b local d_saveintdir a_gfd
+global path_GUP path_exps path_tmp name_expr name_site data_path result_path b local d_saveint a_gfd
 go_die=0; a_gfd=1;
 if nargin<1, bg=NaN; end
 

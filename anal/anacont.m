@@ -3,7 +3,7 @@ function anacont(no_gfd)
 global path_GUP path_exps path_tmp name_expr name_site data_path result_path
 global a_integr a_txlim a_control a_interval a_year a_realtime a_end a_skip a_Magic_const a_NCAR a_code a_save a_ind a_rcprog
 global a_classic
-global di_figures di_results d_saveintdir
+global di_figures di_results d_saveint
 
 if isempty(a_integr)
   error('Cannot continue analysis, please start from scratch')
