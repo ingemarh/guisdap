@@ -13,6 +13,7 @@ if strfind(data_path,'32p')
  d=strfind(d_saveint.dir,'AUTO');
  if expver==2
   analysis_intfixforce(4)=160;
+  d_saveint.range=col(ones(3*175,1)*(0:3)*19619+(1:3*175)'*ones(1,4)+10*175+9*1536);
  end
  if length(d)==1
   d_saveint.dir=[d_saveint.dir(1:d-1) sprintf('%s_%s%d_%d@32p',datestr(analysis_start,29),name_expr,expver,analysis_integr(1))];

@@ -243,6 +243,7 @@ if OK, % if at least one good data dump was found
    if d_saveint.var
     save_noglobal(file,d_ExpInfo,d_parbl,d_data,d_raw,i_var1,i_var2,i_averaged)
    else
+    if isfield(d_saveint,'range'), d_data=d_data(d_saveint.range); end
     save_noglobal(file,d_ExpInfo,d_parbl,d_data)
    end
   end

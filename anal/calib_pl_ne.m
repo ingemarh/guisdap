@@ -21,8 +21,12 @@ if strfind(expt,'steffe2')
  nfft=0; nint=1; ngates=3; nlag=175;
  freq=[-3.8 -5.4 3.8 5.4]*1e6; dt=0.6e-6; invert=-1;
  ran=[47 314;189 455;330 597]; fradar=500e6;
- maxe=2; ele=81.6; updown=0:1; nup_d=2;
- startad=(0:3)*19619+10*175+9*1536; skip_if=0;
+ maxe=2; ele=81.6; updown=0:1; nup_d=2; skip_if=0;
+ if [strfind(expt,'cut') regexp(pl_dir,'\d\d\d\d-\d\d-\d\d_steffe2_\d+@32p')]
+  startad=(0:3)*3*175+1;
+ else
+  startad=(0:3)*19619+10*175+9*1536+1;
+ end
  if isempty(gate), gate=2; end
 elseif strfind(expt,'plwin')
  nfft=0; nint=1; ngates=3; nlag=240;

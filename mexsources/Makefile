@@ -21,7 +21,7 @@ FC=gfortran
 else
 FC=g77
 endif
-MEXOPTS=-f f95opts.sh FC=$(FC)
+#MEXOPTS=-f f95opts.sh FC=$(FC)
 LDFLAGS= -shared
 endif
 

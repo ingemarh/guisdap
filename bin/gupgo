@@ -1,5 +1,5 @@
 #!/bin/sh
-wd=/analysis/webgup
+wd=/opt/webgup
 wwwreq="anareg.txt"
 locreq="anareq_done.txt"
 wwwsite="http://www.eiscat.se/schedule"
@@ -75,7 +75,7 @@ touch $gfdfil
 maxsize=3000000
 if [ $maxfsize ]
 then
- maxsize=$(($maxfsize*750000)) #uuencoding maxes file ~25% bigger 
+ maxsize=$(($maxfsize*730000)) #uuencoding maxes file ~27% bigger 
 fi
 
 ed $gfdfil 2>/dev/null <<!
@@ -90,19 +90,21 @@ rt=0;
 intper=$intper;
 path_exps=[path_GUP '/exps/'];
 figs=[0 0 0 0 1];
+expver=$expver;
 extra=[' $extra'];
 .
 w
 q
 !
-guisdap -tg $gfdfil " -c /opt/matlab7/etc/license.dat" >gupout.txt
+#guisdap -tg $gfdfil " -c /opt/matlab7/etc/license.dat" >gupout.txt
+guisdap -tg $gfdfil >gupout.txt
 rm -rf $datapath $gfdfil
 gzip -9 gupout.txt
 filelist="gupout.txt.gz"
 resdir=`ls -d [12]*`
 if [ $resdir ]
 then
- nextfile=`ls $resdir/NCAR*`
+ nextfile=`ls $resdir/NCAR* 2>/dev/null`
  if [ $nextfile ]
  then
   mv $resdir/NCAR* .
@@ -127,7 +129,7 @@ then
    trusted=1
   fi
  done 
- nextfile=`ls $resdir/*.png`
+ nextfile=`ls $resdir/*.png 2>/dev/null`
  if [ $nextfile ]
  then
   mv $resdir/*.png $resdir/*.eps .
@@ -138,9 +140,12 @@ then
  fi
  if [ $trusted -eq 1 ]
  then
-  bzip2 -9 *.eps 
+  if [ $nextfile ]
+  then
+   bzip2 -9 *.eps
+  fi
   tar cf - $resdir | bzip2 -9c > $resdir.tar.bz2
- elif [ $trusted -eq 0 ]
+ elif [ $trusted -eq 0 ] && [ $nextfile ]
  then
   ps2pdf *.eps
   filelist="$filelist `ls *.pdf`"
