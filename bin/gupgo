@@ -19,10 +19,9 @@ EISCAT
 cd $wd
 if ! wget $wwwsite/$wwwreq -O $wwwreq 2>/dev/null
 then
- echo "Could not reach HQ"
+ #echo "Could not reach HQ"
  exit 0
-fi
-if cmp -s $wwwreq $locreq
+elif cmp -s $wwwreq $locreq
 then
  #echo "All already done"
  exit 0
@@ -32,7 +31,6 @@ fi
 fsiz $wwwreq
 nsiz=$filesize
 fsiz $locreq
-echo "$nsiz $filesize"
 if [ -z $QUERY_STRING ] || [ $nsiz -lt $filesize ]
 then
  echo "New list"
@@ -147,7 +145,7 @@ then
   tar cf - $resdir | bzip2 -9c > $resdir.tar.bz2
  elif [ $trusted -eq 0 ] && [ $nextfile ]
  then
-  ps2pdf *.eps
+  ps2pdf -sPAPERSIZE=a4 *.eps
   filelist="$filelist `ls *.pdf`"
  fi
  filelist="$filelist `ls *.bz2`"
@@ -160,7 +158,7 @@ do
  if [ $filesize -gt $maxsize ]
  then
   split -db $maxsize $fil $fil.
-  flist="$flist `ls $fil.*`"
+  flist="$flist `ls $fil.??`"
  else
   flist="$flist $fil"
  fi
@@ -170,9 +168,10 @@ matt=""
 for fil in $flist
 do
  fsiz $fil
- if [ $((msiz+filesize)) -gt $maxsize ] && [ $nsiz -ne 0 ]
+ if [ $((nsiz+filesize)) -gt $maxsize ] && [ $nsiz -ne 0 ]
  then
   mail_it $matt $resultpath
+  sleep 30
   matt=""
   nsiz=0
  fi
