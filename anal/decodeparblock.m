@@ -14,7 +14,9 @@ else
     ant_id=3; % For the May2000 data
   end
 end
-if lpb>56 & d_parbl(57)>0
+if exist('f_d_rcprog','var')
+  d_rcprog=f_d_rcprog;
+elseif lpb>56 & d_parbl(57)>0
   d_rcprog=d_parbl(57);
 else
   d_rcprog=a_rcprog;
