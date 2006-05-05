@@ -2,15 +2,17 @@
 
 pos1=780
 rot1=
-if [ $landscape ]
+landscape=`grep landscapeMode $1/$2.$3 | grep csm`
+echo $landscape
+if [ "$landscape" ]
 then
-	pos1=180
+	pos1=100
 	rot1="90 rotate"
 	ed $1/$2.$3 <<!
 /%%BeginObject
 /landscapeMode
 a
-1 .9 scale 0 600 translate
+0 600 translate
 .
 w
 q

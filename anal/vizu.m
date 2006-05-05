@@ -97,8 +97,6 @@ elseif strcmp(action,'print') | strcmp(action,'save')
  if isempty(axs)
   disp('Nothing to print!')
  elseif isunix
-  [i,j]=unix('which addlogo.sh');
-  if ~i, set(hds(2:3),'visible','off'), end
   dirs=path_tmp(1:end-1);
   if strcmp(action,'print')
     fig=sprintf('vizu%06d',round(rand*1e6)); ext='ps';
@@ -117,9 +115,21 @@ elseif strcmp(action,'print') | strcmp(action,'save')
     if ~isempty(a2), fig=sprintf('%s_%s',fig,a2); end
     fig=sprintf('%s@%s',fig,name_ant);
   end
+  if length(axs)==1
+   ppos=get(gcf,'PaperPosition');
+   set(gcf,'PaperOrient','landscape','PaperPosition',[0 3 ppos([4 3])-[0 3]])
+  end
+  [i,j]=unix('which addlogo.sh');
+  if ~i, set(hds(2:3),'visible','off'), end
   file=fullfile(dirs,fig);
   print(gcf,['-d' ext '2c'],[file '.' ext]);
-  if ~i, unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext)); end
+  if length(axs)==1
+   set(gcf,'PaperOrient','portrait','PaperPosition',ppos)
+  end
+  if ~i
+   set(hds(2:3),'visible','on')
+   unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
+  end
   if strcmp(action,'print') | strcmp(a3,'print')
     if isempty(a2), dev=local.printer; else, dev=a2; end
     unix(['lp -c -d' dev ' ' file '.' ext ' >/dev/null 2>&1']);
@@ -132,7 +142,6 @@ elseif strcmp(action,'print') | strcmp(action,'save')
       fullfile(gd,'bin',lower(computer),'gs'),gd,gd,file,file,ext));
     fprintf('Created %s.%s and .png\n',file,ext)
   end
-  if ~i, set(hds(2:3),'visible','on'), end
  elseif strcmp(action,'print')
   print(gcf,'-dwinc');
  else
