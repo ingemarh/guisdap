@@ -31,7 +31,7 @@ fi
 fsiz $wwwreq
 nsiz=$filesize
 fsiz $locreq
-if [ -z $QUERY_STRING ] || [ $nsiz -lt $filesize ]
+if [ -z "$QUERY_STRING" ] || [ $nsiz -lt $filesize ]
 then
  echo "New list"
  cp $wwwreq $locreq
@@ -39,12 +39,7 @@ then
 fi
 echo $QUERY_STRING >> $locreq
 
-
-QUERY_STRING=`echo $QUERY_STRING | sed s/%3A/:/g | sed s/%2F/"\/"/g | sed s/%40/@/g | sed s/%5B/[/g | sed s/%5D/]/g | sed s/%0./#/g`
-eval `echo $QUERY_STRING | sed  y/"&"/" "/`
-datapath=`echo $datapath | sed s/%3B/\;/g | sed y/+/\ /`
-t=`echo $t | sed y/+/\ /`
-extra=`echo $extra | sed s/%28/\(/g | sed s/%29/\)/ | sed s/%3B/\;/g | sed s/%3D/=/g | sed s/%26/"\&"/g | sed s/%7B/\{/g | sed s/%7D/\}/g  | sed s/%5E/^/g | sed s/%7E/~/g | sed s/%27/\'\'/g | sed s/%3C/\</g | sed s/%3E/\>/g | sed s/%2C/,/g | sed y/+/\ / | sed s/%2B/+/g | sed s/%25/%/g`
+eval $QUERY_STRING
 
 atpos=`expr index "$resultpath" "@"`
 if [ -z $resultpath ] || [ $atpos -eq 0 ]
@@ -55,6 +50,10 @@ else
  echo "$resultpath"
 fi
 rundir=www$RANDOM
+if [ -d $rundir ]
+then
+ rm -rf $rundir
+fi
 mkdir $rundir
 cd $rundir
 gfdfil=gfd.m
@@ -89,7 +88,7 @@ intper=$intper;
 path_exps=[path_GUP '/exps/'];
 figs=[0 0 0 0 1];
 expver=$expver;
-extra=[' $extra'];
+extra='$extra';
 .
 w
 q

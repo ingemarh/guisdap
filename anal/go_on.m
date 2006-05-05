@@ -84,7 +84,13 @@ if rt & isunix
 end
 if go_die
  try
-  for i=1:size(extra,1),eval(extra(i,:));end
+  for i=1:size(extra,1)
+   ex=extra(i,:);
+   while ~isempty(ex)
+    [ext,ex]=strtok(ex,'#'); eval(ext)
+   end
+  end
+  clear ext ex
   an_start
  catch
   disp(lasterr)
