@@ -138,7 +138,7 @@ C   19    F1 probability model   critical solar zenith angle (old)   t
 C   20    standard F1            standard F1 plus L condition        t
 C   21    ion drift not computed ion drift computed              false
 C   22    ion densities in %     ion densities in m-3                t
-C   23    Te_tops (Aeros,ISIS)   Te_topside (Intercosmos)            t
+C   23    Te_tops (Aeros,ISIS)   Te_topside (Intercosmos)        false
 C   24    D-region: IRI-95       Special: 3 D-region models          t
 C   25    F107D=COV              F107D user input (oarr(41))         t
 C   26    foF2 storm model       no storm updating                   t

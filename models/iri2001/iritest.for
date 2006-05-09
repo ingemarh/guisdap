@@ -78,6 +78,7 @@ c
           jf(5)=.false.               ! URSI foF2 model
           jf(6)=.false.               ! Newest ion composition model
           jf(21)=.false.              ! ion drift model included
+          jf(23)=.false.              ! TTS temperature model is standard
         else
           print *,'Compute Ne, T, Ni? (enter: t,t,t  if you want all)'
           read(5,*) jf(1),jf(2),jf(3)
