@@ -14,7 +14,7 @@ global td_ch td_t1 td_t2 td_am p_rep ch_f ch_filter ch_adcint p_offsetppd
 
 if nargin==0, rcprog=1; Nrcprog=1; 
 elseif nargin==1, Nrcprog=1; end
-if Nrcprog>1, apustr=['_',int2str(rcprog)]; else apustr=[]; end
+apustr=['_',int2str(rcprog)];
 
 create=1;
 PSfile=find_apustr_file([path_expr name_expr name_site],apustr,'pat_PS','.mat');

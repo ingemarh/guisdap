@@ -93,12 +93,12 @@ if isempty(action) | strcmp(lower(action),'verbose')
 elseif strcmp(action,'update')
  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
  set(0,'currentfig',findobj('type','figure','userdata',6))
-elseif strcmp(action,'print') | strcmp(action,'save')
+elseif strcmpi(action,'print') | strcmpi(action,'save')
  if isempty(axs)
   disp('Nothing to print!')
  elseif isunix
   dirs=path_tmp(1:end-1);
-  if strcmp(action,'print')
+  if strcmpi(action,'print')
     fig=sprintf('vizu%06d',round(rand*1e6)); ext='ps';
   else
     fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
@@ -115,7 +115,9 @@ elseif strcmp(action,'print') | strcmp(action,'save')
     if ~isempty(a2), fig=sprintf('%s_%s',fig,a2); end
     fig=sprintf('%s@%s',fig,name_ant);
   end
-  if length(axs)==1
+  rotate=0; if length(axs)==1, rotate=1; end
+  if [strfind(action,'R') strfind(action,'V')], rotate=1-rotate; end
+  if rotate
    ppos=get(gcf,'PaperPosition');
    set(gcf,'PaperOrient','landscape','PaperPosition',[0 3 ppos([4 3])-[0 3]])
   end
@@ -123,26 +125,26 @@ elseif strcmp(action,'print') | strcmp(action,'save')
   if ~i, set(hds(2:3),'visible','off'), end
   file=fullfile(dirs,fig);
   print(gcf,['-d' ext '2c'],[file '.' ext]);
-  if length(axs)==1
+  if rotate
    set(gcf,'PaperOrient','portrait','PaperPosition',ppos)
   end
   if ~i
    set(hds(2:3),'visible','on')
    unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
   end
-  if strcmp(action,'print') | strcmp(a3,'print')
+  if strcmpi(action,'print') | strcmpi(a3,'print')
     if isempty(a2), dev=local.printer; else, dev=a2; end
     unix(['lp -c -d' dev ' ' file '.' ext ' >/dev/null 2>&1']);
-    if strcmp(action,'print'), delete([file '.' ext]), end
+    if strcmpi(action,'print'), delete([file '.' ext]), end
   end
-  if strcmp(action,'save')
+  if strcmpi(action,'save')
     gd=fullfile(matlabroot,'sys','ghostscript',filesep);
 %   unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',...
     unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=png256 -g580x820 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',...
       fullfile(gd,'bin',lower(computer),'gs'),gd,gd,file,file,ext));
     fprintf('Created %s.%s and .png\n',file,ext)
   end
- elseif strcmp(action,'print')
+ elseif strcmpi(action,'print')
   print(gcf,'-dwinc');
  else
   fig=sprintf('%d-%02d-%02d_%s@%s',START_TIME(1:3),name_expr,name_ant);
