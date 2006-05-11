@@ -46,7 +46,7 @@ for d_rcprog=B_rcprog:N_rcprog
 
   plot(p_om,real(lpg_wom)), drawnow
   %lpg_tex
-  if ~strfind(GUPvarfile,apustr), apustr=''; end
+  if isempty(strfind(GUPvarfile,apustr)), apustr=''; end
   save_toinitfile
 
   fprintf('Time used in initialisation:%8.2f min\n',etime(clock,Stime)/60)

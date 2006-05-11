@@ -23,13 +23,13 @@ if p
  td_t1(sig)=td_t1(sig)+100;
  site='P';
 else
- ch_adcint=[25];
- ch_filter={'b14d375.fir'};
- ch_f=[500];
+ ch_adcint=[25 25];
+ ch_filter={'b14d375.fir' 'b14d375.fir'};
+ ch_f=[500.3 500.4];
 end
 for f=1:length(ch_f)
  d=find(td_ch==ch_f(f));
- td_ch(d)=f;
+ td_ch(d)=1;
 end
 name_expr='beata';
 name_site=upper(site);
