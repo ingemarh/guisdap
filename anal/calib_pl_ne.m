@@ -57,7 +57,7 @@ if isempty(gate), gate=1; end
 %pl_dir='/home/ingemar/gup/mydata/steffel_int_CP@32p/';
 %res_dir='gup/results/2004-05-2*_steffe_60@42m/';
 %assume similar integration!
-global Time par1D par2D axs r_Magic_const DATA_PATH
+global Time par1D par2D axs r_Magic_const DATA_PATH local
 edge_dist=10; wrap=9;
 nfreq=length(freq);
 
@@ -188,7 +188,6 @@ end
 d=find(pln>0); plm(d,:)=plm(d,:)./(pln(d)*ones(1,nfl));
 d=find(pln==0); plm(d,:)=[]; sf(d)=[];
 d=find(plm<0); plm(d)=0;
-plm=plm/max(max(plm))*length(get(gcf,'colormap'));
 
 plpeak=ones(2,nfl,nfreq)*NaN;
 s=std(plsig(find(isfinite(plsig))));
@@ -257,15 +256,19 @@ while mr==r0 | abs(mr-1)>.01
  bad=find(abs(r2-mr2)>maxe*sr2);
  mr=median(r(good)); sr2=std(r2(good));
  if r0==1
-  set(gcf,'currentaxes',axs(1),'renderer','zbuffer','colormap',1-gray)
+  axs(3)=copyobj(axs(1),gcf)
+  set(gcf,'currentaxes',axs(3))
   set(gca,'nextplot','add')
   plot(mean(p_time)+eps,plf,'+g',mean(Time),peak_lf,'+b')
-  hp=findobj(gca,'type','line');
-  set(hp,'erase','none')
+  set(gca,'nextplot','replace')
+  set(gcf,'currentaxes',axs(1),'colormap',1-gray)
+  plm=plm/max(max(plm))*length(get(gcf,'colormap'));
+  delete(get(gca,'children')), delete(get(gca,'ylabel'))
   for i=1:nfl
    surface(p_time(:,i),[sf 2*sf(end)-sf(end-1)]'-fres/2,[plm(:,i);plm(end,i)]*ones(1,2))
   end
-  set(gca,'nextplot','replace')
+  set(gca,'xtick',[],'ytick',[],'ticklength',[0 0])
+  if local.matlabversion>=7, linkaxes(axs([1 3])), end
   set(gcf,'currentaxes',axs(2))
   pmax=ceil(max([plf;peak_lf(il(good))]));
   rx=[0 pmax];
