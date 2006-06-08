@@ -20,39 +20,56 @@ EISCAT
 }
 
 cd $wd
-if ! wget $wwwsite/$wwwreq -O $wwwreq 2>/dev/null
+if [ "$1" ]
 then
- #echo "Could not reach HQ"
- exit 0
-elif cmp -s $wwwreq $locreq
-then
- #echo "All already done"
- exit 0
+ echo "Doing from command line"
+ eval $1
+ echo $datapath
+ echo $t
+ echo $resultpath
+ echo $maxfsize
+ echo $name_expr
+ echo $expver
+ echo $siteid
+ echo $intper
+ echo $extra
+ echo $REMOTE_ADDR
 else
- QUERY_STRING=`comm -23 $wwwreq $locreq | head -n1`
+ if ! wget $wwwsite/$wwwreq -O $wwwreq 2>/dev/null
+ then
+ #echo "Could not reach HQ"
+  exit 0
+ elif cmp -s $wwwreq $locreq
+ then
+ #echo "All already done"
+  exit 0
+ else
+  QUERY_STRING=`comm -23 $wwwreq $locreq | head -n1`
+ fi
+ fsiz $wwwreq
+ nsiz=$filesize
+ fsiz $locreq
+ if [ -z "$QUERY_STRING" ] || [ $nsiz -lt $filesize ]
+ then
+  echo "New list"
+  cp $wwwreq $locreq
+  exit 0
+ fi
+ echo $QUERY_STRING >> $locreq
+ eval $QUERY_STRING
 fi
-fsiz $wwwreq
-nsiz=$filesize
-fsiz $locreq
-if [ -z "$QUERY_STRING" ] || [ $nsiz -lt $filesize ]
-then
- echo "New list"
- cp $wwwreq $locreq
- exit 0
-fi
-echo $QUERY_STRING >> $locreq
 
-eval $QUERY_STRING
 
 atpos=`expr index "$resultpath" "@"`
 if [ -z $resultpath ] || [ $atpos -eq 0 ]
 then
  echo "Nowhere to send results"
  exit 1
-else
- echo "$resultpath"
+#else
+# echo "$resultpath"
 fi
-rundir=www$RANDOM
+#rundir=www$RANDOM
+rundir=`date +%y%m%dw%H%M`
 if [ -d $rundir ]
 then
  rm -rf $rundir
