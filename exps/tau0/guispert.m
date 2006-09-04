@@ -7,7 +7,7 @@
 d_date=datenum(d_time(1,:));
 if d_date<datenum(2002,6,1) & lpg_ra(478)==15537
 % data dump changes with integration time
-  shift=length(d_data)-32034;
+  shift=length(d_data)/2-15537;
   lpg_ra(478:end)=lpg_ra(478:end)+shift;
   form_adpar
 end
