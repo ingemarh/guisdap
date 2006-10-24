@@ -76,11 +76,11 @@ apriori(:,5)=zeros(len,1);
 apriori(:,(1:2)+4+nion)=zeros(len,2);
 
 % Ion composition
-if nion==3 & sum(p_m0-[16 1 30.5])==0
+if nion==3 & any(p_m0-[16 1 30.5])
   ionc=[cH cM2];
-elseif nion==2 & sum(p_m0-[30.5 16])==0
+elseif nion==2 & any(p_m0-[30.5 16])
   ionc=1-cM2;
-elseif nion==2 & sum(p_m0-[16 1])==0
+elseif nion==2 & any(p_m0-[16 1])
   ionc=cH;
 elseif nion~=1
   error(['No model for this ion mixture!']);

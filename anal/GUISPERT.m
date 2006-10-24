@@ -8,7 +8,7 @@
 
 % Correct the doppler sign
 d_secs=tosecs(d_time(1,:));
-if (strcmp(name_ant(1:3),'vhf') & d_time(1,1)>2000) | ...
+if (strcmp(name_ant(1:3),'vhf') & d_time(1,1)>1999) | ...
    (strcmp(name_ant(2:3),'2m') & d_time(1,1)==2003 & d_secs>6857400 & d_secs<25660800)
   d_data=conj(d_data);
 end

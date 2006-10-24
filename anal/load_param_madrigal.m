@@ -12,62 +12,88 @@ Time=[]; par2D=[]; par1D=[]; rpar2D=[];
 if nargin<2, fileno=[]; end
 if isempty(fileno), ask=1; fileno=1; end
 
-[wget,devnull]=system('which curl');
-if wget
- cmd1='wget'; cmd2=' -O '; cmd3=' '; cmd4=' --post-data=';
-else
- cmd1='curl'; cmd2=' -o '; cmd3=' -f '; cmd4=' -d ';
-end
-website='http://www.eiscat.se/madrigal/';
 of=local.tfile;
-ws=['''' website 'experiments/' data_path '/expTab.txt'''];
-[mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
-if mad
- return
-end
-[name_expr,kinst]=textread(of,'%*s%*s%s%*s%*s%*s%*s%*s%d%*[^\n]','delimiter',',');
-delete(of)
-name_expr=char(name_expr);
-name_expr(strfind(name_expr,'_'))=[];
-name_expr(strfind(name_expr,' '))=[];
-ws=['''' website 'experiments/' data_path '/fileTab.txt'''];
-[mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
-if mad
- return
-end
-filename=textread(of,'%s%*[^\n]','delimiter',',');
-delete(of)
-antennas={'kir' 'uhf' 'sod' 'vhf' 'esr'};
 REClocs=[67.863 20.44 .412;69.583 19.21 .030;67.367 26.65 .180;69.583 19.21 .030;78.153 16.029 .438];
-i=min(kinst-70,5);
-if i<1 | i>5, return, end
-name_ant=char(antennas(i)); r_RECloc=REClocs(i,:);
-if length(filename)>1
- fprintf('Available data files in %s:\n',data_path)
- for i=1:length(filename), fprintf('%d %s\n',i,char(filename(i))), end
- if ask
-  fileno=minput('Choose',1);
+name_expr='unknown'; name_ant='unk';
+if exist(data_path,'file')
+ global path_GUP
+ cmd2=[' ' path_GUP '/bin/madDataDisplay >'];
+ if ~exist(cmd2(2:end-2)), return, end
+ ws=''; cmd3=''; cmd1=''; cmd4='QUERY_STRING=';
+ antennas={'kir' 'uhf' 'sod' 'vhf' 'esr' '32m' '42m'};
+ [devnull,filename]=fileparts(data_path); ll=16;
+ ldp=length(filename); ll=16;
+ if strfind(filename,'NCAR') & ldp>ll
+  at=strfind(filename(ll+1:end),'@');
+  if at
+   name_expr=filename(16+[1:at-1]);
+   name_ant=filename(16+at+1:end);
+  end
  end
+ i=fix((strfind(cell2mat(antennas),name_ant(1:3))+2)/3);
+ if i<1|i>7, i=1; elseif i>5, i=5; end
+ r_RECloc=REClocs(i,:);
+ hl=10;
+else
+ [wget,devnull]=system('which curl');
+ if wget
+  cmd1='wget'; cmd2=' -O '; cmd3=' '; cmd4=' --post-data=';
+ else
+  cmd1='curl'; cmd2=' -o '; cmd3=' -f '; cmd4=' -d ';
+ end
+ website='http://www.eiscat.se/madrigal/';
+ ws=['''' website 'experiments/' data_path '/expTab.txt'''];
+ [mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
+ if mad
+  return
+ end
+ [name_expr,kinst]=textread(of,'%*s%*s%s%*s%*s%*s%*s%*s%d%*[^\n]','delimiter',',');
+ delete(of)
+ name_expr=char(name_expr);
+ name_expr(strfind(name_expr,'_'))=[];
+ name_expr(strfind(name_expr,' '))=[];
+ ws=['''' website 'experiments/' data_path '/fileTab.txt'''];
+ [mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
+ if mad
+  return
+ end
+ filename=textread(of,'%s%*[^\n]','delimiter',',');
+ delete(of)
+ antennas={'kir' 'uhf' 'sod' 'vhf' 'esr'};
+ i=min(kinst-70,5);
+ if i<1 | i>5
+  r_RECloc=REClocs(1,:);
+ else
+  name_ant=char(antennas(i)); r_RECloc=REClocs(i,:);
+ end
+ if length(filename)>1
+  fprintf('Available data files in %s:\n',data_path)
+  for i=1:length(filename), fprintf('%d %s\n',i,char(filename(i))), end
+  if ask
+   fileno=minput('Choose',1);
+  end
+ end
+ filename=char(filename(fileno));
+ if strcmp(name_ant,'esr')
+  if strfind(filename,'32m'), name_ant='32m';
+  elseif strfind(filename,'42m'), name_ant='42m'; end
+ end
+ data_path=['/usr/local/madroot/experiments/' data_path '/' filename];
+ ws=['''' website 'cgi-bin/madDataDisplay'''];
+ hl=8;
 end
-filename=char(filename(fileno));
-if strcmp(name_ant,'esr')
- if strfind(filename,'32m'), name_ant='32m';
- elseif strfind(filename,'42m'), name_ant='42m'; end
-end
-data_path=['/usr/local/madroot/experiments/' data_path '/' filename];
 
 param='UT1,UT2 AZM ELM GDALT GDLAT GLON RANGE CHISQ POWER SYSTMP CO NEL POPL TE TI VO VOBI PO+';
 arg=sprintf('fileName=%s&startYear=1981&endYear=2006&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&badval=NaN&mxchar=9999&state=text',data_path,param);
 for i=fliplr(find(arg=='&' | arg==' '))
  arg=[arg(1:i-1) '\' arg(i:end)];
 end
-ws=['''' website 'cgi-bin/madDataDisplay'''];
 
 [mad,devnull]=system([cmd1 cmd4 arg cmd2 of cmd3 ws]);
 if mad
  return
 end
-data=textread(of,'','headerlines',8);
+data=textread(of,'','headerlines',hl);
 delete(of)
 if isempty(data)
  return
