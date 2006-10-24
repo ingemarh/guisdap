@@ -7,6 +7,7 @@ wwwreq="anareg.txt"
 locreq="anareq_done.txt"
 wwwsite="http://www.eiscat.se/schedule"
 export PATH=$PATH:/usr/local/bin
+export EISCATSITE=web
 
 fsiz() {
 	filesize=`ls -l $1 | awk '{print $5}'`
@@ -118,7 +119,7 @@ guisdap -tg $gfdfil >gupout.txt
 rm -rf $datapath $gfdfil
 gzip -9 gupout.txt
 filelist="gupout.txt.gz"
-resdir=`ls -d [12]*`
+resdir=`ls -d [12]* 2>/dev/null`
 if [ $resdir ]
 then
  nextfile=`ls $resdir/NCAR* 2>/dev/null`
@@ -128,7 +129,7 @@ then
   bzip2 -9 NCAR*
  fi
  inhouse="@eiscat.se @eiscat.irf.se @eiscat.sgo.fi @eiscat.uit.no @esr.eiscat.no"
- datrep="denis.alcayde@cesr.fr steve@mail.eiscat.rl.ac.uk cesar.la.hoz@phys.uit.no hans.nilsson@irf.se ritva.kuula@oulu.fi nozawa@stelab.nagoya-u.ac.jp mike@eiscat.uit.no"
+ datrep="denis.alcayde@cesr.fr steve@mail.eiscat.rl.ac.uk cesar.la.hoz@phys.uit.no hans.nilsson@irf.se ritva.kuula@oulu.fi yogawa@nipr.ac.jp mike@eiscat.uit.no"
 
  trusted=0
  mh=`expr substr $resultpath $atpos 99`
