@@ -15,6 +15,8 @@ end
 if ~exist('Magic_const')
  if strcmp(name_ant(1:3),'vhf')
   a_Magic_const=1.367;
+ elseif strcmp(name_ant(1:3),'uhf') & d_time(1,1)>2004
+  a_Magic_const=0.80;
  elseif strcmp(name_ant(1:3),'42m')
   a_Magic_const=1.50;
  end

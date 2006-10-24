@@ -1,5 +1,5 @@
 function mr2=calib_ne(F,alt,maxe,minel,folim,fpplt)
-%function mr2=calib_ne(F,alt,maxe,minel)
+%function mr2=calib_ne(F,alt,maxe,minel,folim,fpplt)
 %calib_ne.m: Utility to check the analysis against the dynasonde
 % GUISDAP v.8.3 04-05-27 Copyright EISCAT
 % Inputs: F: 1 FoE, 2 FoF2 (default)
@@ -30,7 +30,7 @@ global Time axs par1D DATA_PATH START_TIME END_TIME r_Magic_const
 d=datevec(Time(1));
 [dd,fo]=get_fo(d(1),d(2));
 t=[]; f=[];
-d=find(dd>datenum(START_TIME) & dd<datenum(END_TIME) & fo>folim(1) & fo<folim(2));
+d=find(dd>datenum(START_TIME) & dd<datenum(END_TIME) & fo(:,F)>folim(1) & fo(:,F)<folim(2));
 dd=dd(d); fo=fo(d,:);
 if ~isempty(dd)
  set(gcf,'currentaxes',axs(1))

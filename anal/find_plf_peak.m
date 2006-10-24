@@ -25,14 +25,14 @@ for i=1:s
  if npol>1
   logh=log(h(d,i));		%log(h) to reduce noisy high alt
   [poly,S,mu]=polyfit(logh,p(d,i),npol);
-  if any(fpp_plot==i) & ~fft
-   plot(h(d,i),p(d,i),h(d,i),polyval(poly,logh,[],mu)),drawnow
-  end
   dpoly=polyder(poly); j=roots(dpoly); hl=(loghl-mu(1))/mu(2);
   ddpoly=polyder(dpoly);
-  d=find(~imag(j) & j>hl(1) & j<hl(2) & polyval(ddpoly,j)<0);
-  if ~isempty(d)
-   peak(i)=max(polyval(poly,j(d)));	%find cutoff
+  dd=find(~imag(j) & j>hl(1) & j<hl(2) & polyval(ddpoly,j)<0);
+  if ~isempty(dd)
+   peak(i)=max(polyval(poly,j(dd)));	%find cutoff
+  end
+  if any(fpp_plot==i) & ~fft
+   plot(p(d,i),h(d,i),polyval(poly,logh,[],mu),h(d,i)),hold on
   end
   if fft
    f=round((polyval(poly,hf,[],mu)-zscale(1))/diff(zscale)*(lf-1));
@@ -48,6 +48,7 @@ for i=1:s
  end
 end
 if fpp_plot
+ hold off
  figure(oldfig)
 end
 
