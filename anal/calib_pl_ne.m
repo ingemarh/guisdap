@@ -28,6 +28,7 @@ if strfind(expt,'steffe2')
   startad=(0:3)*19619+10*175+9*1536+1;
  end
  if isempty(gate), gate=2; end
+ %freq=freq([1 3]); startad=startad([1 3]); nup_d=1;
 elseif strfind(expt,'plwin')
  nfft=0; nint=1; ngates=3; nlag=240;
  freq=[-4.8 4.8]*1e6; dt=0.4e-6; invert=-1;
