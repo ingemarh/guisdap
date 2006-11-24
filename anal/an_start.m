@@ -42,7 +42,7 @@ while ~EOF
     if a_rawdata
       [OK,EOF]=integr_NW;
     else
-      [OK,EOF,N_averaged]=integr_data;
+      [OK,EOF,N_averaged,M_averaged]=integr_data;
     end
     if OK
       if length(d_parbl)==128
@@ -79,8 +79,23 @@ while ~EOF
       clear lpg_wom vc_Aenv vc_Apenv vc_penvabs vc_penv vc_penvo ad_coeff_no_Pt
     end
     ch_Pt=ch_Pt(1)*ones(size(ch_fradar));
-    if a_control(4)==1 & exist('N_averaged') & N_averaged<6
-      var_prof(N_averaged,6)
+    if exist('N_averaged')
+      if a_control(4)==1 & M_averaged(2)<6
+        var_prof(N_averaged,M_averaged,6)
+      else
+        d_var1=d_var1-d_data.*d_data./N_averaged;
+        d_var2=d_var2-d_data.*conj(d_data)./N_averaged;
+      end
+      if diff(M_averaged) % satellites found
+	d_data(find(~N_averaged))=NaN;
+	d=find(N_averaged<M_averaged(1));
+        N_averaged=M_averaged(1)./N_averaged(d);
+        d_data(d)=d_data(d).*N_averaged;
+      	if a_control(4)==1 & M_averaged(2)>=6
+          d_var1(d)=d_var1(d).*N_averaged.^2;
+          d_var2(d)=d_var2(d).*N_averaged.^2;
+      	end
+      end
     end
     if exist([path_expr 'guispert.m'])==2
       run([path_expr 'guispert'])

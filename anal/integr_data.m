@@ -22,7 +22,7 @@
 %
 % See also: an_start integrate
 % function  [OK,EOF]=integr_data
-function  [OK,EOF,N_averaged]=integr_data(txlim)
+function  [OK,EOF,N_averaged,M_averaged]=integr_data(txlim)
  
 global d_parbl d_data d_var1 d_var2 data_path d_filelist a_control 
 global d_saveint
@@ -31,7 +31,7 @@ global a_txlim a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce
 persistent a_antold a_maxgap secs a_posold a_nnold fileslist
  
-OK=0; EOF=0; jj=0; N_averaged=0;
+OK=0; EOF=0; jj=0; N_averaged=0; M_averaged=0;
 d_ExpInfo=[]; d_raw=[]; txdown=0;
 if a_ind==0
   a_ind=1;
@@ -75,7 +75,8 @@ while i<length(files)
   i=i+1; file=files(i);
   filename=fullfile(file.dir,sprintf('%08d%s',file.file,file.ext));
   i_averaged=1; i_var1=[]; i_var2=[];
-  try, load(canon(filename,0))
+  %try, load(canon(filename,0))
+  load(canon(filename,0))
 
   lpb=length(d_parbl);
   if lpb==128
@@ -125,7 +126,7 @@ while i<length(files)
     if isempty(a_antold)
       a_antold=a_ant;
       secs=secs1;
-      N_averaged=0;
+      N_averaged=0; M_averaged=0;
     end
     tdiff=secs1-secs>a_maxgap;
     if a_integr<0 & exist('starttime','var')
@@ -136,9 +137,9 @@ while i<length(files)
     if any(fix(adiff/.2)) | tdiff
       if a_ant(1)<89.8 | a_ant(1)>90.2 | a_ant(1)+adiff(1)<89.8 | a_ant(1)-adiff(1)>90.2 | tdiff
         a_interval(2)=file.file;
-        if tdiff & N_averaged>1
+        if tdiff & M_averaged>1
           a_interval(2)=file.file-.5; a_antold=[];
-        elseif N_averaged==0
+        elseif M_averaged==0
 	  secs=secs1; return
         else
 	  secs=secs1;
@@ -166,7 +167,7 @@ while i<length(files)
   if ~dumpOK
     if ~txdown, fprintf('Tx down\n'), txdown=1; end
   elseif ~isempty(a_satch)
-    dumpOK=satch(a_ant(1),secs,a_inttime);
+    [dumpOK,ad_sat]=satch(a_ant(1),secs,a_inttime);
   end
   if ~isempty(a_intfixforce)
     d=find(a_intfixforce);
@@ -185,9 +186,9 @@ while i<length(files)
       fprintf('\n')
       if a_intfixed
        fprintf('analysis_intfixed set: ')
-       if N_averaged==1
+       if M_averaged==1
         fprintf('Skipping previous dump\n')
-        OK=0; N_averaged=0;
+        OK=0; N_averaged=0; M_averaged=0;
        else
         fprintf('Skipping dump\n')
         dumpOK=0;
@@ -197,22 +198,30 @@ while i<length(files)
   end
   if dumpOK
     if ~OK  % initialize with the first good dump
-      aver=0; data=0; d_var1=0; d_var2=0; accum=0;
+      aver=0; data=zeros(size(d_data)); d_var1=data; d_var2=data; accum=0;
       starttime=secs-a_inttime;    % calculate starttime of first dump
       OK=1;
     end
     % update with the following files
     accum=accum+d_parbl(accumulated);
-    data=data+d_data;
-    aver=aver+d_parbl(averaged)*i_averaged;
+    M_averaged(2)=max(i_averaged);
+    aver=aver+d_parbl(averaged)*M_averaged(2);
+    use=(1:length(d_data))';
+    if ~isempty(a_satch) & ~isempty(ad_sat)
+      i_averaged=i_averaged.*ones(size(use));
+      i_averaged(ad_sat)=0;
+      use(ad_sat)=[];
+    end
+    data(use)=data(use)+d_data(use);
     if isempty(i_var1)
-      d_var1=d_var1+d_data.*d_data;
-      d_var2=d_var2+d_data.*conj(d_data);
+      d_var1(use)=d_var1(use)+d_data(use).*d_data(use);
+      d_var2(use)=d_var2(use)+d_data(use).*conj(d_data(use));
     else
-      d_var1=d_var1+i_var1(:);
-      d_var2=d_var2+i_var2(:);
+      d_var1(use)=d_var1(use)+i_var1(use);
+      d_var2(use)=d_var2(use)+i_var2(use);
     end
     N_averaged=N_averaged+i_averaged;
+    M_averaged=sum(M_averaged);
     prev_parbl=d_parbl; % update previous parameter block
   elseif OK
     d_parbl=prev_parbl;
@@ -224,20 +233,22 @@ while i<length(files)
     files=d_filelist(find(d>a_interval(1) & d<=a_interval(2)));
 %   files=d_filelist(find(d_filelist.file>a_interval(1) & d_filelist.file<=a_interval(2)));
   end
-  catch, disp(lasterr), end
+  %catch, disp(lasterr), end
 end
 
 if OK, % if at least one good data dump was found
   % update parameter block, accept the last parameter block as starting point
-  d_parbl(averaged)=aver/N_averaged;
+  d_parbl(averaged)=aver/M_averaged;
   d_parbl(accumulated)=accum;
   d_parbl(inttime)=tosecs(d_parbl(tvec))-starttime;
   d_data=data;
+  M_averaged(1)=max(N_averaged);
+  M_averaged(2)=min(N_averaged);
   if ~isempty(d_saveint)
-   if N_averaged>1
-    i_averaged=N_averaged; i_var1=real(d_var1); i_var2=d_var2;
-   else
+   if all(M_averaged==1)
     i_averaged=[];
+   else
+    i_averaged=N_averaged; i_var1=real(d_var1); i_var2=d_var2;
    end
    file=[d_saveint.dir sprintf('%08d.mat',fix(secs))];
    disp(file)
@@ -248,8 +259,10 @@ if OK, % if at least one good data dump was found
     save_noglobal(file,d_ExpInfo,d_parbl,d_data)
    end
   end
-  d_var1=d_var1-data.*data/N_averaged;
-  d_var2=d_var2-data.*conj(data)/N_averaged;
+  if M_averaged(1)==0
+    fprintf('Could not fill any data points: Skipping dumps\n')
+    OK=0;
+  end
 end
 
 function [EOF,jj]=update_filelist(EOF,jj)

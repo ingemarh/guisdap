@@ -5,11 +5,11 @@
 %function half_prof 
 function half_prof 
 
-global a_addr a_adstart a_adend a_control ad_lpg ad_coeff ad_range ADDR_SHIFT 
+global a_addr a_adstart a_adend a_control ad_lpg ad_coeff ad_range ad_w ADDR_SHIFT 
 global d_data d_var1 d_var2 d_time p_rep p_dtau ch_el di_fit
 global lpg_ND lpg_lag lpg_womscaled lpg_bac lpg_cal lpg_background lpg_Ap
 global a_priori a_priorierror p_ND
-global r_range r_status r_ind g_ind
+global r_range r_status r_w
 global pldfvv p_D0 p_N0 p_T0 p_om k_radar k_radar0 p_m0
 
 r_ind=0;
@@ -85,6 +85,19 @@ for g_ind=1:length(a_adstart)
   end
   reind=1:length(addr); % Real parts and diagonal only needed in altitude calculation!
   r_range(r_ind)=sum(ad_range(addr+ADDR_SHIFT)./diag_var(reind)')/sum(1 ./diag_var(reind));
+  r12=([1;1]*ad_range(addr+ADDR_SHIFT)+[-1;1]*ad_w(addr+ADDR_SHIFT)/2);
+  mr12=[min(r12(1,:));max(r12(2,:))];
+  r12=1+round(r12-mr12(1));
+  rangest=max(r12(2,:));
+  rangesw=zeros(1,rangest);
+  for i=reind
+    rangesw(r12(1,i):r12(2,i))=rangesw(r12(1,i):r12(2,i))+1/diag_var(i);
+  end
+  rangest=1:rangest;
+  rangest=(rangest-sum(rangesw.*rangest)/sum(rangesw));
+  r_w(:,r_ind)=[4*sum(abs(rangesw.*rangest))/sum(abs(rangesw))...
+                2*sqrt(sum(rangesw.*rangest.^2)/sum(abs(rangesw)))...
+                diff(mr12)]; % 3 range resolution estimates...
 
   ch=1; kd2=k_radar(ch)^2*p_D0^2; Fscale=k_radar0(ch)/k_radar(ch); % hyi hyi
   [small_f_womega,small_p_om]=find_om_grid(aa,f_womega,kd2,Fscale*p_om,pldfvv,any(afree==nion+6));
@@ -114,6 +127,6 @@ for g_ind=1:length(a_adstart)
   % Forward only the variances (not covariances) to store_results
   if min(size(variance))>1; variance=diag(variance); end
   ralpha=real(alpha);
-  store_results(aa,measurement,variance,real(result),ralpha,chi2,status,...
-                kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega,lpgs);
+  store_results(aa,measurement,variance,real(result),ralpha,chi2,status,kd2,...
+          p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega,lpgs,r_ind,g_ind);
 end

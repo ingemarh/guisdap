@@ -1,8 +1,10 @@
-function OK=satch(el,secs,inttime)
-global lpg_lag lpg_wr lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code
+function [OK,ad_sat]=satch(el,secs,inttime)
+global lpg_lag lpg_wr lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h
 global d_data a_satch a_code
+global ad_range ad_w ad_code
 global calold
 
+ad_sat=[];
 if isempty(lpg_lag)
   OK=1; return
 end
@@ -18,6 +20,7 @@ if ~isfield(a_satch,'filled')
   if ~isfield(a_satch,'prep'), a_satch.prep=max(vc_penvo); end% p_rep
   if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
   if ~isfield(a_satch,'lpg_skip'), a_satch.lpg_skip=[]; end% lpg to skip
+  if ~isfield(a_satch,'cut'), a_satch.cut=0; end	% cut or trash
   if ~isfield(a_satch,'do'), a_satch.do=1; end		% do satch
   a_satch.opts=optimset(optimset('fminsearch'),'display','off');
   a_satch.filled=1;
@@ -42,7 +45,7 @@ end
 nclutter(1:length(lp))=a_satch.clutter;
 nsp_no_use(1:length(lp))=a_satch.repair;
 sigma(1:length(lp))=a_satch.sigma;
-lpgused=lp; ii=0;
+lpgused=lp; ii=0; sat_ranges=[];
 for i=lp
  j=j+1; ii=ii+1;
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
@@ -51,6 +54,14 @@ for i=lp
  [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,[nclutter(ii) a_satch.clutfac]);
  ind=find(pb<=length(dat)-L+1+nsp_no_use(ii));
  pb=pb(ind)+round(L/2); x0=x0(ind);
+ if length(pb)
+  if a_satch.cut==1
+   sat_ranges=union(sat_ranges,lpg_h(i)+(pb-1)*lpg_dt(i));
+  elseif a_satch.cut==2
+   %[pb+[-L L]/2 min(find(th~=dat)) max(find(th~=dat))]
+   sat_ranges=[sat_ranges;[[lpg_h(i)+((pb-1)*ones(1,2)+ones(size(pb))*[-L L]/2)*lpg_dt(i)] ones(size(pb))*lpg_code(i)]];
+  end
+ end
  if a_satch.plot
   eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb;'])
  end
@@ -124,7 +135,8 @@ if isfinite(a_satch.sigmac)
 end
 
 %report the result
-if Nsat>0 %| Nsatb>0
+OK=Nsat==0;
+if ~OK %| Nsatb>0
  if a_satch.plot
   drawnow, figure(a_satch.plot), set(gcf,'Name','Satellites detected')
   for i=1:j
@@ -136,9 +148,24 @@ if Nsat>0 %| Nsatb>0
   end
   drawnow
  end
- fprintf('Warning: Satellite detection (%d %.1f %d) -- skipping dump\n',Nsat,x0max,pbmax)
+ fprintf('Warning: Satellite detection (%d %.1f %d) -- skipping ',Nsat,x0max,pbmax)
+ if a_satch.cut
+  for j=1:size(sat_ranges,1)
+   if a_satch.cut==1
+    d=find(ad_range-ad_w/2<sat_ranges(j)-1 & ad_range+ad_w/2>sat_ranges(j)+1);
+   elseif a_satch.cut==2
+    d=find(ad_range>sat_ranges(j,1) & ad_range<sat_ranges(j,2) & ad_code==sat_ranges(j,3));
+   else
+    error('No such cutting strategy')
+   end
+   ad_sat=union(ad_sat,d);
+  end
+  fprintf('ranges\n')
+  OK=1;
+ else
+  fprintf('dump\n')
+ end
 end
-OK=Nsat==0;
 return
 
 function [pb,dat_m,L,x0]=sat_check(sigma,n_echo,min_v,wr,dt,dat,N,C,nbigsig)

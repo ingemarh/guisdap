@@ -3,12 +3,12 @@
 %
 % See also: half_prof
 % function store_results(aa,meas,var,result,alpha,chi2,status,kd2,p_coeffg,f_womega,p_om,pldfvv)
-function store_results(aa,meas,var,result,alpha,chi2,status,kd2,p_coeffg,f_womega,p_om,pldfvv,fb_womega,lpgs)
+function store_results(aa,meas,var,result,alpha,chi2,status,kd2,p_coeffg,f_womega,p_om,pldfvv,fb_womega,lpgs,r_ind,g_ind)
  
 global a_priori a_priorierror p_RECloc
-global ch_el di_fit g_ind
+global ch_el di_fit
 global lpg_dt p_dtau di_figures di_results
-global r_range r_status r_param r_dp r_error r_res r_apriori r_apriorierror r_ind p_m0 r_h r_Offsetppd r_om r_spec
+global r_range r_status r_param r_dp r_error r_res r_apriori r_apriorierror p_m0 r_h r_Offsetppd r_om r_spec
 global name_site a_savespec
 
 % Scale residual and Xfer results to physical units

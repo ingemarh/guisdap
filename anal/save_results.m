@@ -8,7 +8,7 @@ global result_path name_expr name_site name_ant
 global p_XMITloc p_RECloc sc_angle p_om0
 global d_time GUP_ver ch_az ch_el ch_Pt p_m0 p_N0 p_dtau v_lightspeed
 global r_h r_spec r_om
-global r_ind r_range r_param r_error r_res r_status r_dp r_Offsetppd
+global r_range r_param r_error r_res r_status r_dp r_Offsetppd r_w
 global r_apriori r_apriorierror
 global pp_range pp_sigma
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
@@ -98,7 +98,7 @@ file=[result_path filename];
 disp(file)
 name_sig=[local.site local.host ' ' datestr(now)];
 save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,...
-     r_Pt,r_m0,r_range,r_h,r_param,r_error,r_res,r_status,r_dp,...
+     r_Pt,r_m0,r_range,r_h,r_param,r_error,r_res,r_status,r_dp,r_w,...
      r_apriori,r_apriorierror,r_pp,r_pprange,r_XMITloc,r_RECloc,...
      r_SCangle,r_Tsys,r_Offsetppd,r_Magic_const,r_spec,r_om,r_om0,name_sig)
 if a_NCAR

@@ -97,6 +97,7 @@ case $sys in
 	Linux)
 		LD_LIBRARY_PATH=$GUP/lib
 		PATH=$PATH:$GUP/bin
+		unset `env | grep UTF | awk -F = '{ print $1 }'`
 		;;
 esac
 if [ -d $GUP/NW/lib ]; then

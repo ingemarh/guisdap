@@ -120,7 +120,7 @@ for gate=find(diffran>0)
   end
   if a_control(4)==1
     % Remove addresses for which variance have not been determined
-    if any(~real(d_var1(addr))) & isempty(a_addr)
+    if any(~real(d_var1(addr))) & ~bad_var
       fprintf('Warning: Points removed from analysis due to bad variance determination\n')
       bad_var=1;
     end
