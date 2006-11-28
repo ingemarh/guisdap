@@ -9,16 +9,17 @@
 % See also: ionomodel, power_prof range_to_height
 function get_apriori(simul)
  
-global a_addr a_adstart a_adend a_range a_priori a_priorierror ADDR_SHIFT
-global lpg_bcs lpg_lag ch_el ad_w ad_range di_figures p_N0
-global pp_profile pp_range pp_sigma pp_height a_code lpg_code fit_altitude
+global a_addr a_adstart a_adend a_range a_priori a_priorierror a_ppshortlags...
+ a_code ADDR_SHIFT lpg_bcs ch_el ad_w ad_range ad_lpg ad_lag ad_code...
+ di_figures p_N0 k_radar pp_profile pp_range pp_sigma pp_height
 
 if nargin==0, simul=0; end
 
 for gate=1:length(a_adstart)
   range(gate)=mean(ad_range(a_addr(a_adstart(gate):a_adend(gate))+ADDR_SHIFT));
 end
-height=range_to_height(range,ch_el(1));
+ch=1; %hui hui
+height=range_to_height(range,ch_el(ch));
 
 % Exit here, if the a_priori model is loaded for simulation purposes,
 % or it should not be updated with the measured raw electron denstity 
@@ -28,15 +29,23 @@ if simul
  a_priorierror=real_to_scaled(a_priorierror);
  return
 end
-% Calculate electron density estimates from zero lags, if available.
-ind=find(lpg_bcs=='s' & lpg_lag==0);
+% Calculate electron density estimates from low lags, if available.
+addr=lpg_addr(find(lpg_bcs=='s'))+ADDR_SHIFT;
 if ~isempty(a_code)
-  ind=ind(find(ismember(lpg_code(ind),unique(a_code))));
+  addr=addr(find(ismember(ad_code(addr),unique(a_code))));
 end
+if a_ppshortlags
+  ad_h=range_to_height(ad_range(addr),ch_el(ch));
+  addr=addr(find(ad_lag(addr)<exp(1-ad_h/100)*a_ppshortlags*4e3/k_radar(ch)));
+  % default about 100(40) us at 100(200) km for UHF
+else
+  addr=addr(find(ad_lag==0));
+end
+
 ne_from_pp=zeros(size(height'));
-if length(ind)>0
-  [pp_profile,pp_range,pp_sigma]=power_prof(lpg_addr(ind)',0);
-  pp_height=range_to_height(pp_range,ch_el(1));
+if length(addr)>0
+  [pp_profile,pp_range,pp_sigma]=power_prof(addr',0);
+  pp_height=range_to_height(pp_range,ch_el(ch));
 
   for gate=1:length(a_adstart)
     ind=find(abs(pp_range-range(gate))<ad_w(ADDR_SHIFT+a_addr(a_adstart(gate))));

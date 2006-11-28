@@ -86,7 +86,7 @@ while ~EOF
         d_var1=d_var1-d_data.*d_data./N_averaged;
         d_var2=d_var2-d_data.*conj(d_data)./N_averaged;
       end
-      if diff(M_averaged) % satellites found
+      if diff(M_averaged) % satellites found and all data normalised
 	d_data(find(~N_averaged))=NaN;
 	d=find(N_averaged<M_averaged(1));
         N_averaged=M_averaged(1)./N_averaged(d);

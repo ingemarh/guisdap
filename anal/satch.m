@@ -1,7 +1,7 @@
 function [OK,ad_sat]=satch(el,secs,inttime)
 global lpg_lag lpg_wr lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h
 global d_data a_satch a_code
-global ad_range ad_w ad_code
+global ad_range ad_w ad_code ad_lag
 global calold
 
 ad_sat=[];
@@ -59,7 +59,7 @@ for i=lp
    sat_ranges=union(sat_ranges,lpg_h(i)+(pb-1)*lpg_dt(i));
   elseif a_satch.cut==2
    %[pb+[-L L]/2 min(find(th~=dat)) max(find(th~=dat))]
-   sat_ranges=[sat_ranges;[[lpg_h(i)+((pb-1)*ones(1,2)+ones(size(pb))*[-L L]/2)*lpg_dt(i)] ones(size(pb))*lpg_code(i)]];
+   sat_ranges=[sat_ranges;[lpg_h(i)+((pb-1)*ones(1,2)+ones(size(pb))*[-L L]/2)*lpg_dt(i) ones(size(pb))*lpg_code(i)]];
   end
  end
  if a_satch.plot
@@ -154,7 +154,7 @@ if ~OK %| Nsatb>0
    if a_satch.cut==1
     d=find(ad_range-ad_w/2<sat_ranges(j)-1 & ad_range+ad_w/2>sat_ranges(j)+1);
    elseif a_satch.cut==2
-    d=find(ad_range>sat_ranges(j,1) & ad_range<sat_ranges(j,2) & ad_code==sat_ranges(j,3));
+    d=find(ad_range-ad_lag/2<sat_ranges(j,2) & ad_range+ad_lag/2>sat_ranges(j,1) & ad_code==sat_ranges(j,3));
    else
     error('No such cutting strategy')
    end

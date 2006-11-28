@@ -43,11 +43,12 @@ for lpg=lpgs
     else
       f=f0; N=N0; L=L0; R=R0;
     end
-    if laver>1
-      naver=conv(naver,f);
-    end
     coef=conv(coeff(addr),f).^2;
     dat=conv(data(addr),f);
+    if laver>1
+      naver=conv(naver,f);
+      coef=coef.*(M_averaged(1)./naver).^2; % All data normalised
+    end
     var1=(conv(dvar1(addr),f)-dat.*dat./naver).*coef;
     var2=(conv(dvar2(addr),f)-dat.*conj(dat)./naver).*coef;
     d_var1(addr)=[ones(L,1)*var1(N);var1(N:Na);ones(R,1)*var1(Na)];

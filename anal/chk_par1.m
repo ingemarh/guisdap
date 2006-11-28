@@ -183,3 +183,7 @@ a_rcprog=1;
 if exist('analysis_rcprog','var')
  a_rcprog=analysis_rcprog;
 end
+a_ppshortlags=0;
+if exist('analysis_ppshortlags','var')
+ a_ppshortlags=analysis_ppshortlags;
+end
