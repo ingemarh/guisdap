@@ -88,7 +88,7 @@ while ~EOF
       end
       if diff(M_averaged) % satellites found and all data normalised
 	d_data(find(~N_averaged))=NaN;
-	d=find(N_averaged<M_averaged(1));
+	d=find(N_averaged<M_averaged(1) & N_averaged>0);
         N_averaged=M_averaged(1)./N_averaged(d);
         d_data(d)=d_data(d).*N_averaged;
       	if a_control(4)==1 & M_averaged(2)>=6

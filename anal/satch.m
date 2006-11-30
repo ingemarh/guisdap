@@ -1,5 +1,5 @@
 function [OK,ad_sat]=satch(el,secs,inttime)
-global lpg_lag lpg_wr lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h
+global lpg_lag lpg_wr lpg_w lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h
 global d_data a_satch a_code
 global ad_range ad_w ad_code ad_lag
 global calold
@@ -53,13 +53,14 @@ for i=lp
  dat=real(d_data(addr));
  [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,[nclutter(ii) a_satch.clutfac]);
  ind=find(pb<=length(dat)-L+1+nsp_no_use(ii));
- pb=pb(ind)+round(L/2); x0=x0(ind);
+ pb=pb(ind)+L/2; x0=x0(ind);
  if length(pb)
+  sat_ran=lpg_h(i)+(pb-1)*lpg_dt(i);
   if a_satch.cut==1
-   sat_ranges=union(sat_ranges,lpg_h(i)+(pb-1)*lpg_dt(i));
+   sat_ranges=union(sat_ranges,sat_ran);
   elseif a_satch.cut==2
-   %[pb+[-L L]/2 min(find(th~=dat)) max(find(th~=dat))]
-   sat_ranges=[sat_ranges;[lpg_h(i)+((pb-1)*ones(1,2)+ones(size(pb))*[-L L]/2)*lpg_dt(i) ones(size(pb))*lpg_code(i)]];
+   sat_w=2*lpg_w(i)-lpg_dt(i); %A little too wide for AC, much to wide for lp, but we cannot tell which here...
+   sat_ranges=[sat_ranges;[sat_ran-sat_w/2 sat_ran+sat_w/2 ones(size(pb))*lpg_code(i)]];
   end
  end
  if a_satch.plot
@@ -148,13 +149,14 @@ if ~OK %| Nsatb>0
   end
   drawnow
  end
- fprintf('Warning: Satellite detection (%d %.1f %d) -- skipping ',Nsat,x0max,pbmax)
+ fprintf('Warning: Satellite detection (%d %.1f %.0f) -- skipping ',Nsat,x0max,pbmax)
  if a_satch.cut
   for j=1:size(sat_ranges,1)
    if a_satch.cut==1
     d=find(ad_range-ad_w/2<sat_ranges(j)-1 & ad_range+ad_w/2>sat_ranges(j)+1);
    elseif a_satch.cut==2
-    d=find(ad_range-ad_lag/2<sat_ranges(j,2) & ad_range+ad_lag/2>sat_ranges(j,1) & ad_code==sat_ranges(j,3));
+    %d=find(ad_range-ad_lag/2<sat_ranges(j,2) & ad_range+ad_lag/2>sat_ranges(j,1) & ad_code==sat_ranges(j,3));
+    d=find(ad_range<sat_ranges(j,2) & ad_range>sat_ranges(j,1) & ad_code==sat_ranges(j,3));
    else
     error('No such cutting strategy')
    end

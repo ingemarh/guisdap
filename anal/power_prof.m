@@ -21,8 +21,9 @@ function [PPprof,PPrange,PPsigma]=power_prof(addr,Debyecorr)
 global ad_range ch_el d_data lpg_womscaled ad_lpg p_om ad_coeff ad_lag ad_code
 global v_epsilon0 v_Boltzmann v_elemcharge k_radar p_N0 d_var1 d_var2
  
+dvar=real(d_var1+d_var2);
 %addr=addr+ADDR_SHIFT; % To change from radar to Matlab addressing
-addr=addr(find(ad_coeff(addr)>0));
+addr=addr(find(ad_coeff(addr)>0 & dvar(addr)'>0));
 PPrange=ad_range(addr);
 signal_power=real(d_data(addr));
 len_eff=max(real(lpg_womscaled(ad_lpg(addr),:))')';
@@ -37,7 +38,7 @@ if any(ad_lag(addr)>0)
     for range=unique(ranges)
       a2=find(ranges==range);
       if length(a2)>1
-        w2=ad_coeff(a1(a2))'.*len_eff(a2)./real(d_var1(a1(a2))+d_var2(a1(a2)));
+        w2=ad_coeff(a1(a2))'.*len_eff(a2)./dvar(a1(a2));
         sigma(a2(1))=sum(sigma(a2).*w2)/sum(w2);
         a3=[a3 a2(2:end)];
       end
