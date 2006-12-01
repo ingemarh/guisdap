@@ -4213,7 +4213,7 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
               iap(i)=-1
               enddo
 
-        if(iyyyy.gt.2005.or.(iyyyy.eq.2005.and.imn.gt.9)) goto21
+        if(iyyyy.gt.2006.or.(iyyyy.eq.2006.and.imn.gt.4)) goto21
         if(iyyyy.lt.1960) goto 21
         is=0
         if(iyyyy.gt.1960) then
