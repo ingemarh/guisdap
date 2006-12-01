@@ -1,7 +1,7 @@
 function [OK,ad_sat]=satch(el,secs,inttime)
 global lpg_lag lpg_wr lpg_w lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h
 global d_data a_satch a_code
-global ad_range ad_w ad_code ad_lag
+global ad_range ad_w ad_code ad_lag ad_bac
 global calold
 
 ad_sat=[];
@@ -45,7 +45,7 @@ end
 nclutter(1:length(lp))=a_satch.clutter;
 nsp_no_use(1:length(lp))=a_satch.repair;
 sigma(1:length(lp))=a_satch.sigma;
-lpgused=lp; ii=0; sat_ranges=[];
+lpgused=lp; ii=0; sat_ran=[];
 for i=lp
  j=j+1; ii=ii+1;
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
@@ -54,15 +54,8 @@ for i=lp
  [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,[nclutter(ii) a_satch.clutfac]);
  ind=find(pb<=length(dat)-L+1+nsp_no_use(ii));
  pb=pb(ind)+L/2; x0=x0(ind);
- if length(pb)
-  sat_ran=lpg_h(i)+(pb-1)*lpg_dt(i);
-  if a_satch.cut==1
-   sat_ranges=union(sat_ranges,sat_ran);
-  elseif a_satch.cut==2
-   sat_w=2*lpg_w(i)-lpg_dt(i); %A little too wide for AC, much to wide for lp, but we cannot tell which here...
-   sat_ranges=[sat_ranges;[sat_ran-sat_w/2 sat_ran+sat_w/2 ones(size(pb))*lpg_code(i)]];
-  end
- end
+ sat_ran=[sat_ran;[lpg_h(i)+(pb-1)*lpg_dt(i)...
+         ones(size(pb))*[2*lpg_w(i)-lpg_dt(i) L*lpg_dt(i) lpg_code(i)]]];
  if a_satch.plot
   eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb;'])
  end
@@ -151,15 +144,10 @@ if ~OK %| Nsatb>0
  end
  fprintf('Warning: Satellite detection (%d %.1f %.0f) -- skipping ',Nsat,x0max,pbmax)
  if a_satch.cut
-  for j=1:size(sat_ranges,1)
-   if a_satch.cut==1
-    d=find(ad_range-ad_w/2<sat_ranges(j)-1 & ad_range+ad_w/2>sat_ranges(j)+1);
-   elseif a_satch.cut==2
-    %d=find(ad_range-ad_lag/2<sat_ranges(j,2) & ad_range+ad_lag/2>sat_ranges(j,1) & ad_code==sat_ranges(j,3));
-    d=find(ad_range<sat_ranges(j,2) & ad_range>sat_ranges(j,1) & ad_code==sat_ranges(j,3));
-   else
-    error('No such cutting strategy')
-   end
+  for j=1:size(sat_ran,1)
+   arang=2*abs(ad_range-sat_ran(j,1));
+   d=find((ad_bac==0 & arang<sat_ran(j,2) | ...
+     ad_bac~=0 & arang<=ad_lag+sat_ran(j,3)) & ad_code==sat_ran(j,4));
    ad_sat=union(ad_sat,d);
   end
   fprintf('ranges\n')
