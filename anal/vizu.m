@@ -25,7 +25,7 @@ function [varargout]=vizu(action,a2,a3)
 % To reset and start over:
 % >> vizu new [action]
 
-global Time par2D par1D rpar2D name_expr name_ant axs axc hds maxdy
+global Time par2D par1D rpar2D name_expr name_ant axs axc hds maxdy rres
 global height n_tot add_plot manylim
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
 global r_RECloc path_tmp path_GUP result_path webfile local owner
@@ -37,6 +37,7 @@ elseif strcmp(action,'new')
   close(findobj('type','figure','userdata',6))
   axs=[]; axc=[];
   Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
+  maxdy	=Inf;		% Max diff in y stretch data points
   action=a2; a2=a3;
 end
 if ~isempty([axs axc]) & isempty(findobj('type','figure','userdata',6)) 
@@ -191,7 +192,6 @@ if ~isempty(Loc)
  LOCATION	=['EISCAT-' Loc];
 end
 stretchSecs	=65;	% Number of seconds to stretch data points
-maxdy	=Inf;		% Max diff in y stretch data points
 FS	=10;		% Font size
 TL	=[0.01 0.025];	% Tick size
 height(2)=.03;		% Panel separation
@@ -219,7 +219,8 @@ if strcmp(name_expr,'arcd')
 elseif strfind('dlayer cp6',name_expr)
  SCALE(2:3,:)=[59 121;10.^[9 12]]; WHICH_PARAM='Ne AE';
 elseif strcmp(name_expr,'manda')
- SCALE(2:3,:)=[58 500;10.^[9 12]]; WHICH_PARAM='Ne AE'; maxdy=60; Y_TYPE='log';
+ SCALE(2:3,:)=[58 500;10.^[9 12]]; WHICH_PARAM='Ne AE'; Y_TYPE='log';
+ if ~isempty(rres), maxdy=60; end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~exist('GATES')
@@ -389,6 +390,7 @@ if Y_PARAM<3
  YTitle=TITLE(Y_PARAM);
  y_param=par2D(:,:,Y_PARAM);
  Yscale=SCALE(Y_PARAM,:);
+ if isinf(maxdy) & ~isempty(rres), maxdy=rres; end
 elseif Y_PARAM==3
  YTitle='Latitude (\circN)';
  y_param=par2D(:,:,1);

@@ -6,7 +6,7 @@ function [Time,par2D,par1D,rpar2D]=load_param(data_path,status,update)
 % par1D [Az,El,Pt,Tsys,Oppd]
 % rpar2D[Ran,Alt,RawNe]
 
-global lastfile name_expr r_RECloc name_ant r_Magic_const myparams load_apriori
+global lastfile name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
 if isempty(status), status=0; end
@@ -25,7 +25,7 @@ ppres=.25; % pp resolution (km)
 if n==0
   Time=[]; par2D=[]; par1D=[]; rpar2D=[]; return
 end
-r_Tsys=[]; r_pp=[];
+r_Tsys=[]; r_pp=[]; rres=[];
 n_tot=n;
 lastfile=list(n);
 
@@ -73,13 +73,16 @@ for i=1:n_tot
   par2D(n,i,[4 6])=[r_param(:,2).*r_param(:,3) -r_param(:,5)];
   Time(:,i)	=datenum(r_time);
   par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]; %10 kW
+  if exist('r_w','var')
+    rres=[rres;max(r_w(:,3))];
+  end
   if isfinite(n_ralt)
     [ppr,k,l]=unique(round(r_pprange/ppres)); pp=ppr;
     nalt=length(ppr);
     for n=1:nalt
       d=find(l==n);
       ppr(n)=mean(r_pprange(d));
-      pp(n)=mean(r_pp(d));
+      pp(n)=max(mean(r_pp(d)),1);
     end
     if nalt>n_ralt
       rpar2D=[rpar2D;ones(nalt-n_ralt,n_tot,nrpar2D)*NaN];
@@ -91,6 +94,11 @@ for i=1:n_tot
     rpar2D(n,i,2)=re*sqrt(1+x.*(x+2*sin(r_el/57.2957795)))-re;
     rpar2D(n,i,3)=pp;
   end
+end
+if exist('r_w','var')
+  rres=rres/re;
+  rres=re*sqrt(1+rres.*(rres+2*sin(par1D(:,2)/57.2957795)))-re;
+  rres=mean(rres)+std(rres);
 end
 % Cast azimuth and elevation into range 0-360, 0-90 degrees
 d=find(par1D(:,2)>90); par1D(d,2)=180-par1D(d,2); par1D(d,1)=par1D(d,1)+180;

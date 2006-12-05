@@ -24,7 +24,7 @@ for g_ind=1:length(a_adstart)
   r_ind=r_ind+1;
   % ADDR_SHIFT is added to result memory addresses 
   % in order to transfer from radar indexing to Matlab indexing
-  addr=a_addr(a_adstart(g_ind):a_adend(g_ind)); 
+  addr=a_addr(a_adstart(g_ind):a_adend(g_ind));
   lpgs=ad_lpg(addr+ADDR_SHIFT); % These are the lag profile groups of the data points
 
   f_womega=[real(lpg_womscaled(lpgs,:));imag(lpg_womscaled(lpgs,:))];

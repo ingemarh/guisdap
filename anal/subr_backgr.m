@@ -31,6 +31,7 @@ for bac=bacs
   variance2=mean(var2(addr))/lpg_nt(bac);
   for lpg=find(lpg_bac==bac)
     addr=lpg_addr(lpg)+ADDR_SHIFT; % To change from radar to Matlab addressing
+    addr=addr(find(isfinite(d_data(addr))));
     lpg_background(lpg)=background;
     d_data(addr)=data(addr)-background;
     d_var1(addr)=var1(addr)+variance1;
