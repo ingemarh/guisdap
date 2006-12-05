@@ -11,7 +11,7 @@ function get_apriori(simul)
  
 global a_addr a_adstart a_adend a_range a_priori a_priorierror a_ppshortlags...
  a_code ADDR_SHIFT lpg_bcs ch_el ad_w ad_range ad_lpg ad_lag ad_code...
- di_figures p_N0 k_radar pp_profile pp_range pp_sigma pp_height
+ di_figures p_N0 k_radar pp_profile pp_range pp_sigma pp_height pp_err pp_w
 
 if nargin==0, simul=0; end
 
@@ -36,15 +36,16 @@ if ~isempty(a_code)
 end
 if a_ppshortlags
   ad_h=range_to_height(ad_range(addr),ch_el(ch));
-  addr=addr(find(ad_lag(addr)<exp(1-ad_h/100)*a_ppshortlags*4e3/k_radar(ch)));
-  % default about 100(40) us at 100(200) km for UHF
+  %addr=addr(find(ad_lag(addr)<exp(1-ad_h/150)*a_ppshortlags*2e3/k_radar(ch)));
+  addr=addr(find(ad_lag(addr)<3e7*a_ppshortlags/k_radar(ch)./ad_h.^2));
+  % default about 75(10) us at 100(300) km for UHF
 else
-  addr=addr(find(ad_lag==0));
+  addr=addr(find(ad_lag(addr)==0));
 end
 
 ne_from_pp=zeros(size(height'));
 if length(addr)>0
-  [pp_profile,pp_range,pp_sigma]=power_prof(addr',0);
+  [pp_profile,pp_range,pp_sigma,pp_err,pp_w]=power_prof(addr',0);
   pp_height=range_to_height(pp_range,ch_el(ch));
 
   for gate=1:length(a_adstart)

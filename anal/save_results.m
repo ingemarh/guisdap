@@ -10,7 +10,7 @@ global d_time GUP_ver ch_az ch_el ch_Pt p_m0 p_N0 p_dtau v_lightspeed
 global r_h r_spec r_om
 global r_range r_param r_error r_res r_status r_dp r_Offsetppd r_w
 global r_apriori r_apriorierror
-global pp_range pp_sigma
+global pp_range pp_sigma pp_err pp_w
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
 global webfile a_save local a_gfd
 global a_autodir di_figures START_TIME a_Magic_const
@@ -69,6 +69,7 @@ if isempty(r_h)
   save_setup([result_path 'gfd_setup.m']);
  end
 end
+s2km=p_dtau*1e-6*v_lightspeed/2/1000;
 
 r_ver=GUP_ver;
 r_time=d_time;
@@ -81,13 +82,16 @@ r_RECloc=p_RECloc;
 r_SCangle=sc_angle/2;
 
 r_pp=pp_sigma*p_N0;
-r_pprange=col(pp_range)*(p_dtau*1e-6*v_lightspeed/2/1000);
+r_pprange=col(pp_range)*s2km;
+r_pperr=pp_err*p_N0;
+r_ppw=col(pp_w)*s2km;
 
 r_h=col(range_to_height(r_range,ch_el(1)));
-r_range=col(r_range)*(p_dtau*1e-6*v_lightspeed/2/1000);
+r_range=col(r_range)*s2km;
 r_Tsys=sysTemp(isfinite(sysTemp));
 r_Magic_const=a_Magic_const;
 r_om0=p_om0;
+r_w=r_w*s2km;
 
 if ~di_results
  fprintf('Status: '); fprintf('%d',r_status);
@@ -97,9 +101,9 @@ end
 file=[result_path filename];
 disp(file)
 name_sig=[local.site local.host ' ' datestr(now)];
-save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,...
-     r_Pt,r_m0,r_range,r_h,r_param,r_error,r_res,r_status,r_dp,r_w,...
-     r_apriori,r_apriorierror,r_pp,r_pprange,r_XMITloc,r_RECloc,...
+save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,r_Pt,...
+     r_m0,r_range,r_h,r_param,r_error,r_res,r_status,r_dp,r_w,r_apriori,...
+     r_apriorierror,r_pp,r_pprange,r_pperr,r_ppw,r_XMITloc,r_RECloc,...
      r_SCangle,r_Tsys,r_Offsetppd,r_Magic_const,r_spec,r_om,r_om0,name_sig)
 if a_NCAR
  file0=sprintf('%sNCAR_%d-%02d-%02d_%s@%s.',result_path,d_time(2,1:3),...
