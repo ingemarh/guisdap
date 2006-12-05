@@ -54,8 +54,10 @@ for i=lp
  [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,[nclutter(ii) a_satch.clutfac]);
  ind=find(pb<=length(dat)-L+1+nsp_no_use(ii));
  pb=pb(ind)+L/2; x0=x0(ind);
- sat_ran=[sat_ran;[lpg_h(i)+(pb-1)*lpg_dt(i)...
-         ones(size(pb))*[2*lpg_w(i)-lpg_dt(i) L*lpg_dt(i) lpg_code(i)]]];
+ if ind>0
+   sat_ran=[sat_ran;[lpg_h(i)+(pb-1)*lpg_dt(i)...
+           ones(size(pb))*[2*lpg_w(i)-lpg_dt(i) L*lpg_dt(i) lpg_code(i)]]];
+ end
  if a_satch.plot
   eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb;'])
  end
