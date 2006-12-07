@@ -36,11 +36,11 @@ if ~isempty(a_code)
 end
 if a_ppshortlags
   ad_h=range_to_height(ad_range(addr),ch_el(ch));
-  %addr=addr(find(ad_lag(addr)<exp(1-ad_h/150)*a_ppshortlags*2e3/k_radar(ch)));
-  addr=addr(find(ad_lag(addr)<3e7*a_ppshortlags/k_radar(ch)./ad_h.^2));
+  %exp(1-ad_h/150)*a_ppshortlags*2e3/k_radar(ch);
+  addr(find(ad_lag(addr)>3e7*a_ppshortlags/k_radar(ch)./ad_h.^2))=[];
   % default about 75(10) us at 100(300) km for UHF
 else
-  addr=addr(find(ad_lag(addr)==0));
+  addr(find(ad_lag(addr)>0))=[];
 end
 
 ne_from_pp=zeros(size(height'));

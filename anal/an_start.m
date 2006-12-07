@@ -87,13 +87,14 @@ while ~EOF
         d_var2=d_var2-d_data.*conj(d_data)./N_averaged;
       end
       if diff(M_averaged) % satellites found and all data normalised
-	d_data(find(~N_averaged))=NaN;
-	d=find(N_averaged<M_averaged(1) & N_averaged>0);
-        N_averaged=M_averaged(1)./N_averaged(d);
-        d_data(d)=d_data(d).*N_averaged;
+        d_data(find(~N_averaged))=NaN;
+        d=find(N_averaged<M_averaged(1));
+        d1=d(find(N_averaged(d)>0));
+        N_averaged(d1)=M_averaged(1)./N_averaged(d1);
+        d_data(d)=d_data(d).*N_averaged(d);
       	if a_control(4)==1 & M_averaged(2)>=6
-          d_var1(d)=d_var1(d).*N_averaged.^2;
-          d_var2(d)=d_var2(d).*N_averaged.^2;
+          d_var1(d)=d_var1(d).*N_averaged(d).^2;
+          d_var2(d)=d_var2(d).*N_averaged(d).^2;
       	end
       end
     end
@@ -149,7 +150,6 @@ while ~EOF
 % pp_profile : Ne with a priori temperature ratio model
 % pp_sigma   : Ne with Te=Ti
 %******************************************************************
-
       clear_results
       half_prof
       GUIDITOR
@@ -157,11 +157,11 @@ while ~EOF
 
       if di_figures(4)
         drawnow, figure(abs(di_figures(4)))
-	if di_figures(4)<0 & a_savespec
+        if di_figures(4)<0 & a_savespec
           plot_specs
-	else
+        else
           plot_fit('panel',[1 1 1 0 1],[-inf inf 10*ceil((max(r_h)-min(r_h))/100)]);
-	end
+        end
         drawnow 
       end
     end

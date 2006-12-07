@@ -23,7 +23,7 @@ if isempty(alt)
 end
 if isempty(maxe), maxe=1; end
 if isempty(minel), minel=75; end
-if isempty(folim), folim=[0 Inf]; end
+if isempty(folim), folim=[0 30]; end
 fpp_plot=fpplt;
 a=vizu('verbose',alt,'P1 AE');
 global Time axs par1D DATA_PATH START_TIME END_TIME r_Magic_const
@@ -48,6 +48,7 @@ if ~isempty(dd)
 end
 if isempty(t)
  fprintf('Could not find any valid dynasond foF2 for these times\n')
+ mr2=[];
 else
  fgup=fullfile(DATA_PATH,'.gup');
  Magic_const=1;
@@ -64,16 +65,20 @@ else
  bad=find(abs(r2-mr2)>maxe*sr2);
  good=find(abs(r2-mr2)<=maxe*sr2);
  mr2=mean(r2(good)); sr2=std(r2(good));
+ nmc=Magic_const/mr2;
  rx=[0 ceil(max(col(f)))]; %rrx=((rx(1):.1:rx(2)));
  plot(f(good,1),f(good,2),'o',f(bad,1),f(bad,2),'o',rx,rx*sqrt(mr2),'-',rx,rx,'-');
  FO={'foE','foF2'};
- ylabel(sprintf('EISCAT %s (MHz)  Magic const=%g',char(FO(F)),Magic_const))
- xlabel(sprintf('Dynasond %s (MHz)',char(FO(F))))
- text(3,1,sprintf('Density ratio=%.2f (%.2f)',mr2,sr2))
- set(gca,'xlim',rx,'ylim',rx)
+ ylabel(sprintf('EISCAT %s (MHz)',char(FO(F))))
+ xlabel(sprintf('Dynasonde %s (MHz)',char(FO(F))))
+ text(rx(2)*1.05,rx(2)/2,...
+   sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%d-%d km\nelev > %d\\circ\ndynasonde window=%d-%d MHz\ngreen circles > %d\\sigma\n\nsuggested Magic const=%.2f',...
+   mr2,sr2,Magic_const,alt,minel,folim,maxe,nmc),'horiz','left')
  axis square
+ pos=get(gca,'position'); pos(3)=.5;
+ set(gca,'xlim',rx,'ylim',rx,'position',pos)
  if abs(mr2-1)>.005
-  fprintf('Try Magic_const=%.2f;\n',Magic_const/mr2)
+  fprintf('Try Magic_const=%.2f;\n',nmc)
  end
+ mr2=[mr2 sr2 nmc];
 end
-mr2=[mr2 sr2 Magic_const/mr2];

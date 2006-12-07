@@ -37,7 +37,6 @@ elseif strcmp(action,'new')
   close(findobj('type','figure','userdata',6))
   axs=[]; axc=[];
   Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
-  maxdy	=Inf;		% Max diff in y stretch data points
   action=a2; a2=a3;
 end
 if ~isempty([axs axc]) & isempty(findobj('type','figure','userdata',6)) 
@@ -91,6 +90,7 @@ if isempty(action) | strcmp(lower(action),'verbose')
  end
  if ~isempty(axs), delete(axs), axs=[]; end
  if ~isempty(axc), delete(axc), axc=[]; end
+ maxdy	=Inf;		% Max diff in y stretch data points
 elseif strcmp(action,'update')
  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
  set(0,'currentfig',findobj('type','figure','userdata',6))
@@ -220,7 +220,7 @@ elseif strfind('dlayer cp6',name_expr)
  SCALE(2:3,:)=[59 121;10.^[9 12]]; WHICH_PARAM='Ne AE';
 elseif strcmp(name_expr,'manda')
  SCALE(2:3,:)=[58 500;10.^[9 12]]; WHICH_PARAM='Ne AE'; Y_TYPE='log';
- if ~isempty(rres), maxdy=60; end
+ if isempty(rres), maxdy=60; end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~exist('GATES')
@@ -458,7 +458,7 @@ if option(16)
   surf_plot(s,y_param(GATES,:),pf,PLF_SCALE,Yscale,YTitle,'Plasma frequency (MHz)',[])
  end
  if option(16)>1
-  pf=find_plf_peak(s,y_param(GATES,:),Yscale,pf,5,PLF_SCALE,0);
+  pf=find_plf_peak(s,y_param(GATES,:),Yscale,pf,7,PLF_SCALE,0);
   d=many(pf,PLF_SCALE);
   line_plot(s,pf,d,'Cutoff plasma frequency (MHz)',[],[])
  end
