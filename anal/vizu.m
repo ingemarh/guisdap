@@ -533,7 +533,7 @@ o2=ones(1,2);
 for i=1:s
  yp=yparam(:,i); zp=zparam(:,i);
  dy=diff(yp);
- d=find(dy>maxdy);
+ d=find(dy(1:end-2)>maxdy);
  if ~isempty(d)
   d=d(1:2:end);
   yp(d+1)=yp(d+2)-dy(d+2);
