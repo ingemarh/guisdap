@@ -6,11 +6,13 @@ function [Time,par2D,par1D,rpar2D]=load_param(data_path,status,update)
 % par1D [Az,El,Pt,Tsys,Oppd]
 % rpar2D[Ran,Alt,RawNe]
 
-global lastfile name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres
+global name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres ppres
+persistent lastfile
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
 if isempty(status), status=0; end
 if isempty(myparams), myparams=[1 2 4]; end
+if isempty(ppres), ppres=.25; end % pp resolution (km)
 
 if isempty(strfind(data_path,'*')) & ~isdir(data_path)
   [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path);
@@ -20,7 +22,6 @@ data_path=fullfile(data_path,filesep);
 list=getfilelist(data_path,lastfile);
 %if nargin>2, list=list(cell2mat({list.file})>lastfile); end
 n=length(list);
-ppres=.25; % pp resolution (km)
 
 if n==0
   Time=[]; par2D=[]; par1D=[]; rpar2D=[]; return
@@ -81,8 +82,14 @@ for i=1:n_tot
     nalt=length(ppr);
     for n=1:nalt
       d=find(l==n);
-      ppr(n)=mean(r_pprange(d));
-      pp(n)=max(mean(r_pp(d)),1);
+      if exist('r_pperr','var')
+        w=1../r_pperr(d).^2;
+      else
+        w=ones(size(d));
+      end
+      sw=sum(w);
+      ppr(n)=sum(r_pprange(d).*w)/sw;
+      pp(n)=max(sum(r_pp(d).*w)/sw,1);
     end
     if nalt>n_ralt
       rpar2D=[rpar2D;ones(nalt-n_ralt,n_tot,nrpar2D)*NaN];
