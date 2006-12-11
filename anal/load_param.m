@@ -105,7 +105,7 @@ end
 if exist('r_w','var')
   rres=rres/re;
   rres=re*sqrt(1+rres.*(rres+2*sin(par1D(:,2)/57.2957795)))-re;
-  rres=mean(rres)+std(rres);
+  rres=1.1*max(rres)+3*std(rres);
 end
 % Cast azimuth and elevation into range 0-360, 0-90 degrees
 d=find(par1D(:,2)>90); par1D(d,2)=180-par1D(d,2); par1D(d,1)=par1D(d,1)+180;

@@ -274,18 +274,19 @@ while mr==r0 | abs(mr-1)>.01
   pmax=ceil(max([plf;peak_lf(il(good))]));
   rx=[0 pmax];
   plot(plf(ip(good)),peak_lf(il(good)),'o',plf(ip(bad)),peak_lf(il(bad)),'o',rx,rx*mr,'-',rx,rx,'-')
-  hy=ylabel(sprintf('Calculated plasmaline peak (MHz)  Magic const=%g',Magic_const));
+  hy=ylabel('Calculated plasmaline peak (MHz)');
   hx=xlabel('Measured plasmaline peak (MHz)');
   set(hx,'color','green'), set(hy,'color','blue')
-  set(gca,'xlim',[0 pmax],'ylim',[0 pmax]), axis square
+  pos=get(gca,'position'); pos(3)=.5;
+  set(gca,'xlim',[0 pmax],'ylim',[0 pmax],'position',pos), axis square
   freq_th=freq_meas;
  end
 end
 mr2=(mr*r0)^2; sr2=sr2*mr2;
-text(3,.5,sprintf('Density ratio=%.2f (%.2f)',mr2,sr2))
 newMagic=Magic_const/mr2;
 %Need some overshoot for Te changes
 better_guess=newMagic*exp(-log(mr2)/15); % 15 OK for 22May04 ESR
+text(pmax*1.04,pmax/2,sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%.0f-%.0f km\ngreen circles > %g\\sigma\n\nsuggested Magic const=%.2f',mr2,sr2,Magic_const,mean(hlim),maxe,better_guess),'horiz','left')
 if abs(mr2-1)>.01
  fprintf('Try Magic_const=%.2f; (%.2f)\n',better_guess,newMagic)
 end
