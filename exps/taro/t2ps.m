@@ -14,24 +14,11 @@ td_t1=t_to_ps(:,1)';
 td_t2=t_to_ps(:,2)';
 td_am=t_to_ps(:,3)';
 td_ch=t_to_ps(:,4)';
-if p
- ch_adcint=[.6];
- ch_filter={'w600d6.fir'};
- ch_f=[1];
- sig=find(td_ch==1 & td_am==2);
- td_t1(sig)=td_t1(sig)+100;
- site='P';
- p_rep=400000;
-elseif site=='l'
- ch_adcint=[25 25];
- ch_filter={'b14d375.fir' 'b14d375.fir'};
- ch_f=[500.3 500.4];
- p_rep=400000;
-elseif site=='t'
- ch_adcint=[10 10];
- ch_filter={'b35d150.fir' 'b35d150.fir'};
- ch_f=[12 12.1];
- p_rep=357120;
+if site=='l'
+ ch_adcint=[25 25 25 25];
+ ch_filter={'b14d375.fir' 'b14d375.fir' 'b14d375.fir' 'b14d375.fir'};
+ ch_f=[500.1 499.5 500.4 499.8];
+ p_rep=640000;
 else
  error('giveup')
 end
@@ -39,6 +26,6 @@ for f=1:length(ch_f)
  d=find(td_ch==ch_f(f));
  td_ch(d)=f;
 end
-name_expr='beata';
+name_expr='taro';
 name_site=upper(site);
 save_PS

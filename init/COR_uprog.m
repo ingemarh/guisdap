@@ -45,8 +45,11 @@ end
 
 t1=(t1(1)+N_skipped*adcint)*ones(1,N_lags);
 lp_t1(index)=t1;
-lp_h(index)=t1-pulsetimes(1);
-  
+if type=='s' | length(pulsetimes)
+  lp_h(index)=t1-pulsetimes(1);
+else
+  lp_h(index)=0;
+end  
 % finally parameters common to all types
 lp_t2(index)=t1+lags;
 lp_dt(index)=adcint*ones(1,N_lags);

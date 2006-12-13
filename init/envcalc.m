@@ -38,9 +38,14 @@ for vc=find(vc_ch>0)
   len=length(envel);
   if envel(len)~=0; envel(len+1)=0; len=len+1; end
   vc_env(1:len,vc)=envel;
-  vc_envo(vc)=start_env;
+  if isempty(start_env)
+    fprintf('(No transmission)')
+    vc_envo(vc)=NaN;
+  else
+    vc_envo(vc)=start_env;
+  end
   lenmax(1)=max(lenmax(1),len);
-%  plot((0:len-1)*p_dtau,envel)  ,keyboard
+% plot((0:len-1)*p_dtau,envel)  ,keyboard
 
   ind=1:max(find(ch_p(:,vc_ch(vc))~=0));
   impresp=ch_p(ind,vc_ch(vc));
@@ -59,7 +64,7 @@ for vc=find(vc_ch>0)
   if impresp(len)~=0; impresp(len+1)=0; len=len+1; end
   vc_p(1:len,vc)=impresp;
   lenmax(2)=max(lenmax(2),len);
-%  plot((0:len-1)*p_dtau,impresp),keyboard
+% plot((0:len-1)*p_dtau,impresp),keyboard
 end
 
 vc_env(lenmax(1)+1:maxlen,:)=[];

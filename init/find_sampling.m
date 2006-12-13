@@ -34,14 +34,18 @@ for vc=find(vc_ch>0) % These channels in use
 
   % Look first for the signal sampling, it should be there. The logic is 
   % that the first sampling period after the transmission is the signal sampling
-  ind1=find(t1>vc_envo(vc));
-  if name_site=='R' % but not so for remote!
-    ind1=ind1-1; if isempty(ind1), ind1=1; end
+  if isnan(vc_envo(vc))
+    ind1=[];
+  else
+    ind1=find(t1>vc_envo(vc));
+    if name_site=='R' % but not so for remote!
+      ind1=ind1-1; if isempty(ind1), ind1=1; end
+    end
+    [dummy,ind]=min(t1(ind1));
+    ind1=ind1(ind);
+    vc_sampling(s_ind,:)=[vc,type2ind('s'),t1(ind1),t2(ind1)]; 
+    s_ind=s_ind+1; 
   end
-  [dummy,ind]=min(t1(ind1));
-  ind1=ind1(ind);
-  vc_sampling(s_ind,:)=[vc,type2ind('s'),t1(ind1),t2(ind1)]; 
-  s_ind=s_ind+1; 
 
   for i=1:length(t1); % Look if calibration sampling done
     if any(cal_start<=t1(i) & t2(i)<=cal_stop),

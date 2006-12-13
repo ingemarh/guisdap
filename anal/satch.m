@@ -152,7 +152,7 @@ if ~OK %| Nsatb>0
  (ad_bac~=0 & arang<=ad_lag+sat_ran(j,3)) & ad_range>0 & ad_code==sat_ran(j,4));
    ad_sat=union(ad_sat,d);
   end
-  fprintf('ranges\n')
+  fprintf('%d ranges\n',length(ad_sat))
   OK=1;
  else
   fprintf('dump\n')
