@@ -166,14 +166,17 @@ if exist('analysis_intfixforce','var')
 end
 if exist('analysis_txpower','var')
  a_txpower=analysis_txpower;
+elseif name_site=='V' & a_year>2006
+ a_txpower=[70 1000];
+ fprintf('Using measured tx power, override with analysis_txpower=8;\n')
 elseif name_site~='V' & a_year>2004
  a_txpower=[65 1000];
- fprintf('Using new measured tx power, override with analysis_txpower=8;\n')
+ fprintf('Using measured tx power, override with analysis_txpower=8;\n')
 else
  a_txpower=[8 1];
 end
 if length(a_txpower)==1
- if a_txpower(1)==65, a_txpower(2)=1e3; else, a_txpower(2)=1; end
+ if a_txpower(1)==8, a_txpower(2)=1; else, a_txpower(2)=1e3; end
 end
 sysTemp=[];
 if exist('analysis_Tsys','var')
