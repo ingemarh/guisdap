@@ -43,11 +43,11 @@ par1D=zeros(n_tot,length([r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]));
 if nargout>3 & strfind('TVL',name_site) & ~isempty(r_pp)
   n_ralt=length(unique(round(r_pprange/ppres)));
   rpar2D=ones(n_ralt,n_tot,3)*NaN;
-  re=6370;
 else
   n_ralt=NaN;
   rpar2D=[];
 end
+re=6370;
 if isempty(name_ant)
   antennas=['uhf kir sod vhf esr'];
   i=(strfind('TKSVL',name_site)-1)*4+1;
