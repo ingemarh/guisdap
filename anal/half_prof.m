@@ -95,8 +95,8 @@ for g_ind=1:length(a_adstart)
   end
   rangest=1:rangest;
   rangest=(rangest-sum(rangesw.*rangest)/sum(rangesw));
-  r_w(r_ind,:)=[4*sum(abs(rangesw.*rangest))/sum(abs(rangesw))
-                2*sqrt(sum(rangesw.*rangest.^2)/sum(abs(rangesw)))
+  r_w(r_ind,:)=[4*sum(abs(rangesw.*rangest))/sum(abs(rangesw)) ...
+                2*sqrt(sum(rangesw.*rangest.^2)/sum(abs(rangesw))) ...
                 diff(mr12)]; % 3 range resolution estimates...
 
   ch=1; kd2=k_radar(ch)^2*p_D0^2; Fscale=k_radar0(ch)/k_radar(ch); % hyi hyi
