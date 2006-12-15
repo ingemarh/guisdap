@@ -35,8 +35,9 @@ if ~isempty(d)
   dvar(addr(d))=2*d_var2(addr(d));
 end
 len_eff=max(real(lpg_womscaled(ad_lpg(addr),:))')';
-sigma=p_N0*signal_power./(ad_coeff(addr)'.*len_eff);
-sigma_std=sigma.*sqrt(dvar(addr))./signal_power;
+sigfac=p_N0./(ad_coeff(addr)'.*len_eff);
+sigma=sigfac.*signal_power;
+sigma_std=sigfac.*sqrt(dvar(addr));
 if any(ad_lag(addr)>0)
   %Reduce no powerpoints but keep different codes apart
   rres=1; %range resolution given by p_dtau
