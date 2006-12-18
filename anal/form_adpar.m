@@ -13,7 +13,7 @@
 function form_adpar
 
 global lpg_ra lpg_nt lpg_ri lpg_bcs lpg_h lpg_dt lpg_w lpg_code lpg_lag lpg_bac
-global ad_range ad_w ad_code ad_lpg ad_coeff ad_lag ad_bac ADDR_SHIFT
+global ad_range ad_w ad_code ad_lpg ad_coeff ad_lag ad_bac ad_bcs ADDR_SHIFT
 global a_code lpg_bac lpg_cal
 
 zl=zeros(1,max(lpg_ra+(lpg_nt-1).*lpg_ri)+1);
@@ -30,6 +30,7 @@ for lpgs=1:length(lpg_ra)
   ad_lpg(addr)=lpgs*ol;
   ad_lag(addr)=lpg_lag(lpgs)*ol;
   ad_bac(addr)=lpg_bac(lpgs)*ol;
+  ad_bcs(addr)=lpg_bcs(lpgs)*ol;
 end
 
 if ~isempty(a_code)

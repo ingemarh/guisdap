@@ -1,7 +1,7 @@
 function [OK,ad_sat]=satch(el,secs,inttime)
 global lpg_lag lpg_wr lpg_w lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h
 global d_data a_satch a_code
-global ad_range ad_w ad_code ad_lag ad_bac
+global ad_range ad_w ad_code ad_lag ad_bac ad_bcs
 global calold
 
 ad_sat=[];
@@ -148,8 +148,8 @@ if ~OK %| Nsatb>0
  if a_satch.cut
   for j=1:size(sat_ran,1)
    arang=2*abs(ad_range-sat_ran(j,1));
-   d=find(((ad_bac==0 & arang<sat_ran(j,2)) | ...
- (ad_bac~=0 & arang<=ad_lag+sat_ran(j,3))) & ad_range>0 & ad_code==sat_ran(j,4));
+   d=find((ad_bac==0 & arang<sat_ran(j,2) | ...
+ ad_bac~=0 & arang<=ad_lag+sat_ran(j,3)) & ad_bcs=='s' & ad_code==sat_ran(j,4));
    ad_sat=union(ad_sat,d);
   end
   fprintf('%d ranges\n',length(ad_sat))
