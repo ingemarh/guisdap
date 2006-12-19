@@ -25,24 +25,25 @@ if isempty(ionomodel_first)
  ionomodel_first=0; modinfo=1;
 end
 nion=length(p_m0);
-if any([6+nion 5]-size(fit_altitude)>0)
- ff=fit_altitude;
+f=find(isnan(fit_altitude));
+if f
  % Altitudes (h2>h1) where to fit each parameter resp
  % Strucure: h1 h2 hd(transition height) maxerr minerr relerr(relative or static errors)
- fit_altitude=[0  Inf 0 1e2 1
-              80  Inf 0 1e4 0
-             107 1500 0 1e1 0
-              90  107 0 1e2 1
-               0  Inf 0 1e5 0
-       repmat([0    0 0   1 0],nion-1,1)
-               0    0 0 1e5 0
-               0    0 0 9e9 0];
+ ff=[0  Inf 0 1e2 1
+    80  Inf 0 1e4 0
+   107 1500 0 1e1 0
+    90  107 0 1e2 1
+     0  Inf 0 1e5 0
+repmat([0 0 0   1 0],nion-1,1)
+     0    0 0 1e5 0
+     0    0 0 9e9 0
+    zeros(3-nion,5)];
  if name_site=='L'
-  fit_altitude(2:4,1:2)=[90 Inf;113 1500;0 0];
+  ff(2:4,1:2)=[90 Inf;113 1500;0 0];
  elseif name_site=='V'
-  fit_altitude(2:4,1:2)=[100 Inf;120 1500;0 0];
+  ff(2:4,1:2)=[100 Inf;120 1500;0 0];
  end
- fit_altitude(1:size(ff,1),1:size(ff,2))=ff;
+ fit_altitude(f)=ff(f);
 end
 
 model=['ionomodel_' iono_model];
