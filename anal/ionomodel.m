@@ -13,37 +13,51 @@
 
 function [apriori,apriorierror]=ionomodel(heights,ne_from_pp)
 
-global ionomodel_control iono_model p_m0 fit_altitude name_site ionomodel_first
+global ionomodel_control iono_model p_m0 fit_altitude name_site
+persistent modinfo ff
 
 len=length(heights);
 heights=col(heights);
-modinfo=0;
 
 if isempty(ionomodel_control), ionomodel_control=0; end
-if isempty(iono_model), iono_model='giveme'; end
-if isempty(ionomodel_first)
- ionomodel_first=0; modinfo=1;
+if isempty(iono_model)
+ if exist('iri')==3
+  iono_model='iri';
+ else
+  iono_model='giveme';
+ end
+end
+if isempty(modinfo)
+ modinfo=1;
+elseif modinfo
+ modinfo=0;
 end
 nion=length(p_m0);
-f=find(isnan(fit_altitude));
-if f
+if isempty(ff)
  % Altitudes (h2>h1) where to fit each parameter resp
- % Strucure: h1 h2 hd(transition height) maxerr minerr relerr(relative or static errors)
- ff=[0  Inf 0 1e2 1
-    80  Inf 0 1e4 0
-   107 1500 0 1e1 0
-    90  107 0 1e2 1
-     0  Inf 0 1e5 0
-repmat([0 0 0   1 0],nion-1,1)
-     0    0 0 1e5 0
-     0    0 0 9e9 0
-    zeros(3-nion,5)];
+ % Strucure: h1 h2 hd(transition height) maxerr minerr relerr(static|relative errors) prop(linear|log|asin) lowerlim upperlim
+ ff=[0  Inf 0 1e2 1 1 1e6 1e14
+    80  Inf 0 1e4 0 1 1    2e4 
+   107 1500 0 1e1 0 1 .01  100
+    90  107 0 1e2 1 1 1    1e9
+     0  Inf 0 1e5 0 2 -2e4 2e4
+repmat([0 0 0   1 0 0 -.01 1.01],nion-1,1)
+     0    0 0 1e5 0 2 -100 1e4
+     0    0 0 9e9 0 2 -1e20 1e20];
  if name_site=='L'
   ff(2:4,1:2)=[90 Inf;113 1500;0 0];
  elseif name_site=='V'
   ff(2:4,1:2)=[100 Inf;120 1500;0 0];
  end
- fit_altitude(f)=ff(f);
+ i=size(ff); j=size(fit_altitude);
+ if i(1)>j(1), fit_altitude(j(1)+1:i(1),:)=NaN;
+ elseif j(1)>i(1), fit_altitude(i(1)+1:j(1),:)=[]; end
+ if i(2)>j(2), fit_altitude(1:i(1),j(2)+1:i(2))=NaN;
+ elseif j(2)>i(2), fit_altitude(:,i(2)+1:j(2))=[]; end
+ f=find(isnan(fit_altitude));
+ if f
+  fit_altitude(f)=ff(f);
+ end
 end
 
 model=['ionomodel_' iono_model];

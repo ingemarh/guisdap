@@ -15,9 +15,11 @@ else
  figs=str2num(get(b(9),'string'));
  extra=get(b(10),'string');
  expver=get(b(11),'value')-1;
- if size(extra,2)>10
-  while all(extra(:,end)==32), extra(:,end)=[]; end
- elseif isempty(extra)
+ while size(extra,2)>1 & all(extra(:,end)==32), extra(:,end)=[]; end
+ for i=size(extra,1):-1:1
+  if all(extra(i,:)==32), extra(i,:)=[]; end
+ end
+ if isempty(extra)
   extra=' ';
  end
 end

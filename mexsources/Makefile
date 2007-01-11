@@ -22,6 +22,7 @@ else
 FC=g77
 endif
 #MEXOPTS=-f f95opts.sh FC=$(FC)
+MEXOPTS="FLIBS=-lm"
 LDFLAGS= -shared
 endif
 

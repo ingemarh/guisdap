@@ -68,9 +68,9 @@ __inline__ unsigned long long int gethrtime (void)
 void MrqmndiagCalc(long ns,long aaN,double *aPr,double* ymPr,double *variancePr,long varianceM,long varianceN, 
 	double* ftolPr,double *itMaxPr,double *coefPr,long coefM,long coefN,
 	long womM,double *womPr,double *kd2Pr,long nom,double *omPr, 
-	double *aaOutPr,double *chi2Pr,double *itsPr,double *alphaPr,double *pldfvPr,double *pldfvPi,double *physlimPr,double *p_m0,long nion,double *bwomPr)
+	double *aaOutPr,double *chi2Pr,double *itsPr,double *alphaPr,double *pldfvPr,double *pldfvPi,double *physlimPr,double *p_m0,long nion,double *bwomPr,double *fpropPr)
 #else
-void MrqmndiagCalc(ns,aaN,aPr,ymPr,variancePr,varianceM,varianceN,ftolPr,itMaxPr,coefPr,coefM,coefN,womM,womPr,kd2Pr,nom,omPr,aaOutPr,chi2Pr,itsPr,alphaPr,pldfvPr,pldfvPi,physlimPr,p_m0,nion,bwomPr)
+void MrqmndiagCalc(ns,aaN,aPr,ymPr,variancePr,varianceM,varianceN,ftolPr,itMaxPr,coefPr,coefM,coefN,womM,womPr,kd2Pr,nom,omPr,aaOutPr,chi2Pr,itsPr,alphaPr,pldfvPr,pldfvPi,physlimPr,p_m0,nion,bwomPr,fpropPr)
 long ns,aaN,varianceM,varianceN,coefM,coefN,womM,nom,nion;
 double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOutPr,*chi2Pr,*itsPr,*alphaPr,*pldfvPr,*pldfvPi,*physlimPr,*bwomPr;
 #endif
@@ -84,7 +84,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 
 	unsigned long *varOK,nvarOK,*afree,nafree,nth=1;
 	double *tempAlpha,*plim;
-	unsigned long nag=4,ag[]={0,1,2,3},nas=3,as[]={4,0,0};
+	unsigned long nag=0,ag[9],nas=0,as[9];
 	struct pth pth;
 
 #ifdef THTIME
@@ -96,8 +96,10 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
   	start1=gethrtime();
 #endif
 
-	for(i=1;i<3;i++)
-		as[i]=3+nion+i;
+	for(i=0;i<aaN;i++)
+		if(fpropPr[i]==1) ag[nag++]=i;
+		else if(fpropPr[i]==2) as[nas++]=i;
+
 /* Get the max number of iterations from the matrix */
 
 	itMax=(long)itMaxPr[0];

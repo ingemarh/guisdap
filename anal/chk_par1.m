@@ -190,3 +190,20 @@ a_ppshortlags=0;
 if exist('analysis_ppshortlags','var')
  a_ppshortlags=analysis_ppshortlags;
 end
+
+if exist('display_analysis_pars')
+ empty_pars=[];
+ for i=who('a_*','d_s*','path_*')'
+  j=char(i);
+  if isempty(eval(j))
+   empty_pars=[empty_pars ' ' j];
+  else
+   eval(j)
+  end
+ end
+ if ~isempty(empty_pars)
+  fprintf('Empty parameters:%s\n',empty_pars)
+ end
+ fprintf('<Press return>')
+ pause
+end

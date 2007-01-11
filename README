@@ -1,4 +1,4 @@
-GUISDAP 8.4
+GUISDAP 8.5
 
 This release of guisdap contains several new features and bugfixes,
 but everything is made compatible with older versions (hopefully).
@@ -6,8 +6,8 @@ The package should be compatible with Matlab versions higher then 6.5,
 but there may (or may not) be some problems on specific platforms.
 
 Install
-Guisdap-8.4 has been succesfully installed on Solaris (Forte 7) and
-linux (gcc 3), and the makefiles are written for those systems.
+Guisdap-8.5 has been succesfully installed on Solaris and
+linux, and the makefiles are written for those systems.
 Other architectures may have to change the makefiles, if you want speed,
 othervise it should run without the compiled routines. On Windows
 systems it is recommended to run under the cygwin environment for
@@ -26,7 +26,8 @@ if you want the speed improvements the mex utility provides:
  "make"
 make a link of bin/guisdap to a place on your path (ex /usr/local/bin)
 
-Integration of historic KST data is done using the Nigel Wade integration
+Integration of historic KST data (not .mat format) is done using the
+Nigel Wade integration
 package which you have to install separately. Provided are paths to
 NW/mex6 for the mex files and NW/lib for the libraries.
 
@@ -43,28 +44,44 @@ A more detailed instruction can be found pressing the '?' button.
 
 New features
 
--Calibration routines for Tromso using the EISCAT dynasonde is provided,
- calib_ne. Calibrations using measured plasmalines for VHF and ESR is
- prepared for the tau8 and steffe experiments, calib__pl_ne.
--Correlation in frequency domain as done in the experiments is
- simulated with the COR_fdalt routine.
--A new site named 'X' should be used for IPP switching
- experiments on ESR for analysis of the 42m signals as done in the hilde
- experiment.
--Two more parameters to fit for is provided, extra broadband noise and a
- DC spike. These have been used for longpulse experiments behaiving oddly,
- but might be used in other situations also.
--A utility, guisdap_spec, to study how the IS spectrum used
- in GUISDAP behaves for provided plasma parameters is added.
--The plots during the analysis have been extended as it is possible
- to plot the fit in frequency instead of lag domain,
- display_figures(3)=-1, and for all heights using
- display_figures(4)=-1 together with analysis_savespec>0.
- The inversion can be sensitive to the tuning parameter
- but analysis_savespec=1 should work for most experiments.
--Numerous hidden improvements and refinements
+For experiments with multiple versions, such as manda and steffe, GUISDAP now
+accepts them with the same name. If the automatic version selection fails the
+initialisation to choose can be controlled by the analysis_rcprog parameter.
+Analysis on the web directly from our data base follows more or less the
+gfd setup. With that one does not need to download massive amounts of raw data
+and a matlab license or a guisdap installation. Also the running version of
+GUISDAP is used with the latest enhancements. The result files, plots and
+outputs are sent to the given email.
+Satellite checking has been improved to cut out the affected ranges instead of
+skipping the whole preintegrated dump. This feature is the default on some
+experiments and can be controlled by the boolean a_satch.cut.
+Short lags can be used for the raw density estimates via the tuning parameter
+analysis_ppshortlags.
+The matlab result files also includes range resolution, r_w. Added to the power
+profiles are range and statistical resolutions, r_ppw and r_pperr. A signature,
+name_sig, shows on what machine and when the analysis were made.
+The fit_altitude parameter have been extended to also control the physical
+limits for the parameters and how each parameter are fitted, linearly or
+logaritmic or hyperbolic.
+
+-Numerous improvements and refinements
+ Back to individual freq/channel properties
+ Redone gaincurve
+ d_saveint is now a struct: .dir as before, .var for saving variances or not
+ Display also satellite position, longer timeout in RT
+ Introduce a_intfixforce
+ Get max vizu dy from resolutions
+ Landscape vizu plot
+ New renderer for calib_pl_ne
+ Show plasma line spec in calibration
+ Use waveguide power for VHF from 2007 default
+ Better control of pp handling
+ Added taro beataT, enabling vc's without transmission
+ Adding site=P + steffe_P
+ Display the used analysis parameters with display_analysis_pars
+ ...
 
 Further information and bugfixes can be found at www.eiscat.se
 
-Good gup!
+Go on gupping!
 Ingemar Häggström

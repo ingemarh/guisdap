@@ -10,15 +10,11 @@ global d_data d_var1 d_var2 d_time p_rep p_dtau ch_el di_fit
 global lpg_ND lpg_lag lpg_womscaled lpg_bac lpg_cal lpg_background lpg_Ap
 global a_priori a_priorierror p_ND
 global r_range r_status r_w
-global pldfvv p_D0 p_N0 p_T0 p_om k_radar k_radar0 p_m0
+global pldfvv p_D0 p_N0 p_T0 p_om k_radar k_radar0 p_m0 fit_altitude
 
 r_ind=0;
-NP=size(a_priori,2);
-physlim=[-ones(1,NP)*1e20;ones(1,NP)*1e20];
 nion=length(p_m0);
-physlim(:,1:5+nion)=[1e6 1   .01  1   -2e4 -.01*ones(1,nion-1) -100
-                    1e14 2e4 100  1e9  2e4 1.01*ones(1,nion-1) 1e4];
-physlim=real_to_scaled(physlim);
+physlim=real_to_scaled(fit_altitude(:,7:8)');
 
 for g_ind=1:length(a_adstart)
   r_ind=r_ind+1;
@@ -47,43 +43,32 @@ for g_ind=1:length(a_adstart)
     end
   end
 
+  a_priorivar=a_priorierror(g_ind,:)'.^2;
   if a_control(4)==1 % Using variance estimates calculated from data
-    signal_var=real([d_var1(addr+ADDR_SHIFT)+d_var2(addr+ADDR_SHIFT);...
-                     d_var2(addr+ADDR_SHIFT)-d_var1(addr+ADDR_SHIFT)])/2;  
-    diag_var=signal_var;
-    variance=[signal_var; (a_priorierror(g_ind,:)').^2];
+    diag_var=real([d_var1(addr+ADDR_SHIFT)+d_var2(addr+ADDR_SHIFT);...
+                   d_var2(addr+ADDR_SHIFT)-d_var1(addr+ADDR_SHIFT)])/2;  
+    variance=[diag_var;a_priorivar];
   elseif a_control(4)>=2 % calculating variance estimates from ambiguity functions
     % The variance scaling is calculated from the integration time here
     % In fact, it should be based on the loop counter value stored to the data dump
-    Int_time=diff(tosecs(d_time));
-    Var_scale=(p_rep*p_dtau*1e-6/Int_time);
-    if Var_scale>1, Var_scale=1; end
-
+    Var_scale=p_ND/min(1,p_rep*p_dtau*1e-6/diff(tosecs(d_time)));
     lpgbac=lpg_bac(diff_val(lpg_cal(lpgs)));
     ind=find(lpg_lag(lpgbac)==0);
     Tback=mean(lpg_background(lpgbac(ind)));
-
     if a_control(4)==2 % variances only
       [covRe,covIm]=adgr_var(addr,Tback,aa);
-      ND2=p_ND*(lpg_ND(lpgs).^2);
-      signal_var=[covRe./ND2,covIm./ND2]'.*Var_scale;
-      diag_var=[covRe./ND2,covIm./ND2]'.*Var_scale;
-      variance=[signal_var; (a_priorierror(g_ind,:)').^2];
+      ND2=Var_scale*lpg_ND(lpgs).^2;
+      diag_var=[covRe./ND2 covIm./ND2]';
+      variance=[diag_var;a_priorivar];
     elseif a_control(4)==3 % covariances as well
-      [covRe,covIm]=adgr_covar(addr,addr,Tback,aa);
-      ND2=p_ND*(lpg_ND(lpgs)'*lpg_ND(lpgs));
-      signal_var=[covRe./ND2,zeros(size(covRe));...
-                  zeros(size(covRe)),covIm./ND2]'.*Var_scale;
+      [covRe,covIm]=adgr_covar(Tback,aa,addr);
+      ND2=Var_scale*(lpg_ND(lpgs)'*lpg_ND(lpgs));
+      signal_var=blkdiag(covRe./ND2,covIm./ND2);
       diag_var=diag(signal_var);
-      % The variance for zero lag imaginary parts is zero. These must be corrected
-      % to some non-zero value in order the program to work.
-%     ind=find(diag_var==0); mindiag=min(diag_var(diag_var>0));
-%     for ii=ind'; signal_var(ii,ii)=mindiag; end
-      [M,N]=size(signal_var);
-      variance=[signal_var zeros(M,NP);zeros(NP,N) diag((a_priorierror(g_ind,:)').^2)];
+      variance=blkdiag(signal_var,diag(a_priorivar));
     end
   end
-  reind=1:length(addr); % Real parts and diagonal only needed in altitude calculation!
+  reind=1:length(addr); %Only real parts and diagonal needed in altitude calculation!
   r_range(r_ind)=sum(ad_range(addr+ADDR_SHIFT)./diag_var(reind)')/sum(1 ./diag_var(reind));
   r12=([1;1]*ad_range(addr+ADDR_SHIFT)+[-1;1]*ad_w(addr+ADDR_SHIFT)/2);
   mr12=[min(r12(1,:));max(r12(2,:))];
@@ -103,21 +88,18 @@ for g_ind=1:length(a_adstart)
   [small_f_womega,small_p_om]=find_om_grid(aa,f_womega,kd2,Fscale*p_om,pldfvv,any(afree==nion+6));
 
   errorlim=a_control(1); status=0;
-  if errorlim>0 % To prevent unnecessary error estimation
-    % Check if the error of Ne larger than given limit when the fit is started
-    [error,correl,alpha]=error_estimate(aa,variance,kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega);
+  if errorlim>0 % Check if the error of Ne larger than given limit when the fit is started
+    [error,correl,alpha]=error_estimate(aa,variance,kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega,fit_altitude(:,6));
     if error(1)/aa(1)>errorlim, result=aa; chi2=Inf; status=2; end % No fit done
   end
   if status==0 % Now proceed to the fitting routine
     tol=a_control(2); maxiter=a_control(3);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if a_control(4)<=2
-      [result,chi2,iter,alpha]=mrqmndiag(aa,measurement,variance,tol,maxiter,...
-          kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,p_m0,physlim,fb_womega);
-    else
-      [result,chi2,iter,alpha]=mrqmn(aa,measurement,variance,tol,maxiter,...
-          kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega);
-    end
+    MRQMN='mrqmndiag';
+    if a_control(4)>2 | exist(MRQMN)~=3, MRQMN='mrqmn'; end
+    [result,chi2,iter,alpha]=feval(MRQMN,aa,measurement,variance,tol,maxiter,...
+     kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,p_m0,physlim,fb_womega,...
+     fit_altitude(:,6));
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     status=(iter>=maxiter);
     if status==0 & (any(result(afree)-eps<=physlim(1,afree)) | any(result(afree)+eps>=physlim(2,afree)))
@@ -125,7 +107,7 @@ for g_ind=1:length(a_adstart)
     end
   end
   % Forward only the variances (not covariances) to store_results
-  if min(size(variance))>1; variance=diag(variance); end
+  if min(size(variance))>1, variance=diag(variance); end
   ralpha=real(alpha);
   store_results(aa,measurement,variance,real(result),ralpha,chi2,status,kd2,...
           p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega,lpgs,r_ind,g_ind);

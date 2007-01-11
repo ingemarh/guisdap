@@ -1,7 +1,5 @@
-global iono_model fit_altitude a_satch a_Offsetppd
- iono_model='iri';
- if exist('iri')~=3, iono_model='giveme'; end
- fit_altitude=NaN*ones(9,5);
+global iono_model fit_altitude a_satch a_Offsetppd d_saveint
+fit_altitude=NaN*ones(9,8);
 
 first=75; last=2500; d1=3; d2=1; n1=10;
 
