@@ -3563,7 +3563,7 @@ c----------------------------------------------------------------
 
            integer      yr, mm, day, iflag, iyst, iyend,iymst
            integer      imst,iymend
-           real         ionoindx(602),indrz(602)
+           real         ionoindx(722),indrz(722)
            real         ig(3),rz(3)
 
            common /iounit/konsol,monito
