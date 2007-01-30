@@ -75,8 +75,7 @@ while i<length(files)
   i=i+1; file=files(i);
   filename=fullfile(file.dir,sprintf('%08d%s',file.file,file.ext));
   i_averaged=1; i_var1=[]; i_var2=[];
-  %try, load(canon(filename,0))
-  load(canon(filename,0))
+  try, load(canon(filename,0))
 
   lpb=length(d_parbl);
   if lpb==128
@@ -231,9 +230,8 @@ while i<length(files)
     if EOF, break, end
     d=cell2mat({d_filelist.file});
     files=d_filelist(find(d>a_interval(1) & d<=a_interval(2)));
-%   files=d_filelist(find(d_filelist.file>a_interval(1) & d_filelist.file<=a_interval(2)));
   end
-  %catch, disp(lasterr), end
+  catch, disp(lasterr), end
 end
 
 if OK, % if at least one good data dump was found
