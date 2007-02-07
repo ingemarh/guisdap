@@ -1,8 +1,13 @@
 function [altitude,ne,te,ti,coll,cO,cM2,cH]=ionomodel(heights,modinfo)
-if modinfo
- fprintf('** The model uses the IRI-2001 model at the tx position**\n')
-end
 global d_time p_XMITloc
+if modinfo
+ [i1,i2,i3,i4]=textread(fullfile(getenv('IRIPATH'),'ig_rz.dat'),'%d,%d,%d,%d',1,'headerlines',2);
+ i5=datenum(d_time(1,:));
+ if i5>datenum(i4,i3,31) | i5<datenum(i2,i1,1)
+  error('Date is outside iri model time range, please update the iri model')
+ end
+ fprintf('** The model uses the IRI-2001 model at the tx position (%.1f %.1f)**\n',p_XMITloc(1:2))
+end
 [tsec,year]=tosecs(d_time(1,:));
 hh=[min(heights)-1 max(heights)+1.1 1]; if hh(2)-hh(1)>100, hh(3)=0; end
 m_iri=iri([1 4 3 6 8 9 10 12],[tsec year],p_XMITloc(1:2),hh);
