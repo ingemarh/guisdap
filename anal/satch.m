@@ -9,25 +9,29 @@ if isempty(lpg_lag)
   OK=1; return
 end
 if ~isfield(a_satch,'filled')
-  if ~isfield(a_satch,'sigma'), a_satch.sigma=4; end	% detection limit sig
-  if ~isfield(a_satch,'sigmab'), a_satch.sigmab=3; end	% det lim bac+cal
-  if ~isfield(a_satch,'sigmac'), a_satch.sigmac=Inf; end% det lim cal fill
-  if ~isfield(a_satch,'calsecs'), a_satch.calsecs=99; end% time lim cal fill
-  if ~isfield(a_satch,'skip'), a_satch.skip=0; end	% no points to skip
-  if ~isfield(a_satch,'clutter'), a_satch.clutter=0; end% no clutter red points
-  if ~isfield(a_satch,'clutfac'), a_satch.clutfac=1000; end% amount of clutter
-  if ~isfield(a_satch,'repair'), a_satch.repair=0; end	% for alt codes
-  if ~isfield(a_satch,'prep'), a_satch.prep=max(vc_penvo); end% p_rep
-  if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
-  if ~isfield(a_satch,'lpg_skip'), a_satch.lpg_skip=[]; end% lpg to skip
-  if ~isfield(a_satch,'cut'), a_satch.cut=0; end	% cut or trash
-  if ~isfield(a_satch,'do'), a_satch.do=1; end		% do satch
-  a_satch.opts=optimset(optimset('fminsearch'),'display','off');
-  a_satch.filled=1;
-  if a_satch.do
-   disp('Warning: Satellite check works only for single RC prog exps,')
-   disp('         starting with the 2nd integration period')
+ if ~isfield(a_satch,'sigma'), a_satch.sigma=4; end	% detection limit sig
+ if ~isfield(a_satch,'sigmab'), a_satch.sigmab=3; end	% det lim bac+cal
+ if ~isfield(a_satch,'sigmac'), a_satch.sigmac=Inf; end% det lim cal fill
+ if ~isfield(a_satch,'calsecs'), a_satch.calsecs=99; end% time lim cal fill
+ if ~isfield(a_satch,'skip'), a_satch.skip=0; end	% no points to skip
+ if ~isfield(a_satch,'clutter'), a_satch.clutter=0; end% no clutter red points
+ if ~isfield(a_satch,'clutfac'), a_satch.clutfac=1000; end% amount of clutter
+ if ~isfield(a_satch,'repair'), a_satch.repair=0; end	% for alt codes
+ if ~isfield(a_satch,'prep'), a_satch.prep=max(vc_penvo); end% p_rep
+ if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
+ if ~isfield(a_satch,'lpg_skip'), a_satch.lpg_skip=[]; end% lpg to skip
+ if ~isfield(a_satch,'cut'), a_satch.cut=0; end	% cut or trash
+ if ~isfield(a_satch,'do'), a_satch.do=1; end		% do satch
+ a_satch.opts=optimset(optimset('fminsearch'),'display','off');
+ a_satch.filled=1;
+ if a_satch.do
+  disp('Warning: Satellite check works only for single RC prog exps,')
+  disp('         starting with the 2nd integration period')
+  if isempty(lpg_wr)
+   disp('Warning: Range ambiguity profiles missing')
+   disp('         Satellite checking might fail, or reinitialise')
   end
+ end
 end
 if ~a_satch.do
  OK=1; return
@@ -51,7 +55,12 @@ for i=lp
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
  N=lpg_ND(i)*inttime/(a_satch.prep*1e-6);
  dat=real(d_data(addr));
- [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,full(lpg_wr(:,i))/lpg_ND(i),lpg_dt(i),dat,N,C,[nclutter(ii) a_satch.clutfac]);
+ if isempty(lpg_wr)
+  wr=[0;ones(round(lpg_w(i)),1);0];
+ else
+  wr=full(lpg_wr(:,i))/lpg_ND(i);
+ end
+ [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,wr,lpg_dt(i),dat,N,C,[nclutter(ii) a_satch.clutfac]);
  ind=find(pb<=length(dat)-L+1+nsp_no_use(ii));
  pb=pb(ind)+L/2; x0=x0(ind);
  if ind>0
