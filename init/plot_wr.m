@@ -137,10 +137,8 @@ end
 
  	%% If certain necessary variables are empty, we cannot proceed
 	if (isempty(lpg_bcs) | isempty(lpg_dt) | isempty(p_dtau))
-		disp(' ')
-	 	disp(['Error: Variable set not complete ... ' ...
+	 	error(['Variable set not complete ... ' ...
 			' try typing "load_initfile" and "load_GUPvar"'])
-		return
 	end
 
 	%% wr_NAME is a global variable used by the programme, which
@@ -152,8 +150,7 @@ end
 	%% only complete sets of lpg raf's are ever stored to wr_file.
 
 	if isempty(name_expr)
-		disp('Error: ''name_expr'' is blank! Is it global? Should be..')
-		return
+		error('''name_expr'' is blank! Is it global? Should be..')
 	else
 		eval(['wr_name = ''' 'wr_' name_expr ''';'])
 		eval(['wr_file = ''' path_tmp wr_name '.mat'';'])
@@ -171,7 +168,6 @@ end
 	clean=0; limit=0;
 	for a=1:nargin
 		if eval(['strcmp(arg' int2str(a) ',''clear'')'])
-			disp(' ')
 			disp(['Note: Clearing variable ' wr_name ' ...'])
 			eval([wr_name '=[];'])
 			clean = 1;
@@ -186,11 +182,9 @@ end
 	if eval(['(~isempty(' wr_name ') & ' 			...
 		 '(size(' wr_name ',2) < length(all_lpgs)) & '	...
 		 '(limit==0))'])
-		disp(' ')
-		disp(['Warning: The global variable ' wr_name ' is possibly incomplete'])
+		warning(['The global variable ' wr_name ' is possibly incomplete'])
 		replace = input('Do you want to create it afresh? (y=yes) ','s');
 		if (['strcmp(''' replace ''',''y'')'])
-			disp(' ')
 			disp(['Note: Clearing variable ' wr_name ' ...'])
 			eval([wr_name '=[];'])
 		end
@@ -211,7 +205,6 @@ end
 		%% wr_file (this ensures that only complete sets of
 		%% signal lpg raf's are saved to wr_file).
 		if eval(['(exist(''' wr_file ''')==2)'])
-			disp(' ')
 			disp(['Note: Loading ' wr_file ' ...'])
 			load(wr_file)
 		else
@@ -233,7 +226,6 @@ end
 				      ' = pad(wr_' name_expr ',wrlpg(i),0);'])
 			end
 			if (limit==0)	%% Full set of signal raf's ...
-				disp(' ')
 				disp(['Note: saving range ambiguity functions '...
 				      'to file ' wr_file ' ...'])
 				eval(['save ' wr_file '  ' wr_name])
@@ -242,7 +234,6 @@ end
 
 	else
 		%% Global range ambiguity function information is available  ...
-		disp(' ')
 		disp(['Note: Using stored lag profile information ..... ' ...
 		      'to start again:'])
 		disp(['****: Include the argument ' ...
@@ -284,7 +275,7 @@ end
 			if  eval(['strcmp(arg' int2str(j) ',''panel'')'])
 				%% Each panel specified separately ...
 				j = j+1; if (j+1 > nargin)
-					disp('Error in usage! (2)'), return
+					error('Usage of (2)')
 				else
 					if eval(['isempty (arg' int2str(j) ')'])
 						l = pad(l,inf,inf);
@@ -302,7 +293,7 @@ end
 			elseif  eval(['strcmp(arg' int2str(j) ',''Fontsize'')'])
 				%% Set the fontsize explicitly ...
 				j = j+1; if (j > nargin)
-					disp('Error in usage! (Fontsize)'), return
+					error('Usage of Fontsize')
 				else
 					eval(['font_size=arg' int2str(j) ';'])
 				end
@@ -310,7 +301,7 @@ end
 			elseif  eval(['strcmp(arg' int2str(j) ',''Fontweight'')'])
 				%% Set the fontweight explicitly ...
 				j = j+1; if (j > nargin)
-					disp('Error in usage! (Fontweight)'), return
+					error('Usage of Fontweight')
 				else
 					eval(['font_wght=arg' int2str(j) ';'])
 				end
@@ -318,7 +309,7 @@ end
 			elseif  eval(['strcmp(arg' int2str(j) ',''Fontname'')'])
 				%% Set the fontname explicitly ...
 				j = j+1; if (j > nargin)
-					disp('Error in usage! (Fontname)'), return
+					error('Usage of Fontname')
 				else
 					eval(['font_name=arg' int2str(j) ';'])
 				end
@@ -336,10 +327,8 @@ end
 
 		%% A) Do lpgs and tlim correspond to the same number of panels?
 		if (size(lpgs,2) ~= size(tlim,2))
-			disp(' ')
-			disp(['Error: Number of columns in lpg array ' ...
+			error(['Number of columns in lpg array ' ...
 			      'must equal number of columns in time matrix'])
-			return
 		end
 		npanels = size(lpgs,2);
 
@@ -351,16 +340,12 @@ end
 		%% the corresponding limit value .....
 		timecheck   = size(tlim,1);
 		if (timecheck < 2)
-			disp(' ')
-			disp(['Error: Start and end time for each panel '  ...
+			error(['Start and end time for each panel '  ...
 			      'must be specified'])
-			return
 		elseif ((timecheck==3) | (timecheck > 4))
-			disp(' ')
-			disp(['Warning: Either supply only start and end ' ...
-			      'times, or start and end time plus major '   ...
-			      'and minor tickmark spacing (no other '      ...
-			      'combination)'])
+			warning(['Either supply only start and end times,' ...
+			 'or start and end time plus major and minor ' ...
+			 'tickmark spacing (no other combination)'])
 			tlim(3:timecheck,:) = [];
 			timecheck   = size(tlim,1);
 		end
@@ -409,18 +394,15 @@ end
 		%% wr_NAME is "complete" so that limit should be set to 0.
 		if (limit==1)
 			if eval(['(exist(''' wr_file ''')==2)'])
-				disp(' ')
 				disp(['Note: No need to limit ' wr_name ...
 				      ' since ' wr_file ' is available  ...'])
 				disp(['Note: Loading ' wr_file ' ...'])
 				load(wr_file)
 				limit=0;	%% No further need for this ...
 			else			
-				disp(' ')
 				disp(['Note: Clearing variable ' wr_name ' ...'])
 				eval([wr_name '=[];'])
 				total = length(list);
-				disp(' ')
 				disp('**** Limited lpg range ambiguity function set ...')
 				k=0; for i = list'
 					k = k + 1;
@@ -486,25 +468,21 @@ end
 
 			%% Check each panel's lpg information ...
 			if any(~any(dupcol(all_lpgs,length(testlpg))==duprow(testlpg',length(all_lpgs))))
-				disp(' ')
-				disp(['Warning: Lag profile group selection ' int2str(i) ' is invalid'])
+				warning(['Lag profile group selection ' int2str(i) ' is invalid'])
 				togo = [togo i];	%% Any columns of go?
 
 			%% Check each panel's initial time limit ...
 			%% The upper time limit is not strictly enforced
 %			elseif ((tlim(1,i) < all_tlim(1)) | (tlim(2,i) > all_tlim(2)))
 			elseif (tlim(1,i) < all_tlim(1))
-				disp(' ')
-				disp(['Warning: Time limits ' num2str(tlim(1,i)) ' and ' num2str(tlim(2,i)) ' are invalid'])
+				warning(['Time limits ' num2str(tlim(1,i)) ' and ' num2str(tlim(2,i)) ' are invalid'])
 				togo = [togo i]; 	%% Any columns to go?
 			end
 		end
 		if ~isempty(togo)
 			npanels = npanels - length(togo);
 			if (npanels < 1)
-				disp(' ')
-				disp('Error: no valid input information')
-				return
+				error('no valid input information')
 			else
 				lpgs(:,togo) = [];
 				tlim(:,togo) = [];
@@ -723,7 +701,6 @@ end
 	end
 
 	%% Store the panels handles for subsequent use ....
-	disp(' ')
 	disp('Note: The axes'' handles are stored in figure''s "UserData"')
 	disp('****: Use these to make further modifications to the figure')
 	disp('****: Use the returned texthandles to modify the lpg numbers')

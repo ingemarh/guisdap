@@ -67,7 +67,7 @@ while ~EOF
       if any(abs(1-read_antpar./[ch_fradar(1) ch_gain(1)])>.1)
         ch_fradar=read_antpar(1)*ones(size(ch_fradar));
         ch_gain=read_antpar(2)*ones(size(ch_gain));
-        fprintf('Warning: Changed radar freq and antenna gain from init\n')
+        warning('Changed radar freq and antenna gain from init')
       end
       Ant_eff=radar_effs(ant_id);
       if a_control(4)>=2, load_GUPvar, end  

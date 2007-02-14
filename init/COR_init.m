@@ -36,7 +36,7 @@ catch
  else
   lp_fir=repmat(int8(zeros(1,nlp)),nfir,1);
  end
- fprintf('Warning: Too large matrix -- trying with integer fir coeffs\n')
+ warning('Too large matrix -- trying with integer fir coeffs')
 end
 lp_dec=zeros(1,nlp);
 lp_T=zeros(1,nlp);

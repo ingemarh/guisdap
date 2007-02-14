@@ -105,26 +105,22 @@ end
 	if (~isempty(vc_ch)   & ~isempty(vc_env) & ...
 	    ~isempty(vc_envo) & ~isempty(vc_sampling))
 		%% Using  GUISDAP variables ...
-		disp(' ')
 		disp('Note: Using GUISDAP variables...')
 		use_vc = 1;
 	elseif (~isempty(td_ch) & ~isempty(td_am) & ...
 		~isempty(td_t1) & ~isempty(td_t2))
 		%% Using td_variables ...
-		disp(' ')
 		disp('Note: Using td_variables ... vc_variables not available')
 		use_vc = 0;
 	else
-		disp('Error: No complete set of variables found to use ...')
-		return
+		error('No complete set of variables found to use ...')
 	end
 
 	%% Run a check on the 2 global variables need for both options ...
 	if isempty(p_rep)
-		disp('Error: Cannot run without global variable p_rep ...')
-		return
+		error('Cannot run without global variable p_rep ...')
 	elseif isempty(p_dtau)
-		disp('Warning:Global variable p_dtau empty; setting p_dtau = 1')
+		warning('Global variable p_dtau empty; setting p_dtau = 1')
 		p_dtau = 1;
 	end
 
@@ -186,7 +182,7 @@ end
 			if  eval(['strcmp(arg' int2str(j) ',''panel'')'])
 				%% Each panel specified separately ...
 				j = j+1; if (j+1 > nargin)
-					disp('Error in usage! (2)'), return
+					error('Usage of (2)')
 				else
 					if eval(['isempty (arg' int2str(j) ')'])
 						c = pad(c,inf,inf);
@@ -204,7 +200,7 @@ end
 			elseif eval(['strcmp(arg' int2str(j) ',''cycles'')'])
 				%% Number of cycles to be plotted ...
 				j = j+1; if (j > nargin)
-					disp('Error in usage! (3)'), return
+					error('Usage of (3)')
 				else
 					eval(['N=arg' int2str(j) ';'])
 				end
@@ -212,7 +208,7 @@ end
 			elseif  eval(['strcmp(arg' int2str(j) ',''Fontsize'')'])
 				%% Set the fontsize explicitly ...
 				j = j+1; if (j > nargin)
-					disp('Error in usage! (Fontsize)'), return
+					error('Usage of Fontsize')
 				else
 					eval(['font_size=arg' int2str(j) ';'])
 				end
@@ -220,7 +216,7 @@ end
 			elseif  eval(['strcmp(arg' int2str(j) ',''Fontweight'')'])
 				%% Set the fontweight explicitly ...
 				j = j+1; if (j > nargin)
-					disp('Error in usage! (Fontweight)'), return
+					error('Usage if Fontweight')
 				else
 					eval(['font_wght=arg' int2str(j) ';'])
 				end
@@ -228,7 +224,7 @@ end
 			elseif  eval(['strcmp(arg' int2str(j) ',''Fontname'')'])
 				%% Set the fontname explicitly ...
 				j = j+1; if (j > nargin)
-					disp('Error in usage! (Fontname)'), return
+					error('Usage of Fontname')
 				else
 					eval(['font_name=arg' int2str(j) ';'])
 				end
@@ -244,7 +240,7 @@ end
 		%% Is it necessary to duplicate the time variables
 		%% in order to plot several cycles? ..............
 		if (N > 1)
-			disp('Warning: Do not interrupt this process!!!')
+			warning('Do not interrupt this process!!!')
 			if (use_vc)
 				vc_sampling_copy = vc_sampling;
 				vc_envo_copy     = vc_envo;
@@ -278,9 +274,8 @@ end
 		%% A) Do channels and times correspond to the same number
 		%% of panels?
 		if (size(channels,2) ~= size(times,2))
-			disp(['Error: Number of columns in channels matrix ' ...
-			      ' must equal number of columns in times matrix'])
-			return
+			error(['Number of columns in channels matrix ' ...
+			      'must equal number of columns in times matrix'])
 		end
 		npanels = size(channels,2);
 
@@ -290,14 +285,11 @@ end
 		%% and end time are provivded. Otherwise all must be given.
 		timecheck = size(times,1);
 		if (timecheck < 2)
-			disp(['Error: Start and end time for each panel '   ...
-			      'must be specified'])
-			return
+			error('Start and end time for each panel must be specified')
 		elseif ((timecheck==3) | (timecheck > 4))
-			disp(['Warning: Either supply only start and end '  ...
-			      'times, or start and end time plus major '    ...
-			      'and minor tickmark spacing (no other '       ...
-			      'combination)'])
+			warning(['Either supply only start and end times,' ...
+			 'or start and end time plus major and minor' ...
+			 'tickmark spacing (no other combination)'])
 			times(3:timecheck,:) = [];
 			timecheck = size(times,1);
 		end
@@ -376,12 +368,12 @@ end
 
 			%% Check each panel's channel information .....
 			if any(~any(dupcol(expch,length(testch))==duprow(testch',length(expch))))
-				disp(['Warning: Channel selection ' num2str(testch) ' is invalid'])
+				warning(['Channel selection ' num2str(testch) ' is invalid'])
 				togo = [togo i]; %% Any columns to go ...
 
 			%% Check each panel's time information .....
 			elseif ((testtf > tf) | (testti < ti))
-				disp(['Warning: Times ' num2str(testti) ' and ' num2str(testtf) ' are invalid'])
+				warning(['Times ' num2str(testti) ' and ' num2str(testtf) ' are invalid'])
 				togo = [togo i]; %% Any columns to go ...
 			end
 		end
@@ -390,8 +382,7 @@ end
 		if ~isempty(togo)
 			npanels = npanels - length(togo);
 			if (npanels < 1)
-				disp('Error: no valid input information')
-				return
+				error('no valid input information')
 			else
 				channels(:,togo) = [];
 				times(:,togo)    = [];
@@ -538,7 +529,6 @@ end
 				recep_x = [t1 t2 t2 t1]' .* p_dtau;
 				recep_y = [yaxis; yaxis; (yaxis+0.35); (yaxis+0.35)];
 			else
-				disp(' ')
 				disp(['Note: No reception intervals in panel ' int2str(i) ' ...'])
 			end
 		
@@ -570,7 +560,6 @@ end
 				calib_x = [t1 t2 t2 t1]' .* p_dtau;
 				calib_y = dupcol([min(cindex) min(cindex) max(cindex)+1 max(cindex)+1]',length(index));
 			else
-				disp(' ')
 				disp(['Note: No calibration intervals in panel ' int2str(i) ' ...'])
 			end
 	
@@ -617,7 +606,6 @@ end
 				%% Convert GUISDAP time units to us
 				trans_x = trans_x .* p_dtau;
 			else
-				disp(' ')
 				disp(['Note: No transmission intervals in panel ' int2str(i) ' ...'])
 			end
 
@@ -635,7 +623,6 @@ end
 				calib_x = [t1' t2' t2' t1']' .* p_dtau;
 				calib_y = dupcol([min(cindex) min(cindex) max(cindex)+1 max(cindex)+1]',length(index));
 			else
-				disp(' ')
 				disp('Note: No calibration intervals ...')
 			end
 	
@@ -661,7 +648,6 @@ end
 				trans_x = [t1' t2' t2' t1']' .* p_dtau;
 				trans_y = [yaxis; yaxis; (yaxis+(td_am(index)*0.35)); (yaxis+(td_am(index)*0.35))];
 			else
-				disp(' ')
 				disp(['Note: No transmission intervals in panel ' int2str(i) ' ...'])
 			end
 	
@@ -687,7 +673,6 @@ end
 				recep_x = [t1' t2' t2' t1']' .* p_dtau;
 				recep_y = [yaxis; yaxis; (yaxis+0.35); (yaxis+0.35)];
 			else
-				disp(' ')
 				disp(['Note: No reception intervals in panel ' int2str(i) ' ...'])
 			end
 		end
@@ -767,7 +752,6 @@ end
 	axes(panels(1))
 
 	%% Store the panels handles for subsequent use ....
-	disp(' ')
 	disp(['Note: Individual panel handles are obtained using: ' ...
 	      'get(gcf,''UserData'')'])
 	set(gcf,'UserData',panels);
@@ -788,7 +772,6 @@ end
 			td_t1       = td_t1_copy;
 			td_t2       = td_t2_copy;
 		end
-		disp(' ')
 		disp('Note: You may now use interrupts again .....')
 	end
 %end
