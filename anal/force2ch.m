@@ -18,6 +18,6 @@ for i=forced'
    eval([forcedpar '=' forcepar ';'])
   end
  else
-  disp(['Forced parameter ' forcedpar ' do not exists!'])
+  warning('GUISDAP:default','Forced parameter %s do not exists!',forcedpar)
  end
 end

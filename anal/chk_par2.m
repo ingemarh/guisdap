@@ -87,7 +87,7 @@ else
       end
       clear code temp ind gates codes i
     elseif max(a_code)>max(lpg_code)
-      warning('Analysis_code variable not well defined and neglected')
+      warning('GUISDAP:chkpar','Analysis_code variable not well defined and neglected')
       a_code=[];
     elseif length(name_ant)==3 & ~all(ismember(lpg_code,a_code))
       name_ant=[name_ant 96+a_code(1)];
@@ -121,7 +121,7 @@ for gate=find(diffran>0)
   if a_control(4)==1
     % Remove addresses for which variance have not been determined
     if any(~real(d_var1(addr))) & ~bad_var
-      warning('Points removed from analysis due to bad variance determination')
+      warning('GUISDAP:chkpar','Points removed from analysis due to bad variance determination')
       bad_var=1;
     end
     addr=addr(find(real(d_var1(addr))));
@@ -136,7 +136,7 @@ for gate=find(diffran>0)
 end
 
 if isempty(a_addr) & isempty(d_saveint)
-  warning('No data have been selected')
+  warning('GUISDAP:chkpar','No data have been selected')
   if ~bad_var
     error('Check the data selection parameters')
   end

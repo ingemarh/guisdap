@@ -130,7 +130,7 @@ if nargout>3 & ~isempty(pp)
     n_ralt=max(diff(ip));
     rpar2D=ones(n_ralt,n_tot,3)*NaN;
   else
-    disp('Different pp and acf data times not allowed --ignoring pp')
+    warning('GUISDAP:default','Different pp and acf data times not allowed --ignoring pp')
   end
 end
 for i=1:n_tot
@@ -159,4 +159,3 @@ end
 if nralt<n_ralt
   rpar2D=rpar2D(1:nralt,:,:);
 end
-%disp('Done.')

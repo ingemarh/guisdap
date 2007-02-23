@@ -25,11 +25,9 @@ if ~isfield(a_satch,'filled')
  a_satch.opts=optimset(optimset('fminsearch'),'display','off');
  a_satch.filled=1;
  if a_satch.do
-  disp('Warning: Satellite check works only for single RC prog exps,')
-  disp('         starting with the 2nd integration period')
+  warning('GUISDAP:satch','Satellite check works only for single RC prog exps,\n         starting with the 2nd integration period')
   if isempty(lpg_wr)
-   disp('Warning: Range ambiguity profiles missing')
-   disp('         Satellite checking might fail, or reinitialise')
+   warning('GUISDAP:satch','Range ambiguity profiles missing\n         Satellite checking might fail, or reinitialise')
   end
  end
 end
@@ -153,7 +151,7 @@ if ~OK %| Nsatb>0
   end
   drawnow
  end
- fprintf('Warning: Satellite detection (%d %.1f %.0f) -- skipping ',Nsat,x0max,pbmax)
+ msg=sprintf('Satellite detection (%d %.1f %.0f) -- skipping',Nsat,x0max,pbmax);
  if a_satch.cut
   for j=1:size(sat_ran,1)
    arang=2*abs(ad_range-sat_ran(j,1));
@@ -161,10 +159,10 @@ if ~OK %| Nsatb>0
  ad_bac~=0 & arang<=ad_lag+sat_ran(j,3)) & ad_bcs=='s' & ad_code==sat_ran(j,4));
    ad_sat=union(ad_sat,d);
   end
-  fprintf('%d ranges\n',length(ad_sat))
+  warning('GUISDAP:satch','%s %d ranges',msg,length(ad_sat))
   OK=1;
  else
-  fprintf('dump\n')
+  warning('GUISDAP:satch',[msg ' dump'])
  end
 end
 return

@@ -137,8 +137,7 @@ else
 			' | strcmp(arg' int2str(j) ',''Panel''))'])
 			%% Each panel specified separately ...
 			j = j+1; if (j+1 > nargin)
-				disp(' ')
-				disp('Error in usage! (1)'), return
+				error('Usage of (1)')
 			else
 				eval(['m=arg' int2str(j) ';'])
 				j = j+1;
@@ -202,8 +201,7 @@ else
 			    ' | strcmp(arg' int2str(j) ',''markersize''))'])
 			%% Set the fontsize explicitly ...
 			j = j+1; if (j > nargin)
-				disp(' ')
-				disp('Error in usage! (Markersize)'), return
+				error('Usage of Markersize')
 			else
 				eval(['marker_size=arg' int2str(j) ';'])
 			end
@@ -218,8 +216,7 @@ else
 			    ' | strcmp(arg' int2str(j) ',''fontsize''))'])
 			%% Set the fontsize explicitly ...
 			j = j+1; if (j > nargin)
-				disp(' ')
-				disp('Error in usage! (Fontsize)'), return
+				error('Usage of Fontsize')
 			else
 				eval(['font_size=arg' int2str(j) ';'])
 			end
@@ -229,8 +226,7 @@ else
 			    ' | strcmp(arg' int2str(j) ',''fontweight''))'])
 			%% Set the fontweight explicitly ...
 			j = j+1; if (j > nargin)
-				disp(' ')
-				disp('Error in usage! (Fontweight)'), return
+				error('Usage of Fontweight')
 			else
 				eval(['font_wght=arg' int2str(j) ';'])
 			end
@@ -240,8 +236,7 @@ else
 			    ' | strcmp(arg' int2str(j) ',''fontname''))'])
 			%% Set the fontname explicitly ...
 			j = j+1; if (j > nargin)
-				disp(' ')
-				disp('Error in usage! (Fontname)'), return
+				error('Usage of Fontname')
 			else
 				eval(['font_name=arg' int2str(j) ';'])
 			end
@@ -257,19 +252,16 @@ else
 	%% Check parameter mask ...
 	if isempty(mask)
 		mask = ones(1,maxpars);
-		disp(' ')
 		disp('Note: Supplying default parameter mask .....')
 
 	elseif (length(mask) > maxpars)
 		%% Truncate to maximum mask length ...
 		mask(maxpars+1:length(mask)) = [];
-		disp(' ')
 		disp(['Note: Using parameter mask ' int2str(mask) ' .....'])
 
 	elseif (length(mask) < maxpars)
 		%% Fill out missing elements ...
 		mask(length(mask)+1:maxpars) = zeros(1,maxpars - length(mask));
-		disp(' ')
 		disp(['Note: Using parameter mask ' int2str(mask) ' .....'])
 	end
 	npanels = length(find(mask));
@@ -281,8 +273,7 @@ else
 	if ~isempty(file)
 		togo=[]; for k = 1:size(file,1)
 			if (fopen(canon(file(k,:),0)) < 0)
-				disp(' ')
-				disp(['Warning: Cannot open ' file(k,:) '... '])
+				warning(['Cannot open ' file(k,:) '... '])
 				togo = [togo k];
 			end
 		end
@@ -305,20 +296,15 @@ else
 	if ~isempty(hght)
 		hghtcheck1 = size(hght(~isnan(hght)),1);
 		if (hghtcheck1 < 2)
-			disp(' ')
-			disp(['Error: Upper and lower height ' ...
+			error(['Upper and lower height ' ...
 			      'limits for each panel must be specified'])
-			return
 		elseif (hghtcheck1 > 3)
-			disp(' ')
-			disp(['Warning: Programme requires only ' ...
-			      'upper and lower height limits, '   ...
-			      'and an optional tickmark spacing'])
+			warning(['Programme requires only upper and lower ' ...
+			 'height limits, and an optional tickmark spacing'])
 			hght(3:size(hght,1),:) = [];
 		end
 		hghtcheck2  = size(hght,2);
 		if (hghtcheck2 > 1)
-			disp(' ')
 			disp('Note: height array should be 1-D ...')
 			hght(:,2:hghtcheck2) = [];
 		end
@@ -327,14 +313,13 @@ end	%% End of argument checks .... see below for hght check
 
 %% If data comes from files, construct the data variables first
 if (~use_ws)
-	disp(' ')
 	disp('Note: Obtaining data variables from specified file(s)')
-	param=[]; error=[]; status=[]; h=[]; dp=[]; el=[]; time=[];
+	param=[]; err=[]; status=[]; h=[]; dp=[]; el=[]; time=[];
 	name=[]; site=[];
 	for k = 1 : nfiles
 		load(canon(file(k,:),0))
 		param  = pad(param,r_param,NaN);
-		error  = pad(error,r_error(:,1:lr),NaN);
+		err    = pad(err,r_error(:,1:lr),NaN);
 		status = pad(status,r_status,NaN);
 		h      = pad(h,r_h,NaN);
 		dp     = pad(dp,r_dp,NaN);
@@ -346,15 +331,13 @@ if (~use_ws)
 else
 	if (isempty(r_param) | isempty(r_error) | isempty(r_status) | ...
 	    isempty(r_h)     | isempty(r_dp)    | isempty(d_time))
-		disp(' ')
 		disp('Note: There are no result variables on the workspace')
 		return
 %	else
-%		disp(' ')
 %		disp('Note: Using variables on the workspace')
 	end
 	param  = r_param;
-	error  = r_error(:,1:lr);
+	err    = r_error(:,1:lr);
 	status = r_status;
 	h      = r_h;
 	dp     = r_dp;
@@ -366,42 +349,38 @@ end
 
 %% Check that variables have been declared as global outside
 %% this function i.e. whether they are really available!
-if (isempty(param) | isempty(error)  | ...
-    isempty(dp)    | isempty(status) | ...
-    isempty(h)     | isempty(el) | isempty(d_time))
-	disp(' ')
+if (isempty(param) | isempty(err)  | isempty(dp) | isempty(status) | ...
+    isempty(h) | isempty(el) | isempty(d_time))
 	disp('Error: (Global) variable set incomplete .....')
 	disp('*****: Check r_param,r_error,r_status,r_dp,r_h,ch_el & d_time')
 	return
 end
 check = size(param,1);	%% Check their dimensions ....
-if ((size(error,1) ~= check) | ...
+if ((size(err,1)   ~= check) | ...
     (size(h,1)     ~= check) | ...
     (size(status,1)~= check) | ...
     (size(dp,1)    ~= check))
-	disp(' ')
-	disp(['Error: r_error, r_h, r_status, r_dp and r_param ' ...
+	error(['r_error, r_h, r_status, r_dp and r_param ' ...
 	      'must have the same no. rows']) 
-	return
 end
 %% Scale NE if necessary ... and replace fourth column of r_param
 %% with composition information if the latter is desired ....
 if (use_ws)
 	if any(mask & NE)
 		param(:,1) = param(:,1)/1e11;
-		error(:,1) = error(:,1)/1e11;
+		err(:,1) = err(:,1)/1e11;
 	end
 	if any(mask & CP)
 		%% Replace fourth column (coll. freq.)
 		%% with composition information.
 		param(:,4) = dp;
-		error(:,4) = duprow(NaN,length(dp));
+		err(:,4) = duprow(NaN,length(dp));
 	end
 else
 	if any(mask & NE)
 		ind = dupcol2(1,nfiles,5);
 		param(:,ind) = param(:,ind)/1e11;
-		error(:,ind) = error(:,ind)/1e11;
+		err(:,ind) = err(:,ind)/1e11;
 	end
 	if any(mask & CP)
 		%% Replace fourth column (coll. freq.)
@@ -409,7 +388,7 @@ else
 		ind = dupcol2(4,nfiles,5);
 		[r,c] = size(dp);
 		param(:,ind) = dp;
-		error(:,ind) = ones(r,c).*NaN;
+		err(:,ind) = ones(r,c).*NaN;
 	end
 end
 
@@ -475,8 +454,8 @@ if (use_ws)
 	hf = h(fits);
 	hn = h(nofits);
 	%% Data ... (all)
-	err_plus  = param + error;
-	err_minus = param - error;
+	err_plus  = param + err;
+	err_minus = param - err;
 else
 	fits   = find(status==0 & h>=hght(1) & h<=hght(2));
 	nofits = find(status==1 & h>=hght(1) & h<=hght(2));
@@ -484,8 +463,8 @@ else
 	hf = h(fits);
 	hn = h(nofits);
 	%% Data ... (all)
-	err_plus  = param + error;
-	err_minus = param - error;
+	err_plus  = param + err;
+	err_minus = param - err;
 end
 
 %% Underlying range units .....
@@ -626,7 +605,6 @@ axes(panels(1)), set(gca,'Yticklabel',hlabel)
 
 %% Store the panels handles for subsequent use ....
 if sum(get(gcf,'UserData'))~=4
-		disp(' ')
 	disp(['Note: Individual panel handles are obtained using: ' ...
 	'get(gcf,''UserData'')'])
 	set(gcf,'UserData',panels');	%% ROW OF PANEL HANDLES ...

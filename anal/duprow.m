@@ -37,7 +37,7 @@ function y = duprow(mat,n)
 				rn = max(rows);
 			end
 		else
-			disp('''n'' must have same number of rows as ''mat''')
+			error('''n'' must have same number of rows as ''mat''')
 		end		
 
 	else

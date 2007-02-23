@@ -27,7 +27,7 @@ function strings = makelabels(arg1,arg2,arg3,arg4)
 		if     (nargin > 3)
 			min_len = arg2;
 			if (rem(length(arg3),2) > 0)
-				disp('Ignoring arg3 and arg4')
+				warning('Ignoring arg3 and arg4')
 			else
 				assoc = arg3;
 				iatio = arg4;
@@ -42,7 +42,7 @@ function strings = makelabels(arg1,arg2,arg3,arg4)
 
 	%%  Sort through associations ....
 	if (size(assoc,1) ~= size(iatio,1))
-		disp('Association arguments must be of the same length')
+		warning('Association arguments must be of the same length')
 		assoc = [];
 		iatio = [];
 	end

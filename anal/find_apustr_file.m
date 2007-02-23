@@ -17,5 +17,5 @@ elseif exist([a '_' b e])==2
   apu=[];
 else
   file=[]; apu=[];
-  disp(['Could not find file: ' a b e])
+  warning('GUISDAP:default',['Could not find file: ' a b e])
 end

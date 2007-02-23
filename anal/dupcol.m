@@ -32,7 +32,7 @@ function y = dupcol(mat,n)
 				cn = max(cols);
 			end
 		else
-			disp('''n'' must have same number of columns as ''mat''')
+			error('''n'' must have same number of columns as ''mat''')
 		end		
 		
 	else

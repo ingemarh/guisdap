@@ -29,7 +29,7 @@ if isempty(ch_range) & (name_site=='K' | name_site=='S')
     ch_range=height_to_range(ch_height,ch_el(1))*(v_lightspeed*p_dtau*1e-6/2/1e3);
   else
     ch_range=height_to_range(300,ch_el(1))*(v_lightspeed*p_dtau*1e-6/2/1e3);
-    warning('range is dummy!')
+    warning('GUISDAP:default','range is dummy!')
   end
 end
 % Correct transmitter power when wrongly recorded

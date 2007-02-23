@@ -35,6 +35,7 @@ set(0,'defaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
 set(0,'defaultFigurePaperType','A4')
 set(0,'defaultFigurePaperUnits','centimeters')
 set(0,'defaultaxescolor','none')
+warning off backtrace
 
 %localities
 local.printer='color';

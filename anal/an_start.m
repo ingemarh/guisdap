@@ -20,7 +20,7 @@
 %
 % Other routines called: globals nat_const get_ADDRSHIFT  load_GUPvar GUIZARD GUISPERT form_adpar
 %                       spektri_init constants chk_par2 simul_dump clear_results
-  
+
 globals          % Defines (nearly) all global variables 
 chk_par1
 nat_const
@@ -67,7 +67,7 @@ while ~EOF
       if any(abs(1-read_antpar./[ch_fradar(1) ch_gain(1)])>.1)
         ch_fradar=read_antpar(1)*ones(size(ch_fradar));
         ch_gain=read_antpar(2)*ones(size(ch_gain));
-        warning('Changed radar freq and antenna gain from init')
+        warning('GUISDAP:default','Changed radar freq and antenna gain from init')
       end
       Ant_eff=radar_effs(ant_id);
       if a_control(4)>=2, load_GUPvar, end  

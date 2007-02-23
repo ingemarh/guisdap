@@ -36,6 +36,10 @@ elseif warn==0
   end
  end
 end
+if ~warn
+ wstate=warning('query','GUISDAP:parse');
+ warning('off','GUISDAP:parse');
+end
 if ~isempty(b) & ishandle(b(1))
  set_b=1;
 else
@@ -47,22 +51,20 @@ if isempty(expid), [dum,expid,ext]=fileparts(dum); end
 expid=[expid ext];
 [msg,pulse,scan,comment,owner,antenna]=expparts(expid);
 if ~isempty(msg)
- if warn
-  disp(['Unable to parse directory name: ' msg])
- end
+ warning('GUISDAP:parse',['Unable to parse directory name: ' msg])
 else
  nameexpr=pulse(find(pulse~='_' & pulse~='-'));
  while ~exist(fullfile(path_exps,nameexpr))
   nameexpr=nameexpr(1:end-1);
  end
  if isempty(nameexpr)
-  if warn, disp('Unable to set the Dsp experiment, please specify'), end
+  warning('GUISDAP:parse','Unable to set the Dsp experiment, please specify')
  else
   name_expr=nameexpr;
   if set_b, set(b(1),'string',name_expr), end
   expver=str2num(strtok(comment,'.'));
   if isempty(expver) 
-   if warn, disp('Unable to set the experiment version, please specify'), end
+   warning('GUISDAP:parse','Unable to set the experiment version, please specify')
    expver=1;
   else
    if set_b, set(b(11),'value',expver+1), end
@@ -74,7 +76,7 @@ else
   dum=strmatch(antenna(1:3),{'kir' 'sod' 'uhf' 'vhf' '32m' '42m' '32p' 'esr'});
  end
  if isempty(dum)
-  if warn, disp('Unable to set the site, please specify'), end
+  warning('GUISDAP:parse','Unable to set the site, please specify')
  else
   name_site=sites(dum);
   siteid=strfind(sites(1:5),name_site);
@@ -96,7 +98,7 @@ else
   end
  end
  if isempty(intper)
-  disp('Unable to set the integration time, please specify')
+  warning('GUISDAP:parse','Unable to set the integration time, please specify')
  elseif set_b
   set(b(8),'string',num2str(intper))
  end
@@ -121,3 +123,6 @@ if ~isempty(d)
   set(b(5),'string',sprintf('%04d %02d %02d  %02d %02d %02d',t2))
  end
 end 
+if ~warn
+ warning(wstate)
+end

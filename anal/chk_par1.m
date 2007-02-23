@@ -168,10 +168,10 @@ if exist('analysis_txpower','var')
  a_txpower=analysis_txpower;
 elseif name_site=='V' & a_year>2006
  a_txpower=[70 1000];
- fprintf('Using measured tx power, override with analysis_txpower=8;\n')
+ warning('GUISDAP:chkpar','Using measured tx power, override with analysis_txpower=8;')
 elseif name_site~='V' & a_year>2004
  a_txpower=[65 1000];
- fprintf('Using measured tx power, override with analysis_txpower=8;\n')
+ warning('GUISDAP:chkpar','Using measured tx power, override with analysis_txpower=8;')
 else
  a_txpower=[8 1];
 end
