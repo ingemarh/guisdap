@@ -31,6 +31,11 @@ d=find(abs(data-g)<3*sd);
 lld=0;
 while lld~=length(d)
  lld=length(d);
+ if lld<ld/2
+  warning('No gaincurve found')
+  x=[tan(x0(1)) log(x0(2:3))];
+  break
+ end
  x=fminsearch('gaincurve',x,opts,t(d),data(d));
  [err,g]=gaincurve(x,t,data);
  d=find(abs(data-g)<3*sd);
