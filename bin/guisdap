@@ -95,6 +95,7 @@ case $sys in
 		LD_LIBRARY_PATH=$GUP/lib:/opt/SUNWspro/lib:/usr/local/ssl/lib
 		;;
 	Linux)
+		export HISTSIZE=0
 		LD_LIBRARY_PATH=$GUP/lib
 		PATH=$PATH:$GUP/bin
 		unset `env | grep UTF | awk -F = '{ print $1 }'`

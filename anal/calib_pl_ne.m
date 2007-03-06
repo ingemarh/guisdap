@@ -23,18 +23,30 @@ if strfind(expt,'steffe2')
  ran=[47 314;189 455;330 597]; fradar=500e6;
  maxe=2; ele=81.6; updown=0:1; nup_d=2; skip_if=0;
  if [strfind(expt,'cut') regexp(pl_dir,'\d\d\d\d-\d\d-\d\d_steffe2_\d+@32p')]
-  startad=(0:3)*3*175+1;
+  startad=(0:3)*3*nlag+1;
  else
-  startad=(0:3)*19619+10*175+9*1536+1;
+  startad=(0:3)*19619+10*nlag+9*1536+1;
  end
  if isempty(gate), gate=2; end
  %freq=freq([1 3]); startad=startad([1 3]); nup_d=1;
+elseif strfind(expt,'ipy')
+ nfft=0; nint=1; ngates=3; nlag=50;
+ freq=[-4.0 4.0]*1e6; dt=0.6e-6; invert=-1;
+ ran=[41 180;151 290;262 400]; fradar=500e6;
+ maxe=2; ele=81.6; updown=0:1; nup_d=1; skip_if=1;
+ if [strfind(expt,'cut') regexp(pl_dir,'\d\d\d\d-\d\d-\d\d_ipy1_\d+@32p')]
+  startad=(0:1)*3*nlag+1;
+ else
+  startad=(0:1)*19898+22*nlag+21*768+21;
+ end
+ if isempty(gate), gate=2; end
+ %freq=freq(2); updown=0; startad=startad(2);
 elseif strfind(expt,'plwin')
  nfft=0; nint=1; ngates=3; nlag=240;
  freq=[-4.8 4.8]*1e6; dt=0.4e-6; invert=-1;
  ran=[69 300;170 400;270 501]; fradar=500e6;
  maxe=2; ele=81.6; updown=0:1; nup_d=1;
- startad=[1 48165]+19*240+18*2048; skip_if=0;
+ startad=[1 48165]+19*240+18*2048; skip_if=1;
  if isempty(gate), gate=2; end
  %freq=freq(1); updown=0; startad=startad(1);
 elseif strfind(expt,'steffe')

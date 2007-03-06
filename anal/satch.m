@@ -1,8 +1,8 @@
 function [OK,ad_sat]=satch(el,secs,inttime)
 global lpg_lag lpg_wr lpg_w lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h
-global d_data a_satch a_code
+global d_data a_satch a_code local
 global ad_range ad_w ad_code ad_lag ad_bac ad_bcs
-global calold
+persistent calold
 
 ad_sat=[];
 if isempty(lpg_lag)
@@ -11,16 +11,16 @@ end
 if ~isfield(a_satch,'filled')
  if ~isfield(a_satch,'sigma'), a_satch.sigma=4; end	% detection limit sig
  if ~isfield(a_satch,'sigmab'), a_satch.sigmab=3; end	% det lim bac+cal
- if ~isfield(a_satch,'sigmac'), a_satch.sigmac=Inf; end% det lim cal fill
+ if ~isfield(a_satch,'sigmac'), a_satch.sigmac=Inf; end	% det lim cal fill
  if ~isfield(a_satch,'calsecs'), a_satch.calsecs=99; end% time lim cal fill
  if ~isfield(a_satch,'skip'), a_satch.skip=0; end	% no points to skip
- if ~isfield(a_satch,'clutter'), a_satch.clutter=0; end% no clutter red points
+ if ~isfield(a_satch,'clutter'), a_satch.clutter=0; end	% no clutter red points
  if ~isfield(a_satch,'clutfac'), a_satch.clutfac=1000; end% amount of clutter
  if ~isfield(a_satch,'repair'), a_satch.repair=0; end	% for alt codes
  if ~isfield(a_satch,'prep'), a_satch.prep=max(vc_penvo); end% p_rep
  if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
  if ~isfield(a_satch,'lpg_skip'), a_satch.lpg_skip=[]; end% lpg to skip
- if ~isfield(a_satch,'cut'), a_satch.cut=0; end	% cut or trash
+ if ~isfield(a_satch,'cut'), a_satch.cut=0; end		% cut or trash
  if ~isfield(a_satch,'do'), a_satch.do=1; end		% do satch
  a_satch.opts=optimset(optimset('fminsearch'),'display','off');
  a_satch.filled=1;
@@ -127,7 +127,7 @@ if isfinite(a_satch.sigmac)
    newlev=(mean(cal)-bac)/inttime;
    d=(newlev-calold.lev(ii))/calold.std(ii);
    if d>sigma(ii)
-    fprintf('Sat filling cal, %.1f, replacing...\n',d)
+    warning('GUISDAP:satch','Sat filling cal, %.1f, replacing...',d)
     d_data(addr)=lpg_ND(i)*(bac+inttime*calold.lev(ii));
    else
     calold.std(ii)=std(cal);
@@ -144,7 +144,11 @@ if ~OK %| Nsatb>0
   drawnow, figure(a_satch.plot), set(gcf,'Name','Satellites detected')
   for i=1:j
    eval(['dat=dat' num2str(i) '; pc=pc' num2str(i) ';'])
-   subplot(j,1,i)
+   if local.matlabversion<7
+     subplot(j,1,i)
+   else
+     subplot(j,1,i,'v6')
+   end
    plot(dat); hold on
    plot(pc,zeros(size(pc)),'o'), hold off
    ylabel(sprintf('%c_{%d}',lpg_bcs(lpgused(i)),lpgused(i)));
