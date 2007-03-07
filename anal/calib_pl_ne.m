@@ -32,14 +32,14 @@ if strfind(expt,'steffe2')
 elseif strfind(expt,'ipy')
  nfft=0; nint=1; ngates=3; nlag=50;
  freq=[-4.0 4.0]*1e6; dt=0.6e-6; invert=-1;
- ran=[41 180;151 290;262 400]; fradar=500e6;
- maxe=2; ele=81.6; updown=0:1; nup_d=1; skip_if=1;
+ ran=41+(0:2)'*65*ones(1,2)+ones(3,1)*[0 140]; fradar=500e6;
+ maxe=2; ele=81.6; updown=0:1; nup_d=1; skip_if=0;
  if [strfind(expt,'cut') regexp(pl_dir,'\d\d\d\d-\d\d-\d\d_ipy1_\d+@32p')]
   startad=(0:1)*3*nlag+1;
  else
   startad=(0:1)*19898+22*nlag+21*768+21;
  end
- if isempty(gate), gate=2; end
+ if isempty(gate), gate=3; end
  %freq=freq(2); updown=0; startad=startad(2);
 elseif strfind(expt,'plwin')
  nfft=0; nint=1; ngates=3; nlag=240;
@@ -271,9 +271,11 @@ while mr==r0 | abs(mr-1)>.01
  if r0==1
   axs(3)=copyobj(axs(1),gcf)
   set(gcf,'currentaxes',axs(3))
-  set(gca,'nextplot','add')
+  %set(gca,'nextplot','add')
+  hold on
   plot(mean(p_time)+eps,plf,'+g',mean(Time),peak_lf,'+b')
-  set(gca,'nextplot','replace')
+  hold off
+  %set(gca,'nextplot','replace')
   set(gcf,'currentaxes',axs(1),'colormap',1-gray)
   plm=plm/max(max(plm))*length(get(gcf,'colormap'));
   delete(get(gca,'children')), delete(get(gca,'ylabel'))

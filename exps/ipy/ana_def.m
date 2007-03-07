@@ -5,6 +5,7 @@ a_satch.sigma=4;
 a_satch.repair=[Inf];
 a_satch.cut=1;
 d=find(analysis_altit>455); analysis_altit(d(1))=600;
+Magic_const=1.87;
 if strfind(data_path,'32p')
  analysis_do=0;
  analysis_txpower=8;

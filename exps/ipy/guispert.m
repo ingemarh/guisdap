@@ -43,8 +43,7 @@ if length(d_data)>10063
       a_satch.clutter=repmat(a_satch.clutter,1,2);
       a_satch.repair=repmat(a_satch.repair,1,2);
     end
-
-    ch_gain=[ch_gain ch_gain*0.64];
+    ch_gain=[ch_gain ch_gain*0.78]; % for 4 march 2007
   end
 end
 ng=length(ch_gain)/2;
