@@ -63,7 +63,7 @@ elseif strfind(expt,'tau8')
  startad=108679; skip_if=1;
  if isempty(gate), gate=2; end
 else
- error('No such experiment defined (steffe2,steffe,plwin,tau8)')
+ error('No such experiment defined (ipy,steffe2,steffe,plwin,tau8)')
 end
 if isempty(gate), gate=1; end
 
@@ -203,7 +203,8 @@ d=find(pln==0); plm(d,:)=[]; sf(d)=[];
 d=find(plm<0); plm(d)=0;
 
 plpeak=ones(2,nfl,nfreq)*NaN;
-s=std(plsig(find(isfinite(plsig))));
+validpl=plsig(find(isfinite(plsig)));
+s=std(validpl(find(abs(validpl-median(validpl))<std(validpl))));
 for j=1:nfreq
  for i=1:nfl
   [a,b]=max(plsig(:,j,i));
@@ -269,7 +270,7 @@ while mr==r0 | abs(mr-1)>.01
  bad=find(abs(r2-mr2)>maxe*sr2);
  mr=median(r(good)); sr2=std(r2(good));
  if r0==1
-  axs(3)=copyobj(axs(1),gcf)
+  axs(3)=copyobj(axs(1),gcf);
   set(gcf,'currentaxes',axs(3))
   %set(gca,'nextplot','add')
   hold on
