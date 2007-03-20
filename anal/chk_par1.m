@@ -36,7 +36,7 @@ end
 % necessary for integration:
 
 a_simul=[];
-if exist('analysis_simul')
+if exist('analysis_simul','var')
  % The second branch is for simulated data to be calculated from the theory
  % The presence of the variable a_simul is the flag, which is used later
  % a_simul(1): integration time
@@ -52,34 +52,36 @@ if exist('analysis_simul')
  a_end=7200*a_simul(2)+a_simul(1);
  analysis_control(4)=2;
 else
- if exist('analysis_integr'),
+ if exist('analysis_integr','var')
   a_integr=analysis_integr;
  else
   a_skip=zeros(size(a_integr));
  end
- if exist('analysis_realtime'),
+ if exist('analysis_realtime','var')
   a_realtime=analysis_realtime;
  else
   a_realtime=0;
  end
- if exist('analysis_txlimit'),
+ if exist('analysis_txlimit','var')
   a_txlim=analysis_txlimit;
  else
   a_txlim=0;
  end
- if exist('analysis_skip'),
+ if exist('analysis_skip','var')
   a_skip=analysis_skip;
  else
   a_skip=zeros(size(a_integr));
  end
  if ~exist('recurse','var'), recurse=[]; end 
 
- if exist('PI_init')==3
-  a_rawdata=1; % This flags that NW's package is to be used
+ a_rawdata=0;
+ if exist('analysis_rawdata','var')
+  a_rawdata=analysis_rawdata;
+ end
+ if a_rawdata==1 & exist('PI_init')==3, % NW's package is to be used
   NW2
  else
   % The normal case where it is expeced the data are matlab files
-  a_rawdata=0;
   if ~a_realtime
     recurse(strfind(recurse,'?'))='*';
   end
@@ -108,13 +110,13 @@ a_control=[1 0.01 100 1];
 % a_control(4)  Variance calculation
 %               = 1 when variance estimated from data
 %               = 2 when variance estimated using ambiguity functions
-if exist('analysis_control')
+if exist('analysis_control','var')
  ind=find(analysis_control>0);
  a_control(ind)=analysis_control(ind);
 end
 
 a_Magic_const=1;
-if exist('Magic_const')
+if exist('Magic_const','var')
  a_Magic_const=Magic_const;
 end
 a_NCAR=2;
@@ -131,10 +133,10 @@ end
 
 di_figures=[0 0 0 0 0]; di_results=0;
 if name_site=='S' | name_site=='K', di_results=1; end
-if exist('display_figures'), 
+if exist('display_figures','var')
  di_figures(1:length(display_figures))=display_figures;
 end
-if exist('display_results')
+if exist('display_results','var')
  di_results=display_results; 
 end
 
@@ -191,7 +193,7 @@ if exist('analysis_ppshortlags','var')
  a_ppshortlags=analysis_ppshortlags;
 end
 
-if exist('display_analysis_pars')
+if exist('display_analysis_pars','var')
  empty_pars=[];
  for i=who('a_*','d_s*','path_*')'
   j=char(i);

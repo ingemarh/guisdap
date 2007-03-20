@@ -338,7 +338,7 @@ t1=['Produced@' LOCATION ', ' date];
 drawnow
 if isempty(findobj('type','figure','userdata',6))
  figure
- if ~prod(get(0,'ScreenSize'))-1 & round(10*local.matlabversion)==65
+ if ~local.x & round(10*local.matlabversion)==65
   close(gcf),figure; % Matlab R13 bug
  end
  set(gcf,'Position',[400 30 587 807],'DefaultAxesFontSize',FS,...
@@ -483,7 +483,7 @@ end
 xlabel('UNIVERSAL TIME')
 drawnow
 if REALT & ~isempty(Loc) & a_realtime & isunix
- if prod(get(0,'ScreenSize'))-1;
+ if local.x
   flag='-dpng'; flag2='-r72';
  else
   flag='-dpng256'; flag2=[];
@@ -600,7 +600,8 @@ end
 return
 
 function setup_axes(yscale,YTitle)
-global axs height n_tot Time START_TIME END_TIME add_plot xticks
+global axs height n_tot Time START_TIME END_TIME add_plot local
+persistent xticks
 axs=[axs axes('Position',[.12 .06+(n_tot-add_plot)*sum(height) .7 height(1)])];
 set(gca,'xgrid','on','ygrid','on')
 xlim=[datenum(START_TIME) datenum(END_TIME)];
@@ -609,15 +610,27 @@ tickform='HH:MM'; td=diff(xlim);
 if td>7, tickform='dd/mm';
 elseif td<.003, tickform='HH:MM:SS'; end
 if length(axs)==1
+ if td>7
+  set(gca,'xlim',[ceil(xlim(1)) floor(xlim(2))])
+ elseif td>.003
+  set(gca,'xlim',[ceil(xlim(1)*1440) floor(xlim(2)*1440)]/1440)
+ end 
+ fs=get(gca,'fontsize'); set(gca,'fontsize',fs/2) % To encourage more ticks
  datetick(gca,'x',tickform,'keeplimits')
- xticks=get(gca,'xtick');
- if ~(prod(get(0,'ScreenSize'))-1) & (isempty(xticks) | all(xticks<xlim(1) | xticks>xlim(2)) | (length(xticks)<3 & td>.003))
-  fs=get(gca,'fontsize');
-  set(gca,'fontsize',fs/12.429) % Matlab bug...
+ xticks=get(gca,'xtick'); lt=sum((xlim(1)<xticks)&(xticks<xlim(2)));
+ if ~local.x & (isempty(xticks) | lt==0 | (lt<4 & td>.003))
+   freduce=12.429; %Matlab bug...
+ elseif lt<4
+   freduce=4;
+ else
+   freduce=0;
+ end
+ if freduce
+  set(gca,'fontsize',fs/freduce)
   datetick(gca,'x',tickform,'keeplimits')
   xticks=get(gca,'xtick');
-  set(gca,'fontsize',fs)
  end
+ set(gca,'fontsize',fs,'xlim',xlim)
 end
 set(gca,'xtick',xticks)
 datetick(gca,'x',tickform,'keeplimits','keepticks')

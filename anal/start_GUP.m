@@ -42,6 +42,7 @@ local.printer='color';
 local.site=getenv('EISCATSITE');
 local.host=getenv('HOSTNAME');
 local.browser='netscape';
+local.x=prod(get(0,'ScreenSize'))-1;
 matver=ver('matlab'); matver=matver.Version;
 d=strfind(matver,'.'); matver(d(2:end))=[];
 local.matlabversion=str2num(matver);

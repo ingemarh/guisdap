@@ -60,7 +60,9 @@ else
 
   if exist('analysis_maxwidth')
     len=length(analysis_maxwidth);
-    if exist('analysis_altit')
+    if len~=lenr
+      a_maxwidth=diff(a_range);
+    elseif exist('analysis_altit')
       a_maxwidth(1:len)=height_to_range(analysis_maxwidth,ch_el(1));
     else
       a_maxwidth(1:len)=analysis_maxwidth*fac;

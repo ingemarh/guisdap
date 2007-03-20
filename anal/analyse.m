@@ -1,5 +1,4 @@
 startup
-using_x=prod(get(0,'ScreenSize'))-1;
 %default values
 rt=0;
 [intper,t1,t2,siteid,expver]=auto_parse(0);
@@ -18,7 +17,7 @@ end
 sites='KSTVLX';
 beg=sprintf('%04d %02d %02d  %02d %02d %02d',t1);
 to=sprintf('%04d %02d %02d  %02d %02d %02d',t2);
-if using_x & isempty(get(0,'UserData'))
+if local.x & isempty(get(0,'UserData'))
 global b
 figure(5)
 clf
