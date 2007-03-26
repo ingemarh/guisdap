@@ -16,7 +16,10 @@ else
 fi
 mex=
 
-TMP=$HOME/tmp
+if [ -z "$TMP" ]
+then
+	TMP=$HOME/tmp
+fi
 if [ ! -d $TMP ]; then
 	mkdir $TMP
 fi
@@ -47,7 +50,7 @@ if [ -d $GUP/$MEXD ]; then
 	fi
 fi
 
-while getopts aibB:xtr:g: flag
+while getopts aibB:xtm:g: flag
 do
 	case $flag in
 		a) tail="-r analyse";;
