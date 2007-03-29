@@ -1,4 +1,4 @@
-function [varargout]=vizu(action,a2,a3)
+function [varargout]=vizu(varargin)
 % Plot GUISDAP results
 %--------------------------------------------------------------------------
 %     EISCAT additions Copyright 1999-2003  EISCAT Scientific Association. 
@@ -29,22 +29,20 @@ global Time par2D par1D rpar2D name_expr name_ant axs axc hds maxdy rres
 global height n_tot add_plot manylim
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
 global r_RECloc path_tmp path_GUP result_path webfile local owner
-if nargin<2, a2=[]; end
-if nargin<3, a3=[]; end
-if nargin==0
-  action=[];
-elseif strcmp(action,'new')
+nvargin=length(varargin);
+naction=1;
+if strcmp(action(naction,nvargin,varargin),'new')
   close(findobj('type','figure','userdata',6))
   axs=[]; axc=[];
   Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
-  action=a2; a2=a3;
+  naction=naction+1;
 end
 if ~isempty([axs axc]) & isempty(findobj('type','figure','userdata',6)) 
   axs=[]; axc=[];
 end
 REALT=0; manylim=1;
 Loc=local.site;
-if strcmp(action,'rtgup')
+if strcmp(action(naction,nvargin,varargin),'rtgup')
   global a_year a_start a_end a_realtime a_autodir
   if isempty(START_TIME)
     if isstruct(a_autodir)
@@ -55,9 +53,9 @@ if strcmp(action,'rtgup')
       END_TIME=toYMDHMS(a_year,a_end);
     end
     close(findobj('type','figure','userdata',6))
-    axs=[]; axc=[]; action=[];
+    axs=[]; axc=[]; naction=nvargin+1;
   else
-    action='update';
+    varargin{naction}='update';
   end
   DATA_PATH=result_path; MESSAGE1='RT';
   if ~isempty(owner), MESSAGE1=owner; end
@@ -66,13 +64,13 @@ end
 
 PLOT_STATUS=0;		% Status limit (0-3)
 if isempty(DATA_PATH)
-  if strcmp(lower(action),'verbose')
+  act=action(naction,nvargin,varargin);
+  if strcmp(lower(act),'verbose')
     DATA_PATH=minput('Data path',result_path,1);
   elseif ~REALT
-    if isdir(action) | strfind(action,'/')
-      DATA_PATH=action; action=[];
-      if isstr(a2), MESSAGE1=a2; end
-      if isstr(a3), name_ant=a3; end
+    if isdir(act) | strfind(act,'/')
+      DATA_PATH=act; naction=naction+1;
+      MESSAGE1=action(naction,nvargin,varargin); naction=naction+1;
     else
       disp(['Available data directories in ' result_path]);
       dirs=dir(result_path);
@@ -84,22 +82,25 @@ if isempty(DATA_PATH)
   end
 end
 
-if isempty(action) | strcmp(lower(action),'verbose')
+act=action(naction,nvargin,varargin);
+a2=action(naction+1,nvargin,varargin);
+a3=action(naction+2,nvargin,varargin);
+if isempty(act) | strcmp(lower(act),'verbose')
  if isempty(Time)
   [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS);
  end
  if ~isempty(axs), delete(axs), axs=[]; end
  if ~isempty(axc), delete(axc), axc=[]; end
  maxdy	=Inf;		% Max diff in y stretch data points
-elseif strcmp(action,'update')
+elseif strcmp(act,'update')
  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
  set(0,'currentfig',findobj('type','figure','userdata',6))
-elseif strcmpi(action,'print') | strcmpi(action,'save')
+elseif strcmpi(act,'print') | strcmpi(act,'save')
  if isempty(axs)
   disp('Nothing to print!')
  elseif isunix
   dirs=path_tmp(1:end-1);
-  if strcmpi(action,'print')
+  if strcmpi(act,'print')
     fig=sprintf('vizu%06d',round(rand*1e6)); ext='ps';
   else
     fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
@@ -117,7 +118,7 @@ elseif strcmpi(action,'print') | strcmpi(action,'save')
     fig=sprintf('%s@%s',fig,name_ant);
   end
   rotate=0; if length(axs)==1, rotate=1; end
-  if [strfind(action,'R') strfind(action,'V')], rotate=1-rotate; end
+  if [strfind(act,'R') strfind(act,'V')], rotate=1-rotate; end
   if rotate
    ppos=get(gcf,'PaperPosition');
    set(gcf,'PaperOrient','landscape','PaperPosition',[0 3 ppos([4 3])-[0 3]])
@@ -133,19 +134,19 @@ elseif strcmpi(action,'print') | strcmpi(action,'save')
    set(hds(2:3),'visible','on')
    unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
   end
-  if strcmpi(action,'print') | strcmpi(a3,'print')
+  if strcmpi(act,'print') | strcmpi(a3,'print')
     if isempty(a2), dev=local.printer; else, dev=a2; end
     unix(['lp -c -d' dev ' ' file '.' ext ' >/dev/null 2>&1']);
-    if strcmpi(action,'print'), delete([file '.' ext]), end
+    if strcmpi(act,'print'), delete([file '.' ext]), end
   end
-  if strcmpi(action,'save')
+  if strcmpi(act,'save')
     gd=fullfile(matlabroot,'sys','ghostscript',filesep);
 %   unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',...
     unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=png256 -g580x820 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',...
       fullfile(gd,'bin',lower(computer),'gs'),gd,gd,file,file,ext));
     fprintf('Created %s.%s and .png\n',file,ext)
   end
- elseif strcmpi(action,'print')
+ elseif strcmpi(act,'print')
   print(gcf,'-dwinc');
  else
   fig=sprintf('%d-%02d-%02d_%s@%s',START_TIME(1:3),name_expr,name_ant);
@@ -223,30 +224,31 @@ elseif strcmp(name_expr,'manda')
  if isempty(rres), maxdy=60; end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if ~isempty(a2)
+ SCALE(2,:)=a2;
+end
 if ~exist('GATES')
  GATES=1:size(par2D,1);
 end
-if length(GATES)==1
+if ~isempty(a3)
+ WHICH_PARAM=a3;
+elseif length(GATES)==1
  WHICH_PARAM='Ne TT Vi LL';
 end
 %%%%%%%%%% Time scales %%%%%%%%%%%%%
-if strcmp(lower(action),'verbose')
+if strcmp(lower(act),'verbose')
  if isempty(START_TIME)
   START_TIME=floor(datevec(Time(1,1)));
   END_TIME=ceil(datevec(Time(2,end)));
  end
  START_TIME=minput('Start time',START_TIME);
  END_TIME=minput('  End time',END_TIME);
- if ~isempty(a2)
-  SCALE(2,:)=a2;
- elseif length(GATES)>1
+ if isempty(a2) & length(GATES)>1
   SCALE(2,:)=minput('Altitude scale',10*[floor(min(par2D(GATES(1),:,2))/10) ceil(max(par2D(GATES(end),:,2))/10)]);
  end
  if isempty(a3)
   disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Co Nr Lf L1 Ls Pf P1')
   WHICH_PARAM=minput('Choose',WHICH_PARAM,1);
- else
-  WHICH_PARAM=a3;
  end
 elseif ~REALT
  if strcmp(DATA_PATH(end),filesep)
@@ -271,7 +273,7 @@ elseif strcmp(nameant,'vhf')
  FIGURE_TITLE='EISCAT VHF RADAR';
  fradar=224e6;
 end
-if strcmp(action,'VERBOSE')
+if strcmp(act,'VERBOSE')
  GATES=minput('Gates',GATES);
  if length(GATES)>1
   Y_PARAM=minput('Y parameter (Ran-1 Alt-2 Lat-3)',Y_PARAM);
@@ -671,4 +673,10 @@ if llx>p(1) & p(1)>0 & x(p(1))<l(1)
 end
 if llx>p(2) & p(2)>0 & x(p(2))>l(2)
  l(2)=x(p(2));
+end
+
+function comm=action(naction,narg,vizuarg)
+comm=[];
+if naction<=narg
+ comm=vizuarg{naction};
 end

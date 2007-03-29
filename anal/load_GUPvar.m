@@ -9,7 +9,9 @@
 % See also: path_expr save_toinitfile
 %
 
-t_RECloc=p_RECloc;
+if exist('p_RECloc','var') & ~isempty(p_RECloc)
+  t_RECloc=p_RECloc;
+end
 if name_site=='K' | name_site=='S'
   temp=[path_expr name_expr 'R'];
 else
@@ -38,5 +40,7 @@ if max(lp_nfir)==1 | isa(lp_firsto,'int8')
 else 
   lp_fir=cumsum(full(lp_firsto));
 end
-p_RECloc=t_RECloc;
-clear t_RECloc GUPvarfil
+if exist('t_RECloc','var')
+  p_RECloc=t_RECloc; clear t_RECloc
+end
+clear GUPvarfil
