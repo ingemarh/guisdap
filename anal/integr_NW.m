@@ -29,15 +29,15 @@
 
 function [OK,EOF]=integr_NW
 
-global d_parbl d_data d_var1 d_var2 a_control 
+global d_parbl d_data d_var1 d_var2 a_control d_saveint
 global iHandle source strategy
 
 [status,dHandle,modes] = PI_next(iHandle,1);
 
 EOF=0;
-if status ~= 0
+if status~=0
   es=error_string(status);
-  if ~strcmp( es, 'no more data in source') & ~strcmp( es, 'integration complete' )
+  if ~strcmp(es,'no more data in source') & ~strcmp(es,'integration complete')
     fprintf(' Error in integration - %s \n',error_string(status)); 
     OK=0; return
   end
@@ -46,7 +46,7 @@ if status ~= 0
   return
 end
 
-if modes < 1
+if modes<1
    OK=0; EOF=0; return
 end
 
@@ -58,7 +58,7 @@ end
 
 [status]=PI_free(dHandle);
 
-if status1 ~= 0 | status2 ~= 0 | status3 ~= 0 | status4 ~= 0
+if status1~=0 | status2~=0 | status3~=0 | status4~=0
   fprintf(' error extracting data from data handle\n')
   OK=0; EOF=0; return
 end
@@ -69,26 +69,29 @@ if isempty(var1) | isempty(var2)
 end
 
 if isempty(count)
-  total = n_records;
+  total=n_records;
 else
-  total = count;
+  total=count;
 end
 
 if a_control(4)==1 & n_records<5
   if n_records<2
-    fprintf(' One file is not enough for variance determination\n')
-    fprintf(' Skipping this integration period\n')
-    fprintf(' command ''analysis_control(4)=2'' in the startup file will enable the analysis\n')
+    fprintf('One file is not enough for variance determination\n')
+    if isempty(d_saveint)
+      fprintf('Skipping this integration period\n')
+    else
+      file=[d_saveint.dir sprintf('%08d.mat',fix(tosecs(d_parbl(2:4))))];
+      disp(file)
+      save_noglobal(file,d_parbl,d_data)
+    end
     OK=0; return
   end
-  fprintf(' *******************    WARNING    **********************************\n')
-  fprintf(' %.0f files may not be enough for reliable variance determination\n',n_records)
-  fprintf(' *******************    WARNING    **********************************\n')
+  warning('GUISDAP:default','%d files may not be enough for reliable variance determination',n_records)
 end
 
 
-d_data = n_records * data(:) ./ total;
-d_var1 = var1(:) - d_data .* d_data ./ total;
-d_var2 = var2(:) - d_data .* conj(d_data) ./ total;
+d_data=n_records*data(:)./total;
+d_var1=var1(:)-d_data.*d_data./total;
+d_var2=var2(:)-d_data.*conj(d_data)./total;
 
 OK=1;

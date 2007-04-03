@@ -160,8 +160,15 @@ a_intfixed=1;
 if exist('analysis_intfixed','var')
  a_intfixed=analysis_intfixed;
 end
+a_intallow=[.11 .11 1000 0];
 if exist('analysis_intallow','var')
- a_intallow=analysis_intallow;
+ a_intallow(1:length(a_intallow))=analysis_intallow;
+end
+a_intfix=[9 10 42 64];
+if exist('analysis_intfix','var')
+ d=find(analysis_intfix);
+ a_intfix(d)=analysis_intfix(d);
+ a_intallow(length(a_intallow)+1:length(a_intfix))=0;
 end
 if exist('analysis_intfixforce','var')
  a_intfixforce=analysis_intfixforce;

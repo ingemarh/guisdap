@@ -159,8 +159,8 @@ if ~OK %| Nsatb>0
  if a_satch.cut
   for j=1:size(sat_ran,1)
    arang=2*abs(ad_range-sat_ran(j,1));
-   d=find((ad_bac==0 & arang<sat_ran(j,2) | ...
- ad_bac~=0 & arang<=ad_lag+sat_ran(j,3)) & ad_bcs=='s' & ad_code==sat_ran(j,4));
+   d=find(((ad_bac==0 & arang<sat_ran(j,2)) | ...
+(ad_bac~=0 & arang<=ad_lag+sat_ran(j,3))) & ad_bcs=='s' & ad_code==sat_ran(j,4));
    ad_sat=union(ad_sat,d);
   end
   warning('GUISDAP:satch','%s %d ranges',msg,length(ad_sat))
