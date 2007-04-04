@@ -63,8 +63,10 @@ lp_nfir(index)=(apu(index)-1)*SB+1;
 for ind=index
   Ntaps=apu(ind);
   signs=am(1:Ntaps).*am(Nbits-Ntaps+1:Nbits);
-  if SB==1,
+  if SB==1
     lp_fir(1:lp_nfir(ind),ind)=signs;
+  elseif Ntaps==1
+    lp_fir(1:lp_nfir(ind),ind)=signs(Ntaps);
   else
     lp_fir(1:lp_nfir(ind),ind)=[kron(signs(1:Ntaps-1),[1;zeros(SB-1,1)]);signs(Ntaps)];
   end   

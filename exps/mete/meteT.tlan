@@ -1,0 +1,5307 @@
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR            0
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  1,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     360      B7
+AT     361      B7OFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  1,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR       2113
+%%%
+%   CYCLE #  1,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  1,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  1,1 CALIBR.
+%%%
+SETTCR        4929
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR         5330
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  1,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  1,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR       7443
+%%%
+%   CYCLE #  1,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  1,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  1,2 CALIBR.
+%%%
+SETTCR       10259
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        10660
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  2,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  2,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      12773
+%%%
+%   CYCLE #  2,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  2,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  2,1 CALIBR.
+%%%
+SETTCR       15589
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        15990
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  2,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  2,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      18103
+%%%
+%   CYCLE #  2,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  2,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  2,2 CALIBR.
+%%%
+SETTCR       20919
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        21320
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  3,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  3,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      23433
+%%%
+%   CYCLE #  3,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  3,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  3,1 CALIBR.
+%%%
+SETTCR       26249
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        26650
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  3,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  3,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      28763
+%%%
+%   CYCLE #  3,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  3,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  3,2 CALIBR.
+%%%
+SETTCR       31579
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        31980
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  4,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  4,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      34093
+%%%
+%   CYCLE #  4,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  4,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  4,1 CALIBR.
+%%%
+SETTCR       36909
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        37310
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  4,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  4,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      39423
+%%%
+%   CYCLE #  4,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  4,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  4,2 CALIBR.
+%%%
+SETTCR       42239
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        42640
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  5,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  5,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      44753
+%%%
+%   CYCLE #  5,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  5,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  5,1 CALIBR.
+%%%
+SETTCR       47569
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        47970
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  5,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  5,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      50083
+%%%
+%   CYCLE #  5,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  5,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  5,2 CALIBR.
+%%%
+SETTCR       52899
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        53300
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  6,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  6,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      55413
+%%%
+%   CYCLE #  6,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  6,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  6,1 CALIBR.
+%%%
+SETTCR       58229
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        58630
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  6,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  6,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      60743
+%%%
+%   CYCLE #  6,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  6,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  6,2 CALIBR.
+%%%
+SETTCR       63559
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        63960
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  7,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  7,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      66073
+%%%
+%   CYCLE #  7,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  7,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  7,1 CALIBR.
+%%%
+SETTCR       68889
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        69290
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  7,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  7,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      71403
+%%%
+%   CYCLE #  7,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  7,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  7,2 CALIBR.
+%%%
+SETTCR       74219
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        74620
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  8,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  8,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      76733
+%%%
+%   CYCLE #  8,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  8,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  8,1 CALIBR.
+%%%
+SETTCR       79549
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        79950
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  8,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  8,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      82063
+%%%
+%   CYCLE #  8,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA0
+AT    263      PHA180
+AT    269      PHA0
+AT    275      PHA180
+AT    278      PHA0
+AT    281      PHA180
+AT    284      PHA0
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  8,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  8,2 CALIBR.
+%%%
+SETTCR       84879
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        85280
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  9,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  9,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      87393
+%%%
+%   CYCLE #  9,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  9,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  9,1 CALIBR.
+%%%
+SETTCR       90209
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        90610
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  9,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE #  9,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      92723
+%%%
+%   CYCLE #  9,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE #  9,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE #  9,2 CALIBR.
+%%%
+SETTCR       95539
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        95940
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 10,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 10,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR      98053
+%%%
+%   CYCLE # 10,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 10,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 10,1 CALIBR.
+%%%
+SETTCR      100869
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       101270
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 10,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 10,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     103383
+%%%
+%   CYCLE # 10,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 10,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 10,2 CALIBR.
+%%%
+SETTCR      106199
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       106600
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 11,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 11,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     108713
+%%%
+%   CYCLE # 11,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 11,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 11,1 CALIBR.
+%%%
+SETTCR      111529
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       111930
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 11,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 11,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     114043
+%%%
+%   CYCLE # 11,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 11,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 11,2 CALIBR.
+%%%
+SETTCR      116859
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       117260
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 12,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 12,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     119373
+%%%
+%   CYCLE # 12,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 12,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 12,1 CALIBR.
+%%%
+SETTCR      122189
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       122590
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 12,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 12,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     124703
+%%%
+%   CYCLE # 12,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA0
+AT    221      PHA180
+AT    227      PHA0
+AT    233      PHA180
+AT    236      PHA0
+AT    239      PHA180
+AT    242      PHA0
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 12,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 12,2 CALIBR.
+%%%
+SETTCR      127519
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       127920
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 13,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 13,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     130033
+%%%
+%   CYCLE # 13,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 13,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 13,1 CALIBR.
+%%%
+SETTCR      132849
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       133250
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 13,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 13,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     135363
+%%%
+%   CYCLE # 13,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 13,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 13,2 CALIBR.
+%%%
+SETTCR      138179
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       138580
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 14,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 14,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     140693
+%%%
+%   CYCLE # 14,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 14,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 14,1 CALIBR.
+%%%
+SETTCR      143509
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       143910
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 14,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 14,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     146023
+%%%
+%   CYCLE # 14,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA0
+AT    179      PHA180
+AT    185      PHA0
+AT    191      PHA180
+AT    194      PHA0
+AT    197      PHA180
+AT    200      PHA0
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA0
+AT    389      PHA180
+AT    395      PHA0
+AT    401      PHA180
+AT    404      PHA0
+AT    407      PHA180
+AT    410      PHA0
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 14,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 14,2 CALIBR.
+%%%
+SETTCR      148839
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       149240
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 15,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 15,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     151353
+%%%
+%   CYCLE # 15,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 15,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 15,1 CALIBR.
+%%%
+SETTCR      154169
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       154570
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 15,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 15,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     156683
+%%%
+%   CYCLE # 15,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA0
+AT    137      PHA180
+AT    143      PHA0
+AT    149      PHA180
+AT    152      PHA0
+AT    155      PHA180
+AT    158      PHA0
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA180
+AT    305      PHA0
+AT    311      PHA180
+AT    317      PHA0
+AT    320      PHA180
+AT    323      PHA0
+AT    326      PHA180
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA0
+AT    347      PHA180
+AT    353      PHA0
+AT    359      PHA180
+AT    362      PHA0
+AT    365      PHA180
+AT    368      PHA0
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 15,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 15,2 CALIBR.
+%%%
+SETTCR      159499
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       159900
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 16,1 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F7
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F4
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     362      B8
+AT     363      B8OFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 16,1 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH3
+AT       901    CH1
+AT      1410    CH3OFF
+AT      2016    CH1OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     162013
+%%%
+%   CYCLE # 16,1 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F4
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 16,1 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH3
+AT       816      CH4
+AT      1369      CH3OFF
+AT      1575      CH2
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 16,1 CALIBR.
+%%%
+SETTCR      164829
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH2
+AT       156    CH4
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       165230
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 16,2 LP/PP TX
+%
+AT      1      TRANS,CHQPULS
+AT     10      RXPROT,LOPROT
+%
+AT     40      BEAMON,F9
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT    260      RFOFF,F6
+%%
+AT    262      RFON,PHA0
+AT    277      PHA180
+AT    283      PHA0
+AT    289      PHA180
+AT    292      PHA0
+AT    295      PHA180
+AT    298      PHA0
+AT    301      RFOFF,BEAMOFF
+%%
+AT     315      RXPOFF
+AT     364      B9
+AT     365      B9OFF,LOPOFF
+%%
+%   CYCLE # 16,2 LP/PP REC
+%%
+AT       708    RECEV
+AT       709    B13
+AT       710    MATCHFIL
+AT       712    CH4
+AT       901    CH2
+AT      1410    CH4OFF
+AT      2016    CH2OFF
+AT      2026    BYPASMAT
+AT      2036    B13OFF
+%
+%%%
+SETTCR     167343
+%%%
+%   CYCLE # 16,2 A/C TX
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+AT     40      BEAMON,F6
+%%
+% - RF TRANSMISSION -
+%%
+AT     80      RFON,PHA0
+AT     95      PHA180
+AT    101      PHA0
+AT    107      PHA180
+AT    110      PHA0
+AT    113      PHA180
+AT    116      PHA0
+AT    119      RFOFF,PHA0
+%%
+AT    122      RFON,PHA180
+AT    137      PHA0
+AT    143      PHA180
+AT    149      PHA0
+AT    152      PHA180
+AT    155      PHA0
+AT    158      PHA180
+AT    161      RFOFF,PHA0
+%%
+AT    164      RFON,PHA180
+AT    179      PHA0
+AT    185      PHA180
+AT    191      PHA0
+AT    194      PHA180
+AT    197      PHA0
+AT    200      PHA180
+AT    203      RFOFF,PHA0
+%%
+AT    206      RFON,PHA180
+AT    221      PHA0
+AT    227      PHA180
+AT    233      PHA0
+AT    236      PHA180
+AT    239      PHA0
+AT    242      PHA180
+AT    245      RFOFF,PHA0
+%%
+AT    248      RFON,PHA180
+AT    263      PHA0
+AT    269      PHA180
+AT    275      PHA0
+AT    278      PHA180
+AT    281      PHA0
+AT    284      PHA180
+AT    287      RFOFF,PHA0
+%%
+AT    290      RFON,PHA0
+AT    305      PHA180
+AT    311      PHA0
+AT    317      PHA180
+AT    320      PHA0
+AT    323      PHA180
+AT    326      PHA0
+AT    329      RFOFF,PHA0
+%%
+AT    332      RFON,PHA180
+AT    347      PHA0
+AT    353      PHA180
+AT    359      PHA0
+AT    362      PHA180
+AT    365      PHA0
+AT    368      PHA180
+AT    371      RFOFF,PHA0
+%%
+AT    374      RFON,PHA180
+AT    389      PHA0
+AT    395      PHA180
+AT    401      PHA0
+AT    404      PHA180
+AT    407      PHA0
+AT    410      PHA180
+AT    413      RFOFF,PHA0
+AT    415      BEAMOFF
+%%
+AT     460      RXPOFF
+AT     510      LOPOFF
+%%
+%
+%   CYCLE # 16,2 A/C+BG RX
+%
+AT       676      RECEV
+AT       677      B13
+AT       678      MATCHFIL
+%
+AT       680      CH4
+AT       816      CH3
+AT      1369      CH4OFF
+AT      1575      CH1
+AT      2690      ALLOFF
+%%
+AT      2700      BYPASMAT
+AT      2710      B13OFF
+%%%
+%   CYCLE # 16,2 CALIBR.
+%%%
+SETTCR      170159
+%%%
+%
+AT         1    RECEV
+AT         3    CAL100
+AT         5    B13
+AT        10    MATCHFIL
+AT        64    CH1
+AT       156    CH3
+AT       339    STC
+AT       344    ALLOFF,CALOFF
+AT       354    BYPASMAT
+AT       355    B13OFF
+AT       384    BUFLIP
+%%%
+%%%
+%  Padding cycle to ensure proper decoding
+%%%
+%
+SETTCR       170560
+%
+%
+AT      1      TRANS
+AT     10      RXPROT,LOPROT
+%
+AT        40      BEAMON
+AT       653      BEAMOFF
+%%
+AT       703      RXPOFF
+AT       753      LOPOFF
+AT      5326      RECEV
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%   END OF CODE GROUP - RECYCLE !  %
+%%
+SETTCR          0
+AT         175890      REP
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

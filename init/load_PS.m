@@ -33,7 +33,7 @@ else
 end
 
 if create
-  PSfile=find_apustr_file([path_expr name_expr name_site],apustr,'pat_PS','.m');
+  [PSfile,apustr]=find_apustr_file([path_expr name_expr name_site],apustr,'pat_PS','.m');
   if isempty(PSfile)
     fprintf('\n')
     error('Please make a pat_PS.m with TLAN2PS or a pat_PS.mat file yourself')
@@ -49,8 +49,8 @@ if create
   td_am=zeros(1,td_len);
   ch_f=-1*ones(1,8);
 
-  fprintf('Decoding the %s.m file\n',PS_file)
-  eval(PS_file) 
+  fprintf('Decoding the %s.m file\n',PSfile)
+  run(PSfile) 
   if td_ind<td_len;
     td_ch(td_ind+1:td_len)=[];
     td_t1(td_ind+1:td_len)=[];

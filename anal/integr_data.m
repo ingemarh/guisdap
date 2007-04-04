@@ -76,10 +76,11 @@ while i<length(files)
   filename=fullfile(file.dir,sprintf('%08d%s',file.file,file.ext));
   i_averaged=1; i_var1=[]; i_var2=[];
   try, load(canon(filename,0))
+  %catch,end
 
   lpb=length(d_parbl);
   if lpb==128
-    [d_parbl,lpb]=nd2eros4(d_parbl);
+    [d_parbl,lpb]=nd2eros4(col(d_parbl));
   else
     d_parbl=d_parbl(:);
   end

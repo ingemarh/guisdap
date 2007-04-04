@@ -102,7 +102,7 @@ a_addr=[];
 a_adstart=[];
 a_adend=[];
 bad_var=0;
-diffran=diff(a_range);  
+diffran=diff(a_range);
 for gate=find(diffran>0)
   addr=find(ad_range>a_range(gate) & ad_range<=a_range(gate+1));
   if ~isempty(addr)
@@ -117,7 +117,7 @@ for gate=find(diffran>0)
       addr=addr(find(ismember(ad_code(addr),a_code)));
     end
     % Remove too narrow or too broad responses 
-    ind1=find(ad_w(addr)>a_minwidth(gate) & ad_w(addr)<a_maxwidth(gate) );
+    ind1=find(ad_w(addr)>a_minwidth(gate) & ad_w(addr)<a_maxwidth(gate));
     addr=addr(ind1);
   end
   if a_control(4)==1
