@@ -91,11 +91,10 @@ while i<length(files)
   averaged=[8:10 42 63 65];    % parameters which are averaged
   accumulated=[7 22 64];       % parameters which are accumulated
   inttime=7;                   % parameter that holds integration time
-  vhf=lpb>40 & d_parbl(41)==3; % vhf antenna?
   positive=[8 65];             % parameters which are positive
   non_negative=[9 42 63];      % parameters which are positive
-  if vhf
-   non_negative=[9 10 42 63];
+  if lpb>40 & d_parbl(41)==3
+   non_negative=[9 10 42 63];  % for vhf antenna
   end
   % do not work on unavailable parameters
   averaged(find(averaged>lpb))=[];

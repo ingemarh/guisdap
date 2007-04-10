@@ -82,6 +82,7 @@ if a_control(4)==1 & n_records<5
     else
       file=[d_saveint.dir sprintf('%08d.mat',fix(tosecs(d_parbl(2:4))))];
       disp(file)
+      d_data=data;
       save_noglobal(file,d_parbl,d_data)
     end
     OK=0; return
