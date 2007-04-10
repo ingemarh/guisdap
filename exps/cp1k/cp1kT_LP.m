@@ -6,12 +6,12 @@ COR_init(10000,40)
 % channels may have been defined. For a full defintion, the length of
 % vc_ch is 640, and half of that for the economy definition
 N_SCAN=length(vc_ch)/10;
-% STEP=1;
+STEP=1;
 % The transmission is always repeated on even and odd channels
 % It is possible to reduce the number of lag profiles by dropping
 % either one. This happens, if  STEP=2
 
-STEP=2;
+%STEP=2;
 % The p_ND variable takes care of the effects where needed
 p_ND=STEP*64/N_SCAN;
 
@@ -24,8 +24,7 @@ for SCAN=0:N_SCAN-1;
   end
    
   % The long pulses
-  for vc=[]
-% for vc=(3:STEP:4)+SCAN*10
+  for vc=(3:STEP:4)+SCAN*10
     COR_lp(1307,26,vc,'s',15, 0,21,0:10:250,3)
     COR_lp(1853,26,vc,'b',15, 0, 6,0:10:250,3)
 		  % The non-zero lags, which actually are not calculated but included

@@ -1,8 +1,8 @@
 % GUISDAP v1.50   94-03-10 Copyright Asko Huuskonen, Markku Lehtinen 
 % 
 % CP1KTvcinit.m
-% N_scan=64; % Complete virtual channel definition, 640 virtual channels
-N_scan=32; % Half of the channels defined, 320 virtual channels 
+N_scan=64; % Complete virtual channel definition, 640 virtual channels
+%N_scan=32; % Half of the channels defined, 320 virtual channels 
 vc_ch=zeros(1,10*N_scan);
 vc_t1=zeros(1,10*N_scan);
 vc_t2=zeros(1,10*N_scan);
