@@ -1,8 +1,10 @@
 % Analysis defaults
-a_satch.clutter=[32 32 16];
 a_satch.sigma=4;
+a_satch.clutter=[32 32 16];
+a_satch.cut=1;
 %a_satch.plot=8;
 if expver>1
+  a_satch.clutter=[33 34 19];
   a_satch.repair=[104 29 0];
 end
 if strfind(data_path,'32p')
