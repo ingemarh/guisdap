@@ -22,19 +22,20 @@ data_path=fullfile(filesep,'data',filesep);
 
 format compact
 format short g
-set(0,'defaultaxesxminortick','on')
-set(0,'defaultaxesyminortick','on')
-set(0,'defaultfigurenumbertitle','off')
-set(0,'defaultfigureSelectionHighlight','off')
-set(0,'defaultfiguremenubar','none')
-set(0,'defaultfiguretoolbar','figure')
-set(0,'defaultuicontrolfontsize',10)
-set(0,'defaultaxesfontsize',12)
-set(0,'defaulttextfontsize',12)
-set(0,'defaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
-set(0,'defaultFigurePaperType','A4')
-set(0,'defaultFigurePaperUnits','centimeters')
-set(0,'defaultaxescolor','none')
+set(0,'DefaultAxesxMinortick','on')
+set(0,'DefaultAxesyMinortick','on')
+set(0,'DefaultFigureNumberTitle','off')
+set(0,'DefaultFigureSelectionHighlight','off')
+set(0,'DefaultFigureMenuBar','none')
+set(0,'DefaultFigureToolBar','figure')
+set(0,'DefaultUicontrolFontSize',10)
+set(0,'DefaultAxesFontSize',12)
+set(0,'DefaultTextFontSize',12)
+set(0,'DefaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
+set(0,'DefaultFigurePaperType','A4')
+set(0,'DefaultFigurePaperUnits','centimeters')
+set(0,'DefaultFigureRenderer','painters')
+set(0,'DefaultAxesColor','none')
 warning off backtrace
 
 %localities

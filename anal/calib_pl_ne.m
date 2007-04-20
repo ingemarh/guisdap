@@ -111,7 +111,7 @@ p_time=zeros(2,nfl);
 for i=1:nfl
  filename=fullfile(fl(i).dir,sprintf('%08d%s',fl(i).file,fl(i).ext));
  load(canon(filename,0))
- p_time(:,i)=datenum(d_parbl(1:6)')+[-d_parbl(7)/86400;0];
+ p_time(:,i)=datenum(row(d_parbl(1:6)))+[-d_parbl(7)/86400;0];
  if nlag>0
   d=sum(reshape(d_data(add),ngates,nlag,nint,nfreq),3)/d_parbl(22);
   d=reshape(d(gate,:,1,:),nlag,nfreq);

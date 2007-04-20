@@ -1,4 +1,11 @@
 function plot_specs(file)
+% GUISDAP v8.5   07-01-27 Copyright EISCAT
+%
+% Altitude plot of the saved spectra from the analysis
+%  enabled by 'analysis_savespec'
+% Input: Result file name
+%
+% function plot_specs(file)
 if nargin<1
  global r_om r_spec p_om0 sc_angle r_h name_expr name_ant d_time
 else
