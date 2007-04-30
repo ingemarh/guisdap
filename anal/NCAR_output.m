@@ -15,7 +15,7 @@ global NCAR_fid
 
 if nargin==0
   if ~isempty(NCAR_fid) & any(NCAR_fid)
-    fclose(NCAR_fid(find(NCAR_fid)));
+    for fid=NCAR_fid(find(NCAR_fid)), fclose(fid); end
   end
   NCAR_fid=[]; return
 elseif isempty(NCAR_fid)

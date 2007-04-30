@@ -141,9 +141,11 @@ elseif strcmpi(act,'print') | strcmpi(act,'save')
   end
   if strcmpi(act,'save')
     gd=fullfile(matlabroot,'sys','ghostscript',filesep);
+    gsbin=fullfile(gd,'bin',lower(computer),'gs');
+    gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
+    if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
 %   unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',...
-    unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=png256 -g580x820 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',...
-      fullfile(gd,'bin',lower(computer),'gs'),gd,gd,file,file,ext));
+    unix(sprintf('%s %s -dNOPAUSE -q -sDEVICE=png256 -g580x820 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
     fprintf('Created %s.%s and .png\n',file,ext)
   end
  elseif strcmpi(act,'print')
