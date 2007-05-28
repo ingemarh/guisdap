@@ -10,9 +10,10 @@ MATLAB=$(subst MATLAB=,,$(shell matlab -e | grep MATLAB= ))
 endif
 ifeq ($(sys),SunOS)
 #Solaris:
-CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include
+CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include -xarch=v9a
 MEXOPTS=-f $(MATLAB)/bin/f90opts.sh
 LDFLAGS= -dy -G -h libguisdap.so -z text
+FC=f95
 else
 #Linux
 CFLAGS=-O3 -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
@@ -41,13 +42,13 @@ endif
 all: iri msis lib mex install
 
 iri:
-	$(MEX) $(MEXOPTS) iri.f $(IRILIB)
+	$(MEX) $(MEXOPTS) iri.F $(IRILIB)
 
 geomag:
 	$(MEX) $(MEXOPTS) geomag.f $(IRILIB)
 
 msis:
-	$(MEX) $(MEXOPTS) msis.f $(MSISLIB)
+	$(MEX) $(MEXOPTS) msis.F $(MSISLIB)
 
 lib:
 	$(COMPILE.c) mrqmndiag_worker.c dirthe_worker.c GULIPS_addm_worker.c GULIPS_cov_worker.c GULIPS_invR_worker.c GULIPS_mul_worker.c spec_worker.c transf_worker.c addr_covar_worker.c
