@@ -24,7 +24,7 @@ if ~isempty(a_code)
  lpgs=lpgs(find(ismember(lpg_code(lpgs),unique(a_code))));
 end
 for lpg=lpgs
-  addr=(0:lpg_nt(lpg)-1)*lpg_ri(lpg)+lpg_ra(lpg)+ADDR_SHIFT;
+  addr=(0:lpg_nt(lpg)-1)'*lpg_ri(lpg)+lpg_ra(lpg)+ADDR_SHIFT;
   if laver==1
     Na=length(addr); N_av=Na*N_averaged;
     naver=N_averaged;
@@ -51,8 +51,9 @@ for lpg=lpgs
     end
     var1=(conv(dvar1(addr),f)-dat.*dat./naver).*coef;
     var2=(conv(dvar2(addr),f)-dat.*conj(dat)./naver).*coef;
-    d_var1(addr)=[ones(L,1)*var1(N);var1(N:Na);ones(R,1)*var1(Na)];
-    d_var2(addr)=[ones(L,1)*var2(N);var2(N:Na);ones(R,1)*var2(Na)];
+    L=ones(L,1); R=ones(R,1);
+    d_var1(addr)=[L*var1(N);var1(N:Na);R*var1(Na)];
+    d_var2(addr)=[L*var2(N);var2(N:Na);R*var2(Na)];
   end
 end
 
