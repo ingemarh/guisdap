@@ -25,20 +25,23 @@ function [varargout]=vizu(varargin)
 % To reset and start over:
 % >> vizu new [action]
 
-global Time par2D par1D rpar2D name_expr name_ant axs axc hds maxdy rres
+global Time par2D par1D rpar2D name_expr name_ant axs axc maxdy rres
+persistent hds
 global height n_tot add_plot manylim
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
 global r_RECloc path_tmp path_GUP result_path webfile local owner
 nvargin=length(varargin);
 naction=1;
+vizufig=findobj('type','figure','userdata',6);
 if strcmp(action(naction,nvargin,varargin),'new')
-  close(findobj('type','figure','userdata',6))
+  naction=naction+1;
+  if ~isempty(vizufig)
+    close(vizufig), vizufig=[];
+  end
+end
+if isempty(vizufig)
   axs=[]; axc=[];
   Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
-  naction=naction+1;
-end
-if ~isempty([axs axc]) & isempty(findobj('type','figure','userdata',6)) 
-  axs=[]; axc=[];
 end
 REALT=0; manylim=1;
 Loc=local.site;
@@ -52,8 +55,10 @@ if strcmp(action(naction,nvargin,varargin),'rtgup')
       START_TIME=toYMDHMS(a_year,a_start);
       END_TIME=toYMDHMS(a_year,a_end);
     end
-    close(findobj('type','figure','userdata',6))
-    axs=[]; axc=[]; naction=nvargin+1;
+    if ~isempty(vizufig)
+      close(vizufig), vizufig=[]; axs=[]; axc=[];
+    end
+    naction=nvargin+1;
   else
     varargin{naction}='update';
   end
@@ -94,7 +99,7 @@ if isempty(act) | strcmp(lower(act),'verbose')
  maxdy	=Inf;		% Max diff in y stretch data points
 elseif strcmp(act,'update')
  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
- set(0,'currentfig',findobj('type','figure','userdata',6))
+ set(0,'currentfig',vizufig)
 elseif strcmpi(act,'print') | strcmpi(act,'save')
  if isempty(axs)
   disp('Nothing to print!')
@@ -120,15 +125,15 @@ elseif strcmpi(act,'print') | strcmpi(act,'save')
   rotate=0; if length(axs)==1, rotate=1; end
   if [strfind(act,'R') strfind(act,'V')], rotate=1-rotate; end
   if rotate
-   ppos=get(gcf,'PaperPosition');
-   set(gcf,'PaperOrient','landscape','PaperPosition',[0 3 ppos([4 3])-[0 3]])
+   ppos=get(vizufig,'PaperPosition');
+   set(vizufig,'PaperOrient','landscape','PaperPosition',[0 3 ppos([4 3])-[0 3]])
   end
   [i,j]=unix('which addlogo.sh');
   if ~i, set(hds(2:3),'visible','off'), end
   file=fullfile(dirs,fig);
-  print(gcf,['-d' ext '2c'],[file '.' ext]);
+  print(vizufig,['-d' ext '2c'],[file '.' ext]);
   if rotate
-   set(gcf,'PaperOrient','portrait','PaperPosition',ppos)
+   set(vizufig,'PaperOrient','portrait','PaperPosition',ppos)
   end
   if ~i
    set(hds(2:3),'visible','on')
@@ -149,12 +154,12 @@ elseif strcmpi(act,'print') | strcmpi(act,'save')
     fprintf('Created %s.%s and .png\n',file,ext)
   end
  elseif strcmpi(act,'print')
-  print(gcf,'-dwinc');
+  print(vizufig,'-dwinc');
  else
   fig=sprintf('%d-%02d-%02d_%s@%s',START_TIME(1:3),name_expr,name_ant);
   ext='eps';
   file=fullfile(DATA_PATH,fig);
-  print(gcf,['-d' ext '2c'],[file '.' ext]);
+  print(vizufig,['-d' ext '2c'],[file '.' ext]);
   fprintf('Created %s.%s\n',file,ext)
  end
  return
@@ -340,7 +345,7 @@ t1=['Produced@' LOCATION ', ' date];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 drawnow
-if isempty(findobj('type','figure','userdata',6))
+if isempty(vizufig)
  figure
  if ~local.x & round(10*local.matlabversion)==65
   close(gcf),figure; % Matlab R13 bug
@@ -381,6 +386,7 @@ if isempty(findobj('type','figure','userdata',6))
  axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
  hds(3)=get(gca,'child'); set(hds(3),'markersize',1)
  set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
+ vizufig=gcf;
 else
  set(hds(1),'string',t2)
 end
@@ -493,7 +499,7 @@ if REALT & ~isempty(Loc) & a_realtime & isunix
   flag='-dpng256'; flag2=[];
  end
  pngfile=sprintf('%sGup_%s.png',path_tmp,name_ant(1:3));
- print(gcf,flag,flag2,pngfile)
+ print(vizufig,flag,flag2,pngfile)
  webfile(1)=cellstr(pngfile);
 end
 if nargout

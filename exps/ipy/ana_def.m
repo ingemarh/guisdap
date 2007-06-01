@@ -10,6 +10,7 @@ d=find(analysis_altit>455); analysis_altit(d(1))=600;
 Magic_const=1.59; %Changed on 20070521 to 1.59 after snow clearence IH
 if strfind(data_path,'32p')
  analysis_do=0;
+ display_figures(5)=0;
  analysis_txpower=8;
  d_saveint.dir=result_path;
  d_saveint.var=0;
