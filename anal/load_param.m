@@ -28,6 +28,7 @@ if n==0
 end
 r_Tsys=[]; r_pp=[]; rres=[];
 n_tot=n;
+memwarn=0;
 lastfile=list(n);
 
 load(canon(fullfile(list(1).dir,sprintf('%08d%s',list(1).file,list(1).ext)),0))
@@ -92,14 +93,25 @@ for i=1:n_tot
       pp(n)=max(sum(r_pp(d).*w)/sw,1);
     end
     if nalt>n_ralt
-      rpar2D=[rpar2D;ones(nalt-n_ralt,n_tot,nrpar2D)*NaN];
-      n_ralt=nalt;
+      try
+        rpar2D=[rpar2D;ones(nalt-n_ralt,n_tot,nrpar2D)*NaN];
+        n_ralt=nalt;
+      catch
+        if strfind(lasterr,'MEMORY')
+          if ~memwarn
+            warning('GUISDAP:default','Raw density results cut')
+          end
+          nalt=n_ralt; memwarn=1;
+        else
+          error(lasterr)
+        end
+      end
     end
     n=1:nalt;
-    rpar2D(n,i,1)=ppr;
-    x=ppr/re;
+    rpar2D(n,i,1)=ppr(n);
+    x=ppr(n)/re;
     rpar2D(n,i,2)=re*sqrt(1+x.*(x+2*sin(r_el/57.2957795)))-re;
-    rpar2D(n,i,3)=pp;
+    rpar2D(n,i,3)=pp(n);
   end
 end
 if exist('r_w','var')
