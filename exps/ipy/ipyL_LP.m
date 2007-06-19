@@ -13,7 +13,7 @@ for vc=1:2:N_SCAN
 end
 for vc=2:2:N_SCAN
     COR_pp(10,1,vc,'c',1,10,0,1)
-    COR_pp(9901,1,vc,'c',1,10,0,2)
+    COR_pp(9901,1,vc+N_SCAN,'c',1,10,0,2)
 end
    
 COR_end
