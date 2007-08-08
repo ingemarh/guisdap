@@ -52,13 +52,13 @@ if length(d_data)==358500   % arc_dlayer_ht
 end 
 
 nsig=npr1+(1:ngat);
-d_data(nsig)=zerolagfix(d_data(nsig),d_data(90+(1:npp)),128);
+d_data(nsig)=remove_stripe(d_data(nsig),d_data(90+(1:npp)),128);
 if a_control(4)==1
  d_var1(nsig)=d_var1(nsig)/(1+1/32/63);
  d_var2(nsig)=d_var2(nsig)/(1+1/32/63);
 end
 nsig=npr2+(1:ngat);
-d_data(nsig)=zerolagfix(d_data(nsig),d_data(90+(1:npp)),128);
+d_data(nsig)=remove_stripe(d_data(nsig),d_data(90+(1:npp)),128);
 if a_control(4)==1
  d_var1(nsig)=d_var1(nsig)/(1+1/8/15);
  d_var2(nsig)=d_var2(nsig)/(1+1/8/15);
