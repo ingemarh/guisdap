@@ -47,7 +47,7 @@ if name_site=='L'
    ch_gain=[ch_gain ch_gain*0.78], % for 4 march 2007
   end
  end
- ng=length(ch_gain)/2;
+ ng=0; %length(ch_gain)/2;
  glp=5333;
  grps=[1 1 lpg_h(1);2 5331 lpg_h(1)+lpg_w(1)/2
        5333 5333 lpg_h(5333)];

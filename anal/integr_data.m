@@ -166,7 +166,7 @@ while i<length(files)
     [dumpOK,ad_sat]=satch(a_ant(1),secs,a_inttime);
   end
   if ~isempty(a_intfixforce)
-    d=find(a_intfixforce);
+    d=find(isfinite(a_intfixforce));
     if find(abs(d_parbl(fixed(d))-a_intfixforce(d))>allow(d))
       fprintf('Parameter bad:')
       fprintf(' par(%d)=%g[%g];',[fixed(d);d_parbl(fixed(d))';a_intfixforce(d)'])

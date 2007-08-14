@@ -20,7 +20,7 @@ if strfind(data_path,'32p')
  d_saveint.dir=result_path;
  d_saveint.var=0;
  d=strfind(d_saveint.dir,'AUTO');
- analysis_intfixforce(4)=400;
+ analysis_intfixforce=[NaN NaN NaN 400];
  analysis_intfix(5:6)=47:48;
  if expver==1
   d_saveint.range=20+col(ones(3*50,1)*(0:1)*19898+(1:3*50)'*ones(1,2)+22*50+21*768);
@@ -30,4 +30,8 @@ if strfind(data_path,'32p')
  if length(d)==1
   d_saveint.dir=[d_saveint.dir(1:d-1) sprintf('%s_%s%d_%d@32p',datestr(analysis_start,29),name_expr,expver,analysis_integr(1))];
  end
+else
+ analysis_intfix(5)=67;
+ analysis_intfixforce=[NaN NaN NaN NaN 0];
+ analysis_intallow=[.11 .11 1000 0 1];
 end

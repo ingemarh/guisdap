@@ -14,7 +14,7 @@ if strfind(data_path,'32p')
  d_saveint.var=0;
  d=strfind(d_saveint.dir,'AUTO');
  if expver==2
-  analysis_intfixforce(4)=160;
+  analysis_intfixforce=[NaN NaN NaN 160];
   d_saveint.range=col(ones(3*175,1)*(0:3)*19619+(1:3*175)'*ones(1,4)+10*175+9*1536);
  end
  if length(d)==1

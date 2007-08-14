@@ -162,7 +162,7 @@ if exist('analysis_intfixed','var')
 end
 a_intallow=[.11 .11 1000 0];
 if exist('analysis_intallow','var')
- a_intallow(1:length(a_intallow))=analysis_intallow;
+ a_intallow(1:length(analysis_intallow))=analysis_intallow;
 end
 a_intfix=[9 10 42 64];
 if exist('analysis_intfix','var')
