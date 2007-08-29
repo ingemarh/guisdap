@@ -199,6 +199,10 @@ a_ppshortlags=0;
 if exist('analysis_ppshortlags','var')
  a_ppshortlags=analysis_ppshortlags;
 end
+a_gating=0;
+if exist('analysis_gating','var')
+ a_gating=analysis_gating;
+end
 
 if exist('display_analysis_pars','var')
  empty_pars=[];

@@ -8,7 +8,7 @@ function half_prof
 global a_addr a_adstart a_adend a_control ad_lpg ad_coeff ad_range ad_w ADDR_SHIFT 
 global d_data d_var1 d_var2 d_time p_rep p_dtau ch_el di_fit
 global lpg_ND lpg_lag lpg_womscaled lpg_bac lpg_cal lpg_background lpg_Ap
-global a_priori a_priorierror p_ND
+global a_priori a_priorierror p_ND a_gating
 global r_range r_status r_w
 global pldfvv p_D0 p_N0 p_T0 p_om k_radar k_radar0 p_m0 fit_altitude
 
@@ -26,8 +26,7 @@ for g_ind=1:length(a_adstart)
   f_womega=[real(lpg_womscaled(lpgs,:));imag(lpg_womscaled(lpgs,:))];
   fb_womega=[real(lpg_Ap(lpgs));imag(lpg_Ap(lpgs))];
   p_coeffg=[ad_coeff(addr+ADDR_SHIFT),ad_coeff(addr+ADDR_SHIFT)]';
-
-  signal_acf=[real(d_data(addr+ADDR_SHIFT));imag(d_data(addr+ADDR_SHIFT))];  
+  signal_acf=[real(d_data(addr+ADDR_SHIFT));imag(d_data(addr+ADDR_SHIFT))];
   measurement=[signal_acf;col(a_priori(g_ind,:))];
 
   % Take starting point from the a priori model, or from the previous gate
@@ -67,6 +66,27 @@ for g_ind=1:length(a_adstart)
       diag_var=diag(signal_var);
       variance=blkdiag(signal_var,diag(a_priorivar));
     end
+  end
+  if a_gating & any(size(variance)==1)
+    lpg=unique(lpgs); nlpg=length(lpg); nlpgs=length(lpgs);
+    F=zeros(nlpg*2,length(p_om)); M=zeros(nlpg*2,1); V=M; FB=M; P=M;
+    for i=1:nlpg
+      d=find(lpgs==lpg(i));
+      for j=(0:1)*nlpg+i
+        F(j,:)=f_womega(d(1),:); FB(j,:)=fb_womega(d(1)); mv=variance(d);
+        if any(mv) & a_gating>1
+          smv=sum(1../mv);
+          M(j)=sum(measurement(d)./mv)/smv; V(j)=1/smv;
+          P(j)=sum(p_coeffg(d)./mv)/smv;
+        else
+          M(j)=sum(measurement(d)); P(j)=sum(p_coeffg(d));
+          if a_gating==1, V(j)=sum(mv); end
+        end
+        d=d+nlpgs;
+      end
+    end
+    measurement=[M;col(a_priori(g_ind,:))]; variance=[V;a_priorivar];
+    f_womega=F; fb_womega=FB; p_coeffg=P; lpgs=lpg;
   end
   reind=1:length(addr); %Only real parts and diagonal needed in altitude calculation!
   r_range(r_ind)=sum(ad_range(addr+ADDR_SHIFT)./diag_var(reind)')/sum(1 ./diag_var(reind));
