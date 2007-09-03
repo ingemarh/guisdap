@@ -1,7 +1,7 @@
 function peak=find_plf_peak(s,h,hlim,p,npoly,zscale,fft)
 global fpp_plot
 if fft
- %100 kHz, 1km resolution fast but need correction sometimes
+ %100 kHz, 1km resolution, fast but might need correction
  df=.1; lf=round(diff(zscale/df)); freqs=(0:lf-1)/(lf-1)*diff(zscale)+zscale(1);
  df=1/(lf-1)*diff(zscale);
  lf=length(freqs); freq=zeros(length(freqs),s);
@@ -22,7 +22,9 @@ for i=1:s
   d=find(h(:,i)>hlim(1) & h(:,i)<hlim(2) & isfinite(p(:,i)));
  end
  npol=min(npoly,round(length(d)/2)-1);
- if npol>1
+ if isnan(npoly) & d
+  peak(i)=max(p(d,i));
+ elseif npol>1
   logh=log(h(d,i));		%log(h) to reduce noisy high alt
   [poly,S,mu]=polyfit(logh,p(d,i),npol);
   dpoly=polyder(poly); j=roots(dpoly); hl=(loghl-mu(1))/mu(2);

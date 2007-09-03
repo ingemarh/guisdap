@@ -1,4 +1,4 @@
-function mr2=calib_ne(F,alt,maxe,minel,folim,fpplt)
+function mr2=calib_ne(F,alt,maxe,minel,folim,polen,fpplt)
 %function mr2=calib_ne(F,alt,maxe,minel,folim,fpplt)
 %calib_ne.m: Utility to check the analysis against the dynasonde
 % GUISDAP v.8.3 04-05-27 Copyright EISCAT
@@ -7,10 +7,12 @@ function mr2=calib_ne(F,alt,maxe,minel,folim,fpplt)
 %         maxe: Maximum error allowed, default 1 (* std)
 %         minel: Minimum elevation allowed, default 75
 %         folim: Frequency range allowed, default [0 Inf]
+%         polen: Maximum length of polynomial fit, default 7, NaN=no fit
 %         fpplt: Indices to display the parabolic fits of plfs
 % Output: mr2: [Density_ratio Error NewMagic_const]
-global fpp_plot
-if nargin<6, fpplt=[]; end
+global fpp_plot,plf_polen
+if nargin<7, fpplt=[]; end
+if nargin<6, polen=[]; end
 if nargin<5, folim=[]; end
 if nargin<4, minel=[]; end
 if nargin<3, maxe=[]; end
@@ -25,6 +27,7 @@ if isempty(maxe), maxe=1; end
 if isempty(minel), minel=75; end
 if isempty(folim), folim=[0 30]; end
 fpp_plot=fpplt;
+plf_polen=polen;
 a=vizu('verbose',alt,'P1 AE');
 global Time axs par1D DATA_PATH START_TIME END_TIME r_Magic_const
 d=datevec(Time(1));

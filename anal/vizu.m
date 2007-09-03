@@ -27,7 +27,7 @@ function [varargout]=vizu(varargin)
 
 global Time par2D par1D rpar2D name_expr name_ant axs axc maxdy rres
 persistent hds
-global height n_tot add_plot manylim
+global height n_tot add_plot manylim plf_polen
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
 global r_RECloc path_tmp path_GUP result_path webfile local owner
 nvargin=length(varargin);
@@ -468,7 +468,8 @@ if option(16)
   surf_plot(s,y_param(GATES,:),pf,PLF_SCALE,Yscale,YTitle,'Plasma frequency (MHz)',[])
  end
  if option(16)>1
-  pf=find_plf_peak(s,y_param(GATES,:),Yscale,pf,7,PLF_SCALE,0);
+  polen=plf_polen; if isempty(polen), polen=7; end
+  pf=find_plf_peak(s,y_param(GATES,:),Yscale,pf,polen,PLF_SCALE,0);
   d=many(pf,PLF_SCALE);
   line_plot(s,pf,d,'Cutoff plasma frequency (MHz)',[],[])
  end
