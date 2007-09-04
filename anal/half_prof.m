@@ -23,16 +23,15 @@ for g_ind=1:length(a_adstart)
   addr=a_addr(a_adstart(g_ind):a_adend(g_ind));
   lpgs=ad_lpg(addr+ADDR_SHIFT); % These are the lag profile groups of the data points
 
-  f_womega=[real(lpg_womscaled(lpgs,:));imag(lpg_womscaled(lpgs,:))];
-  fb_womega=[real(lpg_Ap(lpgs));imag(lpg_Ap(lpgs))];
+  aa=a_priori(g_ind,:); 
+  a_priorivar=a_priorierror(g_ind,:)'.^2;
   p_coeffg=[ad_coeff(addr+ADDR_SHIFT),ad_coeff(addr+ADDR_SHIFT)]';
   signal_acf=[real(d_data(addr+ADDR_SHIFT));imag(d_data(addr+ADDR_SHIFT))];
-  measurement=[signal_acf;col(a_priori(g_ind,:))];
+  measurement=[signal_acf;col(aa)];
 
   % Take starting point from the a priori model, or from the previous gate
   % (if previous fit was successful and gate above the present one).  
-  aa=a_priori(g_ind,:); 
-  afree=find(a_priorierror(g_ind,:)>0);
+  afree=find(a_priorivar>0);
   if r_ind>1
     if mean(ad_range(addr+ADDR_SHIFT))>=r_range(r_ind-1) & status==0
       err=sqrt(diag(ralpha(afree,afree)))';
@@ -42,24 +41,23 @@ for g_ind=1:length(a_adstart)
     end
   end
 
-  a_priorivar=a_priorierror(g_ind,:)'.^2;
-  if a_control(4)==1 % Using variance estimates calculated from data
+  if a_control(4)==1, %Using variance estimates from data
     diag_var=real([d_var1(addr+ADDR_SHIFT)+d_var2(addr+ADDR_SHIFT);...
                    d_var2(addr+ADDR_SHIFT)-d_var1(addr+ADDR_SHIFT)])/2;  
     variance=[diag_var;a_priorivar];
-  elseif a_control(4)>=2 % calculating variance estimates from ambiguity functions
+  elseif a_control(4)>=2, %variance estimates from ambiguity functions
     % The variance scaling is calculated from the integration time here
-    % In fact, it should be based on the loop counter value stored to the data dump
+    % it should be based on the loop counter value stored to the data dump
     Var_scale=p_ND/min(1,p_rep*p_dtau*1e-6/diff(tosecs(d_time)));
     lpgbac=lpg_bac(diff_val(lpg_cal(lpgs)));
     ind=find(lpg_lag(lpgbac)==0);
     Tback=mean(lpg_background(lpgbac(ind)));
-    if a_control(4)==2 % variances only
+    if a_control(4)==2, %variances only
       [covRe,covIm]=adgr_var(addr,Tback,aa);
       ND2=Var_scale*lpg_ND(lpgs).^2;
       diag_var=[covRe./ND2 covIm./ND2]';
       variance=[diag_var;a_priorivar];
-    elseif a_control(4)==3 % covariances as well
+    elseif a_control(4)==3, %covariances as well
       [covRe,covIm]=adgr_covar(Tback,aa,addr);
       ND2=Var_scale*(lpg_ND(lpgs)'*lpg_ND(lpgs));
       signal_var=blkdiag(covRe./ND2,covIm./ND2);
@@ -67,27 +65,31 @@ for g_ind=1:length(a_adstart)
       variance=blkdiag(signal_var,diag(a_priorivar));
     end
   end
-  if a_gating & any(size(variance)==1)
-    lpg=unique(lpgs); nlpg=length(lpg); nlpgs=length(lpgs);
-    F=zeros(nlpg*2,length(p_om)); M=zeros(nlpg*2,1); V=M; FB=M; P=M;
+  lpg=unique(lpgs); nlpg=length(lpg); nlpgs=length(lpgs);
+  if a_gating & nlpg<nlpgs & any(size(variance)==1)
+    M=zeros(nlpg*2,1); V=M; P=M;
     for i=1:nlpg
       d=find(lpgs==lpg(i));
+      pc=p_coeffg(d);
       for j=(0:1)*nlpg+i
-        F(j,:)=f_womega(d(1),:); FB(j,:)=fb_womega(d(1)); mv=variance(d);
+        mv=variance(d)./pc;
         if any(mv) & a_gating>1
-          smv=sum(1../mv);
-          M(j)=sum(measurement(d)./mv)/smv; V(j)=1/smv;
-          P(j)=sum(p_coeffg(d)./mv)/smv;
+          mv=sum(1./mv)./mv;
+          M(j)=sum(measurement(d).*mv);
+	  V(j)=sum(variance(d).*mv.^2);
+          P(j)=sum(pc.*mv);
         else
-          M(j)=sum(measurement(d)); P(j)=sum(p_coeffg(d));
-          if a_gating==1, V(j)=sum(mv); end
+          M(j)=sum(measurement(d)); P(j)=sum(pc); V(j)=sum(variance(d));
         end
         d=d+nlpgs;
       end
     end
     measurement=[M;col(a_priori(g_ind,:))]; variance=[V;a_priorivar];
-    f_womega=F; fb_womega=FB; p_coeffg=P; lpgs=lpg;
+    p_coeffg=P; lpgs=lpg;
   end
+  f_womega=[real(lpg_womscaled(lpgs,:));imag(lpg_womscaled(lpgs,:))];
+  fb_womega=[real(lpg_Ap(lpgs));imag(lpg_Ap(lpgs))];
+
   reind=1:length(addr); %Only real parts and diagonal needed in altitude calculation!
   r_range(r_ind)=sum(ad_range(addr+ADDR_SHIFT)./diag_var(reind)')/sum(1 ./diag_var(reind));
   r12=([1;1]*ad_range(addr+ADDR_SHIFT)+[-1;1]*ad_w(addr+ADDR_SHIFT)/2);
@@ -127,7 +129,7 @@ for g_ind=1:length(a_adstart)
     end
   end
   % Forward only the variances (not covariances) to store_results
-  if min(size(variance))>1, variance=diag(variance); end
+  if all(size(variance)>1), variance=diag(variance); end
   ralpha=real(alpha);
   store_results(aa,measurement,variance,real(result),ralpha,chi2,status,kd2,...
           p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega,lpgs,r_ind,g_ind);
