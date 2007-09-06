@@ -540,7 +540,7 @@ if strcmp(lg,'log')
 end
 o2=ones(1,2);
 for i=1:s
- d=max(find(isfinite(yparam(:,i)))); yp=yparam(1:d,i);
+ d=max([find(isfinite(yparam(:,i)));2]); yp=yparam(1:d,i);
  dy=diff(yp)/2; yp=[yp-[dy(1);dy];yp(d)+dy(end)];
  zp=zparam([1:d d],i);
  d=find(dy(1:end-1)>maxdy);
