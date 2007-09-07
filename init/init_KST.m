@@ -33,7 +33,7 @@ cd(path_expr)
 p_dtau=1;
 if name_site=='T' | name_site=='K' | name_site=='S' | name_site=='R'
   ch_gain=10^4.81;
-  ch_fradar=931.5e6;
+  ch_fradar=927e6;
 elseif name_site=='L' | name_site=='P'
   ch_gain=10^4.25;
 % ch_gain=10^4.48; % esr-2?

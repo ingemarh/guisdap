@@ -10,7 +10,7 @@ function mr2=calib_ne(F,alt,maxe,minel,folim,polen,fpplt)
 %         polen: Maximum length of polynomial fit, default 7, NaN=no fit
 %         fpplt: Indices to display the parabolic fits of plfs
 % Output: mr2: [Density_ratio Error NewMagic_const]
-global fpp_plot,plf_polen
+global fpp_plot plf_polen
 if nargin<7, fpplt=[]; end
 if nargin<6, polen=[]; end
 if nargin<5, folim=[]; end
