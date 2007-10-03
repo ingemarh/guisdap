@@ -29,7 +29,7 @@ global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlim a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
-persistent a_antold a_maxgap secs a_posold a_nnold fileslist
+persistent a_antold a_max secs a_posold a_nnold fileslist
  
 OK=0; EOF=0; jj=0; N_averaged=0; M_averaged=0;
 d_ExpInfo=[]; d_raw=[]; txdown=0;
@@ -47,7 +47,7 @@ if a_ind==0
     if i>0, a_start=a_start+i*a_cycle; end
   end
   a_interval=a_start+[0 a_integr(1)];
-  a_maxgap=30;
+  a_max.gap=30; a_max.adiff=0.3;
   a_posold=zeros(1,9);
   a_nnold=zeros(1,9);
 else
@@ -124,14 +124,14 @@ while i<length(files)
       secs=secs1;
       N_averaged=0; M_averaged=0;
     end
-    tdiff=secs1-secs>a_maxgap;
+    tdiff=secs1-secs>a_max.gap;
     if a_integr<0 & exist('starttime','var')
       tdiff=tdiff | starttime-secs1<a_integr;
     end
     adiff=a_antold-a_ant;
     a_antold=a_ant;
-    if any(fix(adiff/.2)) | tdiff
-      if a_ant(1)<89.8 | a_ant(1)>90.2 | a_ant(1)+adiff(1)<89.8 | a_ant(1)-adiff(1)>90.2 | tdiff
+    if any(fix(adiff/a_max.adiff)) | tdiff
+      if abs(a_ant(1)-90)>a_max.adiff+min(0,adiff(1)) | tdiff
         a_interval(2)=file.file;
         if tdiff & M_averaged>1
           a_interval(2)=file.file-.5; a_antold=[];
