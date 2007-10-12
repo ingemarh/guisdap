@@ -3,7 +3,12 @@
 %
 % See also: GUISPERT GUIZARD
 %
-%d_date=datenum(d_time(1,:));
+d_date=datenum(d_time(1,:));
+if name_site=='T'
+ if d_date<2007
+  lpg_ra(1305:1306)=[25547 25563];
+ end
+end
 if name_site=='L'
  glp=1182;
  grps=[1 1 lpg_h(1);2 1180 lpg_h(1)+lpg_w(1)/2

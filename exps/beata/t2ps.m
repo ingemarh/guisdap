@@ -1,7 +1,6 @@
 function dum=t2ps(site,rc,p)
 if nargin<2, rc=0; end
 if nargin<3, p=0; end
-t2psfile='t_to_ps.txt';
 if rc==0
  apustr='';
 else
@@ -9,6 +8,9 @@ else
 end
 t2psfile=['t_to_ps.txt' apustr '.' lower(site)];
 t_to_ps=load(t2psfile,'-ascii');
+if site=='r'
+  d=find(t_to_ps(:,4)==12.2); t_to_ps(d,:)=[];
+end
 p_offsetppd=0;
 td_t1=t_to_ps(:,1)';
 td_t2=t_to_ps(:,2)';
@@ -31,6 +33,11 @@ elseif site=='t'
  ch_adcint=[10 10];
  ch_filter={'b35d150.fir' 'b35d150.fir'};
  ch_f=[12 12.1];
+ p_rep=357120;
+elseif site=='r'
+ ch_adcint=[10];
+ ch_filter={'b35d150.fir'};
+ ch_f=[12];
  p_rep=357120;
 else
  error('giveup')
