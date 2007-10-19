@@ -48,6 +48,9 @@ matver=ver('matlab'); matver=matver.Version;
 d=strfind(matver,'.'); matver(d(2:end))=[];
 local.matlabversion=str2num(matver);
 clear matver d
+if ~usejava('jvm') & local.matlabversion>7.4
+ set(0,'DefaultAxesButtonDownFcn','zoom')
+end
 if ~isfield(local,'tfile'), local.tfile=tempname; end
 switch local.site
  case 'K'

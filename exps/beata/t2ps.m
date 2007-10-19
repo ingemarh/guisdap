@@ -39,6 +39,11 @@ elseif site=='r'
  ch_filter={'b35d150.fir'};
  ch_f=[12];
  p_rep=357120;
+elseif site=='v'
+ ch_adcint=[20 20];
+ ch_filter={'b25d300.fir' 'b25d300.fir'};
+ ch_f=[12 12.2];
+ p_rep=357120;
 else
  error('giveup')
 end
