@@ -151,19 +151,21 @@ while ~EOF
 % pp_sigma   : Ne with Te=Ti
 %******************************************************************
       clear_results
-      half_prof
-      GUIDITOR
-      save_results
+      if ~a_pponly
+        half_prof
+        GUIDITOR
 
-      if di_figures(4)
-        drawnow, figure(abs(di_figures(4)))
-        if di_figures(4)<0 & a_savespec
-          plot_specs
-        else
-          plot_fit('panel',[1 1 1 0 1],[-inf inf 10*ceil((max(r_h)-min(r_h))/100)]);
+        if di_figures(4)
+          drawnow, figure(abs(di_figures(4)))
+          if di_figures(4)<0 & a_savespec
+            plot_specs
+          else
+            plot_fit('panel',[1 1 1 0 1],[-inf inf 10*ceil((max(r_h)-min(r_h))/100)]);
+          end
+          drawnow 
         end
-        drawnow 
       end
+      save_results
     end
   end 
 

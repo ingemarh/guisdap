@@ -203,6 +203,10 @@ a_gating=0;
 if exist('analysis_gating','var')
  a_gating=analysis_gating;
 end
+a_pponly=0;
+if exist('analysis_pponly','var')
+ a_pponly=analysis_pponly;
+end
 
 if exist('display_analysis_pars','var')
  empty_pars=[];
