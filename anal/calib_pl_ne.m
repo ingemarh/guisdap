@@ -3,6 +3,7 @@ function ratio=calib_pl_ne(pl_dir,expt,gate,plots)
 % GUISDAP 8.4  8 Oct 2004  Copyright EISCAT
 % Calibration routine of radar constant using simultaneous wide band plasma
 % lines and GUISDAP results
+% Using setup in pl_def.m in experiment directory
 % input: pl_dir Directory containing integrated plasma lines (needed)
 %        expt   Name of experiment (or guessed from pl_dir)
 %        plots  Display a number of plots for internal checks
@@ -17,62 +18,26 @@ if nargin<2, expt=[]; end
 if nargin<3, gate=[]; end
 if nargin<4, plots=[]; end
 if isempty(expt), expt=pl_dir; end
-if strfind(expt,'steffe2')
- nfft=0; nint=1; ngates=3; nlag=175;
- freq=[-3.8 -5.4 3.8 5.4]*1e6; dt=0.6e-6; invert=-1;
- ran=[47 314;189 455;330 597]; fradar=500e6;
- maxe=2; ele=81.6; updown=0:1; nup_d=2; skip_if=0;
- if [strfind(expt,'cut') regexp(pl_dir,'\d\d\d\d-\d\d-\d\d_steffe2_\d+@32p')]
-  startad=(0:3)*3*nlag+1;
- else
-  startad=(0:3)*19619+10*nlag+9*1536+1;
+global Time par1D par2D axs r_Magic_const DATA_PATH local path_exps
+exps=dir(path_exps); pldef='pl_def'; pdefs=[];
+for i=1:length(exps)
+ d=fullfile(path_exps,exps(i).name,pldef);
+ if exist([d '.m'],'file')
+   pdefs=[pdefs i];
+   if strfind(expt,exps(i).name) & exist([d '.m'],'file')
+     run(d),break
+   end
  end
- if isempty(gate), gate=2; end
- %freq=freq([1 3]); startad=startad([1 3]); nup_d=1;
-elseif strfind(expt,'ipy')
- nfft=0; nint=1; ngates=3; nlag=50;
- freq=[-4.0 4.0]*1e6; dt=0.6e-6; invert=-1;
- ran=41+(0:2)'*65*ones(1,2)+ones(3,1)*[0 140]; fradar=500e6;
- maxe=2; ele=81.6; updown=0:1; nup_d=1; skip_if=0;
- if [strfind(expt,'cut') regexp(pl_dir,'\d\d\d\d-\d\d-\d\d_ipy\d_\d+@32p')]
-  startad=(0:1)*3*nlag+1;
- elseif strfind(expt,'ipy2')
-  startad=(0:1)*29814+34*nlag+33*768+21;
- else
-  startad=(0:1)*19898+22*nlag+21*768+21;
- end
- if isempty(gate), gate=3; end
- %freq=freq(2); updown=0; startad=startad(2); %uncomment/modify for one plch
-elseif strfind(expt,'plwin')
- nfft=0; nint=1; ngates=3; nlag=240;
- freq=[-4.8 4.8]*1e6; dt=0.4e-6; invert=-1;
- ran=[69 300;170 400;270 501]; fradar=500e6;
- maxe=2; ele=81.6; updown=0:1; nup_d=1;
- startad=[1 48165]+19*240+18*2048; skip_if=1;
- if isempty(gate), gate=2; end
- %freq=freq(1); updown=0; startad=startad(1);
-elseif strfind(expt,'steffe')
- nfft=128; nint=2; ngates=1; nlag=0;
- freq=[-4 -5.3 4 5.3]*1e6; dt=0.6e-6; invert=-1;
- ran=[182 423.9]; fradar=500e6;
- maxe=2; ele=81.6; updown=0:1; nup_d=2;
- startad=1; gate=1; skip_if=0;
-elseif strfind(expt,'tau8')
- nfft=128; nint=2; ngates=4; nlag=0;
- freq=4.1*1e6; dt=0.6e-6; invert=-1;
- ran=[53.3 272.4;193.4 412.5;333.4 552.5;473.3 692.4]; fradar=224e6;
- maxe=2; ele=0; updown=0; nup_d=1;
- startad=108679; skip_if=1;
- if isempty(gate), gate=2; end
-else
- error('No such experiment defined (ipy,steffe2,steffe,plwin,tau8)')
+end
+if ~exist('startadd','var')
+ pdefs=sprintf('%s ',exps(pdefs).name);
+ error(['No such experiment defined ( ' pdefs ')'])
 end
 if isempty(gate), gate=1; end
 
 %pl_dir='/home/ingemar/gup/mydata/steffel_int_CP@32p/';
 %res_dir='gup/results/2004-05-2*_steffe_60@42m/';
 %assume similar integration!
-global Time par1D par2D axs r_Magic_const DATA_PATH local
 edge_dist=10; wrap=9;
 nfreq=length(freq);
 
