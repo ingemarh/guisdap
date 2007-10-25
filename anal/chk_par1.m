@@ -173,6 +173,16 @@ end
 if exist('analysis_intfixforce','var')
  a_intfixforce=analysis_intfixforce;
 end
+if exist('analysis_sweep','var')
+ if strfind(analysis_sweep,'az')
+  a_intallow(1)=Inf;
+ elseif ~strfind(analysis_sweep,'el')
+  warning('GUISDAP:parse','analysis_sweep has to contain ''el'' and/or ''az'' strings')
+ end
+ if strfind(analysis_sweep,'el')
+  a_intallow(2)=Inf;
+ end
+end
 if exist('analysis_txpower','var')
  a_txpower=analysis_txpower;
 elseif name_site=='V' & a_year>2006

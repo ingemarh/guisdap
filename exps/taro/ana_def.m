@@ -6,7 +6,7 @@ if ~exist('analysis_code','var')
  a_satch.clutter=[6 20];
  if siteid==6
   analysis_code=3:4;
-  analysis_intallow=[Inf;Inf];
+  analysis_sweep='azel';
  else
   analysis_code=1:2;
  end
