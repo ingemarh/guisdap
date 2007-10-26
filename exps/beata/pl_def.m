@@ -1,7 +1,7 @@
 ran=[47 143;123 219;200 326];
 nfft=0; nint=1; ngates=3; nlag=25;
 maxe=2; nup_d=1; skip_if=0;
-if strcmp(expt,'v')
+if strfind(expt,'v')
  freq=[5.5 -5.5]*1e6; dt=0.8e-6; invert=-1; fradar=224e6;
  ele=90; updown=0:1;
  if strfind(expt,'cut')

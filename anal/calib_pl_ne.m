@@ -18,8 +18,8 @@ if nargin<2, expt=[]; end
 if nargin<3, gate=[]; end
 if nargin<4, plots=[]; end
 if isempty(expt)
- [i,expt]=pl_dir;
- if isempty(expt), [i,expt]=i; end
+ [i,expt]=fileparts(pl_dir);
+ if isempty(expt), [i,expt]=fileparts(i); end
 end
 global Time par1D par2D axs r_Magic_const DATA_PATH local path_exps
 exps=dir(path_exps); pldef='pl_def'; pdefs=[];
@@ -49,7 +49,7 @@ re=6370; ratio=[];
 alt=re*sqrt(1+ran(gate,:)/re.*(ran(gate,:)/re+2*sin(ele/57.2957795)))-re;
 if ele==0, alt=[150 450]; end
 %Read in the analysed data
-lf=vizu('verbose',alt,'L1 AE'),
+lf=vizu('verbose',alt,'L1 AE');
 for i=1:2
  hlim(:,i)=ran(gate,i)*(ran(gate,i)/re+2*sin(par1D(:,2)/57.2957795));
 end
