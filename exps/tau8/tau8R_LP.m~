@@ -1,0 +1,16 @@
+N_SCAN=length(vc_ch);
+
+COR_init(977*N_SCAN*2,80)
+Asplit=6825;
+for vc=1:2:N_SCAN
+    COR_uprog(0,1,vc,'s',1,300,(0:2)*28,0,1)
+    COR_fraclp(897,vc,'s',100-45,16,84,(1:47)*28,1,50)
+%   COR_pp(50712,1,vc,'c',1,21,0,1)
+    COR_uprog(6597,1,vc,'b',1,21,(0:18)*28,0,1)
+
+    COR_uprog(Asplit+0,1,vc+1,'s',1,300,(0:2)*28,0,2)
+    COR_fraclp(Asplit+897,vc+1,'s',100-45,16,84,(1:47)*28,2,50)
+    COR_uprog(Asplit+6597,1,vc+1,'b',1,21,(0:18)*28,0,2)
+end
+
+COR_end

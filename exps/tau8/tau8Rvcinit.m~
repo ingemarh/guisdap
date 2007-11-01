@@ -12,3 +12,6 @@ for scan=0:N_scan-1
   vc_t1(1+scan)=0+SHIFT;
   vc_t2(1+scan)=2*T_scan+SHIFT;
 end
+%vc_ch=[vc_ch vc_ch];
+%vc_t1=[vc_t1 vc_t1];
+%vc_t2=[vc_t2 vc_t2];

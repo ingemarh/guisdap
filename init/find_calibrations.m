@@ -91,13 +91,13 @@ for code=codes;
 
   %******* find the LPG that gives the calibration power *********** 
   cal=find(lpg_lag(cal_gr)==0);
-  if length(cal)==0, 
-    fprintf('\nERROR: No calibration found for code %3.0f, formed by lag profile groups\n',code)
-    fprintf(' %.0f', sort(all_gr))
-    fprintf('\n Treating these lag profile groups as garbage\n\n')
-    lpg_bcs(all_gr)='g'*ones(1,length(all_gr));
-  else,
-    % Store the found calibration lpg to all lag profile groups with this code number   
+  if exist('nocal','var') & nocal
+    lpg_cal(all_gr)=NaN;
+  elseif length(cal)==0
+    warning('GUISDAP:init','No calibration found for code %d, all those lag profile groups treated as garbage',code)
+    lpg_bcs(all_gr)='g';
+  else
+    % Store the found calibration lpg to all lag profile groups with this code number
     lpg_cal(1:length(cal),all_gr)=cal_gr(cal)'*ones(1,length(all_gr));
   end
 

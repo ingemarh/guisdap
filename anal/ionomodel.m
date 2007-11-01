@@ -110,13 +110,14 @@ if nion>1
 end
 
 if nargout>1
+[ ionomodel_control nion ~any(p_m0-[30.5 16])]
  if ionomodel_control>5 & nion==2 & ~any(p_m0-[30.5 16])
   global pp_height
   if ~isempty(pp_height) & ionomodel_control==7
    global pp_profile p_N0 di_figures
    nepp=pp_profile*p_N0; hpp=pp_height';
    forc=log([1e11;300;100;1e11;120;25]); %;1e11;170;25]);
-   tol=log([ 10  ;1.5;2  ;10  ;1.3;1.5]);%;10  ;2  ;2]);
+   tol=log([ 10  ;2  ;2  ;10  ;1.3;1.5]);%;10  ;2  ;2]);
    fac=(hpp/210).^2*median(nepp);
 %  nepp=ne_from_pp; hpp=heights; fac=median(nepp);
    opts=optimset(optimset('fminsearch'),'MaxFunEvals',10000);

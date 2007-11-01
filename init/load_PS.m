@@ -16,19 +16,19 @@ if nargin==0, rcprog=1; Nrcprog=1;
 elseif nargin==1, Nrcprog=1; end
 apustr=['_',int2str(rcprog)];
 
-create=1;
+create=0;
 PSfile=find_apustr_file([path_expr name_expr name_site],apustr,'pat_PS','.mat');
 if isempty(PSfile)
-  fprintf('Did not find a pat_PS.mat file')
+  warning('Did not find a pat_PS.mat file')
+  create=1;
 else
   fprintf(' Loading %s\n',PSfile)
   load(PSfile)
-  if exist('ch_f')==1 & any(td_ch==0)
-    create=0;
-  elseif all(td_ch~=0)   % No calibration data in the file
-    fprintf('No calibration times in pat_PS.mat file')
-  else
-    fprintf('Existing pat_PS.mat file is not up-to-date')
+  if all(td_ch~=0)   % No calibration data in the file
+    warning('No calibration times in pat_PS.mat file')
+  elseif any(ch_f)~=1
+    warning('Existing pat_PS.mat file is not up-to-date')
+    create=1;
   end
 end
 
