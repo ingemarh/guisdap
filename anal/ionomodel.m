@@ -110,7 +110,6 @@ if nion>1
 end
 
 if nargout>1
-[ ionomodel_control nion ~any(p_m0-[30.5 16])]
  if ionomodel_control>5 & nion==2 & ~any(p_m0-[30.5 16])
   global pp_height
   if ~isempty(pp_height) & ionomodel_control==7
