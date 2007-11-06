@@ -68,14 +68,18 @@ if di_figures(3) | name_site=='K' | name_site=='S'
   sig_err=sqrt(var);
   sig_r=meas(indr); err_r=sig_err(indr); fitted_r=theo(indr);
   if name_site=='K' | name_site=='S'
-    [ii,jj]=max(conv(sig_r,flipud(fitted_r)));
+    sigc=conv(sig_r,flipud(fitted_r)); [ii,jj]=max(sigc);
     iii=conv(err_r,abs(flipud(fitted_r)));
     if ii/iii(jj)>1 & ~status
-      r_Offsetppd(r_ind)=(len/2-jj)*mean(lpg_dt)*p_dtau;
+      mdt=mean(lpg_dt); offppd=(len/2-jj); d=(-1:1)';
+      if all(lpg_dt==mdt) & jj+d(1)>0 & jj+d(end)<=length(sigc)
+        offppd=offppd+roots(polyder(polyfit(d,sigc(jj+d),2)));
+      end
+      r_Offsetppd(r_ind)=offppd*mdt*p_dtau;
     else
       r_Offsetppd(r_ind)=NaN;
     end
-    fprintf('Offset: %d us  ',r_Offsetppd(r_ind))
+    fprintf('Offset: %.0f us  ',r_Offsetppd(r_ind))
   end
 end
 if di_figures(3)<0 | a_savespec
@@ -148,8 +152,7 @@ if di_figures(3)
          [indi;indi],[sig_i-err_i,sig_i+err_i]','b-')
     set(get(gca,'Children'),'MarkerSize',4)
     if name_site=='K' | name_site=='S'
-      [ii,jj]=max(conv(sig_r,flipud(fitted_r)));
-      title(['Data (o) and fit (-) results  Offset: ',num2str(r_Offsetppd) '\mus'])
+      title(sprintf('Data (o) and fit (-) results  Offset: %.0f \\mus',r_Offsetppd(r_ind)))
     else
       title('Data (o) and fit results (solid line)')
     end

@@ -35,6 +35,6 @@ elseif name_site=='K' & any(isnan(lpg_cal))
  for c=unique(lpg_code)
   lpg_cal(find(lpg_code==c))=d(find(lpg_code(d)==c));
  end
- ch_gain=500*ones(size(ch_gain));
+ ch_gain=700*ones(size(ch_gain));
  ch_fradar=224e6*ones(size(ch_fradar));
 end
