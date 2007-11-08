@@ -35,7 +35,7 @@ end
 
 if ~isempty(a_code)
 %may need to change code for calibration purposes
- lpgs=find(ismember(lpg_code,a_code));
+ lpgs=find(ismember(lpg_code,a_code) & isfinite(lpg_cal));
  lpgc=unique([lpg_cal(lpgs);lpg_bac(lpgs)]);
  lpgc=lpgc(find(lpgc));
  lpgneed=lpgc(find(~ismember(lpg_code(lpgc),a_code)));
