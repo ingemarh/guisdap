@@ -1,4 +1,4 @@
-function lpg_rep(n)
+function lpg_rep(n,nsh)
 % lpg_rep: To duplicate lpg defs for multiple blocks
 % GUISDAP v8.5   07-11-30 Copyright EISCAT
 %
@@ -11,21 +11,23 @@ global vc_ch vc_group vc_routine vc_Ap lp_vc
 global ch_Pt ch_gain ch_fradar
 global d_data
 
-nsh=length(lpg_ND);
-nsh2=length(lp_vc);
-nsh3=length(d_data)/n;
+if nargin<2, nsh=[]; end
+if isempty(nsh), nsh=length(d_data)/n; end
+nlpg=length(lpg_ND);
+nlp=length(lp_vc);
 nvc=length(vc_ch);
 ncode=max(lpg_code);
 nch=max(vc_ch);
 
-s=reshape(((lpg_bac>0).'*((0:n-1)*nsh)),1,[]);
+n1=(0:n-1);
+s=reshape((lpg_bac>0).'*(n1*nlpg),1,[]);
 lpg_bac=repmat(lpg_bac,1,n)+s;
-s=reshape(((lpg_cal>0).'*((0:n-1)*nsh)),1,[]);
+s=reshape((lpg_cal>0).'*(n1*nlpg),1,[]);
 lpg_cal=repmat(lpg_cal,1,n)+s;
-s=reshape((ones(nsh,1)*(0:n-1)),1,[]);
+s=reshape(ones(nlpg,1)*n1,1,[]);
 lpg_code=repmat(lpg_code,1,n)+s*ncode;
-lpg_ra=repmat(lpg_ra,1,n)+s*nsh3;
-s=s*nsh2;
+lpg_ra=repmat(lpg_ra,1,n)+s*nsh;
+s=s*nlp;
 lpg_lpend=repmat(lpg_lpend,1,n)+s;
 lpg_lpstart=repmat(lpg_lpstart,1,n)+s;
 lpg_ND=repmat(lpg_ND,1,n);
@@ -42,10 +44,10 @@ lpg_wom=repmat(lpg_wom,n,1);
 lpg_womscaled=repmat(lpg_womscaled,n,1);
 lpg_Ap=repmat(lpg_Ap,n,1);
 
-s=reshape((ones(nsh2,1)*(0:n-1)),1,[]);
+s=reshape(ones(nlp,1)*n1,1,[]);
 lp_vc=repmat(lp_vc,1,n)+s*nvc;
-lpg_lpdata=repmat(lpg_lpdata,1,n)+s*nsh2;
-s=reshape((ones(nvc,1)*(0:n-1)),1,[]);
+lpg_lpdata=repmat(lpg_lpdata,1,n)+s*nlp;
+s=reshape(ones(nvc,1)*n1,1,[]);
 vc_group=repmat(vc_group,1,n)+s*nvc;
 vc_ch=repmat(vc_ch,1,n)+s*nch;
 vc_routine=repmat(vc_routine,1,n);

@@ -30,17 +30,7 @@ if name_site=='V'
   error('No such analysis_code')
  end
  clear polhv hv
-elseif name_site=='K' & any(isnan(lpg_cal))
- if all(isnan(lpg_cal))
-  d=find(lpg_bcs=='b' & lpg_lag==0);
-  for c=unique(lpg_code)
-   lpg_cal(find(lpg_code==c))=d(find(lpg_code(d)==c));
-  end
- end
- if any(a_code>2) & max(lpg_code<3)
-  lpg_rep(2)
-  form_adpar
- end
+elseif name_site=='K'
  ch_gain=700*ones(size(ch_gain));
  ch_fradar=224e6*ones(size(ch_fradar));
 end

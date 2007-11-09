@@ -72,7 +72,10 @@ while ~EOF
       Ant_eff=radar_effs(ant_id);
       if a_control(4)>=2, load_GUPvar, end  
       if any(a_simul), simulparblock; end
-      if exist('GUIZARD')==2, GUIZARD, end
+      if exist([path_expr 'guizard.m'])==2
+        run([path_expr 'guizard'])
+      end
+      GUIZARD
       scale_lpgwom % scales the spectral ambiguity function with lpg_ND factors
       form_adpar
       % Removing uncessary variables
