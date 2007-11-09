@@ -7,6 +7,7 @@
 % See also: GUIZARD GUIDITOR
 
 % Correct the doppler sign
+d_date=datenum(d_time(1,:));
 d_secs=tosecs(d_time(1,:));
 if (strcmp(name_ant(1:3),'vhf') & d_time(1,1)>1999) | ...
    (strcmp(name_ant(2:3),'2m') & d_time(1,1)==2003 & d_secs>6857400 & d_secs<25660800)
@@ -18,7 +19,17 @@ if ~exist('Magic_const')
  elseif strcmp(name_ant(1:3),'uhf') & d_time(1,1)>2004
   a_Magic_const=0.80;
  elseif strcmp(name_ant(1:3),'42m')
-  a_Magic_const=1.50;
+  if d_date<datenum(2007,3,1)
+   a_Magic_const=1.5;
+  elseif d_date<datenum(2007,3,18)
+   a_Magic_const=1.87;
+  elseif d_date<datenum(2007,5,21)
+   a_Magic_const=2.45; %AW
+  elseif d_date<datenum(2007,10,15)
+   a_Magic_const=1.59; %after snow clearence IH
+  else
+   a_Magic_const=2.0;
+  end
  end
 end
 
@@ -40,7 +51,6 @@ end
 %end
 
 if strcmp(name_ant(1:3),'uhf')
- d_date=datenum(d_time(1,:));
  if (d_date>=datenum(2000,10,01) & d_date<=datenum(2001,02,08)) | ...
     (d_date>=datenum(2001,06,28) & d_date<=datenum(2001,10,15,13,31,00)) 
      fprintf('GUISPERT: doubling uhf tx power estimate\n')

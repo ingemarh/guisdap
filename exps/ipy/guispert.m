@@ -22,3 +22,6 @@ for i=1:ng
   gaincorrect(glp,grps)
   glp=glp+1886; grps(:,1:2)=grps(:,1:2)+1886;
 end
+if exist('spear_count','var')
+  spear_count=spear_count+(d_parbl(67)>1)
+end
