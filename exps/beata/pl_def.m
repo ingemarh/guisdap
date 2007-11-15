@@ -1,4 +1,5 @@
-ran=[47 143;123 219;200 326];
+%ran=[47 143;123 219;200 326];
+ran=[49 199;106 256;163 313];
 nfft=0; nint=1; ngates=3; nlag=25;
 maxe=2; nup_d=1; skip_if=0;
 if strfind(expt,'v')

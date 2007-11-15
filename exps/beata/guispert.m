@@ -17,8 +17,9 @@ if name_site=='T'
  if ~isempty(a_code) | min(a_code)<1
   lpg_code(1:2)=a_code(1);
  end
-end
-if name_site=='L'
+elseif name_site=='V'
+ ch_gain=ch_gain/2;
+elseif name_site=='L'
  glp=1182;
  grps=[1 1 lpg_h(1);2 1180 lpg_h(1)+lpg_w(1)/2
       1181 1182 lpg_h(1182)];
