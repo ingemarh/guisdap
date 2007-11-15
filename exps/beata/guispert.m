@@ -18,7 +18,7 @@ if name_site=='T'
   lpg_code(1:2)=a_code(1);
  end
 elseif name_site=='V'
- ch_gain=ch_gain/2;
+ [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
 elseif name_site=='L'
  glp=1182;
  grps=[1 1 lpg_h(1);2 1180 lpg_h(1)+lpg_w(1)/2
