@@ -16,5 +16,5 @@
   Earth_radius=6372;
   hei=height/Earth_radius;
   sin_el=sin(pi*el/180);
-  range=1000*Earth_radius*(sqrt(sin_el^2+2*hei+hei.^2)-sin_el);
+  range=1000*Earth_radius*(sqrt(sin_el.^2+2*hei+hei.^2)-sin_el);
   range=range/(p_dtau*1e-6*v_lightspeed/2);
