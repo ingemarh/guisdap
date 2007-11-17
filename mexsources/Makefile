@@ -17,13 +17,13 @@ FC=f95
 else
 #Linux
 CFLAGS=-O3 -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
-ifeq ($(FC),f95)
-FC=gfortran
+ifeq ($(FC),gfortran)
+MEXOPTS="FC=gfortran"
 else
 FC=g77
+MEXOPTS="FLIBS=-lm"
 endif
 #MEXOPTS=-f f95opts.sh FC=$(FC)
-MEXOPTS="FLIBS=-lm"
 LDFLAGS= -shared
 endif
 
