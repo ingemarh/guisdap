@@ -50,27 +50,12 @@ switch name_site
              KINDAT=AbsentData;
 end
 
+LPROL=16;		% length of prologue
 % set up NCAR single-valued parameters
 %spar=[Azimuth,Elevation,Scattering_half_angle,System_temperature,...
 %    Peak_transmitted_power]
 sparcod=[130 140 190 482 486];
-
-% set up NCAR multi-valued parameters
-%mvarcod=[Altitude(km),Alt(dm),Status,Resid,O+/Ne,...
-%       Log10_Ne,Ti,TeTi,CollFreq,Vi,...
-%     errors...				];
-mvarcod=[110 111 430 420 620 520  550  570  720 mvel,...
-                            -520 -550 -570 -720 -mvel];
-
-
-LPROL=16;		% length of prologue
 JPAR =length(sparcod);	% # single-valued parameters
-MPAR =length(mvarcod);	% # multi-valued parameters	
-NROW =length(r_h);	% # entries for each multi-valued parameter
-
-% the prologue
-ITIM =[r_time(:,1) r_time(:,[2 4])*100+r_time(:,[3 5]) r_time(:,6)*100];
-prol=fix([KINST KINDAT ITIM(1,:) ITIM(2,:) LPROL JPAR MPAR NROW]);
 
 % codes and values for the single-valued parameters
 if r_el>90	% Cast azimuth and elevation into range +-180, 0-90 degrees
@@ -91,20 +76,35 @@ else
 end
 spar=[sparcod;round([[m_az m_el r_SCangle*180/pi]*100 tsys r_Pt/1000])];
 
-% Assemble output vector of codes and values for the multi-valued parameters
-var=real([log10(r_param(:,1))*1e3 r_param(:,2) r_param(:,3)*1e3 log10(r_param(:,4))*1e3 -r_param(:,5)]);
-evar=real([log10(r_error(:,1))*1e3 r_error(:,2) r_error(:,3)*1e3 log10(r_param(:,4))*1e3 r_error(:,5)]);
-mvar=var;
-% only output results for fit parameter 0
-d=find(r_status~=0); var(d,:)=BadData; evar(d,:)=BadData;
-d=find(r_error(:,1:5)==0); evar(d)=ModelData; var(d)=mvar(d);
-pos=[fix(r_h) rem(r_h,1)*1e4];
-mvar=round([pos r_status [r_res(:,1) r_dp]*1e3 var evar]);
-% replace infinities and all values > 32767
-mvar(find(~isfinite(mvar) | abs(mvar)>-AbsentData))=BadData;
-Multivar=[mvarcod;mvar];
+if ~isempty(r_param)
+ % set up NCAR multi-valued parameters
+ %mvarcod=[Altitude(km),Alt(dm),Status,Resid,O+/Ne,...
+ %       Log10_Ne,Ti,TeTi,CollFreq,Vi,...
+ %     errors...				];
+ mvarcod=[110 111 430 420 620 520  550  570  720 mvel,...
+                            -520 -550 -570 -720 -mvel];
+
+ MPAR =length(mvarcod);	% # multi-valued parameters	
+ NROW =length(r_h);	% # entries for each multi-valued parameter
+
+ % the prologue
+ ITIM =[r_time(:,1) r_time(:,[2 4])*100+r_time(:,[3 5]) r_time(:,6)*100];
+ prol=fix([KINST KINDAT ITIM(1,:) ITIM(2,:) LPROL JPAR MPAR NROW]);
+
+ % Assemble output vector of codes and values for the multi-valued parameters
+ var=real([log10(r_param(:,1))*1e3 r_param(:,2) r_param(:,3)*1e3 log10(r_param(:,4))*1e3 -r_param(:,5)]);
+ evar=real([log10(r_error(:,1))*1e3 r_error(:,2) r_error(:,3)*1e3 log10(r_param(:,4))*1e3 r_error(:,5)]);
+ mvar=var;
+ % only output results for fit parameter 0
+ d=find(r_status~=0); var(d,:)=BadData; evar(d,:)=BadData;
+ d=find(r_error(:,1:5)==0); evar(d)=ModelData; var(d)=mvar(d);
+ pos=[fix(r_h) rem(r_h,1)*1e4];
+ mvar=round([pos r_status [r_res(:,1) r_dp]*1e3 var evar]);
+ % replace infinities and all values > 32767
+ mvar(find(~isfinite(mvar) | abs(mvar)>-AbsentData))=BadData;
+ Multivar=[mvarcod;mvar];
  
-if NCAR_fid(1)
+ if NCAR_fid(1)
   KREC=1101;	% kind of record (data, character version)
   LTOT=4+NROW;	% number of lines in record
 % LTOT=1+fix((JPAR+19)/20)*2+fix((MPAR+19)/20)*(NROW+1);
@@ -118,12 +118,13 @@ if NCAR_fid(1)
     fprintf(NCAR_fid(1),'%6i',Multivar(i,:));
     fprintf(NCAR_fid(1),'\n');
   end
-end
+ end
 
-if NCAR_fid(2)
+ if NCAR_fid(2)
   KREC=1002;				% kind of record (data, binary version)
   LTOT=LPROL+2*JPAR+MPAR*(NROW+1);	% number of entries
   fwrite(NCAR_fid(2),[LTOT KREC prol row(spar') row(Multivar')],'short');
+ end
 end
 
 if strfind('TVL',name_site) & exist('r_pp') & ~isempty(r_pp)
