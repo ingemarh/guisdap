@@ -540,17 +540,26 @@ if strcmp(lg,'log')
 end
 o2=ones(1,2);
 for i=1:s
- d=max([find(isfinite(yparam(:,i)));2]); yp=yparam(1:d,i);
- dy=diff(yp)/2; yp=[yp-[dy(1);dy];yp(d)+dy(end)];
- zp=zparam([1:d d],i);
- d=find(dy(1:end-1)>maxdy);
- if ~isempty(d)
-  d=d(1:2:end);
-  yp(d+1)=yp(d+2)-dy(d+2);
-  [yp,j]=sort([yp;yp(d)+dy(d-1);yp(d)+dy(d-1)+eps]);
-  zp=[zp;zp(d);NaN*ones(size(dy))]; zp=zp(j);
+ d=max(find(isfinite(yparam(:,i))));
+ if d
+  yp=yparam(1:d,i);
+  zp=zparam(1:d,i);
+  dy=diff(yp); d=find(dy>maxdy); dd=find(dy<=maxdy);
+  for j=flipud(d)'
+   [dum,jj]=min(abs(dd-j)); jj=find(abs(dd-j)==dum);
+   yp(j+1:end+2)=[yp(j:j+1)+dy(dd(jj)).*[1;-1];yp(j+1:end)];
+   zp(j+1:end+2)=[NaN;NaN;zp(j+1:end)];
+  end
+  dy=diff(yp)/2;
+  yp=[yp-[dy(1);dy];yp(end)+dy(end)];
+  d=find(isnan(zp)); jp=0;
+  for j=[d' length(zp)+1]
+   jj=(jp+1):(j-1); jp=j;
+   if length(jj)
+    surface(Time(:,i),yp([jj jp])*o2,zp([jj jp-1])*o2)
+   end
+  end
  end
- surface(Time(:,i),yp*o2,zp*o2)
 end
 if strcmp(Y_TYPE,'log')
  ny=length(get(gca,'ytick'));
