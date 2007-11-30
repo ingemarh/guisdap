@@ -18,3 +18,4 @@ else
 end
 if isempty(gate), gate=3; end
 %freq=freq(2); updown=0; startad=startad(2); %uncomment/modify for one plch
+uparfreq=[3.65 11.65];
