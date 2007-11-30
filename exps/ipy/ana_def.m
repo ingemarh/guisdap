@@ -5,15 +5,8 @@ a_satch.sigma=4;
 a_satch.repair=[Inf];
 a_satch.cut=1;
 d=find(analysis_altit>455); analysis_altit(d(1))=600;
-mdate=mean(datenum([analysis_start;analysis_end]));
-if mdate<datenum([2007 3 18])
- Magic_const=1.87;
-elseif mdate<datenum([2007 5 21])
- Magic_const=2.45; %AW
-else
- Magic_const=1.59; %after snow clearence IH
-end
-if strfind(data_path,'32p')
+%global spearcount, spearcount='/analysis/results/spearcount';
+if strfind(data_path,'@32p')
  analysis_do=0;
  clear display_figures
  analysis_txpower=8;

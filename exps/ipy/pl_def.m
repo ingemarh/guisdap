@@ -6,7 +6,7 @@ re=regexp(pl_dir,'\d\d\d\d-\d\d-\d\d_ipy\d_\d+@32p');
 if [strfind(expt,'cut') re]
   startad=(0:1)*3*nlag+1;
   if re
-    dat=sscanf(pl_dir,'%d-%d-%d_ipy%d_%d@32p');
+    dat=sscanf(expt,'%d-%d-%d_ipy%d_%d@32p');
     if datenum(dat(1:3)')>datenum(2007,11,11)
       ran=[41 252;117 329;194 405];
     end
@@ -18,4 +18,3 @@ else
 end
 if isempty(gate), gate=3; end
 %freq=freq(2); updown=0; startad=startad(2); %uncomment/modify for one plch
-
