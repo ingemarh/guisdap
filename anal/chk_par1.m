@@ -175,12 +175,12 @@ if exist('analysis_intfixforce','var')
 end
 if exist('analysis_sweep','var')
  if strfind(analysis_sweep,'az')
-  a_intallow(1)=Inf;
+  a_intallow(2)=Inf;
  elseif ~strfind(analysis_sweep,'el')
   warning('GUISDAP:parse','analysis_sweep has to contain ''el'' and/or ''az'' strings')
  end
  if strfind(analysis_sweep,'el')
-  a_intallow(2)=Inf;
+  a_intallow(1)=Inf;
  end
 end
 if exist('analysis_txpower','var')
