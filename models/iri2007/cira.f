@@ -11,7 +11,8 @@ C 11/09/99 always calculated Legendre; 'if glat' and 'if stl' taken out
 C 11/09/99 use UMR, dumr and humr from COMMON 
 C Version-mm/dd/yy-------------------------------------------------
 C 2001.01 05/07/01 start of versioning
-c 2002.01 28/10/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
+C 2002.01 28/10/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
+C 2007.00 05/18/07 Release of IRI-2007
 c-----------------------------------------------------------------------
 C
 

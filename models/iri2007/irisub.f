@@ -87,8 +87,15 @@ C 2000.16 02/04/03 along<0 -> along=along+360; F1 occ for hmf1&foF1
 C 2000.17 02/05/03 zyear =12.97 (Dec 31); idayy=#days per year
 C 2000.18 02/06/03 jf(27) for IG12 user input; all F1 prob in oar
 C 2000.19 07/14/04 covsat<188 instead of covsat=<f(IG)<188
-C 2000.20 02/09/05 declare INVDIP as real                F. Morgan
-C 2000.21 11/09/05 replace B0B1 with BCOEF               T. Gulyaeva
+C 2000.19 02/09/05 declare INVDIP as real                F. Morgan
+C 2000.20 11/09/05 replace B0B1 with BCOEF               T. Gulyaeva
+C 2005.01 11/09/05 new topside ion composition; F107D from file 
+C 2005.02 11/14/05 jf(18) now IGRF/POGO; dip,mlat now IGRF10; 
+C 2005.03 11/15/05 sunrise/sunset/night for D,E,F1,F2; UT_LT removed
+C 2005.04 05/06/06 FIRI D-region option not tied to peak
+C 2005.04 05/06/06 Spread-F included, NeQuick included
+C 2005.05 01/15/07 NeQuick uses CCIR-M3000F2 even if user-hmF2  
+C 2007.00 05/18/07 Release of IRI-2007
 C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
@@ -117,33 +124,35 @@ C    i       .true.                  .flase.          standard version
 C    -----------------------------------------------------------------
 C    1    Ne computed            Ne not computed                     t
 C    2    Te, Ti computed        Te, Ti not computed                 t
-C    3    Ni computed            Ni not computed                     t
+C    3    Ne & Ni computed       Ni not computed                     t
 C    4    B0 - Table option      B0 - Gulyaeva (1987)                t
 C    5    foF2 - CCIR            foF2 - URSI                     false
-C    6    Ni - Standard          Ni - Danilov-95                 false
+C    6    Ni - DS-78 & DY-85     Ni - DS-95 & TTS-03             false
 C    7    Ne - Tops: f10.7<188   f10.7 unlimited                     t            
 C    8    foF2 from model        foF2 or NmF2 - user input           t
 C    9    hmF2 from model        hmF2 or M3000F2 - user input        t
 C   10    Te - Standard          Te - Using Te/Ne correlation        t
 C   11    Ne - Standard Profile  Ne - Lay-function formalism         t
-C   12    Messages to unit 6     Messages to unit 12                 t
-C  {all messages can be turned off by setting KONSOL=1 internally}
+C   12    Messages to unit 6     no messages                         t
 C   13    foF1 from model        foF1 or NmF1 - user input           t
 C   14    hmF1 from model        hmF1 - user input (only Lay version)t
 C   15    foE  from model        foE or NmE - user input             t
 C   16    hmE  from model        hmE - user input                    t
 C   17    Rz12 from file         Rz12 - user input                   t
-C   18    simple ut<->lt         using ut_lt subroutine              t
+C   18    IGRF dip, magbr, modip old FIELDG using POGO68/10 for 1973 t
 C   19    F1 probability model   critical solar zenith angle (old)   t
 C   20    standard F1            standard F1 plus L condition        t
-C   21    ion drift not computed ion drift computed              false
+C   21    ion drift computed     ion drift not computed          false
 C   22    ion densities in %     ion densities in m-3                t
 C   23    Te_tops (Aeros,ISIS)   Te_topside (Intercosmos)        false
 C   24    D-region: IRI-95       Special: 3 D-region models          t
-C   25    F107D=COV              F107D user input (oarr(41))         t
+C   25    F107D from AP.DAT      F107D user input (oarr(41))         t
 C   26    foF2 storm model       no storm updating                   t
-C   27    IG12 from file         IG12 - user input
-C   28-30 unused
+C   27    IG12 from file         IG12 - user input					 t
+C   28    spread-F probability 	 not computed                    false
+C   29    IRI01-topside          new options as def. by JF(30)   false
+C   30    IRI01-topside corr.    NeQuick topside model   	     false 
+C     (29,30) = (t,t) IRIold, (f,t) IRIcor, (f,f) NeQuick, (t,f) TTS   
 C   ------------------------------------------------------------------
 C
 C  Depending on the jf() settings additional INPUT parameters may 
@@ -161,7 +170,7 @@ C    jf(14) =.false.     OARR(4)=user input for hmF1/km
 C    jf(15) =.false.     OARR(5)=user input for foE/MHz or NmE/m-3 
 C    jf(16) =.false.     OARR(6)=user input for hmE/km
 C    jf(17) =.flase.     OARR(33)=user input for Rz12
-C    jf(21) =.false.     OARR(41)=user input for daily F10.7 index
+C    jf(21) =.true.      OARR(41)=user input for daily F10.7 index
 C    jf(23) =.false.     OARR(41)=user input for daily F10.7 index
 C    jf(24) =.false.     OARR(41)=user input for daily F10.7 index
 C          optional for jf(21:24); default is F10.7D=COV
@@ -169,6 +178,7 @@ C    jf(25) =.false.     OARR(41)=user input for daily F10.7 index
 C          if oarr(41).le.0 then 12-month running mean is 
 C          taken from internal file]
 C    jf(27) =.flase.     OARR(39)=user input for IG12
+C    jf(21) =.true.      OARR(41)=user input for daily F10.7 index
 C
 C
 C  OUTPUT:  OUTF(1:20,1:100)
@@ -219,6 +229,7 @@ C       OARR(44) = equatorial vertical ion drift in m/s
 C       OARR(45) = foF2_storm/foF2_quiet
 C       OARR(46) = F1 probability without L condition 
 C       OARR(47) = F1 probability with L condition incl.
+C       OARR(48) = spread-F occurrence probability (Brazilian model)
 C                # INPUT as well as OUTPUT parameter
 C                $ special for IRIWeb (only place-holders)
 c-----------------------------------------------------------------------        
@@ -239,9 +250,8 @@ C*****************************************************************
 C*****************************************************************
 C*****************************************************************
       INTEGER    DAYNR,DDO,DO2,SEASON,SEADAY
-      REAL       LATI,LONGI,MO2,MO,MODIP,NMF2,MAGBR,INVDIP,   
+      REAL       LATI,LONGI,MO2,MO,MODIP,NMF2,MAGBR,INVDIP,  
      &               NMF1,NME,NMD,MM,MLAT,MLONG,NOBO2
-c     CHARACTER  FILNAM*12
       CHARACTER  FILNAM*100,path*100
 c-web-for webversion
 c      CHARACTER FILNAM*53
@@ -252,27 +262,30 @@ c      CHARACTER FILNAM*53
      &  AMP(4),HXL(4),SCL(4),XSM(4),MM(5),DTI(4),AHH(7),
      &  STTE(6),DTE(5),ATE(7),TEA(6),XNAR(2),param(2),OARR(50),
      &  OUTF(20,100),PG1O(80),PG2O(32),PG3O(80),PF1O(12),PF2O(4),
-     &  PF3O(12),HO(4),MO(5),DDO(4),HO2(2),MO2(3),DO2(2),DION(7)
+     &  PF3O(12),HO(4),MO(5),DDO(4),HO2(2),MO2(3),DO2(2),DION(7),
+     &  osfbr(25)
 
-      LOGICAL    EXT,SCHALT,NIGHT,TECON(2),sam_mon,sam_yea,sam_ut,
+      LOGICAL    EXT,SCHALT,TECON(2),sam_mon,sam_yea,sam_ut,
      &  sam_date,F1REG,FOF2IN,HMF2IN,URSIF2,LAYVER,DY,GULB0,DREG,
      &  rzino,FOF1IN,HMF1IN,FOEIN,HMEIN,RZIN,sam_doy,F1_OCPRO,
      &  F1_L_COND,NODEN,NOTEM,NOION,TENEOP,OLD79,JF(30),URSIFO,
-     &  igin,igino
+     &  igin,igino,dnight,enight,fnight,TOPO,TOPC
 
       COMMON /CONST/UMR  /const1/humr,dumr   /ARGEXP/ARGMAX
      &   /BLOCK1/HMF2,NMF2,HMF1,F1REG  /BLOCK2/B0,B1,C1  
      &   /BLOCK3/HZ,T,HST              /BLOCK4/HME,NME,HEF 
-     &   /BLOCK5/NIGHT,E               /BLOCK6/HMD,NMD,HDX
+     &   /BLOCK5/ENIGHT,E              /BLOCK6/HMD,NMD,HDX
      &   /BLOCK7/D1,XKK,FP30,FP3U,FP1,FP2
      &   /BLOCK8/HS,TNHS,XSM,MM,DTI,MXSM         
      &   /BLOTN/XSM1,TEXOS,TLBDH,SIGMA /BLOTE/AHH,ATE1,STTE,DTE
      &   /BLO10/BETA,ETA,DELTA,ZETA       
+     &   /BLO11/B2TOP,TC3,itopn,alg10,hcor1       
      &   /iounit/konsol,monito
 
       EXTERNAL          XE1,XE2,XE3_1,XE4_1,XE5,XE6,TEDER
 
         save
+        
 
         DO 7397 KI=1,20
         do 7397 kk=1,100
@@ -298,6 +311,7 @@ C
         humr=pi/12.
         dumr=pi/182.5
         ALOG2=ALOG(2.)
+        ALG10=ALOG(10.)
         ALG100=ALOG(100.)
         numhei=int(abs(heiend-heibeg)/abs(heistp))+1
         if(numhei.gt.100) numhei=100
@@ -336,12 +350,16 @@ C AGNR=OUTPUT (OUTPUT IS DISPLAYED OR STORED IN FILE OUTPUT.IRI)...
 C IUCCIR=UNIT NUMBER FOR CCIR COEFFICIENTS ........................
 c set konsol=1 if you do not want the konsol information
 c
-      MONITO=6
-      IUCCIR=10
+        MONITO=6
+        IUCCIR=10
 c-web- special for web version
 c-web-      KONSOL=1
-      KONSOL=1
-        if(.not.jf(12)) konsol=11
+        KONSOL=6
+        if(.not.jf(12)) konsol=1
+c        if(.not.jf(12)) then
+c                konsol=11
+c                open(11,file='messages.txt')
+c                endif
 c
 c selection of density, temperature and ion composition options ......
 c
@@ -349,6 +367,7 @@ c
       NODEN=(.not.jf(1))
       NOTEM=(.not.jf(2))
       NOION=(.not.jf(3))
+      if(.not.NOION) NODEN=.false.
       DY=(.not.jf(6))
       LAYVER=(.not.jf(11))
       OLD79=(.not.jf(7))
@@ -357,6 +376,8 @@ c
       f1_l_cond=.false.
       if(F1_OCPRO) F1_L_COND=(.not.jf(20))
       DREG=jf(24)
+      TOPO=jf(29)
+      TOPC=jf(30)
 c
 c rz12, F10.7D input option ..........................................
 c
@@ -379,6 +400,22 @@ c
       else
           oarr(41)=-1.
       ENDIF
+c
+c Topside density ....................................................
+c
+        if(TOPO) then
+             if (TOPC) then 
+                 itopn=0
+             else
+                 itopn=3
+             endif
+        else 
+             if (TOPC) then
+                 itopn=1
+             else
+                 itopn=2
+             endif
+        endif
 c
 c F2 peak density ....................................................
 c
@@ -430,7 +467,7 @@ c
           IF(AFOE.GT.100.) AFOE=SQRT(AFOE/1.24E10)
         else
           oarr(5)=-1.
-          ENDIF
+        ENDIF
 c
 c E peak altitude ..................................................
 c
@@ -458,64 +495,127 @@ c lists the selected options before starting the table
 c
 
       if(icalls.gt.1.or.konsol.eq.1) goto 8201
-        write(*,*) '*** IRI parameters are being calculated ***'
-      if(NODEN) goto 2889
-        if(LAYVER) write(*,*) 'Ne, E-F: The LAY-Version is ',
-     &          'prelimenary. Erroneous profile features can occur.'
-        if(GULB0) write(*,*) 'Ne, B0: Bottomside thickness is ',
-     &          'obtained with Gulyaeva-1987 model.'
-        if(OLD79) write(*,*) 'Ne: No F10.7-saturation for NmF2.',
-     &          ' of equatorial topside is not included.'
-        if(FOF2IN) then
-                write(*,*) 'Ne, foF2/NmF2: provided by user.'
+          write(konsol,2911) 
+        if(NODEN) goto 2889
+          if(LAYVER) write(konsol,9012) 
+          if(GULB0) write(konsol,9013) 
+          if(OLD79) write(konsol,9014) 
+          if(TOPO.and.(.not.TOPC)) write(konsol,9206)
+          if(.not.TOPO) then
+                if(TOPC) then
+                      write(konsol,9204) 
+                else
+                      write(konsol,9205) 
+                endif
+                endif
+          if(FOF2IN) then
+                write(konsol,9015) 
                 goto 2889
                 endif
         if(URSIF2) then
-                write(*,*) 'Ne, foF2: URSI model is used.'
+                write(konsol,9016) 
         else
-                write(*,*) 'Ne, foF2: CCIR model is used.'
+                write(konsol,9017) 
         endif
-        if(HMF2IN) write(*,*) 'Ne, hmF2/M3000F2: provided by user.'
-        if(fof1in) write(*,*) 'Ne, foF1/NmF1: provided by user.'
-        if(HMF1IN.and.LAYVER) write(*,*) 'Ne, hmF1: provided by user.'
-        if(foein) write(*,*) 'Ne, foE/NmE: provided by user.'
-        if(HMEIN) write(*,*) 'Ne, hmE: provided by user.'
-      if(F1_OCPRO) write(*,*) 'Ne, foF1: probability function used.'
-      if(F1_L_COND) write(*,*) 'Ne, foF1: L condition cases included.'
-      if(DREG) then 
-            write(*,*) 'Ne, D: Mechtley/Bilitza'
-      else
-            write(*,*) 'Ne, D: 3 models (M&B,F&T,Da)'
-      endif
-      if(jf(26)) then
+        if(HMF2IN) write(konsol,9018) 
+        if(fof1in) write(konsol,9019) 
+        if(HMF1IN.and.LAYVER) write(konsol,9021) 
+        if(foein) write(konsol,9022) 
+        if(HMEIN) write(konsol,9023) 
+        if(F1_OCPRO) write(konsol,9024) 
+        if(F1_L_COND) write(konsol,9025) 
+        if(DREG) then 
+            write(konsol,9026) 
+        else
+            write(konsol,9027) 
+        endif
+        if(jf(26)) then
             if(fof2in) then 
-                       write(*,*) 
-     &'Ne, foF2: Storm model turned off if foF2 or NmF2 user input'
+                  write(konsol,9028) 
                   jf(26)=.false.
             else
-                       write(*,*) 'Ne, foF2: storm model included'
+                  write(konsol,9029) 
             endif
-      endif
+            endif
+
 2889    continue
-        if((.not.NOION).and.(DY)) 
-     &    write(*,*) 'Ion Com.: Using Danilov et al. 1985/95.'
+
+        if((.not.NOION).and.(DY)) write(konsol,9031) 
+        if((.not.NOION).and.(.not.DY)) write(konsol,9039) 
+
         if(NOTEM) goto 8201
-      if(TENEOP)
-     &    write(*,*) 'Te: Temperature-density correlation is used.'
-      if(jf(23)) then 
-            write(*,*) 'Te: Aeros/ISIS model'
-      else
-            write(*,*) 'Te: Interkosmos model'
-      endif
+          if(TENEOP) write(konsol,9032) 
+          if(jf(23)) then 
+            write(konsol,9033) 
+          else
+            write(konsol,9034) 
+          endif
+2911    format('*** IRI parameters are being calculated ***')
+9012    format('Ne, E-F: The LAY-Version is prelimenary.',
+     &          ' Erroneous profile features can occur.')
+9013    format('Ne, B0: Bottomside thickness is ',
+     &          'obtained with Gulyaeva-1987 model.')
+9014    format('Ne: No upper limit for F10.7 in',
+     &          ' topside formula.')
+9204    format('Ne: Corrected Topside Formula')
+9205    format('Ne: NeQuick for Topside')
+9206    format('Ne: TTS for Topside')
+9015    format('Ne, foF2/NmF2: provided by user.')
+9016    format('Ne, foF2: URSI model is used.')
+9017    format('Ne, foF2: CCIR model is used.')
+9018    format('Ne, hmF2/M3000F2: provided by user.')
+9019    format('Ne, foF1/NmF1: provided by user.')
+9021    format('Ne, hmF1: provided by user.')
+9022    format('Ne, foE/NmE: provided by user.')
+9023    format('Ne, hmE: provided by user.')
+9024    format('Ne, foF1: probability function used.')
+9025    format('Ne, foF1: L condition cases included.')
+9026    format('Ne, D: IRI-90')
+9027    format('Ne, D: IRI-90, DRS-95,and FIRI-01)')
+9028    format('Ne, foF2: Storm model turned off if foF2 or',
+     &          ' NmF2 user input')
+9029    format('Ne, foF2: storm model included')
+9039    format('Ion Com.: DS-78 & DY-85')
+9031    format('Ion Com.: DS-95 & TTS-03')
+9032    format('Te: Temperature-density correlation is used.')
+9033    format('Te: Aeros/ISIS model')
+9034    format('Te: Interkosmos model')
+
 8201    continue
 
 C
-C CALCULATION OF GEOG. OR GEOM. COORDINATES IN DEG....................
-C CALCULATION OF MAGNETIC INCLINATION (DIP), DECLINATION (DEC)........
-C   DIP LATITUDE (MAGBR) AND MODIFIED DIP (MODIP). ALL IN DEGREE......
+C CALCULATION OF DAY OF YEAR OR MONTH/DAY AND DECIMAL YEAR 
+c
+c  leap year rule: years evenly divisible by 4 are leap years, except
+c  years also evenly divisible by 100 are not leap years, except years 
+c  also evenly divisible by 400 are leap years. The year 2000 is a 100 
+c  and 400 year exception and therefore it is a normal leap year. 
+c  The next 100 year exception will be in the year 2100!
+c
+
+        iyear=iyyyy
+        if(iyear.lt.100) iyear=iyear+1900
+        idayy=365
+        if(iyear/4*4.eq.iyear) idayy=366    ! leap year
+
+        if(MMDD.lt.0) then
+                DAYNR=-MMDD
+                call MODA(1,iyear,MONTH,IDAY,DAYNR,nrdaym)
+        else
+                MONTH=MMDD/100
+                IDAY=MMDD-MONTH*100
+                 call MODA(0,iyear,MONTH,IDAY,DAYNR,nrdaym)
+        endif
+
+        ryear = iyear + daynr/idayy
+        
+C
+C CALCULATION OF GEODETIC/GEOMAGNETIC COORDINATES (LATI, LONGI AND 
+C MLAT, MLONG), MAGNETIC INCLINATION (DIP), DIP LATITUDE (MAGBR) 
+C AND MODIFIED DIP (MODIP), ALL IN DEGREES
 C
 
-        if(along.lt.0.) along = along + 360.
+        if(along.lt.0.) along = along + 360. ! -180/180 to 0-360
         
         IF(JMAG.GT.0) THEN
            MLAT=ALATI
@@ -524,94 +624,63 @@ C
            LATI=ALATI
            LONGI=ALONG
         ENDIF
-        CALL GGM(JMAG,LONGI,LATI,MLONG,MLAT)
-        ABSLAT=ABS(LATI)
+        CALL GEODIP(IYEAR,LATI,LONGI,MLAT,MLONG,JMAG)
+
+C        CALL GGM(JMAG,XLONGI1,XLATI1,XMLONG1,XMLAT1)
+
+        call igrf_dip(lati,longi,ryear,300.0,dip,magbr,modip)
+
+        if(.not.jf(18)) then
         CALL FIELDG(LATI,LONGI,300.0,XMA,YMA,ZMA,BET,DIP,DEC,MODIP)
-        MAGBR=ATAN(0.5*TAN(DIP*UMR))/UMR
+        	MAGBR=ATAN(0.5*TAN(DIP*UMR))/UMR
+        	endif
+
+        ABSLAT=ABS(LATI)
         ABSMLT=ABS(MLAT)
         ABSMDP=ABS(MODIP)
         ABSMBR=ABS(MAGBR)
-C
-C CALCULATION OF DAY OF YEAR AND SUN DECLINATION......................
-C CALCULATION OF UT/LT AND RELATED YEAR, MONTH, DAYNRs ...............
-C CALCULATION OF (UT-)SEASON (SUMMER=2, WINTER=4).....................
-C
-        iyear=iyyyy
-        if(iyear.lt.100) iyear=iyear+1900
-        idayy=365
-        if(iyear/4*4.eq.iyear) idayy=366
 
-        ryear=iyear*1.0
-        if(MMDD.lt.0) then
-                DAYNR=-MMDD
-                call MODA(1,iyear,MONTH,IDAY,DAYNR,nrdaym)
-        else
-                MONTH=MMDD/100
-                IDAY=MMDD-MONTH*100
-                call MODA(0,iyear,MONTH,IDAY,DAYNR,nrdaym)
-        endif
-c
-c lyear,lmonth,lday,ldaynre,lnrday related to LT
-c
-        lyear=iyear
-        lmonth=month
-        lday=iday
-        ldaynr=daynr
-        lnrday=nrdaym
 
-      IF(DHOUR.le.24.0) goto 2619
-        UT=DHOUR-25.
-        iytmp=iyear
-        idtmp=daynr
-        if(jf(18)) then
-                hour=ut+longi/15.
-                if(hour.gt.24.) hour=hour-24.
-        else
-                call ut_lt(0,ut,hour,longi,iytmp,idtmp)
-                if(idtmp.ne.ldaynr) then
-                        lyear=iytmp
-                        ldaynr=idtmp
-                        call MODA(1,lyear,LMONTH,LDAY,LDAYNR,lnrday)
-                        endif
-        endif
-        goto 2629
-
-2619  HOUR=DHOUR
-        iytmp=lyear
-        idtmp=ldaynr
-        if(jf(18)) then
-                ut=hour-longi/15.
-                if(ut.lt.0) ut=ut+24.
-        else
-                call ut_lt(1,ut,hour,longi,iytmp,idtmp)
-                if(idtmp.ne.daynr) then
-                        iyear=iytmp
-                        daynr=idtmp
-                        call MODA(1,iyear,MONTH,IDAY,DAYNR,nrdaym)
-                        endif
-        endif
 c
+C CALCULATION OF UT/LT  ...............
+c
+        IF(DHOUR.le.24.0) then
+        	HOUR=DHOUR					! dhour =< 24 is LT
+            ut=hour-longi/15.
+            if(ut.lt.0) ut=ut+24.
+		else
+        	UT=DHOUR-25.				 ! dhour>24 is UT+25
+        	hour=ut+longi/15.	 		 ! hour becomes LT
+        	if(hour.gt.24.) hour=hour-24.
+        endif
+
+c
+c season assumes equal length seasons (92 days) with spring 
+c (season=1) starting at day-of-year=47; for lati<0 adjustment 
+c for southern hemisphere is made. some models require the
+c seasonal month or the seasonal day-of year
+c 
 c zmonth is decimal month (Jan 1 = 1.0 and Dec 31 = 12.97)
-c
-
-2629  zmonth = lmonth + ((lday-1)*1.)/lnrday
-
+c		zmonth = month + (iday*1.-1.)/nrdaym
+c is not used currently
+      
       SEASON=INT((DAYNR+45.0)/92.0)
       IF(SEASON.LT.1) SEASON=4
-      NSEASN=SEASON
+      NSEASN=SEASON				! Northern hemisphere season
       seaday=daynr
-      seamon=zmonth
-      IF(LATI.GT.0.0) GOTO 5592
-        SEASON=SEASON-2
-        IF(SEASON.LT.1) SEASON=SEASON+4
-        seamon=zmonth+6.
-        if(seamon.ge.13.0) seamon=seamon-12.
-        seaday=daynr+idayy/2.
-        if(seaday.gt.idayy) seaday=seaday-idayy
+      iseamon=month
+      IF(LATI.GE.0.0) GOTO 5592
+        	SEASON=SEASON-2			
+        	IF(SEASON.LT.1) SEASON=SEASON+4
+        	iseamon=month+6
+        	if(iseamon.gt.12) iseamon=iseamon-12
+        	seaday=daynr+idayy/2.
+        	if(seaday.gt.idayy) seaday=seaday-idayy
 
 C
-C MEAN F10.7CM SOLAR RADIO FLUX (COV), GLOBAL IONOSPHERIC INDEX
-C (GIND)
+C 12-month running mean sunspot number (rssn) and Ionospheric Global 
+C index (gind), daily F10.7 cm solar radio flux (f107d) and monthly 
+C F10.7 (cov) index   
 C
 
 5592    continue
@@ -622,25 +691,27 @@ C
         sam_ut=(ut.eq.ut0)
         if(sam_date.and..not.rzino.and..not.rzin.
      &                   and..not.igin.and..not.igino) goto 2910
-            call tcon(iyear,month,iday,daynr,rzar,arig,ttt,nmonth)
-            if(nmonth.lt.0) goto 3330
+     
+        call tcon(iyear,month,iday,daynr,rzar,arig,ttt,nmonth)
+        if(nmonth.lt.0) goto 3330		! jump to end of program
+
         if(RZIN) then
-                  rrr = arzin                                 
-                  rzar(1) = rrr
-                  rzar(2) = rrr
-                  rzar(3) = rrr
-c                  zi=-12.349154+(1.4683266-2.67690893e-03*rrr)*rrr
-c                  if(zi.gt.174.0) zi=174.0
-c                  arig(1) = zi
-c                  arig(2) = zi
-c                  arig(3) = zi
-                  endif
+        	rrr = arzin
+        	rzar(1) = rrr
+        	rzar(2) = rrr
+        	rzar(3) = rrr
+c       	zi=-12.349154+(1.4683266-2.67690893e-03*rrr)*rrr
+c       	if(zi.gt.174.0) zi=174.0
+c       	arig(1) = zi
+c       	arig(2) = zi
+c       	arig(3) = zi
+        	endif
         if(IGIN) then
-                  zi = aigin
-                  arig(1) = zi
-                  arig(2) = zi
-                  arig(3) = zi
-                  endif
+        	zi = aigin
+        	arig(1) = zi
+        	arig(2) = zi
+        	arig(3) = zi
+        	endif
         rssn=rzar(3)
         gind=arig(3)
         COV=63.75+RSSN*(0.728+RSSN*0.00089)
@@ -648,27 +719,55 @@ c        rlimit=gind
 c        COVSAT=63.75+rlimit*(0.728+rlimit*0.00089)
         COVSAT=cov
         if(covsat.gt.188.) covsat=188
-        f107d=cov
-        if(.not.jf(25)) f107d=oarr(41)
+        
+        if(jf(25)) then
+        	f107d=cov
+        	call APF_ONLY(iyear,month,iday,F107DX)
+            if(f107dx.gt.-2) f107d=f107dx
+			endif
 
 C
-C CALCULATION OF SOLAR ZENITH ANGLE (XHI/DEG).........................
-C NOON VALUE (XHINON).................................................
+C CALCULATION OF SOLAR ZENITH ANGLE (XHI/DEG), SUN DECLINATION ANGLE 
+C (SUNDEC),SOLAR ZENITH ANGLE AT NOON (XHINON) AND TIME OF LOCAL 
+C SUNRISE/SUNSET (SAX, SUX; dec. hours) AT 70 KM (D-REGION), 110 KM
+C (E-REGION), 200 KM (F1-REGION), AND 500 KM (TE, TI).
 C
 
 2910    continue
-        CALL SOCO(ldaynr,HOUR,LATI,LONGI,SUNDEC,XHI,SAX,SUX)
-        CALL SOCO(ldaynr,12.0,LATI,LONGI,SUNDE1,XHINON,SAXNON,SUXNON)
+        CALL SOCO(daynr,HOUR,LATI,LONGI,70.,SUNDEC,XHI1,SAX70,SUX70)
+        CALL SOCO(daynr,HOUR,LATI,LONGI,110.,SUD1,XHI2,SAX110,SUX110)
+        CALL SOCO(daynr,HOUR,LATI,LONGI,200.,SUD1,XHI,SAX200,SUX200)
+        CALL SOCO(daynr,HOUR,LATI,LONGI,500.,SUD1,XHI3,SAX500,SUX500)
+        CALL SOCO(daynr,12.0,LATI,LONGI,110.,SUNDE1,XHINON,SAX1,SUX1)
+        DNIGHT=.FALSE.
+        if(abs(sax70).gt.25.0) then
+                if(sax70.lt.0.0) DNIGHT=.TRUE.
+                goto 9334
+                endif
+        if(SAX70.le.SUX70) goto 1386
+        if((hour.gt.sux70).and.(hour.lt.sax70)) dnight=.true.
+        goto 9334
+1386    IF((HOUR.GT.SUX70).OR.(HOUR.LT.SAX70)) DNIGHT=.TRUE.
 
-        NIGHT=.FALSE.
-        if(abs(sax).gt.25.0) then
-                if(sax.lt.0.0) NIGHT=.TRUE.
+9334    ENIGHT=.FALSE.
+        if(abs(sax110).gt.25.0) then
+                if(sax110.lt.0.0) ENIGHT=.TRUE.
+                goto 8334
+                endif
+        if(SAX110.le.SUX110) goto 9386
+        if((hour.gt.sux110).and.(hour.lt.sax110)) enight=.true.
+        goto 8334
+9386    IF((HOUR.GT.SUX110).OR.(HOUR.LT.SAX110)) ENIGHT=.TRUE.
+
+8334    FNIGHT=.FALSE.
+        if(abs(sax200).gt.25.0) then
+                if(sax200.lt.0.0) FNIGHT=.TRUE.
                 goto 1334
                 endif
-        if(SAX.le.SUX) goto 1386
-                if((hour.gt.sux).and.(hour.lt.sax)) night=.true.
+        if(SAX200.le.SUX200) goto 7386
+        if((hour.gt.sux200).and.(hour.lt.sax200)) fnight=.true.
         goto 1334
-1386    IF((HOUR.GT.SUX).OR.(HOUR.LT.SAX)) NIGHT=.TRUE.
+7386    IF((HOUR.GT.SUX200).OR.(HOUR.LT.SAX200)) FNIGHT=.TRUE.
 
 C
 C CALCULATION OF ELECTRON DENSITY PARAMETERS................
@@ -677,7 +776,7 @@ C
       
 1334  continue
       HNEA=65.
-      IF(NIGHT) HNEA=80.
+      IF(DNIGHT) HNEA=80.
       HNEE=2000.
       IF(NODEN) GOTO 4933
 
@@ -704,7 +803,7 @@ c F2 peak critical frequency foF2, density NmF2, and height hmF2
 c
 C READ CCIR AND URSI COEFFICIENT SET FOR CHOSEN MONTH 
 C
-      IF((FOF2IN).AND.(HMF2IN)) GOTO 501
+      IF((FOF2IN).AND.(HMF2IN).and.(itopn.ne.2)) GOTO 501
       IF(URSIF2.NEQV.URSIFO) GOTO 7797
       if(.not.rzin.and..not.rzino.and..not.igin.and..not.igino) then
           IF(sam_mon.AND.(nmonth.EQ.nmono).and.sam_yea) GOTO 4292
@@ -721,7 +820,7 @@ c
         WRITE(FILNAM,104) path(1:index(path,' ')-1),MONTH+10
 104         FORMAT(a,'/ccir',I2,'.asc')
 c       WRITE(FILNAM,104) MONTH+10
-c104         FORMAT('ccir',I2,'.asc')
+c104        FORMAT('ccir',I2,'.asc')
 c-binary- if binary files than use:
 c-binary-104   FORMAT('ccir',I2,'.bin')
 c-web- special for web-version:
@@ -734,7 +833,6 @@ c-binary- if binary files than use:
 c-binary-     &          FORM='UNFORMATTED')
 c
         READ(IUCCIR,4689) F2,FM3
-        write(*,*)
 4689    FORMAT(1X,4E15.8)
 c-binary- if binary files than use:
 c-binary-        READ(IUCCIR) F2,FM3
@@ -748,7 +846,7 @@ C
           WRITE(FILNAM,1144) path(1:index(path,' ')-1),MONTH+10
 1144          FORMAT(a,'/ursi',I2,'.asc')
 c         WRITE(FILNAM,1144) MONTH+10
-c1144          FORMAT('ursi',I2,'.asc')
+c1144         FORMAT('ursi',I2,'.asc')
 c-web- special for web-version:
 c1144  FORMAT('/usr/local/etc/httpd/cgi-bin/models/IRI/ursi',I2,'.asc')
 c-binary- if binary files than use:
@@ -760,7 +858,6 @@ c-binary- if binary files than use:
 c-binary-     &         FORM='UNFORMATTED')
 
           READ(IUCCIR,4689) F2
-        write(*,*)
 c-binary- if binary files than use:
 c-binary-          READ(IUCCIR) F2
 
@@ -786,7 +883,6 @@ c-binary- if binary files than use:
 c-binary-     &          FORM='unFORMATTED')
 
         READ(IUCCIR,4689) F2N,FM3N
-        write(*,*)
 c-binary- if binary files than use:
 c-binary-        READ(IUCCIR) F2N,FM3N
 
@@ -812,7 +908,7 @@ c-binary-          READ(IUCCIR) F2N
 
         GOTO 4291
         
-8448    WRITE(MONITO,8449) FILNAM
+8448    WRITE(konsol,8449) FILNAM
 8449    FORMAT(1X////,
      &    ' The file ',A30,'is not in your directory.')
         GOTO 3330
@@ -863,8 +959,13 @@ C
         NMF2=1.24E10*FOF2*FOF2
 
         IF(HMF2IN) THEN
-          HMF2=AHMF2
-          IF(AHMF2.LT.50.0) HMF2=HMF2ED(MAGBR,RSSN,FOF2/FOE,AHMF2)
+          IF(AHMF2.LT.50.0) THEN
+          	XM3000=AHMF2
+          	HMF2=HMF2ED(MAGBR,RSSN,FOF2/FOE,XM3000)
+          ELSE
+          	HMF2=AHMF2
+c          	XM3000=XM3000HM(MAGBR,RSSN,FOF2/FOE,HMF2)
+          ENDIF
         ELSE
           HMF2=HMF2ED(MAGBR,RSSN,FOF2/FOE,XM3000)
         ENDIF
@@ -900,7 +1001,7 @@ c
         COS2=COS(MLAT*UMR)
         COS2=COS2*COS2
         FLU=(COVSAT-40.0)/30.0
-c option to use unlimited F10.7M for the topside
+c option to use unlimiited F10.7M for the topside
         IF(OLD79) FLU=(COV-40.0)/30.0
 c previously: IF(OLD79) ETA1=-0.0070305*COS2
         EX=EXP(-MLAT/15.)
@@ -929,17 +1030,51 @@ corr    Z=EXP(94.45/BETA)
         Z2=Z/(BETA*Z1*Z1)
         DELTA=(ETA/Z1-ZETA/2.0)/(ETA*Z2+ZETA/400.0)
 c
+c Correction term for topside
+c
+      if(itopn.eq.1) then
+          zmp1 = exp(modip / 10.)
+          zmp11 = 1. + zmp1
+          zmp111 = zmp1 / (zmp11 * zmp11)
+          zmp2 = exp(modip / 19.)
+          zmp22 = 1. + zmp2
+          zmp222 = zmp2 / (zmp22 * zmp22) 
+          r2n = -0.84 - 1.6 * zmp111  
+          r2d = -0.84 - 0.64 * zmp111 
+          x1n = 230. - 700. * zmp222  
+          x1d = 550. - 1900. * zmp222
+          r2 = HPOL(HOUR,r2d,r2n,SAX500,SUX500,1.,1.)
+          x1 = HPOL(HOUR,x1d,x1n,SAX500,SUX500,1.,1.)
+          hcor1 = hmF2 + x1
+          x12 = 1500. - x1
+	      tc3 = r2 / x12
+          endif
+c
+c NeQuick topside parameters (use CCIR-M3000F2 even if user-hmF2)
+c
+      if (itopn.eq.2) then
+         dNdHmx=-3.467+1.714*log(foF2)+2.02*log(xM3000)
+         dNdHmx=exp(dNdHmx)*0.01
+         B2bot=0.04774*FOF2*FOF2/dNdHmx
+         b2k = 3.22-0.0538*foF2-0.00664*hmF2+0.113*hmF2/B2bot
+     &   	+0.00257*rssn
+         ee=exp(2.0*(b2k-1.0))
+         b2k=(b2k*ee+1.0)/(ee+1.0)
+         B2TOP=b2k*B2bot
+      endif
+c
 c F layer - bottomside thickness parameter B0 and shape parameters B1
 c
-      B1=HPOL(HOUR,1.9,2.6,SAX,SUX,1.,1.)
-      if(GULB0) then
+                           
+	    B1=HPOL(HOUR,1.9,2.6,SAX200,SUX200,1.,1.)
+        if(GULB0) then
                 call ROGUL(SEADAY,XHI,SEAX,GRAT)
-                if(NIGHT) GRAT=0.91-HMF2/4000.
+                if(FNIGHT) GRAT=0.91-HMF2/4000.
                 BCOEF=B1*(B1*(0.0046*B1-0.0548)+0.2546)+0.3606
                 B0CNEW=HMF2*(1.-GRAT)
                 B0=B0CNEW/BCOEF
         else
-                B0 = B0_98(HOUR,SAX,SUX,NSEASN,RSSN,LONGI,MODIP)
+                B0 = B0_98(HOUR,SAX200,SUX200,NSEASN,RSSN,LONGI,MODIP)
         endif
 c
 c F1 layer height hmF1, critical frequency foF1, peak density NmF1
@@ -950,12 +1085,12 @@ c
             FOF1=FOF1ED(ABSMBR,RSSN,XHI)
         ENDIF
 c F1 layer thickness parameter c1
-        c1 = f1_c1(modip,hour,suxnon,saxnon)
+        c1 = f1_c1(modip,hour,sux200,sax200)
 c F1 occurrence probability with Scotto et al. 1997
         call f1_prob(xhi,mlat,rssn,f1pbw,f1pbl)
 c F1 occurrence probability Ducharme et al.        
         f1pbo = 0.0 
-        if(fof1in.or.((.not.night).and.(fof1.gt.0.0))) f1pbo=1. 
+        if(fof1in.or.((.not.fnight).and.(fof1.gt.0.0))) f1pbo=1. 
 
         if(f1_ocpro) then
             f1pb = f1pbw
@@ -976,12 +1111,12 @@ c height of valley top (HEF)
 c
       XDEL=XDELS(SEASON)/DELA
       DNDHBR=DNDS(SEASON)/DELA
-      HDEEP=HPOL(HOUR,10.5/DELA,28.,SAX,SUX,1.,1.)
-      WIDTH=HPOL(HOUR,17.8/DELA,45.+22./DELA,SAX,SUX,1.,1.)
-      DEPTH=HPOL(HOUR,XDEL,81.,SAX,SUX,1.,1.)
-      DLNDH=HPOL(HOUR,DNDHBR,.06,SAX,SUX,1.,1.)
+      HDEEP=HPOL(HOUR,10.5/DELA,28.,SAX110,SUX110,1.,1.)
+      WIDTH=HPOL(HOUR,17.8/DELA,45.+22./DELA,SAX110,SUX110,1.,1.)
+      DEPTH=HPOL(HOUR,XDEL,81.,SAX110,SUX110,1.,1.)
+      DLNDH=HPOL(HOUR,DNDHBR,.06,SAX110,SUX110,1.,1.)
       IF(DEPTH.LT.1.0) GOTO 600
-        IF(NIGHT) DEPTH=-DEPTH
+        IF(ENIGHT) DEPTH=-DEPTH
         CALL TAL(HDEEP,DEPTH,WIDTH,DLNDH,EXT,E)
         IF(.NOT.EXT) GOTO 667
         if(konsol.gt.1) WRITE(KONSOL,650)
@@ -998,10 +1133,10 @@ c
 2727  continue
       hmex=hme-9.
       NMD=XMDED(XHI,RSSN,4.0E8)
-      HMD=HPOL(HOUR,81.0,88.0,SAX,SUX,1.,1.)
-      F(1)=HPOL(HOUR,0.02+0.03/DELA,0.05,SAX,SUX,1.,1.)
-      F(2)=HPOL(HOUR,4.6,4.5,SAX,SUX,1.,1.)
-      F(3)=HPOL(HOUR,-11.5,-4.0,SAX,SUX,1.,1.)
+      HMD=HPOL(HOUR,81.0,88.0,SAX70,SUX70,1.,1.)
+      F(1)=HPOL(HOUR,0.02+0.03/DELA,0.05,SAX70,SUX70,1.,1.)
+      F(2)=HPOL(HOUR,4.6,4.5,SAX70,SUX70,1.,1.)
+      F(3)=HPOL(HOUR,-11.5,-4.0,SAX70,SUX70,1.,1.)
       FP1=F(1)
       FP2=-FP1*FP1/2.0
       FP30=(-F(2)*FP2-FP1+1.0/F(2))/(F(2)*F(2))
@@ -1029,7 +1164,7 @@ c
                 D1=DXDX/(XDX*XKK*X**(XKK-1.0))
         endif
 c
-c compute Danilov et al D-region model values
+c compute Danilov et al. (1995) D-region model values
 c
       if(.not.dreg) then
           vKp=1.
@@ -1091,7 +1226,7 @@ c
 3801     continue
          if(hef.ne.hefold) then
             width=hef-hme
-            IF(NIGHT) DEPTH=-DEPTH
+            IF(ENIGHT) DEPTH=-DEPTH
             CALL TAL(HDEEP,DEPTH,WIDTH,DLNDH,EXT,E)
             IF(.NOT.EXT) GOTO 380
             if(konsol.gt.1) WRITE(KONSOL,650)
@@ -1155,7 +1290,7 @@ C
         HV1R = HME + WIDTH
         HV2R = HME + HDEEP
         HHMF2 = HMF2
-        CALL INILAY(NIGHT,F1REG,NMF2,NMF1,NME,VNER,HHMF2,HMF1M,HME,
+        CALL INILAY(FNIGHT,F1REG,NMF2,NMF1,NME,VNER,HHMF2,HMF1M,HME,
      &                  HV1R,HV2R,HHALF,HXL,SCL,AMP,IIQU)
         IF((IIQU.EQ.1).and.(konsol.gt.1)) WRITE(KONSOL,7733)
 7733   FORMAT('*NE* LAY amplitudes found with 2nd choice of HXL(1).')
@@ -1171,8 +1306,8 @@ C
       SEC=UT*3600.
       CALL CIRA86(DAYNR,SEC,LATI,LONGI,HOUR,COV,TEXOS,TN120,SIGMA)
       IF(HOUR.NE.0.0) THEN
-         iyz=lyear
-         idz=ldaynr
+         iyz=iyear
+         idz=daynr
          if(jf(18)) then
              secni=(24.-longi/15)*3600.
          else
@@ -1203,10 +1338,10 @@ C Te-MAXIMUM based on JICAMARCA and ARECIBO data
 
       HMAXD=60.*EXP(-(MLAT/22.41)**2)+210.
       HMAXN=150.
-      AHH(2)=HPOL(HOUR,HMAXD,HMAXN,SAX,SUX,1.,1.)
+      AHH(2)=HPOL(HOUR,HMAXD,HMAXN,SAX200,SUX200,1.,1.)
       TMAXD=800.*EXP(-(MLAT/33.)**2)+1500.
       TMAXN=TN(HMAXN,TEXNI,TLBDN,SIGNI)+20
-      ATE(2)=HPOL(HOUR,TMAXD,TMAXN,SAX,SUX,1.,1.)
+      ATE(2)=HPOL(HOUR,TMAXD,TMAXN,SAX200,SUX200,1.,1.)
 
 c Te(300km), Te(400km) from AE-C, Te(1400km), Te(3000km) from 
 c ISIS, Brace and Theis
@@ -1214,6 +1349,7 @@ c ISIS, Brace and Theis
               DIPLAT=MAGBR
               CALL TEBA(DIPLAT,HOUR,NSEASN,TEA)
 
+              icd=0              
           if(jf(23)) then
 
 c Te at fixed heights taken from Brace and Theis
@@ -1234,7 +1370,7 @@ c Te(600km) from AEROS, Spenner and Plugge (1979)
               ETT=EXP(-MLAT/11.35)
               TET=2900.-5600.*ETT/((ETT+1)**2.)
               TEN=839.+1161./(1.+EXP(-(ABSMLT-45.)/5.))
-              ATE(5)=HPOL(HOUR,TET,TEN,SAX,SUX,1.5,1.5)
+              ATE(5)=HPOL(HOUR,TET,TEN,SAX500,SUX500,1.5,1.5)
           else
 
 c Te at fixed heights from IK, Truhlik, Triskova, Smilauer
@@ -1246,14 +1382,14 @@ c Te at fixed heights from IK, Truhlik, Triskova, Smilauer
               AHH(7)=2500.
               hte=2500
               dimo=0.311653
-              icd=1    ! compute INVDIP
-              isa=0    ! solar activity correction off
-              ise=0    ! season correction off
+c              icd=1    ! compute INVDIP
+c              isa=0    ! solar activity correction off
+c              ise=0    ! season correction off
               do 3491 ijk=4,7
                  call igrf_sub(lati,longi,ryear,ahh(ijk),
      &                xl,icode,dipl,babs)
                  if(xl.gt.10.) xl=10.
-                 call elteik(icd,isa,ise,invdip,xl,dimo,
+                 call elteik(1,0,0,invdip,xl,dimo,
      &              babs,dipl,hour,ahh(ijk),daynr,f107d,
      &              teh2,sdte)
 3491             ate(ijk)=teh2
@@ -1297,7 +1433,7 @@ c Ti(430km) during daytime from AEROS data
       Z1=EXP(-0.09*MLAT)
       Z2=Z1+1.
       TID1 = 1240.0 - 1400.0 * Z1 / ( Z2 * Z2 )
-      MM(2)=HPOL(HOUR,3.0,0.0,SAX,SUX,1.,1.)
+      MM(2)=HPOL(HOUR,3.0,0.0,SAX500,SUX500,1.,1.)
 
 c Ti(430km) duirng nighttime from AEROS data
 
@@ -1309,7 +1445,7 @@ c Ti(430km) duirng nighttime from AEROS data
 c Ti(430km) for specified time using HPOL
 
       TI1=TIN1  
-      IF(TID1.GT.TIN1) TI1=HPOL(HOUR,TID1,TIN1,SAX,SUX,1.,1.)
+      IF(TID1.GT.TIN1) TI1=HPOL(HOUR,TID1,TIN1,SAX500,SUX500,1.,1.)
 
 c Tn < Ti < Te enforced
 
@@ -1383,7 +1519,7 @@ C
       RIF(3)=SEASON
       IF(SEASON.EQ.1) RIF(3)=3.
       RIF(4)=1.
-      IF(NIGHT) RIF(4)=2.
+      IF(FNIGHT) RIF(4)=2.
       CALL KOEFP1(PG1O)
       CALL KOEFP2(PG2O)
       CALL KOEFP3(PG3O)
@@ -1395,10 +1531,10 @@ c
 c calculate O+ profile parameters
 c
 
-      IF(ABS(XHI).LE.90.0) THEN
-        ZZZ1=COS(XHI*UMR)
-      ELSE
+      IF(FNIGHT) THEN
         ZZZ1=0.0
+      ELSE
+        ZZZ1=COS(XHI*UMR)
       ENDIF
       msumo=4
       RDOMAX=100.0
@@ -1512,6 +1648,23 @@ C
           goto 330
           endif
       ELEDE=XE_1(HEIGHT)
+c
+c TTS model option for topside
+c
+      if((itopn.eq.3).and.(height.ge.400.0)) then
+              call igrf_sub(lati,longi,ryear,height,
+     &                xl1,icode,dipl1,babs1)
+              if(xl1.gt.10.) xl1=10.
+c              icd=1    ! compute INVDIP
+        	  dimo=0.311653
+      	      call CALNE(1,INVDIP,xl1,DIMO,babs1,
+     &                  DIPL,hour,height,daynr,F107D,ELEDE)
+           	  endif
+
+c
+c electron density in m-3 in outf(1,*)
+c
+
       OUTF(1,kk)=ELEDE
 
 c
@@ -1537,7 +1690,8 @@ c
 7108  IF(NOION) GOTO 7118
       IF((HEIGHT.GT.HNIE).OR.(HEIGHT.LT.HNIA)) GOTO 7118
       if(DY) then
-            call ioncom_new(height,xhi,lati,cov,seamon,dion)
+            call ioncomp(ryear,daynr,iseamon,hour,height,xhi,
+     &            lati,longi,cov,dion)
             ROX=DION(1)
             RHX=DION(2)
             RNX=DION(3)
@@ -1572,7 +1726,7 @@ c
       OUTF(11,kk)=RNX*xnorm
 
 c
-c D region special: Friedrich&Torkar model in outf(14,*)
+c D region special: Friedrich&Torkar model in outf(13,*)
 c
 
 7118    if(.not.dreg) then
@@ -1600,16 +1754,33 @@ c
             endif
 
 c
-c ion drift
+c equatorial vertical ion drift
 c
 
       drift=-1.
-      if(.not.jf(21).and.abs(magbr).lt.25.0) then
+      if(jf(21).and.abs(magbr).lt.25.0) then
             param(1)=daynr
             param(2)=f107d
             call vdrift(hour,longi,param,drift)
             endif
-
+c
+c spread-F occurrence probability
+c
+      spreadf=-1.
+      if(.not.jf(28)) goto 1937
+      if(hour.gt.7.25.and.hour.lt.17.75) goto 1937
+      if(abs(lati).gt.25.0) goto 1937
+			spfhour=hour
+			daynr1=daynr
+			if(hour.lt.12.0) then
+				spfhour=hour+24.0
+				daynr1=daynr-1
+				if(daynr1.lt.1) daynr1=idayy
+            	endif
+            call spreadf_brazil(daynr,idayy,f107d,lati,osfbr)
+			ispf=int((spfhour-17.75)/0.5)+1
+ 			if(ispf.gt.0.and.ispf.lt.26) spreadf=osfbr(ispf)
+1937   continue
 C
 C ADDITIONAL PARAMETER FIELD OARR
 C
@@ -1644,8 +1815,8 @@ C
       OARR(26)=MAGBR
       OARR(27)=MODIP
       OARR(28)=DELA
-      OARR(29)=SAX
-      OARR(30)=SUX
+      OARR(29)=SAX200
+      OARR(30)=SUX200
       OARR(31)=SEASON
       OARR(32)=NSEASN
       OARR(33)=rssn
@@ -1661,6 +1832,7 @@ C
       OARR(45)=stormcorr
       OARR(46)=f1pbw
       OARR(47)=f1pbl
+      OARR(48)=spreadf
 3330  CONTINUE
       RETURN
       END
