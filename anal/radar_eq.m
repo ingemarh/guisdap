@@ -115,12 +115,12 @@ end
 
 for sig=find(lpg_bcs=='s')
   % Must find the virtual channel now
-  lp=lpg_lp(sig);
-  vc=lp_vc(lp(1));
+  %lp=lpg_lp(sig); vc=lp_vc(lp(1)); pcoeff=p_coeff0(vc);
+  vc=lp_vc(lpg_lp(sig)); pcoeff=mean(p_coeff0(vc));
   addr=ADDR_SHIFT+lpg_addr(sig);
   if max(abs(gg2gc(p_XMITloc)-gg2gc(p_RECloc)))<.1 | GUP_iniver<1.71
 % For monostatic case calculate for each point the range factor
-    ad_coeff(addr)=p_coeff0(vc)*(sc_R1./(scale*ad_range(addr))).^2;
+    ad_coeff(addr)=pcoeff*(sc_R1./(scale*ad_range(addr))).^2;
   else
 % For bistatic case calculate for each point the antenna beam factor
 %  a=conv(a1,ones(1,round(lpg_w(sig))))/lpg_w(sig);
@@ -130,7 +130,7 @@ for sig=find(lpg_bcs=='s')
    at=(1:length(a))-(length(a1)-1)/2-lpg_h(sig)-ppdoff+p_R0/p_dtau;
    b=interp1(at,a,ad_range(addr))'; c=sign(b*lpg_w(sig)-1);
    ad_range(addr)=range*c; ad_w(addr)=range_cover*c;
-   ad_coeff(addr)=p_coeff0(vc)*b;
+   ad_coeff(addr)=pcoeff*b;
    lpg_w(sig)=range_cover;
    lpg_h(sig)=range;
   end
