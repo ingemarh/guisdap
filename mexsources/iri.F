@@ -15,8 +15,9 @@ C---------------------------------------------------------------------
       real outf(20,100),oarr(50),tim(2),pos(2),h(3)
 c     save jf,nrp,rp,tim,pos,h,dirfiles,lendir
 c jf tttff ffttt ftttt ttftf ttttt tt---
-      data jf/3*.true.,4*.false.,3*.true.,.false.,6*.true.,.false.,
-     ,.true.,.false.,10*.true./,nrp/3/,rp/1,4,3,9*0/,
+c jf tttff ffttt ffttt ttttf ttttt ttftt
+      data jf/3*.true.,4*.false.,3*.true.,2*.false.,7*.true.,.false.,
+     ,7*.true.,.false.,2*.true./,nrp/3/,rp/1,4,3,9*0/,
      ,tim/15552090.,1996./,pos/69.2,19.2/,h/100.,590.,0./
 C CHECK FOR PROPER NUMBER OF ARGUMENTS
       IF(NLHS.GT.1)CALL MEXERRMSGTXT('Only one output argument')
@@ -40,6 +41,7 @@ C CHECK FOR PROPER NUMBER OF ARGUMENTS
       len=(h(2)-h(1))/h(3)+1
       if(len.GT.100)CALL MEXERRMSGTXT('Max 100 heights')
       if(len*nrp.gt.900)CALL MEXERRMSGTXT('Max 9par*100 heights')
+      call initialize
       call iri_sub(jf,0,pos(1),pos(2),iy,id-1,ut+25.,h(1),h(2),h(3),
      ,outf,oarr)
       i=1
