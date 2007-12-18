@@ -5828,7 +5828,8 @@ c
           call getenv('IRIPATH',path)
       
 c         open(unit=12,file='ig_rz.dat',status='old')
-          open(unit=12,file=path(1:index(path,' ')-1)//'/ig_rz.dat',status='old')
+          open(unit=12,file=path(1:index(path,' ')-1)//'/ig_rz.dat',
+     ,status='old')
 c-web- special for web version
 c          open(unit=12,file=
 c     *'/usr/local/etc/httpd/cgi-bin/models/IRI/ig_rz.dat',
@@ -6151,7 +6152,8 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
 
         if(is*8+ihour.lt.13) goto 21   ! at least 13 indices available	
 
-        READ(13,10,REC=IS,ERR=21) JY,JMN,JD,iiap,F
+        READ(13,10,REC=IS,ERR=21,iostat=ier) JY,JMN,JD,iiap,F
+	if(ier.ne.0)goto21
         do i9=1,8
         	if(iiap(i9).lt.-2) goto 21
         	enddo
@@ -6160,7 +6162,8 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
            iap(j1+i)=iiap(i)
            enddo
         iss=is-1
-        READ(13,10,REC=ISS,ERR=21) JY,JMN,JD,iiap,F
+        READ(13,10,REC=ISS,ERR=21,iostat=ier) JY,JMN,JD,iiap,F
+	if(ier.ne.0)goto21
         do i9=1,8
         	if(iiap(i9).lt.-2) goto 21
         	enddo
@@ -6174,7 +6177,8 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
                 iap(j2+i)=iiap(i)
                 enddo
              iss=is-2
-             READ(13,10,REC=ISS,ERR=21) JY,JMN,JD,iiap,F
+             READ(13,10,REC=ISS,ERR=21,iostat=ier) JY,JMN,JD,iiap,F
+	     if(ier.ne.0)goto21
         	 do i9=1,8
         		if(iiap(i9).lt.-2) goto 21
         		enddo
@@ -6232,7 +6236,8 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
               ENDDO
 
         IS=IS+IDN+ID
-        READ(13,10,REC=IS,ERR=21) JY,JMN,JD,iiap,f
+        READ(13,10,REC=IS,ERR=21,iostat=ier) JY,JMN,JD,iiap,f
+	if(ier.ne.0)goto21
         F107D=f
 		if(f.lt.-4.) goto 21
         

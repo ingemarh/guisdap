@@ -12,11 +12,11 @@ FFLAGS = -xO3 -KPIC -dalign -mt -silent -e -xarch=v9a
 FC=f90
 LDFLAGS= -dy -G -h $N$S -z text
 else
-ifeq ($(FC),gfortran)
-FFLAGS = -O3 -fPIC -c -static -ffixed-line-length-132 -fexceptions
-else
-FC=g77
+ifeq ($(FC),g77)
 FFLAGS = -O3 -fPIC -c -static -finit-local-zero -ffixed-line-length-132
+else
+FC=gfortran
+FFLAGS = -O3 -fPIC -c -static -fexceptions -fno-omit-frame-pointer
 endif
 LDFLAGS= -shared
 endif
