@@ -19,10 +19,12 @@ else
 CFLAGS=-O3 -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
 ifeq ($(FC),gfortran)
 MEXOPTS="FC=gfortran"
-elifeq ($(FC),g77)
+else
+ifeq ($(FC),g77)
 MEXOPTS="FLIBS=-lm"
 else
 MEXOPTS="FC=g77"
+endif
 endif
 LDFLAGS= -shared
 endif
