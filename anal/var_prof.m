@@ -71,7 +71,7 @@ for lpg=lpgs
     f=f0; N=N0; L=L0; R=R0;
   end
   if any(coeff(addr)-1)
-    error(sprintf('Well, how did we get here...\n'))
+    error('GUISDAP:default','Well, how did we get here...')
   end
   dat=conv(data(addr),f);
   var1=conv(dvar1(addr),f)-dat.*dat/N_averaged;
@@ -81,5 +81,5 @@ for lpg=lpgs
 end
 
 if N_avtot<N_avpref
-  fprintf('Warning: %.0f points may not be enough for reliable variance determination\n',N_avtot)
+  warning('GUISDAP:default','%.0f points may not be enough for reliable variance determination',N_avtot)
 end

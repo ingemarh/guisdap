@@ -1,18 +1,28 @@
 function [altitude,ne,te,ti,coll,cO,cM2,cH]=ionomodel(heights,modinfo)
 global d_time p_XMITloc
+if isempty(d_time)
+ dtime=clock;
+else
+ dtime=d_time(1,:);
+end
+if isempty(p_XMITloc)
+ loc=[69.6 19.2];
+else
+ loc=p_XMITloc(1:2);
+end
 if modinfo
  [i1,i2,i3,i4]=textread(fullfile(getenv('IRIPATH'),'ig_rz.dat'),'%d,%d,%d,%d',1,'headerlines',2);
- i5=datenum(d_time(1,:));
+ i5=datenum(dtime);
  if i5>datenum(i4,i3,31) | i5<datenum(i2,i1,1)
   error('Date is outside iri model time range, please update the iri model')
  end
- fprintf('** The model uses the IRI-2007 model at the tx position (%.1f %.1f)**\n',p_XMITloc(1:2))
+ fprintf('** The model uses the IRI-2007 model at the tx position (%.1f %.1f)**\n',loc)
 end
-[tsec,year]=tosecs(d_time(1,:));
+[tsec,year]=tosecs(dtime);
 hh=[min(heights)-1 max(heights)+1.1 1]; if hh(2)-hh(1)>100, hh(3)=0; end
-m_iri=iri([1 4 3 6 8 9 10 12],[tsec year],p_XMITloc(1:2),hh);
+m_iri=iri([1 4 3 6 8 9 10 12],[tsec year],loc,hh);
 altitude=m_iri(:,8);
-tn=msis(altitude*1e3,[tsec/86400 rem(tsec,86400)],p_XMITloc(1:2));
+tn=msis(altitude*1e3,[tsec/86400 rem(tsec,86400)],loc);
 d=find(isnan(m_iri(:,2)) & altitude<150);
 if ~isempty(d)
  m_iri(d,2:3)=tn(d,9)*ones(1,2);

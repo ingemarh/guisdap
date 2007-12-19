@@ -64,7 +64,7 @@ model=['ionomodel_' iono_model];
 if exist([model '.m'])
  [altitude,ne,te,ti,coll,cO,cM2,cH]=feval(model,heights,modinfo);
 else
- error(['Undefined ionospheric model: ' iono_model ' (giveme,gup150,iri)']);
+ error('GUISDAP:default','Undefined ionospheric model: %s (giveme,gup150,iri)',iono_model)
 end
 heights2=heights;
 heights=max(heights,altitude(1));

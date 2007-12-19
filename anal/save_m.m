@@ -3,7 +3,7 @@ if isempty(file)
  fid=1;
 else
  fid=fopen(file,'w');
- if fid<0, error(['Cannot write to ' file]); end
+ if fid<0, error('GUISDAP:default','Cannot write to %s',file), end
 end
 nv=length(varargin);
 for i=1:nv

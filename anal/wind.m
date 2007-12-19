@@ -11,11 +11,10 @@
   z=[];zz=[]; 
   sy=sort(col(y));dsy=diff(sy);
   sx=sort(col(x));dsx=diff(sx);
-  if isempty(dsy==0), error('y not an index'), end
-%  if ~isempty(sx==0), error('x not an index'), end
-  if length(x)>length(y), error('wrong order'), end
+  if isempty(dsy==0), error('GUISDAP:wind','y not an index'), end
+  if length(x)>length(y), error('GUISDAP:wind','wrong order'), end
   for i=row(x) 
     w=find(y==i);
     z=[z w];
-    zz=[zz, w(1)];
+    zz=[zz w(1)];
   end

@@ -63,7 +63,7 @@ elseif ~isempty(sysTemp)
   scale(cal)=bac_power/sysTemp;
  end
 else
- error('No calibration temperature')
+ error('GUISDAP:default','No calibration temperature')
 end
 for lpg=lpgs
  cal=lpg_cal(lpg);
