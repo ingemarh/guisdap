@@ -16,7 +16,7 @@ ifeq ($(FC),g77)
 FFLAGS = -O3 -fPIC -c -static -finit-local-zero -ffixed-line-length-132
 else
 FC=gfortran
-FFLAGS = -O3 -fPIC -c -static -fexceptions -fno-omit-frame-pointer
+FFLAGS = -O3 -fPIC -c -fno-automatic
 endif
 LDFLAGS= -shared
 endif

@@ -13,7 +13,7 @@ C---------------------------------------------------------------------
       logical jf(30)
       real*8 par(900),dum(12)
       real outf(20,100),oarr(50),tim(2),pos(2),h(3)
-c     save jf,nrp,rp,tim,pos,h
+      save jf,nrp,rp,tim,pos,h
 c jf tttff ffttt ftttt ttftf ttttt tt---
 c jf tttff ffttt ffttt ttttf ttttt ttftt
       data jf/3*.true.,4*.false.,3*.true.,2*.false.,7*.true.,.false.,
