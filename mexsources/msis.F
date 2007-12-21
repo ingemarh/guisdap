@@ -1,5 +1,10 @@
 #include "fintrf.h"
+#ifndef mwPointer
+#define mwPointer mwpointer
+#define mwSize mwpointer
+#endif
 #define maxheights 4096
+
       SUBROUTINE MEXFUNCTION(NLHS, PLHS, NRHS, PRHS)
 C [profile,status]=msis(height,time,position,indices,cgs)
       mwPointer PLHS(*),PRHS(*),mxGetPr,mxCreateDoubleMatrix

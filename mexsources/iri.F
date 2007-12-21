@@ -1,4 +1,8 @@
 #include "fintrf.h"
+#ifndef mwPointer
+#define mwPointer mwpointer
+#define mwSize mwpointer
+#endif
 
       SUBROUTINE mexFunction(NLHS, PLHS, NRHS, PRHS)
 C par=iri95(rp,tim,pos,h)
