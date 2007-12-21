@@ -1,7 +1,7 @@
 #include "fintrf.h"
 #define maxheights 4096
       SUBROUTINE MEXFUNCTION(NLHS, PLHS, NRHS, PRHS)
-C [profile,status]=msis(height,time,position,indexes,cgs)
+C [profile,status]=msis(height,time,position,indices,cgs)
       mwPointer PLHS(*),PRHS(*),mxGetPr,mxCreateDoubleMatrix
       INTEGER*4 NLHS, NRHS
       mwSize mxGetN,mxGetM,nm
@@ -16,10 +16,11 @@ C Mikael Hedin <micce@irf.se>
       real height(maxheights)
       real stl
       real pos(2),glat,glong
-      real index(3),f107a,f107,ap
+      real indices(3),f107a,f107,ap
       real*8 dd(maxheights,9),tt(2),dummy
+      save indices
 C
-      data index/100.,100.,5./
+      data indices/100.,100.,5./
 C-----------------------------------------------------------------------
 C  check for proper number of arguments
       if(nlhs.gt.2)call mexErrMsgTxt('Max two output arguments')
@@ -57,20 +58,20 @@ C  check that position is a vector
       call myCopyToReal(prhs(3),pos,2)
       glat=pos(1)
       glong=pos(2)
-C  check if indexes given
+C  check if indices given
       if(nrhs.gt.3)then
-        nindex=mxGetN(prhs(4))*mxGetM(prhs(4))
-        if(nindex.ne.3)then
-          if(nindex.ne.0)then
-            call mexErrMsgTxt('Indexes not a 3-vector or empty')
+        nindices=mxGetN(prhs(4))*mxGetM(prhs(4))
+        if(nindices.ne.3)then
+          if(nindices.ne.0)then
+            call mexErrMsgTxt('Indices not a 3-vector or empty')
           endif
         else
-          call myCopyToReal(prhs(4),index,3)
+          call myCopyToReal(prhs(4),indices,3)
         endif
       endif
-      f107a=index(1)
-      f107=index(2)
-      ap=index(3)
+      f107a=indices(1)
+      f107=indices(2)
+      ap=indices(3)
 C     check if cgs-flag is given
       call meters(.true.)
       if(nrhs.gt.4)then
