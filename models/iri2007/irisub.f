@@ -76,19 +76,19 @@ C 2000.05 12/07/00 change name IRIS13 to IRISUB
 C 2000.06 12/14/00 jf(30),outf(20,100),oarr(50)
 C 2000.07 03/17/01 include Truhlik-Triskova Te model and IGRF
 C 2000.08 05/07/01 include Fuller-Rowell-Condrescu storm model 
-C 2000.09 07/09/01 LATI instead of LAT1 in F00 call (M. Torkar)
-C 2000.10 07/09/01 sdte instead of dte in ELTEIK call (P. Wilkinson)
+C 2000.09 07/09/01 LATI instead of LAT1 in F00 call -------- M. Torkar
+C 2000.10 07/09/01 sdte instead of dte in ELTEIK call --- P. Wilkinson
 C 2000.11 09/18/01 correct computation of foF2 for Rz12 user input
-C 2000.12 09/19/01 Call APF only if different date and time (P. Webb)
-c 2000.13 10/28/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
+C 2000.12 09/19/01 Call APF only if different date and time -- P. Webb
+c 2000.13 10/28/02 replace TAB/6 blanks, enforce 72/line -- D. Simpson
 C 2000.14 11/08/02 change unit for message file to 11 (13 is Kp)
 C 2000.15 01/27/03 change F1_prob output; Te-IK for fix h and ELTE(h)
 C 2000.16 02/04/03 along<0 -> along=along+360; F1 occ for hmf1&foF1
 C 2000.17 02/05/03 zyear =12.97 (Dec 31); idayy=#days per year
 C 2000.18 02/06/03 jf(27) for IG12 user input; all F1 prob in oar
 C 2000.19 07/14/04 covsat<188 instead of covsat=<f(IG)<188
-C 2000.19 02/09/05 declare INVDIP as real                F. Morgan
-C 2000.20 11/09/05 replace B0B1 with BCOEF               T. Gulyaeva
+C 2000.19 02/09/05 declare INVDIP as real ------------------ F. Morgan
+C 2000.20 11/09/05 replace B0B1 with BCOEF --------------- T. Gulyaeva
 C 2005.01 11/09/05 new topside ion composition; F107D from file 
 C 2005.02 11/14/05 jf(18) now IGRF/POGO; dip,mlat now IGRF10; 
 C 2005.03 11/15/05 sunrise/sunset/night for D,E,F1,F2; UT_LT removed
@@ -96,6 +96,7 @@ C 2005.04 05/06/06 FIRI D-region option not tied to peak
 C 2005.04 05/06/06 Spread-F included, NeQuick included
 C 2005.05 01/15/07 NeQuick uses CCIR-M3000F2 even if user-hmF2  
 C 2007.00 05/18/07 Release of IRI-2007
+C 2007.01 01/23/08 ryear = .. (daynr-1.0)/idayy ---------- R. Scharroo
 C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
@@ -607,7 +608,7 @@ c
                  call MODA(0,iyear,MONTH,IDAY,DAYNR,nrdaym)
         endif
 
-        ryear = iyear + daynr/idayy
+        ryear = iyear + (daynr-1.0)/idayy
         
 C
 C CALCULATION OF GEODETIC/GEOMAGNETIC COORDINATES (LATI, LONGI AND 

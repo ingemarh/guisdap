@@ -13,7 +13,7 @@ if strfind(expt,'v')
  end
  %freq=freq(1); startad=startad(1); updown=0;
 else
- freq=[-4.8]*1e6; dt=0.4e-6; invert=1; fradar=930e6;
+ freq=[-5.0]*1e6; dt=0.4e-6; invert=1; fradar=930e6;
  ele=77.5; updown=0;
  if strfind(expt,'cut')
   startad=0+1;

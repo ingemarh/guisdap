@@ -22,8 +22,20 @@ function [PPprof,PPrange,PPsigma,PPstd,PPw]=power_prof(addr,Debyecorr)
   
 global ad_range ch_el d_data lpg_womscaled ad_lpg p_om ad_coeff ad_lag ad_code ad_w
 global v_epsilon0 v_Boltzmann v_elemcharge k_radar p_N0 d_var1 d_var2
+global a_control p_ND p_rep p_dtau d_time sysTemp lpg_ND
  
-dvar=real(d_var1+d_var2)/2;
+if a_control(4)>1
+ % do only variances here
+ Var_scale=p_ND/min(1,p_rep*p_dtau*1e-6/diff(tosecs(d_time)));
+ Tback=min(sysTemp);
+ aa=[1 1 1 1 0 0 0]; % scaling of parameters should be close
+ [covRe,covIm]=adgr_var(addr,Tback,aa);
+ ND2=Var_scale*lpg_ND(ad_lpg(addr)).^2;
+ dvar=zeros(size(d_var1));
+ dvar(addr)=covRe./ND2;
+else
+ dvar=real(d_var1+d_var2)/2;
+end
 %addr=addr+ADDR_SHIFT; % To change from radar to Matlab addressing
 addr=addr(find(ad_coeff(addr)>0 & dvar(addr)'>0));
 PPrange=ad_range(addr);
