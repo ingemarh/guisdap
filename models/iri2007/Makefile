@@ -8,7 +8,11 @@ ML=	$L$N
 
 sys=$(shell uname -s)
 ifeq ($(sys),SunOS)
+ifeq ($(bit),64)
 FFLAGS = -xO3 -KPIC -dalign -mt -silent -e -xarch=v9a
+else
+FFLAGS = -xO3 -KPIC -dalign -mt -silent -e
+endif
 FC=f90
 LDFLAGS= -dy -G -h $N$S -z text
 else

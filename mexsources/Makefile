@@ -10,7 +10,11 @@ MATLAB=$(subst MATLAB=,,$(shell matlab -e | grep MATLAB= ))
 endif
 ifeq ($(sys),SunOS)
 #Solaris:
+ifeq ($(bit),64)
 CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include -xarch=v9a
+else
+CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include
+endif
 MEXOPTS=-f $(MATLAB)/bin/f90opts.sh
 LDFLAGS= -dy -G -h libguisdap.so -z text
 FC=f95
