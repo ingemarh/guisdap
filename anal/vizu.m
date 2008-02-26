@@ -66,11 +66,14 @@ if strcmp(action(naction,nvargin,varargin),'rtgup')
   REALT=1; manylim=Inf;
 end
 
-PLOT_STATUS=0;		% Status limit (0-3)
+PLOT_STATUS=[0 Inf];	% Status (0-3) and Residual limit
 if isempty(DATA_PATH)
   act=action(naction,nvargin,varargin);
   if strcmp(lower(act),'verbose')
     DATA_PATH=minput('Data path',result_path,1);
+    if strcmp(lower(act),'verbose')
+      PLOT_STATUS=minput('Status/Residual limits',PLOT_STATUS);
+    end
   elseif ~REALT
     if isdir(act) | strfind(act,'/')
       DATA_PATH=act; naction=naction+1;
@@ -103,9 +106,8 @@ elseif strcmpi(act,'print') | strcmpi(act,'save')
  if isempty(axs)
   disp('Nothing to print!')
  elseif isunix
-  dirs=path_tmp(1:end-1);
   if strcmpi(act,'print')
-    fig=sprintf('vizu%06d',round(rand*1e6)); ext='ps';
+    [dirs,fig]=fileparts(local.tfile); ext='ps';
   else
     fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
     ext='eps';
@@ -117,6 +119,8 @@ elseif strcmpi(act,'print') | strcmpi(act,'save')
           fig=sprintf('%s_%d',fig,intper);
         end
       end
+    else
+      dirs=path_tmp(1:end-1);
     end
     if ~isempty(a2), fig=sprintf('%s_%s',fig,a2); end
     fig=sprintf('%s@%s',fig,name_ant);

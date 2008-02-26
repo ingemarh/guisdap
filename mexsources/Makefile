@@ -51,7 +51,7 @@ iri:
 	$(MEX) $(MEXOPTS) iri.F $(IRILIB)
 
 geomag:
-	$(MEX) $(MEXOPTS) geomag.f $(IRILIB)
+	$(MEX) $(MEXOPTS) geomag.F $(IRILIB)
 
 msis:
 	$(MEX) $(MEXOPTS) msis.F $(MSISLIB)

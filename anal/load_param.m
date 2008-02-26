@@ -1,18 +1,21 @@
-function [Time,par2D,par1D,rpar2D]=load_param(data_path,status,update)
+function [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,status,update)
 % Function to read the plasma parameters from GUISDAP result files
 %
-% [Time,par2D,par1D,rpar2D]=load_param(data_path,update)
+% [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,update)
 % par2D [Ran,Alt,Ne,Te,Ti,Vi,Coll,Comp,Res]
 % par1D [Az,El,Pt,Tsys,Oppd]
 % rpar2D[Ran,Alt,RawNe]
+%  or error[Ne,Te,Ti,Vi,Coll]
 
-global name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres ppres
+global name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres ppres do_errs
 persistent lastfile
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
-if isempty(status), status=0; end
+if isempty(status), status=[0 Inf]; end
 if isempty(myparams), myparams=[1 2 4]; end
 if isempty(ppres), ppres=.25; end % pp resolution (km)
+do_rpar=nargout==4;
+do_err=nargout==5;
 
 if isempty(strfind(data_path,'*')) & ~isdir(data_path)
   [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path);
@@ -23,9 +26,8 @@ list=getfilelist(data_path,lastfile);
 %if nargin>2, list=list(cell2mat({list.file})>lastfile); end
 n=length(list);
 
-if n==0
-  Time=[]; par2D=[]; par1D=[]; rpar2D=[]; return
-end
+Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];
+if n==0, return; end
 r_Tsys=[]; r_pp=[]; rres=[];
 n_tot=n;
 memwarn=0;
@@ -34,19 +36,21 @@ lastfile=list(n);
 load(canon(fullfile(list(1).dir,sprintf('%08d%s',list(1).file,list(1).ext)),0))
 n_alt=size(r_param,1);
 
-npar2D=9; nrpar2D=3;
+npar2D=9; nrpar2D=3; nerr2D=npar2D-4;
 par2D	=ones(n_alt,n_tot,npar2D)*NaN;
 Time   	=zeros(2,n_tot);
 if isempty('r_Tsys') | ~exist('r_Offsetppd')
   r_Offsetppd=[];
 end
 par1D=zeros(n_tot,length([r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]));
-if nargout>3 & strfind('TVL',name_site) & ~isempty(r_pp)
+if do_rpar & strfind('TVL',name_site) & ~isempty(r_pp)
   n_ralt=length(unique(round(r_pprange/ppres)));
   rpar2D=ones(n_ralt,n_tot,3)*NaN;
 else
   n_ralt=NaN;
-  rpar2D=[];
+end
+if do_err
+  err2D	=ones(n_alt,n_tot,nerr2D)*NaN;
 end
 re=6370;
 if isempty(name_ant)
@@ -61,18 +65,27 @@ for i=1:n_tot
   nalt=size(r_param,1);
   if nalt>n_alt
     par2D=[par2D;ones(nalt-n_alt,n_tot,npar2D)*NaN];
+    if do_err
+      err2D=[err2D;ones(nalt-n_alt,n_tot,nerr2D)*NaN];
+    end
     n_alt=nalt;
   end
   n=1:nalt;
   if load_apriori
     r_param=r_apriori;
   else
-    d=find(r_status>status); [d1,d2]=find(r_error(d,1:size(r_param,2))>0);
+    d=find(r_status>status(1) | r_res(:,1)>status(2));
+    [d1,d2]=find(r_error(d,1:size(r_param,2))>0);
     r_param(d(d1),d2)=NaN;
+    r_err(d(d1),d2)=NaN;
   end
   par2D(n,i,[1 2 8 9])=[r_range(:,1) r_h(:,1) r_dp(:,1) r_res(:,1)];
   par2D(n,i,[3 5 7])=r_param(:,myparams);
   par2D(n,i,[4 6])=[r_param(:,2).*r_param(:,3) -r_param(:,5)];
+  if do_err
+    err2D(n,i,[1 3 5])=r_error(:,myparams);
+    err2D(n,i,[2 4])=[(r_error(:,2)./r_param(:,2)+r_error(:,3)./r_param(:,3)).*par2D(n,i,4) r_error(:,5)];
+  end
   Time(:,i)	=datenum(r_time);
   par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]; %10 kW
   if exist('r_w','var')

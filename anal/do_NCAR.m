@@ -28,8 +28,15 @@ if isempty(ant)
   ant=path(end-3:end-1);
  end
 end
+iper=[];
+if exist([path '.gup'],'file')
+ load('-mat',fullfile([path '.gup']),'intper')
+ if intper>0
+  iper=sprintf('_%d',intper);
+ end
+end
 
-file0=sprintf('%sNCAR_%d-%02d-%02d_%s@%s.',path,r_time(2,1:3),name_expr,ant);
+file0=sprintf('%sNCAR_%d-%02d-%02d_%s%s@%s.',path,r_time(2,1:3),name_expr,iper,ant);
 i1=[]; i2=[];
 if rem(ascbin,2), i1=[file0 'asc']; end
 if ascbin>1, i2=[file0 'bin']; end
