@@ -7,13 +7,14 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,status,update)
 % rpar2D[Ran,Alt,RawNe]
 %  or error[Ne,Te,Ti,Vi,Coll]
 
-global name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres ppres do_errs
+global name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres ppres max_ppw
 persistent lastfile
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
 if isempty(status), status=[0 Inf]; end
 if isempty(myparams), myparams=[1 2 4]; end
 if isempty(ppres), ppres=.25; end % pp resolution (km)
+if isempty(max_ppw), max_ppw=Inf; end % pp resolution (km)
 do_rpar=nargout==4;
 do_err=nargout==5;
 
@@ -32,36 +33,39 @@ r_Tsys=[]; r_pp=[]; rres=[];
 n_tot=n;
 memwarn=0;
 lastfile=list(n);
-
-load(canon(fullfile(list(1).dir,sprintf('%08d%s',list(1).file,list(1).ext)),0))
-n_alt=size(r_param,1);
-
-npar2D=9; nrpar2D=3; nerr2D=npar2D-4;
-par2D	=ones(n_alt,n_tot,npar2D)*NaN;
-Time   	=zeros(2,n_tot);
-if isempty('r_Tsys') | ~exist('r_Offsetppd')
-  r_Offsetppd=[];
-end
-par1D=zeros(n_tot,length([r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]));
-if do_rpar & strfind('TVL',name_site) & ~isempty(r_pp)
-  n_ralt=length(unique(round(r_pprange/ppres)));
-  rpar2D=ones(n_ralt,n_tot,3)*NaN;
-else
-  n_ralt=NaN;
-end
-if do_err
-  err2D	=ones(n_alt,n_tot,nerr2D)*NaN;
-end
 re=6370;
-if isempty(name_ant)
-  antennas=['uhf kir sod vhf esr'];
-  i=(strfind('TKSVL',name_site)-1)*4+1;
-  name_ant=antennas(i:i+2);
-end
+npar2D=9; nrpar2D=3; nerr2D=npar2D-4;
+Time=zeros(2,n_tot);
+
 for i=1:n_tot
 % clear('r_*','name_*')
   load(canon(fullfile(list(i).dir,sprintf('%08d%s',list(i).file,list(i).ext)),0))
-  
+  if isfinite(max_ppw) & exist('r_ppw','var')
+    d=find(r_ppw<max_ppw);
+    r_pp=r_pp(d); r_pprange=r_pprange(d); r_pperr=r_pperr(d);
+  end
+  if i==1
+    n_alt=size(r_param,1);
+    par2D	=ones(n_alt,n_tot,npar2D)*NaN;
+    if isempty('r_Tsys') | ~exist('r_Offsetppd')
+      r_Offsetppd=[];
+    end
+    par1D=zeros(n_tot,length([r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]));
+    if do_rpar & strfind('TVL',name_site) & ~isempty(r_pp)
+      n_ralt=length(unique(round(r_pprange/ppres)));
+      rpar2D=ones(n_ralt,n_tot,3)*NaN;
+    else
+      n_ralt=NaN;
+    end
+    if do_err
+      err2D	=ones(n_alt,n_tot,nerr2D)*NaN;
+    end
+    if isempty(name_ant)
+      antennas=['uhf kir sod vhf esr'];
+      i=(strfind('TKSVL',name_site)-1)*4+1;
+      name_ant=antennas(i:i+2);
+    end
+  end
   nalt=size(r_param,1);
   if nalt>n_alt
     par2D=[par2D;ones(nalt-n_alt,n_tot,npar2D)*NaN];
