@@ -1,182 +1,71 @@
-function [varargout]=efield(dirs,alt,td,odir)
+function [varargout]=efield(vfile,add)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-global result_path path_tmp path_GUP
-if nargin<1, dirs=[]; end
-if nargin<2, alt=[]; end
-if nargin<3, td=[]; end
-if nargin<4, odir=[]; end
-if isempty(dirs), dirs=result_path; end
-if isempty(alt), alt=[170 500]; end
-if isempty(td), td=300; end
-dirs=fullfile(dirs,filesep);
-if isempty(odir)
- if strfind(dirs,'*')
-  odir=path_tmp;
- else
-  odir=dirs;
- end
-end
-%dirs='/home/ingemar/tmp/2007-02-07_tau2pl_ant@uhf/';
+if nargin<2, add=[]; end
+if isempty(add), add=0; end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+load(vfile)
 mexing=1;
 if ~exist('geomag')
  mexing=0;
- path(path,fullfile(path_GUP,'models','geopack'))
 end
-degrad=pi/180.;  % conversion factor from degrees to radians
-r_earth=6378.135; % earth radius (km) and flatness factor
-[Time,par2D,par1D,dum,err2D]=load_param(dirs);
-global r_RECloc name_ant name_expr
-%%%%%%%%%%%%%%%%%
-r_time=datevec(Time(2,1));
-fig=sprintf('Efield_%d-%02d-%02d',r_time(1:3));
-fig2=sprintf('%d-%02d-%02d  %s@%s',r_time(1:3),name_expr,name_ant);
-if exist(fullfile(dirs,'.gup'),'file')
- load('-mat',fullfile(dirs,'.gup'))
- fig=sprintf('%s_%s_%d@%s',fig,name_expr,intper,name_ant);
-end
-result_file=fullfile(odir,fig),
-fid2=fopen([result_file '.txt'],'w');
-fprintf(fid2,'%20s%6s%6s%4s','Date     Time','Lat','Lon','Alt');
-fprintf(fid2,'%5s','VgN','VgW','VgU','VgNe','VgWe','VgUe');
-fprintf(fid2,'%4s','En','Ew','Ene','Ewe');
-fprintf(fid2,'\n');
-fprintf(fid2,'%20s%6s%6s%4s','UT','deg','deg','km');
-fprintf(fid2,'%5s',[],'m/s',[],[],'m/s',[]);
-fprintf(fid2,'%4s',[],'mV/m',[],'mV/m');
-fprintf(fid2,'\n');
-%%%%%%%%%%%%%%%%%
-[aa,count]=min(abs(par2D(:,:,2)-alt(1)));
-count=count+(0:size(par2D,2)-1)*size(par2D,1);
-ng=size(par2D,1); l2D=size(par2D,1)*size(par2D,2);
-%%%%%%%%%%%%%%%%%
-Edate=[]; Etime=[]; Epos=[]; Vg=[]; Vgv=[]; Ef=[]; Efe=[];
-%%%%%%%%%%%%%%%%%
-d=find(par1D(:,2) < 74 | par1D(:,2) > 69)';  % remove Tro FA data
-parerr=1; verterr='Inf';
-t1=floor(Time(1,1));
-for tim=t1:td/86400:Time(2,end)
- count=d(find(Time(2,d)>=tim & Time(1,d)<=tim+td/86400));
- if length(count)>=3
-  [g,dump]=find(par2D(:,count,2) > alt(1) & par2D(:,count,2) < alt(2) & isfinite(par2D(:,count,6)));
-  dump=count(dump)';
-  if length(unique(dump))>=3
-   g=g+(dump-1)*ng;
-   az=par1D(dump,1);el=par1D(dump,2);
-   Vi=par2D(g+(6-1)*l2D);
-   Vierr=err2D(g+(4-1)*l2D);
-   r_range=par2D(g);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   Date=[Time(1,dump(1));Time(2,dump(end))];
-   r_time=datevec(mean(Date));
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   gc=zeros(1,3);
-   for i=1:length(az)
-    gg_sp=loc2gg(r_RECloc,[el(i) az(i) r_range(i)]);
-    gc=gc+gg2gc(gg_sp);
-   end
-   gg_sp=gc2gg(gc/length(az));
-   obs_lat=gg_sp(1);
-   obs_lon=gg_sp(2);
-   alt_0=gg_sp(3);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   if mexing
-    bpar=geomag(gg_sp,r_time);
-    B=[bpar(1) -bpar(2) -bpar(3)]; %[N W U] Tesla
-   else
-    iday=(r_time(2)-1)*30+r_time(3);
-    r=alt_0/r_earth+1;
-    theta=(90.-obs_lat)*degrad;
-    phi=obs_lon*degrad;
+degrad=pi/180;
+E=[]; Ee=[];
+for i=1:size(Vdate,2)
+ r_time=datevec(mean(Vdate(:,i)));
+ if mexing
+  bpar=geomag(Vpos(i,:),r_time);
+  B=[bpar(1) -bpar(2) -bpar(3)]; %[N W U] Tesla
+ else
+  iday=(r_time(2)-1)*30+r_time(3);
+  r=Vpos(i,3)/r_earth+1;
+  theta=(90.-Vpos(i,1))*degrad;
+  phi=Vpos(i,2)*degrad;
 % BR, BTHETA, BPHI - SPHERICAL COMPONENTS OF THE MAIN
 % GEOMAGNETIC FIELD IN NANOTESLA
 % (POSITIVE BR OUTWARD, BTHETA SOUTHWARD, BPHI EASTWARD)
-    GEOPACK_RECALC(r_time(1),iday,r_time(4),r_time(5),r_time(6));
-    [br,bt,bf]=GEOPACK_IGRF_GEO(r,theta,phi);
-    B=[-bt -bf br]*1e-9; %[N W U] Tesla
-   end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   az1=-az*degrad; % -Az
-   el1=(90-el)*degrad; % 90-El
-   A=[sin(el1).*cos(az1) sin(el1).*sin(az1) cos(el1)];
-   if isfinite(parerr)
-    A=[A;-B/norm(B)];
-    Vi=[Vi;0];
-    Vierr=[Vierr;parerr];
-   elseif isfinite(verterr)
-    A=[A;[0 0 1]];
-    Vi=[Vi;0];
-    Vierr=[Vierr;verterr];
-   end
-% A x V_real=V_obs
-% ->     V_real = A* x A x V_real = A* x V_obs = A\V_obs
-% example   Vi_t=100;Vi_k=50;Vi_s=30;
-%                Vi_t=100;Vi_k=0;Vi_s=0;
-%%%V_real=A\Vi_0;
-%V_real(1);% Northward
-%V_real(2);% Westward
-%V_real(3);% Upward
-%%%[V_real,Verr_real,MSE,S]=lscov(A,Vi_0,1../Vierr_0.^2),
-   VV=(Vi./Vierr.^2)'*A;
-   T=(A'*(A./(Vierr.^2*ones(1,3))));
-   V_real=VV/T;
-   T=T^-1;
-   Vvar_real=T([1 5 9 2 6 3]); %lower triangle only
-   Verr=sqrt(Vvar_real([1:3])); %lower triangle only
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   Eg=-cross(V_real,B); % V/m geographic
-   [D,i,r]=cart2sph(B(1),B(2),B(3));
-   gtm=[-sin(i)*cos(D) -sin(i)*sin(D) cos(i);-sin(D) cos(D) 0;-cos(i)*cos(D) -cos(i)*sin(D) -sin(i)]';
-   Em=Eg*gtm; % geomagnetic
-   E=Em(1:2); %Along B = 0 always
-   Exerr=abs(Verr(2)*B(3))+abs(Verr(3)*B(2));  % Ex=-(Vy*Bz-Vz*By) V/m
-   Eyerr=abs(Verr(3)*B(1))+abs(Verr(1)*B(3));  % Ey=-(Vz*Bx-Vx*Bz) V/m
-   Ezerr=abs(Verr(1)*B(2))+abs(Verr(2)*B(1));  % Ez=-(Vx*By-Vy*Bx) V/m
-   Ee=[Exerr Eyerr];
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   fprintf(fid2,'%s',datestr(mean(Date)));
-   fprintf(fid2,'%6.2f', obs_lat);
-   fprintf(fid2,'%6.2f', obs_lon);
-   fprintf(fid2,'%4.0f', alt_0);
-   fprintf(fid2,'%5.0f', V_real);
-   fprintf(fid2,'%5.0f', Verr);
-   fprintf(fid2,'%4.0f', E*1000);
-   fprintf(fid2,'%4.0f', Ee*1000);
-   fprintf(fid2,'\n');
-
-   Edate=[Edate Date];
-   Epos=[Epos;[obs_lat obs_lon alt_0]];
-   Vg=[Vg;V_real];
-   Vgv=[Vgv;Vvar_real];
-   Ef=[Ef;E];
-   Efe=[Efe;Ee];
-  end
+  GEOPACK_RECALC(r_time(1),iday,r_time(4),r_time(5),r_time(6));
+  [br,bt,bf]=GEOPACK_IGRF_GEO(r,theta,phi);
+  B=[-bt -bf br]*1e-9; %[N W U] Tesla
  end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %Eg=-cross(Vg(i,:),B); % V/m geographic
+ [D,I,r]=cart2sph(B(1),B(2),B(3));
+ gtm=[-sin(I)*cos(D) -sin(I)*sin(D) cos(I);-sin(D) cos(D) 0;-cos(I)*cos(D) -cos(I)*sin(D) -sin(I)]';
+ Vm=Vg(i,:)*gtm; %geomagnetic
+ %Em=Eg*gtm, % geomagnetic
+ BB=[0 0 -norm(B)];
+ Em=-cross(Vm,BB);
+ E=[E;Em(1:2)]; %Along B = 0 always
+ Vgvv=Vgv([1 4 6;4 2 5;6 5 3]);
+ Vmv=Vgvv*abs(gtm);
+ EE=abs(cross(sqrt(diag(Vmv)),BB));
+ Ee=[Ee;EE(1:2)];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
-fclose(fid2);
-save(result_file,'Edate','Epos','Vg','Vgv','Ef','Efe')
+if add
+ save(vfile,'Vdate','Vpos','Vg','Vgv','E','Ee')
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % plot data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % load Efield_CP2_2005-09-12_tau2pl_0@uhf.mat
-START_TIME=floor(datevec(Edate(1)));
-END_TIME=ceil(datevec(Edate(end)));
+START_TIME=floor(datevec(Vdate(1)));
+END_TIME=ceil(datevec(Vdate(end)));
 START_TIME=minput('Start time',START_TIME);
 END_TIME=minput('  End time',END_TIME);
 
 xlim=[datenum(START_TIME) datenum(END_TIME)];
-fa=find(max(abs(Ef),[],2) < 0.1);
+fa=find(max(abs(E),[],2) < 0.1);
 tickform='HH:MM';
 d={'north' 'west'};
 for i=1:2
  subplot(2,1,i)
- plot(mean(Edate(:,fa)),Ef(fa,i)*1000,'-ok')
+ plot(mean(Vdate(:,fa)),E(fa,i)*1000,'-ok')
  hold on
- plot(ones(2,1)*mean(Edate(:,fa)),1000*(ones(2,1)*Ef(fa,i)'+[1;-1]*Efe(fa,i)'),'-k')
+ plot(ones(2,1)*mean(Vdate(:,fa)),1000*(ones(2,1)*E(fa,i)'+[1;-1]*Ee(fa,i)'),'-k')
  hold off
  set(gca,'XLim',xlim,'ylim',[-100 100])
- title(fig2),xlabel('UT'),ylabel(['E ' d{i} ' [mV/m]'])
+ title(datestr(mean(mean(Vdate)))),xlabel('UT'),ylabel(['E ' d{i} ' [mV/m]'])
  set(gca,'xgrid','on','ygrid','on')
  datetick(gca,'x',tickform,'keeplimits')
 end
-print(result_file,'-dpsc2')
