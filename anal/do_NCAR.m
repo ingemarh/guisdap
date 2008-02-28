@@ -30,7 +30,7 @@ if isempty(ant)
 end
 iper=[];
 if exist([path '.gup'],'file')
- load('-mat',fullfile([path '.gup']),'intper')
+ load('-mat',[path '.gup'],'intper')
  if intper>0
   iper=sprintf('_%d',intper);
  end
