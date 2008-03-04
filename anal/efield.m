@@ -1,8 +1,12 @@
+% function efield(vfile,add)
+% Copyright EISCAT 2008-02-28
+% Rotate velocity vectors in 'vfile' and calculate perpendicular
+%  electric fields
+% See also VECTOR_VELOCITY
+%
 function [varargout]=efield(vfile,add)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin<2, add=[]; end
 if isempty(add), add=0; end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 load(vfile)
 mexing=1;
 if ~exist('geomag')
@@ -13,8 +17,8 @@ E=[]; Ee=[];
 for i=1:size(Vdate,2)
  r_time=datevec(mean(Vdate(:,i)));
  if mexing
-  bpar=geomag(Vpos(i,:),r_time);
-  B=[bpar(1) -bpar(2) -bpar(3)]; %[N W U] Tesla
+  bpar=geomag(Vpos(i,:)',r_time);
+  B=[bpar(2);bpar(1);-bpar(3)]; %[E N U] Tesla
  else
   iday=(r_time(2)-1)*30+r_time(3);
   r=Vpos(i,3)/r_earth+1;
@@ -25,12 +29,12 @@ for i=1:size(Vdate,2)
 % (POSITIVE BR OUTWARD, BTHETA SOUTHWARD, BPHI EASTWARD)
   GEOPACK_RECALC(r_time(1),iday,r_time(4),r_time(5),r_time(6));
   [br,bt,bf]=GEOPACK_IGRF_GEO(r,theta,phi);
-  B=[-bt -bf br]*1e-9; %[N W U] Tesla
+  B=[bf -bt br]*1e-9; %[E N U] Tesla
  end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %Eg=-cross(Vg(i,:),B); % V/m geographic
- [D,I,r]=cart2sph(B(1),B(2),B(3));
- gtm=[-sin(I)*cos(D) -sin(I)*sin(D) cos(I);-sin(D) cos(D) 0;-cos(I)*cos(D) -cos(I)*sin(D) -sin(I)]';
+ [D,I,r]=cart2sph(B(2),B(1),-B(3));
+ gtm=[cos(D) -sin(D) 0;sin(I)*sin(D) sin(I)*cos(D) cos(I);-cos(I)*sin(D) -cos(I)*cos(D) sin(I)]';
  Vm=Vg(i,:)*gtm; %geomagnetic
  %Em=Eg*gtm, % geomagnetic
  BB=[0 0 -norm(B)];
@@ -57,7 +61,7 @@ END_TIME=minput('  End time',END_TIME);
 xlim=[datenum(START_TIME) datenum(END_TIME)];
 fa=find(max(abs(E),[],2) < 0.1);
 tickform='HH:MM';
-d={'north' 'west'};
+d={'east' 'north'};
 for i=1:2
  subplot(2,1,i)
  plot(mean(Vdate(:,fa)),E(fa,i)*1000,'-ok')
