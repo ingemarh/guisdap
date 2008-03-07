@@ -38,10 +38,8 @@ if isempty(odir)
 end
 %dirs='/home/ingemar/tmp/2007-02-07_tau2pl_ant@uhf/';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-mexing=1;
-if isfinite(uperr(1)) & ~exist('geomag')
- mexing=0;
- path(path,fullfile(path_GUP,'models','geopack'))
+if exist('geomag')~=3
+ addpath(fullfile(path_GUP,'models','geopack'),'-end')
 end
 degrad=pi/180.;  % conversion factor from degrees to radians
 [Time,par2D,par1D,dum,err2D]=load_param(dirs);
@@ -91,7 +89,9 @@ for tim=t1:td(2):Time(2,end)
      gc(i,:)=gg2gc(gg_sp(i,:));
     end
     if isfinite(ld(1))
-     [B,dip,modip]=getB(gg_sp,datevec(mean(Date)),mexing);
+     B=geomag(gg_sp',datevec(mean(Date)));
+     d=-asin(B(3,:)./sqrt(sum(B(1:3,:).^2)));
+     modip=real(asin(d./sqrt(d.^2+cos(gg_sp(:,1)'*degrad))));
     end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for il=1:length(ld)-1
@@ -102,13 +102,13 @@ for tim=t1:td(2):Time(2,end)
      end
      if length(unique(dump(ll)))>=mindump
       gg_sp=gc2gg(mean(gc(ll,:)));
-      az1=az(ll)*degrad; % Az
-      el1=el(ll)*degrad; % El
+      az1=az(ll)*degrad;
+      el1=el(ll)*degrad;
       A=[cos(el1).*sin(az1) cos(el1).*cos(az1) sin(el1)];
       Vll=Vi(ll); Vlle=Vierr(ll);
       if isfinite(uperr(1))
-       B=getB(gg_sp,r_time,mexing)';
-       A=[A;-B/norm(B)];
+       B=geomag(gg_sp',r_time)';
+       A=[A;-B(1:3)/norm(B(1:3))];
        Vll=[Vll;0];
        Vlle=[Vlle;uperr(1)];
       end
@@ -117,10 +117,9 @@ for tim=t1:td(2):Time(2,end)
        Vll=[Vll;0];
        Vlle=[Vlle;uperr(2)];
       end
-% A x V_real=V_obs
-% ->     V_real = A* x A x V_real = A* x V_obs = A\V_obs
-%%%V_real=A\Vi_0; % ENU
-%%%[V_real,Verr_real,MSE,S]=lscov(A,Vi_0,1../Vierr_0.^2),
+%%A*V_real=Vll +- Vlle
+%%V_real=A\Vi_0;
+%%[V_real,Verr_real]=lscov(A,Vll,1../Vlle.^2);
       VV=(Vll./Vlle.^2)'*A;
       T=(A'*(A./(Vlle.^2*ones(1,3))));
       V_real=VV/T;
@@ -148,31 +147,3 @@ save(result_file,'Vdate','Vpos','Vg','Vgv')
 if nargout>0
  varargout={Vdate,Vpos,Vg,Vgv};
 end
-return
-
-function [B,dip,modip]=getB(pos,r_time,mexing)
-degrad=pi/180;
-if mexing
- bpar=geomag(pos',r_time);
- B=[bpar([2 1],:);-bpar(3,:)]; %[E N U] Tesla
- dip=bpar(4,:);
-else
- r_earth=6378.135; % earth radius (km)
- iday=(r_time(2)-1)*30+r_time(3);
- GEOPACK_RECALC(r_time(1),iday,r_time(4),r_time(5),r_time(6));
- r=pos(:,3)/r_earth+1;
- theta=(90.-pos(:,1))*degrad;
- phi=pos(:,2)*degrad;
- np=size(pos,1)
- B=zeros(3,np);
-% BR, BTHETA, BPHI - SPHERICAL COMPONENTS OF THE MAIN
-% GEOMAGNETIC FIELD IN NANOTESLA
-% (POSITIVE BR OUTWARD, BTHETA SOUTHWARD, BPHI EASTWARD)
- for i=1:size(pos,1)
-  [br,bt,bf]=GEOPACK_IGRF_GEO(r,theta,phi);
-  B(:,i)=[bf;-bt;br]*1e-9; %[E N U] Tesla
- end
- dip=atan(B(3,:)/2../sqrt(sum(B(1:2,:).^2)));
-end
-d=-asin(B(3,:)./sqrt(sum(B.^2)));
-modip=real(asin(d./sqrt(d.^2+cos(pos(:,1)'*degrad))));

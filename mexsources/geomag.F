@@ -67,9 +67,9 @@ C ASSIGN POINTER
 c     CALL SHELLG(xlat,xlong,HEIGHT,DIMO,XL,ICODE,BAB1)
 c     DIP=ASIN(BDOWN/BABS)/UMR
 c     DEC=ASIN(BEAST/SQRT(BEAST*BEAST+BNORTH*BNORTH))/UMR
-       out(1)=BNORTH*1e-4
-       out(2)=BEAST*1e-4
-       out(3)=BDOWN*1e-4
+       out(1)=BEAST*1e-4
+       out(2)=BNORTH*1e-4
+       out(3)=-BDOWN*1e-4
        DIPL=ATAN(BDOWN/2.0/sqrt(BNORTH*BNORTH+BEAST*BEAST))
        out(4)=DIPL
 c      if(icode.eq.2)out(4)=mexgetnan()
