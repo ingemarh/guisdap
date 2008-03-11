@@ -94,7 +94,7 @@ IRIPATH=$GUP/models/iri2007
 sys=`uname -s`
 case $sys in
 	SunOS)
-		PATH=/usr/bin:/usr/local/bin:/opt/sfw/bin:$GUP/bin
+		PATH=/usr/bin:/usr/local/bin:/opt/sfw/bin:/usr/sfw/bin:$GUP/bin
 		LD_LIBRARY_PATH=$GUP/lib:/opt/SUNWspro/lib:/usr/local/ssl/lib
 		;;
 	Linux)

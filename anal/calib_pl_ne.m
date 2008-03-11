@@ -15,8 +15,9 @@ function ratio=calib_pl_ne(pl_dir,expt,gate,plots)
 %                Number of "good" points used
 % see also CALIB_NE
 if nargin<2, expt=[]; end
+verbose=0;
 if nargin<3
- gate=[]; verbose=0;
+ gate=[];
 elseif gate==0
  gate=[]; verbose=1;
 end
@@ -49,7 +50,7 @@ if verbose
  ran=minput('Ranges (km)',ran);
  nfft=minput('No fft points',nfft);
  nint=minput('No to integrate',nint);
- ngates=minput('No of gates',nint);
+ ngates=minput('No of gates',ngates);
  nlag=minput('No of lags',nlag);
  maxe=minput('Max sigma',maxe);
  nup_d=minput('No frequencies',nup_d);

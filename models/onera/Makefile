@@ -7,6 +7,7 @@ NULL=true
 SOURCEDIR=./source
 HELPDIR=./compile
 INSTALLDIR=.
+GUPDIR=../../lib
 EXAMPLE=./example
 
 #------------------------------------------------------------------------------
@@ -202,12 +203,14 @@ install.lib:
 	@if [ -f $(SOURCEDIR)/onera_desp_lib_*.so ] ; then \
 	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(INSTALLDIR)/matlab;\
 	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(INSTALLDIR);\
+	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(GUPDIR)/onera_desp_lib.so;\
 	 else \
 	   $(NULL) ; \
 	 fi
 	@if [ -f $(SOURCEDIR)/onera_desp_lib_*.dll ] ; then \
 	   cp $(SOURCEDIR)/onera_desp_lib_*.dll $(INSTALLDIR)/matlab;\
 	   cp $(SOURCEDIR)/onera_desp_lib_*.dll $(INSTALLDIR);\
+	   cp $(SOURCEDIR)/onera_desp_lib_*.dll $(GUPDIR)/onera_desp_lib.dll;\
 	 else \
 	   $(NULL) ; \
 	 fi
