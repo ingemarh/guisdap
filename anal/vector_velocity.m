@@ -3,9 +3,9 @@
 % Copyright EISCAT 2008-02-28
 % Inputs:dirs	[result_path] Directory containing data (wild cards accepted)
 %	alt	[170 500] Altitude ranges to handle
-%	td	[300 300] Maximum time span, time step
+%	td	[300 300 t0] Maximum time span, time step, first time
 %	uperr	[Inf Inf] Apply constraints on the [parallel vertical] component
-%	ld	[] Dip latitude ranges to handle
+%	ld	[] Latitude ranges to handle (imaginary for invlat (slow))
 %	odir	[dirs/path_tmp] Output directory
 % Outputs:Vdate	(2,:) Datenum span for the estimate
 %	Vpos	(:,3) Mean lat,lon,alt
@@ -41,6 +41,17 @@ end
 if exist('geomag')~=3
  addpath(fullfile(path_GUP,'models','geopack'),'-end')
 end
+if isfinite(ld(1))
+ ILAT=0;
+ if max(ld)>90
+  addpath(fullfile(path_GUP,'models','onera','matlab'),'-end')
+  try
+   onera_desp_lib_load
+   ILAT=1;
+  catch
+  end
+ end
+end
 degrad=pi/180.;  % conversion factor from degrees to radians
 [Time,par2D,par1D,dum,err2D]=load_param(dirs);
 global r_RECloc name_ant name_expr
@@ -65,8 +76,9 @@ dates=mean(Time); td=td/86400; ld=ld*degrad;
 %%%%%%%%%%%%%%%%%
 Vdate=[]; Vpos=[]; Vg=[]; Vgv=[];
 %%%%%%%%%%%%%%%%%
-t1=floor(Time(1,1)); mindump=3;
-for tim=t1:td(2):Time(2,end)
+if length(td)==2, td(3)=floor(Time(1,1)); end
+mindump=3;
+for tim=td(3):td(2):Time(2,end)
  count=find(dates>=tim & dates<=tim+td(1));
  if length(count)>=3
   for ia=1:length(alt)-1
@@ -89,14 +101,20 @@ for tim=t1:td(2):Time(2,end)
      gc(i,:)=gg2gc(gg_sp(i,:));
     end
     if isfinite(ld(1))
-     B=geomag(gg_sp',datevec(mean(Date)));
-     d=-asin(B(3,:)./sqrt(sum(B(1:3,:).^2)));
-     modip=real(asin(d./sqrt(d.^2+cos(gg_sp(:,1)'*degrad))));
+     if ILAT
+      gcR=gc/6378.135;
+      L=onera_desp_lib_make_lstar([],[],'geo',mean(Date),gcR(:,1),gcR(:,2),gcR(:,3));
+      mlat=acos(sqrt(1../abs(L))); %inv lat
+     else
+      B=geomag(gg_sp',r_time);
+      d=-asin(B(3,:)./sqrt(sum(B(1:3,:).^2)));
+      mlat=real(asin(d./sqrt(d.^2+cos(gg_sp(:,1)'*degrad)))); %modip
+     end
     end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for il=1:length(ld)-1
      if isfinite(ld(1))
-      ll=find(modip>ld(il) & modip<ld(il+1));
+      ll=find(mlat>ld(il) & mlat<ld(il+1));
      else
       ll=1:ntotest;
      end

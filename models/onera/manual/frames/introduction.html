@@ -1,0 +1,125 @@
+<html>
+<head>
+</head>
+<body>
+    <!-- Insert content here -->
+    <div style="TEXT-ALIGN: center"><big><big><font face="ARIAL, HELVETICA"><font color="#0000ff"><font size="-2"><big><big>Version
+        4.1 - January 2007</big></big></font></font></font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><font color="#0000ff"><font size="-2"><big><big><span style="TEXT-DECORATION: underline">Authors:</span> D.
+        Boscher, S. Bourdarie - ONERA-DESP, Toulouse France (Fortran code and IDL wrappers)</big></big></font></font></font></big></big> 
+        <br />
+        <font face="ARIAL, HELVETICA"><font color="#0000ff"><font size="-2"><big><big><span style="TEXT-DECORATION: underline"></span>T.
+        Guild - The Aerospace Corporation - USA&nbsp; (Fortran code)</big></big></font></font></font> 
+    </div>
+    <div style="TEXT-ALIGN: center"><big><big><font face="ARIAL, HELVETICA"><font color="#0000ff"><font size="-2"><big><big>Paul
+        O'Brien - The Aerospace Corporation - USA&nbsp; (MATLAB wrappers)</big></big></font></font></font></big></big><big><big>&nbsp;<br />
+        <font face="ARIAL, HELVETICA"><font color="#0000ff"><font size="-2"><big><big>For
+        any questions or to report bugs please contact</big></big></font></font></font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><font color="#0000ff"><font size="-2"><big><big><a href="mailto:Sebastien.Bourdarie@onecert.fr">Dr.
+        Sebastien Bourdarie</a> or <a href="mailto:Daniel.Boscher@onecert.fr">Dr. Daniel Boscher</a>&nbsp;or <a href="mailto:Paul.OBRIEN@aero.org">Dr.
+        Paul O'Brien</a> </big></big></font></font></font></big></big>
+    </div>
+    <p>
+        <br />
+        <font face="ARIAL, HELVETICA"><font size=+1>The following document describes how to
+        use the ONERA-DESP fortran library to compute magnetic coordinates and drift shells
+        using various external magnetic field models.&nbsp; Further routines are provided
+        for&nbsp; various coordinate and time format transformations.</font></font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><font size=+1>The library can be called from FORTRAN
+        or C code and from IDL&nbsp;or MATLAB code. For IDL and MATLAB wrappers are provided
+        in the distribution package.</font></font>&nbsp; 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><font size=+1>The package includes sripts to compile
+        the library under linux, sun solaris and windows/cygwin systems. You might have to
+        change it to build the library on your system. Currently the library is compiled using
+        the standard gnu compiler (g77). Just know that the use of any other compiler like
+        intel/fortran on linux can increase the speed by a factor of 2 to 3. An example calling
+        the library from IDL is given in example directory of the distribution and can be
+        run to test if the library has been built properly. </font></font><font face="ARIAL, HELVETICA"><font size=+1><strong>Since
+        version 4.1 a Makefile if provided to built the library on various platform, install
+        it&nbsp;and test it (See section installation for more details</strong>).&nbsp;</font></font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><font size=+1>Two libraries are created, one for access
+        from IDL or MATLAB and one for access from fortran or some other language.</font></font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><font size=+1>&nbsp;&nbsp;&nbsp;&nbsp; -from IDL or
+        MATLAB use lib_name='onera_desp_lib.so' or 'onera_desp_lib.DLL'&nbsp;depending on
+        your operating system.</font></font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><font size=+1>&nbsp;&nbsp;&nbsp;&nbsp; -from FORTRAN
+        use liboneradesp.a</font></font> 
+    </p>
+    <p>
+    </p>
+    <p>
+        <span style="FONT-WEIGHT: bold"><font face="ARIAL, HELVETICA">Notes:</font> 
+        <br />
+        </span>
+    </p>
+    <p>
+        <span style="FONT-WEIGHT: bold"><font face="ARIAL, HELVETICA">1.&nbsp;</font></span><b><font face="ARIAL, HELVETICA">The
+        bad value flag is set to&nbsp; -1.d31 throughout.</font></b> 
+        <br />
+        <br />
+    </p>
+    <p>
+        <span style="FONT-STYLE: italic"><font face="ARIAL, HELVETICA"><span style="TEXT-DECORATION: underline">Caution: </span>The
+        library has so far been extensively tested with Olson Pfitzer quiet. Other magnetic
+        field models should be used with caution, as there may be problems. Expect this message
+        to evolve as we test more of the code.<br />
+        </font></span>
+    </p>
+    <p>
+        <span style="FONT-STYLE: italic"><font face="ARIAL, HELVETICA"><span style="TEXT-DECORATION: underline">Rule
+        of use: </span>The use of this library is free. If you want to fully refer to this
+        library in publications or reports, use the following: "D. Boscher<sup>1</sup>, S.
+        Bourdarie<sup>1</sup>, P. O'Brien<sup>2</sup>, T. Guild<sup>2</sup>,(<sup>1</sup> ONERA-DESP,
+        Toulouse France; <sup>2</sup> Aerospace Corporation, Washington DC, USA),&nbsp;ONERA-DESP
+        library V4.1, Toulouse-France, 2004-2007".<br />
+        </font></span>
+    </p>
+    <p>
+        <span style="FONT-STYLE: italic"><font face="ARIAL, HELVETICA"><span style="TEXT-DECORATION: underline">Acknowledgments:</span> The
+        authors whish to thanks:<br />
+        </font></span>
+    </p>
+    <div style="MARGIN-LEFT: 40px">
+        <ul>
+            <li>
+                <span style="FONT-STYLE: italic"><font face="ARIAL, HELVETICA">K. Pfitzer, N. Tsyganenko,
+                I. Alexeev and their co-authors for providing us magnetic field model source codes
+                and for good discussions on how to use their model correctly.&nbsp;</font></span><span style="FONT-STYLE: italic"></span> 
+            </li>
+            <li>
+                <span style="FONT-STYLE: italic"><font face="ARIAL, HELVETICA">R. Friedel (LANL),
+                Y. Dotan and M. Redding (Aerospace corporation) for good discussions, advices and
+                bug reports which are always very helpfull when one attemps to develop such a tool.</font></span> 
+            </li>
+            <li>
+                <span style="FONT-STYLE: italic"><font face="ARIAL, HELVETICA">D. Bilitza for his
+                help regarding the use of IGRF magnetic field model.</font></span> 
+            </li>
+            <li>
+                <span style="FONT-STYLE: italic"><font face="ARIAL, HELVETICA">D. Brautigam for providing
+                us CRRES models.</font></span> 
+            </li>
+            <li>
+                <span style="FONT-STYLE: italic"><font face="ARIAL, HELVETICA">D. Vallado for providing&nbsp;free
+                of use&nbsp;source code for orbit propagator (SGP4).<br />
+                </font></span>
+            </li>
+        </ul>
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"></font>
+    </p>
+</body>
+</html>

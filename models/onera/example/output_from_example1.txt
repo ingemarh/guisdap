@@ -1,0 +1,26 @@
+IDL>  .run example_1.pro
+% Compiled module: $MAIN$.
+
+Testing make_lstar ...
+Lm =        6.6158203
+L* =        5.9037514
+Blocal =        104.53093
+Bmin =        104.14772
+
+Testing make_lstar_shell_splitting ...
+L* =        6.3453233
+       6.3390294
+       6.2441834
+       6.0936900
+       5.9186153
+       5.9037514
+blocal =        13753.759
+       893.19216
+       252.84655
+       139.32330
+       107.77722
+       104.53093
+
+Testing get_field ...
+blocal =        104.53093
+IDL> 

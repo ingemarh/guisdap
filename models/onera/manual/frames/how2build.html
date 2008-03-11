@@ -1,0 +1,150 @@
+<html>
+<head>
+</head>
+<body>
+    <!-- Insert content here --><font size="2"> 
+    <p>
+    </p>
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">INTRODUCTION</font></font> 
+    </h2>
+    <p>
+    </p>
+    <font face="ARIAL, HELVETICA"><font size=+1> 
+    <p>
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+    </p>
+    <p>
+        &nbsp; &nbsp;You must have a Fortran compiler in order to build the ONERA_DESP_LIB
+        distribution. 
+    </p>
+    <p>
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+    </p>
+    <p>
+        Requests for assistance or documentation should be sent to: sebastien.bourdarie@onera.fr 
+    </p>
+    <p>
+        If you get the distribution, please send to sebastien.bourdarie@onera.fr a message
+        so we can put you on our mailing list. That way you will be notified of new releases. 
+    </p>
+    <p>
+    </p>
+    <p>
+        The use of the Makefile to build the library is highly recommended. Old scripts distributed
+        before are still provided but will not be maintained any more. The new Makefile allows
+        to build the library on various platforms, either 32 or 64 bits computers. It solves
+        the problems being encounter to built the library on new 64 bit linux box and run
+        it with IDL. 
+    </p>
+    </font></font>&nbsp; 
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">INSTALLATION INSTRUCTIONS</font></font>&nbsp; 
+    </h2>
+    <p>
+    </p>
+    <font face="ARIAL, HELVETICA"><font size=+1> 
+    <p>
+        ONERA_DESP_LIB has a makefile setup to automatically build the library. The following
+        steps should be taken to build and install ONERA_DESP_LIB. 
+    </p>
+    <blockquote dir="ltr" style="MARGIN-RIGHT: 0px"> 
+    <p>
+        1. <u><strong>Set your current directory</strong></u> (cd) to the top level ONERA_DESP_LIB
+        directory. 
+    </p>
+    <p>
+    </p>
+    <p>
+        2. <strong><u>Compile/link the distribution</u></strong>. First enter... 
+    </p>
+    <p>
+        make all.help 
+    </p>
+    <p>
+        For example, to build the distribution on a SunOS system using the gnu Fortran compiler
+        enter... 
+    </p>
+    <p>
+        make OS=sunos ENV=gnu64 all 
+    </p>
+    <p>
+        The `OS' and `ENV' variables are described in the `make all.help' part of this step. 
+    </p>
+    <p>
+    </p>
+    <p>
+        3. <strong><u>Install the libraries.</u></strong> 
+    </p>
+    <p>
+        First enter... 
+    </p>
+    <p>
+        make install.help 
+    </p>
+    <p>
+        to determine the required/optional `make' variables to be used. 
+    </p>
+    <p>
+        Then enter... 
+    </p>
+    <p>
+        make `make variables...' install 
+    </p>
+    <p>
+        The appropriate files will be copied to the `matlab' and top level ONERA_DESP_LIB
+        directories (from the `source/...' directory). 
+    </p>
+    <p>
+        For example, to install the distribution in `/usr/local/onera_desp_lib' enter... 
+    </p>
+    <p>
+        make INSTALLDIR=/usr/local/onera_desp_lib install 
+    </p>
+    <p>
+        The `INSTALLDIR' variable is described in the `make install.help' part of this step. 
+    </p>
+    <p>
+    </p>
+    <p>
+        4. <strong><u>Test</u></strong> that the distribution was built correctly by entering... 
+    </p>
+    <p>
+        First enter... 
+    </p>
+    <p>
+        make test.help 
+    </p>
+    <p>
+        to determine the required/optional `make' variables to be used. 
+    </p>
+    <p>
+        Then enter... 
+    </p>
+    <p>
+        make `make variables...' test 
+    </p>
+    <p>
+        The name of each test executed and results will be displayed. 
+    </p>
+    <p>
+    </p>
+    <p>
+        5. <strong><u>Delete the libraries, object files, and executables</u></strong> in
+        the `source/...' directory by entering... 
+    </p>
+    <p>
+        make clean 
+    </p>
+    </blockquote></font></font></font><font face="ARIAL, HELVETICA"><font size=+1><font size="2"> 
+    <p>
+    </p>
+    </font></font></font><font face="Arial" size="4">&nbsp;</font>&nbsp; 
+</body>
+</html>

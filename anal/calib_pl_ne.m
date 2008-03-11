@@ -15,13 +15,17 @@ function ratio=calib_pl_ne(pl_dir,expt,gate,plots)
 %                Number of "good" points used
 % see also CALIB_NE
 if nargin<2, expt=[]; end
-if nargin<3, gate=[]; end
+if nargin<3
+ gate=[]; verbose=0;
+elseif gate==0
+ gate=[]; verbose=1;
+end
 if nargin<4, plots=[]; end
 if isempty(expt)
  [i,expt]=fileparts(pl_dir);
  if isempty(expt), [i,expt]=fileparts(i); end
 end
-global Time par1D par2D axs r_Magic_const DATA_PATH local path_exps
+global Time par1D par2D axs r_Magic_const DATA_PATH local path_exps START_TIME END_TIME
 exps=dir(path_exps); pldef='pl_def'; pdefs=[];
 for i=1:length(exps)
  d=fullfile(path_exps,exps(i).name,pldef);
@@ -34,10 +38,30 @@ for i=1:length(exps)
 end
 if ~exist('startad','var')
  pdefs=sprintf('%s ',exps(pdefs).name);
- error(['No such experiment defined ( ' pdefs ')'])
+ warning(['No such experiment defined ( ' pdefs ')'])
+ verbose=1;
+ ran=[200 300]; nfft=128; nint=1; ngates=1; nlag=0; maxe=2; nup_d=1; skip_if=0;
+ freq=[-5 5]*1e6; dt=1e-6; invert=1; fradar=930e6; ele=77.5; updown=0:1;
+ startad=0;
 end
 if isempty(gate), gate=1; end
-
+if verbose
+ ran=minput('Ranges (km)',ran);
+ nfft=minput('No fft points',nfft);
+ nint=minput('No to integrate',nint);
+ ngates=minput('No of gates',nint);
+ nlag=minput('No of lags',nlag);
+ maxe=minput('Max sigma',maxe);
+ nup_d=minput('No frequencies',nup_d);
+ skip_if=minput('Skip interference',skip_if);
+ freq=minput('Offset frequencies',freq);
+ dt=minput('Sampling frequency',dt);
+ invert=minput('Invert frequency scale',invert);
+ fradar=minput('Radar frequency',fradar);
+ ele=minput('Approx elevation',ele);
+ updown=minput('Up/Down shifted (0/1)',updown);
+ startad=minput('Start address',startad);
+end
 %pl_dir='/home/ingemar/gup/mydata/steffel_int_CP@32p';
 %res_dir='gup/results/2004-05-2*_steffe_60@42m/';
 %assume similar integration!
@@ -68,7 +92,8 @@ disp('Reading plasmaline data')
 [fl,msg]=getfilelist(fullfile(pl_dir,filesep));
 if msg, error(msg), end
 d=cell2mat({fl.file});
-fl=fl(find(d>tosecs(datevec(Time(1))) & d<=tosecs(datevec(Time(end)))));
+fl=fl(find(d>max([tosecs(datevec(Time(1))) tosecs(START_TIME)]) & ...
+  d<=min([tosecs(datevec(Time(end))) tosecs(END_TIME)])));
 nfl=length(fl);
 if nfl==0
  error('You stupid! Choose a better data set.')
