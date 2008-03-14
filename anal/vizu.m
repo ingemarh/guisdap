@@ -71,7 +71,7 @@ if isempty(DATA_PATH)
   act=action(naction,nvargin,varargin);
   if strcmp(lower(act),'verbose')
     DATA_PATH=minput('Data path',result_path,1);
-    if strcmp(lower(act),'verbose')
+    if strcmp(act,'VERBOSE')
       PLOT_STATUS=minput('Status/Residual limits',PLOT_STATUS);
     end
   elseif ~REALT
