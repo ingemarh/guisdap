@@ -13,9 +13,9 @@ factor=pi/180;        % conversion factor from degrees to radians
 r_earth=6378.135;
 g=1.00673944;
 
-lat=gg(1)*factor;
-lon=gg(2)*factor;
-h=gg(3);
+lat=gg(:,1)*factor;
+lon=gg(:,2)*factor;
+h=gg(:,3);
 
-hor=(r_earth/sqrt(1+tan(lat)^2/g)+h*cos(lat));
-gc=[hor*[cos(lon), sin(lon)], r_earth/sqrt((g+g^2/tan(lat)^2))+h*sin(lat)];
+hor=(r_earth./sqrt(1+tan(lat).^2/g)+h.*cos(lat));
+gc=[hor.*cos(lon) hor.*sin(lon) r_earth./sqrt(g+g^2../tan(lat).^2)+h.*sin(lat)];

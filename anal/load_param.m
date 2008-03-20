@@ -1,13 +1,13 @@
 function [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,status,update)
 % Function to read the plasma parameters from GUISDAP result files
 %
-% [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,update)
+% [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,status,update)
 % par2D [Ran,Alt,Ne,Te,Ti,Vi,Coll,Comp,Res]
 % par1D [Az,El,Pt,Tsys,Oppd]
 % rpar2D[Ran,Alt,RawNe]
-%  or error[Ne,Te,Ti,Vi,Coll]
-
-global name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres ppres max_ppw
+%  or err2D[Ne,Te,Ti,Vi,Coll]
+%
+global name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres ppres max_ppw r_XMITloc
 persistent lastfile
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
@@ -24,7 +24,6 @@ if isempty(strfind(data_path,'*')) & ~isdir(data_path)
 end
 data_path=fullfile(data_path,filesep);
 list=getfilelist(data_path,lastfile);
-%if nargin>2, list=list(cell2mat({list.file})>lastfile); end
 n=length(list);
 
 Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];

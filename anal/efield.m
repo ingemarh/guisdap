@@ -110,13 +110,14 @@ if ~isempty(p)
    datetick(gca,'x',tickform,'keeplimits')
   end
  elseif strfind(p,'p')
-  minlat=90-10*floor(min(Vpos(d,1)/10));
+  minlat=10*floor(min(Vpos(d,1)/10));
   if verbose
-   minlat=90-minput('Min latitude to display',90-minlat);
+   minlat=minput('Min latitude to display',minlat);
   end
+  maxrlat=90-minlat;
   [xc,yc]=pol2cart((0:360)'/180*pi,1);
-  latr=(1:floor(minlat/10))*10;
-  tscx=[-1 -1 0 1;1 1 0 -1]*minlat; tscy=[0 -1 -1 -1;0 1 1 1]*minlat;
+  latr=(1:floor(minrlat/10))*10;
+  tscx=[-1 -1 0 1;1 1 0 -1]*minrlat; tscy=[0 -1 -1 -1;0 1 1 1]*minrlat;
   if strfind(p,'g')
    lt=(rem(vd',1)+Vpos(d,2)/(15*24)-.25)*2*pi;
    lat=Vpos(d,1);
@@ -142,16 +143,16 @@ if ~isempty(p)
         x0(de),y0(de),'r.',x0(dw),y0(dw),'b.',...
         [-5 5],[0 0],'+-k',xc*latr,yc*latr,'k:',tscx,tscy,'k:')
   for i=0:3
-   text(minlat*1.2*xc(46+i*90),minlat*1.2*yc(46+i*90),sprintf('%02.0f%s',rem(i*6+9,24),tt),'horiz','center')
+   text(minrlat*1.2*xc(46+i*90),minrlat*1.2*yc(46+i*90),sprintf('%02.0f%s',rem(i*6+9,24),tt),'horiz','center')
   end
   text(0,0,sprintf('%d %s',10*scale,pfor),'horiz','center','vertical','baseline')
-  lims=minlat*[-1 1];
+  lims=minrlat*[-1 1];
   set(gca,'xlim',lims,'ylim',lims,'visible','off')
   axis square
-  text(0,minlat,tit,'horiz','center','vertical','baseline')
+  text(0,minrlat,tit,'horiz','center','vertical','baseline')
   for i=latr
    text(i,0,sprintf('%d',90-i),'horiz','center')
   end
-  text(minlat,0,['  ' ifor])
+  text(minrlat,0,['  ' ifor])
  end
 end
