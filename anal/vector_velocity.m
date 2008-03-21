@@ -63,7 +63,7 @@ if isfinite(ld(1))
 end
 degrad=pi/180.;  % conversion factor from degrees to radians
 Re=6378.135;
-min_area=.5*(mind(2)*degrad)^2; % minimum triangular angle area to cover
+min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area to cover
 %%%%%%%%%%%%%%%%%
 global r_RECloc name_ant name_expr r_XMITloc
 Data1D=[]; Data2D=[]; dirind=0; loc=[];
@@ -197,10 +197,8 @@ function area=angarea(enu)
 % calculate the "angle area" for a number of directions
 [t,p]=cart2sph(enu(:,1),enu(:,2),enu(:,3));
 [x,y]=pol2cart(t,pi/2-p);
-x=x-mean(x); y=y-mean(y);
-[t,r]=cart2pol(x,y);
-[a,b]=sort(t);
-area=polyarea(x(b),y(b));
+k=convhull(x,y);
+area=polyarea(x(k),y(k));
 return
 
 function [e,n,u]=xyz2enu(Xr,Yr,Zr,X,Y,Z) 
