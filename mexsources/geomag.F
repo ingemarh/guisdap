@@ -10,7 +10,7 @@ C  MEX file.
 C par=iri95(rp,tim,pos,h)
       mwPointer PLHS(*),PRHS(*),mxGetPr,mxCreateDoubleMatrix,m1,magp
       INTEGER*4 NLHS, NRHS
-      mwSize mxGetN,mxGetM
+      mwSize mxGetN,mxGetM,n
 C KEEP THE ABOVE SUBROUTINE, ARGUMENT, AND FUNCTION DECLARATIONS FOR USE
 C IN ALL YOUR FORTRAN MEX FILES.
 C---------------------------------------------------------------------
@@ -19,7 +19,6 @@ C---------------------------------------------------------------------
       real pos(3)
       data pos/69.2,19.2,200./
 C CHECK FOR PROPER NUMBER OF ARGUMENTS
-c     CALL MEXSETCANONICALMODE
       IF(NLHS.GT.1)CALL mexErrMsgTxt('Only one output argument')
       call gmtime(time(),ttim)
       do i=1,6
