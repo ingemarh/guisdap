@@ -3,6 +3,7 @@
 % Plot velocity vectors
 % Input: vfile	filename with geographical vectors
 %	p	['tE'] plot type:	t versus time
+%					3 separate plots + errors
 %					p polar plot
 %					E plot electric field
 %					V plot velocities
@@ -95,26 +96,35 @@ if ~isempty(p)
   tickform='HH:MM';
   dir={'east' 'north' 'up'};
   np=size(vp,2);
-  for i=1:np
-   subplot(np,1,i)
-   plot(vd,vp(d,i),'-k', ...
-    ones(2,1)*vd,ones(2,1)*vp(d,i)'+[1;-1]*vpe(d,i)','-k')
-   set(gca,'XLim',xlim)
-   if i==1
-    title(tit)
-   elseif i==np
-    xlabel('Time [UT]')
+  if strfind(p,'3')
+   for i=1:np
+    subplot(np,1,i)
+    plot(vd,vp(d,i),'-k', ...
+     ones(2,1)*vd,ones(2,1)*vp(d,i)'+[1;-1]*vpe(d,i)','-k')
+    set(gca,'XLim',xlim)
+    if i==1
+     title(tit)
+    end
+    ylabel(sprintf(yfor,dir{i}))
+    set(gca,'xgrid','on','ygrid','on')
+    datetick(gca,'x',tickform,'keeplimits')
    end
-   ylabel(sprintf(yfor,dir{i}))
+  else
+   plot(vd,vp(d,:))
+   set(gca,'XLim',xlim)
+   title(tit)
+   ylabel(sprintf(yfor,[]))
    set(gca,'xgrid','on','ygrid','on')
    datetick(gca,'x',tickform,'keeplimits')
+   legend(dir(1:np))
   end
+  xlabel('Time [UT]')
  elseif strfind(p,'p')
   minlat=10*floor(min(Vpos(d,1)/10));
   if verbose
    minlat=minput('Min latitude to display',minlat);
   end
-  maxrlat=90-minlat;
+  minrlat=90-minlat;
   [xc,yc]=pol2cart((0:360)'/180*pi,1);
   latr=(1:floor(minrlat/10))*10;
   tscx=[-1 -1 0 1;1 1 0 -1]*minrlat; tscy=[0 -1 -1 -1;0 1 1 1]*minrlat;
