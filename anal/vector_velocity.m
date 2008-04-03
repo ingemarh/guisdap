@@ -8,7 +8,7 @@
 %	ld	[] Latitude ranges to handle (imaginary for invlat (slow))
 %	uperr	[Inf 160] Constraint the vertical [from 160km parallel] comp
 %	mind	[3 10] Minimum no of directions and angle difference
-%	odir	[dirs/path_tmp] Output directory
+%	odir	[dirs|path_tmp] Output directory
 % Outputs:Vdate	(2,:) Datenum span for the estimate
 %	Vpos	(:,3) Mean lat,lon,alt
 %	Vg	(:,3) Geographic velocity (E,N,U)
@@ -64,6 +64,7 @@ end
 degrad=pi/180.;  % conversion factor from degrees to radians
 Re=6378.135;
 min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area to cover
+tfile=0;	%make velocity table for testings
 %%%%%%%%%%%%%%%%%
 global r_RECloc name_ant name_expr r_XMITloc
 Data1D=[]; Data2D=[]; dirind=0; loc=[];
@@ -81,18 +82,20 @@ end
 dirind=cumsum(dirind);
 %%%%%%%%%%%%%%%%%
 r_time=datevec(mean(Data1D(:,1)));
-fig=sprintf('Vecvel_%d-%02d-%02d',r_time(1:3));
+oname=sprintf('%d-%02d-%02d_vecvel',r_time(1:3));
 if ndir==1
- fig=sprintf('%s_%s@%s',fig,name_expr,name_ant);
+ oname=sprintf('%s_%s@%s',oname,name_expr,name_ant);
 end
-result_file=fullfile(odir,fig),
-fid=fopen([result_file '.txt'],'w');
-fprintf(fid,'%20s%6s%6s%4s','Date     Time','Lat','Lon','Alt');
-fprintf(fid,'%5s','VgE','VgN','VgU','VgEe','VgNe','VgUe');
-fprintf(fid,'\n');
-fprintf(fid,'%20s%6s%6s%4s','UT','deg','deg','km');
-fprintf(fid,'%5s',[],'m/s',[],[],'m/s');
-fprintf(fid,'\n');
+result_file=fullfile(odir,oname),
+if tfile
+ tfile=fopen([result_file '.txt'],'w');
+ fprintf(tfile,'%20s%6s%6s%4s','Date     Time','Lat','Lon','Alt');
+ fprintf(tfile,'%5s','VgE','VgN','VgU','VgEe','VgNe','VgUe');
+ fprintf(tfile,'\n');
+ fprintf(tfile,'%20s%6s%6s%4s','UT','deg','deg','km');
+ fprintf(tfile,'%5s',[],'m/s',[],[],'m/s');
+ fprintf(tfile,'\n');
+end
 Vdate=[]; Vpos=[]; Vg=[]; Vgv=[];
 %%%%%%%%%%%%%%%%%
 dates=mean(Data1D(:,[1 2]),2); td=td/86400; ld=ld*degrad;
@@ -170,12 +173,14 @@ for tim=td(3):td(2):max(Data1D(:,2))+td(2)
        Vvar_real=T([1 5 9 2 6 3]); %lower triangle only
        Verr=sqrt(Vvar_real([1:3]));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-       fprintf(fid,'%s',datestr(mean(Date)));
-       fprintf(fid,'%6.2f',gg_sp(1:2));
-       fprintf(fid,'%4.0f',gg_sp(3));
-       fprintf(fid,'%5.0f',V_real);
-       fprintf(fid,'%5.0f',Verr);
-       fprintf(fid,'\n');
+       if tfile
+        fprintf(tfile,'%s',datestr(mean(Date)));
+        fprintf(tfile,'%6.2f',gg_sp(1:2));
+        fprintf(tfile,'%4.0f',gg_sp(3));
+        fprintf(tfile,'%5.0f',V_real);
+        fprintf(tfile,'%5.0f',Verr);
+        fprintf(tfile,'\n');
+       end
        Vdate=[Vdate Date];
        Vpos=[Vpos;gg_sp];
        Vg=[Vg;V_real];
@@ -187,10 +192,13 @@ for tim=td(3):td(2):max(Data1D(:,2))+td(2)
   end
  end
 end
-save(result_file,'Vdate','Vpos','Vg','Vgv')
 if nargout>0
  varargout={Vdate,Vpos,Vg,Vgv};
+else
+ save(result_file,'Vdate','Vpos','Vg','Vgv')
+ NCAR_output(result_file,fullfile(odir,[],['NCAR_' oname '.bin']))
 end
+if tfile, fclose(tfile); end
 return
 
 function area=angarea(enu)

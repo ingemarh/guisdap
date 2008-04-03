@@ -106,11 +106,14 @@ save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,r_Pt,...
      r_apriorierror,r_pp,r_pprange,r_pperr,r_ppw,r_XMITloc,r_RECloc,...
      r_SCangle,r_Tsys,r_Offsetppd,r_Magic_const,r_spec,r_om,r_om0,name_sig)
 if a_NCAR
- file0=sprintf('%sNCAR_%d-%02d-%02d_%s@%s.',result_path,d_time(2,1:3),...
-      name_expr,name_ant);
+ file0=sprintf('%sNCAR_%d-%02d-%02d_%s',result_path,d_time(2,1:3),name_expr);
+ if isstruct(a_autodir)
+  file0=[file0 a_autodir.ant];
+ end
+ file0=[file0 '@' name_ant];
  i1=[]; i2=[];
  if rem(a_NCAR,2)
-  i1=[file0 'asc'];
+  i1=[file0 '.asc'];
   if a_realtime & isunix & ~isempty(local.site)
    i1=[path_tmp 'latest_' name_ant(1:3) '.asc'];
    if exist(i1,'file')
@@ -118,7 +121,7 @@ if a_NCAR
    end
   end
  end
- if a_NCAR>1, i2=[file0 'bin']; end
+ if a_NCAR>1, i2=[file0 '.bin']; end
  NCAR_output(file,i1,i2)
  if strfind(i1,'latest')
   fclose(NCAR_fid(1)); NCAR_fid(1)=0;

@@ -56,7 +56,7 @@ else
     for i=dirlen:-1:1
       l(i).file=sscanf(dirlist(i).name,'%8d');
       l(i).ext=sscanf(dirlist(i).name,'%*8s%s');
-      if ~isnumeric(l(i).file), l(i)=[]; end
+      if ~isnumeric(l(i).file) | ~strcmp(l(i).ext(1),'.'), l(i)=[]; end
     end
     list=[list;l];
   end
