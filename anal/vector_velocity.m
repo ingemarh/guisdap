@@ -84,7 +84,7 @@ dirind=cumsum(dirind);
 r_time=datevec(mean(Data1D(:,1)));
 oname=sprintf('%d-%02d-%02d_vecvel',r_time(1:3));
 if ndir==1
- oname=sprintf('%s_%s@%s',oname,name_expr,name_ant);
+ oname=sprintf('%d-%02d-%02d_%s_vecvel@%s',r_time(1:3),name_expr,name_ant);
 end
 result_file=fullfile(odir,oname),
 if tfile
@@ -196,7 +196,9 @@ if nargout>0
  varargout={Vdate,Vpos,Vg,Vgv};
 else
  save(result_file,'Vdate','Vpos','Vg','Vgv')
- NCAR_output(result_file,fullfile(odir,[],['NCAR_' oname '.bin']))
+ NCAR_output
+ NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))
+ NCAR_output
 end
 if tfile, fclose(tfile); end
 return

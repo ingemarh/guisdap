@@ -108,7 +108,7 @@ save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,r_Pt,...
 if a_NCAR
  file0=sprintf('%sNCAR_%d-%02d-%02d_%s',result_path,d_time(2,1:3),name_expr);
  if isstruct(a_autodir)
-  file0=[file0 a_autodir.ant];
+  file0=[file0 '_' a_autodir.int];
  end
  file0=[file0 '@' name_ant];
  i1=[]; i2=[];

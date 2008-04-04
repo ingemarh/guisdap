@@ -101,6 +101,7 @@ end
 
 if strfind('TVL',name_site) & exist('r_pp') & ~isempty(r_pp)
 %power profiles
+ mvarcod=[120 121 505];
  var=real(log10(r_pp(:,1))*1e3);
  pos=[fix(r_pprange) rem(r_pprange,1)*1e4];
  mvar=round([pos var]);

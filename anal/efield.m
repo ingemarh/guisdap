@@ -160,7 +160,7 @@ if ~isempty(p)
    minlat=minput('Min latitude to display',minlat);
   end
   minrlat=90-minlat;
-  [xc,yc]=pol2cart((0:360)'/180*pi,1);
+  [xc,yc]=pol2cart((0:360)'*degrad,1);
   latr=(1:floor(minrlat/10))*10;
   tscx=[-1 -1 0 1;1 1 0 -1]*minrlat; tscy=[0 -1 -1 -1;0 1 1 1]*minrlat;
   if strfind(p,'g')
@@ -169,9 +169,17 @@ if ~isempty(p)
    tt='LT';
   else
    addpath(fullfile(path_GUP,'models','onera','matlab'))
-   [Lm,Lstar,Blocal,Bmin,J,MLT]=onera_desp_lib_make_lstar([],[],'rll',vd',1+Vpos(d,3)/6378.135,Vpos(d,1),Vpos(d,2));
+   try
+    [Lm,Lstar,Blocal,Bmin,J,MLT]=onera_desp_lib_make_lstar([],[],'rll',vd',1+Vpos(d,3)/6378.135,Vpos(d,1),Vpos(d,2));
+    lat=acos(sqrt(1../abs(Lm)))/degrad;
+   catch %dirty workaround for old matlabs
+    MLT=onera_desp_lib_get_mlt(vd',gg2gc(Vpos(d,:)));
+    B=geomag(Vpos(d,:)',datevec(mean(vd)));
+    dip=-asin(B(3,:)./sqrt(sum(B(1:3,:).^2)))';
+    warning('GUISDAP:efield','Using modip instead of invariant latitude')
+    lat=real(asin(dip./sqrt(dip.^2+cos(Vpos(d,1)*degrad))))/degrad; %modip
+   end
    lt=(MLT/12-.5)*pi;
-   lat=180/pi*acos(sqrt(1../abs(Lm)));
    tt='MLT';
   end
   [x0,y0]=pol2cart(lt,90-lat);
