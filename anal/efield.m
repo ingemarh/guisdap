@@ -8,7 +8,7 @@
 %					E plot electric field
 %					V plot velocities
 %					g geographical coords
-%					m magnetic coords
+%					m (local) magnetic coords
 %	alt	[0 Inf] altitude range, km
 %	verbose	[0]	Specify some plot parameters
 % See also VECTOR_VELOCITY
@@ -34,11 +34,9 @@ if [strfind(p,'m') strfind(p,'E')]
   r_time=datevec(mean(Vdate(:,i)));
   B=geomag(Vpos(i,:)',r_time);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  %Eg=-cross(Vg(i,:),B); % V/m geographic
   [D,I,r]=cart2sph(B(2),B(1),-B(3));
   gtm=[cos(D) -sin(D) 0;sin(I)*sin(D) sin(I)*cos(D) cos(I);-cos(I)*sin(D) -cos(I)*cos(D) sin(I)]';
   Vm(i,:)=Vg(i,:)*gtm; %geomagnetic
-  %Em=Eg*gtm, % geomagnetic
   BB=[0 0 -norm(B(1:3))];
   Em=-cross(Vm(i,:),BB);
   E(i,:)=Em(1:2); %Along B = 0 always
@@ -102,13 +100,15 @@ if ~isempty(p)
  end
  vdd=[Vdate(2,d(1)) Vdate(1,d(end))];
  tit=[datestr(vdd(2),'dd mmm yyyy')];
+ if tit(1)=='0', tit(1)=[]; end
  if diff(floor(vdd))
   ii=diff(datevec(vdd));
   if ii(2)
-   tit=[datestr(vdd(1),'dd mmm') ' - ' tit]
+   tit=[datestr(vdd(1),'dd mmm') ' - ' tit];
   else
-   tit=[datestr(vdd(1),'dd') '-' tit]
+   tit=[datestr(vdd(1),'dd') '-' tit];
   end
+  if tit(1)=='0', tit(1)=[]; end
  end
  if strfind(p,'g')
   hgt=sprintf(' %.0fkm',mean(Vpos(d,3)));

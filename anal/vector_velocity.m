@@ -5,6 +5,7 @@
 %			Sites separated in cell
 %	alt	[170 500] Altitude ranges to handle
 %	td	[300 300 t0] Maximum time span, time step, first time
+%			td<=number of dirs: that dir selects times
 %	ld	[] Latitude ranges to handle (imaginary for invlat (slow))
 %	uperr	[Inf 160] Constraint the vertical [from 160km parallel] comp
 %	mind	[3 10] Minimum no of directions and angle difference
@@ -68,16 +69,19 @@ tfile=0;	%make velocity table for testings
 %%%%%%%%%%%%%%%%%
 global r_RECloc name_ant name_expr r_XMITloc
 Data1D=[]; Data2D=[]; dirind=0; loc=[];
-for d1=dirs
- [Time,par2D,par1D,dum,err2D]=load_param(char(d1));
+for d1=1:ndir
+ [Time,par2D,par1D,dum,err2D]=load_param(char(dirs(d1)));
  ng=size(par2D,1);
  [g,dump]=find(par2D(:,:,2)>alt(1) & par2D(:,:,2)<alt(end) & isfinite(par2D(:,:,6)));
- [d,dum,dd]=unique(dump);
- Data1D=[Data1D;Time(:,d)' par1D(d,1:2)]; % only time+el+az used
+ [d,dum,dd]=unique(dump); dd=dd+size(Data1D,1);
+ Data1D=[Data1D;[Time(:,d)' par1D(d,1:2)]]; % only time+el+az used
  D2D=[reshape(par2D(:,:,[1 2 6]),[],3) col(err2D(:,:,4))]; % only alt+ran+vi+vie used
- Data2D=[Data2D;D2D(g+(dump-1)*ng,:) dd];
+ Data2D=[Data2D;[D2D(g+(dump-1)*ng,:) dd]];
  dirind=[dirind;length(dump)];
  loc=[loc;r_RECloc r_XMITloc];
+ if td(1)==d1
+  timint=mean(Time)-median(diff(Time));
+ end
 end
 dirind=cumsum(dirind);
 %%%%%%%%%%%%%%%%%
@@ -99,12 +103,17 @@ end
 Vdate=[]; Vpos=[]; Vg=[]; Vgv=[];
 %%%%%%%%%%%%%%%%%
 dates=mean(Data1D(:,[1 2]),2); td=td/86400; ld=ld*degrad;
-if length(td)==2, td(3)=floor(min(Data1D(:,1))); end
 mindumps=mind(1)-isfinite(uperr(1));
 loc0=reshape([gg2gc(loc(:,1:3)) gg2gc(loc(:,4:6))]',3,2,[]);
 loc0=reshape(mean(loc0,2),3,[])'; %Effective position for bistatic
+if td(1)>ndir/86400
+ if length(td)==2, td(3)=floor(min(Data1D(:,1))); end
+ timint=td(3):td(2):max(Data1D(:,2))+td(2);
+else
+ td(1)=median(diff(timint));
+end
 %%%%%%%%%%%%%%%%%
-for tim=td(3):td(2):max(Data1D(:,2))+td(2)
+for tim=timint
  count=find(dates>=tim & dates<=tim+td(1));
  if length(count)>=mindumps
   gates=find(ismember(Data2D(:,end),count));
@@ -115,7 +124,7 @@ for tim=td(3):td(2):max(Data1D(:,2))+td(2)
     Date=[min(Data1D(d,1));max(Data1D(d,2))];
     r_time=datevec(mean(Date));
     alti=mean(alt(ia:ia+1));
-    [dum,site]=histc(dump,dirind+.5);
+    [dum,site]=histc(g,dirind+.5);
     Vi=Data2D(g,3);
     Vierr=Data2D(g,4);
     loc_sp=[Data1D(dump,[4 3]) Data2D(g,1)]; 
