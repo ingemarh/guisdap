@@ -543,7 +543,7 @@ if strcmp(lg,'log')
 end
 o2=ones(1,2);
 for i=1:s
- d=max(find(isfinite(yparam(:,i))));
+ d=max([2;find(isfinite(yparam(:,i)))]);
  if d
   yp=yparam(1:d,i);
   zp=zparam(1:d,i);
