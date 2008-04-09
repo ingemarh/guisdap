@@ -1,4 +1,4 @@
-function onera_desp_lib_load(libfile,headerfile)
+function onera_desp_lib_load(libfile,headerfile,makeproto)
 %function onera_desp_lib_load(libfile,@prototypefunction);
 %function onera_desp_lib_load(libfile,headerfile);
 % checks for the presence of the onera_desp_lib dynamic library in memory
@@ -15,5 +15,9 @@ if ~libisloaded('onera_desp_lib'),
     if nargin < 1,
         libfile = 'onera_desp_lib';
     end
-    loadlibrary(libfile,headerfile,'alias','onera_desp_lib');
+    if nargin > 2
+     loadlibrary(libfile,headerfile,'alias','onera_desp_lib','mfilename','onera_desp_lib_proto');
+    else
+     loadlibrary(libfile,headerfile,'alias','onera_desp_lib');
+    end
 end
