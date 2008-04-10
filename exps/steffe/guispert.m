@@ -31,7 +31,7 @@ if d_date<datenum(2003,11,11,21,15,0)
 end
 if length(d_data)>34863 & d_rcprog==2
   calTemp=[163 163 228 228];
-  if all(ch_gain)==ch_gain(1)
+  if all(ch_gain==ch_gain(1))
     if isempty(a_code)
       a_satch.clutter=repmat(a_satch.clutter,1,2);
       a_satch.repair=repmat(a_satch.repair,1,2);
