@@ -1,8 +1,8 @@
-% function efield(vfile,p,alt,verbose)
+% function efield(vfile,p,alt,lat,verbose)
 % Copyright EISCAT 2008-02-28
 % Plot velocity vectors
 % Input: vfile	filename with geographical vectors
-%	p	['tE'] plot type:	t versus time
+%	p	['tVg'] plot type:	t versus time
 %					3 separate plots + errors
 %					p polar plot
 %					E plot electric field
@@ -10,23 +10,33 @@
 %					g geographical coords
 %					m (local) magnetic coords
 %	alt	[0 Inf] altitude range, km
-%	verbose	[0]	Specify some plot parameters
-% See also VECTOR_VELOCITY
+%	verbose	[0]	Specify plot parameters:	0 autoscale
+%							1 interactive
+%							2 fixed values
+%				[minlat maxV maxVerr scaleV stretchtime]
+% See also VECTOR_VELOCITY VEL_WRAPPER
 %
-function [varargout]=efield(vfile,p,alt,verbose)
+function [varargout]=efield(vfile,p,alt,lat,verbose)
 if nargin<2, p=[]; end
 if nargin<3, alt=[]; end
-if nargin<4, verbose=[]; end
-if isempty(p), p='tE'; end
+if nargin<4, lat=[]; end
+if nargin<5, verbose=[]; end
+if isempty(p), p='tVg'; end
 if isempty(alt), alt=[0 Inf]; end
-if isempty(verbose), verbose=0; end
-global path_GUP
+if isempty(lat), lat=[0 Inf]; end
+if isempty(verbose)
+ verbose=0;
+elseif verbose(1)==2
+ minlat=60; scale=500; maxv=5000; maxverr=500; St=600;
+elseif verbose(1)~=1
+ minlat=verbose(1); scale=verbose(4); maxv=verbose(2); maxverr=verbose(3); St=verbose(5);
+end
 load(vfile)
+if isempty(Vdate)
+ error('Empty data file')
+end
 degrad=pi/180;
 np=size(Vdate,2);
-%%%%
-minlatD=90-60; scaleV=1000; scaleE=90;
-maxV=4500; maxVe=300; maxE=100; maxEe=10;
 %%%%
 if [strfind(p,'m') strfind(p,'E')]
  E=zeros(np,2); Ee=E; Vm=zeros(np,3); Vme=Vm; 
@@ -41,10 +51,9 @@ if [strfind(p,'m') strfind(p,'E')]
   Em=-cross(Vm(i,:),BB);
   E(i,:)=Em(1:2); %Along B = 0 always
   Vgvv=reshape(Vgv(i,[1 4 6 4 2 5 6 5 3]),3,3);
-  Vmv=Vgvv*abs(gtm);
+  Vmv=abs(Vgvv*gtm);
   Vme(i,:)=sqrt(diag(Vmv));
-  EE=abs(cross(Vme(i,:),BB));
-  Ee(i,:)=EE(1:2);
+  Ee(i,:)=BB(3)*Vme(i,[2 1]);
  end
  %save(vfile,'Vdate','Vpos','Vg','Vgv','E','Ee')
 end
@@ -52,36 +61,49 @@ end
 % plot data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~isempty(p)
+ global path_GUP
  ifor='\Lambda';
+ dir={'East_{\perp}' 'North_{\perp}' 'Up_{\mid\mid}'};
+ dir={'East_{\perp}' 'North_{\perp}' 'Up_{//}'};
  if strfind(p,'V')
+  ew=2;
+  yfor='V %s [ms^{-1}]';
   if strfind(p,'m')
    vp=Vm; vpe=Vme;
-   yfor='V_m %s [ms^{-1}]%s';
   elseif strfind(p,'g')
    vp=Vg; vpe=sqrt(Vgv(:,1:3));
-   yfor='V_g %s [ms^{-1}]%s';
    ifor='\circN';
+   dir={'East_{GG}' 'North_{GG}' 'Up_{GG}'};
   end
  elseif strfind(p,'E')
+  ew=1;
   vp=E*1000; vpe=Ee*1000;
-  yfor='E %s [mVm^{-1}]%s';
+  yfor='E %s [mVm^{-1}]';
+  if verbose(1)>1
+   scale=scale/50; maxv=maxv/50; maxverr=maxverr/50;
+  end
  end
  START_TIME=floor(datevec(Vdate(1)));
  END_TIME=ceil(datevec(Vdate(end)));
- if verbose
+ if verbose(1)==1
   START_TIME=minput('Start time',START_TIME);
   END_TIME=minput('  End time',END_TIME);
  end
- d=find(Vpos(:,3)>alt(1) & Vpos(:,3)<alt(2));
- maxv=norm(vp(d,:),1)/length(d);
- if verbose
-  maxv=minput('Max value to plot',maxv);
- end
- maxverr=min([maxv norm(vpe(d,:),1)/length(d)]);
- if verbose
-  maxverr=minput('Max error to plot',maxverr);
+ d=find(Vpos(:,3)>alt(1) & Vpos(:,3)<alt(2) & Vpos(:,1)>lat(1) & Vpos(:,1)<lat(2));
+ if verbose(1)<2
+  maxv=norm(vp(d,:),1)/length(d);
+  if verbose
+   maxv=minput('Max value to plot',maxv);
+  end
+  maxverr=min([maxv norm(vpe(d,:),1)/length(d)]);
+  if verbose
+   maxverr=minput('Max error to plot',maxverr);
+  end
  end
  d=d(find(max(vpe(d,:),[],2)<maxverr & max(abs(vp(d,:)),[],2)<maxv));
+ if isempty(d)
+  error('No data within the limits')
+ end
  vd=mean(Vdate(:,d));
  if isempty(findobj(gcf,'userdata','logo'))
   ax=gca;
@@ -111,18 +133,19 @@ if ~isempty(p)
   if tit(1)=='0', tit(1)=[]; end
  end
  if strfind(p,'g')
-  hgt=sprintf(' %.0fkm',mean(Vpos(d,3)));
+  hgt=sprintf('%.0fkm',mean(Vpos(d,3)));
  else
   hgt=[];
  end
  if strfind(p,'t')
   xlim=[datenum(START_TIME) datenum(END_TIME)];
   tickform='HH:MM';
-  dir={'east' 'north' 'up'};
   np=size(vp,2);
-  St=norm(diff(Vdate(:,d)),1)/length(d);
-  if verbose
-   maxverr=minput('Max stretch time',St*86400)/86400;
+  if verbose(1)<2
+   St=norm(diff(Vdate(:,d)),1)/length(d);
+   if verbose
+    St=minput('Max stretch time',St*86400)/86400;
+   end
   end
   vdt=Vdate(:,d); ddt=vdt(1,2:end)-vdt(2,1:end-1);
   dt=find(ddt<St);
@@ -140,24 +163,33 @@ if ~isempty(p)
     plot(vdt,vpt(:,i),'-k', ...
      ones(2,1)*vd,ones(2,1)*vp(d,i)'+[1;-1]*vpe(d,i)','-k')
     set(gca,'XLim',xlim)
-    ylabel(sprintf(yfor,dir{i},[]))
+    ylabel(sprintf(yfor,dir{i}))
     set(gca,'xgrid','on','ygrid','on')
     datetick(gca,'x',tickform,'keeplimits')
-    if hgt, legend(hgt), end
+    text('String',hgt,'Units','Normalized','Position',[1.025 0.5],'Rotation',-90,'Color','k')
    end
   else
    plot(vdt,vpt)
    set(gca,'XLim',xlim)
-   ylabel(sprintf(yfor,[],hgt))
+   ylabel([sprintf(yfor,[]) ' ' hgt])
    set(gca,'xgrid','on','ygrid','on')
    datetick(gca,'x',tickform,'keeplimits')
-   legend(dir(1:np))
+   color=get(gca,'ColorOrder');
+   for i=1:np
+    text('String',dir{i},'Units','Normalized','Position',[.98+i*.035 0.5],'Rotation',-90,'Color',color(i,:))
+   end
+   %legend(dir(1:np))
   end
   xlabel([tit ' [UT]'])
  elseif strfind(p,'p')
-  minlat=10*floor(min(Vpos(d,1)/10));
-  if verbose
-   minlat=minput('Min latitude to display',minlat);
+  if verbose(1)<2
+   minlat=10*floor(min(Vpos(d,1)/10));
+   scale=norm(vp(d,1:2),1)/length(d); scale_m=10^floor(log10(scale));
+   scale=round(scale/scale_m)*scale_m;
+   if verbose
+    minlat=minput('Min latitude to display',minlat);
+    scale=minput('Scale units/degree',scale);
+   end
   end
   minrlat=90-minlat;
   [xc,yc]=pol2cart((0:360)'*degrad,1);
@@ -183,15 +215,13 @@ if ~isempty(p)
    tt='MLT';
   end
   [x0,y0]=pol2cart(lt,90-lat);
-  %plot(x0,y0,'o')
-  scale=10^(round(log10(norm(vp(d,1:2),1)/length(d))));
-  if verbose
-   scale=minput('Scale units/degree',scale);
-  end
   V_NE=vp(d,[2 1])/scale;
   x1=-sum([cos(lt) sin(lt)].*V_NE,2);
   y1=sum([-sin(lt) cos(lt)].*V_NE,2);
-  de=find(V_NE(:,2)>0); dw=find(V_NE(:,2)<0);
+  de=find(V_NE(:,ew)<=0); dw=find(V_NE(:,ew)>0);
+  plot(x0,y0,'.k'), hold on
+  axis square
+  x0=x0-x1/2; y0=y0-y1/2;
   quiver(x0(de),y0(de),x1(de),y1(de),0,'r'), hold on
   quiver(x0(dw),y0(dw),x1(dw),y1(dw),0,'b')
   quiver(-5,-minrlat/50,10,0,0,'k')
@@ -199,16 +229,15 @@ if ~isempty(p)
   for i=0:3
    text(minrlat*1.2*xc(46+i*90),minrlat*1.2*yc(46+i*90),sprintf('%02.0f%s',rem(i*6+9,24),tt),'horiz','center')
   end
-  text(0,0,sprintf(yfor,num2str(10*scale),[]),'horiz','center','vertical','bottom')
+  text(0,0,sprintf(yfor,num2str(10*scale)),'horiz','center','vertical','bottom')
   lims=minrlat*[-1 1];
   set(gca,'xlim',lims,'ylim',lims,'visible','off')
-  axis square
   for i=latr
    text(i,0,sprintf('%d',90-i),'horiz','center')
   end
   text(minrlat,0,['  ' ifor])
   if hgt
-   tit=[tit ' Height =' hgt];
+   tit=[tit ' Height=' hgt];
   end
   text(0,-minrlat,tit,'horiz','center','vertical','top')
  end

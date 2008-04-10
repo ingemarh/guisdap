@@ -1,4 +1,5 @@
 % function [Vdate,Vpos,Vg,Vgv]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
+% function [result_file]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
 % To calculate 3D velocities from EISCAT data
 % Copyright EISCAT 2008-02-28
 % Inputs:dirs	{result_path} Directories containing data (wild cards accepted)
@@ -14,7 +15,8 @@
 %	Vpos	(:,3) Mean lat,lon,alt
 %	Vg	(:,3) Geographic velocity (E,N,U)
 %	Vgv	(:,6) Geographic velocity variance matrix, diagonals 0,1 and 2
-% See also EFIELD
+%	: or result file name
+% See also EFIELD VEL_WRAPPER
 %
 function [varargout]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
 global result_path path_tmp path_GUP
@@ -39,10 +41,10 @@ if isempty(mind), mind=3; end
 if length(mind)==1, mind(2)=10; end
 ndir=length(dirs);
 if isempty(odir)
- if ndir>1 | strfind(char(dirs(1)),'*')
+ if ndir>1 | strfind(dirs{1},'*')
   odir=path_tmp;
  else
-  odir=char(dirs(1));
+  odir=dirs{1};
  end
  odir=fullfile(odir,filesep);
 end
@@ -70,7 +72,8 @@ tfile=0;	%make velocity table for testings
 global r_RECloc name_ant name_expr r_XMITloc
 Data1D=[]; Data2D=[]; dirind=0; loc=[];
 for d1=1:ndir
- [Time,par2D,par1D,dum,err2D]=load_param(char(dirs(d1)));
+ fprintf('Reading %s...\n',dirs{d1})
+ [Time,par2D,par1D,dum,err2D]=load_param(dirs{d1});
  ng=size(par2D,1);
  [g,dump]=find(par2D(:,:,2)>alt(1) & par2D(:,:,2)<alt(end) & isfinite(par2D(:,:,6)));
  [d,dum,dd]=unique(dump); dd=dd+size(Data1D,1);
@@ -90,7 +93,7 @@ oname=sprintf('%d-%02d-%02d_vecvel',r_time(1:3));
 if ndir==1
  oname=sprintf('%d-%02d-%02d_%s_vecvel@%s',r_time(1:3),name_expr,name_ant);
 end
-result_file=fullfile(odir,oname),
+result_file=fullfile(odir,oname);
 if tfile
  tfile=fopen([result_file '.txt'],'w');
  fprintf(tfile,'%20s%6s%6s%4s','Date     Time','Lat','Lon','Alt');
@@ -113,6 +116,7 @@ else
  td(1)=median(diff(timint));
 end
 %%%%%%%%%%%%%%%%%
+fprintf('Combining...\n')
 for tim=timint
  count=find(dates>=tim & dates<=tim+td(1));
  if length(count)>=mindumps
@@ -173,27 +177,42 @@ for tim=timint
       end
       if angarea(A)>min_area
 %%A*V_real=Vll +- Vlle
-%%V_real=A\Vi_0;
+%%V_real=A\Vll;
 %%[V_real,Verr_real]=lscov(A,Vll,1../Vlle.^2);
        VV=(Vll./Vlle.^2)'*A;
        T=(A'*(A./(Vlle.^2*ones(1,3))));
        V_real=VV/T;
-       T=T^-1;
-       Vvar_real=T([1 5 9 2 6 3]); %lower triangle only
-       Verr=sqrt(Vvar_real([1:3]));
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-       if tfile
-        fprintf(tfile,'%s',datestr(mean(Date)));
-        fprintf(tfile,'%6.2f',gg_sp(1:2));
-        fprintf(tfile,'%4.0f',gg_sp(3));
-        fprintf(tfile,'%5.0f',V_real);
-        fprintf(tfile,'%5.0f',Verr);
-        fprintf(tfile,'\n');
+       if isposdef(T)
+        T=T^-1;
+        Vvar_real=T([1 5 9 2 6 3]); %lower triangle only
+        Verr=sqrt(Vvar_real(1:3));
+       else
+	warning('Covariance matrix not positive definite (%s)',datestr(mean(Date),13))
+	% trying direct route, but errors handled in a clumsy way
+        [V_real,Verr]=lscov(A,Vll,1../Vlle.^2);
+        if size(A,1)==3
+         Verr=abs(A)\Vlle;
+        end
+        Vvar_real=[Verr'.^2 zeros(1,3)];
+        V_real=V_real';
        end
-       Vdate=[Vdate Date];
-       Vpos=[Vpos;gg_sp];
-       Vg=[Vg;V_real];
-       Vgv=[Vgv;Vvar_real];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       if all(real(Verr)>=0)
+        if tfile
+         fprintf(tfile,'%s',datestr(mean(Date)));
+         fprintf(tfile,'%6.2f',gg_sp(1:2));
+         fprintf(tfile,'%4.0f',gg_sp(3));
+         fprintf(tfile,'%5.0f',V_real);
+         fprintf(tfile,'%5.0f',Verr);
+         fprintf(tfile,'\n');
+        end
+        Vdate=[Vdate Date];
+        Vpos=[Vpos;gg_sp];
+        Vg=[Vg;V_real];
+        Vgv=[Vgv;Vvar_real];
+       else
+	warning('Shortcuts did not help, --skipping')
+       end
       end
      end
     end
@@ -201,10 +220,16 @@ for tim=timint
   end
  end
 end
-if nargout>0
+if nargout>1
  varargout={Vdate,Vpos,Vg,Vgv};
 else
+ if nargout==1
+  varargout={result_file};
+ else
+  result_file
+ end 
  save(result_file,'Vdate','Vpos','Vg','Vgv')
+ fprintf('Making NCAR file...\n')
  NCAR_output
  NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))
  NCAR_output
@@ -228,4 +253,14 @@ lambda=atan2(Yr,Xr);
 e=-sin(lambda).*(X-Xr)+cos(lambda).*(Y-Yr); 
 n=-sin(phiP).*cos(lambda).*(X-Xr)-sin(phiP).*sin(lambda).*(Y-Yr)+cos(phiP).*(Z-Zr); 
 u=cos(phiP).*cos(lambda).*(X-Xr)+cos(phiP).*sin(lambda).*(Y-Yr)+sin(phiP).*(Z-Zr);
+return
+
+function ret=isposdef(M)
+ret=true;
+for i=1:length(M)
+  if det(M(1:i,1:i))<=0
+    ret=false;
+    break
+  end
+end
 return
