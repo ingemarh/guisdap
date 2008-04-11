@@ -14,6 +14,7 @@
 % See also VECTOR_VELOCITY, EFIELD
 %
 function vel_wrapper(scan,dirs)
+global result_path
 ld=[]; uperr=[]; plots={'Vm'}; ptype='t';
 if nargin<1
  fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst cp1 cp1kst cp2 cluster\n')
@@ -29,7 +30,7 @@ if nargin<2
 end
 switch scan
  case 'ip2e'
-  alt=[90 100 110 130 160 400]; td=180; plots={'Vg','Vg','Vg',[],'Vm'};
+  alt=[90 110 130 160 400]; td=180; plots={'Vg','Vg',[],'Vm'};
  case 'ip2t'
   alt=[90 100 110 130 160 500]; td=4*240; plots={'Vg','Vg','Vg',[],'Vm'};
  case {'ip2kst' 'cp2kst'}
@@ -45,7 +46,7 @@ switch scan
  otherwise
   error('GUISDAP:default','No such scan defined: %s',scan)
 end
-r=vector_velocity(dirs,alt,td,ld,uperr);
+r=vector_velocity(dirs,alt,td,ld,uperr,[],fullfile(result_path,'vectors'));
 np=length(plots);
 ntp=[];
 for i=1:np, if ~isempty(plots{i}), ntp=[ntp i]; end, end
@@ -56,33 +57,39 @@ if strcmp(ptype,'t')
   orient rotated
  else
   orient tall
+  sq=np^2;
  end
 else
  npc=floor(sqrt(np)); npr=ceil(np/npc);
+ sq=sqrt(8);
  orient tall
 end
-for i=np:-1:1
- subplot(npr,npc,i)
+for i=1:np
+ subplot(npr,npc,np+1-i)
  efield(r,[plots{ntp(i)} ptype],alt((0:1)+ntp(i)),[],2)
  if strcmp(ptype,'t')
-  if alt(ntp(i))<150, ylim=500; else, ylim=4000; end
+  if alt(ntp(i))<150, ylim=1000; else, ylim=2000; end
   set(gca,'ylim',[-ylim ylim])
+  if i>1, xlabel([]), end
  end
 end
-if strcmp(ptype,'p')
+% Squeeze things before printing
+if strcmp(ptype,'p') | np>1
  gc=get(gcf,'children');
  pos=get(gc,'pos');
  for i=1:length(gc)
   p=pos{i};
-  sh=(0.5-(p(2)+p(4)/2))/sqrt(8);
+  sh=(0.5-(p(2)+p(4)/2))/sq;
   set(gc(i),'pos',[p+[0 sh 0 0]])
  end
- gl=findobj(gcf,'visible','off','xlim',[0 202]);
- set(gl,'pos',get(gl,'pos')+[.1 0 0 0])
+ if strcmp(ptype,'p') | np>1
+  gl=findobj(gcf,'visible','off','xlim',[0 202]);
+  set(gl,'pos',get(gl,'pos')+[.1 0 0 0])
+ end
 end
 print('-deps2',r)
 print('-dpng256',r)
-if strcmp(ptype,'p')
+if strcmp(ptype,'p') | np>1
  for i=1:length(gc)
   set(gc(i),'pos',pos{i})
  end

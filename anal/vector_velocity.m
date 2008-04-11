@@ -70,7 +70,7 @@ min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area 
 tfile=0;	%make velocity table for testings
 %%%%%%%%%%%%%%%%%
 global r_RECloc name_ant name_expr r_XMITloc
-Data1D=[]; Data2D=[]; dirind=0; loc=[];
+Data1D=[]; Data2D=[]; dirind=0; loc=[]; nant=[]; nexp=[];
 for d1=1:ndir
  fprintf('Reading %s...\n',dirs{d1})
  [Time,par2D,par1D,dum,err2D]=load_param(dirs{d1});
@@ -85,14 +85,26 @@ for d1=1:ndir
  if td(1)==d1
   timint=mean(Time)-median(diff(Time));
  end
+ if strfind(dirs{1},'*') & strcmp(name_ant(2:3),'2m')
+  name_ant='esr';
+ end
+ nant=[nant;name_ant(1:3)];
+ nexp=strvcat(nexp,name_expr);
 end
 dirind=cumsum(dirind);
 %%%%%%%%%%%%%%%%%
 r_time=datevec(mean(Data1D(:,1)));
-oname=sprintf('%d-%02d-%02d_vecvel',r_time(1:3));
-if ndir==1
- oname=sprintf('%d-%02d-%02d_%s_vecvel@%s',r_time(1:3),name_expr,name_ant);
+if all(mean(nant,1)==nant(1,:))
+ nant=nant(1,:);
+else
+ nant='esa';
 end
+if all(mean(nexp,1)==nexp(1,:))
+ nexp=['_' nexp(1,:)];
+else
+ nexp=[];
+end
+oname=sprintf('%d-%02d-%02d%s_vecvel@%s',r_time(1:3),nexp,nant);
 result_file=fullfile(odir,oname);
 if tfile
  tfile=fopen([result_file '.txt'],'w');
@@ -228,7 +240,7 @@ else
  else
   result_file
  end 
- save(result_file,'Vdate','Vpos','Vg','Vgv')
+ save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv)
  fprintf('Making NCAR file...\n')
  NCAR_output
  NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))

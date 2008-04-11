@@ -83,8 +83,8 @@ if ~isempty(p)
    scale=scale/50; maxv=maxv/50; maxverr=maxverr/50;
   end
  end
- START_TIME=floor(datevec(Vdate(1)));
- END_TIME=ceil(datevec(Vdate(end)));
+ START_TIME=datevec(floor(24*Vdate(1))/24);
+ END_TIME=datevec(ceil(24*Vdate(end))/24);
  if verbose(1)==1
   START_TIME=minput('Start time',START_TIME);
   END_TIME=minput('  End time',END_TIME);
