@@ -63,11 +63,10 @@ end
 if ~isempty(p)
  global path_GUP
  ifor='\Lambda';
- dir={'East_{\perp}' 'North_{\perp}' 'Up_{\mid\mid}'};
  dir={'East_{\perp}' 'North_{\perp}' 'Up_{//}'};
  if strfind(p,'V')
   ew=2;
-  yfor='V %s [ms^{-1}]';
+  yfor1='\bfv\rm'; yfor2='ms^{-1}]';
   if strfind(p,'m')
    vp=Vm; vpe=Vme;
   elseif strfind(p,'g')
@@ -78,7 +77,7 @@ if ~isempty(p)
  elseif strfind(p,'E')
   ew=1;
   vp=E*1000; vpe=Ee*1000;
-  yfor='E %s [mVm^{-1}]';
+  yfor1='\bfE\rm'; yfor2='mVm^{-1}]';
   if verbose(1)>1
    scale=scale/50; maxv=maxv/50; maxverr=maxverr/50;
   end
@@ -163,7 +162,7 @@ if ~isempty(p)
     plot(vdt,vpt(:,i),'-k', ...
      ones(2,1)*vd,ones(2,1)*vp(d,i)'+[1;-1]*vpe(d,i)','-k')
     set(gca,'XLim',xlim)
-    ylabel(sprintf(yfor,dir{i}))
+    ylabel([yfor1 ' ' dir{i} ' [' yfor2])
     set(gca,'xgrid','on','ygrid','on')
     datetick(gca,'x',tickform,'keeplimits')
     text('String',hgt,'Units','Normalized','Position',[1.025 0.5],'Rotation',-90,'Color','k')
@@ -171,14 +170,13 @@ if ~isempty(p)
   else
    plot(vdt,vpt)
    set(gca,'XLim',xlim)
-   ylabel([sprintf(yfor,[]) ' ' hgt])
+   ylabel([yfor1 ' [' yfor2 ' ' hgt])
    set(gca,'xgrid','on','ygrid','on')
    datetick(gca,'x',tickform,'keeplimits')
    color=get(gca,'ColorOrder');
    for i=1:np
     text('String',dir{i},'Units','Normalized','Position',[.98+i*.035 0.5],'Rotation',-90,'Color',color(i,:))
    end
-   %legend(dir(1:np))
   end
   xlabel([tit ' [UT]'])
  elseif strfind(p,'p')
@@ -229,7 +227,7 @@ if ~isempty(p)
   for i=0:3
    text(minrlat*1.2*xc(46+i*90),minrlat*1.2*yc(46+i*90),sprintf('%02.0f%s',rem(i*6+9,24),tt),'horiz','center')
   end
-  text(0,0,sprintf(yfor,num2str(10*scale)),'horiz','center','vertical','bottom')
+  text(0,0,[yfor1 ' [' num2str(10*scale) ' ' yfor2],'horiz','center','vertical','bottom')
   lims=minrlat*[-1 1];
   set(gca,'xlim',lims,'ylim',lims,'visible','off')
   for i=latr

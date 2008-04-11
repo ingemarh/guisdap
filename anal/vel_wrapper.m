@@ -32,7 +32,7 @@ switch scan
  case 'ip2e'
   alt=[90 110 130 160 400]; td=180; plots={'Vg','Vg',[],'Vm'};
  case 'ip2t'
-  alt=[90 100 110 130 160 500]; td=4*240; plots={'Vg','Vg','Vg',[],'Vm'};
+  alt=[90 100 110 130 160 500]; td=240; plots={'Vg','Vg','Vg',[],'Vm'};
  case {'ip2kst' 'cp2kst'}
   alt=[170 450]; td=1;
  case {'cp3kst'}
@@ -65,12 +65,12 @@ else
  orient tall
 end
 for i=1:np
- subplot(npr,npc,np+1-i)
+ subplot(npr,npc,np+1-i,'align')
  efield(r,[plots{ntp(i)} ptype],alt((0:1)+ntp(i)),[],2)
  if strcmp(ptype,'t')
+  if i>1, delete(get(gca,'xlabel')), end
   if alt(ntp(i))<150, ylim=1000; else, ylim=2000; end
   set(gca,'ylim',[-ylim ylim])
-  if i>1, xlabel([]), end
  end
 end
 % Squeeze things before printing
@@ -82,12 +82,12 @@ if strcmp(ptype,'p') | np>1
   sh=(0.5-(p(2)+p(4)/2))/sq;
   set(gc(i),'pos',[p+[0 sh 0 0]])
  end
- if strcmp(ptype,'p') | np>1
+ if strcmp(ptype,'p')
   gl=findobj(gcf,'visible','off','xlim',[0 202]);
   set(gl,'pos',get(gl,'pos')+[.1 0 0 0])
  end
 end
-print('-deps2',r)
+print('-deps2c',r)
 print('-dpng256',r)
 if strcmp(ptype,'p') | np>1
  for i=1:length(gc)
