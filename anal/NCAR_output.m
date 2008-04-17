@@ -39,12 +39,21 @@ AbsentData=-32767;
 ModelData=-32766;
 BadData=-32767; % madrigal cannot handle +32767
 
-KINDAT=6800; mvel=580;
+KINDAT=6800;
 if exist('Vdate','var')
- KINST=70; % EISCAT Any
+ switch name_ant
+  case 'esr', KINST=95;
+  case 'uhf', KINST=72;
+  case 'vhf', KINST=74;
+  case 'kir', KINST=71;
+  case 'sod', KINST=73;
+  case 'esa', KINST=70;
+  otherwise, KINST=AbsentData;
+ end
  sparcod=[]; name_site=[];
  ITIM=zeros(2,4);
 else
+ mvel=580;
  switch name_site
   case 'L', KINST=95; % EISCAT Svalbard Radar
   case 'K', KINST=71; mvel=590; % EISCAT Kiruna UHF

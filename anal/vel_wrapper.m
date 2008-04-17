@@ -15,7 +15,7 @@
 %
 function vel_wrapper(scan,dirs)
 global result_path
-ld=[]; uperr=[]; plots={'Vm'}; ptype='t';
+ld=[]; uperr=[]; plots={'Vm'}; ptype='t'; ylim=[2000 2000];
 if nargin<1
  fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst cp1 cp1kst cp2 cluster\n')
  scan=minput('Choose',[],1);
@@ -32,15 +32,15 @@ switch scan
  case 'ip2e'
   alt=[90 110 130 160 400]; td=180; plots={'Vg','Vg',[],'Vm'};
  case 'ip2t'
-  alt=[90 100 110 130 160 500]; td=240; plots={'Vg','Vg','Vg',[],'Vm'};
+  alt=[90 110 130 160 500]; td=240; plots={'Vg','Vg',[],'Vm'};
  case {'ip2kst' 'cp2kst'}
   alt=[170 450]; td=1;
  case {'cp3kst'}
   alt=[170 450]; td=1; ptype='p';
  case {'cp1' 'cp1kst'}
   alt=[170 500]; td=1;
- case 'cp2'
-  alt=[90 100 110 130 160 500]; td=360; plots={'Vg','Vg','Vg',[],'Vm'};
+ case {'cp2' 'cp2t' 'cp2e'}
+  alt=[90 110 130 160 500]; td=360; plots={'Vg','Vg',[],'Vm'};
  case 'cluster'
   alt=[160 500]; td=120; uperr=1; ld=50:.5:90; ptype='p';
  otherwise
@@ -69,8 +69,7 @@ for i=1:np
  efield(r,[plots{ntp(i)} ptype],alt((0:1)+ntp(i)),[],2)
  if strcmp(ptype,'t')
   if i>1, delete(get(gca,'xlabel')), end
-  if alt(ntp(i))<150, ylim=1000; else, ylim=2000; end
-  set(gca,'ylim',[-ylim ylim])
+  set(gca,'ylim',ylim(1+(alt(ntp(i))<150))*[-1 1])
  end
 end
 % Squeeze things before printing

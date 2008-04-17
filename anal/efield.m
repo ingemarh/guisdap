@@ -1,4 +1,4 @@
-% function efield(vfile,p,alt,lat,verbose)
+% function [Edate,E,Ee,Epos,Vm,Vme,MLT,ilat]=efield(vfile,p,alt,lat,verbose)
 % Copyright EISCAT 2008-02-28
 % Plot velocity vectors
 % Input: vfile	filename with geographical vectors
@@ -55,11 +55,12 @@ if [strfind(p,'m') strfind(p,'E')]
   Vme(i,:)=sqrt(diag(Vmv));
   Ee(i,:)=BB(3)*Vme(i,[2 1]);
  end
- %save(vfile,'Vdate','Vpos','Vg','Vgv','E','Ee')
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % plot data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+d=find(Vpos(:,3)>alt(1) & Vpos(:,3)<alt(2) & Vpos(:,1)>lat(1) & Vpos(:,1)<lat(2));
+MLT=[]; ilat=[];
 if ~isempty(p)
  global path_GUP
  ifor='\Lambda';
@@ -88,7 +89,6 @@ if ~isempty(p)
   START_TIME=minput('Start time',START_TIME);
   END_TIME=minput('  End time',END_TIME);
  end
- d=find(Vpos(:,3)>alt(1) & Vpos(:,3)<alt(2) & Vpos(:,1)>lat(1) & Vpos(:,1)<lat(2));
  if verbose(1)<2
   maxv=norm(vp(d,:),1)/length(d);
   if verbose
@@ -201,15 +201,16 @@ if ~isempty(p)
    addpath(fullfile(path_GUP,'models','onera','matlab'))
    try
     [Lm,Lstar,Blocal,Bmin,J,MLT]=onera_desp_lib_make_lstar([],[],'rll',vd',1+Vpos(d,3)/6378.135,Vpos(d,1),Vpos(d,2));
-    lat=acos(sqrt(1../abs(Lm)))/degrad;
+    ilat=acos(sqrt(1../abs(Lm)))/degrad;
    catch %dirty workaround for old matlabs
     MLT=onera_desp_lib_get_mlt(vd',gg2gc(Vpos(d,:)));
     B=geomag(Vpos(d,:)',datevec(mean(vd)));
     dip=-asin(B(3,:)./sqrt(sum(B(1:3,:).^2)))';
     warning('GUISDAP:efield','Using modip instead of invariant latitude')
-    lat=real(asin(dip./sqrt(dip.^2+cos(Vpos(d,1)*degrad))))/degrad; %modip
+    ilat=real(asin(dip./sqrt(dip.^2+cos(Vpos(d,1)*degrad))))/degrad; %modip
    end
    lt=(MLT/12-.5)*pi;
+   lat=ilat;
    tt='MLT';
   end
   [x0,y0]=pol2cart(lt,90-lat);
@@ -217,7 +218,7 @@ if ~isempty(p)
   x1=-sum([cos(lt) sin(lt)].*V_NE,2);
   y1=sum([-sin(lt) cos(lt)].*V_NE,2);
   de=find(V_NE(:,ew)<=0); dw=find(V_NE(:,ew)>0);
-  plot(x0,y0,'.k'), hold on
+  plot(x0,y0,'ok','MarkerSize',2), hold on
   axis square
   x0=x0-x1/2; y0=y0-y1/2;
   quiver(x0(de),y0(de),x1(de),y1(de),0,'r'), hold on
@@ -238,5 +239,10 @@ if ~isempty(p)
    tit=[tit ' Height=' hgt];
   end
   text(0,-minrlat,tit,'horiz','center','vertical','top')
+ end
+end
+if nargout>0
+ if [strfind(p,'m') strfind(p,'E')]
+  varargout={Vdate(:,d),E(d,:),Ee(d,:),Vpos(d,:),Vm(d,:),Vme(d,:),MLT,ilat};
  end
 end

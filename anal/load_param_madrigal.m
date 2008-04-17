@@ -14,7 +14,6 @@ if isempty(fileno), ask=1; fileno=1; end
 
 of=local.tfile;
 REClocs=[67.863 20.44 .412;69.583 19.21 .030;67.367 26.65 .180;69.583 19.21 .030;78.153 16.029 .438];
-name_expr='unknown'; name_ant='unk';
 if exist(data_path,'file')
  global path_GUP
  cmd2=[' ' path_GUP '/bin/madDataDisplay >'];
@@ -23,6 +22,7 @@ if exist(data_path,'file')
  antennas={'kir' 'uhf' 'sod' 'vhf' 'esr' '32m' '42m'};
  [devnull,filename]=fileparts(data_path); ll=16;
  ldp=length(filename); ll=16;
+ name_expr='unknown'; name_ant='unk';
  if strfind(filename,'NCAR') & ldp>ll
   at=strfind(filename(ll+1:end),'@');
   if at
