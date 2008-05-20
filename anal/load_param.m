@@ -64,6 +64,9 @@ for i=1:n_tot
       i=(strfind('TKSVL',name_site)-1)*4+1;
       name_ant=antennas(i:i+2);
     end
+    if exist('r_w','var')
+      rres=ones(n_tot)*Inf;
+    end
   end
   nalt=size(r_param,1);
   if nalt>n_alt
@@ -91,7 +94,7 @@ for i=1:n_tot
   end
   Time(:,i)	=datenum(r_time);
   par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]; %10 kW
-  if exist('r_w','var')
+  if exist('r_w','var') & ~isempty(rres)
     rres=[rres;max(r_w(:,3))];
   end
   if isfinite(n_ralt)
@@ -130,7 +133,7 @@ for i=1:n_tot
     rpar2D(n,i,3)=pp(n);
   end
 end
-if exist('r_w','var')
+if ~isempty(rres)
   rres=rres/re;
   rres=re*sqrt(1+rres.*(rres+2*sin(par1D(:,2)/57.2957795)))-re;
   rres=1.1*max(rres)+3*std(rres);
