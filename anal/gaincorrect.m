@@ -1,6 +1,8 @@
 function gaincorrect(glp,grps,p)
+% function gaincorrect(glp,grps,p)
 % glp: The lagprofile groups containing the gain measurements
 % grps: The groups of lagprofilegroups handles by the same gain parameters: start,stop,tdiff
+% p: plot window for debugging
 global d_data d_var1 d_var2 ADDR_SHIFT lpg_ra lpg_nt lpg_ri lpg_dt lpg_h lpg_lag
 gx=[];
 if nargin<3, p=0; end

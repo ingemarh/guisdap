@@ -147,7 +147,7 @@ if ~OK %| Nsatb>0
    if local.matlabversion<7
      subplot(j,1,i)
    else
-     subplot(j,1,i,'v6')
+     subplot(j,1,i,'align')
    end
    plot(dat); hold on
    plot(pc,zeros(size(pc)),'o'), hold off
