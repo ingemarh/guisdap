@@ -65,7 +65,7 @@ for i=1:n_tot
       name_ant=antennas(i:i+2);
     end
     if exist('r_w','var')
-      rres=ones(n_tot)*Inf;
+      rres=ones(n_tot,1)*Inf;
     end
   end
   nalt=size(r_param,1);
@@ -95,7 +95,7 @@ for i=1:n_tot
   Time(:,i)	=datenum(r_time);
   par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]; %10 kW
   if exist('r_w','var') & ~isempty(rres)
-    rres=[rres;max(r_w(:,3))];
+    rres(i)=max(r_w(:,3));
   end
   if isfinite(n_ralt)
     [ppr,k,l]=unique(round(r_pprange/ppres)); pp=ppr;
