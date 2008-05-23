@@ -14,4 +14,4 @@ else
  grps=[2 4 lpg_h(4);5 562 lpg_h(5)+lpg_w(5)/2;1 1 lpg_h(1)
     564 566 lpg_h(566);567 1435 lpg_h(567)+lpg_w(567)/2;563 563 lpg_h(563)];
 end
-gaincorrect(glp,grps)
+%aincorrect(glp,grps)

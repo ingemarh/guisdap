@@ -8,6 +8,7 @@ if ~exist('analysis_code','var')
   a_satch.clutter=23;
   analysis_code=3;
   analysis_sweep='azel';
+  plasma_range=58990+(1:3*90);
  else
   a_satch.clutter=[12 23];
   analysis_code=1:2;

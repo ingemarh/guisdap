@@ -8,4 +8,5 @@ elseif name_site=='T' | name_site=='V'
   a_satch.sigma=3;
   a_satch.cut=1;
   analysis_ppshortlags=1;
+  plasma_range=83111+(1:3*25)
 end

@@ -115,7 +115,7 @@ if tfile
  fprintf(tfile,'%5s',[],'m/s',[],[],'m/s');
  fprintf(tfile,'\n');
 end
-Vdate=[]; Vpos=[]; Vg=[]; Vgv=[];
+Vdate=[]; Vpos=[]; Vg=[]; Vgv=[]; V_area=[]; Gid=[];
 %%%%%%%%%%%%%%%%%
 dates=mean(Data1D(:,[1 2]),2); td=td/86400; ld=ld*degrad;
 mindumps=mind(1)-isfinite(uperr(1));
@@ -168,7 +168,9 @@ for tim=timint
      else
       ll=1:ng;
      end
-     if length(unique(dump(ll)))>=mindumps
+     gid=sum(log(g(ll))); %ID for the selection
+     seldumps=unique(dump(ll));
+     if length(seldumps)>=mindumps & ~any(gid==Gid)
       gg_sp=gc2gg(mean(gc(ll,:)));
       %az1=az(ll)*degrad; el1=el(ll)*degrad;
       %A=[cos(el1).*sin(az1) cos(el1).*cos(az1) sin(el1)];
@@ -187,7 +189,8 @@ for tim=timint
         Vlle=[Vlle;uperr(1)];
        end
       end
-      if angarea(A)>min_area
+      ang_area=angarea(A);
+      if ang_area>min_area
 %%A*V_real=Vll +- Vlle
 %%V_real=A\Vll;
 %%[V_real,Verr_real]=lscov(A,Vll,1../Vlle.^2);
@@ -210,18 +213,21 @@ for tim=timint
        end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        if all(real(Verr)>=0)
+        selDate=[min(Data1D(seldumps,1));max(Data1D(seldumps,2))];
         if tfile
-         fprintf(tfile,'%s',datestr(mean(Date)));
+         fprintf(tfile,'%s',datestr(mean(selDate)));
          fprintf(tfile,'%6.2f',gg_sp(1:2));
          fprintf(tfile,'%4.0f',gg_sp(3));
          fprintf(tfile,'%5.0f',V_real);
          fprintf(tfile,'%5.0f',Verr);
          fprintf(tfile,'\n');
         end
-        Vdate=[Vdate Date];
+        Vdate=[Vdate selDate];
         Vpos=[Vpos;gg_sp];
         Vg=[Vg;V_real];
         Vgv=[Vgv;Vvar_real];
+        V_area=[V_area ang_area];
+        Gid=[Gid gid];
        else
 	warning('Shortcuts did not help, --skipping')
        end
@@ -240,7 +246,7 @@ else
  else
   result_file
  end 
- save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,name_exps,name_expr,name_ant,name_ants)
+ save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants)
  fprintf('Making NCAR file...\n')
  NCAR_output
  NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))

@@ -21,6 +21,17 @@ result_path=fullfile(result_path,filesep);
 path_GUP=fullfile(path_GUP,filesep);
 path_exps=fullfile(path_exps,filesep);
 path_tmp=fullfile(path_tmp,filesep);
+if exist('analysis_plasmaline','var') & analysis_plasmaline
+ analysis_do=0;
+ analysis_do=0;
+ d_saveint.var=0;
+ d_saveint.dir=result_path;
+ d=strfind(d_saveint.dir,'AUTO');
+ if length(d)==1
+  d_saveint.dir=[d_saveint.dir(1:d-1) sprintf('%s_%s%d_%d@%sp',datestr(analysis_start,29),name_expr,expver,analysis_integr(1),name_site)];
+ end
+ d_saveint.range=plasma_range;
+end
 if ~isempty(d_saveint)
  d_saveint.dir=fullfile(d_saveint.dir,filesep);
  if ~exist(d_saveint.dir,'dir')

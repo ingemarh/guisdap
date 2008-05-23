@@ -18,8 +18,8 @@
 
 function scale_data
 
-global lpg_ra lpg_ND lpg_cal lpg_bac lpg_T lpg_bcs d_data d_var1 ...
-    d_var2 ADDR_SHIFT calTemp sysTemp a_code lpg_code
+global lpg_ra lpg_ND lpg_cal lpg_bac lpg_bcs d_data d_var1 d_var2 ...
+  ADDR_SHIFT calTemp sysTemp a_code lpg_code
 
 %*************** SCALING BY CORRELATOR ALGORITHM FACTORS *****************
 data=d_data;
@@ -42,16 +42,15 @@ calibs=diff_val(lpg_cal(lpgs));      % find all different values
 calibs=calibs(find(calibs>0)); % Accept non-zero values
 scale=zeros(size(lpg_cal));
 if ~isempty(calTemp)
- cT=calTemp;
  sysTemp=[];
  for cal=calibs
   bac=lpg_bac(cal);
   bac_power=median(d_data(lpg_addr(bac)+ADDR_SHIFT));
   cal_power=median(d_data(lpg_addr(cal)+ADDR_SHIFT));
-  if length(cT)>1
-    scale(cal)=(cal_power-bac_power)/cT(lpg_code(cal));
+  if length(calTemp)>1
+    scale(cal)=(cal_power-bac_power)/calTemp(lpg_code(cal));
   else
-    scale(cal)=(cal_power-bac_power)/cT;
+    scale(cal)=(cal_power-bac_power)/calTemp;
   end
   sysTemp=[sysTemp;bac_power/scale(cal)];
  end

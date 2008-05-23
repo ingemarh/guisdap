@@ -38,7 +38,7 @@ switch scan
  case {'cp3kst'}
   alt=[170 450]; td=1; ptype='p';
  case {'ip3'}
-  alt=[160 500]; td=1440./[1 3]; uperr=1; ld=50:.5:90; ptype='p';
+  alt=[160 500]; td=1440./[1 2]; uperr=10; ld=50:.5:90; ptype='p';
  case {'cp1' 'cp1kst'}
   alt=[170 500]; td=1;
  case {'cp2' 'cp2t' 'cp2e'}

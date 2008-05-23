@@ -1,4 +1,4 @@
-function peak=find_plf_peak(s,h,hlim,p,npoly,zscale,fft)
+function [peak,height]=find_plf_peak(s,h,hlim,p,npoly,zscale,fft)
 global fpp_plot
 if fft
  %100 kHz, 1km resolution, fast but might need correction
@@ -11,6 +11,7 @@ if fft
 else
  peak=ones(s,1)*NaN;
 end
+height=ones(s,1)*NaN;
 loghl=log(hlim);
 if fpp_plot
  oldfig=gcf; figure(9)
@@ -23,7 +24,8 @@ for i=1:s
  end
  npol=min(npoly,round(length(d)/2)-1);
  if isnan(npoly) & d
-  peak(i)=max(p(d,i));
+  [peak(i),g]=max(p(d,i));
+  height(i)=h(d(g),i);
  elseif npol>1
   logh=log(h(d,i));		%log(h) to reduce noisy high alt
   [poly,S,mu]=polyfit(logh,p(d,i),npol);
@@ -31,7 +33,8 @@ for i=1:s
   ddpoly=polyder(dpoly);
   dd=find(~imag(j) & j>hl(1) & j<hl(2) & polyval(ddpoly,j)<0);
   if ~isempty(dd)
-   peak(i)=max(polyval(poly,j(dd)));	%find cutoff
+   [peak(i),g]=max(polyval(poly,j(dd)));	%find cutoff
+   height(i)=exp(j(dd(g))*mu(2)+mu(1));
   end
   if any(fpp_plot==i) & ~fft
    plot(p(d,i),h(d,i),polyval(poly,logh,[],mu),h(d,i)),hold on

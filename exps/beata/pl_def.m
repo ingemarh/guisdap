@@ -2,11 +2,12 @@
 ran=[49 233;137 323;227 413];
 nfft=0; nint=1; ngates=3; nlag=25;
 maxe=2; nup_d=1; skip_if=0;
-if strfind(expt,'v')
+re=regexp(pl_dir,'\d\d\d\d-\d\d-\d\d_beata\d_\d+@[TV]p');
+if [strfind(expt,'v') strfind(expt,'V')]
  ran=2+ran;
  freq=[4.5 -4.5]*1e6; dt=0.8e-6; invert=-1; fradar=224e6;
  ele=90; updown=0:1;
- if strfind(expt,'cut')
+ if [strfind(expt,'cut') re]
   startad=(0:1)*3*nlag+1;
  else
   startad=(0:1)*27907+32815+1;
@@ -15,7 +16,7 @@ if strfind(expt,'v')
 else
  freq=[-5.0]*1e6; dt=0.4e-6; invert=1; fradar=930e6;
  ele=77.5; updown=0;
- if strfind(expt,'cut')
+ if [strfind(expt,'cut') re]
   startad=0+1;
  else
   startad=83111+1;
