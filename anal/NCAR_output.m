@@ -141,20 +141,20 @@ return
 
 function NCAR_write(NCAR_fid,KINDAT,prol,spar,mvarcod,mvar,AbsentData,BadData)
 LPROL=length(prol)+2;	% length of prologue
-JPAR=size(spar,1);	% # single-valued parameters
+JPAR=size(spar);	% # single-valued parameters
 NROW=size(mvar,1);	% # entries for each multi-valued parameter
 MPAR=length(mvarcod);	% # multi-valued parameters
-prol([2 11 13 14])=[KINDAT LPROL MPAR NROW];
+prol([2 11:14])=[KINDAT LPROL JPAR(2) MPAR NROW];
 % replace infinities and all values > 32767
 mvar(find(~isfinite(mvar) | abs(mvar)>-AbsentData))=BadData;
 Multivar=[mvarcod;mvar];
 if NCAR_fid(1)
   KREC=1101;	% kind of record (data, character version)
-  LTOT=2+NROW+size(spar,1);	% number of lines in record
+  LTOT=2+NROW+JPAR(1);	% number of lines in record
 % LTOT=1+fix((JPAR+19)/20)*2+fix((MPAR+19)/20)*(NROW+1);
   fprintf(NCAR_fid(1),'%6i',[LTOT KREC prol]);
   fprintf(NCAR_fid(1),'\n');
-  for i=1:JPAR
+  for i=1:JPAR(1)
     fprintf(NCAR_fid(1),'%6i',spar(i,:));
     fprintf(NCAR_fid(1),'\n');
   end
@@ -165,7 +165,7 @@ if NCAR_fid(1)
 end
 if NCAR_fid(2)
   KREC=1002;	% kind of record (data, binary version)
-  LTOT=LPROL+2*JPAR+MPAR*(NROW+1);	% number of entries
+  LTOT=LPROL+2*JPAR(2)+MPAR*(NROW+1);	% number of entries
   fwrite(NCAR_fid(2),[LTOT KREC prol row(spar') row(Multivar')],'short');
 end
 return
