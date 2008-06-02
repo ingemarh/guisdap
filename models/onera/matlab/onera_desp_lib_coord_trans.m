@@ -1,4 +1,23 @@
 function Y = onera_desp_lib_coord_trans(X,rotation,matlabd)
+%***************************************************************************************************
+% Copyright 2006, T.P. O'Brien
+%
+% This file is part of ONERA_DESP_LIB.
+%
+%    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU Lesser General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU Lesser General Public License for more details.
+%
+%    You should have received a copy of the GNU Lesser General Public License
+%    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+%***************************************************************************************************
+%
 % Y = onera_desp_lib_coord_trans(X,rotation,matlabd)
 % rotates X ([nx3]) into new coordinate system
 % Y is nx3 and psi (for geo2gsm/gsm2geo) is nx1
@@ -77,6 +96,6 @@ while nstart <= ntime,
     YPtr = libpointer('doublePtr',Ynmax);
     calllib('onera_desp_lib','coord_trans_vec1_',length(ii),istart,iend,iyear(ii),idoy(ii),secs(ii),X(ii,:)',YPtr);
     Ynmax = get(YPtr,'value');
-    Y(ii,:) = Ynmax(:,ii)';
+    Y(ii,:) = Ynmax(:,1:length(ii))';
     nstart = nstart+nmax;
 end

@@ -1,4 +1,22 @@
 !***************************************************************************************************
+! Copyright 2007 S. Bourdarie
+!
+! This file is part of ONERA_DESP_LIB.
+!
+!    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+!    it under the terms of the GNU Lesser General Public License as published by
+!    the Free Software Foundation, either version 3 of the License, or
+!    (at your option) any later version.
+!
+!    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU Lesser General Public License for more details.
+!
+!    You should have received a copy of the GNU Lesser General Public License
+!    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+!
+!***************************************************************************************************
 ! CREATION: S. Bourdarie - ONERA-DESP
 !
 ! FILE CONTENT: 
@@ -41,7 +59,7 @@ c
 	REAL*8    xIN(3),xOUT(3),xTMP(3),alti
  
         if (sysaxesIN.EQ.sysaxesOUT) then
-	   write(6,*)'sysaxesIN = sysaxesOUT!'
+c	   write(6,*)'sysaxesIN = sysaxesOUT!'
 	   do i=1,3
 	      xOUT(i)=xIN(i)
 	   enddo
@@ -107,14 +125,9 @@ c input=GDZ
 	   endif
 	   if (sysaxesOUT.EQ.8) then  !RLL
 	      call gdz_geo(xIN(2),xIN(3),xIN(1),xTMP(1),xTMP(2),xTMP(3))
-	      call geo_gdz(xTMP(1),xTMP(2),xTMP(3),
-     &                     xOUT(1),xOUT(2),xOUT(3))
-	      do i=1,3
-	         xTMP(i)=xOUT(i)
-	      enddo
-	      xOUT(1)=SQRT(xIN(1)*xIN(1)+xIN(2)*xIN(2)+xIN(3)*xIN(3))
-	      xOUT(2)=xTMP(1)
-	      xOUT(3)=xTMP(2)
+	   xOUT(1)=SQRT(xTMP(1)*xTMP(1)+xTMP(2)*xTMP(2)+xTMP(3)*xTMP(3))
+	      xOUT(2)=xIN(2)
+	      xOUT(3)=xIN(3)
 	   endif
 	   if (sysaxesOUT.EQ.9) then  !HEE
 	      call gdz_geo(xIN(2),xIN(3),xIN(1),xTMP(1),xTMP(2),xTMP(3))
@@ -157,7 +170,7 @@ c
 c input=GEO
 	if (sysaxesIN.EQ.1) then
 	   if (sysaxesOUT.EQ.0) then  !GDZ
-	      call geo_gdz(xIN(1),xIN(2),xIN(3),xOUT(2),xOUT(3),xOUT(1))
+	     call geo_gdz(xIN(1),xIN(2),xIN(3),xOUT(2),xOUT(3),xOUT(1))
 	   endif
 	   if (sysaxesOUT.EQ.2) then  !GSM
 	      call geo2gsm1(iyr,idoy,secs,psi,xIN,xOUT)
@@ -178,7 +191,7 @@ c input=GEO
 	      call CAR_SPH(xIN,xOUT(1),xOUT(2),xOUT(3))
 	   endif
 	   if (sysaxesOUT.EQ.8) then  !RLL
-	      call geo_gdz(xIN(1),xIN(2),xIN(3),xTMP(1),xTMP(2),xTMP(3))
+	     call geo_gdz(xIN(1),xIN(2),xIN(3),xTMP(1),xTMP(2),xTMP(3))
 	      xOUT(1)=SQRT(xIN(1)*xIN(1)+xIN(2)*xIN(2)+xIN(3)*xIN(3))
 	      xOUT(2)=xTMP(1)
 	      xOUT(3)=xTMP(2)
@@ -814,10 +827,10 @@ c input=HEE
 	      enddo
 	      call geo_gdz(xTMP(1),xTMP(2),xTMP(3),
      &                     xOUT(1),xOUT(2),xOUT(3))
-	      xOUT(1)=SQRT(xTMP(1)*xTMP(1)+xTMP(2)*xTMP(2)
-     &                     +xTMP(3)*xTMP(3))
 	      xOUT(3)=xOUT(2)
 	      xOUT(2)=xOUT(1)
+	      xOUT(1)=SQRT(xTMP(1)*xTMP(1)+xTMP(2)*xTMP(2)
+     &                     +xTMP(3)*xTMP(3))
 	   endif
 	   if (sysaxesOUT.EQ.10) then  !HAE
 	      call hee2hae1(iyr,idoy,secs,xIN,xOUT) 
@@ -935,10 +948,10 @@ c input=HAE
 	      enddo
 	      call geo_gdz(xTMP(1),xTMP(2),xTMP(3),
      &                     xOUT(1),xOUT(2),xOUT(3))
-	      xOUT(1)=SQRT(xTMP(1)*xTMP(1)+xTMP(2)*xTMP(2)
-     &                     +xTMP(3)*xTMP(3))
 	      xOUT(3)=xOUT(2)
 	      xOUT(2)=xOUT(1)
+	      xOUT(1)=SQRT(xTMP(1)*xTMP(1)+xTMP(2)*xTMP(2)
+     &                     +xTMP(3)*xTMP(3))
 	   endif
 	   if (sysaxesOUT.EQ.9) then  !HEE
 	      call hae2hee1(iyr,idoy,secs,xIN,xOUT) 
@@ -1091,10 +1104,10 @@ c input=HEEQ
 	      enddo
 	      call geo_gdz(xTMP(1),xTMP(2),xTMP(3),
      &                     xOUT(1),xOUT(2),xOUT(3))
-	      xOUT(1)=SQRT(xTMP(1)*xTMP(1)+xTMP(2)*xTMP(2)
-     &                     +xTMP(3)*xTMP(3))
 	      xOUT(3)=xOUT(2)
 	      xOUT(2)=xOUT(1)
+	      xOUT(1)=SQRT(xTMP(1)*xTMP(1)+xTMP(2)*xTMP(2)
+     &                     +xTMP(3)*xTMP(3))
 	   endif
 	   if (sysaxesOUT.EQ.9) then  !HEE
 	      call heeq2hae1(iyr,idoy,secs,xIN,xTMP) 

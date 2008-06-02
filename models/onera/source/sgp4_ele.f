@@ -1,3 +1,21 @@
+!***************************************************************************************************
+! Copyright 2001 D. Vallado, 2007 S. Bourdarie, T. Guild
+!
+! This file is part of ONERA_DESP_LIB.
+!
+!    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+!    it under the terms of the GNU Lesser General Public License as published by
+!    the Free Software Foundation, either version 3 of the License, or
+!    (at your option) any later version.
+!
+!    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU Lesser General Public License for more details.
+!
+!    You should have received a copy of the GNU Lesser General Public License
+!    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+!
 C       
 C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 C SUBROUTINE sgp4_ele
@@ -64,6 +82,7 @@ C     only the first 100,000 will be returned.  Errors will be issued
 C     to STDOUT, but not through IDL/Matlab wrappers.   
 C                              Contributed by Timothy Guild, 3.7.07
 C                               timothy.guild@aero.org
+C     last updated 10.9.07 by tbg
 C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 C
 
@@ -81,6 +100,7 @@ C
       REAL*8 ut(nmax),x1(nmax),x2(nmax),x3(nmax)
       REAL*8 sec
       REAL*8 e1, e2, e3, e4, e5, e6
+      REAL*8 keepe1, keepe2, keepe3, keepe4, keepe5, keepe6
       REAL*8 o1, o2, o3, o4, o5, o6
       REAL*8 a, e, i, BigOmega, omega, tsfe, BigPi
       REAL*8 nu0,u0,l0,M0,P,E0
@@ -95,6 +115,15 @@ C
 
       INCLUDE 'astconst.cmn'
       INCLUDE 'astmath.cmn'
+
+      ! TBG, 10.9.07:  save the initial input elements to pass back, as per 
+      ! Sebastien's suggestion.  
+      keepe1 = e1
+      keepe2 = e2
+      keepe3 = e3
+      keepe4 = e4
+      keepe5 = e5
+      keepe6 = e6
 
       debug = 0
       IF (debug.eq.1) THEN
@@ -209,6 +238,14 @@ c     unpack the 'output' array into arguments make_lstar uses.
          x3(ii) = output(10,ii) ! input Z coordinate
          ut(ii) = output(4,ii)*3600d0+output(5,ii)*60d0+output(6,ii)
       ENDDO
+
+      ! TBG, 10.9.07: now assign the original elements back to the e1-e6 variables
+      e1 = keepe1
+      e2 = keepe2
+      e3 = keepe3
+      e4 = keepe4
+      e5 = keepe5
+      e6 = keepe6
 
       END
 
@@ -475,8 +512,8 @@ C*******************************************************************************
       IMPLICIT NONE
       INTEGER*4 debug
       REAL*8 a,tsfe,M0,P,negM0
-      EXTERNAL REM
-      REAL*8 REM
+c      EXTERNAL REM   ! line commented by S. Bourdarie
+c      REAL*8 REM   ! line commented by S. Bourdarie
 
       INCLUDE 'astconst.cmn'
       INCLUDE 'astmath.cmn'      

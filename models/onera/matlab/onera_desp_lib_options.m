@@ -1,4 +1,24 @@
 function options  = onera_desp_lib_options(varargin)
+%***************************************************************************************************
+% Copyright 2006, T.P. O'Brien
+%
+% This file is part of ONERA_DESP_LIB.
+%
+%    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU Lesser General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU Lesser General Public License for more details.
+%
+%    You should have received a copy of the GNU Lesser General Public License
+%    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+%
+%***************************************************************************************************
+%
 % function options  = onera_desp_lib_options(options)
 % converts cell array of option words into array of numbers
 % leaves array of 5 numbers unchaged
@@ -6,7 +26,7 @@ function options  = onera_desp_lib_options(varargin)
 % defaults are 0
 %
 % options(1st element):  0 - don't compute L*;  1 - compute L*
-% 'noLstar' - 0, 'doLstar' - 1,
+% 'noLstar' - 0, 'doLstar' - 1, 'makePHI' - 2
 % options(2nd element): 0 - initialize IGRF field once per year (year.5);
 % n - n is the  frequency (in days) starting on January 1st of each year
 % (i.e. if options(2nd element)=15 then IGRF will be updated on the
@@ -57,10 +77,11 @@ end
 i = 1;
 while i <= length(inoptions),
     opt = inoptions{i};
-    if ~isempty(opt) && ~ischar(opt),
+    if ~isempty(opt) && ischar(opt),
         switch(upper(opt)),
             case {'NOLSTAR'}, options(1) = 0;
             case {'DOLSTAR'}, options(1) = 1;
+            case {'MAKEPHI'}, options(1) = 2;
             case {'IGRFINIT'}, options(2) = eval_pair(inoptions,i); i = i+1;
             case {'L*T','L*3'}, options(3) = eval_pair(inoptions,i); i = i+1;
             case {'L*R','L*4'}, options(4) = eval_pair(inoptions,i); i = i+1;

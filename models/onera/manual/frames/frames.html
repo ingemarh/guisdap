@@ -1,3 +1,21 @@
+<!-- %***************************************************************************************************
+% Copyright 2004-2008, S. Bourdarie
+%
+% This file is part of ONERA_DESP_LIB.
+%
+%    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU Lesser General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU Lesser General Public License for more details.
+%
+%    You should have received a copy of the GNU Lesser General Public License
+%    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+% -->
 <!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
@@ -12,11 +30,8 @@
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA">This function allows one to compute magnetic coordinate
-    at any s/c position, i.e. L, L*, Blocal, Bequator ...</font> 
-    <br />
-    <font face="ARIAL, HELVETICA">The internal magnetic field model is set to IGRF where
-    parameters are can be computed for the month of june of the year or at any user defined
-    frequency. The external magnetic field model can be selected&nbsp; (see inputs).</font> 
+    at any s/c position, i.e. L, L*, Blocal, Bequator.&nbsp;A set of internal/external
+    field&nbsp;can be selected.</font><br />
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA"><b>ntime:</b> long integer number of time in arrays
@@ -26,76 +41,56 @@
         field</font> 
         <br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0&nbsp;&nbsp; = no external
-        field</font> 
+    <div style="MARGIN-LEFT: 40px; FONT-FAMILY: helvetica,arial,sans-serif">
+        0&nbsp;&nbsp; = no external field 
         <br />
-        <font face="ARIAL, HELVETICA">1&nbsp;&nbsp; = Mead &amp; Fairfield [1975] (uses 0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA"> -
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">17.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        1&nbsp;&nbsp; = Mead &amp; Fairfield [1975] (uses 0&#8804;Kp&#8804;9 - Valid for rGEO&#8804;17. Re)
         <br />
-        <font face="ARIAL, HELVETICA">2&nbsp;&nbsp; = Tsyganenko short [1987] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9 </font><font face="ARIAL, HELVETICA">-
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">30.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        2&nbsp;&nbsp; = Tsyganenko short [1987] (uses 0&#8804;Kp&#8804;9 - Valid for rGEO&#8804;30. Re) 
         <br />
-        <font face="ARIAL, HELVETICA">3&nbsp;&nbsp; = Tsyganenko long [1987] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA">-
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">70.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        3&nbsp;&nbsp; = Tsyganenko long [1987] (uses 0&#8804;Kp&#8804;9 - Valid for rGEO&#8804;70. Re)
         <br />
-        <font face="ARIAL, HELVETICA">4&nbsp;&nbsp; = Tsyganenko [1989c] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA">-
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">70.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        4&nbsp;&nbsp; = Tsyganenko [1989c] (uses 0&#8804;Kp&#8804;9 - Valid for rGEO&#8804;70. Re)
         <br />
-        <font face="ARIAL, HELVETICA">5&nbsp;&nbsp; = Olson &amp; Pfitzer quiet [1977] (default
-        - Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">15.
-        Re)</font> 
+        5&nbsp;&nbsp; = Olson &amp; Pfitzer quiet [1977] (default - Valid for rGEO&#8804;15. Re)
         <br />
-        <font face="ARIAL, HELVETICA">6&nbsp;&nbsp; = Olson &amp; Pfitzer dynamic [1988] (uses
-        5.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">dens</font><font face="ARIAL, HELVETICA">&#8804;50.</font><font face="ARIAL, HELVETICA">,
-        300.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">velo</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">500., </font><font face="ARIAL, HELVETICA">-100.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA">&#8804;20.</font><font face="ARIAL, HELVETICA"> -
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">60.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        6&nbsp;&nbsp; = Olson &amp; Pfitzer dynamic [1988] (uses 5.&#8804;dens&#8804;50., 300.&#8804;velo&#8804;500., -100.&#8804;Dst&#8804;20. - Valid for rGEO&#8804;60. Re)
         <br />
-        <font face="ARIAL, HELVETICA">7&nbsp;&nbsp; = Tsyganenko [1996] (uses -100.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA"> (nT)&#8804;20.</font><font face="ARIAL, HELVETICA">, </font><font face="ARIAL, HELVETICA">0.5&#8804;</font><font face="ARIAL, HELVETICA">Pdyn</font><font face="ARIAL, HELVETICA"> (nPa)&#8804;</font><font face="ARIAL, HELVETICA">10.,
-        |ByIMF| (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">10.</font><font face="ARIAL, HELVETICA">,
-        |BzIMF|</font><font face="ARIAL, HELVETICA"> (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">10.</font><font face="ARIAL, HELVETICA"> -
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">40.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        7&nbsp;&nbsp; = Tsyganenko [1996] (uses -100.&#8804;Dst (nT)&#8804;20., 0.5&#8804;Pdyn (nPa)&#8804;10.,
+        |ByIMF| (nT)&#8804;10., |BzIMF| (nT)&#8804;10. - Valid for rGEO&#8804;40. Re) 
         <br />
-        <font face="ARIAL, HELVETICA">8&nbsp;&nbsp; = Ostapenko &amp; Maltsev [1997] (uses
-        dst,Pdyn,BzIMF, Kp)</font> 
+        8&nbsp;&nbsp; = Ostapenko &amp; Maltsev [1997] (uses dst,Pdyn,BzIMF, Kp) 
         <br />
-        <font face="ARIAL, HELVETICA">9&nbsp;&nbsp; = Tsyganenko [2001] (uses </font><font face="ARIAL, HELVETICA">-50.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA"> (nT)&#8804;20.</font><font face="ARIAL, HELVETICA">,</font><font face="ARIAL, HELVETICA">0.5&#8804;</font><font face="ARIAL, HELVETICA">Pdyn</font><font face="ARIAL, HELVETICA"> (nPa)&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">, </font><font face="ARIAL, HELVETICA">|ByIMF|
-        (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">,
-        |BzIMF|</font><font face="ARIAL, HELVETICA"> (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">,
-        0.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">G1</font><font face="ARIAL, HELVETICA">&#8804;</font>10.<font face="ARIAL, HELVETICA">,
-        0.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">G2</font><font face="ARIAL, HELVETICA">&#8804;</font>10.<font face="ARIAL, HELVETICA"> -
-        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        9&nbsp;&nbsp; = Tsyganenko [2001] (uses -50.&#8804;Dst (nT)&#8804;20., 0.5&#8804;Pdyn (nPa)&#8804;5., 
+        |ByIMF| (nT)&#8804;5., |BzIMF| (nT)&#8804;5., 0.&#8804;G1&#8804;10., 0.&#8804;G2&#8804;10. - Valid for xGSM&#8805;-15. Re) 
         <br />
-        <font face="ARIAL, HELVETICA">10 =Tsyganenko [2001] storm&nbsp; (uses Dst, Pdyn, ByIMF,
-        BzIMF, G2, G3 - there is no upper or lower limit for those inputs </font><font face="ARIAL, HELVETICA">-
-        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        10 =Tsyganenko [2001] storm&nbsp; (uses Dst, Pdyn, ByIMF,
+        BzIMF, G2, G3 - there is no upper or lower limit for those inputs - Valid for xGSM&#8805;-15. Re)
         <br />
-        <font face="ARIAL, HELVETICA">11 =Tsyganenko [2004] storm&nbsp; (uses Dst, Pdyn, ByIMF,
-        BzIMF, W1, W2, W3, W4, W5, W6 - there is no upper or lower limit for those inputs </font><font face="ARIAL, HELVETICA">-
-        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
-        Re</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
+        11 =Tsyganenko [2004] storm&nbsp; (uses Dst, Pdyn, ByIMF,
+        BzIMF, W1, W2, W3, W4, W5, W6 - there is no upper or lower limit for those inputs - Valid for xGSM&#8805;-15. Re) 
         <br />
-        <font face="ARIAL, HELVETICA">12 =Alexeev [2000] - also known as Paraboloid model
-        - Submitted to ISO&nbsp; (uses Dens, velo, Dst, BzIMF, AL</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
-        <br />
-        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font><font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font>
+        12 =Alexeev [2000] - also known as Paraboloid model - Submitted to ISO&nbsp; (uses Dens, velo, Dst, BzIMF, AL) 
         <br />
         <br />
-        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">Notes: </span></font>
         <br />
-        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font>
+        <span style="FONT-STYLE: italic">Notes: </span>
+        <ol>
+        <li>
+            <span style="FONT-STYLE: italic">when the magnetic field
+            model inputs are outside the allowed range bad data values are returned.</span>
+        </li>
+        <li>
+            <span style="FONT-STYLE: italic">When solar wind inputs
+            are required they must be taken in the vicinity of the day side magnetopause and not
+            at L1.<br />
+            </span>
+        </li>
+        </ol>
+        <br />
     </div>
     <p>
     </p>
-    <ol>
-    </ol>
     <ol>
         <li>
             <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">when the magnetic field
@@ -118,7 +113,7 @@
         <ol>
             <li>
                 <span style="FONT-WEIGHT: bold">options(1st element):</span>&nbsp; 0 - don't compute
-                L*;&nbsp; 1 - compute L* 
+                L* or &#934; ;&nbsp; 1 - compute L*; 2- compute &#934; 
                 <br />
             </li>
             <li>
@@ -170,8 +165,8 @@
         system is provided in</font> 
         <br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, longi
-        - km,deg.,deg)</font> 
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
         <br />
         <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
         <br />
@@ -186,9 +181,9 @@
         <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
         <br />
         <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
-        longi - Re, deg., deg.)<br />
-        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, longi -
-        Re, deg., deg. - prefered to 7)</font> 
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered to 7)</font> 
         <br />
     </div>
     <p>
@@ -236,7 +231,7 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(3rd element,*) =</b></font><font face="ARIAL, HELVETICA"><b>dens:</b> Solar
-            Wind density (cm-3)</font> 
+            Wind density (cm<sup>-3</sup>)</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(4th element,*) =</b></font><font face="ARIAL, HELVETICA"><b>velo:</b> Solar
@@ -256,9 +251,9 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(8th element,*) =</b></font><font face="ARIAL, HELVETICA"><b>G1:</b>&nbsp;
-            G1=&lt; Vsw*(Bperp/40)^2/(1+Bperp/40)*sin^3(theta/2) &gt; where the &lt;&gt; mean
-            an average over the previous 1 hour, Vsw is the solar wind speed, Bperp is the transverse
-            IMF component (GSM) and theta it's clock angle.</font> 
+            G1=&lt; Vsw*(Bperp/40)<sup>2</sup>/(1+Bperp/40)*sin<sup>3</sup>(theta/2) &gt; where
+            the &lt;&gt; mean an average over the previous 1 hour, Vsw is the solar wind speed,
+            Bperp is the transverse IMF component (GSM) and theta it's clock angle.</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(9th element,*) =</b></font><font face="ARIAL, HELVETICA"><b>G2:</b> G2=&lt;
@@ -324,28 +319,38 @@
     </p>
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA"><b>Lm:</b> L McIlwain (array(100000) of double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>Lstar:</b> L Roederer (array(100000) of double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>Blocal:</b> magnitude of magnetic field at s/c (array(100000)
-    of double) - nT</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>Bmin:</b> magnitude of magnetic field at equator
-    (array(100000) of double) - nT</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>XJ:</b> I, related to second adiabatic invariant
-    (array(100000) of double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>MLT:</b> magnetic local time in hours, (array(100000)
-    of double) - hour</font> 
-    <br />
-    <br />
-    <br />
-    Below is provided an chart explaining the logic for the coding of Lm and Lstar from
-    the routine:<br />
-    <br />
-    &nbsp;<img style="WIDTH: 500px; HEIGHT: 375px" alt="" src="Lstar.jpg" /> 
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Lm:</b> L McIlwain (array(100000) of double)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><b>Lstar or &#934; :</b> L Roederer&nbsp; or &#934;=Bo*Re<sup>2</sup>/Lstar
+        [nT Re<sup>2</sup>] (array(100000) of double)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><b>Blocal:</b> magnitude of magnetic field at s/c (array(100000)
+        of double) - [nT]</font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><b>Bmin:</b> magnitude of magnetic field at equator
+        (array(100000) of double) - [nT]</font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><b>XJ:</b> I, related to second adiabatic invariant
+        (array(100000) of double)</font> - [Re]<br />
+        <font face="ARIAL, HELVETICA"><b>MLT:</b> magnetic local time in hours, (array(100000)
+        of double) - [hour]</font> 
+        <br />
+        <br />
+        <u>Comments on adiabatic invariants:</u> 
+        <br />
+        J<sub>2</sub>=2*p*I/(2*&#960;) where p is the particle momemtum - [kg m<sup>2</sup> s<sup>-2</sup> Re] 
+        <br />
+        J<sub>3</sub>=q/(2*&#960;) *&#934; - <font face="Arial">[C nT Re<sup>2</sup>] </font>
+    </p>
+    <p>
+        <br />
+        <u>Below is provided an chart explaining the logic for the coding of Lm and Lstar
+        from the routine:</u> 
+        <br />
+        <br />
+        &nbsp;<img style="WIDTH: 500px; HEIGHT: 375px" alt="" src="Lstar.jpg" /> 
+    </p>
     <h3>
         <br />
     </h3>
@@ -372,12 +377,8 @@
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA">This function allows one to compute the magnetic coordinates
-    at any s/c position and pitch-angle, i.e. L, L*, Blocal, Bequator ...</font> 
-    <br />
-    <font face="ARIAL, HELVETICA">The internal magnetic field model is set to IGRF where
-    parameters are can be computed for the month of June of the year or at any user defined
-    frequency. </font><font face="ARIAL, HELVETICA">The external magnetic field model
-    can be selected&nbsp; (see inputs).</font> 
+    at any s/c position and pitch-angle, i.e. L, L*, Blocal, Bequator.&nbsp;A set of internal/external
+    field&nbsp;can be selected</font><font face="ARIAL, HELVETICA">.</font> 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA"><b>ntime:</b> long integer number of time in arrays
@@ -463,8 +464,6 @@
     <p>
     </p>
     <ol>
-    </ol>
-    <ol>
         <li>
             <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">when the magnetic field
             model inputs are outside the allowed range bad data values are returned.</span></font> 
@@ -485,7 +484,7 @@
         <ol>
             <li>
                 <span style="FONT-WEIGHT: bold">options(1st element):</span>&nbsp; 0 - don't compute
-                L*;&nbsp; 1 - compute L* 
+                L* or &#934; ;&nbsp; 1 - compute L*; 2- compute &#934;&nbsp; 
                 <br />
             </li>
             <li>
@@ -508,7 +507,7 @@
                 be the computing time. It is recommended to use 0 (usually sufficient) unless L* is
                 not computed on a LEO orbit. For LEO orbit higher values are recommended. Note that
                 this parameter defines the integration step (&#966;) along the drift shell such as
-                d&#966;=(2&#960;)/(25*[options(4th element)+1])<br />
+                d&#966;=(2&#960;)/(25×[options(4th element)+1])<br />
             </li>
             <li>
                 <span style="FONT-WEIGHT: bold">options(5th element):</span> allows to select an internal
@@ -537,8 +536,8 @@
         system is provided in</font> 
         <br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, longi
-        - km,deg.,deg)</font> 
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
         <br />
         <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
         <br />
@@ -553,9 +552,9 @@
         <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
         <br />
         <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
-        longi - Re, deg., deg.)<br />
-        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, longi -
-        Re, deg., deg. - prefered than 7)</font> 
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered than 7)</font> 
         <br />
         <p>
         </p>
@@ -611,7 +610,7 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(3rd element,*) =</b></font><font face="ARIAL, HELVETICA"><b>dens:</b> Solar
-            Wind density (cm-3)</font> 
+            Wind density (cm<sup>-3</sup>)</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(4th element,*) =</b></font><font face="ARIAL, HELVETICA"><b>velo:</b> Solar
@@ -631,9 +630,9 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(8th element,*) =</b></font><font face="ARIAL, HELVETICA"><b>G1:</b>&nbsp;
-            G1=&lt; Vsw*(Bperp/40)^2/(1+Bperp/40)*sin^3(theta/2) &gt; where the &lt;&gt; mean
-            an average over the previous 1 hour, Vsw is the solar wind speed, Bperp is the transverse
-            IMF component (GSM) and theta it's clock angle.</font> 
+            G1=&lt; Vsw*(Bperp/40)<sup>2</sup>/(1+Bperp/40)*sin<sup>3</sup>(theta/2) &gt; where
+            the &lt;&gt; mean an average over the previous 1 hour, Vsw is the solar wind speed,
+            Bperp is the transverse IMF component (GSM) and theta it's clock angle.</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(9th element,*) =</b></font><font face="ARIAL, HELVETICA"><b>G2:</b> G2=&lt;
@@ -701,37 +700,50 @@
     </p>
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA"><b>Lm:</b> L McIlwain (array(100000</font><font face="ARIAL, HELVETICA">,25</font><font face="ARIAL, HELVETICA">)
-    of double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>Lstar:</b> L Roederer (array(100000,25) of double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>Blocal:</b> magnitude of magnetic field at mirror
-    point (array(100000,25) of double) - nT</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>Bmin:</b> magnitude of magnetic field at equator
-    (array(100000) of double) - nT</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>XJ:</b> I, related to second adiabatic invariant
-    (array(100000,25) of double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>MLT:</b> magnetic local time in hours, (array(100000)
-    of double) - hour</font> 
-    <br />
-    &nbsp; 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>IMPORTANT:</b> When using a non dipole field Lm is
-    pitch-angle dependent because of the McIlwain L definition which has some limitation
-    but this dependency has nothing to do with shell-splitting!<br />
-    <br />
-    <br />
-    </font>Below is provided an chart explaining the logic for the coding of Lm and Lstar
-    from the routine:<br />
-    <br />
-    &nbsp;<img style="WIDTH: 500px; HEIGHT: 375px" alt="" src="Lstar.jpg" /> 
-    <br />
-    <br />
-    <br />
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Lm:</b> L McIlwain (array(100000</font><font face="ARIAL, HELVETICA">,25</font><font face="ARIAL, HELVETICA">)
+        of double)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><strong>Lstar or &#934; :</strong> L Roederer&nbsp;
+        or &#934;=Bo*Re<sup>2</sup>/Lstar [nT Re<sup>2</sup>] (array(100000,25) of double)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><b>Blocal:</b> magnitude of magnetic field at mirror
+        point (array(100000,25) of double) - nT</font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><b>Bmin:</b> magnitude of magnetic field at equator
+        (array(100000) of double) - nT</font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><b>XJ:</b> I, related to second adiabatic invariant
+        (array(100000,25) of double)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><b>MLT:</b> magnetic local time in hours, (array(100000)
+        of double) - hour</font> 
+        <br />
+        &nbsp; 
+        <br />
+        <font face="ARIAL, HELVETICA"><b>IMPORTANT:</b> When using a non dipole field Lm is
+        pitch-angle dependent because of the McIlwain L definition which has some limitation
+        but this dependency has nothing to do with shell-splitting!<br />
+        </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><font face="Times New Roman"><u>Comments on adiabatic
+        invariants:</u> 
+        <br />
+        J<sub>2</sub>=2*p*I/(2*&#960;) where p is the particle momemtum - [kg m<sup>2</sup> s<sup>-2</sup> Re] 
+        <br />
+        J<sub>3</sub>=q/(2*&#960;) *&#934; - <font face="Arial">[C nT Re<sup>2</sup>] </font></font>
+        <br />
+        <br />
+        </font><u>Below is provided an chart explaining the logic for the coding of Lm and
+        Lstar from the routine:<br />
+        </u>
+        <br />
+        &nbsp;<img style="WIDTH: 500px; HEIGHT: 375px" alt="" src="Lstar.jpg" /> 
+        <br />
+        <br />
+        <br />
+    </p>
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA">[Lm,Lstar,Blocal,Bmin,J,MLT] = onera_desp_lib_make_lstar_shell_splitting(kext,options,sysaxes,matlabd,x1,x2,x3,alpha,maginput) </font>
@@ -757,12 +769,8 @@
     </h3>
     <font face="ARIAL, HELVETICA">This function traces a full drift shell for particles
     that have their mirror point at the input location.&nbsp; The output is a full array
-    of positions of the drift shell, usefull for plotting and visualisation.</font> 
-    <br />
-    <font face="ARIAL, HELVETICA">The internal magnetic field model is set to IGRF where
-    the expansion parameters can be computed for the month of June of the year or at any
-    user defined frequency. </font><font face="ARIAL, HELVETICA">The external magnetic
-    field model can be changed (see inputs).</font> 
+    of positions of the drift shell, usefull for plotting and visualisation.</font>&nbsp;<font face="Arial">A
+    set of internal/external field can be selected</font><font face="ARIAL, HELVETICA">.</font> 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
     </h3>
     <p>
@@ -915,8 +923,8 @@
         system is provided in</font> 
         <br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, longi
-        - km,deg.,deg)</font> 
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
         <br />
         <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
         <br />
@@ -931,9 +939,9 @@
         <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
         <br />
         <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
-        longi - Re, deg., deg.)<br />
-        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, longi -
-        Re, deg., deg. - prefered than 7)</font> 
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered than 7)</font> 
         <br />
     </div>
     <p>
@@ -980,7 +988,7 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(3rd element) =</b></font><font face="ARIAL, HELVETICA"><b>dens:</b> Solar
-            Wind density (cm-3)</font> 
+            Wind density (cm<sup>-3</sup>)</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(4th element) =</b></font><font face="ARIAL, HELVETICA"><b>velo:</b> Solar
@@ -1000,9 +1008,9 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(8th element) =</b></font><font face="ARIAL, HELVETICA"><b>G1:</b>&nbsp;
-            G1=&lt; Vsw*(Bperp/40)^2/(1+Bperp/40)*sin^3(theta/2) &gt; where the &lt;&gt; mean
-            an average over the previous 1 hour, Vsw is the solar wind speed, Bperp is the transverse
-            IMF component (GSM) and theta it's clock angle.</font> 
+            G1=&lt; Vsw*(Bperp/40)<sup>2</sup>/(1+Bperp/40)*sin<sup>3</sup>(theta/2) &gt; where
+            the &lt;&gt; mean an average over the previous 1 hour, Vsw is the solar wind speed,
+            Bperp is the transverse IMF component (GSM) and theta it's clock angle.</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(9th element) =</b></font><font face="ARIAL, HELVETICA"><b>G2:</b> G2=&lt;
@@ -1019,43 +1027,43 @@
             IMF Bz &lt; 0 and Bs=0 when IMF Bz &gt; 0.</font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(11th element,*) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(11th element) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(12th element,*) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(12th element) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(13th element,*) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(13th element) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(14th element,*) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(14th element) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(15th element,*) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(15th element) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(16th element,*) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(16th element) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(17th element,*) =AL </b>the auroral index<b> 
+            <font face="ARIAL, HELVETICA"><b>maginput(17th element) =AL </b>the auroral index<b> 
             <br />
             </b></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(18th element,*) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
-            element,*): </b>for future use</font> 
+            <font face="ARIAL, HELVETICA"><b>maginput(18th element) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
+            element): </b>for future use</font> 
         </li>
     </ol>
     <br />
@@ -1128,12 +1136,8 @@
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA">This function finds the magnitude and location of the
-    mirror point along a field line traced from any given location and local pitch-angle.</font> 
-    <br />
-    <font face="ARIAL, HELVETICA">The internal magnetic field model is set to IGRF where
-    parameters are can be computed for the month of june of the year or at any user defined
-    frequency.&nbsp; </font><font face="ARIAL, HELVETICA">The external magnetic field
-    model can be changed (see inputs).</font> 
+    mirror point along a field line traced from any given location and local pitch-angle
+    for a set of internal/external field to be selected.</font>&nbsp;<br />
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
     </h3>
     <p>
@@ -1275,8 +1279,8 @@
         system is provided in</font> 
         <br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, longi
-        - km,deg.,deg)</font> 
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
         <br />
         <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
         <br />
@@ -1291,9 +1295,9 @@
         <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
         <br />
         <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
-        longi - Re, deg., deg.)<br />
-        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, longi -
-        Re, deg., deg. - prefered than 7)</font> 
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered than 7)</font> 
         <br />
     </div>
     <p>
@@ -1344,7 +1348,7 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(3rd element) =</b></font><font face="ARIAL, HELVETICA"><b>dens:</b> Solar
-            Wind density (cm-3)</font> 
+            Wind density (cm<sup>-3</sup>)</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(4th element) =</b></font><font face="ARIAL, HELVETICA"><b>velo:</b> Solar
@@ -1364,9 +1368,9 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(8th element) =</b></font><font face="ARIAL, HELVETICA"><b>G1:</b>&nbsp;
-            G1=&lt; Vsw*(Bperp/40)^2/(1+Bperp/40)*sin^3(theta/2) &gt; where the &lt;&gt; mean
-            an average over the previous 1 hour, Vsw is the solar wind speed, Bperp is the transverse
-            IMF component (GSM) and theta it's clock angle.</font> 
+            G1=&lt; Vsw*(Bperp/40)<sup>2</sup>/(1+Bperp/40)*sin<sup>3</sup>(theta/2) &gt; where
+            the &lt;&gt; mean an average over the previous 1 hour, Vsw is the solar wind speed,
+            Bperp is the transverse IMF component (GSM) and theta it's clock angle.</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(9th element) =</b></font><font face="ARIAL, HELVETICA"><b>G2:</b> G2=&lt;
@@ -1383,43 +1387,43 @@
             IMF Bz &lt; 0 and Bs=0 when IMF Bz &gt; 0.</font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(11th element,*) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(11th element) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(12th element,*) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(12th element) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(13th element,*) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(13th element) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(14th element,*) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(14th element) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(15th element,*) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(15th element) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(16th element,*) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(16th element) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(17th element,*) =AL </b>the auroral index<b> 
+            <font face="ARIAL, HELVETICA"><b>maginput(17th element) =AL </b>the auroral index<b> 
             <br />
             </b></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(18th element,*) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
-            element,*): </b>for future use</font> 
+            <font face="ARIAL, HELVETICA"><b>maginput(18th element) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
+            element): </b>for future use</font> 
         </li>
     </ol>
     <p>
@@ -1467,12 +1471,8 @@
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA">This function finds the GEO coordinates of the magnetic
-    equator along the field line starting from input location.</font> 
-    <br />
-    <font face="ARIAL, HELVETICA">The internal magnetic field model is set to IGRF where
-    parameters are can be computed for the month of june of the year or at any user defined
-    frequency.&nbsp; </font><font face="ARIAL, HELVETICA">The external magnetic field
-    model can be changed (see inputs).</font> 
+    equator along the field line starting from input location for a set of internal/external
+    field to be selected.</font>&nbsp;<br />
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
     </h3>
     <p>
@@ -1615,8 +1615,8 @@
         system is provided in</font> 
         <br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, longi
-        - km,deg.,deg)</font> 
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
         <br />
         <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
         <br />
@@ -1631,9 +1631,9 @@
         <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
         <br />
         <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
-        longi - Re, deg., deg.)<br />
-        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, longi -
-        Re, deg., deg. - prefered than 7)</font> 
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered than 7)</font> 
         <br />
     </div>
     <p>
@@ -1678,7 +1678,7 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(3rd element) =</b></font><font face="ARIAL, HELVETICA"><b>dens:</b> Solar
-            Wind density (cm-3)</font> 
+            Wind density (cm<sup>-3</sup>)</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(4th element) =</b></font><font face="ARIAL, HELVETICA"><b>velo:</b> Solar
@@ -1698,9 +1698,9 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(8th element) =</b></font><font face="ARIAL, HELVETICA"><b>G1:</b>&nbsp;
-            G1=&lt; Vsw*(Bperp/40)^2/(1+Bperp/40)*sin^3(theta/2) &gt; where the &lt;&gt; mean
-            an average over the previous 1 hour, Vsw is the solar wind speed, Bperp is the transverse
-            IMF component (GSM) and theta it's clock angle.</font> 
+            G1=&lt; Vsw*(Bperp/40)<sup>2</sup>/(1+Bperp/40)*sin<sup>3</sup>(theta/2) &gt; where
+            the &lt;&gt; mean an average over the previous 1 hour, Vsw is the solar wind speed,
+            Bperp is the transverse IMF component (GSM) and theta it's clock angle.</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(9th element) =</b></font><font face="ARIAL, HELVETICA"><b>G2:</b> G2=&lt;
@@ -1717,43 +1717,43 @@
             IMF Bz &lt; 0 and Bs=0 when IMF Bz &gt; 0.</font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(11th element,*) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(11th element) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(12th element,*) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(12th element) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(13th element,*) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(13th element) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(14th element,*) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(14th element) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(15th element,*) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(15th element) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(16th element,*) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(16th element) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(17th element,*) =AL </b>the auroral index<b> 
+            <font face="ARIAL, HELVETICA"><b>maginput(17th element) =AL </b>the auroral index<b> 
             <br />
             </b></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(18th element,*) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
-            element,*): </b>for future use</font> 
+            <font face="ARIAL, HELVETICA"><b>maginput(18th element) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
+            element): </b>for future use</font> 
         </li>
     </ol>
     <p>
@@ -1797,12 +1797,721 @@
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA">This function computes the GEO vector of the magnetic
-    field at input location.</font> 
+    field at input location for a set of internal/external magnetic field to be selected.</font>&nbsp;<br />
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>kext:</b> long integer to select external magnetic
+        field</font> 
+        <br />
+    </p>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0&nbsp;&nbsp; = no external
+        field</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">1&nbsp;&nbsp; = Mead &amp; Fairfield [1975] (uses 0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA"> -
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">17.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">2&nbsp;&nbsp; = Tsyganenko short [1987] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9 </font><font face="ARIAL, HELVETICA">-
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">30.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">3&nbsp;&nbsp; = Tsyganenko long [1987] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">-
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">70.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">4&nbsp;&nbsp; = Tsyganenko [1989c] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">-
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">70.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">5&nbsp;&nbsp; = Olson &amp; Pfitzer quiet [1977] (default
+        - Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">15.
+        Re)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">6&nbsp;&nbsp; = Olson &amp; Pfitzer dynamic [1988] (uses
+        5.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">dens</font><font face="ARIAL, HELVETICA">&#8804;50.</font><font face="ARIAL, HELVETICA">,
+        300.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">velo</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">500., </font><font face="ARIAL, HELVETICA">-100.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA">&#8804;20.</font><font face="ARIAL, HELVETICA"> -
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">60.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">7&nbsp;&nbsp; = Tsyganenko [1996] (uses -100.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA"> (nT)&#8804;20.</font><font face="ARIAL, HELVETICA">, </font><font face="ARIAL, HELVETICA">0.5&#8804;</font><font face="ARIAL, HELVETICA">Pdyn</font><font face="ARIAL, HELVETICA"> (nPa)&#8804;</font><font face="ARIAL, HELVETICA">10.,
+        |ByIMF| (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">10.</font><font face="ARIAL, HELVETICA">,
+        |BzIMF|</font><font face="ARIAL, HELVETICA"> (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">10.</font><font face="ARIAL, HELVETICA"> -
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">40.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">8&nbsp;&nbsp; = Ostapenko &amp; Maltsev [1997] (uses
+        dst,Pdyn,BzIMF, Kp)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">9&nbsp;&nbsp; = Tsyganenko [2001] (uses </font><font face="ARIAL, HELVETICA">-50.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA"> (nT)&#8804;20.</font><font face="ARIAL, HELVETICA">,</font><font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">0.5&#8804;</font><font face="ARIAL, HELVETICA">Pdyn</font><font face="ARIAL, HELVETICA"> (nPa)&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">, </font><font face="ARIAL, HELVETICA">|ByIMF|
+        (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">,
+        |BzIMF|</font><font face="ARIAL, HELVETICA"> (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">,
+        0.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">G1</font><font face="ARIAL, HELVETICA">&#8804;</font>10.<font face="ARIAL, HELVETICA">,
+        0.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">G2</font><font face="ARIAL, HELVETICA">&#8804;</font>10.<font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">-
+        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">10 =Tsyganenko [2001] storm&nbsp; (uses Dst, Pdyn, ByIMF,
+        BzIMF, G2, G3 - there is no upper or lower limit for those inputs </font><font face="ARIAL, HELVETICA">-
+        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
+        Re</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font><font face="ARIAL, HELVETICA">11
+        =Tsyganenko [2004] storm&nbsp; (uses Dst, Pdyn, ByIMF, BzIMF, W1, W2, W3, W4, W5,
+        W6 - there is no upper or lower limit for those inputs </font><font face="ARIAL, HELVETICA">-
+        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
+        Re</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font><font face="ARIAL, HELVETICA">12
+        =Alexeev [2000] - also known as Paraboloid model - Submitted to ISO&nbsp; (uses Dens,
+        velo, Dst, BzIMF, AL</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
+        <br />
+        <br />
+        <br />
+        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">Notes: </span></font>
+        <br />
+    </div>
+    <p>
+    </p>
+    <ol>
+    </ol>
+    <ol>
+        <li>
+            <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">when the magnetic field
+            model inputs are outside the allowed range bad data values are returned.</span></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">When solar wind inputs
+            are required they must be taken in the vicinity of the day side magnetopause and not
+            at L1.<br />
+            </span></font>
+        </li>
+    </ol>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>
+        <br />
+        options: </b>array(5) of long integer to set some control options on computed values<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px; FONT-FAMILY: helvetica,arial,sans-serif">
+        <ol>
+            <li>
+                <span style="FONT-WEIGHT: bold">options(1st element):</span>&nbsp; not used<br />
+            </li>
+            <li>
+                <span style="FONT-WEIGHT: bold">options(2nd element): </span>parameter to initialize
+                IGRF field in June of the year (year.5) if set to 0 or at the day of year corresponding
+                to the closest lower or equal day of year for a frequency of update equal to this
+                parameter (in days) starting on January 1st of each years (i.e. if options(2nd element)=15
+                then IGRF will be initialize to theclosest lower or equal day of year between those:1,
+                15, 30, 45 ...) 
+                <br />
+            </li>
+            <li>
+                <span style="FONT-WEIGHT: bold">options(3rd element): </span>for future use 
+            </li>
+            <li>
+                <span style="FONT-WEIGHT: bold">options(4th element): </span>for future use 
+            </li>
+            <li>
+                <span style="FONT-WEIGHT: bold">options(5th element):</span> allows to select an internal
+                magnetic field model (default is set to IGRF) 
+                <div style="MARGIN-LEFT: 80px">
+                    <ul>
+                        <li>
+                            0 = IGRF 
+                        </li>
+                        <li>
+                            1 = Eccentric tilted dipole 
+                        </li>
+                        <li>
+                            2 = Jensen&amp;Cain 1960 
+                        </li>
+                        <li>
+                            3 = GSFC 12/66 updated to 1970<br />
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ol>
+    </div>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>sysaxes:</b> long integer to define which coordinate
+        system is provided in</font> 
+        <br />
+    </p>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">2: GSM (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">3: GSE (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">4: SM (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">5: GEI (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered than 7)</font> 
+        <br />
+    </div>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>iyear:</b> long integer year when measurement is
+        given</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>idoy:</b> long integer doy when measurement is given</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>UT:</b> double, UT in seconds</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>x1:</b> double, first coordinate according to sysaxes.
+        If sysaxes is 0 then altitude has to be in km otherwise use dimentionless variables
+        (in Re)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>x2:</b> double, second coordinate according to sysaxes.
+        If sysaxes is 0 then latitude has to be in degre otherwise use dimentionless variables
+        (in Re)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>x3:</b> double, third coordinate according to sysaxes.
+        If sysaxes is 0 then longitude has to be in degre otherwise use dimentionless variables
+        (in Re).</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>maginput: </b>array (25) of double to specify magnetic
+        fields inputs such as:<b> 
+        <br />
+        </b></font>
+    </p>
+    <ol>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(1st element) =</b></font><font face="ARIAL, HELVETICA"><b>Kp:</b> value
+            of Kp as in OMNI2 files but has to be double instead of integer type</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(2nd element) =</b></font><font face="ARIAL, HELVETICA"><b>Dst:</b> Dst
+            index (nT)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(3rd element) =</b></font><font face="ARIAL, HELVETICA"><b>dens:</b> Solar
+            Wind density (cm<sup>-3</sup>)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(4th element) =</b></font><font face="ARIAL, HELVETICA"><b>velo:</b> Solar
+            Wind velocity (km/s)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(5th element) =</b></font><font face="ARIAL, HELVETICA"><b>Pdyn:</b> Solar
+            Wind dynamic pressure (nPa)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(6th element) =</b></font><font face="ARIAL, HELVETICA"><b>ByIMF:</b> GSM
+            y component of IMF mag. field (nT)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(7th element) =</b></font><font face="ARIAL, HELVETICA"><b>BzIMF:</b> GSM
+            z component of IMF mag. field (nT)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(8th element) =</b></font><font face="ARIAL, HELVETICA"><b>G1:</b>&nbsp;
+            G1=&lt; Vsw*(Bperp/40)<sup>2</sup>/(1+Bperp/40)*sin<sup>3</sup>(theta/2) &gt; where
+            the &lt;&gt; mean an average over the previous 1 hour, Vsw is the solar wind speed,
+            Bperp is the transverse IMF component (GSM) and theta it's clock angle.</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(9th element) =</b></font><font face="ARIAL, HELVETICA"><b>G2:</b> G2=&lt;
+            a*Vsw*Bs &gt; </font><font face="ARIAL, HELVETICA">where the &lt;&gt; mean an average
+            over the previous 1 hour, Vsw is the solar wind speed, Bs=|IMF Bz| when IMF Bz &lt;
+            0 and Bs=0 when IMF Bz &gt; 0, a=0.005.</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(10th element) =</b></font><font face="ARIAL, HELVETICA"><b>G3:</b>&nbsp;
+            G3=&lt; Vsw*Dsw*Bs /2000.&gt;</font> 
+            <br />
+            <font face="ARIAL, HELVETICA">where the &lt;&gt; mean an average over the previous
+            1 hour, Vsw is the solar wind speed, Dsw is the solar wind density, Bs=|IMF Bz| when
+            IMF Bz &lt; 0 and Bs=0 when IMF Bz &gt; 0.</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(11th element) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(12th element) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(13th element) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(14th element) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(15th element) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(16th element) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(17th element) =AL </b>the auroral index<b> 
+            <br />
+            </b></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(18th element) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
+            element): </b>for future use</font> 
+        </li>
+    </ol>
+    <p>
+                <br />
+                <font face="ARIAL, HELVETICA"><b>IMPORTANT:</b> all inputs must be present. For those
+                which are not used a dummy value can be provided.</font> 
+
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA"><b>Bgeo:</b> BxGEO,ByGEO and BzGEO of the magnetic field
+    (nT), (array(3) of double)</font> 
     <br />
-    <font face="ARIAL, HELVETICA">The internal magnetic field model is set to IGRF where
-    parameters are can be computed for the month of june of the year or at any user defined
-    frequency. </font><font face="ARIAL, HELVETICA">The external magnetic field model
-    can be changed (see inputs)</font>.<br />
+    <font face="ARIAL, HELVETICA"><b>Bl:</b> magnitude of magnetic field (double) (nT)</font> 
+    <br />
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">[Bgeo,B] = onera_desp_lib_get_field(kext,options,sysaxes,matlabd,x1,x2,x3,maginput)</font> 
+    <br />
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'get_field_', kext,options,sysaxes,iyear,idoy,ut,
+    x1,x2,x3, maginput,Bgeo, Bl,&nbsp; /f_value)</font> 
+    <br />
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">call GET_FIELD1(kext,options,sysaxes,iyear,idoy,ut,
+    x1,x2,x3, maginput,Bgeo,Bl)</font> 
+    <p>
+        <br />
+        <font face="ARIAL, HELVETICA">------------------------------------------------------------</font><a name="TRACE_FIELD_LINE"></a> 
+    </p>
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">TRACE_FIELD_LINE</font></font> 
+    </h2>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">This function traces a full field line which crosses
+    the input position.&nbsp; The output is a full array of positions of the field line,
+    usefull for plotting and visualisation for a set of internal/external fields to be
+    selected.</font>&nbsp;<br />
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>kext:</b> long integer to select external magnetic
+        field</font> 
+        <br />
+    </p>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0&nbsp;&nbsp; = no external
+        field</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">1&nbsp;&nbsp; = Mead &amp; Fairfield [1975] (uses 0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA"> -
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">17.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">2&nbsp;&nbsp; = Tsyganenko short [1987] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9 </font><font face="ARIAL, HELVETICA">-
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">30.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">3&nbsp;&nbsp; = Tsyganenko long [1987] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">-
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">70.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">4&nbsp;&nbsp; = Tsyganenko [1989c] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">-
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">70.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">5&nbsp;&nbsp; = Olson &amp; Pfitzer quiet [1977] (default
+        - Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">15.
+        Re)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">6&nbsp;&nbsp; = Olson &amp; Pfitzer dynamic [1988] (uses
+        5.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">dens</font><font face="ARIAL, HELVETICA">&#8804;50.</font><font face="ARIAL, HELVETICA">,
+        300.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">velo</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">500., </font><font face="ARIAL, HELVETICA">-100.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA">&#8804;20.</font><font face="ARIAL, HELVETICA"> -
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">60.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">7&nbsp;&nbsp; = Tsyganenko [1996] (uses -100.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA"> (nT)&#8804;20.</font><font face="ARIAL, HELVETICA">, </font><font face="ARIAL, HELVETICA">0.5&#8804;</font><font face="ARIAL, HELVETICA">Pdyn</font><font face="ARIAL, HELVETICA"> (nPa)&#8804;</font><font face="ARIAL, HELVETICA">10.,
+        |ByIMF| (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">10.</font><font face="ARIAL, HELVETICA">,
+        |BzIMF|</font><font face="ARIAL, HELVETICA"> (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">10.</font><font face="ARIAL, HELVETICA"> -
+        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">40.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">8&nbsp;&nbsp; = Ostapenko &amp; Maltsev [1997] (uses
+        dst,Pdyn,BzIMF, Kp)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">9&nbsp;&nbsp; = Tsyganenko [2001] (uses </font><font face="ARIAL, HELVETICA">-50.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA"> (nT)&#8804;20.</font><font face="ARIAL, HELVETICA">,</font><font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">0.5&#8804;</font><font face="ARIAL, HELVETICA">Pdyn</font><font face="ARIAL, HELVETICA"> (nPa)&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">, </font><font face="ARIAL, HELVETICA">|ByIMF|
+        (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">,
+        |BzIMF|</font><font face="ARIAL, HELVETICA"> (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">,
+        0.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">G1</font><font face="ARIAL, HELVETICA">&#8804;</font>10.<font face="ARIAL, HELVETICA">,
+        0.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">G2</font><font face="ARIAL, HELVETICA">&#8804;</font>10.<font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">-
+        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
+        Re</font><font face="ARIAL, HELVETICA">)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">10 =Tsyganenko [2001] storm&nbsp; (uses Dst, Pdyn, ByIMF,
+        BzIMF, G2, G3 - there is no upper or lower limit for those inputs </font><font face="ARIAL, HELVETICA">-
+        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
+        Re</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font><font face="ARIAL, HELVETICA">11
+        =Tsyganenko [2004] storm&nbsp; (uses Dst, Pdyn, ByIMF, BzIMF, W1, W2, W3, W4, W5,
+        W6 - there is no upper or lower limit for those inputs </font><font face="ARIAL, HELVETICA">-
+        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
+        Re</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font><font face="ARIAL, HELVETICA">12
+        =Alexeev [2000] - also known as Paraboloid model - Submitted to ISO&nbsp; (uses Dens,
+        velo, Dst, BzIMF, AL</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
+        <br />
+        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font><font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">
+        <br />
+        </span></font>
+        <br />
+        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">Notes: </span></font>
+        <br />
+        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font>
+    </div>
+    <p>
+    </p>
+    <ol>
+    </ol>
+    <ol>
+        <li>
+            <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">when the magnetic field
+            model inputs are outside the allowed range bad data values are returned.</span></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">When solar wind inputs
+            are required they must be taken in the vicinity of the day side magnetopause and not
+            at L1.<br />
+            </span></font>
+        </li>
+    </ol>
+    <p>
+        <br />
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>options: </b>array(5) of long integer to set some
+        control options on computed values<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px; FONT-FAMILY: helvetica,arial,sans-serif">
+        <ol>
+            <li>
+                <span style="FONT-WEIGHT: bold">options(1st element):</span>&nbsp; not used<br />
+            </li>
+            <li>
+                <span style="FONT-WEIGHT: bold">options(2nd element): </span>0 - initialize IGRF field
+                once per year (year.5);&nbsp; n - n is the&nbsp; frequency (in days) starting on January
+                1st of each year (i.e. if options(2nd element)=15 then IGRF will be updated on the
+                following days of the year: 1, 15, 30, 45 ...)<br />
+            </li>
+            <li>
+                <span style="FONT-WEIGHT: bold">options(3rd element): </span>not used 
+                <br />
+            </li>
+            <li>
+                <span style="FONT-WEIGHT: bold">options(4th element): </span>for future use 
+            </li>
+            <li>
+                <span style="FONT-WEIGHT: bold">options(5th element):</span> allows to select an internal
+                magnetic field model (default is set to IGRF) 
+                <div style="MARGIN-LEFT: 80px">
+                    <ul>
+                        <li>
+                            0 = IGRF 
+                        </li>
+                        <li>
+                            1 = Eccentric tilted dipole 
+                        </li>
+                        <li>
+                            2 = Jensen&amp;Cain 1960 
+                        </li>
+                        <li>
+                            3 = GSFC 12/66 updated to 1970<br />
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ol>
+    </div>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>sysaxes:</b> long integer to define which coordinate
+        system is provided in</font> 
+        <br />
+    </p>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">2: GSM (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">3: GSE (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">4: SM (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">5: GEI (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
+        <br />
+        <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered than 7)</font> 
+        <br />
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>iyear:</b> long integer year when position is given</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>idoy:</b> long integer doy when position is given</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>UT:</b> double, UT in seconds</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>x1:</b> double, first coordinate according to sysaxes.
+        If sysaxes is 0 then altitude has to be in km otherwise use dimentionless variables
+        (in Re)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>x2:</b> double, second coordinate according to sysaxes.
+        If sysaxes is 0 then latitude has to be in degre otherwise use dimentionless variables
+        (in Re)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>x3:</b> double, third coordinate according to sysaxes.
+        If sysaxes is 0 then longitude has to be in degre otherwise use dimentionless variables
+        (in Re).</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>maginput: </b>array (25) of double to specify magnetic
+        fields inputs such as:<b> 
+        <br />
+        </b></font>
+    </p>
+    <ol>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(1st element) =</b></font><font face="ARIAL, HELVETICA"><b>Kp:</b> value
+            of Kp as in OMNI2 files but has to be double instead of integer type</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(2nd element) =</b></font><font face="ARIAL, HELVETICA"><b>Dst:</b> Dst
+            index (nT)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(3rd element) =</b></font><font face="ARIAL, HELVETICA"><b>dens:</b> Solar
+            Wind density (cm<sup>-3</sup>)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(4th element) =</b></font><font face="ARIAL, HELVETICA"><b>velo:</b> Solar
+            Wind velocity (km/s)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(5th element) =</b></font><font face="ARIAL, HELVETICA"><b>Pdyn:</b> Solar
+            Wind dynamic pressure (nPa)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(6th element) =</b></font><font face="ARIAL, HELVETICA"><b>ByIMF:</b> GSM
+            y component of IMF mag. field (nT)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(7th element) =</b></font><font face="ARIAL, HELVETICA"><b>BzIMF:</b> GSM
+            z component of IMF mag. field (nT)</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(8th element) =</b></font><font face="ARIAL, HELVETICA"><b>G1:</b>&nbsp;
+            G1=&lt; Vsw*(Bperp/40)<sup>2</sup>/(1+Bperp/40)*sin<sup>3</sup>(theta/2) &gt; where
+            the &lt;&gt; mean an average over the previous 1 hour, Vsw is the solar wind speed,
+            Bperp is the transverse IMF component (GSM) and theta it's clock angle.</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(9th element) =</b></font><font face="ARIAL, HELVETICA"><b>G2:</b> G2=&lt;
+            a*Vsw*Bs &gt; </font><font face="ARIAL, HELVETICA">where the &lt;&gt; mean an average
+            over the previous 1 hour, Vsw is the solar wind speed, Bs=|IMF Bz| when IMF Bz &lt;
+            0 and Bs=0 when IMF Bz &gt; 0, a=0.005.</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(10th element) =</b></font><font face="ARIAL, HELVETICA"><b>G3:</b>&nbsp;
+            G3=&lt; Vsw*Dsw*Bs /2000.&gt;</font> 
+            <br />
+            <font face="ARIAL, HELVETICA">where the &lt;&gt; mean an average over the previous
+            1 hour, Vsw is the solar wind speed, Dsw is the solar wind density, Bs=|IMF Bz| when
+            IMF Bz &lt; 0 and Bs=0 when IMF Bz &gt; 0.</font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(11th element) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(12th element) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(13th element) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(14th element) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(15th element) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(16th element) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
+            1.2MB)</a></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(17th element) =AL </b>the auroral index<b> 
+            <br />
+            </b></font> 
+        </li>
+        <li>
+            <font face="ARIAL, HELVETICA"><b>maginput(18th element) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
+            element): </b>for future use</font> 
+        </li>
+    </ol>
+    <br />
+    <font face="ARIAL, HELVETICA"><b>IMPORTANT:</b> all inputs must be present. For those
+    which are not used a dummy value can be provided.</font> 
+    <br />
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA"><b>Lm:</b> L McIlwain (double)</font> 
+    <br />
+    <font face="ARIAL, HELVETICA"><b>Blocal:</b> magnitude of magnetic field at each field
+    line point - see posit (array(1000) of double)</font> 
+    <br />
+    <font face="ARIAL, HELVETICA"><b>Bmin:</b> magnitude of magnetic field at equator
+    (double)</font> 
+    <br />
+    <font face="ARIAL, HELVETICA"><b>XJ:</b> I, related to second adiabatic invariant
+    (double)</font> 
+    <br />
+    <font face="ARIAL, HELVETICA"><b>POSIT:</b> xGEO,yGEO and zGEO along the field line,
+    (array(3,1000) of double) 
+    <br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    1st element: x, y, z GEO coord, 2nd element: points along field line. 
+    <br /></font>
+    <font face="ARIAL, HELVETICA"><b>Nposit:</b> long integer&nbsp; providing the number
+    of points along the field line traced in 2nd element of POSIT array (max 1000).</font> <font face="ARIAL, HELVETICA"><b>Note:</b> Posit
+    is organized as follow: array(xyz,along bounce). Nposit tells how many of the 1000
+    points available are used to described one bounce.</font> 
+    <br />
+    <br />
+    &nbsp; 
+    <p>
+        <br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">[Lm,Blocal,Bmin,J,POSIT] = onera_desp_lib_trace_field_line(kext,options,sysaxes,matlabd,x1,x2,x3,maginput)</font> 
+    <br />
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM IDL:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'trace_field_line_',&nbsp;
+    kext,options,sysaxes,iyear,idoy,ut,&nbsp; x1,x2,x3, maginput, lm,blocal,bmin,xj,posit,Nposit,&nbsp;
+    /f_value)</font> 
+    <br />
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM FORTRAN:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">call trace_field_line1(kext,options,sysaxes,iyear,idoy,ut,
+    x1,x2,x3, maginput, lm,blocal,bmin,xj,posit,Nposit)</font> 
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA">---------------------------------------------------------------------------------------</font><a name="GET_MLT"></a> 
+    </p>
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">GET_MLT</font></font> 
+    </h2>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">Routine to get Magnetic Local Time (MLT) from a Cartesian
+    GEO position and date</font> 
+    <br />
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA"><b>iyr :</b> long integer year</font> 
+    <br />
+    <font face="ARIAL, HELVETICA"><b>idoy :</b> long integer day of year</font> 
+    <br />
+    <font face="ARIAL, HELVETICA"><b>secs :</b> UT in seconds - double</font> 
+    <br />
+    <font face="ARIAL, HELVETICA"><b>xGEO :</b> 3D array (double) of cartesian position
+    in GEO (Re)</font> 
+    <br />
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA"><b>MLT:</b> Magnetic Local Time (hours) - double <b>
+    <br />
+    </b></font>
+    <br />
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">MLT = onera_desp_lib_get_mlt(matlabd,xGEO)</font> 
+    <br />
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'get_mlt_', iyr,idoy,secs,xGEO,MLT,
+    /f_value)</font> 
+    <br />
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">call get_mlt1(iyr,idoy,secs,xGEO,MLT)</font><br />
+    <br />
+    &nbsp; ------------------------------------------------------------<a name="GET_HEMI"></a> 
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">GET_HEMI</font></font> 
+    </h2>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">This function computes&nbsp;in which magnetic hemisphere
+    is the&nbsp;input location for a set of internal/externalmagnetic field to select.</font>&nbsp;<br />
+    <br />
     &nbsp; 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
     </h3>
@@ -1949,8 +2658,8 @@
         system is provided in</font> 
         <br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, longi
-        - km,deg.,deg)</font> 
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
         <br />
         <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
         <br />
@@ -1965,9 +2674,9 @@
         <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
         <br />
         <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
-        longi - Re, deg., deg.)<br />
-        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, longi -
-        Re, deg., deg. - prefered than 7)</font> 
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered than 7)</font> 
         <br />
     </div>
     <p>
@@ -2012,7 +2721,7 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(3rd element) =</b></font><font face="ARIAL, HELVETICA"><b>dens:</b> Solar
-            Wind density (cm-3)</font> 
+            Wind density (cm<sup>-3</sup>)</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(4th element) =</b></font><font face="ARIAL, HELVETICA"><b>velo:</b> Solar
@@ -2032,9 +2741,9 @@
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(8th element) =</b></font><font face="ARIAL, HELVETICA"><b>G1:</b>&nbsp;
-            G1=&lt; Vsw*(Bperp/40)^2/(1+Bperp/40)*sin^3(theta/2) &gt; where the &lt;&gt; mean
-            an average over the previous 1 hour, Vsw is the solar wind speed, Bperp is the transverse
-            IMF component (GSM) and theta it's clock angle.</font> 
+            G1=&lt; Vsw*(Bperp/40)<sup>2</sup>/(1+Bperp/40)*sin<sup>3</sup>(theta/2) &gt; where
+            the &lt;&gt; mean an average over the previous 1 hour, Vsw is the solar wind speed,
+            Bperp is the transverse IMF component (GSM) and theta it's clock angle.</font> 
         </li>
         <li>
             <font face="ARIAL, HELVETICA"><b>maginput(9th element) =</b></font><font face="ARIAL, HELVETICA"><b>G2:</b> G2=&lt;
@@ -2051,187 +2760,95 @@
             IMF Bz &lt; 0 and Bs=0 when IMF Bz &gt; 0.</font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(11th element,*) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(11th element) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(12th element,*) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(12th element) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(13th element,*) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(13th element) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(14th element,*) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(14th element) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(15th element,*) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(15th element) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(16th element,*) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
+            <font face="ARIAL, HELVETICA"><b>maginput(16th element) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
             v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
             1.2MB)</a></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(17th element,*) =AL </b>the auroral index<b> 
+            <font face="ARIAL, HELVETICA"><b>maginput(17th element) =AL </b>the auroral index<b> 
             <br />
             </b></font> 
         </li>
         <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(18th element,*) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
-            element,*): </b>for future use</font> 
+            <font face="ARIAL, HELVETICA"><b>maginput(18th element) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
+            element): </b>for future use</font> 
         </li>
     </ol>
     <p>
-        <VSW *(bperp 40)^2 (1+bperp 40)*sin^3(theta 2="">
-            <AVSW *bs="">
                 <br />
                 <font face="ARIAL, HELVETICA"><b>IMPORTANT:</b> all inputs must be present. For those
                 which are not used a dummy value can be provided.</font> 
-            </AVSW>
-        </VSW>
     </p>
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA"><b>Bgeo:</b> BxGEO,ByGEO and BzGEO of the magnetic field
-    (nT), (array(3) of double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>Bl:</b> magnitude of magnetic field (double) (nT)</font> 
-    <br />
+    <font face="ARIAL, HELVETICA"><b>xHEMI:</b>&nbsp;+1 means Northern magnetic hemisphere,
+    -1 means Southern magnetic hemisphere, 0 means cannot be defined (magnetic field not
+    valid)&nbsp;- long</font>&nbsp;<br />
     &nbsp; 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA">[Bgeo,B] = onera_desp_lib_get_field(kext,options,sysaxes,matlabd,x1,x2,x3,maginput)</font> 
+    <font face="ARIAL, HELVETICA">[xHEMI] = onera_desp_lib_get_hemi(kext,options,sysaxes,matlabd,x1,x2,x3,maginput)</font> 
     <br />
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'get_field_', kext,options,sysaxes,iyear,idoy,ut,
-    x1,x2,x3, maginput,Bgeo, Bl,&nbsp; /f_value)</font> 
+    <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'get_hemi_', kext,options,sysaxes,iyear,idoy,ut,
+    x1,x2,x3, maginput,xHEMI,&nbsp; /f_value)</font> 
     <br />
     &nbsp; 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA">call GET_FIELD1(kext,options,sysaxes,iyear,idoy,ut,
-    x1,x2,x3, maginput,Bgeo,Bl)</font> 
+    <font face="ARIAL, HELVETICA">call GET_HEMI1(kext,options,sysaxes,iyear,idoy,ut, x1,x2,x3,
+    maginput,xHEMI)</font> 
     <p>
         <br />
-        <font face="ARIAL, HELVETICA">------------------------------------------------------------</font><a name="TRACE_FIELD_LINE"></a> 
     </p>
-    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">TRACE_FIELD_LINE</font></font> 
+    <br />
+    <font face="Arial">------------------------------------------------------------</font><a name="LSTAR_PHI"></a> 
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">LSTAR_PHI</font></font> 
     </h2>
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA">This function traces a full field line which crosses
-    the input position.&nbsp; The output is a full array of positions of the field line,
-    usefull for plotting and visualisation.</font> 
-    <br />
-    <font face="ARIAL, HELVETICA">The internal magnetic field model is set to IGRF where
-    the expansion parameters can be computed for the month of June of the year or at any
-    user defined frequency. </font><font face="ARIAL, HELVETICA">The external magnetic
-    field model can be changed (see inputs).</font> 
+    <font face="ARIAL, HELVETICA">This function allows one to convert L* to &#934; or
+    vice versa</font><font face="ARIAL, HELVETICA">.</font> 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
     </h3>
+    <font face="ARIAL, HELVETICA"><b>ntime:</b> long integer number of time in arrays
+    (max allowed is 100000)</font> 
     <p>
-        <font face="ARIAL, HELVETICA"><b>kext:</b> long integer to select external magnetic
-        field</font> 
-        <br />
+        <font face="ARIAL, HELVETICA"><b>whichinv:</b> long integer to select&nbsp;which conversion
+        to perform</font>&nbsp;<br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0&nbsp;&nbsp; = no external
-        field</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">1&nbsp;&nbsp; = Mead &amp; Fairfield [1975] (uses 0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA"> -
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">17.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">2&nbsp;&nbsp; = Tsyganenko short [1987] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9 </font><font face="ARIAL, HELVETICA">-
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">30.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">3&nbsp;&nbsp; = Tsyganenko long [1987] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">-
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">70.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">4&nbsp;&nbsp; = Tsyganenko [1989c] (uses </font><font face="ARIAL, HELVETICA">0&#8804;Kp</font><font face="ARIAL, HELVETICA">&#8804;9</font><font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">-
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">70.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">5&nbsp;&nbsp; = Olson &amp; Pfitzer quiet [1977] (default
-        - Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">15.
-        Re)</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">6&nbsp;&nbsp; = Olson &amp; Pfitzer dynamic [1988] (uses
-        5.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">dens</font><font face="ARIAL, HELVETICA">&#8804;50.</font><font face="ARIAL, HELVETICA">,
-        300.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">velo</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">500., </font><font face="ARIAL, HELVETICA">-100.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA">&#8804;20.</font><font face="ARIAL, HELVETICA"> -
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">60.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">7&nbsp;&nbsp; = Tsyganenko [1996] (uses -100.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA"> (nT)&#8804;20.</font><font face="ARIAL, HELVETICA">, </font><font face="ARIAL, HELVETICA">0.5&#8804;</font><font face="ARIAL, HELVETICA">Pdyn</font><font face="ARIAL, HELVETICA"> (nPa)&#8804;</font><font face="ARIAL, HELVETICA">10.,
-        |ByIMF| (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">10.</font><font face="ARIAL, HELVETICA">,
-        |BzIMF|</font><font face="ARIAL, HELVETICA"> (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">10.</font><font face="ARIAL, HELVETICA"> -
-        Valid for rGEO</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">40.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">8&nbsp;&nbsp; = Ostapenko &amp; Maltsev [1997] (uses
-        dst,Pdyn,BzIMF, Kp)</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">9&nbsp;&nbsp; = Tsyganenko [2001] (uses </font><font face="ARIAL, HELVETICA">-50.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">Dst</font><font face="ARIAL, HELVETICA"> (nT)&#8804;20.</font><font face="ARIAL, HELVETICA">,</font><font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">0.5&#8804;</font><font face="ARIAL, HELVETICA">Pdyn</font><font face="ARIAL, HELVETICA"> (nPa)&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">, </font><font face="ARIAL, HELVETICA">|ByIMF|
-        (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">,
-        |BzIMF|</font><font face="ARIAL, HELVETICA"> (nT)</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">5.</font><font face="ARIAL, HELVETICA">,
-        0.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">G1</font><font face="ARIAL, HELVETICA">&#8804;</font>10.<font face="ARIAL, HELVETICA">,
-        0.</font><font face="ARIAL, HELVETICA">&#8804;</font><font face="ARIAL, HELVETICA">G2</font><font face="ARIAL, HELVETICA">&#8804;</font>10.<font face="ARIAL, HELVETICA"> </font><font face="ARIAL, HELVETICA">-
-        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
-        Re</font><font face="ARIAL, HELVETICA">)</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">10 =Tsyganenko [2001] storm&nbsp; (uses Dst, Pdyn, ByIMF,
-        BzIMF, G2, G3 - there is no upper or lower limit for those inputs </font><font face="ARIAL, HELVETICA">-
-        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
-        Re</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
-        <br />
-        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font><font face="ARIAL, HELVETICA">11
-        =Tsyganenko [2004] storm&nbsp; (uses Dst, Pdyn, ByIMF, BzIMF, W1, W2, W3, W4, W5,
-        W6 - there is no upper or lower limit for those inputs </font><font face="ARIAL, HELVETICA">-
-        Valid for xGSM</font><font face="ARIAL, HELVETICA">&#8805;</font><font face="ARIAL, HELVETICA">-15.
-        Re</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
-        <br />
-        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font><font face="ARIAL, HELVETICA">12
-        =Alexeev [2000] - also known as Paraboloid model - Submitted to ISO&nbsp; (uses Dens,
-        velo, Dst, BzIMF, AL</font><font face="ARIAL, HELVETICA">)<span style="FONT-STYLE: italic"></span></font> 
-        <br />
-        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font><font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">1&nbsp;&nbsp; =&nbsp;Lstar
+        to &#934;</font>&nbsp;<br />
+        <font face="ARIAL, HELVETICA">2&nbsp;&nbsp; =&nbsp;&#934; to Lstar</font><font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"> 
         <br />
         </span></font>
-        <br />
-        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">Notes: </span></font>
-        <br />
-        <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic"></span></font>
     </div>
-    <p>
-    </p>
-    <ol>
-    </ol>
-    <ol>
-        <li>
-            <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">when the magnetic field
-            model inputs are outside the allowed range bad data values are returned.</span></font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><span style="FONT-STYLE: italic">When solar wind inputs
-            are required they must be taken in the vicinity of the day side magnetopause and not
-            at L1.<br />
-            </span></font>
-        </li>
-    </ol>
-    <p>
-        <br />
-    </p>
     <p>
         <font face="ARIAL, HELVETICA"><b>options: </b>array(5) of long integer to set some
         control options on computed values<br />
@@ -2240,7 +2857,7 @@
     <div style="MARGIN-LEFT: 40px; FONT-FAMILY: helvetica,arial,sans-serif">
         <ol>
             <li>
-                <span style="FONT-WEIGHT: bold">options(1st element):</span>&nbsp; not used<br />
+                <span style="FONT-WEIGHT: bold">options(1st element):</span>&nbsp;&nbsp;not used here&nbsp;<br />
             </li>
             <li>
                 <span style="FONT-WEIGHT: bold">options(2nd element): </span>0 - initialize IGRF field
@@ -2249,278 +2866,75 @@
                 following days of the year: 1, 15, 30, 45 ...)<br />
             </li>
             <li>
-                <span style="FONT-WEIGHT: bold">options(3rd element): </span>not used 
-                <br />
+                <span style="FONT-WEIGHT: bold">options(3rd element): </span>not used here<br />
             </li>
             <li>
-                <span style="FONT-WEIGHT: bold">options(4th element): </span>for future use 
+                <span style="FONT-WEIGHT: bold">options(4th element): </span>not used here<br />
             </li>
             <li>
                 <span style="FONT-WEIGHT: bold">options(5th element):</span> allows to select an internal
                 magnetic field model (default is set to IGRF) 
-                <div style="MARGIN-LEFT: 80px">
-                    <ul>
-                        <li>
-                            0 = IGRF 
-                        </li>
-                        <li>
-                            1 = Eccentric tilted dipole 
-                        </li>
-                        <li>
-                            2 = Jensen&amp;Cain 1960 
-                        </li>
-                        <li>
-                            3 = GSFC 12/66 updated to 1970<br />
-                        </li>
-                    </ul>
-                </div>
             </li>
         </ol>
-    </div>
-    <p>
-        <font face="ARIAL, HELVETICA"><b>sysaxes:</b> long integer to define which coordinate
-        system is provided in</font> 
-        <br />
-    </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, longi
-        - km,deg.,deg)</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">2: GSM (cartesian) - Re</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">3: GSE (cartesian) - Re</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">4: SM (cartesian) - Re</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">5: GEI (cartesian) - Re</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
-        <br />
-        <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
-        longi - Re, deg., deg.)<br />
-        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, longi -
-        Re, deg., deg. - prefered than 7)</font> 
-        <br />
+        <div style="MARGIN-LEFT: 80px">
+            <ul>
+                <li>
+                    0 = IGRF 
+                </li>
+                <li>
+                    1 = Eccentric tilted dipole 
+                </li>
+                <li>
+                    2 = Jensen&amp;Cain 1960 
+                </li>
+                <li>
+                    3 = GSFC 12/66 updated to 1970<br />
+                </li>
+            </ul>
+        </div>
     </div>
     <p>
     </p>
     <p>
-        <font face="ARIAL, HELVETICA"><b>iyear:</b> long integer year when position is given</font> 
+        <font face="ARIAL, HELVETICA"><b>iyear:</b> array(100000) of long integer year when
+        inputs are given</font> 
     </p>
     <p>
-        <font face="ARIAL, HELVETICA"><b>idoy:</b> long integer doy when position is given</font> 
+        <font face="ARIAL, HELVETICA"><b>idoy:</b> array(100000) of long integer doy when
+        inputs are given</font> 
     </p>
     <p>
-        <font face="ARIAL, HELVETICA"><b>UT:</b> double, UT in seconds</font> 
-    </p>
-    <p>
-        <font face="ARIAL, HELVETICA"><b>x1:</b> double, first coordinate according to sysaxes.
-        If sysaxes is 0 then altitude has to be in km otherwise use dimentionless variables
-        (in Re)</font> 
-    </p>
-    <p>
-        <font face="ARIAL, HELVETICA"><b>x2:</b> double, second coordinate according to sysaxes.
-        If sysaxes is 0 then latitude has to be in degre otherwise use dimentionless variables
-        (in Re)</font> 
-    </p>
-    <p>
-        <font face="ARIAL, HELVETICA"><b>x3:</b> double, third coordinate according to sysaxes.
-        If sysaxes is 0 then longitude has to be in degre otherwise use dimentionless variables
-        (in Re).</font> 
-    </p>
-    <p>
-        <font face="ARIAL, HELVETICA"><b>maginput: </b>array (25) of double to specify magnetic
-        fields inputs such as:<b> 
+        <font face="ARIAL, HELVETICA"><b>IMPORTANT:</b> all inputs must be present. For those
+        which are not used a dummy value can be provided.</font> 
         <br />
-        </b></font>
+        &nbsp; 
     </p>
-    <ol>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(1st element) =</b></font><font face="ARIAL, HELVETICA"><b>Kp:</b> value
-            of Kp as in OMNI2 files but has to be double instead of integer type</font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(2nd element) =</b></font><font face="ARIAL, HELVETICA"><b>Dst:</b> Dst
-            index (nT)</font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(3rd element) =</b></font><font face="ARIAL, HELVETICA"><b>dens:</b> Solar
-            Wind density (cm-3)</font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(4th element) =</b></font><font face="ARIAL, HELVETICA"><b>velo:</b> Solar
-            Wind velocity (km/s)</font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(5th element) =</b></font><font face="ARIAL, HELVETICA"><b>Pdyn:</b> Solar
-            Wind dynamic pressure (nPa)</font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(6th element) =</b></font><font face="ARIAL, HELVETICA"><b>ByIMF:</b> GSM
-            y component of IMF mag. field (nT)</font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(7th element) =</b></font><font face="ARIAL, HELVETICA"><b>BzIMF:</b> GSM
-            z component of IMF mag. field (nT)</font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(8th element) =</b></font><font face="ARIAL, HELVETICA"><b>G1:</b>&nbsp;
-            G1=&lt; Vsw*(Bperp/40)^2/(1+Bperp/40)*sin^3(theta/2) &gt; where the &lt;&gt; mean
-            an average over the previous 1 hour, Vsw is the solar wind speed, Bperp is the transverse
-            IMF component (GSM) and theta it's clock angle.</font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(9th element) =</b></font><font face="ARIAL, HELVETICA"><b>G2:</b> G2=&lt;
-            a*Vsw*Bs &gt; </font><font face="ARIAL, HELVETICA">where the &lt;&gt; mean an average
-            over the previous 1 hour, Vsw is the solar wind speed, Bs=|IMF Bz| when IMF Bz &lt;
-            0 and Bs=0 when IMF Bz &gt; 0, a=0.005.</font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(10th element) =</b></font><font face="ARIAL, HELVETICA"><b>G3:</b>&nbsp;
-            G3=&lt; Vsw*Dsw*Bs /2000.&gt;</font> 
-            <br />
-            <font face="ARIAL, HELVETICA">where the &lt;&gt; mean an average over the previous
-            1 hour, Vsw is the solar wind speed, Dsw is the solar wind density, Bs=|IMF Bz| when
-            IMF Bz &lt; 0 and Bs=0 when IMF Bz &gt; 0.</font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(11th element,*) =W1 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
-            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
-            1.2MB)</a></font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(12th element,*) =W2 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
-            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
-            1.2MB)</a></font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(13th element,*) =W3 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
-            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
-            1.2MB)</a></font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(14th element,*) =W4 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
-            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
-            1.2MB)</a></font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(15th element,*) =W5 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
-            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
-            1.2MB)</a></font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(16th element,*) =W6 </b>see definition in<b> </b></font><font size=+0>(JGR-A,
-            v.110(A3), 2005.) <a href="http://nssdc.gsfc.nasa.gov/space/model/magnetos/data-based/Storm_paper2.pdf">(PDF
-            1.2MB)</a></font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(17th element,*) =AL </b>the auroral index<b> 
-            <br />
-            </b></font> 
-        </li>
-        <li>
-            <font face="ARIAL, HELVETICA"><b>maginput(18th element,*) to </b></font><font face="ARIAL, HELVETICA"><b>maginput(25th
-            element,*): </b>for future use</font> 
-        </li>
-    </ol>
-    <br />
-    <font face="ARIAL, HELVETICA"><b>IMPORTANT:</b> all inputs must be present. For those
-    which are not used a dummy value can be provided.</font> 
-    <br />
-    &nbsp; 
-    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS or OUTPUTS (according
+        to whichinv):</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA"><b>Lm:</b> L McIlwain (double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>Blocal:</b> magnitude of magnetic field at each field
-    line point - see posit (array(1000) of double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>Bmin:</b> magnitude of magnetic field at equator
-    (double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>XJ:</b> I, related to second adiabatic invariant
-    (double)</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>POSIT:</b> xGEO,yGEO and zGEO along the field line,
-    (array(3,1000) of double)</font> 
-    <br />
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    1st element: x, y, z GEO coord, 2nd element: points along field line. 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>Nposit:</b> long integer&nbsp; providing the number
-    of points along the field line traced in 2nd element of POSIT array (max 1000).</font> &lt;&gt;<font face="ARIAL, HELVETICA"><b>Note:</b> Posit
-    is organized as follow: array(xyz,along bounce). Nposit tells how many of the 1000
-    points available are used to described one bounce.</font> 
-    <br />
-    <br />
-    &nbsp; 
     <p>
+        <font face="ARIAL, HELVETICA"><b>Lstar:</b> L Roederer&nbsp; (array(100000) of double)</font> 
         <br />
+        <font face="ARIAL, HELVETICA"><b>Phi:</b> &#934;=Bo*Re<sup>2</sup>/Lstar [nT Re<sup>2</sup>]
+        (array(100000) of double)&nbsp;</font> 
+        <br />
+        <br />
+        <u>Comments on adiabatic invariants:</u>&nbsp;<br />
+        J<sub>3</sub>=q/(2*&#960;) *&#934; - <font face="Arial">[C nT Re<sup>2</sup>]&nbsp;</font><font face="Arial"> </font>
     </p>
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA">[Lm,Blocal,Bmin,J,POSIT] = onera_desp_lib_trace_field_line(kext,options,sysaxes,matlabd,x1,x2,x3,maginput)</font> 
+    <font face="ARIAL, HELVETICA">? </font>
     <br />
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM IDL:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'trace_field_line_',&nbsp;
-    kext,options,sysaxes,iyear,idoy,ut,&nbsp; x1,x2,x3, maginput, lm,blocal,bmin,xj,posit,Nposit,&nbsp;
+    <font face="ARIAL, HELVETICA">result = call_external(lib_name, lstar_phi_', ntime,whichinv,options,iyear,idoy,lstar,phi,
     /f_value)</font> 
     <br />
     &nbsp; 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM FORTRAN:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA">call trace_field_line1(kext,options,sysaxes,iyear,idoy,ut,
-    x1,x2,x3, maginput, lm,blocal,bmin,xj,posit,Nposit)</font> 
-    <p>
-    </p>
-    <p>
-        <font face="ARIAL, HELVETICA">---------------------------------------------------------------------------------------</font><a name="GET_MLT"></a> 
-    </p>
-    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">GET_MLT</font></font> 
-    </h2>
-    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
-    </h3>
-    <font face="ARIAL, HELVETICA">Routine to get Magnetic Local Time (MLT) from a Cartesian
-    GEO position and date</font> 
-    <br />
-    &nbsp; 
-    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
-    </h3>
-    <font face="ARIAL, HELVETICA"><b>iyr :</b> long integer year</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>idoy :</b> long integer day of year</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>secs :</b> UT in seconds - double</font> 
-    <br />
-    <font face="ARIAL, HELVETICA"><b>xGEO :</b> 3D array (double) of cartesian position
-    in GEO (Re)</font> 
-    <br />
-    &nbsp; 
-    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
-    </h3>
-    <font face="ARIAL, HELVETICA"><b>MLT:</b> Magnetic Local Time (hours) - double <b>
-    <br />
-    </b></font>
-    <br />
-    &nbsp; 
-    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
-    </h3>
-    <font face="ARIAL, HELVETICA">MLT = onera_desp_lib_get_mlt(matlabd,xGEO)</font> 
-    <br />
-    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
-    </h3>
-    <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'get_mlt_', iyr,idoy,secs,xGEO,MLT,
-    /f_value)</font> 
-    <br />
-    &nbsp; 
-    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
-    </h3>
-    <font face="ARIAL, HELVETICA">call get_mlt1(iyr,idoy,secs,xGEO,MLT)<br />
-    <br />
-    &nbsp; </font>
-    <br />
+    <font face="ARIAL, HELVETICA">call lstar_phi1(ntime,whichinv,options,iyear,idoy,lstar,phi)</font> 
     <br />
     <br />
     <font face="ARIAL, HELVETICA">---------------------------------------------------------------------------------------</font><a name="COORDTRANS"></a> 
@@ -2549,9 +2963,9 @@
     <font face="ARIAL, HELVETICA"><b>xIN :</b> 3D array (double) of position in&nbsp;input
     coordinates system.&nbsp;xIN must be in Re for Earth coordinates system and in AU
     for Heliospheric coordinates system. In case of GEODETIC coordinates system xIN(1)
-    is&nbsp;altitude (deg), xIN(2) is latitude (deg) and xIN(3) is&nbsp;longitude (km),
-    for RLL coordinates system, xIN(1) is radial distance (Re), xIN(2) is latitude (deg)
-    and xIN(3) is longitude (deg).</font>&nbsp;<br />
+    is&nbsp;altitude (km), xIN(2) is latitude (deg) and xIN(3) is&nbsp;East longitude
+    (deg), for RLL coordinates system, xIN(1) is radial distance (Re), xIN(2) is latitude
+    (deg) and xIN(3) is East longitude (deg).</font>&nbsp;<br />
     &nbsp; 
     <table style="WIDTH: 627px; HEIGHT: 301px">
         <tbody>
@@ -3011,9 +3425,9 @@
     <font face="ARIAL, HELVETICA"><b>xOUT :</b> 3D array (double) of position in&nbsp;output
     coordinates system.</font>&nbsp;<font face="Arial">xOUT is in Re for Earth coordinates
     system and in AU for Heliospheric coordinates system. In case of GEODETIC coordinates
-    system xOUT(1) is alitude (deg), xOUT(2) is latitude (deg) and xOUT(3) is longitude
-    (km), for RLL coordinates system, xOUT(1) is radial distance (Re), xOUT(2) is latitude
-    (deg) and xOUT(3) is longitude (deg).</font> 
+    system xOUT(1) is alitude (km), xOUT(2) is latitude (deg) and xOUT(3) is East longitude
+    (deg), for RLL coordinates system, xOUT(1) is radial distance (Re), xOUT(2) is latitude
+    (deg) and xOUT(3) is East longitude (deg).</font> 
     <br />
     &nbsp; 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
@@ -3061,9 +3475,9 @@
     <font face="ARIAL, HELVETICA"><b>xIN :</b> array (3,100000) of double&nbsp;with position
     in&nbsp;input coordinates system.&nbsp;xIN must be in Re for Earth coordinates system
     and in AU for Heliospheric coordinates system. In case of GEODETIC coordinates system
-    xIN(1,*) is&nbsp;altitude (deg), xIN(2,*) is latitude (deg) and xIN(3,*) is&nbsp;longitude
-    (km), for RLL coordinates system, xIN(1,*) is radial distance (Re), xIN(2,*) is latitude
-    (deg) and xIN(3,*) is longitude (deg).</font>&nbsp;<br />
+    xIN(1,*) is&nbsp;altitude (km), xIN(2,*) is latitude (deg) and xIN(3,*) is&nbsp;East
+    longitude (deg), for RLL coordinates system, xIN(1,*) is radial distance (Re), xIN(2,*)
+    is latitude (deg) and xIN(3,*) is East longitude (deg).</font>&nbsp;<br />
     &nbsp; 
     <table style="WIDTH: 627px; HEIGHT: 301px">
         <tbody>
@@ -3523,9 +3937,9 @@
     <font face="ARIAL, HELVETICA"><b>xOUT :</b> array (3,100000) of double&nbsp;with position
     in&nbsp;output coordinates system.</font>&nbsp;<font face="Arial">xOUT is in Re for
     Earth coordinates system and in AU for Heliospheric coordinates system. In case of
-    GEODETIC coordinates system xOUT(1,*) is alitude (deg), xOUT(2,*) is latitude (deg)
-    and xOUT(3,*) is longitude (km), for RLL coordinates system, xOUT(1,*) is radial distance
-    (Re), xOUT(2,*) is latitude (deg) and xOUT(3,*) is longitude (deg).</font> 
+    GEODETIC coordinates system xOUT(1,*) is alitude (km), xOUT(2,*) is latitude (deg)
+    and xOUT(3,*) is East longitude (deg), for RLL coordinates system, xOUT(1,*) is radial
+    distance (Re), xOUT(2,*) is latitude (deg) and xOUT(3,*) is East longitude (deg).</font> 
     <br />
     &nbsp; 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
@@ -3743,7 +4157,7 @@
     </h3>
     <font face="ARIAL, HELVETICA"><b>lati :</b> latitude (degres) (double)</font> 
     <br />
-    <font face="ARIAL, HELVETICA"><b>longi :</b> longitude (degres) (double)</font> 
+    <font face="ARIAL, HELVETICA"><b>longi :</b> East longitude (degres) (double)</font> 
     <br />
     <font face="ARIAL, HELVETICA"><b>alti :</b> altitude (km) (double)</font> 
     <br />
@@ -3761,7 +4175,7 @@
     </h3>
     <font face="ARIAL, HELVETICA">******NOTE ORDER OF GDZ COORDINATES********<br />
     xGEO = onera_desp_lib_rotate([alti(:), lati(:), longi(:)],'gdz2geo');<br />
-    xx = xGEO(:,1); yy = xGEO(:,2); zz = xGEO(:,3);/font&gt; 
+    xx = xGEO(:,1); yy = xGEO(:,2); zz = xGEO(:,3);</font> 
     <br />
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
     </h3>
@@ -3797,7 +4211,7 @@
     </h3>
     <font face="ARIAL, HELVETICA"><b>lati :</b> latitude (degres) (double)</font> 
     <br />
-    <font face="ARIAL, HELVETICA"><b>longi :</b> longitude (degres) (double)</font> 
+    <font face="ARIAL, HELVETICA"><b>longi :</b> East longitude (degres) (double)</font> 
     <br />
     <font face="ARIAL, HELVETICA"><b>alti :</b> altitude (km) (double)</font> 
     <br />
@@ -4791,11 +5205,63 @@
     <font face="ARIAL, HELVETICA">Not available, see IDL build-in routines</font> 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
     </h3>
-    <font face="ARIAL, HELVETICA">CALL DATE_AND_TIME2DECY(Year,Month, Day, hour,minute,second,</font><font face="ARIAL, HELVETICA">Dec_y</font><font face="ARIAL, HELVETICA">)<br />
+    <font face="ARIAL, HELVETICA">CALL DATE_AND_TIME2DECY(Year,Month,Day,hour,minute,second,Dec_y)</font><br />
+    <br />
+    <br />
+    &nbsp; <font face="ARIAL, HELVETICA">---------------------------------------------------------------------------------------</font><a name="DOY_AND_UT2DATE_AND_TIME"></a> 
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">DOY_AND_UT2DATE_AND_TIME</font></font> 
+    </h2>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESRIPTION:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">Calculate month, day, year from year and day of year<br />
+    Calculate time (hour, minute, second) from UT</font> 
+    <br />
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA"><b>YEAR:</b> Number year.Year parameters must be valid
+    values from the civil calendar. Years B.C.E. are represented as negative integers.
+    Years in the common era are represented as positive integers. In particular, note
+    that there is no year 0 in the civil calendar. 1 B.C.E. (-1) is followed by 1 C.E.
+    (1). - long</font> 
+    <p>
+        <font face="ARIAL, HELVETICA"><b>DOY:</b> Number of day of year (DOY=1 is for January
+        1st) - long</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>UT:</b> Universal time in seconds -&nbsp;double</font> 
+    </p>
+    <br />
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Month&nbsp;:</b> Number month (1 = January, ...,
+        12 = December). - long</font> 
+    </p>
+    <p>
+        <strong>Day&nbsp;:</strong> Number of day of the month - long 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>HOUR, MINUTE and SECOND:</strong> Universal
+        time in the day - long 
+        <br /><br />
+        </font>
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">Not available, see MATLAB build-in routines</font> 
+    <br />
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">Not available, see IDL build-in routines</font> 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
+    </h3>
+    <font face="ARIAL, HELVETICA">CALL DOY_AND_UT2DATE_AND_TIME(Year,Doy,UT,Month, Day,
+    hour,minute,second)</font><br />
     <br />
     <br />
     <br />
-    </font> 
+    <br />
     <p>
         <font face="ARIAL, HELVETICA">------------------------------------------------------------</font><a name="FLY_IN_NASA_AEAP"></a> 
     </p>
@@ -4816,8 +5282,8 @@
         system is provided in</font> 
         <br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, longi
-        - km,deg.,deg)</font> 
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
         <br />
         <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
         <br />
@@ -4832,9 +5298,9 @@
         <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
         <br />
         <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
-        longi - Re, deg., deg.)<br />
-        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, longi -
-        Re, deg., deg. - prefered to 7)</font> 
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered to 7)</font> 
         <br />
     </div>
     <p>
@@ -4855,9 +5321,11 @@
         <font face="ARIAL, HELVETICA"><b>whatf:</b> long integer to select what flux to compute<br />
         </font>
     </p>
-    <div style="MARGIN-LEFT: 40px">1=differential flux (MeV-1 cm-2 s-1) at energy(1)<br />
-        2=flux within an ernergy range (MeV-1 cm-2 s-1) - energy(1) to energy(2)<br />
-        3=integral flux (cm-2 s-1) at energy(1) 
+    <div style="MARGIN-LEFT: 40px">1=differential flux (MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup>)
+        at energy(1,*)<br />
+        2=flux within an ernergy range (MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup>) -
+        energy(1,*) to energy(2,*)<br />
+        3=integral flux (cm<sup>-2</sup> s<sup>-1</sup>) at energy(1,*) 
     </div>
     <p>
     </p>
@@ -4888,7 +5356,7 @@
     </p>
     <p>
     </p>
-    </font><font face="ARIAL, HELVETICA"><b>x1:</b> array(100000) of double, first coordinate
+    <font face="ARIAL, HELVETICA"><b>x1:</b> array(100000) of double, first coordinate
     according to sysaxes. If sysaxes is 0 then altitude has to be in km otherwise use
     dimensionless variables (in Re)</font> 
     <p>
@@ -4898,7 +5366,7 @@
     </p>
     <p>
         <font face="ARIAL, HELVETICA"><b>x3:</b> array(100000) of double, third coordinate
-        according to sysaxes. If sysaxes is 0 then longitude has to be in degrees otherwise
+        according to sysaxes. If sysaxes is 0 then East longitude has to be in degrees otherwise
         use dimensionless variables (in Re).</font> 
     </p>
     <br />
@@ -4914,16 +5382,112 @@
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'fly_in_nasa_aeap_',
-    ntime,sysaxes,whichm,whatf,Nene,energy,iyear,idoy, UT,xIN1,xIN2,xIN3,flux, /f_value)</font> 
+    ntime,sysaxes,whichm,whatf,Nene,energy,iyear,idoy, UT,x1,x2,x3,flux, /f_value)</font> 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA">CALL </font><font face="ARIAL, HELVETICA">fly_in_nasa_aeap1</font><font face="ARIAL, HELVETICA">(</font><font face="ARIAL, HELVETICA">ntime,sysaxes,whichm,whatf,Nene,energy,iyear,idoy,
-    UT,xIN1,xIN2,xIN3,flux</font><font face="ARIAL, HELVETICA">)<br />
+    UT,x1,x2,x3,flux)</font><br />
     <br />
-    </font>&nbsp;<br />
+    <br />
     <p>
-        <font face="ARIAL, HELVETICA">------------------------------------------------------------</font><a name="FLY_IN_AFRL_CRRES"></a> 
+        <font face="ARIAL, HELVETICA">------------------------------------------------------------</font><a name="GET_AE8_AP8_FLUX"></a> 
     </p>
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">GET_AE8_AP8_FLUX</font></font> 
+    </h2>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">This function allows one to&nbsp;compute NASA AE8 min/max
+        and AP8 min/max flux for any B/Bo, L position</font><font face="ARIAL, HELVETICA">.<br />
+        The output can be differential flux or flux within an energy range or integral flux.<br />
+        </font>
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>ntime:</b> long integer number of&nbsp;points in
+        arrays (max allowed is 100000)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>whichm:</b> long integer to select in which NASA
+        model to fly<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">1=AE8 MIN<br />
+        2=AE8 MAX<br />
+        3=AP8 MIN<br />
+        4=AP8 MAX<br />
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>whatf:</b> long integer to select what flux to compute<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">1=differential flux (MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup>)
+        at energy(1,*)<br />
+        2=flux within an ernergy range (MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup>) -
+        energy(1,*) to energy(2,*)<br />
+        3=integral flux (cm<sup>-2</sup> s<sup>-1</sup>) at energy(1,*) 
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>Nene:</strong> long integer number of&nbsp;energies
+        in array energy&nbsp;(max allowed is 25) </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>energy:</b> array(2,25) of double. If whatf=1 or
+        3 then energy(2,*) is not considered.<br />
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <span style="FONT-STYLE: italic">Note: if energy is
+        in MeV then differential flux will be per MeV.</span> 
+        <br />
+        </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>BBo:</b> array(100000) of double. Provide B/Bequator
+        for all position where to compute the fluxes. Note that the Jensen and Cain 1960 magnetic
+        field model must be used for any call to AE8min, AE8max, AP8min and GSFC 1266 (extended
+        to year 1970) for any call to AP8max.<br />
+        </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>L:</b> array(100000) of double. Provide McIlwain
+        L for all position where to compute the fluxes.</font>&nbsp; Note that the Jensen
+        and Cain 1960 magnetic field model must be used for any call to AE8min, AE8max, AP8min
+        and GSFC 1266 (extended to year 1970) for any call to AP8max.<br />
+    </p>
+    <p>
+        <br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>flux:</b> flux according to selection of whatf for
+        all times and energies (array(100000,25) of double)</font> 
+        <br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">Flux = onera_desp_lib_get_ae8_ap8_flux(whichm,energy,BBo,L)</font> 
+        <br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'get_ae8_ap8_flux_idl_',
+        ntime,whichm,whatf,Nene,energy,BBo,L,,flux, /f_value)</font> 
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">CALL </font><font face="ARIAL, HELVETICA">get_ae8_ap8_flux</font> <font face="ARIAL, HELVETICA">(</font><font face="ARIAL, HELVETICA">ntime,whichm,whatf,Nene,energy,BBo,L,flux</font> <font face="ARIAL, HELVETICA">)<br />
+        <br />
+        </font>&nbsp;<br />
+        ------------------------------------------------------------ 
+    </p>
+    <a name="FLY_IN_AFRL_CRRES"></a> 
     <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">FLY_IN_AFRL_CRRES</font></font> 
     </h2>
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
@@ -4951,8 +5515,8 @@
         system is provided in</font> 
         <br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, longi
-        - km,deg.,deg)</font> 
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
         <br />
         <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
         <br />
@@ -4967,9 +5531,9 @@
         <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
         <br />
         <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
-        longi - Re, deg., deg.)<br />
-        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, longi -
-        Re, deg., deg. - prefered to 7)</font> 
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered to 7)</font> 
         <br />
     </div>
     <p>
@@ -4992,9 +5556,11 @@
         <font face="ARIAL, HELVETICA"><b>whatf:</b> long integer to select what flux to compute<br />
         </font>
     </p>
-    <div style="MARGIN-LEFT: 40px">1=differential flux (MeV-1 cm-2 s-1) at energy(1)<br />
-        2=flux within an ernergy range (MeV-1 cm-2 s-1) - energy(1) to energy(2)<br />
-        3=integral flux (cm-2 s-1) at energy(1) 
+    <div style="MARGIN-LEFT: 40px">1=differential flux (MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup>)
+        at energy(1,*)<br />
+        2=flux within an ernergy range (MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup>) -
+        energy(1,*) to energy(2,*)<br />
+        3=integral flux (cm<sup>-2</sup> s<sup>-1</sup>) at energy(1,*) 
     </div>
     <p>
     </p>
@@ -5003,8 +5569,8 @@
     <p>
     </p>
     <p>
-        <font face="ARIAL, HELVETICA"><b>energy:</b> array(2) of double (MeV). If whatf=1
-        or 3 then energy(2) is not considered.<br />
+        <font face="ARIAL, HELVETICA"><b>energy:</b> array(2,25) of double (MeV). If whatf=1
+        or 3 then energy(2,*) is not considered.<br />
         </font>
     </p>
     <p>
@@ -5065,16 +5631,745 @@
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
     </h3>
     <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'fly_in_afrl_crres_',
-    ntime,sysaxes,whichm,whatf,Nene,energy,iyear,idoy, UT,xIN1,xIN2,xIN3,Ap15,flux,path,path_len,
+    ntime,sysaxes,whichm,whatf,Nene,energy,iyear,idoy, UT,x1,x2,x3,Ap15,flux,path,path_len,
     /f_value)</font> 
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
     </h3>
     <p>
         <font face="ARIAL, HELVETICA">CALL </font><font face="ARIAL, HELVETICA">fly_in_afrl_crres1</font><font face="ARIAL, HELVETICA">(</font><font face="ARIAL, HELVETICA">ntime,sysaxes,whichm,whatf,Nene,energy,iyear,idoy,
-        UT,xIN1,xIN2,xIN3,Ap15,flux,path,path_len</font><font face="ARIAL, HELVETICA">)<br />
+        UT,x1,x2,x3,Ap15,flux,path,path_len</font><font face="ARIAL, HELVETICA">)</font> 
+    </p>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA">------------------------------------------------------------ <a name="GET_CRRES_FLUX"></a></font>
+    </p>
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">GET_CRRES_FLUX</font></font> 
+    </h2>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">This function allows one to compute AFRL CRRESPRO and
+        CRRESELE flux for any B/Bo, L position</font><font face="ARIAL, HELVETICA">.<br />
+        The output can be differential flux or flux within an energy range or integral flux.</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA">Caution: integral flux for electron are from E to&nbsp;
+        5.75 MeV and for proton are from E to 81.3 MeV.</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA">To run CRRES models you have to set the full path for
+        the source code directory (where CRRES data files are located).<br />
         </font>
     </p>
-    <font face="ARIAL, HELVETICA"> 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>ntime:</b> long integer number of&nbsp;points in
+        arrays (max allowed is 100000)</font> 
+    </p>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>whichm:</b> long integer to select in which&nbsp;AFRL
+        CRRES&nbsp;model to fly<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">1=CRRESPRO QUIET<br />
+        2=CRRESPRO ACTIVE<br />
+        3=CRRESELE AVERAGE<br />
+        4=CRRESELE WORST CASE 
+    </div>
+    <div style="MARGIN-LEFT: 40px">5=CRRESELE Ap15<br />
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>whatf:</b> long integer to select what flux to compute<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">1=differential flux (MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup>)
+        at energy(1,*)<br />
+        2=flux within an ernergy range (MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup>) -
+        energy(1,*) to energy(2,*)<br />
+        3=integral flux (cm<sup>-2</sup> s<sup>-1</sup>) at energy(1,*) 
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Nene:</b> long integer number of&nbsp;energies in
+        array energy&nbsp;(max allowed is 25) </font>
+    </p>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>energy:</b> array(2,25) of double (MeV). If whatf=1
+        or 3 then energy(2,*) is not considered.<br />
+        </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>BBo:</b> array(100000) of double. Provide B/Bequator
+        for all position where to compute the fluxes. Note that the IGRF1985 magnetic field
+        model must be used.<br />
+        </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>L:</b> array(100000) of double. Provide McIlwain
+        L for all position where to compute the fluxes.&nbsp; Note that the IGRF1985 magnetic
+        field model must be used.</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Ap15:</b> array(100000) of double, preceding 15-day
+        running average of Ap index assuming a one day delay. Array can be set to 0 if whichm
+        non equal to 5. </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>path:</b> byte array where the number of elements
+        is the length of the string to be converted to byte, provides the path to locate&nbsp;the
+        files which describe CRRES models. Note that the path should end by a "/" or "\" depending
+        on your operating system. Before submitting the path it must me converted to byte
+        array where each element is the ascii code for the corresponding character in the
+        path.</font>&nbsp; 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>path_len:</b> long integer, provide here the length
+        of the path string</font> 
+    </p>
+    <p>
+        <br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>flux:</b> flux according to selection of whatf for
+        all times and energies (array(100000,25) of double)</font> 
+        <br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">Flux = onera_desp_lib_get_crres_flux(whichm,energy,BBo,L,Ap15,crres_path)</font> 
+        <br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'get_crres_flux_idl_',
+        ntime,whichm,whatf,Nene,energy,BBo,L,Ap15,flux,path,path_len, /f_value)</font> 
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">CALL </font><font face="ARIAL, HELVETICA">get_crres_flux</font><font face="ARIAL, HELVETICA">(</font><font face="ARIAL, HELVETICA">ntime,whichm,whatf,Nene,energy,BBo,L,Ap15,flux,path,path_len</font><font face="ARIAL, HELVETICA">)</font> 
+    </p>
+    <p>
+        ------------------------------------------------------------ 
+    </p>
+    <a name="FLY_IN_IGE"></a> 
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">FLY_IN_IGE</font></font> 
+    </h2>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">This function allows one to fly any geostationary spacecraft
+        in&nbsp;IGE (International Geostationary Electron)&nbsp;models</font><font face="ARIAL, HELVETICA">.
+        The use of the model is limited to geostationary altitude as it is based on LANL-GEO&nbsp;
+        bird series (1976 to 2006) and JAXA-DRTS spacecraft (added in IGE2006). Three versions
+        of the model are provided: </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">1: known as POLE-V1, it&nbsp;covers electron energies
+        from 30 keV-1.3 MeV (issued in 2003) <br>
+        Published in <em>Boscher D., S. Bourdarie, R. Friedel
+        and D. Belian, A model for the geostationary electron environment : POLE, IEEE Trans.
+        Nuc. Sci., 50 (6), 2278-2283, Dec. 2003</em>. <br>
+
+        <br />
+        2: known as POLE-V2, it&nbsp;covers electron energies from 30 keV-5.2 MeV (issued
+        in 2005) <br>
+        Published in <em>Sicard-Piet A., S. Bourdarie, Boscher
+        D. and&nbsp;R. Friedel, A model for the geostationary electron environment : POLE
+        from 30 keV to 5.2 MeV, IEEE Trans. Nuc. Sci., 53 (4), 1844-1850, Aug. 2006</em>. <br>
+        <br />
+        3: known as&nbsp;IGE-2006, it&nbsp;covers electron energies from&nbsp;0.9 keV-5.2
+        MeV (issued in 2006) <br>
+        Submitted in <em>Sicard-Piet A., S. Bourdarie, Boscher
+        D.,&nbsp;R. Friedel M. Thomsen, T. Goka, H. Matsumoto, H. Koshiishi, A new international
+        geostationary model:&nbsp;IGE-2006 from&nbsp;1 keV to 5.2 MeV, JGR-Space Weather,
+        2007</em>.<br /></font>
+        <br />
+    </div>
+    <p>
+       <font face="ARIAL, HELVETICA">For more details on these GEO models, a GEO handbook has been
+       written. You can download a pdf version: <a href="http://craterre.onecert.fr/support/1-13377_avril_2008_GEO_handbook-V1.1.pdf"> GEO handbook.</a>
+      .</font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><em>Note that POLE stands for Particle-ONERA-LANL-Electrons</em></font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"></font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA">The output can be differential flux or flux within an
+        energy range or integral flux.</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA">Caution: integral flux for electron are from E to Emax
+        of the given&nbsp;selected model. So one should be very carrefull when looking at
+        integral fluxes with POLE-V1&nbsp;.</font> <font face="ARIAL, HELVETICA">
+        <br />
+        </font>
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>launch_year:</b> year of spacecraft start of life
+        in space - long integer</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>mission_duration:</b> duration of the mission (number
+        of years) - long integer</font> 
+        <br />
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>whichm:</b> long integer to select in which&nbsp;IGE
+        model to fly<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">1=POLE-V1<br />
+        2=POLE-V2<br />
+        3=IGE-2006<br />
+        <br /></font>
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>whatf:</b> long integer to select what flux to compute<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">1=differential flux (MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup> sr<sup>-1</sup>)
+        at energy(1,*)<br />
+        2=flux within an ernergy range (MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup> sr<sup>-1</sup>)
+        - energy(1,*) to energy(2,*)<br />
+        3=integral flux (cm<sup>-2</sup> s<sup>-1</sup> sr<sup>-1</sup>) at energy(1,*) </font>
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Nene:</b> long integer number of&nbsp;energies in
+        array energy&nbsp;(max allowed is 50). If Nene&nbsp;=0 then a default energy grid
+        is being used. The number of default channels is then returned in Nene.&nbsp;</font> 
+    </p>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>energy:</b> array(2,50) of double (MeV). If whatf=1
+        or 3 then energy(2,*) is not considered. If Nene=0 then the default energies are returned
+        (in energy(1,1:Nene) in fortran or in energy(0,0:Nene-1)).<br />
+        </font>
+    </p>
+    <p>
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Lower_flux:</b> Lower flux according to selection
+        of whatf for all energies averaged over entire mission duration - This has to be considered
+        as a lower envelop&nbsp;to bound&nbsp;expected flux at GEO for any solar cycle (array(50)
+        of double) </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Mean_flux:</b>&nbsp;Mean flux according to selection of whatf for all energies
+        averaged over entire mission duration - This&nbsp;spectrum is an averaged&nbsp;expected
+        flux at GEO for any solar cycle , no margins are included at this point(array(50)
+        of double) </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Upper_flux:</b>&nbsp;Upper flux according to selection of whatf for all energies
+        averaged over entire mission duration - This has to be considered as an upper envelop
+        for expected flux at GEO for any solar cycle, this spectrum can be used for any conservative
+        approach as margins are included at this point. Note that the margins are enrgy depended
+        and can be assesed by&nbsp;looking at Upper_flux/Mean_flux&nbsp;(array(50) of double) </font>
+    </p>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA">Note: all flux are expressed in MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup> sr<sup>-1</sup> for
+        differential flux&nbsp;or in&nbsp;MeV<sup>-1</sup> cm<sup>-2</sup> s<sup>-1</sup> sr<sup>-1</sup> for
+        integrated flux.&nbsp;To derive omnidirectional flux at GEO one should multiply these
+        flux values by 4&#960;. </font>
+    </p>
+    <p>
+        <br />
+        &nbsp; 
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">[Lower_flux,Mean_flux,Upper_flux] = onera_desp_lib_fly_in_ige(launch_year,mission_duration,whichm,whatf,energy)</font> 
+        <br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'fly_in_ige_', launch_year,mission_duration,whichm,whatf,Nene,energy,Lower_flux,Mean_flux,Upper_flux,
+        /f_value)</font> 
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">CALL </font><font face="ARIAL, HELVETICA">fly_in_ige1</font><font face="ARIAL, HELVETICA">(</font><font face="ARIAL, HELVETICA">launch_year,mission_duration,whichm,whatf,Nene,energy,Lower_flux,Mean_flux,Upper_flux</font><font face="ARIAL, HELVETICA">)</font> 
+    </p>
+    <p>
+        <br />
+    </p>
+
+    <p>
+        <font face="ARIAL, HELVETICA">------------------------------------------------------------</font><a name="MSIS86"></a> 
+    </p>
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">MSIS86</font></font> 
+    </h2>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">The Mass-Spectrometer-Incoherent-Scatter-1986 (MSIS-86)
+        neutral atmosphere model describes the neutral temperature and the densities of He,
+        O, N2, O2, Ar, H, and N. The MSIS model is based on the extensive data compilation
+        and analysis work of A. E. Hedin and his collaborators [A. E. Hedin et al., J. Geophys.
+        Res. 82, 2139-2156, 1977; A. E. Hedin, J. Geophys. Res. 88, 10170- 10188, 1983; A.
+        E. Hedin, J. Geophys. Res. 92, 4649, 1987]. MSIS-86 constitutes the upper part of
+        the COSPAR International Reference Atmosphere (CIRA-86). </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA">Data sources for the present model include temperature
+        and density measurements from several rockets, satellites (OGO-6, San Marco 3, Aeros-A,
+        AE-C, AE-D, AE-E, ESRO 4 and DE-2) and incoherent scatter radars (Millstone Hill,
+        St. Santin, Arecibo, Jicamarca, and Malvern). Since the MSIS-83 model, terms were
+        added or changed to better represent seasonal variations in the polar regions under
+        both quiet and magnetically disturbed conditions and local time variations in the
+        magnetic activity effect. In addition a new species, atomic nitrogen, was added to
+        the list of species covered by the model. </font>
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Ntime:</b> long integer number of time in arrays
+        (max allowed is 100000)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>WhichAp:</b> long integer</font> to select the&nbsp;kind
+        of Ap input:<br />
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <div style="MARGIN-LEFT: 40px">1=Only daily Ap magnetic index is provided in Ap array
+        (i.e. 1st element)<br />
+        2=All fields in Ap array are provided (i.e. the 7th elements)<br />
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>DOY:</b> array(100000) of long integer, Number of
+        day of year (DOY=1 is for January 1st) </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>UT:</strong> array(100000) of double, UT in
+        seconds when positions are given..</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>Alt:</strong> array(100000) of double, Altitude
+        in km (greater than 85 km).</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>Lat:</strong> array(100000) of double, Geodetic
+        latitude (Deg.)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>Long:</strong> array(100000) of double, Geodetic
+        longitude (Deg.)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>F107A:</strong> array(100000) of double, 3 month
+        average of F10.7 flux.</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>F107:</strong> array(100000) of double, daily
+        F10.7 flux for previous day.</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Ap:</b> array(7,100000) of double where:<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">1st element=Daily Ap<br />
+        2nd element=3 hours Ap index for current time<br />
+        3rd element=3 hours Ap index for 3 hours before current time 
+        <br />
+        4th element=3 hours Ap index for 6 hours before current time<br />
+        5th element=3 hours Ap index for 9 hours before current time<br />
+        6th element=Average of eight 3 hours Ap indices from 12 to 33 hours prior to current
+        time<br />
+        7th element=Average of eight 3 hours Ap indices from 36 to 59 hours prior to current
+        time 
+    </div>
+    <p>
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Dens:</b> array(8,100000) of double where:<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">Dens(1st element,*)=He number density (cm<sup>-3</sup>) 
+    </font></div>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">Dens(2nd element,*)=O number density (cm<sup>-3</sup>)<br />
+        Dens(3rd&nbsp;element,*)=N<sub>2</sub> number density (cm<sup>-3</sup>)<br />
+        Dens(4th&nbsp;element,*)=O<sub>2</sub> number density (cm<sup>-3</sup>)<br />
+        Dens(5th element,*)=AR number density (cm<sup>-3</sup>)<br />
+        Dens(6th element,*)=Total mass density (g/cm<sup>-3</sup>)<br />
+        Dens(7th element,*)=H number density (cm<sup>-3</sup>)<br />
+        Dens(8th element,*)=N number density (cm<sup>-3</sup>) </font>
+    </div>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Temp:</b> array(2,100000) of double where:<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">Temp(1st element,*)=Exospheric temperature (K) 
+    </div>
+    <div style="MARGIN-LEFT: 40px">Temp(2nd element,*)=Temperature at alt (K)&nbsp; 
+    </div>
+    <p>
+    </p>
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">out = onera_desp_lib_msis('msis86',date,X,sysaxes,F107A,F107,Ap)</font> 
+        <br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'msis86_idl_', ntime,whichAp,DOY,UT,Alt,Lat,Lon,F107A,F107,Ap,Dens,Temp,
+        /f_value)</font> 
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">CALL </font><font face="ARIAL, HELVETICA">msis86</font><font face="ARIAL, HELVETICA">(</font><font face="ARIAL, HELVETICA">ntime,whichAp,DOY,UT,Alt,Lat,Lon,F107A,F107,Ap,Dens,Temp</font><font face="ARIAL, HELVETICA">)</font> 
+    </p>
+    <p>
+        <br />
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA">------------------------------------------------------------</font><a name="MSISE90"></a> 
+    </p>
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">MSISE90</font></font> 
+    </h2>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">The MSISE model describes the neutral temperature and
+        densities in Earth's atmosphere from ground to thermospheric heights. Below 72.5 km
+        the model is primarily based on the MAP Handbook (Labitzke et al., 1985) tabulation
+        of zonal average temperature and pressure by Barnett and Corney, which was also used
+        for the CIRA-86. Below 20 km these data were supplemented with averages from the National
+        Meteorological Center (NMC). In addition, pitot tube, falling sphere, and grenade
+        sounder rocket measurements from 1947 to 1972 were taken into consideration. Above
+        72.5 km MSISE-90 is essentially a revised MSIS-86 model taking into account data derived
+        from space shuttle flights and newer incoherent scatter results. For someone interested
+        only in the thermosphere (above 120 km), the author recommends the MSIS-86 model.
+        MSISE is also not the model of preference for specialized tropospheric work. It is
+        rather for studies that reach across several atmospheric boundaries. </font>
+    </p>
+    <p>
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Ntime:</b> long integer number of time in arrays
+        (max allowed is 100000)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>WhichAp:</b> long integer</font> to select the&nbsp;kind
+        of Ap input:<br />
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <div style="MARGIN-LEFT: 40px">1=Only daily Ap magnetic index is provided in Ap array
+        (i.e. 1st element)<br />
+        2=All fields in Ap array are provided (i.e. the 7th elements)<br />
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>DOY:</b> array(100000) of long integer, Number of
+        day of year (DOY=1 is for January 1st) </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>UT:</strong> array(100000) of double, UT in
+        seconds when positions are given..</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>Alt:</strong> array(100000) of double, Altitude
+        (km).</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>Lat:</strong> array(100000) of double, Geodetic
+        latitude (Deg.)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>Long:</strong> array(100000) of double, Geodetic
+        longitude (Deg.)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>F107A:</strong> array(100000) of double, 3 month
+        average of F10.7 flux.</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>F107:</strong> array(100000) of double, daily
+        F10.7 flux for previous day.</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Ap:</b> array(7,100000) of double where:<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">1st element=Daily Ap<br />
+        2nd element=3 hours Ap index for current time<br />
+        3rd element=3 hours Ap index for 3 hours before current time 
+        <br />
+        4th element=3 hours Ap index for 6 hours before current time<br />
+        5th element=3 hours Ap index for 9 hours before current time<br />
+        6th element=Average of eight 3 hours Ap indices from 12 to 33 hours prior to current
+        time<br />
+        7th element=Average of eight 3 hours Ap indices from 36 to 59 hours prior to current
+        time 
+    </div>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"></font>
+    </p>
+    <p>
+    </p>
+    <font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Dens:</b> array(8,100000) of double where:<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">Dens(1st element,*)=He number density (cm<sup>-3</sup>) 
+    </div>
+    <div style="MARGIN-LEFT: 40px">Dens(2nd element,*)=O number density (cm<sup>-3</sup>)<br />
+        Dens(3rd&nbsp;element,*)=N<sub>2</sub> number density (cm<sup>-3</sup>)<br />
+        Dens(4th&nbsp;element,*)=O<sub>2</sub> number density (cm<sup>-3</sup>)<br />
+        Dens(5th element,*)=AR number density (cm<sup>-3</sup>)<br />
+        Dens(6th element,*)=Total mass density (g/cm<sup>-3</sup>)<br />
+        Dens(7th element,*)=H number density (cm<sup>-3</sup>)<br />
+        Dens(8th element,*)=N number density (cm<sup>-3</sup>) 
+    </div>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Temp:</b> array(2,100000) of double where:<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">Temp(1st element,*)=Exospheric temperature (K) 
+    </div>
+    <div style="MARGIN-LEFT: 40px">Temp(2nd element,*)=Temperature at alt (K)&nbsp; 
+    </div>
+    <p>
+    </p>
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">out = onera_desp_lib_msis('msise90',date,X,sysaxes,F107A,F107,Ap)</font> 
+        <br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'msise90_idl_', ntime,whichAp,DOY,UT,Alt,Lat,Lon,F107A,F107,Ap,Dens,Temp,
+        /f_value)</font> 
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">CALL </font><font face="ARIAL, HELVETICA">msise90</font><font face="ARIAL, HELVETICA">(</font><font face="ARIAL, HELVETICA">ntime,whichAp,DOY,UT,Alt,Lat,Lon,F107A,F107,Ap,Dens,Temp</font><font face="ARIAL, HELVETICA">)</font> 
+    </p>
+    <p>
+        <br />
+    </p> 
+    <p>
+        <font face="ARIAL, HELVETICA">------------------------------------------------------------</font><a name="NRLMSIS00"></a> 
+    </p>
+    <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">NRLMSIS00</font></font> 
+    </h2>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">DESCRIPTION:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">The NRLMSIS-00 empirical atmosphere model was developed
+        by Mike Picone, Alan Hedin, and Doug Drob based on the MSISE90 model. The main differences
+        to MSISE90 are noted in the comments at the top of the computer code. They involve
+        (1) the extensive use of drag and accelerometer data on total mass density, (2) the
+        addition of a component to the total mass density that accounts for possibly significant
+        contributions of O+ and hot oxygen at altitudes above 500 km, and (3) the inclusion
+        of the SMM UV occultation data on [O2]. The MSISE90 model describes the neutral temperature
+        and densities in Earth's atmosphere from ground to thermospheric heights. Below 72.5
+        km the model is primarily based on the MAP Handbook (Labitzke et al., 1985) tabulation
+        of zonal average temperature and pressure by Barnett and Corney, which was also used
+        for the CIRA-86. Below 20 km these data were supplemented with averages from the National
+        Meteorological Center (NMC). In addition, pitot tube, falling sphere, and grenade
+        sounder rocket measurements from 1947 to 1972 were taken into consideration. Above
+        72.5 km MSISE-90 is essentially a revised MSIS-86 model taking into account data derived
+        from space shuttle flights and newer incoherent scatter results. For someone interested
+        only in the thermosphere (above 120 km), the author recommends the MSIS-86 model.
+        MSISE is also not the model of preference for specialized tropospheric work. It is
+        rather for studies that reach across several atmospheric boundaries. </font>
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Ntime:</b> long integer number of time in arrays
+        (max allowed is 100000)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>WhichAp:</b> long integer to select the&nbsp;kind
+        of Ap input:<br /></font>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">1=Only daily Ap magnetic index is provided in Ap array
+        (i.e. 1st element)<br />
+        2=All fields in Ap array are provided (i.e. the 7th elements)<br /></font>
+    </div>
+    <p>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>DOY:</b> array(100000) of long integer, Number of
+        day of year (DOY=1 is for January 1st) </font>
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>UT:</strong> array(100000) of double, UT in
+        seconds when positions are given..</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>Alt:</strong> array(100000) of double, Altitude
+        in km (greater than 85 km).</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>Lat:</strong> array(100000) of double, Geodetic
+        latitude (Deg.)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>Long:</strong> array(100000) of double, Geodetic
+        longitude (Deg.)</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>F107A:</strong> array(100000) of double, 3 month
+        average of F10.7 flux.</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><strong>F107:</strong> array(100000) of double, daily
+        F10.7 flux for previous day.</font> 
+    </p>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Ap:</b> array(7,100000) of double where:<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">1st element=Daily Ap<br />
+        2nd element=3 hours Ap index for current time<br />
+        3rd element=3 hours Ap index for 3 hours before current time 
+        <br />
+        4th element=3 hours Ap index for 6 hours before current time<br />
+        5th element=3 hours Ap index for 9 hours before current time<br />
+        6th element=Average of eight 3 hours Ap indices from 12 to 33 hours prior to current
+        time<br />
+        7th element=Average of eight 3 hours Ap indices from 36 to 59 hours prior to current
+        time 
+    </div>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
+    <font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Dens:</b> array(9,100000) of double where:<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">Dens(1st element,*)=He number density (cm<sup>-3</sup>) 
+    </font></div>
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">Dens(2nd element,*)=O number density (cm<sup>-3</sup>)<br />
+        Dens(3rd&nbsp;element,*)=N<sub>2</sub> number density (cm<sup>-3</sup>)<br />
+        Dens(4th&nbsp;element,*)=O<sub>2</sub> number density (cm<sup>-3</sup>)<br />
+        Dens(5th element,*)=AR number density (cm<sup>-3</sup>)<br />
+        Dens(6th element,*)=Total mass density (g/cm<sup>-3</sup>)<br />
+        Dens(7th element,*)=H number density (cm<sup>-3</sup>)<br />
+        Dens(8th element,*)=N number density (cm<sup>-3</sup>) 
+        <br />
+        Dens(9th element,*)=Anomalous oxygen&nbsp;number density (cm<sup>-3</sup>) 
+    </font></div>
+    <p>
+        <font face="ARIAL, HELVETICA"><b>Temp:</b> array(2,100000) of double where:<br />
+        </font>
+    </p>
+    <div style="MARGIN-LEFT: 40px">Temp(1st element,*)=Exospheric temperature (K) 
+    </div>
+    <div style="MARGIN-LEFT: 40px">Temp(2nd element,*)=Temperature at alt (K)&nbsp; 
+    </div>
+    <p>
+    </p>
+    &nbsp; 
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
+    </h3>
+    <p>
+        <font face="Arial">out = onera_desp_lib_msis('nrlmsise00',date,X,sysaxes,F107A,F107,Ap)</font>&nbsp;<br />
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">result = call_external(lib_name, 'nrlmsise90_idl_',
+        ntime,whichAp,DOY,UT,Alt,Lat,Lon,F107A,F107,Ap,Dens,Temp, /f_value)</font> 
+    </p>
+    <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from FORTRAN:</font></font> 
+    </h3>
+    <p>
+        <font face="ARIAL, HELVETICA">CALL </font><font face="ARIAL, HELVETICA">nrlmsise90</font><font face="ARIAL, HELVETICA">(</font><font face="ARIAL, HELVETICA">ntime,whichAp,DOY,UT,Alt,Lat,Lon,F107A,F107,Ap,Dens,Temp</font><font face="ARIAL, HELVETICA">)</font> 
+    </p>
+    <p>
+        <br />
+    </p>
     <p>
         <font face="ARIAL, HELVETICA">------------------------------------------------------------</font><a name="SGP4_TLE"></a> 
     </p>
@@ -5108,7 +6403,7 @@
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">INPUTS:</font></font> 
     </h3>
     <p>
-        <font face="ARIAL, HELVETICA"><b>runtype:</b> long integer&nbsp;to select which&nbsp;in
+        <font face="ARIAL, HELVETICA"><b>runtype:</b> long integer&nbsp;to select&nbsp;in
         which mode&nbsp;SGP4_TLE will run</font>&nbsp; 
     </p>
     <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: defines start and
@@ -5169,7 +6464,7 @@
     </div>
     <div style="MARGIN-LEFT: 40px">5: latitude (deg) 
     </div>
-    <div style="MARGIN-LEFT: 40px">6: longitude (deg)&nbsp; 
+    <div style="MARGIN-LEFT: 40px">6: East longitude (deg)&nbsp; 
         <br />
     </div>
     <p>
@@ -5177,10 +6472,19 @@
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE FROM MATLAB:</font></font> 
     </h3>
     <p>
-        pos = onera_desp_lib_sgp4_tle(startsfe,stopsfe,deltasec,InFileByte) %implies runtype=0 
+        The Matlab wrapper handles calculation of runtype strlenIn, OutfileByte, strlenOut.
+        OutfileByte and strlenOut will be set appropriately for a temporary file (onera_desp_lib_sgp4_tle.tmp
+        or onera_desp_lib_sgp4_tle.tmp.####). The wrapper reads the library routine's output
+        from the temporary file and passes it back as a Matlab structure. The temporary file
+        is deleted, so the Matlab structure is the only result of a successful call to sgp4_tle.
+        In order to avoid a memory overflow for very long TLE runs, it is possible to leave
+        the output in a text file (as in the FORTRAN call): the syntax is then onera_desp_lib_sgp4_tle(InFile,OutFile) 
     </p>
     <p>
-        pos = onera_desp_lib_sgp4_tle(InFileByte) %implies runtype=1<br />
+        pos = onera_desp_lib_sgp4_tle(InFileByte) %implies runtype=0<br />
+    </p>
+    <p>
+        pos = onera_desp_lib_sgp4_tle(startsfe,stopsfe,deltasec,InFileByte) %implies runtype=1<br />
     </p>
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">CALLING SEQUENCE from IDL:</font></font> 
     </h3>
@@ -5220,11 +6524,11 @@
     </h3>
     <p>
         <font face="ARIAL, HELVETICA"><b>sysaxesOUT:</b> long integer to define which coordinate
-        system is provided in</font> 
+        system is provided out</font> 
         <br />
     </p>
-    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, longi
-        - km,deg.,deg)</font> 
+    <div style="MARGIN-LEFT: 40px"><font face="ARIAL, HELVETICA">0: GDZ (alti, lati, East
+        longi - km,deg.,deg)</font> 
         <br />
         <font face="ARIAL, HELVETICA">1: GEO (cartesian) - Re</font> 
         <br />
@@ -5239,12 +6543,11 @@
         <font face="ARIAL, HELVETICA">6: MAG (cartesian) - Re</font> 
         <br />
         <font face="ARIAL, HELVETICA">7: SPH (geo in spherical) - (radial distance, lati,
-        longi - Re, deg., deg.)<br />
-        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, longi -
-        Re, deg., deg. - prefered to 7)</font> 
+        East longi - Re, deg., deg.)<br />
+        </font><font face="ARIAL, HELVETICA">8: RLL&nbsp; (radial distance, lati, East longi
+        - Re, deg., deg. - prefered to 7)</font> 
         <br />
-    </div>
-    </font><font face="ARIAL, HELVETICA"> 
+    </div> 
     <p>
         <font face="ARIAL, HELVETICA"><strong>year:</strong> long integer&nbsp;giving start
         year of start date</font> 
@@ -5253,7 +6556,6 @@
         <font face="ARIAL, HELVETICA"><strong>month:</strong> long integer&nbsp;giving start
         month of start date </font>
     </p>
-    </font> 
     <p>
         <font face="ARIAL, HELVETICA"><strong>day:</strong> long integer&nbsp;giving start
         day of month of start date. </font>
@@ -5467,12 +6769,12 @@
     <h3><font face="ARIAL, HELVETICA"><font color="#ff0000">OUTPUTS:</font></font> 
     </h3>
     <p>
-        <font face="ARIAL, HELVETICA"><b>OUTyear:</b>&nbsp;array of double(100000)&nbsp;giving
+        <font face="ARIAL, HELVETICA"><b>OUTyear:</b>&nbsp;array of long integer(100000)&nbsp;giving
         output year for each orbital locations</font> 
         <br />
     </p>
     <p>
-        <font face="ARIAL, HELVETICA"><b>OUTdoy:</b>&nbsp;array of double(100000)&nbsp;giving
+        <font face="ARIAL, HELVETICA"><b>OUTdoy:</b>&nbsp;array of long integer(100000)&nbsp;giving
         output&nbsp;day of year&nbsp;for each orbital locations</font> 
         <br />
     </p>
@@ -5606,5 +6908,7 @@
     &nbsp; 
     <div>
     </div>
+    <p>
+    </p>
 </body>
 </html>

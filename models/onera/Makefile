@@ -1,3 +1,21 @@
+#***************************************************************************************************
+# Copyright 2007, S. Bourdarie
+#
+# This file is part of ONERA_DESP_LIB.
+#
+#    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Lesser General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public License
+#    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+#
 SHELL=/bin/sh
 NULL=true
 #------------------------------------------------------------------------------
@@ -87,6 +105,14 @@ LDOPTIONS_linux32_gnu32=-shared
 WRAPPER_linux32_gnu32=32
 LIBNAME_linux32_gnu32=linux_x86
 
+FOPTIONS_SHARED_linux32_pgi32=-Bstatic -Mnosecond_underscore -w
+FOPTIONS_NONSHARED_linux32_pgi32=-c -w
+FC_linux32_pgi32=pgf77
+PIC_linux32_pgi32=-fpic
+LDOPTIONS_linux32_pgi32=-shared
+WRAPPER_linux32_pgi32=32
+LIBNAME_linux32_pgi32=linux_x86
+
 #------------------------------------------------------------------------------
 # Macros for Linux64.
 #------------------------------------------------------------------------------
@@ -114,11 +140,19 @@ LIBNAME_linux64_gnu32=linux_x86
 FOPTIONS_SHARED_linux64_gnu64=-mno-align-double -fno-second-underscore -w -m64
 FOPTIONS_NONSHARED_linux64_gnu64=-c -mno-align-double -w -m64
 FC_linux64_gnu64=g77
-FC_linux64_gnu64=gfortran-4.3
+FC_linux64_gnu64=gfortran
 PIC_linux64_gnu64=-fPIC
 LDOPTIONS_linux64_gnu64=-shared
 WRAPPER_linux64_gnu64=64
 LIBNAME_linux64_gnu64=linux_x86_64
+
+FOPTIONS_SHARED_linux64_pgi64=-Mnosecond_underscore -w -tp p7-64
+FOPTIONS_NONSHARED_linux64_pgi64=-c -w -tp p7-64
+FC_linux64_pgi64=pgf77
+PIC_linux64_pgi64=-fPIC
+LDOPTIONS_linux64_pgi64=-shared
+WRAPPER_linux64_pgi64=64
+LIBNAME_linux64_pgi64=linux_x86_64
 
 #------------------------------------------------------------------------------
 # Macros for Windows.
@@ -128,7 +162,7 @@ SHAREDEXT_win32=dll
 NONSHAREDEXT_win32=a
 AROPTIONS_win32=-r
 
-FOPTIONS_SHARED_win32_cygwin32=-mno-cygwin -I%IDLINC% -Wl,--add-stdcall-alias
+FOPTIONS_SHARED_win32_cygwin32=-mno-cygwin -I%IDLINC% -Wl,--add-stdcall-alias -fno-second-underscore -w
 FOPTIONS_NONSHARED_win32_cygwin32=-c -mno-cygwin -shared -mno-align-double -fno-second-underscore -w
 FC_win32_cygwin32=g77
 PIC_win32_cygwin32=
@@ -166,9 +200,11 @@ all..:
 
 all.linux32.intel32: all.build
 all.linux32.gnu32: all.build
+all.linux32.pgi32: all.build
 all.linux64.intel32: all.build
 all.linux64.gnu32: all.build
 all.linux64.gnu64: all.build
+all.linux64.pgi64: all.build
 all.win32.cygwin32: all.build
 all.mach.gnu32: all.build
 all.sunos.sparc32: all.build
@@ -202,16 +238,16 @@ install: install.lib
 
 install.lib:
 	@if [ -f $(SOURCEDIR)/onera_desp_lib_*.so ] ; then \
-	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(INSTALLDIR)/matlab;\
+	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(INSTALLDIR)/matlab/onera_desp_lib.so;\
 	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(INSTALLDIR);\
 	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(GUPDIR)/onera_desp_lib.so;\
 	 else \
 	   $(NULL) ; \
 	 fi
 	@if [ -f $(SOURCEDIR)/onera_desp_lib_*.dll ] ; then \
-	   cp $(SOURCEDIR)/onera_desp_lib_*.dll $(INSTALLDIR)/matlab;\
+	   cp $(SOURCEDIR)/onera_desp_lib_*.dll $(INSTALLDIR)/matlab/onera_desp_lib.dll;\
 	   cp $(SOURCEDIR)/onera_desp_lib_*.dll $(INSTALLDIR);\
-	   cp $(SOURCEDIR)/onera_desp_lib_*.dll $(GUPDIR)/onera_desp_lib.dll;\
+	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(GUPDIR)/onera_desp_lib.dll;\
 	 else \
 	   $(NULL) ; \
 	 fi

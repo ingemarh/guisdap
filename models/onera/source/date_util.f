@@ -1,3 +1,21 @@
+!***************************************************************************************************
+! Copyright , 2005 S. Bourdarie
+!
+! This file is part of ONERA_DESP_LIB.
+!
+!    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+!    it under the terms of the GNU Lesser General Public License as published by
+!    the Free Software Foundation, either version 3 of the License, or
+!    (at your option) any later version.
+!
+!    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU Lesser General Public License for more details.
+!
+!    You should have received a copy of the GNU Lesser General Public License
+!    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+!
 ! 
 !----------------------------------------------------------------------      
 ! NAME:
@@ -170,7 +188,54 @@
        firstJanuary=JULDAY(year,01,01)
        GET_DOY=JULDAY(year,month,day)-firstJanuary+1
        END 
-       
+!----------------------------------------------------------------------      
+! NAME:
+!	DOY_AND_UT2DATE_AND_TIME
+!
+! PURPOSE:
+!	Calculate month, day, and year from year and day of year.
+!       Calulate time (hour, minute, second) from UT
+!
+! CALLING SEQUENCE:
+!	CALL DOY_AND_UT2DATE_AND_TIME(Year,Doy,UT, Month, Day, hour, minute, second)
+!
+! INPUTS:
+!	YEAR:	Number of the desired year.Year parameters must be valid
+!               values from the civil calendar.  Years B.C.E. are represented
+!               as negative integers.  Years in the common era are represented
+!               as positive integers.  In particular, note that there is no
+!               year 0 in the civil calendar.  1 B.C.E. (-1) is followed by
+!               1 C.E. (1).
+!
+!	DOY:    The day of year of the specified calendar date.
+!
+!       UT:     Universal time in seconds
+!
+! OUTPUTS:
+!	MONTH:	Number of the desired month (1 = January, ..., 12 = December).
+!
+!	DAY:	Number of day of the month.
+!
+!	hour, minute second: time
+!-----------------------------------------------------------------------
+       SUBROUTINE DOY_AND_UT2DATE_AND_TIME(Year,Doy,UT, Month, Day, 
+     &            hour, minute, second)
+!
+       IMPLICIT NONE
+!
+       INTEGER*4 jd,year,month,day,doy
+       INTEGER*4 hour,minute,second
+       INTEGER*4 firstJanuary,julday
+       REAL*8    UT
+!
+       firstJanuary=JULDAY(year,01,01)
+       jd=doy+firstJanuary-1
+       CALL CALDAT(jd, year,month, day)
+       hour=int(UT/3600)
+       minute=int((UT-hour*3600)/60)
+       second=int(UT-hour*3600.-minute*60.)
+       END 
+!            
 !----------------------------------------------------------------------      
 ! NAME:
 !	DECY2DATE_AND_TIME

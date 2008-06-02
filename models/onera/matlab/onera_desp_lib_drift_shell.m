@@ -1,4 +1,23 @@
 function [Lm,Lstar,Blocal,Bmin,J,POSIT] = onera_desp_lib_drift_shell(kext,options,sysaxes,matlabd,x1,x2,x3,maginput)
+%***************************************************************************************************
+% Copyright 2005, T.P. O'Brien
+%
+% This file is part of ONERA_DESP_LIB.
+%
+%    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU Lesser General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU Lesser General Public License for more details.
+%
+%    You should have received a copy of the GNU Lesser General Public License
+%    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+%***************************************************************************************************
+%
 % function [Lm,Lstar,Blocal,Bmin,J,POSIT] = onera_desp_lib_drift_shell(kext,options,sysaxes,matlabd,x1,x2,x3,maginput)
 % returns spatial coordinates of drift shell starting from a single point
 % as described in the ONERA/DESP
@@ -50,7 +69,11 @@ matlabd = datenum(matlabd);
 onera_desp_lib_load;
 
 kext = onera_desp_lib_kext(kext);
+in_options = options;
 options = onera_desp_lib_options(options);
+if isempty(in_options),
+    options(1) = 1; % by default, force full drift shell to be traced, otherwise only get one field line
+end
 sysaxes = onera_desp_lib_sysaxes(sysaxes);
 if isempty(maginput),
     maginput = zeros(1,25);

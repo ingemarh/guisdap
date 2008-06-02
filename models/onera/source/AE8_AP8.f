@@ -1,4 +1,22 @@
 !***************************************************************************************************
+! Copyright 1987, D. Bilitza, 2007 S. Bourdarie
+!
+! This file is part of ONERA_DESP_LIB.
+!
+!    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+!    it under the terms of the GNU Lesser General Public License as published by
+!    the Free Software Foundation, either version 3 of the License, or
+!    (at your option) any later version.
+!
+!    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU Lesser General Public License for more details.
+!
+!    You should have received a copy of the GNU Lesser General Public License
+!    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+!
+!
 ! CREATION: S. Bourdarie - ONERA-DESP
 !
 ! FILE CONTENT: 
@@ -12,220 +30,256 @@
 !               SUBROUTINE Init_AP8min: Set block data for NASA AP8min model
 !
 !***************************************************************************************************
-!---------------------------------------------------------------------------------------------------
-!                              Introduced in version 3.0
+!--------------------------------------------------------------------------------------------
+!+
+! NAME:
+!	fly_in_nasa_aeap1
 !
-! CREATION: S. Bourdarie - September 2005
-! MODIFICATION: S. Bourdarie - March 2007 (add multi channel calculcations; add time input for coordinates transformations) - V4.1
+! PURPOSE:
+!	This subroutine Allows to fly a spacecraft in AE8-AP8 min and max models.
 !
-! DESCRIPTION: Allows to fly a spacecraft in AE8-AP8 min and max models. 
+! CATEGORY:
+!	Radiation belt model
 !
-! INPUT: ntime -> maximum number of time to compute (long integer)
-!        sysaxes -> define which coordinate system is provided in
-!        whichm -> which model to use, 1=AE8min 2=AE8max 3=AP8min 4=AP8max (long integer)
-!        whatf -> which kind of flux, 1=differential 2=E range 3=integral (long integer)
-!        Nene -> Number of energy channels to compute
-!        energy -> energy (MeV) at which fluxes must be computed (double array [2,25])
-!        iyear,idoy,UT -> times when flux are to be computed (not usefull if imput position is not in GSE, GSM, SM,GEI) (respectively long array(100000), long array(100000), double array(100000))
-!        xIN1 -> first coordinate in the chosen system (double array [100000])
-!        xIN2 -> second coordinate in the chosen system (double array [100000])
-!        xIN3 -> third coordinate in the chosen system (double array [100000])
+! CALLING SEQUENCE:
+!	CALL fly_in_nasa_aeap1(ntime,sysaxes,whichm,whatf,energy,xIN1,xIN2,xIN3,flux)
 !
-! OUTPUT: flux -> Computed fluxes (MeV-1 cm-2 s-1 or cm-2 s-1) (double array [100000,25])
+! INPUTS:
+!	ntime -> maximum number of time to compute (long integer)
+!	sysaxes -> define which coordinate system is provided in
+!	whichm -> which model to use, 1=AE8min 2=AE8max 3=AP8min 4=AP8max (long integer)
+!	whatf -> which kind of flux, 1=differential 2=E range 3=integral (long integer)
+!	Nene -> Number of energy channels to compute
+!	energy -> energy (MeV) at which fluxes must be computed (double array [2,25])
+!	iyear,idoy,UT -> times when flux are to be computed (not usefull if imput position is not in GSE, GSM, SM,GEI) (respectively long array(100000), long array(100000), double array(100000))
+!	xIN1 -> first coordinate in the chosen system (double array [100000])
+!	xIN2 -> second coordinate in the chosen system (double array [100000])
+!	xIN3 -> third coordinate in the chosen system (double array [100000])
+!	
+! OUTPUTS:
+!	flux -> Computed fluxes (MeV-1 cm-2 s-1 or cm-2 s-1) (double array [100000,25])
 !
-! CALLING SEQUENCE: CALL fly_in_nasa_aeap1(ntime,sysaxes,whichm,whatf,energy,xIN1,xIN2,xIN3,flux)
-!---------------------------------------------------------------------------------------------------
-        SUBROUTINE fly_in_nasa_aeap1(ntime,sysaxes,whichm,whatf,nene,
+! COMMON BLOCKS:
+!	COMMON/GENER/ERA,AQUAD,BQUAD
+!	COMMON /magmod/k_ext,k_l,kint
+!	COMMON /flag_L/Ilflag
+!	COMMON /dip_ang/tilt
+!
+! MODIFICATION HISTORY:
+!	Written by: S. Bourdarie (introduced in version 3.0), September 2005
+!				S. Bourdarie - March 2007 (add multi channel calculcations; 
+!					add time input for coordinates transformations) - V4.1
+!-
+!--------------------------------------------------------------------------------------------
+      SUBROUTINE fly_in_nasa_aeap1(ntime,sysaxes,whichm,whatf,nene,
      &                        energy,iyear,idoy,UT,xIN1,xIN2,xIN3,flux)
 c
-	IMPLICIT NONE
-	INCLUDE 'variables.inc'
+      IMPLICIT NONE
+      INCLUDE 'variables.inc'
 C
 c declare inputs
-        INTEGER*4 ntime_max,nene_max
-	PARAMETER (ntime_max=100000)
-	PARAMETER (nene_max=25)
-        INTEGER*4  ntime,sysaxes,whichm,whatf,Nene
-	INTEGER*4  iyear(ntime_max),idoy(ntime_max)
-	REAL*8     energy(2,nene_max)
-	REAL*8     UT(ntime_max)
-	real*8     xIN1(ntime_max),xIN2(ntime_max),xIN3(ntime_max)
+      INTEGER*4 ntime_max,nene_max
+      PARAMETER (ntime_max=100000)
+      PARAMETER (nene_max=25)
+      INTEGER*4  ntime,sysaxes,whichm,whatf,Nene
+      INTEGER*4  iyear(ntime_max),idoy(ntime_max)
+      REAL*8     energy(2,nene_max)
+      REAL*8     UT(ntime_max)
+      real*8     xIN1(ntime_max),xIN2(ntime_max),xIN3(ntime_max)
 c Declare internal variables
-	INTEGER*4  k_ext,k_l,isat,kint
-        INTEGER*4  t_resol,r_resol,Ilflag
-	INTEGER*4  iyear_dip,idoy_dip
-	REAL*8     xGEO(3),xMAG(3),xSUN(3),rM,MLAT,Mlon1
-	REAL*8     xGSM(3),xSM(3),xGEI(3),xGSE(3)
-	real*8     alti,lati,longi,UT_dip,psi,tilt
-        REAL*8     ERA,AQUAD,BQUAD
-        REAL*8     BLOCAL(ntime_max),BMIN(ntime_max),XJ(ntime_max)
-        REAL*8     Lm(ntime_max),Lstar(ntime_max),BBo(ntime_max)
+      INTEGER*4  k_ext,k_l,isat,kint
+      INTEGER*4  t_resol,r_resol,Ilflag
+      INTEGER*4  iyear_dip,idoy_dip
+      REAL*8     xGEO(3),xMAG(3),xSUN(3),rM,MLAT,Mlon1
+      REAL*8     xGSM(3),xSM(3),xGEI(3),xGSE(3)
+      real*8     alti,lati,longi,UT_dip,psi,tilt
+      REAL*8     ERA,AQUAD,BQUAD
+      REAL*8     BLOCAL(ntime_max),BMIN(ntime_max),XJ(ntime_max)
+      REAL*8     Lm(ntime_max),Lstar(ntime_max),BBo(ntime_max)
 c
 c Declare output variables	
-	REAL*8     flux(ntime_max,nene_max)
+      REAL*8     flux(ntime_max,nene_max)
 C
-        COMMON/GENER/ERA,AQUAD,BQUAD
-	COMMON /magmod/k_ext,k_l,kint
-        COMMON /flag_L/Ilflag
-        COMMON /dip_ang/tilt
-        DATA  xSUN /1.d0,0.d0,0.d0/
+      COMMON/GENER/ERA,AQUAD,BQUAD
+      COMMON /magmod/k_ext,k_l,kint
+      COMMON /flag_L/Ilflag
+      COMMON /dip_ang/tilt
+      DATA  xSUN /1.d0,0.d0,0.d0/
 C
-	Ilflag=0
-	k_ext=0
-	t_resol=3
-	r_resol=0
-	k_l=0
-	if (whichm .lt. 1 .or. whichm .gt. 4) then
-           whichm=1
-	   WRITE(6,*)
-	   WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-	   WRITE(6,*)'Invalid NASA AE8 or AP8 specification'
-	   WRITE(6,*)'Selecting AE8 min'
-	   WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-	   WRITE(6,*)
-	endif   
-	if (whichm .eq. 4) then
-	   kint=3
-	else
-	   kint=2
-	endif
-	if (whatf .lt. 1 .or. whatf .gt. 3) then
-           whatf=1
-	   WRITE(6,*)
-	   WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-	   WRITE(6,*)'Invalid flux output specification'
-	   WRITE(6,*)'Selecting differential flux'
-	   WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-	   WRITE(6,*)
-	endif   
+      Ilflag=0
+      k_ext=0
+      t_resol=3
+      r_resol=0
+      k_l=0
+      if (whichm .lt. 1 .or. whichm .gt. 4) then
+         whichm=1
+         WRITE(6,*)
+         WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         WRITE(6,*)'Invalid NASA AE8 or AP8 specification'
+         WRITE(6,*)'Selecting AE8 min'
+         WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         WRITE(6,*)
+      endif   
+      if (whichm .eq. 4) then
+         kint=3
+      else
+         kint=2
+      endif
+      if (whatf .lt. 1 .or. whatf .gt. 3) then
+         whatf=1
+         WRITE(6,*)
+         WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         WRITE(6,*)'Invalid flux output specification'
+         WRITE(6,*)'Selecting differential flux'
+         WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         WRITE(6,*)
+      endif   
 c
 c
-        CALL INITIZE
-	if (kint .eq. 2) then
-	   CALL JensenANDCain1960
-	   iyear_dip=1960
-	endif
-	if (kint .eq. 3) then
-	   CALL GSFC1266
-	   iyear_dip=1970
-	endif
+      CALL INITIZE
+      if (kint .eq. 2) then
+         CALL JensenANDCain1960
+         iyear_dip=1960
+      endif
+      if (kint .eq. 3) then
+         CALL GSFC1266
+        iyear_dip=1970
+      endif
 c
-        idoy_dip=0
-	UT_dip=0.d0
-        CALL INIT_GSM(iyear_dip,idoy_dip,UT_dip,psi)
-        tilt = psi/(4.D0*ATAN(1.D0)/180.d0)
-        DO isat = 1,ntime
+      idoy_dip=0
+      UT_dip=0.d0
+      CALL INIT_GSM(iyear_dip,idoy_dip,UT_dip,psi)
+      tilt = psi/(4.D0*ATAN(1.D0)/180.d0)
+      DO isat = 1,ntime
 c	   write(6,*)real(isat)*100./real(ntime), '% done'
 c
-	   if (sysaxes .EQ. 0) then
-	       alti=xIN1(isat)
-	       lati=xIN2(isat)
-	       longi=xIN3(isat)
-	   endif
-	   if (sysaxes .EQ. 1) then
-	       xGEO(1)=xIN1(isat)
-	       xGEO(2)=xIN2(isat)
-	       xGEO(3)=xIN3(isat)
-	       CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
-	   endif
-	   if (sysaxes .EQ. 2) then
-	       xGSM(1)=xIN1(isat)
-	       xGSM(2)=xIN2(isat)
-	       xGSM(3)=xIN3(isat)
-               CALL INIT_GSM(iyear(isat),idoy(isat),UT(isat),psi)
-	       CALL GSM_GEO(xGSM,xGEO)
-	       CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
-	   endif
-	   if (sysaxes .EQ. 3) then
-	       xGSE(1)=xIN1(isat)
-	       xGSE(2)=xIN2(isat)
-	       xGSE(3)=xIN3(isat)
-               CALL INIT_GSM(iyear(isat),idoy(isat),UT(isat),psi)
-	       CALL GSE_GEO(xGSE,xGEO)
-	       CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
-	   endif
-	   if (sysaxes .EQ. 4) then
-	       xSM(1)=xIN1(isat)
-	       xSM(2)=xIN2(isat)
-	       xSM(3)=xIN3(isat)
-               CALL INIT_GSM(iyear(isat),idoy(isat),UT(isat),psi)
-	       CALL SM_GEO(xSM,xGEO)
-	       CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
-	   endif
-	   if (sysaxes .EQ. 5) then
-	       xGEI(1)=xIN1(isat)
-	       xGEI(2)=xIN2(isat)
-	       xGEI(3)=xIN3(isat)
-               CALL INIT_GSM(iyear(isat),idoy(isat),UT(isat),psi)
-	       CALL GEI_GEO(xGEI,xGEO)
-	       CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
-	   endif
-	   if (sysaxes .EQ. 6) then
-	       xMAG(1)=xIN1(isat)
-	       xMAG(2)=xIN2(isat)
-	       xMAG(3)=xIN3(isat)
-	       CALL MAG_GEO(xMAG,xGEO)
-	       CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
-	   endif
-	   if (sysaxes .EQ. 7) then
-	       xMAG(1)=xIN1(isat)
-	       xMAG(2)=xIN2(isat)
-	       xMAG(3)=xIN3(isat)
-	       CALL SPH_CAR(xMAG(1),xMAG(2),xMAG(3),xGEO)
-	       CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
-	   endif
-	   if (sysaxes .EQ. 8) then
-	       xMAG(1)=xIN1(isat)
-	       lati=xIN2(isat)
-	       longi=xIN3(isat)
-	       CALL RLL_GDZ(xMAG(1),lati,longi,alti)
-	   endif
-           CALL calcul_Lstar(t_resol,r_resol,lati,longi,alti
+      if (sysaxes .EQ. 0) then
+         alti=xIN1(isat)
+         lati=xIN2(isat)
+         longi=xIN3(isat)
+      endif
+      if (sysaxes .EQ. 1) then
+         xGEO(1)=xIN1(isat)
+         xGEO(2)=xIN2(isat)
+         xGEO(3)=xIN3(isat)
+         CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
+      endif
+      if (sysaxes .EQ. 2) then
+         xGSM(1)=xIN1(isat)
+         xGSM(2)=xIN2(isat)
+         xGSM(3)=xIN3(isat)
+         CALL INIT_GSM(iyear(isat),idoy(isat),UT(isat),psi)
+         CALL GSM_GEO(xGSM,xGEO)
+         CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
+      endif
+      if (sysaxes .EQ. 3) then
+         xGSE(1)=xIN1(isat)
+         xGSE(2)=xIN2(isat)
+         xGSE(3)=xIN3(isat)
+         CALL INIT_GSM(iyear(isat),idoy(isat),UT(isat),psi)
+         CALL GSE_GEO(xGSE,xGEO)
+           CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
+      endif
+      if (sysaxes .EQ. 4) then
+           xSM(1)=xIN1(isat)
+           xSM(2)=xIN2(isat)
+           xSM(3)=xIN3(isat)
+           CALL INIT_GSM(iyear(isat),idoy(isat),UT(isat),psi)
+           CALL SM_GEO(xSM,xGEO)
+           CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
+      endif
+      if (sysaxes .EQ. 5) then
+           xGEI(1)=xIN1(isat)
+           xGEI(2)=xIN2(isat)
+           xGEI(3)=xIN3(isat)
+           CALL INIT_GSM(iyear(isat),idoy(isat),UT(isat),psi)
+           CALL GEI_GEO(xGEI,xGEO)
+           CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
+      endif
+      if (sysaxes .EQ. 6) then
+           xMAG(1)=xIN1(isat)
+           xMAG(2)=xIN2(isat)
+           xMAG(3)=xIN3(isat)
+           CALL MAG_GEO(xMAG,xGEO)
+           CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
+      endif
+      if (sysaxes .EQ. 7) then
+           xMAG(1)=xIN1(isat)
+           xMAG(2)=xIN2(isat)
+           xMAG(3)=xIN3(isat)
+           CALL SPH_CAR(xMAG(1),xMAG(2),xMAG(3),xGEO)
+           CALL GEO_GDZ(xGEO(1),xGEO(2),xGEO(3),lati,longi,alti)
+      endif
+      if (sysaxes .EQ. 8) then
+           xMAG(1)=xIN1(isat)
+           lati=xIN2(isat)
+           longi=xIN3(isat)
+           CALL RLL_GDZ(xMAG(1),lati,longi,alti)
+      endif
+      CALL calcul_Lstar(t_resol,r_resol,lati,longi,alti
      &     ,Lm(isat),Lstar(isat),XJ(isat),BLOCAL(isat),BMIN(isat))
            BBo(isat)=BLOCAL(isat)/BMIN(isat)
-	   if (Lm(isat) .le. 0.D0 .and. Lm(isat) .ne. -1.D31) 
+      if (Lm(isat) .le. 0.D0 .and. Lm(isat) .ne. -1.D31) 
      &       Lm(isat)=-Lm(isat)
-        write(6,'(I10,3f12.5)')isat,Lm(isat),BLOCAL(isat),BMIN(isat)
-	enddo   
-        call get_AE8_AP8_flux(ntime,whichm,whatf,nene,
+!        write(6,'(I10,3f12.5)')isat,Lm(isat),BLOCAL(isat),BMIN(isat)
+      enddo   
+      call get_AE8_AP8_flux(ntime,whichm,whatf,nene,
      &                             energy,BBo,Lm,flux)
         end
-	
+    
 !
-!---------------------------------------------------------------------------------------------------
-!                              Introduced in version 3.0
+!--------------------------------------------------------------------------------------------
+!+
+! NAME:
+!	get_AE8_AP8_flux
 !
-! CREATION: S. Bourdarie - September 2005
-! MODIFICATION: S. Bourdarie - March 2007 (add multi channel calculcations) - V4.1
+! PURPOSE:
+!	This subroutine Allows to fly a spacecraft in AE8-AP8 min and max models.
 !
-! DESCRIPTION: Compute flux from AE8 or AP8 for an energy, B/B0 and L
+! CATEGORY:
+!	Radiation belt model
 !
-! INPUT: ntmax -> maximum number of time to compute (long integer)
-!        whichm -> which model to use, 1=AE8min 2=AE8max 3=AP8min 4=AP8max (long integer)
-!        whatf -> which kind of flux, 1=differential 2=E range 3=integral (long integer)
-!        Nene -> Number of energy channels to compute
-!        energy -> energy (MeV) at which fluxes must be computed (double array [2,25])
-!        BBo -> Blocal/Bequator (double array [100000])
-!        L -> McIlwain L (double array [100000])
-! OUTPUT: flux -> Computed fluxes (MeV-1 cm-2 s-1 or cm-2 s-1) (double array [100000,25])
+! CALLING SEQUENCE:
+!	CALL get_AE8_AP8_flux(ntmax,whichm,whatf,nene,energy,BBo,L,flux)
 !
-! CALLING SEQUENCE: get_AE8_AP8_flux(ntmax,whichm,whatf,energy,BBo,L,flux)
-!---------------------------------------------------------------------------------------------------
-       SUBROUTINE get_AE8_AP8_flux(ntmax,whichm,whatf,nene,
+! INPUTS:
+!	ntmax -> maximum number of time to compute (long integer)
+!	whichm -> which model to use, 1=AE8min 2=AE8max 3=AP8min 4=AP8max (long integer)
+!	whatf -> which kind of flux, 1=differential 2=E range 3=integral (long integer)
+!	Nene -> Number of energy channels to compute
+!	energy -> energy (MeV) at which fluxes must be computed (double array [2,25])
+!	BBo -> Blocal/Bequator (double array [100000])
+!	L -> McIlwain L (double array [100000])
+!	
+! OUTPUTS:
+!	flux -> Computed fluxes (MeV-1 cm-2 s-1 or cm-2 s-1) (double array [100000,25])
+!
+! COMMON BLOCKS:
+!	COMMON /PROMIN/ IHEADPMIN, MAPPMIN
+!	COMMON /PROMAX/ IHEADPMAX, MAPPMAX
+!	COMMON /ELEMIN/ IHEADEMIN, MAPEMIN
+!	COMMON /ELEMAX/ IHEADEMAX, MAPEMAX
+!
+! MODIFICATION HISTORY:
+!	Written by: S. Bourdarie (introduced in version 3.0), September 2005
+!				S. Bourdarie - March 2007 (add multi channel calculcations) - V4.1
+!-
+!--------------------------------------------------------------------------------------------
+      SUBROUTINE get_AE8_AP8_flux(ntmax,whichm,whatf,nene,
      &                             energy,BBo,L,flux)
 c       
-       IMPLICIT NONE
-       INCLUDE 'variables.inc'
+      IMPLICIT NONE
+      INCLUDE 'variables.inc'
 c
-       INTEGER*4   ntmax,i,nene,ieny
-       INTEGER*4   whichm  !1=AE8min 2=AE8max 3=AP8min 4=AP8max
-       INTEGER*4   whatf  !1=diff 2=E range 3=int
-       INTEGER*4 MAPPMIN(16582), MAPPMAX(16291),
+      INTEGER*4   ntmax,i,nene,ieny
+      INTEGER*4   whichm  !1=AE8min 2=AE8max 3=AP8min 4=AP8max
+      INTEGER*4   whatf  !1=diff 2=E range 3=int
+      INTEGER*4 MAPPMIN(16582), MAPPMAX(16291),
      &           MAPEMIN(13168), MAPEMAX(13548)
-       REAL*8      energy(2,25)
-       REAL*8      flux(100000,25),BBo(100000),L(100000)
-       REAL*8    FL,FL1
-       INTEGER*4 IHEADPMIN(8),IHEADPMAX(8),IHEADEMIN(8),IHEADEMAX(8)
+      REAL*8      energy(2,25)
+      REAL*8      flux(100000,25),BBo(100000),L(100000)
+      REAL*8    FL,FL1
+      INTEGER*4 IHEADPMIN(8),IHEADPMAX(8),IHEADEMIN(8),IHEADEMAX(8)
 c
       COMMON /PROMIN/ IHEADPMIN, MAPPMIN
       COMMON /PROMAX/ IHEADPMAX, MAPPMAX
@@ -233,8 +287,10 @@ c
       COMMON /ELEMAX/ IHEADEMAX, MAPEMAX
 c
 c  init
-      do ieny=1,25
-         Flux(i,ieny) = baddata
+      DO i=1,ntmax
+         do ieny=1,25
+            Flux(i,ieny) = baddata
+         enddo
       enddo
 c
 c  AE8min
@@ -242,50 +298,50 @@ c
       if (whichm .EQ. 1) then
          CALL Init_AE8min
          if (whatf.EQ. 1) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
+            DO i=1,ntmax
+               if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADEMIN,MAPEMIN,L(i),BBo(i),
+                     CALL TRARA1(IHEADEMIN,MAPEMIN,L(i),BBo(i),
      &                     energy(1,ieny)-0.001D0,FL)
-	              FL1 = 10.D0** FL
-	              CALL TRARA1(IHEADEMIN,MAPEMIN,L(i),BBo(i),
-     &         	           energy(1,ieny)+0.001D0,FL)
-                      Flux(i,ieny) = (FL1-10.D0** FL)/0.002D0
-		      if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
-		   enddo
-	       endif
-	    enddo
-	 endif
-         if (whatf.EQ. 2) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
-c loop on energies
-                  do ieny=1,nene
-	             CALL TRARA1(IHEADEMIN,MAPEMIN,L(i),BBo(i),
-     &                     energy(1,ieny),FL)
-	             FL1 = 10.D0** FL
-	             CALL TRARA1(IHEADEMIN,MAPEMIN,L(i),BBo(i),
-     &         	           energy(2,ieny),FL)
-                     Flux(i,ieny) = (FL1-10.D0** FL)/
-     &                          (energy(2,ieny)-energy(1,ieny))
-		     if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
+                     FL1 = 10.D0** FL
+                     CALL TRARA1(IHEADEMIN,MAPEMIN,L(i),BBo(i),
+     &                        energy(1,ieny)+0.001D0,FL)
+                     if (FL1.GT.1.D0 .AND. FL.GT.0.D0) 
+     &                 Flux(i,ieny) = (FL1-10.D0** FL)/0.002D0
                   enddo
-	       endif
-	    enddo
-	 endif
-         if (whatf.EQ. 3) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
+               endif
+            enddo
+         endif
+         if (whatf.EQ. 2) then
+            DO i=1,ntmax
+               if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADEMIN,MAPEMIN,L(i),BBo(i),
-     &         	           energy(1,ieny),FL)
-                     Flux(i,ieny) = 10.D0** FL
-		  enddo
-	       endif
-	    enddo
-	 endif
+                     CALL TRARA1(IHEADEMIN,MAPEMIN,L(i),BBo(i),
+     &                     energy(1,ieny),FL)
+                     FL1 = 10.D0** FL
+                     CALL TRARA1(IHEADEMIN,MAPEMIN,L(i),BBo(i),
+     &                        energy(2,ieny),FL)
+                     if (FL1.GT.1.D0 .AND. FL.GT.0.D0) 
+     &                  Flux(i,ieny) = (FL1-10.D0** FL)/
+     &                          (energy(2,ieny)-energy(1,ieny))
+                  enddo
+               endif
+            enddo
+         endif
+         if (whatf.EQ. 3) then
+            DO i=1,ntmax
+               if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
+c loop on energies
+                  do ieny=1,nene
+                     CALL TRARA1(IHEADEMIN,MAPEMIN,L(i),BBo(i),
+     &                        energy(1,ieny),FL)
+                     if (FL.GT.0.D0) Flux(i,ieny) = 10.D0** FL
+                  enddo
+               endif
+            enddo
+         endif
       endif
 c
 c  AE8max
@@ -293,50 +349,52 @@ C
       if (whichm .EQ. 2) then
          CALL Init_AE8max
          if (whatf.EQ. 1) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
+            DO i=1,ntmax
+               if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADEMAX,MAPEMAX,L(i),BBo(i),
+                     CALL TRARA1(IHEADEMAX,MAPEMAX,L(i),BBo(i),
      &                     energy(1,ieny)-0.001D0,FL)
-	             FL1 = 10.D0** FL
-	             CALL TRARA1(IHEADEMAX,MAPEMAX,L(i),BBo(i),
-     &         	           energy(1,ieny)+0.001D0,FL)
-                     Flux(i,ieny) = (FL1-10.D0** FL)/0.002D0
-		     if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
+                     FL1 = 10.D0** FL
+                     CALL TRARA1(IHEADEMAX,MAPEMAX,L(i),BBo(i),
+     &                        energy(1,ieny)+0.001D0,FL)
+                     if (FL1.GT.1.D0 .AND. FL.GT.0.D0) 
+     &                     Flux(i,ieny) = (FL1-10.D0** FL)/0.002D0
+c             if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
                   enddo
-	       endif
-	    enddo
-	 endif
+               endif
+            enddo
+         endif
          if (whatf.EQ. 2) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
+            DO i=1,ntmax
+               if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADEMAX,MAPEMAX,L(i),BBo(i),
+                     CALL TRARA1(IHEADEMAX,MAPEMAX,L(i),BBo(i),
      &                     energy(1,ieny),FL)
-	             FL1 = 10.D0** FL
-	             CALL TRARA1(IHEADEMAX,MAPEMAX,L(i),BBo(i),
-     &         	           energy(2,ieny),FL)
-                     Flux(i,ieny) = (FL1-10.D0** FL)/
+                     FL1 = 10.D0** FL
+                     CALL TRARA1(IHEADEMAX,MAPEMAX,L(i),BBo(i),
+     &                        energy(2,ieny),FL)
+                     if (FL1.GT.1.D0 .AND. FL.GT.0.D0) 
+     &                     Flux(i,ieny) = (FL1-10.D0** FL)/
      &                    (energy(2,ieny)-energy(1,ieny))
-		     if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
+c             if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
                   enddo
-	       endif
-	    enddo
-	 endif
+               endif
+            enddo
+         endif
          if (whatf.EQ. 3) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
+            DO i=1,ntmax
+               if (L(i).GE.1.2D0 .AND. L(i).LE.11.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADEMAX,MAPEMAX,L(i),BBo(i),
-     &         	           energy(1,ieny),FL)
-                     Flux(i,ieny) = 10.D0** FL
+                     CALL TRARA1(IHEADEMAX,MAPEMAX,L(i),BBo(i),
+     &                        energy(1,ieny),FL)
+                     if (FL.GT.0.D0) Flux(i,ieny) = 10.D0** FL
                   enddo
-	       endif
-	    enddo
-	 endif
+               endif
+            enddo
+         endif
       endif
 c
 c  AP8min
@@ -344,50 +402,52 @@ C
       if (whichm .EQ. 3) then
          CALL Init_AP8min
          if (whatf.EQ. 1) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
+            DO i=1,ntmax
+               if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADPMIN,MAPPMIN,L(i),BBo(i),
+                     CALL TRARA1(IHEADPMIN,MAPPMIN,L(i),BBo(i),
      &                     energy(1,ieny)-0.001D0,FL)
-	             FL1 = 10.D0** FL
-	             CALL TRARA1(IHEADPMIN,MAPPMIN,L(i),BBo(i),
-     &         	           energy(1,ieny)+0.001D0,FL)
-                     Flux(i,ieny) = (FL1-10.D0** FL)/0.002D0
-		     if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
+                     FL1 = 10.D0** FL
+                     CALL TRARA1(IHEADPMIN,MAPPMIN,L(i),BBo(i),
+     &                        energy(1,ieny)+0.001D0,FL)
+                     if (FL1.GT.1.D0 .AND. FL.GT.0.D0) 
+     &                     Flux(i,ieny) = (FL1-10.D0** FL)/0.002D0
+c             if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
                   enddo
-	       endif
-	    enddo
-	 endif
+               endif
+            enddo
+         endif
          if (whatf.EQ. 2) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
+            DO i=1,ntmax
+               if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADPMIN,MAPPMIN,L(i),BBo(i),
+                     CALL TRARA1(IHEADPMIN,MAPPMIN,L(i),BBo(i),
      &                     energy(1,ieny),FL)
-	             FL1 = 10.D0** FL
-	             CALL TRARA1(IHEADPMIN,MAPPMIN,L(i),BBo(i),
-     &         	           energy(2,ieny),FL)
-                     Flux(i,ieny) = (FL1-10.D0** FL)/
+                     FL1 = 10.D0** FL
+                     CALL TRARA1(IHEADPMIN,MAPPMIN,L(i),BBo(i),
+     &                        energy(2,ieny),FL)
+                     if (FL1.GT.1.D0 .AND. FL.GT.0.D0) 
+     &                     Flux(i,ieny) = (FL1-10.D0** FL)/
      &                     (energy(2,ieny)-energy(1,ieny))
-		     if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
+c             if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
                   enddo
-	       endif
-	    enddo
-	 endif
+               endif
+            enddo
+         endif
          if (whatf.EQ. 3) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
+            DO i=1,ntmax
+               if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADPMIN,MAPPMIN,L(i),BBo(i),
-     &         	           energy(1,ieny),FL)
-                     Flux(i,ieny) = 10.D0** FL
+                     CALL TRARA1(IHEADPMIN,MAPPMIN,L(i),BBo(i),
+     &                        energy(1,ieny),FL)
+                     if (FL.GT.0.D0) Flux(i,ieny) = 10.D0** FL
                   enddo
-	       endif
-	    enddo
-	 endif
+               endif
+            enddo
+         endif
       endif
 c
 c  AP8max
@@ -395,70 +455,87 @@ C
       if (whichm .EQ. 4) then
          CALL Init_AP8max
          if (whatf.EQ. 1) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
+            DO i=1,ntmax
+               if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADPMAX,MAPPMAX,L(i),BBo(i),
+                     CALL TRARA1(IHEADPMAX,MAPPMAX,L(i),BBo(i),
      &                     energy(1,ieny)-0.001D0,FL)
-	             FL1 = 10.D0** FL
-	             CALL TRARA1(IHEADPMAX,MAPPMAX,L(i),BBo(i),
-     &         	           energy(1,ieny)+0.001D0,FL)
-                     Flux(i,ieny) = (FL1-10.D0** FL)/0.002D0
-		     if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
+                     FL1 = 10.D0** FL
+                     CALL TRARA1(IHEADPMAX,MAPPMAX,L(i),BBo(i),
+     &                        energy(1,ieny)+0.001D0,FL)
+                     if (FL1.GT.1.D0 .AND. FL.GT.0.D0) 
+     &                     Flux(i,ieny) = (FL1-10.D0** FL)/0.002D0
+c             if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
                   enddo
-	       endif
-	    enddo
-	 endif
+               endif
+            enddo
+         endif
          if (whatf.EQ. 2) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
+            DO i=1,ntmax
+               if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADPMAX,MAPPMAX,L(i),BBo(i),
+                     CALL TRARA1(IHEADPMAX,MAPPMAX,L(i),BBo(i),
      &                     energy(1,ieny),FL)
-	             FL1 = 10.D0** FL
-	             CALL TRARA1(IHEADPMAX,MAPPMAX,L(i),BBo(i),
-     &         	           energy(2,ieny),FL)
-                     Flux(i,ieny) = (FL1-10.D0** FL)/
+                     FL1 = 10.D0** FL
+                     CALL TRARA1(IHEADPMAX,MAPPMAX,L(i),BBo(i),
+     &                        energy(2,ieny),FL)
+                     if (FL1.GT.1.D0 .AND. FL.GT.0.D0) 
+     &                     Flux(i,ieny) = (FL1-10.D0** FL)/
      &                     (energy(2,ieny)-energy(1,ieny))
-		     if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
+c             if (Flux(i,ieny).LE.0.D0) Flux(i,ieny)=baddata
                   enddo
-	       endif
-	    enddo
-	 endif
+               endif
+            enddo
+         endif
          if (whatf.EQ. 3) then
-	    DO i=1,ntmax
-	       if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
+            DO i=1,ntmax
+               if (L(i).GE.1.17D0 .AND. L(i).LE.7.D0) then
 c loop on energies
                   do ieny=1,nene
-	             CALL TRARA1(IHEADPMAX,MAPPMAX,L(i),BBo(i),
-     &         	           energy(1,ieny),FL)
-                     Flux(i,ieny) = 10.D0** FL
-	          enddo
-	       endif
-	    enddo
-	 endif
+                     CALL TRARA1(IHEADPMAX,MAPPMAX,L(i),BBo(i),
+     &                        energy(1,ieny),FL)
+                     if (FL.GT.0.D0) Flux(i,ieny) = 10.D0** FL
+                  enddo
+               endif
+            enddo
+         endif
       endif
       end
 ! 
-!---------------------------------------------------------------------------------------------------
-!                              Introduced in version 3.0
+!--------------------------------------------------------------------------------------------
+!+
+! NAME:
+!	TRARA1
+
+! PURPOSE:
+!	This subroutine finds particle fluxes for given energies, magnetic field strength and L-value.
 !
-! CREATION: ? 1987
-! MODIFICATION: S. Bourdarie - September 2005
+! CATEGORY:
+!	Radiation belt model
 !
-! DESCRIPTION: Finds particle fluxes for given energies, magnetic field strength and L-value
+! CALLING SEQUENCE:
+!	CALL call TRARA1(DESCR,MAP,FL,BB0,E,F)
 !
-! INPUT: DESCR(8) -> Header of specified trapped dadiation model
-!        MAP(...) -> MAP of trapped radiation model (see block data)
-!        FL -> L-value
-!        BB0 -> B/B0 magnetic field strength normalized to field strength at magnetic equator 
-!        E -> energy in MeV
-! OUTPUT: F -> Decadic logarithm of integral fluxes in #/(cm2 s)
+! INPUTS:
+!	DESCR(8) -> Header of specified trapped dadiation model
+!	MAP(...) -> MAP of trapped radiation model (see block data)
+!	FL -> L-value
+!	BB0 -> B/B0 magnetic field strength normalized to field strength at magnetic equator 
+!	E -> energy in MeV
+!	
+! OUTPUTS:
+!	F -> Decadic logarithm of integral fluxes in #/(cm2 s)
 !
-! CALLING SEQUENCE: call TRARA1(DESCR,MAP,FL,BB0,E,F) 
-!---------------------------------------------------------------------------------------------------
+! COMMON BLOCKS:
+!	COMMON/TRA2/FISTEP
+!
+! MODIFICATION HISTORY:
+!	Written by: D. Bilitza, 1987
+!				S. Bourdarie (introduced in version 3.0) - September 2005
+!-
+!--------------------------------------------------------------------------------------------
       SUBROUTINE TRARA1(DESCR,MAP,FL,BB0,E,F)                         
 c
       IMPLICIT NONE
@@ -505,20 +582,20 @@ C FOR THE ENERGY E FIND THE SUCCESSIVE ENERGIES E0,E1,E2 IN
 C MODEL MAP, WHICH OBEY  E0 < E1 < E < E2 . 
 C
   1   IF((E.LE.E2).OR.(L3.EQ.0)) GOTO 2                                   
-      	I0=I1                                                             
-      	I1=I2                                                             
-      	I2=I3                                                             
-      	I3=I3+L3                                                          
-      	L3=MAP(I3+1)                                                      
-      	E0=E1                                                             
-      	E1=E2                                                             
-      	E2=MAP(I2+2)/ESCALE
-      	S0=S1                                                             
-      	S1=S2                                                             
-      	S2=.TRUE.                                                         
-      	F0=F1                                                             
-      	F1=F2                                 
-      	GOTO 1     
+          I0=I1                                                             
+          I1=I2                                                             
+          I2=I3                                                             
+          I3=I3+L3                                                          
+          L3=MAP(I3+1)                                                      
+          E0=E1                                                             
+          E1=E2                                                             
+          E2=MAP(I2+2)/ESCALE
+          S0=S1                                                             
+          S1=S2                                                             
+          S2=.TRUE.                                                         
+          F0=F1                                                             
+          F1=F2                                 
+          GOTO 1     
 C
 C CALL TRARA2 TO INTERPOLATE THE FLUX-MAPS FOR E1,E2 IN L-B/B0-
 C SPACE TO FIND FLUXES F1,F2 [IF THEY HAVE NOT ALREADY BEEN 
@@ -552,22 +629,37 @@ C
       RETURN                                                            
       END                                                               
 C
-!---------------------------------------------------------------------------------------------------
-!                              Introduced in version 3.0
+!--------------------------------------------------------------------------------------------
+!+
+! NAME:
+!	TRARA2
+
+! PURPOSE:
+!	This function interpolates linearly in L-B/B0-MAP to obtain the logarithm of integral flux at given L and B/B0
 !
-! CREATION: ? 1987
-! MODIFICATION: S. Bourdarie - September 2005
+! CATEGORY:
+!	Radiation belt model
 !
-! DESCRIPTION: Interpolates linearly in L-B/B0-MAP to obtain the logarithm of integral flux at given L and B/B0
+! CALLING SEQUENCE:
+!	result=TRARA2(MAP,IL,IB)
 !
-! INPUT: MAP(...) -> is the sub-MAP (for specific energy) of trapped radiation model (see block data)
-!        IL -> Scaled L-value
-!        IB -> scaled B/B0 magnetic field strength normalized to field strength at magnetic equator 
-!        E -> energy in MeV
-! OUTPUT: TRARA2 -> Scaled logarithm of integral fluxes
+! INPUTS:
+!	MAP(...) -> is the sub-MAP (for specific energy) of trapped radiation model (see block data)
+!	IL -> Scaled L-value
+!	IB -> scaled B/B0 magnetic field strength normalized to field strength at magnetic equator 
+!	E -> energy in MeV
+!	
+! OUTPUTS:
+!	TRARA2 -> Scaled logarithm of integral fluxes
 !
-! CALLING SEQUENCE: result=TRARA2(MAP,IL,IB)
-!---------------------------------------------------------------------------------------------------
+! COMMON BLOCKS:
+!	COMMON/TRA2/FISTEP
+!
+! MODIFICATION HISTORY:
+!	Written by: D. Bilitza, 1987
+!				S. Bourdarie (introduced in version 3.0) - September 2005
+!-
+!--------------------------------------------------------------------------------------------
       FUNCTION TRARA2(MAP,IL,IB)                                        
 C
       IMPLICIT NONE
@@ -592,10 +684,10 @@ C I1,I2 ARE INDECES OF FIRST ELEMENTS MINUS 1.
 C
   1   L2=MAP(I2+1)  
       IF(MAP(I2+2).GT.IL) GOTO 2  
-	I1=I2                                                             
-    	L1=L2
-      	I2=I2+L2
-      	GOTO 1                                                           
+      I1=I2                                                           
+      L1=L2
+      I2=I2+L2
+      GOTO 1                                                           
   2   CONTINUE    
 C  
 C IF SUB-SUB-MAPS ARE EMPTY, I. E. LENGTH LESS 4, THAN TRARA2=0
@@ -605,12 +697,12 @@ C
 C IF FLOG2 LESS FLOG1, THAN LS2 FIRST MAP AND LS1 SECOND MAP
 C
       IF(MAP(I2+3).GT.MAP(I1+3))  GOTO 10
-    5 	KT=I1                                                             
-      	I1=I2                                                             
-      	I2=KT                                                             
-      	KT=L1                                                             
-      	L1=L2                                                             
-      	L2=KT                                                             
+    5     KT=I1                                                             
+          I1=I2                                                             
+          I2=KT                                                             
+          KT=L1                                                             
+          L1=L2                                                             
+          L2=KT                                                             
 C
 C DETERMINE INTERPOLATE IN SCALED L-VALUE
 C 
@@ -626,9 +718,9 @@ C
 C B/B0 LOOP
 C                                               
       DO 17 J2=4,L2                                                     
- 	FINCR2=MAP(I2+J2)                                                 
-      	IF(FKB2+FINCR2.GT.FNB) GOTO 23                                    
-      	FKB2=FKB2+FINCR2                                                  
+         FINCR2=MAP(I2+J2)                                                 
+         IF(FKB2+FINCR2.GT.FNB) GOTO 23                                    
+         FKB2=FKB2+FINCR2                                                  
    17 FLOG2=FLOG2-FISTEP                                                
       ITIME=ITIME+1                                                     
       IF(ITIME.EQ.1)GO TO 5                                             
@@ -637,11 +729,11 @@ C
       IF(J2.EQ.4)GO TO 28                                               
       SL2=FLOG2/FKB2                                                    
       DO 27 J1=4,L1                                                     
-      	FINCR1=MAP(I1+J1)                                                 
-      	FKB1=FKB1+FINCR1                                                  
-      	FLOG1=FLOG1-FISTEP                                                
-      	FKBJ1=((FLOG1/FISTEP)*FINCR1+FKB1)/((FINCR1/FISTEP)*SL2+1.)       
-      	IF(FKBJ1.LE.FKB1) GOTO 31                                         
+          FINCR1=MAP(I1+J1)                                                 
+          FKB1=FKB1+FINCR1                                                  
+          FLOG1=FLOG1-FISTEP                                                
+          FKBJ1=((FLOG1/FISTEP)*FINCR1+FKB1)/((FINCR1/FISTEP)*SL2+1.)       
+          IF(FKBJ1.LE.FKB1) GOTO 31                                         
    27 CONTINUE                                                          
       IF(FKBJ1.LE.FKB2) GOTO 50                                        
    31 IF(FKBJ1.LE.FKB2) GOTO 29                                         
@@ -670,35 +762,35 @@ C
       SL1=FLOG1/FKB1                                                    
       SL2=FLOG2/FKB2                                                    
    15 IF(SL1.LT.SL2) GOTO 20                                            
-      	FKBJ2=((FLOG2/FISTEP)*FINCR2+FKB2)/((FINCR2/FISTEP)*SL1+1.D0)       
-      	FKB=FKB1+(FKBJ2-FKB1)*DFL                                         
-      	FLOG=FKB*SL1                                                      
-      	IF(FKB.GE.FNB) GOTO 60                                            
-      	FKBM=FKB                                                          
-      	FLOGM=FLOG                                                        
-      	IF(J1.GE.L1) GOTO 50                                            
-      	J1=J1+1                                                           
-      	FINCR1=MAP(I1+J1)                                                 
-      	FLOG1=FLOG1-FISTEP                                                
-      	FKB1=FKB1+FINCR1                                                  
-      	SL1=FLOG1/FKB1                                                    
-      	GOTO 15                                                          
+          FKBJ2=((FLOG2/FISTEP)*FINCR2+FKB2)/((FINCR2/FISTEP)*SL1+1.D0)       
+          FKB=FKB1+(FKBJ2-FKB1)*DFL                                         
+          FLOG=FKB*SL1                                                      
+          IF(FKB.GE.FNB) GOTO 60                                            
+          FKBM=FKB                                                          
+          FLOGM=FLOG                                                        
+          IF(J1.GE.L1) GOTO 50                                            
+          J1=J1+1                                                           
+          FINCR1=MAP(I1+J1)                                                 
+          FLOG1=FLOG1-FISTEP                                                
+          FKB1=FKB1+FINCR1                                                  
+          SL1=FLOG1/FKB1                                                    
+          GOTO 15                                                          
    20 FKBJ1=((FLOG1/FISTEP)*FINCR1+FKB1)/((FINCR1/FISTEP)*SL2+1.D0)       
       FKB=FKBJ1+(FKB2-FKBJ1)*DFL                                        
       FLOG=FKB*SL2                                                      
       IF(FKB.GE.FNB) GOTO 60                                            
-      	FKBM=FKB                                                          
-      	FLOGM=FLOG                                                        
-      	IF(J2.GE.L2) GOTO 50                                             
-      	J2=J2+1                                                           
-      	FINCR2=MAP(I2+J2)                                                 
-      	FLOG2=FLOG2-FISTEP                                                
-      	FKB2=FKB2+FINCR2                                                  
-      	SL2=FLOG2/FKB2                                                    
-      	GOTO 15  
-   35 	FINCR1=0.D0                                                         
-      	SL1=-900000.D0                                                      
-      	GOTO 20                                                          
+          FKBM=FKB                                                          
+          FLOGM=FLOG                                                        
+          IF(J2.GE.L2) GOTO 50                                             
+          J2=J2+1                                                           
+          FINCR2=MAP(I2+J2)                                                 
+          FLOG2=FLOG2-FISTEP                                                
+          FKB2=FKB2+FINCR2                                                  
+          SL2=FLOG2/FKB2                                                    
+          GOTO 15  
+   35     FINCR1=0.D0                                                         
+          SL1=-900000.D0                                                      
+          GOTO 20                                                          
    60 IF(FKB.LT.FKBM+1.D-10) GOTO 50                                    
       TRARA2=FLOGM+(FLOG-FLOGM)*((FNB-FKBM)/(FKB-FKBM))                 
       TRARA2=1.D0*MAX(TRARA2,0.D0)                                           
@@ -707,19 +799,34 @@ C
       RETURN                                                            
       END
 
-!---------------------------------------------------------------------------------------------------
-!                              Introduced in version 3.0
+!--------------------------------------------------------------------------------------------
+!+
+! NAME:
+!	Init_AE8max
+
+! PURPOSE:
+!	This subroutine sets block data for AE8max
 !
-! CREATION: S. Bourdarie - September 2005
-! MODIFICATION: S. Bourdarie - April 2006
+! CATEGORY:
+!	Radiation belt model
 !
-! DESCRIPTION: Set block data for AE8max
+! CALLING SEQUENCE:
+!	call Init_AE8max
 !
-! INPUT: None
-! OUTPUT: None
+! INPUTS:
+!	None
+!	
+! OUTPUTS:
+!	None
 !
-! CALLING SEQUENCE: call Init_AE8max
-!---------------------------------------------------------------------------------------------------
+! COMMON BLOCKS:
+!	COMMON /ELEMAX/ IHEADEMAX, MAPEMAX
+!
+! MODIFICATION HISTORY:
+!	Written by: D. Bilitza, 1987
+!				S. Bourdarie (introduced in version 3.0) - September 2005
+!-
+!--------------------------------------------------------------------------------------------
       SUBROUTINE Init_AE8max
 !     
 !      BLOCK DATA AE8MAX
@@ -2270,6 +2377,34 @@ C
      &  32767,     0,     0/
 
       END
+!--------------------------------------------------------------------------------------------
+!+
+! NAME:
+!	Init_AE8min
+
+! PURPOSE:
+!	This subroutine sets block data for AE8min
+!
+! CATEGORY:
+!	Radiation belt model
+!
+! CALLING SEQUENCE:
+!	call Init_AE8min
+!
+! INPUTS:
+!	None
+!	
+! OUTPUTS:
+!	None
+!
+! COMMON BLOCKS:
+!	COMMON /ELEMIN/ IHEADEMIN, MAPEMIN
+!
+! MODIFICATION HISTORY:
+!	Written by: D. Bilitza, 1987
+!				S. Bourdarie (introduced in version 3.0) - September 2005
+!-
+!--------------------------------------------------------------------------------------------
 !---------------------------------------------------------------------------------------------------
 !                              Introduced in version 3.0
 !
@@ -3789,19 +3924,34 @@ C
      &      0/
 
       END
-!---------------------------------------------------------------------------------------------------
-!                              Introduced in version 3.0
+!--------------------------------------------------------------------------------------------
+!+
+! NAME:
+!	Init_AP8max
+
+! PURPOSE:
+!	This subroutine sets block data for AP8max
 !
-! CREATION: S. Bourdarie - September 2005
-! MODIFICATION: S. Bourdarie - April 2006
+! CATEGORY:
+!	Radiation belt model
 !
-! DESCRIPTION: Set block data for AP8max
+! CALLING SEQUENCE:
+!	call Init_AP8max
 !
-! INPUT: None
-! OUTPUT: None
+! INPUTS:
+!	None
+!	
+! OUTPUTS:
+!	None
 !
-! CALLING SEQUENCE: call Init_AP8max
-!---------------------------------------------------------------------------------------------------
+! COMMON BLOCKS:
+!	COMMON /PROMAX/ IHEADPMAX, MAPPMAX
+!
+! MODIFICATION HISTORY:
+!	Written by: D. Bilitza, 1987
+!				S. Bourdarie (introduced in version 3.0) - September 2005
+!-
+!--------------------------------------------------------------------------------------------
       SUBROUTINE Init_AP8max
 !      BLOCK DATA AP8MAX
                                                        
@@ -6209,19 +6359,34 @@ C
      &    0,      0/
 
       END
-!---------------------------------------------------------------------------------------------------
-!                              Introduced in version 3.0
+!--------------------------------------------------------------------------------------------
+!+
+! NAME:
+!	Init_AP8min
+
+! PURPOSE:
+!	This subroutine sets block data for AP8min
 !
-! CREATION: S. Bourdarie - September 2005
-! MODIFICATION: S. Bourdarie - April 2006
+! CATEGORY:
+!	Radiation belt model
 !
-! DESCRIPTION: Set block data for AP8min
+! CALLING SEQUENCE:
+!	call Init_AP8min
 !
-! INPUT: None
-! OUTPUT: None
+! INPUTS:
+!	None
+!	
+! OUTPUTS:
+!	None
 !
-! CALLING SEQUENCE: call Init_AP8min
-!---------------------------------------------------------------------------------------------------
+! COMMON BLOCKS:
+!	COMMON /PROMIN/ IHEADPMIN, MAPPMIN
+!
+! MODIFICATION HISTORY:
+!	Written by: D. Bilitza, 1987
+!				S. Bourdarie (introduced in version 3.0) - September 2005
+!-
+!--------------------------------------------------------------------------------------------
       SUBROUTINE Init_AP8min
 !      BLOCK DATA AP8MIN
                                                        

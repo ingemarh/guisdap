@@ -1,7 +1,28 @@
 function pos = onera_desp_lib_sgp4_ele(elements,startdate,enddate,deltasec,sysAxesOUT)
+%***************************************************************************************************
+% Copyright 2007, T.P. O'Brien
+%
+% This file is part of ONERA_DESP_LIB.
+%
+%    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU Lesser General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU Lesser General Public License for more details.
+%
+%    You should have received a copy of the GNU Lesser General Public License
+%    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+%
+%***************************************************************************************************
+%
 % function pos = onera_desp_lib_sgp4_ele(elements,startdate,enddate,deltasec,sysAxesOUT)
 % computes the position of satellite orbiting Earth
 % into struct: pos.date (Nx1), pos.X (Nx3)
+% also returns pos.elements and pos.sysaxes for record keeping
 % elements is a structure containing orbital elements
 % startdate: start time in matlab date format
 % enddate: end time in matlab date format
@@ -16,6 +37,7 @@ function pos = onera_desp_lib_sgp4_ele(elements,startdate,enddate,deltasec,sysAx
 % elements.type = 'mean' or 'm', requires n, e, i, Omega, omega, M0
 % elements.type = 'rv', requires r,v (km and km/s, ECI)
 % elements.type = 'solar' or 's', requires i, A_p, A_a, H_a, H_i, T
+% elements.type = 'geo' or 'g', requires geo_lon
 %
 % definitions:
 % epoch - time for which elements are given (default startdate)
@@ -37,6 +59,7 @@ function pos = onera_desp_lib_sgp4_ele(elements,startdate,enddate,deltasec,sysAx
 % u0 - argument of latitude at epoch (deg)
 % l0 - true longitude at epoch (deg)
 % M0 - mean anomaly at epoch (deg)
+% geo_lon - longitude in GEO coordinates (deg)
 
 if nargin < 5,
     sysAxesOUT = 'gdz';
@@ -46,11 +69,20 @@ if ~isfield(elements,'epoch'),
     elements.epoch = startdate;
 end
 
+pos.elements = elements;
+pos.sysaxes = sysAxesOUT;
+
 sysAxesOUT = onera_desp_lib_sysaxes(sysAxesOUT);
 
 ele_opts = zeros(5,1);
 rv = 0;
 switch(lower(elements.type(1))),
+    case 'g', % geosynchronous orbit, do manually
+        geo_alt = 35786; % wikipedia value
+        sys_in = onera_desp_lib_sysaxes('gdz');
+        pos.date = (startdate:(deltasec/24/60/60):enddate)';
+        pos.X = onera_desp_lib_coord_trans(repmat([geo_alt 0 elements.geo_lon],length(pos.date),1),[sys_in sysAxesOUT],pos.date);
+        return
     case 'o',
         ele_opts(1) = 1;
         e_names = {'i','A_p','A_a','Omega','omega','M0'};
@@ -84,8 +116,8 @@ else
     if isfield(elements,'omega'),
         e_names{5} = 'omega';
         ele_opts(2) = 1;
-    elseif isfield(elements,'PI'),
-        e_names{5} = 'PI';
+    elseif isfield(elements,'Pi'),
+        e_names{5} = 'Pi';
         ele_opts(2) = 2;
     end
 
@@ -132,6 +164,7 @@ pos.X = repmat(nan,ntimes,3);
 i0 = 1;
 while i0 <= ntimes,
     ii = i0:(min(ntimes,i0+nmax-1));
+    ii0 = ii-i0+1;
     vstartsfe = startsfe + (ii(1)-1)*deltasec;
     vstopsfe = startsfe + (ii(end))*deltasec;
     iYr = repmat(nan,nmax,1);
@@ -150,17 +183,25 @@ while i0 <= ntimes,
         eles(1),eles(2),eles(3),eles(4),eles(5),eles(6),ele_opts,...
         vstartsfe,vstopsfe,deltasec,iYrPtr,iDoyPtr,UTptr,x1Ptr,x2Ptr,x3Ptr);
     iYear = double(get(iYrPtr,'value'));
-    ii = ii(iYear(1:length(ii))>0); % trim out entries not reached by sgp4_ele1
-    date = datenum(iYear,1,double(get(iDoyPtr,'value')),0,0,double(get(UTptr,'value')));
+    ikeep = iYear(1:length(ii))>0; % trim out entries not reached by sgp4_ele1
+    ii = ii(ikeep); 
     if isempty(ii),
         break;
     end
-    pos.date(ii) = date(ii);
+    ii0 = ii0(ikeep);
+    date = datenum(iYear,1,double(get(iDoyPtr,'value')),0,0,double(get(UTptr,'value')));
+    ii0 = ii0(ikeep);
+    pos.date(ii) = date(ii0);
     x1 = get(x1Ptr,'value');
-    pos.X(ii,1) = x1(ii);
+    pos.X(ii,1) = x1(ii0);
     x2 = get(x2Ptr,'value');
-    pos.X(ii,2) = x2(ii);
+    pos.X(ii,2) = x2(ii0);
     x3 = get(x3Ptr,'value');
-    pos.X(ii,3) = x3(ii);
+    pos.X(ii,3) = x3(ii0);
     i0 = ii(end)+1;
 end
+
+ikeep = isfinite(pos.date); % trim out entries not reached by sgp4_ele1
+pos.date = pos.date(ikeep);
+pos.X = pos.X(ikeep,:);
+

@@ -1,4 +1,24 @@
 function Flux = onera_desp_lib_fly_in_afrl_crres(sysaxes,whichm,energy,matlabd,x1,x2,x3,Ap15,crres_path)
+%***************************************************************************************************
+% Copyright 2007, T.P. O'Brien
+%
+% This file is part of ONERA_DESP_LIB.
+%
+%    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU Lesser General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU Lesser General Public License for more details.
+%
+%    You should have received a copy of the GNU Lesser General Public License
+%    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+%
+%***************************************************************************************************
+%
 % function Flux = onera_desp_lib_fly_in_afrl_crres(sysaxes,whichm,energy,matlabd,x1,x2,x3,Ap15,crres_path)
 % returns CRRESELE/CRRESPRO flux from AFRL models
 % sysaxes - sets the coordinate system for the input points
@@ -9,7 +29,7 @@ function Flux = onera_desp_lib_fly_in_afrl_crres(sysaxes,whichm,energy,matlabd,x
 % 3 or 'CRRESELE AVERAGE'
 % 4 or 'CRRESELE WORST CASE'
 % 5 or 'CRRESELE Ap15'
-% if energy is Nex1, returns differential flux at N energies (MeV-1 cm-2 s-1)
+% if energy is Nex1, returns differential flux at Ne energies (MeV-1 cm-2 s-1)
 % if energy is Nex2, returns differential flux from energy(:,1) to energy(:,2) (MeV-1 cm-2 s-1)
 % if energy(:,2) is all infinities, returns integral flux above energy(:,1) (cm-2 s-1)
 % matlabd is the time in matlab date format
@@ -105,7 +125,7 @@ if (ntime>Nmax) || (NE>NEmax),
         ii = i:min(i+Nmax-1,ntime);
         for ie = 1:NEmax:NE,
             iie = ie:min(ie+NEmax-1,NE);
-            Flux(ii,ie) = onera_desp_lib_fly_in_afrl_crres(sysaxes,whichm,energy(iie,:),matlabd(ii),x1(ii),x2(ii),x3(ii),Ap15(ii),crres_path);
+            Flux(ii,iie) = onera_desp_lib_fly_in_afrl_crres(sysaxes,whichm,energy(iie,:),matlabd(ii),x1(ii),x2(ii),x3(ii),Ap15(ii),crres_path);
         end
     end
 else

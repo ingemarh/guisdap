@@ -1,3 +1,21 @@
+!***************************************************************************************************
+! Copyright 1988, K. Pfitzer
+!
+! This file is part of ONERA_DESP_LIB.
+!
+!    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+!    it under the terms of the GNU Lesser General Public License as published by
+!    the Free Software Foundation, either version 3 of the License, or
+!    (at your option) any later version.
+!
+!    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU Lesser General Public License for more details.
+!
+!    You should have received a copy of the GNU Lesser General Public License
+!    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+!
 C-----------------------------------------------------------------------
       SUBROUTINE BDYN(den, vel, dst, X, Y, Z, ABX, ABY, ABZ) 
 
@@ -553,7 +571,11 @@ C
 C Input
       REAL*8 SOFFD, DST
 C Local
-      REAL*8 SCL, SCM, DSTMOD, CON / 0.03D0 /
+c modified by S. Bourdarie (March 2008) (line below not compatible with all compilers - e.g. g95 gnu)
+c      REAL*8 SCL, SCM, DSTMOD, CON / 0.03D0 /
+      REAL*8 SCL, SCM, DSTMOD, CON
+      DATA CON / 0.03D0 /
+c end modif S. Bourdarie
 
       SCL = 10.5D0 / SOFFD
       SCM = SCL**3.0D0

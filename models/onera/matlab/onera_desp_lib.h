@@ -1,46 +1,27 @@
 /*
-prototype C header file for access to generic DLL
-onera_desp_lib_windows.dll
-created for ONERA/DESP library version 3.0
+%***************************************************************************************************
+% Copyright 2006, T.P. O'Brien
+%
+% This file is part of ONERA_DESP_LIB.
+%
+%    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU Lesser General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU Lesser General Public License for more details.
+%
+%    You should have received a copy of the GNU Lesser General Public License
+%    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+%
+prototype C header file for access to generic .dll or .so file
+e.g., onera_desp_lib.dll
 Paul O'Brien paul.obrien@aero.org
  */
 
-/* functions supported
-
-all functions derived from or supporting the onera 
-desp library are given names of the form 
-onera_desp_lib_*, e.g., onera_desp_lib_get_field
-   
-MAKE_LSTAR wrapper built _make_lstar - need to test maginput
-MAKE_LSTAR_SHELL_SPLITTING wrapper built _make_lstar_shell_splitting - need to test
-GET_FIELD wrapper built _get_field - need to test maginput
-GET_MLT wrapper built _get_mlt, tested
-FIND_MIRROR_POINT wrapper built _find_mirror_point, tested
-FIND_MAGEQUATOR wrapper built _find_magequator, tested
-TRACE_FIELD_LINE  wrapper built _trace_field_line - need to test maginput
-DRIFT_SHELL wrapper built _drift_shell - need to test maginput
-FLY_IN_NASA_AEAP wrapper built _fly_in_nasa_aeap
-FLY_IN_AFRL_CRRES wrapper built _fly_in_afrl_crres
-
-coordinate rotations are handled exclusively by _rotate or
-_coord_trans, which calls the coord_trans subroutine.
-
-SGP4_TLE
-SGP4_ELE
-
-The following functions are not available to IDL and
-are not implemented in matlab (but are easy to build
-uisng matlab's native datenum and datevec functions.) 
-These really shouldn't be necessary since all the
-wrappers do the date conversion from matlab date 
-numbers
-JULDAY
-DECY2DATE_AND_TIME
-DATE_AND_TIME2DECY
-CALDAT
-GET_DOY
-
- */
 
 void make_lstar1_(long int *ntime, long int *kext,
 		  long int *options,long int *sysaxes,
@@ -138,6 +119,10 @@ void fly_in_nasa_aeap1_(long int *ntime, long int *sysaxes,
 			double *x1,double *x2, double *x3,
 			double *flux);
 
+void get_ae8_ap8_flux_(long int *ntime, long int *whichm, long int *whatf,
+		       long int *Nene, double *energy, 
+		       double *BBo, double *L, double *flux);
+
 void fly_in_afrl_crres1_(long int *ntime, long int *sysaxes,
 			 long int *whichm, long int *whatf,
 			 long int *nene, double *energy, 
@@ -147,6 +132,13 @@ void fly_in_afrl_crres1_(long int *ntime, long int *sysaxes,
 			 double *flux,
 			 char *ascii_path,
 			 long int *strlen);
+
+void get_crres_flux_(long int *ntime, long int *whichm, long int *whatf,
+		     long int *nene, double *energy, 
+		     double *BBo,double *L, double *Ap15,
+		     double *flux,
+		     char *ascii_path,
+		     long int *strlen);
 
 void sgp4_tle1_(long int *runtype,double *startsfe,double *stopsfe,double *deltasec,
 		char *InFileByte,long int *strlenIn,
@@ -168,3 +160,21 @@ void rv2coe_(double *R, double *V,
 	     double *P, double *A, double *Ecc, double *Incl, double *Omega, 
 	     double *Argp, double *Nu, double *M, double *ArgLat,
 	     double *TrueLon, double *LonPer);
+
+void fly_in_ige1_(long int *launch_year, long int *duration,
+		  long int *whichm, long int *whatf,
+		  long int *nene, double *energy,
+		  double *Lower_flux, double *Mean_flux, double *Upper_flux);
+
+void nrlmsise00_(long int *ntime,long int *whichAp,
+		long int *DOY,double *UT,double *ALT,double *LAT,double *LON,
+		double *F107A,double *F107,double *AP,double *Dens,double *Temp);
+
+void msise90_(long int *ntime,long int *whichAp,
+		long int *DOY,double *UT,double *ALT,double *LAT,double *LON,
+		double *F107A,double *F107,double *AP,double *Dens,double *Temp);
+
+void msis86_(long int *ntime,long int *whichAp,
+		long int *DOY,double *UT,double *ALT,double *LAT,double *LON,
+		double *F107A,double *F107,double *AP,double *Dens,double *Temp);
+

@@ -1,3 +1,21 @@
+!***************************************************************************************************
+! Copyright 2004, 2008 S. Bourdarie
+!
+! This file is part of ONERA_DESP_LIB.
+!
+!    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+!    it under the terms of the GNU Lesser General Public License as published by
+!    the Free Software Foundation, either version 3 of the License, or
+!    (at your option) any later version.
+!
+!    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU Lesser General Public License for more details.
+!
+!    You should have received a copy of the GNU Lesser General Public License
+!    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+!
 C----------------------------------------------------------------------------- 
 C Wrappers and procedures for ONERA_DESP_LIB
 C----------------------------------------------------------------------------- 
@@ -1085,6 +1103,121 @@ c Compute Bmin assuming 90° PA at S/C
            IF (MLT(isat).LT.0.d0) MLT(isat) = MLT(isat) + 24.d0
 	ENDDO
 	END
+c
+C----------------------------------------------------------------------------- 
+
+      REAL*4 FUNCTION Lstar_Phi(argc, argv)   ! Called by IDL
+      INCLUDE 'wrappers.inc'
+
+       j = loc(argc)                    ! Obtains the number of arguments (argc)
+                                       ! Because argc is passed by VALUE.
+
+c  Call subroutine make_Lstar, converting the IDL parameters to standard FORTRAN
+c  passed by reference arguments.
+c
+c  subroutine Lstar_Phi: 7 arguments
+      call Lstar_Phi1(%VAL(argv(1)), %VAL(argv(2)), %VAL(argv(3)),
+     * %VAL(argv(4)),  %VAL(argv(5)),  %VAL(argv(6)),  %VAL(argv(7)))
+
+      Lstar_Phi = 9.9
+
+      RETURN
+      END
+c
+c --------------------------------------------------------------------
+c
+        SUBROUTINE Lstar_Phi1(ntime,whichinv,options,iyearsat,
+     &  idoy,Lstar,Phi)
+c
+	IMPLICIT NONE
+	INCLUDE 'variables.inc'
+C
+c declare inputs
+        INTEGER*4    ntime_max,whichinv,options(5)
+	PARAMETER (ntime_max=100000)
+        INTEGER*4    ntime,sysaxes
+	INTEGER*4    iyearsat(ntime_max)
+	integer*4    idoy(ntime_max)
+c
+c Declare internal variables
+	INTEGER*4    isat,iyear,kint
+        INTEGER*4    Ndays
+	INTEGER*4    firstJanuary,lastDecember,Julday,currentdoy
+        REAL*8     yearsat,dec_year
+	REAL*8     psi,mlon,tilt
+        REAL*8     ERA,AQUAD,BQUAD
+        REAL*8     Bo,xc,yc,zc,ct,st,cp,sp
+c
+c Declare output variables	
+        REAL*8     Phi(ntime_max),Lstar(ntime_max)
+C
+        COMMON/GENER/ERA,AQUAD,BQUAD
+        COMMON /dipigrf/Bo,xc,yc,zc,ct,st,cp,sp
+C
+        iyear=1800
+	kint=options(5)
+	IF (kint .lt. 0) THEN
+	   kint=0
+	   WRITE(6,*)
+	   WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+	   WRITE(6,*)'Invalid internal field specification'
+	   WRITE(6,*)'Selecting IGRF'
+	   WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+	   WRITE(6,*)
+	ENDIF
+	if (kint .gt. 3) THEN
+	   kint=0
+	   WRITE(6,*)
+	   WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+	   WRITE(6,*)'Invalid internal field specification'
+	   WRITE(6,*)'Selecting IGRF'
+	   WRITE(6,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+	   WRITE(6,*)
+	ENDIF
+c
+        CALL INITIZE
+	if (kint .eq. 2) CALL JensenANDCain1960
+	if (kint .eq. 3) CALL GSFC1266
+        DO isat = 1,ntime
+c	   write(6,*)real(isat)*100./real(ntime), '% done'
+c
+           if (kint .le. 1) then
+              if (options(2) .eq. 0) then	
+	        if (iyearsat(isat) .ne. iyear) then
+	           iyear=iyearsat(isat)
+	           dec_year=iyear+0.5d0
+	           CALL INIT_DTD(dec_year)
+	        endif
+	      else
+	        if (iyearsat(isat) .ne. iyear .or.
+     &          MOD(idoy(isat)*1.d0,options(2)*1.d0) .eq. 0) THEN
+	           iyear=iyearsat(isat)
+		   firstJanuary=JULDAY(iyear,01,01)
+		   lastDecember=JULDAY(iyear,12,31)
+		   currentdoy=(idoy(isat)/options(2))*options(2)
+		   if (currentdoy .eq. 0) currentdoy=1
+	           dec_year=iyear+currentdoy*1.d0/
+     &             ((lastDecember-firstJanuary+1)*1.d0)
+	           CALL INIT_DTD(dec_year)
+                endif
+	      endif
+	   endif
+	   if (whichinv .EQ. 1) then !Lstar to Phi
+	      if (Lstar(isat) .NE. baddata) then
+	         Phi(isat)=Bo/Lstar(isat)
+	      else
+	         Phi(isat)=baddata
+	      endif
+	   else
+	      if (phi(isat) .NE. baddata) then
+	         Lstar(isat)=Bo/Phi(isat)
+	      else
+	         Lstar(isat)=baddata
+	      endif
+	   endif
+	enddo
+	end
+c
 C----------------------------------------------------------------------------- 
 
       REAL*4 FUNCTION drift_shell(argc, argv)   ! Called by IDL
@@ -3462,7 +3595,28 @@ C
         IF (MLT.LT.0.d0) MLT = MLT + 24.d0
 
         END
+C----------------------------------------------------------------------------- 
 
+      REAL*4 FUNCTION GET_HEMI(argc, argv)   ! Called by IDL
+      INCLUDE 'wrappers.inc'
+c      INTEGER*4 argc, argv(*)                      ! Argc and Argv are integers
+
+       j = loc(argc)                    ! Obtains the number of arguments (argc)
+                                       ! Because argc is passed by VALUE.
+
+c  Call subroutine make_Lstar, converting the IDL parameters to standard FORTRAN
+c  passed by reference arguments.
+c
+c  
+      call GET_HEMI1(%VAL(argv(1)), %VAL(argv(2)), %VAL(argv(3)),
+     * %VAL(argv(4)),  %VAL(argv(5)),  %VAL(argv(6)),  %VAL(argv(7)),
+     * %VAL(argv(8)),  %VAL(argv(9)),  %VAL(argv(10)), %VAL(argv(11)))
+
+      GET_HEMI = 9.9
+
+      RETURN
+      END
+c
 c Wrapper and proceduce to access many coordinate transformation form the 
 c ONERA library
 c
@@ -4068,7 +4222,7 @@ c  subroutine geo2gsm: 6 arguments
 c
 c --------------------------------------------------------------------
 c
-        SUBROUTINE mag2geo1(iyr,xSM,xMAG)
+        SUBROUTINE mag2geo1(iyr,xMAG,xGEO)
 	INTEGER*4 iyr
 	REAL*8    dyear
 	REAL*8    xGEO(3),xMAG(3)
@@ -4315,6 +4469,36 @@ c      INTEGER*4 argc, argv(*)                      ! Argc and Argv are integers
       RETURN
       END
 c
+!---------------------------------------------------------------------------------------------------
+!                              Introduced in version 4.2
+!
+! CREATION: S. Bourdarie - March 2008
+! MODIFICATION: None
+!
+! DESCRIPTION: Wrapper to call get_AE8_AP8_flux (IN AE8_AP8.f) from IDL, converts the IDL parameters to 
+!              standard FORTRAN passed by reference arguments. 
+!
+! INPUT: argc-> number of argument (long integer)
+!        argv -> reference argument
+!
+! CALLING SEQUENCE: result=call_external(lib_name, 'get_AE8_AP8_flux_idl_', ntime,whichm,whatf,nene,energy,BBo,L,flux, /f_value)
+!---------------------------------------------------------------------------------------------------
+      REAL*4 FUNCTION get_ae8_ap8_flux_idl(argc, argv)   ! Called by IDL
+      INCLUDE 'wrappers.inc'
+c      INTEGER*4 argc, argv(*)                      ! Argc and Argv are integers
+
+       j = loc(argc)                    ! Obtains the number of arguments (argc)
+                                       ! Because argc is passed by VALUE.
+!
+      call get_AE8_AP8_flux(%VAL(argv(1)), %VAL(argv(2)), 
+     * %VAL(argv(3)),%VAL(argv(4)),  %VAL(argv(5)),  %VAL(argv(6)),
+     * %VAL(argv(7)), %VAL(argv(8)))
+
+      get_AE8_AP8_flux_idl = 9.9
+
+      RETURN
+      END
+c
 c
 !---------------------------------------------------------------------------------------------------
 !                              Introduced in version 3.0
@@ -4354,6 +4538,75 @@ c
       RETURN
       END
 c
+!---------------------------------------------------------------------------------------------------
+!                              Introduced in version 4.2
+!
+! CREATION: S. Bourdarie - March 2008
+!
+! DESCRIPTION: Wrapper to call get_crres_flux (IN AFRL_CRRES_models.f) from IDL, converts the IDL parameters to 
+!              standard FORTRAN passed by reference arguments. 
+!
+! INPUT: argc-> number of argument (long integer)
+!        argv -> reference argument
+!
+! CALLING SEQUENCE: result=call_external(lib_name, 'get_crres_flux_idl_', ntime,whichm,whatf,Nene,energy,BBo,L,Ap15,flux,afrl_crres_path,strlen, /f_value)
+!---------------------------------------------------------------------------------------------------
+      REAL*4 FUNCTION get_crres_flux_idl(argc, argv)   ! Called by IDL
+!
+      INTEGER   CHAR_SIZE
+      PARAMETER	(CHAR_SIZE=500)
+
+      INCLUDE 'wrappers.inc'
+c      INTEGER*4 argc, argv(*)                      ! Argc and Argv are integers
+!
+      j = loc(argc)                    ! Obtains the number of arguments (argc)
+                                       ! Because argc is passed by VALUE.
+c
+
+      call get_crres_flux(%VAL(argv(1)), %VAL(argv(2)), 
+     * %VAL(argv(3)),
+     * %VAL(argv(4)),  %VAL(argv(5)),  %VAL(argv(6)),  %VAL(argv(7)),
+     * %VAL(argv(8)),  %VAL(argv(9)),  %VAL(argv(10)), %VAL(argv(11)))
+
+      get_crres_flux_idl = 9.9
+
+      RETURN
+      END
+c
+
+!---------------------------------------------------------------------------------------------------
+!                              Introduced in version 4.2
+!
+! CREATION: S. Bourdarie - December 2007
+! MODIFICATION: None
+!
+! DESCRIPTION: Wrapper to call fly_in_ige1 from IDL, converts the IDL parameters to 
+!              standard FORTRAN passed by reference arguments. 
+!
+! INPUT: argc-> number of argument (long integer)
+!        argv -> reference argument
+!
+! CALLING SEQUENCE: result=call_external(lib_name, 'fly_in_ige1_', launch_year,duration,whichm,whatf,Nene,energy,Lower_flux,Mean_flux,Upper_flux, /f_value)
+!---------------------------------------------------------------------------------------------------
+      REAL*4 FUNCTION fly_in_ige(argc, argv)   ! Called by IDL
+!
+      INTEGER   CHAR_SIZE
+      PARAMETER	(CHAR_SIZE=500)
+
+      INCLUDE 'wrappers.inc'
+!
+      j = loc(argc)                    ! Obtains the number of arguments (argc)
+                                       ! Because argc is passed by VALUE.
+c
+
+      call fly_in_ige1(%VAL(argv(1)), %VAL(argv(2)), %VAL(argv(3)),
+     * %VAL(argv(4)),  %VAL(argv(5)),  %VAL(argv(6)),  %VAL(argv(7)),
+     * %VAL(argv(8)),  %VAL(argv(9)))
+
+      fly_in_ige = 9.9
+
+      RETURN
+      END
 c
 !---------------------------------------------------------------------------------------------------
 !                              Introduced in version 4.0
@@ -4491,3 +4744,177 @@ c
       RETURN
       END
 c
+C----------------------------------------------------------------------------- 
+C IDL Wrappers 
+C----------------------------------------------------------------------------- 
+
+      REAL*4 FUNCTION msis86_idl(argc, argv)   ! Called by IDL
+      INCLUDE 'wrappers.inc'
+
+       j = loc(argc)                    ! Obtains the number of arguments (argc)
+                                       ! Because argc is passed by VALUE.
+
+      call msis86(%VAL(argv(1)), %VAL(argv(2)), %VAL(argv(3)),
+     * %VAL(argv(4)),  %VAL(argv(5)),  %VAL(argv(6)),  %VAL(argv(7)),
+     * %VAL(argv(8)),  %VAL(argv(9)),  %VAL(argv(10)), %VAL(argv(11)),
+     + %VAL(argv(12)))
+
+      msis86_idl = 9.9
+
+      RETURN
+      END
+c
+c --------------------------------------------------------------------
+c
+      subroutine msis86(ntime,whichAp,DOY,UT,ALT,LAT,LONG,F107A,
+     &F107,AP,Dens,Temp)
+c
+      IMPLICIT NONE
+      INTEGER*4 ISW,ntime,whichAp,DOY(100000),I,J
+      REAL*8 SV(25),STL
+      REAL*8 UT(100000),ALT(100000),LAT(100000),LONG(100000)
+      REAL*8 F107A(100000),F107(100000),AP(7,100000)
+      REAL*8 Dens(8,100000),Temp(2,100000),APin(7),D(8),T(2)
+c       
+      COMMON/CSWI/ISW
+      DO I=1,25
+         SV(I)=1.D0
+      ENDDO
+      if (WhichAp .EQ.2) SV(9)=-1.D0
+      CALL TSELEC(SV)
+      ISW=64999
+      DO I=1,ntime
+         STL=UT(I)/3600.D0+Long(I)/15.D0
+	 DO J=1,7
+	    APin(J)=AP(J,I)
+	 ENDDO
+	 IF (ALT(I).GE.85.D0) then
+	    CALL GTS5(DOY(I),UT(I),ALT(I),LAT(I),LONG(I),STL,F107A(I),
+     &             F107(I),APin,48,D,T)
+         ELSE
+            DO J=1,8
+	       D(J)=-1.D31
+	    ENDDO
+	    DO J=1,2
+	       T(J)=-1.D31
+	    ENDDO
+	 ENDIF
+         DO J=1,8
+	    Dens(J,I)=D(J)
+	 ENDDO
+	 DO J=1,2
+	    Temp(J,I)=T(J)
+	 ENDDO
+      ENDDO
+      END
+      
+C----------------------------------------------------------------------------- 
+C IDL Wrappers 
+C----------------------------------------------------------------------------- 
+
+      REAL*4 FUNCTION msise90_idl(argc, argv)   ! Called by IDL
+      INCLUDE 'wrappers.inc'
+
+       j = loc(argc)                    ! Obtains the number of arguments (argc)
+                                       ! Because argc is passed by VALUE.
+
+      call msise90(%VAL(argv(1)), %VAL(argv(2)), %VAL(argv(3)),
+     * %VAL(argv(4)),  %VAL(argv(5)),  %VAL(argv(6)),  %VAL(argv(7)),
+     * %VAL(argv(8)),  %VAL(argv(9)),  %VAL(argv(10)), %VAL(argv(11)),
+     + %VAL(argv(12)))
+
+      msise90_idl = 9.9
+
+      RETURN
+      END
+c
+c --------------------------------------------------------------------
+c
+      subroutine msise90(ntime,whichAp,DOY,UT,ALT,LAT,LONG,F107A,
+     &F107,AP,Dens,Temp)
+c
+      IMPLICIT NONE
+      INTEGER*4 ISW,ntime,whichAp,DOY(100000),I,J
+      REAL*8 SV(25),STL
+      REAL*8 UT(100000),ALT(100000),LAT(100000),LONG(100000)
+      REAL*8 F107A(100000),F107(100000),AP(7,100000)
+      REAL*8 Dens(8,100000),Temp(2,100000),APin(7),D(8),T(2)
+c       
+      COMMON/CSWI/ISW
+      DO I=1,25
+         SV(I)=1.D0
+      ENDDO
+      if (WhichAp .EQ.2) SV(9)=-1.D0
+      CALL TSELEC5(SV)
+      ISW=64999
+      DO I=1,ntime
+         STL=UT(I)/3600.D0+Long(I)/15.D0
+	 DO J=1,7
+	    APin(J)=AP(J,I)
+	 ENDDO
+	 CALL GTD6(DOY(I),UT(I),ALT(I),LAT(I),LONG(I),STL,F107A(I),
+     &             F107(I),APin,48,D,T)
+         DO J=1,8
+	    Dens(J,I)=D(J)
+	 ENDDO
+	 DO J=1,2
+	    Temp(J,I)=T(J)
+	 ENDDO
+      ENDDO
+      END
+C----------------------------------------------------------------------------- 
+C IDL Wrappers 
+C----------------------------------------------------------------------------- 
+
+      REAL*4 FUNCTION nrlmsise00_idl(argc, argv)   ! Called by IDL
+      INCLUDE 'wrappers.inc'
+
+       j = loc(argc)                    ! Obtains the number of arguments (argc)
+                                       ! Because argc is passed by VALUE.
+
+      call nrlmsise00(%VAL(argv(1)), %VAL(argv(2)), %VAL(argv(3)),
+     * %VAL(argv(4)),  %VAL(argv(5)),  %VAL(argv(6)),  %VAL(argv(7)),
+     * %VAL(argv(8)),  %VAL(argv(9)),  %VAL(argv(10)), %VAL(argv(11)),
+     + %VAL(argv(12)))
+
+      nrlmsise00_idl = 9.9
+
+      RETURN
+      END
+c
+c --------------------------------------------------------------------
+c
+      subroutine nrlmsise00(ntime,whichAp,DOY,UT,ALT,LAT,LONG,F107A,
+     &F107,AP,Dens,Temp)
+c
+      IMPLICIT NONE
+      INTEGER*4 ISW,ntime,whichAp,DOY(100000),I,J
+      REAL*8 SV(25),STL
+      REAL*8 UT(100000),ALT(100000),LAT(100000),LONG(100000)
+      REAL*8 F107A(100000),F107(100000),AP(7,100000)
+      REAL*8 Dens(9,100000),Temp(2,100000),APin(7),D(8),T(2)
+c       
+      COMMON/CSWI/ISW
+      DO I=1,25
+         SV(I)=1.D0
+      ENDDO
+      if (WhichAp .EQ.2) SV(9)=-1.D0
+      CALL TSELEC7(SV)
+      ISW=64999
+      DO I=1,ntime
+         STL=UT(I)/3600.D0+Long(I)/15.D0
+	 DO J=1,7
+	    APin(J)=AP(J,I)
+	 ENDDO
+	 CALL GTD7(DOY(I),UT(I),ALT(I),LAT(I),LONG(I),STL,F107A(I),
+     &             F107(I),APin,48,D,T)
+         DO J=1,9
+	    Dens(J,I)=D(J)
+	 ENDDO
+	 DO J=1,2
+	    Temp(J,I)=T(J)
+	 ENDDO
+      ENDDO
+      END
+      
+      

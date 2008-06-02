@@ -1,3 +1,21 @@
+!***************************************************************************************************
+! Copyright 2000 D. Boscher, 2004 S. Bourdarie
+!
+! This file is part of ONERA_DESP_LIB.
+!
+!    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+!    it under the terms of the GNU Lesser General Public License as published by
+!    the Free Software Foundation, either version 3 of the License, or
+!    (at your option) any later version.
+!
+!    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU Lesser General Public License for more details.
+!
+!    You should have received a copy of the GNU Lesser General Public License
+!    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+!
        SUBROUTINE CHAMP(xGEO,BxGEO,Bl,Ifail)
 C
        IMPLICIT NONE
@@ -1240,6 +1258,7 @@ c
 	z0 = (l0 - g10*e)/(3.D0*b02)
 	x0 = (l1 - g11*e)/(3.D0*b02)
 	y0 = (l2 - h11*e)/(3.D0*b02)
+!	write(6,*)alpha*180.d0/3.14d0,beta*180.d0/3.14d0
 c
 	return
 	end

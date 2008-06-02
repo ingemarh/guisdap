@@ -1,8 +1,26 @@
+<!-- %***************************************************************************************************
+% Copyright 2004,2006, S. Bourdarie
+%
+% This file is part of ONERA_DESP_LIB.
+%
+%    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU Lesser General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU Lesser General Public License for more details.
+%
+%    You should have received a copy of the GNU Lesser General Public License
+%    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+% -->
 <html>
 <head>
 </head>
 <body>
-    <!-- Insert content here --><font size="2"> 
+    <!-- Insert content here --> 
     <p>
     </p>
     <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">INTRODUCTION</font></font> 
@@ -22,13 +40,10 @@
     <p>
     </p>
     <p>
-        <font face="ARIAL, HELVETICA"><font size=+1>The ONERA/DESP compile scripts will create
-        the shared and the static library file for use with&nbsp;FORTRAN and is given a name
-        "onera_desp_lib.dll" or "onera_desp_lib.so" "onera_desp_lib.a" depending on the platform.&nbsp;You
-        will have to rename the static lib file as "liboneradesp.a"</font></font><font face="ARIAL, HELVETICA"><font size=+1>&nbsp;<br />
-        &nbsp; </font></font>
+        <font face="ARIAL, HELVETICA"><font size=+1>See how to build section</font></font>
+        <br />
     </p>
-    </font> 
+
     <p>
     </p>
     <h2><font face="ARIAL, HELVETICA"><font color="#0000ff">USE OF THE LIBRARY</font></font> 
@@ -44,7 +59,12 @@
         <font face="Arial" size="4">To link any FORTRAN source code with the&nbsp;static library
         you&nbsp;have to add at the end of the compilation&nbsp;command the option -Lpath
         where path&nbsp;allows to locate the static library file and the option -loneradesp
-        (make sure the static lib name is liboneradesp.a)&nbsp;</font>&nbsp; 
+        (make sure the static lib name is liboneradesp.a)<BR>
+        <br>
+        If you have been using the Makefile to build the library then you have to add the proper 
+        option depending on the compiler in order to force the compiler to add only a single underscore
+        to any subroutine. e.g. with g77 the option is -fno-second-underscore.</font>
+        <br>
     </p>
 </body>
 </html>

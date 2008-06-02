@@ -1,3 +1,22 @@
+!***************************************************************************************************
+! Copyright 2000, 2002, Igor Alexeev
+!
+! This file is part of ONERA_DESP_LIB.
+!
+!    ONERA_DESP_LIB is free software: you can redistribute it and/or modify
+!    it under the terms of the GNU Lesser General Public License as published by
+!    the Free Software Foundation, either version 3 of the License, or
+!    (at your option) any later version.
+!
+!    ONERA_DESP_LIB is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU Lesser General Public License for more details.
+!
+!    You should have received a copy of the GNU Lesser General Public License
+!    along with ONERA_DESP_LIB.  If not, see <http://www.gnu.org/licenses/>.
+!
+!
 ***************************************************************************
 *                                					   
 *									   
@@ -735,8 +754,9 @@ C New version 29.08.2001					     *
 C                                                                    *
 C    Written by Igor I. Alexeev 				     *
 C*********************************************************************
-      COMMON/T2/PI,R1,R2,BETA0,AL0,C0,AL1,BT,CPSI,SPSI,PSI,Z0,B0,BD
-      COMMON/T21/BD1,R0,RKM,BK1,BKA,BKB,BKC
+c      COMMON/T2/PI,R1,R2,BETA0,AL0,C0,AL1,BT,CPSI,SPSI,PSI,Z0,B0,BD
+      COMMON/T2/PI,R1,BETA0,AL0,C0,E5,AL1,BT,CPSI,SPSI,PSI,Z0,B0,BD,bd0
+       COMMON/T21/BD1,R0,RKM,BK1,BKA,BKB,BKC
       COMMON /COR2/CFI,SFI
       COMMON/COR3/R,CT,ST
       DIMENSION P(3),PD(3),UFR(3)
@@ -888,7 +908,7 @@ C*********************************************************************
 ******************************************************************
       COMMON/S2/ CF0(5),CF1(5),CF2(5),CF3(5),CF4(5)
       REAL L,L0
-      COMMON /T3/ L(6,5),L0(5)
+      COMMON/T3/ L(6,5),L0(5)
       COMMON /COR1/AL,BE,SQ,PQ,QA
       COMMON /COR2/CFI,SFI
       COMMON/SM/SSCP,SSP,simf,smd,ssd,ssr,smr,sbt,ss1,ss2
@@ -950,8 +970,9 @@ C*************************************************************
       COMMON/COR3/R,CT,ST
       COMMON/COR4/CTE,STE,CFIE,SFIE
       COMMON/TFAC/STM,CTM,BFAC0,BFAC1,TETAM,AJ0
-      COMMON/T2/PI,R1,R2,BETA0,AL0,C0,E5,AL1,BT,CPSI,SPSI,PSI,Z0,B0,BD
-      DIMENSION P(3)
+c      COMMON/T2/PI,R1,R2,BETA0,AL0,C0,E5,AL1,BT,CPSI,SPSI,PSI,Z0,B0,BD
+      COMMON/T2/PI,R1,BETA0,AL0,C0,E5,AL1,BT,CPSI,SPSI,PSI,Z0,B0,BD,bd0
+       DIMENSION P(3)
 
         U= TETAM*PI/180.
         STM=SIN(U)
@@ -1849,8 +1870,9 @@ c      B2=0 in this version of the paraboloid model
       COMMON/COR3/R,CT,ST
       COMMON/COR4/CTE,STE,CFIE,SFIE
       COMMON/TFAC/STM,CTM,BFAC0,BFAC1,TETAM,AJ0
-      COMMON/T2/PI,R1,R2,BETA0,AL0,C0,E5,AL1,BT,CPSI,SPSI,PSI,Z0,B0,BD
-      COMMON/SM/SSCP,SSP,simf,smd,ssd,ssr,smr,sbt,ss1,ss2
+c      COMMON/T2/PI,R1,R2,BETA0,AL0,C0,E5,AL1,BT,CPSI,SPSI,PSI,Z0,B0,BD
+      COMMON/T2/PI,R1,BETA0,AL0,C0,E5,AL1,BT,CPSI,SPSI,PSI,Z0,B0,BD,bd0
+       COMMON/SM/SSCP,SSP,simf,smd,ssd,ssr,smr,sbt,ss1,ss2
       common/fac12/ami1,ami2,tm1,tm2
       DIMENSION x(3),B2(3),xsm(3),Bsm(3),xr(3),Br(3),sm2gsm(3,3)
      *,zu(3,3),Bsm1(3),b1(3),Br1(3)

@@ -56,7 +56,7 @@ Make Variables
           OS=mach      For Mach on a NeXT or a MacOS X Server.  The possible
                        environments are...
  
-                       ENV=gnu   Compile using the Gnu-supplied Gnu C (gcc).
+                       ENV=gnu32   Compile using the Gnu-supplied Gnu C (gcc).
 
           OS=linux32   For Linux 32-bit on an IBM PC, a Mac Power PC or a Dual Alpha.  
                        The possible environments are...
@@ -67,6 +67,9 @@ Make Variables
                        ENV=gnu32    Compile using Gnu Fortran (g77).  This seems to
                                   be the fortran compiler most commonly found on
                                   Linux systems. 
+				  Produce ELF 32-bit MSB dynamic lib.
+
+                       ENV=pgi32    Compile using Portland Fortran compilers (PGI).
 				  Produce ELF 32-bit MSB dynamic lib.
 
           OS=linux64   For Linux 64-bit on an IBM PC, a Mac Power PC or a Dual Alpha.  
@@ -83,6 +86,9 @@ Make Variables
                        ENV=gnu64    Compile using Gnu Fortran (g77).  This seems to
                                   be the fortran compiler most commonly found on
                                   Linux systems. 
+				  Produce ELF 64-bit MSB dynamic lib.
+
+                       ENV=pgi64    Compile using Portland Fortran compilers (PGI).
 				  Produce ELF 64-bit MSB dynamic lib.
 
           OS=win32     For Cygwin on a PC. The possible environments are...
