@@ -55,14 +55,18 @@ PIC_sunos_sparc32=-KPIC
 LDOPTIONS_sunos_sparc32=
 WRAPPER_sunos_sparc32=32
 LIBNAME_sunos_sparc32=sunos_sparc
+GUPDIR_sparc32=$(GUPDIR)
 
 FOPTIONS_SHARED_sunos_sparc64=-xlang=f77 -G -xarch=generic64
 FOPTIONS_NONSHARED_sunos_sparc64=-c -xlang=f77 -xarch=generic64
+FOPTIONS_SHARED_sunos_sparc64=-xlang=f77 -G -m64
+FOPTIONS_NONSHARED_sunos_sparc64=-c -xlang=f77 -m64
 FC_sunos_sparc64=f95
 PIC_sunos_sparc64=-KPIC
 LDOPTIONS_sunos_sparc64=
 WRAPPER_sunos_sparc64=64
 LIBNAME_sunos_sparc64=sunos_sparcV9
+GUPDIR_sparc64=$(GUPDIR)/sparcv9
 
 FOPTIONS_SHARED_sunos_gnu32=-fno-second-underscore -w -m32
 FOPTIONS_NONSHARED_sunos_gnu32=-c -fno-second-underscore -w -m32
@@ -71,6 +75,7 @@ PIC_sunos_gnu32=
 LDOPTIONS_sunos_gnu32=-shared
 WRAPPER_sunos_gnu32=32
 LIBNAME_sunos_gnu32=sunos_sparc
+GUPDIR_gnu32=$(GUPDIR)
 
 FOPTIONS_SHARED_sunos_gnu64=-fno-second-underscore -w -m64
 FOPTIONS_NONSHARED_sunos_gnu64=-c -fno-second-underscore -w -m64
@@ -79,6 +84,7 @@ PIC_sunos_gnu64=
 LDOPTIONS_sunos_gnu64=-shared
 WRAPPER_sunos_gnu64=64
 LIBNAME_sunos_gnu64=sunos_sparcV9
+GUPDIR_gnu64=$(GUPDIR)
 
 #------------------------------------------------------------------------------
 # Macros for Linux32.
@@ -95,6 +101,7 @@ PIC_linux32_intel32=
 LDOPTIONS_linux32_intel32=-shared
 WRAPPER_linux32_intel32=32
 LIBNAME_linux32_intel32=linux_x86
+GUPDIR_intel32=$(GUPDIR)
 
 FOPTIONS_SHARED_linux32_gnu32=-mno-align-double -fno-second-underscore -w -m32
 FOPTIONS_NONSHARED_linux32_gnu32=-c -mno-align-double -w -m32
@@ -112,6 +119,7 @@ PIC_linux32_pgi32=-fpic
 LDOPTIONS_linux32_pgi32=-shared
 WRAPPER_linux32_pgi32=32
 LIBNAME_linux32_pgi32=linux_x86
+GUPDIR_pgi32=$(GUPDIR)
 
 #------------------------------------------------------------------------------
 # Macros for Linux64.
@@ -153,6 +161,7 @@ PIC_linux64_pgi64=-fPIC
 LDOPTIONS_linux64_pgi64=-shared
 WRAPPER_linux64_pgi64=64
 LIBNAME_linux64_pgi64=linux_x86_64
+GUPDIR_pgi64=$(GUPDIR)
 
 #------------------------------------------------------------------------------
 # Macros for Windows.
@@ -169,6 +178,7 @@ PIC_win32_cygwin32=
 LDOPTIONS_win32_cygwin32=-shared
 WRAPPER_win32_cygwin32=32
 LIBNAME_win32_cygwin32=Win32_x86
+GUPDIR_cygwin32=$(GUPDIR)
 
 #------------------------------------------------------------------------------
 # Macros for Mach.
@@ -238,9 +248,9 @@ install: install.lib
 
 install.lib:
 	@if [ -f $(SOURCEDIR)/onera_desp_lib_*.so ] ; then \
-	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(INSTALLDIR)/matlab/onera_desp_lib.so;\
+	   cp $(SOURCEDIR)/onera_desp_lib_$(LIBNAME_$(OS)_$(ENV)).so $(INSTALLDIR)/matlab/onera_desp_lib.so;\
 	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(INSTALLDIR);\
-	   cp $(SOURCEDIR)/onera_desp_lib_*.so $(GUPDIR)/onera_desp_lib.so;\
+	   cp $(SOURCEDIR)/onera_desp_lib_$(LIBNAME_$(OS)_$(ENV)).so $(GUPDIR_$(ENV))/onera_desp_lib.so;\
 	 else \
 	   $(NULL) ; \
 	 fi

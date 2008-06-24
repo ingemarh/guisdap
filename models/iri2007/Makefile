@@ -9,7 +9,9 @@ ML=	$L$N
 sys=$(shell uname -s)
 ifeq ($(sys),SunOS)
 ifeq ($(bit),64)
-FFLAGS = -xO3 -KPIC -dalign -mt -silent -e -xarch=v9a
+ML=	$Lsparcv9/$N
+#FFLAGS = -xO3 -KPIC -dalign -mt -silent -e -xarch=v9a
+FFLAGS = -xO3 -KPIC -dalign -mt -silent -e -m64 -xarch=sparcvis
 else
 FFLAGS = -xO3 -KPIC -dalign -mt -silent -e
 endif
