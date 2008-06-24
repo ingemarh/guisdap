@@ -27,7 +27,7 @@ function [varargout]=vizu(varargin)
 
 global Time par2D par1D rpar2D name_expr name_ant axs axc maxdy rres
 persistent hds
-global height n_tot add_plot manylim plf_polen
+global height n_tot add_plot manylim plf_polen max_ppw
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
 global r_RECloc path_tmp path_GUP result_path webfile local owner
 nvargin=length(varargin);
@@ -73,6 +73,7 @@ if isempty(DATA_PATH)
     DATA_PATH=minput('Data path',result_path,1);
     if strcmp(act,'VERBOSE')
       PLOT_STATUS=minput('Status/Residual limits',PLOT_STATUS);
+      max_ppw=minput('Maximum pp resolution (km)',Inf);
     end
   elseif ~REALT
     if isdir(act) | strfind(act,'/')

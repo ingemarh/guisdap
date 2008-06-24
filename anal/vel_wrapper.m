@@ -1,23 +1,27 @@
 % function vel_wrapper(scan,dirs)
 % Wrapper to make default velocity vectors and plots for CPs
-% Inputs:scan	'ip2e'	Scan type, defined are:
-%			ip2e for monostatic ESR ip2 scan
-%			ip2t for monostatic UHF ip2 scan
-%			ip2kst for tristatic UHF ip2 scan
-%			cp2 for monostatic cp2 scan
-%			cp2kst for tristatic UHF ip2 scan
-%			cp1 for tristatic UHF cp1 scan
-%			cp3kst for tristatic UHF cp3 scan
-%			cluster for overlapped ESR and VHF runs
-%	dirs		{result_path} Directories containing data (wild cards accepted)
-%				Sites separated in cell
+% Inputs:scan	Scan type, defined are:
+%		ip2e for monostatic ESR ip2 scan
+%		ip3 for monostatic ESR ip3 scan
+%		ip2t for monostatic UHF ip2 scan
+%		ip2kst for tristatic UHF ip2 scan
+%		cp2 for monostatic cp2 scan
+%		cp2kst for tristatic UHF ip2 scan
+%		cp1kst for tristatic UHF cp1 scan
+%		cp3kst for tristatic UHF cp3 scan
+%		cluster for overlapped ESR and VHF beams
+%	dirs	{result_path} Directories containing data (wild cards accepted)
+%			Sites separated in cell
 % See also VECTOR_VELOCITY, EFIELD
 %
 function vel_wrapper(scan,dirs)
 global result_path
 ld=[]; uperr=[]; plots={'Vm'}; ptype='t'; ylim=[2000 2000];
+e=[90 100 107.5 112.5 117.5 122.5 130]; %from old cp1
+%e=90:10:130;
+f=[160 500];
 if nargin<1
- fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst cp1 cp1kst cp2 cluster\n')
+ fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst ip3 cp1 cp1kst cp2 cluster\n')
  scan=minput('Choose',[],1);
 end
 if nargin<2
@@ -30,21 +34,25 @@ if nargin<2
 end
 switch scan
  case 'ip2e'
-  alt=[90 110 130 160 400]; td=180; plots={'Vg','Vg',[],'Vm'};
+  alt=[e f]; td=180;
+  plots(2:length(alt)-3)={'Vg'}; plots([1 end+2])={[] 'Vm'};
  case 'ip2t'
-  alt=[90 110 130 160 500]; td=240; plots={'Vg','Vg',[],'Vm'};
+  alt=[e f]; td=240;
+  plots(2:length(alt)-3)={'Vg'}; plots([1 end+2])={[] 'Vm'};
  case {'ip2kst' 'cp2kst'}
-  alt=[170 450]; td=1;
+  alt=f; td=1;
  case {'cp3kst'}
-  alt=[170 450]; td=1; ptype='p';
+  alt=f; td=1; ptype='p';
  case {'ip3'}
-  alt=[160 500]; td=1440./[1 2]; uperr=10; ld=50:.5:90; ptype='p';
+  alt=[e f]; td=1440./[1 2]; uperr=10; ld=60:.5:90; ptype='p';
+  plots(2:length(alt)-3)={'Vg'}; plots([1 end+2])={[] 'Vm'};
  case {'cp1' 'cp1kst'}
-  alt=[170 500]; td=1;
+  alt=f; td=1;
  case {'cp2' 'cp2t' 'cp2e'}
-  alt=[90 110 130 160 500]; td=360; plots={'Vg','Vg',[],'Vm'};
+  alt=[e f]; td=360;
+  plots(2:length(alt)-3)={'Vg'}; plots([1 end+2])={[] 'Vm'};
  case 'cluster'
-  alt=[160 500]; td=120; uperr=1; ld=50:.5:90; ptype='p';
+  alt=f; td=120; uperr=1; ld=50:.5:90; ptype='p';
  otherwise
   error('GUISDAP:default','No such scan defined: %s',scan)
 end
@@ -63,7 +71,8 @@ if strcmp(ptype,'t')
  end
 else
  npc=floor(sqrt(np)); npr=ceil(np/npc);
- sq=sqrt(8);
+ %sq=sqrt(8);
+ sq=3*(npr-1.5).^2+2;
  orient tall
 end
 for i=1:np

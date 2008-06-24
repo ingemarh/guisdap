@@ -67,7 +67,7 @@ if ~isempty(p)
  dir={'East_{\perp}' 'North_{\perp}' 'Up_{//}'};
  if strfind(p,'V')
   ew=2;
-  yfor1='\bfv\rm'; yfor2='ms^{-1}]';
+  yfor1='\bfv\rm_i'; yfor2='ms^{-1}';
   if strfind(p,'m')
    vp=Vm; vpe=Vme;
   elseif strfind(p,'g')
@@ -78,7 +78,7 @@ if ~isempty(p)
  elseif strfind(p,'E')
   ew=1;
   vp=E*1000; vpe=Ee*1000;
-  yfor1='\bfE\rm'; yfor2='mVm^{-1}]';
+  yfor1='\bfE\rm'; yfor2='mVm^{-1}';
   if verbose(1)>1
    scale=scale/50; maxv=maxv/50; maxverr=maxverr/50;
   end
@@ -162,7 +162,7 @@ if ~isempty(p)
     plot(vdt,vpt(:,i),'-k', ...
      ones(2,1)*vd,ones(2,1)*vp(d,i)'+[1;-1]*vpe(d,i)','-k')
     set(gca,'XLim',xlim)
-    ylabel([yfor1 ' ' dir{i} ' [' yfor2])
+    ylabel([yfor1 ' ' dir{i} ' [' yfor2 ']'])
     set(gca,'xgrid','on','ygrid','on')
     datetick(gca,'x',tickform,'keeplimits')
     text('String',hgt,'Units','Normalized','Position',[1.025 0.5],'Rotation',-90,'Color','k')
@@ -170,7 +170,7 @@ if ~isempty(p)
   else
    plot(vdt,vpt)
    set(gca,'XLim',xlim)
-   ylabel([yfor1 ' [' yfor2 ' ' hgt])
+   ylabel([yfor1 ' [' yfor2 '] ' hgt])
    set(gca,'xgrid','on','ygrid','on')
    datetick(gca,'x',tickform,'keeplimits')
    color=get(gca,'ColorOrder');
@@ -218,17 +218,17 @@ if ~isempty(p)
   x1=-sum([cos(lt) sin(lt)].*V_NE,2);
   y1=sum([-sin(lt) cos(lt)].*V_NE,2);
   de=find(V_NE(:,ew)<=0); dw=find(V_NE(:,ew)>0);
-  plot(x0,y0,'ok','MarkerSize',2), hold on
+  plot(x0,y0,'ok','MarkerSize',1), hold on
   axis square
   x0=x0-x1/2; y0=y0-y1/2;
   quiver(x0(de),y0(de),x1(de),y1(de),0,'r'), hold on
   quiver(x0(dw),y0(dw),x1(dw),y1(dw),0,'b')
-  quiver(-5,-minrlat/50,10,0,0,'k')
+  quiver(-5,0,10,0,0,'k')
   plot(xc*latr,yc*latr,'k:',tscx,tscy,'k:'), hold off
   for i=0:3
    text(minrlat*1.2*xc(46+i*90),minrlat*1.2*yc(46+i*90),sprintf('%02.0f%s',rem(i*6+9,24),tt),'horiz','center')
   end
-  text(0,0,[yfor1 ' [' num2str(10*scale) ' ' yfor2],'horiz','center','vertical','bottom')
+  text(0,0,{yfor1 [num2str(10*scale) ' ' yfor2]},'horiz','center','vertical','middle')
   lims=minrlat*[-1 1];
   set(gca,'xlim',lims,'ylim',lims,'visible','off')
   for i=latr

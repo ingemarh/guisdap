@@ -259,8 +259,12 @@ function area=angarea(enu)
 % calculate the "angle area" for a number of directions
 [t,p]=cart2sph(enu(:,1),enu(:,2),enu(:,3));
 [x,y]=pol2cart(t,pi/2-p);
-k=convhull(x,y);
-area=polyarea(x(k),y(k));
+try
+ k=convhull(x,y);
+ area=polyarea(x(k),y(k));
+catch
+ area=0;
+end
 return
 
 function [e,n,u]=xyz2enu(Xr,Yr,Zr,X,Y,Z) 
