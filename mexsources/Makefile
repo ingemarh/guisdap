@@ -1,3 +1,4 @@
+M=	$(PWD)/../lib
 sys=$(shell uname -s)
 ifndef MEX
 MEX:=	mex
@@ -11,11 +12,15 @@ endif
 ifeq ($(sys),SunOS)
 #Solaris:
 ifeq ($(bit),64)
-CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include -xarch=v9a
+#CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include -xarch=v9a
+CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include -m64 -xarch=sparcvis
+CC=	cc -m64 -xarch=sparcvis
+M=	$(PWD)/../lib/sparcv9
+MEXOPTS= CC="cc -m64 -xarch=sparcvis" FC="f90  -m64 -xarch=sparcvis" -f $(MATLAB)/bin/f90opts.sh
 else
 CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include
-endif
 MEXOPTS=-f $(MATLAB)/bin/f90opts.sh
+endif
 LDFLAGS= -dy -G -h libguisdap.so -z text
 FC=f95
 else
@@ -36,7 +41,6 @@ endif
 th=$(shell if [ -f /usr/include/pthread.h ]; then echo 1;else echo 0;fi)
 
 #The rest
-M=	$(PWD)/../lib
 IRILIB=	-L$M -liri
 MSISLIB=	-L$M -lmsis
 GUPLIB=	-L$M -lguisdap
