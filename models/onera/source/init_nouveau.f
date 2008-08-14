@@ -1217,7 +1217,7 @@ C
 c
 C
 999	format(//1x,
-     *	 '*** ERROR -- Input year = ',F7.2,/
+     *   '*** ERROR -- Input year = ',F7.2,/
      *   ' is out of valid range 1965-2010 ***'//)
 c
 	return

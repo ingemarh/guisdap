@@ -79,7 +79,7 @@ for d1=1:ndir
  [d,dum,dd]=unique(dump); dd=dd+size(Data1D,1);
  Data1D=[Data1D;[Time(:,d)' par1D(d,1:2)]]; % only time+el+az used
  D2D=[reshape(par2D(:,:,[1 2 6]),[],3) col(err2D(:,:,4))]; % only alt+ran+vi+vie used
- Data2D=[Data2D;[D2D(g+(dump-1)*ng,:) dd]];
+ Data2D=[Data2D;[D2D(g+(dump-1)*ng,:) dd(:)]];
  dirind=[dirind;length(dump)];
  loc=[loc;r_RECloc r_XMITloc];
  if td(1)==d1
@@ -261,10 +261,10 @@ function area=angarea(enu)
 [x,y]=pol2cart(t,pi/2-p);
 try
  k=convhull(x,y);
- area=polyarea(x(k),y(k));
 catch
- area=0;
+ k=convhull(x,y,{'QJ'});
 end
+area=polyarea(x(k),y(k));
 return
 
 function [e,n,u]=xyz2enu(Xr,Yr,Zr,X,Y,Z) 
