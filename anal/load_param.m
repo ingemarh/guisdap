@@ -19,7 +19,7 @@ do_rpar=nargout==4;
 do_err=nargout==5;
 
 if isempty(strfind(data_path,'*')) & ~isdir(data_path)
-  [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path);
+  [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,[],do_err);
   return
 end
 data_path=fullfile(data_path,filesep);

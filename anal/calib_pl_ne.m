@@ -62,6 +62,7 @@ if verbose
  ele=minput('Approx elevation',ele);
  updown=minput('Up/Down shifted (0/1)',updown);
  startad=minput('Start address',startad);
+ gate=minput('Gate',gate);
 end
 %pl_dir='/home/ingemar/gup/mydata/steffel_int_CP@32p';
 %res_dir='gup/results/2004-05-2*_steffe_60@42m/';
