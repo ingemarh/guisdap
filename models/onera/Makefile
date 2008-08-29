@@ -59,8 +59,8 @@ GUPDIR_sparc32=$(GUPDIR)
 
 FOPTIONS_SHARED_sunos_sparc64=-xlang=f77 -G -xarch=generic64
 FOPTIONS_NONSHARED_sunos_sparc64=-c -xlang=f77 -xarch=generic64
-FOPTIONS_SHARED_sunos_sparc64=-xlang=f77 -G -m64
-FOPTIONS_NONSHARED_sunos_sparc64=-c -xlang=f77 -m64
+FOPTIONS_SHARED_sunos_sparc64=-G -m64 -xarch=sparcvis
+FOPTIONS_NONSHARED_sunos_sparc64=-c -m64 -xarch=sparcvis
 FC_sunos_sparc64=f95
 PIC_sunos_sparc64=-KPIC
 LDOPTIONS_sunos_sparc64=

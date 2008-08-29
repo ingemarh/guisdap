@@ -6,8 +6,8 @@ else
 end
 if isempty(a)
  r=D;
-elseif nargin>2
- r=a;
+elseif nargin>2 | any(isnan(a))
+ r=a(~isnan(a));
 else
  r=D;
  r(1:length(a))=a;

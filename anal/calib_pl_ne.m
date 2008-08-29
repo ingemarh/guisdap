@@ -135,7 +135,8 @@ fd2=-std(d2);
 for i=1:nfreq
  d=find(d2(:,i)<2*fd2(i));
  for j=d'
-  filt_shape(j+(1:3),i)=interp1([-3:-1 5:7]',fsh(j+wrap+[-3:-1 5:7],i),(1:3)','spline');
+  jj=3; if j>nfft-3, jj=2; end
+  filt_shape(j+(1:jj),i)=interp1([-3:-1 5:7]',fsh(j+wrap+[-3:-1 5:7],i),(1:jj)','spline');
  end
 end
 if plots
