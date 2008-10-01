@@ -63,6 +63,7 @@ switch local.site
   local.printer='hp4550';
  case 'L'
   data_path='/data1/';
+  local.printer='Hpcolor';
  case 'HQ'
   local.browser='mozilla';
   local.printer='hpclj';

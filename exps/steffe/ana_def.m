@@ -12,6 +12,6 @@ if strfind(data_path,'32p')
  analysis_plasmaline=1;
  if expver==2
   analysis_intfixforce=[NaN NaN NaN 160];
-  d_saveint.range=col(ones(3*175,1)*(0:3)*19619+(1:3*175)'*ones(1,4)+10*175+9*1536);
+  plasma_range=col(ones(3*175,1)*(0:3)*19619+(1:3*175)'*ones(1,4)+10*175+9*1536);
  end
 end
