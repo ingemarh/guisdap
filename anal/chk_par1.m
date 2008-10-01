@@ -16,8 +16,8 @@
 % See also: an_start globals chk_par2
 
 % make sure that the various path names have directory separators at the end
-data_path=fullfile(data_path,filesep);
-result_path=fullfile(result_path,filesep);
+data_path=fullfile(deblank(strjust(data_path,'left')),filesep);
+result_path=fullfile(deblank(strjust(result_path,'left')),filesep);
 path_GUP=fullfile(path_GUP,filesep);
 path_exps=fullfile(path_exps,filesep);
 path_tmp=fullfile(path_tmp,filesep);

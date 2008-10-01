@@ -93,7 +93,7 @@ else
  param='UT1,UT2 AZM ELM GDALT GDLAT GLON RANGE CHISQ POWER SYSTMP CO NEL POPL TE TI VO VOBI PO+';
 end
 t2=clock;
-arg=sprintf('fileName=%s&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&badval=NaN&mxchar=9999&state=text',data_path,t2(1),param);
+arg=sprintf('fileName=%s&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',data_path,t2(1),param);
 for i=fliplr(find(arg=='&' | arg==' '))
  arg=[arg(1:i-1) '\' arg(i:end)];
 end
