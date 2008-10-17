@@ -1,4 +1,4 @@
-% function vel_wrapper(scan,dirs)
+% function vel_wrapper(scan,dirs,override)
 % Wrapper to make default velocity vectors and plots for CPs
 % Inputs:scan	Scan type, defined are:
 %		ip2e for monostatic ESR ip2 scan
@@ -14,17 +14,20 @@
 %			Sites separated in cell
 % See also VECTOR_VELOCITY, EFIELD
 %
-function vel_wrapper(scan,dirs)
+function vel_wrapper(scan,dirs,override)
+if nargin<1, scan=[]; end
+if nargin<2, dirs=[]; end
+if nargin<3, override=[]; end
 global result_path
 ld=[]; uperr=[]; plots={'Vm'}; ptype='t'; ylim=[2000 2000];
 e=[90 100 107.5 112.5 117.5 122.5 130]; %from old cp1
 %e=90:10:130;
 f=[160 500];
-if nargin<1
+if isempty(scan)
  fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst ip3 cp1 cp1kst cp2 cluster\n')
  scan=minput('Choose',[],1);
 end
-if nargin<2
+if isempty(dirs)
  nd=0;
  while nd<1 | ~isempty(dirs{nd})
   nd=nd+1;
@@ -57,6 +60,9 @@ switch scan
   alt=f; td=120; uperr=1; ld=50:.5:90; ptype='p';
  otherwise
   error('GUISDAP:default','No such scan defined: %s',scan)
+end
+if ~isempty(override)
+ eval(override)
 end
 r=vector_velocity(dirs,alt,td,ld,uperr,[],fullfile(result_path,'vectors'));
 np=length(plots);
