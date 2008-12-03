@@ -24,14 +24,14 @@ e=[90 100 107.5 112.5 117.5 122.5 130]; %from old cp1
 %e=90:10:130;
 f=[160 500];
 if isempty(scan)
- fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst ip3 cp1 cp1kst cp2 cluster\n')
+ fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst cp3kstl ip3 cp1 cp1kst cp2 cluster\n')
  scan=minput('Choose',[],1);
 end
 if isempty(dirs)
  nd=0;
  while nd<1 | ~isempty(dirs{nd})
   nd=nd+1;
-  dirs(nd)={minput(sprintf('Data directory no %d',nd),[],1)};
+  dirs{nd}=minput(sprintf('Data directory no %d',nd),[],1);
  end
  dirs=dirs(1:nd-1);
 end
