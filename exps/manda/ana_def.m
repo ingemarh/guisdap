@@ -4,7 +4,7 @@ if name_site=='V'
   first=50; last=600; d1=.45; d2=1; n1=100;
   h1=230; h2=370;
 elseif name_site=='T'
-  fit_altitude(2:5,1)=[100;130;Inf;90];
+  fit_altitude(2:5,1)=[100;130;107;90];
   first=50; last=600; d1=.45; d2=1; n1=100;
   h1=230; h2=370;
 elseif name_site=='L'
@@ -29,6 +29,9 @@ if name_site=='T' | name_site=='L' | name_site=='V'
   d=find(analysis_range>h1(i) & analysis_range<h2(i));
   analysis_range(d(1))=mean([h1(i) h2(i)]);
   analysis_range(d(2:end))=[];
+ end
+ if strfind(data_path,'mandas')
+  analysis_range(find(analysis_range>300))=[];
  end
  analysis_maxwidth=ones(size(analysis_range));
 end
