@@ -19,7 +19,7 @@ glp=1886;
 grps=[1 1 lpg_h(1);2 1884 lpg_h(1)+lpg_w(1)/2
       1885 1886 lpg_h(1886)];
 for i=1:ng
-  gaincorrect(glp,grps)
+  %aincorrect(glp,grps)
   glp=glp+1886; grps(:,1:2)=grps(:,1:2)+1886;
 end
 if exist('spear_count','var')
