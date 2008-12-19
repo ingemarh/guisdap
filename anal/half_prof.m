@@ -6,7 +6,7 @@
 function half_prof 
 
 global a_addr a_adstart a_adend a_control ad_lpg ad_coeff ad_range ad_w ADDR_SHIFT 
-global d_data d_var1 d_var2 d_time p_rep p_dtau ch_el di_fit
+global d_data d_var1 d_var2 d_time p_rep p_dtau ch_el di_fit di_spectra
 global lpg_ND lpg_lag lpg_womscaled lpg_bac lpg_cal lpg_background lpg_Ap
 global a_priori a_priorierror p_ND a_gating
 global r_range r_status r_w
@@ -67,6 +67,7 @@ for g_ind=1:length(a_adstart)
   end
   lpg=unique(lpgs); nlpg=length(lpg); nlpgs=length(lpgs);
   if a_gating & nlpg<nlpgs & any(size(variance)==1)
+    % Collect points from the same lpg to speed up fitting process
     M=zeros(nlpg*2,1); V=M; P=M;
     for i=1:nlpg
       d=find(lpgs==lpg(i));
@@ -109,6 +110,11 @@ for g_ind=1:length(a_adstart)
   ch=1; kd2=k_radar(ch)^2*p_D0^2; Fscale=k_radar0(ch)/k_radar(ch); % hyi hyi
   [small_f_womega,small_p_om]=find_om_grid(aa,f_womega,kd2,Fscale*p_om,pldfvv,any(afree==nion+6));
 
+ if di_spectra
+   forward_spec(measurement,variance,lpgs,small_f_womega)
+   status=1;
+ else
+
   errorlim=a_control(1); status=0;
   if errorlim>0 % Check if the error of Ne larger than given limit when the fit is started
     [error,correl,alpha]=error_estimate(aa,variance,kd2,p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega,fit_altitude(:,6));
@@ -133,4 +139,5 @@ for g_ind=1:length(a_adstart)
   ralpha=real(alpha);
   store_results(aa,measurement,variance,real(result),ralpha,chi2,status,kd2,...
           p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega,lpgs,r_ind,g_ind);
+ end
 end

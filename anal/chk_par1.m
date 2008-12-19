@@ -142,13 +142,16 @@ if exist('analysis_code','var')
  a_code=analysis_code;
 end
 
-di_figures=[0 0 0 0 0]; di_results=0;
+di_figures=[0 0 0 0 0]; di_results=0; di_spectra=0;
 if name_site=='S' | name_site=='K', di_results=1; end
 if exist('display_figures','var')
  di_figures(1:length(display_figures))=display_figures;
 end
 if exist('display_results','var')
  di_results=display_results; 
+end
+if exist('display_spectra','var')
+ di_spectra=display_spectra; 
 end
 
 a_save=1;

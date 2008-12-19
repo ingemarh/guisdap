@@ -5,7 +5,7 @@
   function clear_results
 
 global r_range r_param r_error r_res r_status r_dp r_w
-global r_apriori r_apriorierror r_spec r_om
+global r_apriori r_apriorierror r_spec r_om r_freq
 
 r_range=[];r_param=[];r_error=[];r_res=[];r_status=[];r_dp=[]; r_w=[];
-r_apriori=[];r_apriorierror=[];r_spec=[];r_om=[];
+r_apriori=[];r_apriorierror=[];r_spec=[];r_om=[];r_freq=[];
