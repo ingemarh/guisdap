@@ -1,4 +1,5 @@
 function B=geomag(pos,r_time)
+%function B=geomag(pos,r_time)
 degrad=pi/180;
 r_earth=6378.135; % earth radius (km)
 iday=(r_time(2)-1)*30+r_time(3);

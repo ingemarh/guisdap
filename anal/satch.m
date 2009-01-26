@@ -41,12 +41,16 @@ n_echo=6; min_v=.065; skip=a_satch.skip;
 
 %check signal
 lp=setdiff(find(lpg_lag==0 & (lpg_bcs=='s' | lpg_bcs=='x') & lpg_bac~=0),a_satch.lpg_skip);
-if ~isempty(a_code)
- lp=lp(find(ismember(lpg_code(lp),unique(a_code))));
-end
 nclutter(1:length(lp))=a_satch.clutter;
 nsp_no_use(1:length(lp))=a_satch.repair;
 sigma(1:length(lp))=a_satch.sigma;
+if ~isempty(a_code)
+ lpf=find(ismember(lpg_code(lp),unique(a_code)));
+ lp=lp(lpf);
+ nclutter=nclutter(lpf);
+ nsp_no_use=nsp_no_use(lpf);
+ sigma=sigma(lpf);
+end
 lpgused=lp; ii=0; sat_ran=[];
 for i=lp
  j=j+1; ii=ii+1;
