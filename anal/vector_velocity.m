@@ -262,7 +262,13 @@ function area=angarea(enu)
 try
  k=convhull(x,y);
 catch
- k=convhull(x,y,{'QJ'});
+ try
+  k=convhull(x,y,{'QJ'});
+ catch
+  [t,p]=cart2pol(x-median(x),y-median(y));
+  [dum,k]=sort(t);
+  warning('Doing rough area calc')
+ end
 end
 area=polyarea(x(k),y(k));
 return
