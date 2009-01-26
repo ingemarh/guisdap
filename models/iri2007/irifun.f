@@ -5829,7 +5829,7 @@ c
       
 c         open(unit=12,file='ig_rz.dat',status='old')
           open(unit=12,file=path(1:index(path,' ')-1)//'/ig_rz.dat',
-     ,status='old')
+     ,status='old',ACTION='read')
 c-web- special for web version
 c          open(unit=12,file=
 c     *'/usr/local/etc/httpd/cgi-bin/models/IRI/ig_rz.dat',
@@ -6117,10 +6117,10 @@ c--------------------------------------------------------------------
         DATA LM/31,28,31,30,31,30,31,31,30,31,30,31/
 
         call getenv('IRIPATH',path)
-        Open(13,FILe=path(1:index(path,' ')-1)//'/ap.dat',
 c       Open(13,FILe='ap.dat',
 c-web-sepcial vfor web version
 C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
+       Open(13,FILe=path(1:index(path,' ')-1)//'/ap.dat',ACTION='read',
      *    ACCESS='DIRECT',RECL=39,FORM='FORMATTED',STATUS='OLD')
                 
         do i=1,8
@@ -6216,7 +6216,7 @@ c       Open(13,FILE='ap.dat',
 c-web-sepcial vfor web version
 C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
         call getenv('IRIPATH',path)
-        Open(13,FILE=path(1:index(path,' ')-1)//'/ap.dat',
+       Open(13,FILE=path(1:index(path,' ')-1)//'/ap.dat',ACTION='read',
      *    ACCESS='DIRECT',RECL=39,FORM='FORMATTED',STATUS='OLD')
                 
         if(iyyyy.lt.1960) goto 21   ! AP.DAT starts at Jan 1, 1960

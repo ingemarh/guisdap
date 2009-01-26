@@ -27,7 +27,7 @@ if p
 elseif site=='l'
  ch_adcint=[25 25];
  ch_filter={'b14d375.fir' 'b14d375.fir'};
- ch_f=[500.3 500.4];
+ ch_f=[500.3 500.5];
  p_rep=400000;
 elseif site=='t'
  ch_adcint=[10 10];

@@ -49,7 +49,7 @@ CFLAGS:=	$(CFLAGS) -DGUPTHREAD
 GUPLIB:=	$(GUPLIB) -lpthread
 endif
 
-all: iri msis lib mex install
+all: iri msis geomag lib mex install
 
 iri:
 	$(MEX) $(MEXOPTS) iri.F $(IRILIB)

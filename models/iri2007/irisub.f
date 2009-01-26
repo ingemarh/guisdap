@@ -828,7 +828,7 @@ c-web- special for web-version:
 c104   FORMAT('/usr/local/etc/httpd/cgi-bin/models/IRI/ccir',I2,'.asc')
 c-web- special for web-version:
 c
-        OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,
+        OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,ACTION='read',
      &          FORM='FORMATTED')
 c-binary- if binary files than use:
 c-binary-     &          FORM='UNFORMATTED')
@@ -853,7 +853,7 @@ c1144  FORMAT('/usr/local/etc/httpd/cgi-bin/models/IRI/ursi',I2,'.asc')
 c-binary- if binary files than use:
 c-binary-1144          FORMAT('ursi',I2,'.bin')
 
-          OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,
+          OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,ACTION='read',
      &         FORM='FORMATTED')
 c-binary- if binary files than use:
 c-binary-     &         FORM='UNFORMATTED')
@@ -878,7 +878,7 @@ c
 
         WRITE(FILNAM,104) path(1:index(path,' ')-1),NMONTH+10
 c       WRITE(FILNAM,104) NMONTH+10
-        OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,
+        OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,ACTION='read',
      &          FORM='FORMATTED')
 c-binary- if binary files than use:
 c-binary-     &          FORM='unFORMATTED')
@@ -895,7 +895,7 @@ C
         if(URSIF2) then
           WRITE(FILNAM,1144) path(1:index(path,' ')-1),NMONTH+10
 c         WRITE(FILNAM,1144) NMONTH+10
-          OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,
+          OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,ACTION='read',
      &         FORM='FORMATTED')
 c-binary- if binary files than use:
 c-binary-     &         FORM='unFORMATTED')

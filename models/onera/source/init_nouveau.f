@@ -290,7 +290,8 @@ C
        COMMON /dipigrf/Bo,xc,yc,zc,ct,st,cp,sp
        COMMON /dgrf/g,h
 C
-       call get_igrf_coeffs(year,g,h,ierr)
+c      call get_igrf_coeffs(year,g,h,ierr)
+       call get_igrf_coeffs(year,g,h)
 c
        call get_terms(g,h,thet,phit,xc,yc,zc,Bo)
 c       write(6,*)Bo
@@ -877,7 +878,7 @@ C
 C
 C----------------------------------------------------------------------
 C
-	subroutine get_igrf_coeffs(year,g,h,ierr)
+	subroutine get_igrf_coeffs(year,g,h)
 c
 C	SET UP TO ACCEPT DATES BETWEEN 1965 AND 2005; COEFFICIENTS
 C	THROUGH 1985 ARE FROM DGRF MODELS COEFFICIENTS FOR 1990 

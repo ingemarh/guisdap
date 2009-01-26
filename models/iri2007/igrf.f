@@ -763,7 +763,7 @@ c special for IRIWeb version
 c 667  FORMAT('/usr/local/etc/httpd/cgi-bin/models/IRI/',A12)
 c 667    FORMAT(A12)
 667    FORMAT(a,'/',A12)
-       OPEN (IU, FILE=FOUT, STATUS='OLD', IOSTAT=IER, ERR=999)     
+       OPEN(IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,ACTION='read')     
 
        READ (IU, *, IOSTAT=IER, ERR=999) 
         READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD 
