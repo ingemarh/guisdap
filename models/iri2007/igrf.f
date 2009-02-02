@@ -758,11 +758,10 @@ C       Read degree and order of model and Earth's radius.
 C ---------------------------------------------------------------               
        call getenv('IRIPATH',path)
 c      WRITE(FOUT,667) FSPEC
-       WRITE(FOUT,667) path(1:index(path,' ')-1),FSPEC
+       FOUT=path(1:index(path,' ')-1)//'/'//FSPEC
 c special for IRIWeb version
 c 667  FORMAT('/usr/local/etc/httpd/cgi-bin/models/IRI/',A12)
 c 667    FORMAT(A12)
-667    FORMAT(a,'/',A12)
        OPEN(IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,ACTION='read')     
 
        READ (IU, *, IOSTAT=IER, ERR=999) 

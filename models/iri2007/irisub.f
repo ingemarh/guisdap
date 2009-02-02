@@ -97,6 +97,7 @@ C 2005.04 05/06/06 Spread-F included, NeQuick included
 C 2005.05 01/15/07 NeQuick uses CCIR-M3000F2 even if user-hmF2  
 C 2007.00 05/18/07 Release of IRI-2007
 C 2007.01 01/23/08 ryear = .. (daynr-1.0)/idayy ---------- R. Scharroo
+C 2007.02 10/31/08 outf(100) -> outf(500), numhei=numstp=500 
 C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
@@ -182,7 +183,7 @@ C    jf(27) =.flase.     OARR(39)=user input for IG12
 C    jf(21) =.true.      OARR(41)=user input for daily F10.7 index
 C
 C
-C  OUTPUT:  OUTF(1:20,1:100)
+C  OUTPUT:  OUTF(1:20,1:500)
 C               OUTF(1,*)  ELECTRON DENSITY/M-3
 C               OUTF(2,*)  NEUTRAL TEMPERATURE/K
 C               OUTF(3,*)  ION TEMPERATURE/K
@@ -262,7 +263,7 @@ c      CHARACTER FILNAM*53
      &  FF0N(988),XM0N(441),F2N(13,76,2),FM3N(9,49,2),INDAP(13),
      &  AMP(4),HXL(4),SCL(4),XSM(4),MM(5),DTI(4),AHH(7),
      &  STTE(6),DTE(5),ATE(7),TEA(6),XNAR(2),param(2),OARR(50),
-     &  OUTF(20,100),PG1O(80),PG2O(32),PG3O(80),PF1O(12),PF2O(4),
+     &  OUTF(20,500),PG1O(80),PG2O(32),PG3O(80),PF1O(12),PF2O(4),
      &  PF3O(12),HO(4),MO(5),DDO(4),HO2(2),MO2(3),DO2(2),DION(7),
      &  osfbr(25)
 
@@ -289,7 +290,7 @@ c      CHARACTER FILNAM*53
         
 
         DO 7397 KI=1,20
-        do 7397 kk=1,100
+        do 7397 kk=1,500
 7397    OUTF(KI,kk)=-1.
 
         do 8398 kind=7,14,1
@@ -315,7 +316,7 @@ C
         ALG10=ALOG(10.)
         ALG100=ALOG(100.)
         numhei=int(abs(heiend-heibeg)/abs(heistp))+1
-        if(numhei.gt.100) numhei=100
+        if(numhei.gt.500) numhei=500
 C
 C Code inserted to aleviate block data problem for PC version.
 C Thus avoiding DATA statement with parameters from COMMON block.
@@ -1859,14 +1860,14 @@ c          vbeg,vend,vstp  variable range (begin,end,step)
 c output:  a       similar to outf in IRI_SUB
 c          b       similar to oarr in IRI_SUB
 c
-c          numstp  number of steps; maximal 100
+c          numstp  number of steps; maximal 500
 c-----------------------------------------------------------------------        
-        dimension   outf(20,100),oar(50),oarr(50),a(20,100),b(50,100)
+        dimension   outf(20,500),oar(50),oarr(50),a(20,500),b(50,500)
         dimension   xvar(8)
         logical     jf(30)
 
         numstp=int((vend-vbeg)/vstp)+1
-        if(numstp.gt.100) numstp=100
+        if(numstp.gt.500) numstp=500
 
         do 6249 i=1,50
 6249          oar(i)=b(i,1) 

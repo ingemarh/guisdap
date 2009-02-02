@@ -15,8 +15,8 @@ C IN ALL YOUR FORTRAN MEX FILES.
 C---------------------------------------------------------------------
       INTEGER parp,rp(12)
       logical jf(30)
-      real*8 par(900),dum(12)
-      real outf(20,100),oarr(50),tim(2),pos(2),h(3)
+      real*8 par(4500),dum(12)
+      real outf(20,500),oarr(50),tim(2),pos(2),h(3)
       save jf,nrp,rp,tim,pos,h
 c jf tttff ffttt ftttt ttftf ttttt tt---
 c jf tttff ffttt ffttt ttttf ttttt ttftt
@@ -43,8 +43,8 @@ C CHECK FOR PROPER NUMBER OF ARGUMENTS
       iy=nint(tim(2))
       if(h(3).eq.0.) h(3)=(h(2)-h(1))/99.
       len=(h(2)-h(1))/h(3)+1
-      if(len.GT.100)CALL MEXERRMSGTXT('Max 100 heights')
-      if(len*nrp.gt.900)CALL MEXERRMSGTXT('Max 9par*100 heights')
+      if(len.GT.500)CALL MEXERRMSGTXT('Max 500 heights')
+      if(len*nrp.gt.4500)CALL MEXERRMSGTXT('Max 9par*500 heights')
       call initialize
       call iri_sub(jf,0,pos(1),pos(2),iy,id-1,ut+25.,h(1),h(2),h(3),
      ,outf,oarr)
