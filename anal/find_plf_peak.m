@@ -46,15 +46,16 @@ for i=1:s
    freq(:,i)=sum(fmat,2);	%integrate along height
    fmat(f(d))=0;		%reset "plot window"
    [d,j]=max(freq(:,i)); peak(i,2)=freqs(j);	%find strongest line
-   if any(fpp_plot==i)
-    hold on,plot(freqs,freq(:,i))
-   end
   end
  end
 end
 if fpp_plot
- hold off
- figure(oldfig)
+ if fft
+  plot(freqs,freq(:,fpp_plot))
+ else
+  hold off
+ end
+ set(0,'currentfigure',oldfig)
 end
 
 if fft

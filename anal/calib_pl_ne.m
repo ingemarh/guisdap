@@ -26,7 +26,7 @@ if isempty(expt)
  [i,expt]=fileparts(pl_dir);
  if isempty(expt), [i,expt]=fileparts(i); end
 end
-global Time par1D par2D axs r_Magic_const DATA_PATH local path_exps START_TIME END_TIME
+global Time par1D par2D axs r_Magic_const DATA_PATH local path_exps START_TIME END_TIME fpp_plot
 exps=dir(path_exps); pldef='pl_def'; pdefs=[];
 for i=1:length(exps)
  d=fullfile(path_exps,exps(i).name,pldef);
@@ -77,6 +77,7 @@ if ele==0, alt=[150 450]; end
 %Read in the analysed data
 lf=vizu('verbose',alt,'L1 AE');
 for i=1:2
+ hlim(:,i)=ran(gate,i)*(ran(gate,i)/re+2*sin(par1D(:,2)/57.2957795));
  hlim(:,i)=ran(gate,i)*(ran(gate,i)/re+2*sin(par1D(:,2)/57.2957795));
 end
 hlim=re*sqrt(1+hlim/re)-re;
@@ -263,7 +264,13 @@ while mr==r0 | abs(mr-1)>.01
  if mr~=r0, mrpp=mrp; end
  mr=mr*r0; r0=mr;
  lf=8.98e-6*sqrt(par2D(:,:,3))/mr.*sqrt(1+3*7.52e5*(fradar/3e8)^2*par2D(:,:,4)./par2D(:,:,3)*mr^2);
+ if plots
+  fpp_plot=1:100:s;
+ end
  lf=find_plf_peak(s,h,hlim,lf,16,freq_th,1);
+ if plots
+  fpp_plot=[]; pause
+ end
  peak_lf=lf{1}(:,2);
  r=peak_lf(il)./plf(ip); r2=r.*2;
  mr2=median(r2); sr2=std(r2);

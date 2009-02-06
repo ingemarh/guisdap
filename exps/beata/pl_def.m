@@ -14,9 +14,10 @@ if [strfind(expt,'v') strfind(expt,'V')]
  end
  %freq=freq(1); startad=startad(1); updown=0;
 elseif [strfind(expt,'l') strfind(expt,'L')]
- ran=[42 266;155 379];
+ %ran=[42 379;162 499];
+ ran=[42 379;200 499]; %Aviod fvalley
  freq=[-4.0 4.0]*1e6; dt=0.4e-6; invert=-1; fradar=500e6;
- ele=81.6; updown=0; nlag=125; ngates=2;
+ ele=81.6; updown=0:1; nlag=125; ngates=2;
  if [strfind(expt,'cut') re]
   startad=(0:1)*ngates*nlag+1;
  else
