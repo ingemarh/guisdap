@@ -31,7 +31,7 @@ global lpg_womscaled k_radar
 % global p_coeff0 p_coeffg f_womega
 
  global r_range r_param r_dp r_error r_res r_status
- global r_apriori r_apriorierror r_h
+ global r_apriori r_apriorierror r_h r_phasepush
 
 % Global definitions for the spectrum calculations
  global pldfvv pldfv GUP_iniver

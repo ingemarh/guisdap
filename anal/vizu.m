@@ -182,7 +182,7 @@ TITLE={'Range (km)','Altitude (km)','Electron Density (m^{-3})',...
 	'Ion Drift Velocity (ms^{-1})','Collision frequency (Hz)',...
 	'Ion Composition (O^+/N_e)','Residual'};
 TITLE1={'Azimuth(\circ)','Elevation(\circ)','Power (10kW)',...
-	'System Temperature (K)'};
+	'System Temperature (K)' 'Phasepushing (Hz)'};
 SCALE =[50 900		% Range km
 	80 600		% Altitude km
 	10.^[10 12]	% Ne m-3
@@ -482,10 +482,14 @@ if option(15)
  surf_plot(s,rpar2D(:,:,Y_PARAM),rpar2D(:,:,3),RAWNE_SCALE,Yscale,YTitle,'Raw electron density (m^{-3})','log')
 end
 if option(11)
- ae=par1D(:,[3 1 2:2:end]);
+ if size(par1D,2)>4
+  ae=par1D(:,[3 1 2 4 5]);
+ else
+  ae=par1D(:,[3 1 2:2:end]);
+ end
  d=find(ae(:,3)<90.1 & ae(:,3)>89.9); ae(d,2)=NaN;
  d=many(ae,AE_SCALE);
- line_plot(s,ae,d,'Radar parameters',TITLE1([3 1 2 4]),[])
+ line_plot(s,ae,d,'Radar parameters',TITLE1([3 1 2 4 5]),[])
 end
 if option(13)
  ll=[par1D(:,[3 2 1]) par2D(GATES,:,1)'];

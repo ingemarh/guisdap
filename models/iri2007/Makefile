@@ -22,7 +22,7 @@ else
 ifeq ($(FC),g77)
 EXF =-static -finit-local-zero -ffixed-line-length-132
 else ifeq ($(FC),g95)
-EXF =-fno-second-underscore
+EXF =-fno-second-underscore -fstatic -fmultiple-save
 ALIB=/usr/lib/g95/i586-mandriva-linux-gnu/4.0.4/libf95.a
 else
 FC=gfortran

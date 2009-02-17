@@ -79,7 +79,7 @@ while ~EOF
       scale_lpgwom % scales the spectral ambiguity function with lpg_ND factors
       form_adpar
       % Removing uncessary variables
-      clear lpg_wom vc_Aenv vc_Apenv vc_penvabs vc_penv vc_penvo ad_coeff_no_Pt
+      clear lpg_wom vc_Aenv vc_Apenv vc_penvabs ad_coeff_no_Pt
     end
     ch_Pt=ch_Pt(1)*ones(size(ch_fradar));
     if exist('N_averaged')
@@ -156,8 +156,10 @@ while ~EOF
       clear_results
       if ~a_pponly
         half_prof
+        if exist([path_expr 'guiditor.m'])==2
+          run([path_expr 'guiditor'])
+        end
         GUIDITOR
-
       end
       save_results
       if di_figures(4)

@@ -3,7 +3,7 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,status,update)
 %
 % [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,status,update)
 % par2D [Ran,Alt,Ne,Te,Ti,Vi,Coll,Comp,Res]
-% par1D [Az,El,Pt,Tsys,Oppd]
+% par1D [Az,El,Pt,Tsys,Oppd/Php]
 % rpar2D[Ran,Alt,RawNe]
 %  or err2D[Ne,Te,Ti,Vi,Coll]
 %
@@ -39,6 +39,9 @@ Time=zeros(2,n_tot);
 for i=1:n_tot
 % clear('r_*','name_*')
   load(canon(fullfile(list(i).dir,sprintf('%08d%s',list(i).file,list(i).ext)),0))
+  if ~exist('r_Offsetppd') & exist('r_phasepush')
+    r_Offsetppd=r_phasepush;
+  end
   if isfinite(max_ppw) & exist('r_ppw','var')
     d=find(r_ppw<max_ppw);
     r_pp=r_pp(d); r_pprange=r_pprange(d); r_pperr=r_pperr(d);
