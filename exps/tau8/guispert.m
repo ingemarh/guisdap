@@ -10,7 +10,6 @@ if name_site=='V'
   polhv=[.6374 -45.17 540.33;.6336 -48.418 790.23;0 0 -ch_Pt(1)/1000];
   hv=max(roots(sum(polhv)));
  end
- d_date=datenum(d_time(1,:));
  if d_date<datenum(2003,12,1,0,0,0)
   ch_el=90;
  end

@@ -5,7 +5,6 @@
 %
 ch_Pt=ch_Pt(1);
 if strcmp(name_ant(1:3),'vhf')
- d_date=datenum(d_time(1,:));
  polhv=[.6374 -45.17 540.33;.6336 -48.418 790.23;0 0 -ch_Pt(1)/1000];
  if d_date>datenum(2000,01,01,0,0,0) & d_date<datenum(2000,05,25,0,0,0) 
 %  Two klystrons but only ca. 1.3 MW in parameter block- wrong

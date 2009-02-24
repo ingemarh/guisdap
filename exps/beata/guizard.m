@@ -3,7 +3,6 @@
 %
 % See also: GUISPERT GUIZARD
 %
-d_date=datenum(d_time(1,:));
 if name_site=='T'
  lpgs=find(ismember(lpg_code,3:16));
  lpg_wom(lpgs,:)=lpg_wom(lpgs,:)/14;

@@ -3,7 +3,6 @@
 %
 % See also: GUISPERT GUIZARD
 %
-d_date=datenum(d_time(1,:));
 if length(d_data)>10063
   calTemp=[163 163 228 228];
   if all(ch_gain==ch_gain(1))

@@ -9,7 +9,6 @@ if name_site=='K' | name_site=='S'
   p_rep=312480;
   ch_height=292.9;
 end
-d_date=datenum(d_time(1,:));
 if d_date>datenum(2000,09,06,12,0,0) & d_date<datenum(2000,09,06,23,0,0)
  polhv=[1.7980 -178.1795 4508.4];
  %read hv from txlog

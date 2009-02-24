@@ -3,7 +3,6 @@
 %
 % See also: GUISPERT GUIZARD
 %
-d_date=datenum(d_time(1,:));
 if exist('skip_upper_tail','var') & skip_upper_tail
   lpg_bcs(find(lpg_h>3200 & lpg_h<3800 & lpg_nt==2))='x';
 end 
@@ -14,8 +13,8 @@ if d_date<datenum(2003,11,11,21,15,0)
   elseif ant_id==2
     name_ant='32m'; calTemp=228;
     ch_gain=10^4.25;
-    d_date=(d_date-datenum(2003,11,11,9,9,0))*86400;
-    if d_date>0
+    ddate=(d_date-datenum(2003,11,11,9,9,0))*86400;
+    if ddate>0
       if ~exist('pos_cp2','var')
         global d_filelist
         d=rem(d_filelist-tosecs([2003 11 11 9 0 0]),3*128);
@@ -24,7 +23,7 @@ if d_date<datenum(2003,11,11,21,15,0)
         d_filelist(d)=[];
         pos_cp2=[144 171.6 171.6;66.66 90 63.2];
       end
-      d_pos=fix(rem(d_date/128,3))+1;
+      d_pos=fix(rem(ddate/128,3))+1;
       ch_el=pos_cp2(2,d_pos); ch_az=pos_cp2(1,d_pos);
     end
   end

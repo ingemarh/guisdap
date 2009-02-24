@@ -3,7 +3,6 @@
 %
 % See also: GUISPERT GUIZARD
 %
-d_date=datenum(d_time(1,:));
 if name_site=='L'
  if length(d_data)>290942
   calTemp=[163 163 228 228];

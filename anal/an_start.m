@@ -54,6 +54,7 @@ while ~EOF
         datestr(datenum(d_time(2,:)),13))
     end
   end
+  d_date=datenum(d_time(1,:));
 
 %****************************************************************************
 % At this point, an integrated complex data dump is stored in variable d_data

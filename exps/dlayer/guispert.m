@@ -4,7 +4,6 @@
 % See also: GUISPERT GUIZARD
 %
 ch_Pt=ch_Pt(1);
-d_date=datenum(d_time(1,:));
 if name_site=='L'
 % lpg_bcs([1 3 4])='x';
 elseif name_site=='V'

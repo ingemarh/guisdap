@@ -3,8 +3,6 @@
 %
 % See also: GUISPERT GUIZARD
 %
-%ch_Pt=ch_Pt(1);
-d_date=datenum(d_time(1,:));
 if d_date<datenum(2002,6,1) & lpg_ra(478)==15537
 % noise injection moved
   lpgs=find(lpg_lag>0);

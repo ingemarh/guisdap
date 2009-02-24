@@ -6,7 +6,6 @@
 ch_Pt=ch_Pt(1);
 if name_site=='V' | name_site=='T'
  npp=330; npr1=420; npr2=34596; nslic=1;  %pg_bcs(5)='x';
- d_date=datenum(d_time(1,:));
  if strcmp(name_ant(1:3),'vhf')
   % Oct 2003
   if d_date>=datenum(2003,10,28,16,18,0) & d_date<=datenum(2003,10,28,16,40,0)

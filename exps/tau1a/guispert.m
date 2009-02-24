@@ -3,8 +3,6 @@
 %
 % See also: GUISPERT GUIZARD
 %
-%ch_Pt=ch_Pt(1)/2;
-d_date=datenum(d_time(1,:));
 if ch_Pt(1)==0
  polhv=[0;0]; hv=0;
 else
