@@ -39,8 +39,12 @@ Time=zeros(2,n_tot);
 for i=1:n_tot
 % clear('r_*','name_*')
   load(canon(fullfile(list(i).dir,sprintf('%08d%s',list(i).file,list(i).ext)),0))
-  if ~exist('r_Offsetppd') & exist('r_phasepush')
-    r_Offsetppd=r_phasepush;
+  if exist('r_Offsetppd')
+    rOff=r_Offsetppd;
+  elseif exist('r_phasepush')
+    rOff=r_phasepush;
+  else
+    rOff=[];
   end
   if isfinite(max_ppw) & exist('r_ppw','var')
     d=find(r_ppw<max_ppw);
@@ -49,10 +53,7 @@ for i=1:n_tot
   if i==1
     n_alt=size(r_param,1);
     par2D	=ones(n_alt,n_tot,npar2D)*NaN;
-    if isempty('r_Tsys') | ~exist('r_Offsetppd')
-      r_Offsetppd=[];
-    end
-    par1D=zeros(n_tot,length([r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]));
+    par1D=zeros(n_tot,length([r_az r_el r_Pt/10000 median(r_Tsys) rOff]));
     if do_rpar & strfind('TVL',name_site) & ~isempty(r_pp)
       n_ralt=length(unique(round(r_pprange/ppres)));
       rpar2D=ones(n_ralt,n_tot,3)*NaN;
@@ -96,7 +97,7 @@ for i=1:n_tot
     err2D(n,i,[2 4])=[(r_error(:,2)./r_param(:,2)+r_error(:,3)./r_param(:,3)).*par2D(n,i,4) r_error(:,5)];
   end
   Time(:,i)	=datenum(r_time);
-  par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys) r_Offsetppd]; %10 kW
+  par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys) rOff]; %10 kW
   if exist('r_w','var') & ~isempty(rres)
     rres(i)=max(r_w(:,3));
   end

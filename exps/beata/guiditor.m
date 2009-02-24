@@ -7,12 +7,12 @@ if name_site=='T'
   %LO1 error
   phasepush=phasecorr(d_raw,vc_penv(:,1:64),10,64,4,1);
  else
-  phasepush=phasecorr(d_raw,vc_penv(:,1:64),10,59);
+  phasepush=phasecorr(d_raw,vc_penv(:,1:64),10,64,4);
  end
 elseif name_site=='K' | name_site=='S'
  phasepush=-21; %Average for 640 us pulse
 elseif name_site=='L'
- phasepush=phasecorr(d_raw(1:end/2),vc_penv(:,1:64),25,64);
+ phasepush=phasecorr(d_raw(1:end/2),vc_penv(:,1:64),25,59);
 end
 if ~isempty(phasepush), r_phasepush=phasepush; end
 if ~isempty(r_phasepush)
