@@ -54,13 +54,13 @@ while ~EOF
         datestr(datenum(d_time(2,:)),13))
     end
   end
-  d_date=datenum(d_time(1,:));
 
 %****************************************************************************
 % At this point, an integrated complex data dump is stored in variable d_data
 %****************************************************************************
 
   if OK & a_do
+    d_date=datenum(d_time(1,:));
     if d_rcprog~=old_rcprog | ((name_site=='K' | name_site=='S') & any(fix((old_point-[ch_el(1) ch_az(1)])/.05)))
       name_ant=char(name_antennas(ant_id));
       load_initfile
