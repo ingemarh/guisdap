@@ -50,10 +50,13 @@ for i=1:n_tot
     d=find(r_ppw<max_ppw);
     r_pp=r_pp(d); r_pprange=r_pprange(d); r_pperr=r_pperr(d);
   end
+  par1=[r_az r_el r_Pt/10000 median(r_Tsys) rOff]; %10kW
+  npar1=length(par1);
   if i==1
+    npar1D=npar1;
     n_alt=size(r_param,1);
     par2D	=ones(n_alt,n_tot,npar2D)*NaN;
-    par1D=zeros(n_tot,length([r_az r_el r_Pt/10000 median(r_Tsys) rOff]));
+    par1D=zeros(n_tot,npar1D);
     if do_rpar & strfind('TVL',name_site) & ~isempty(r_pp)
       n_ralt=length(unique(round(r_pprange/ppres)));
       rpar2D=ones(n_ralt,n_tot,3)*NaN;
@@ -97,7 +100,11 @@ for i=1:n_tot
     err2D(n,i,[2 4])=[(r_error(:,2)./r_param(:,2)+r_error(:,3)./r_param(:,3)).*par2D(n,i,4) r_error(:,5)];
   end
   Time(:,i)	=datenum(r_time);
-  par1D(i,:)	=[r_az r_el r_Pt/10000 median(r_Tsys) rOff]; %10 kW
+  if npar1>npar1D
+   par1D=[par1D;zeros(ntot,npar1-npar1D)];
+   npar1D=npar1;
+  end 
+  par1D(i,1:npar1)=par1;
   if exist('r_w','var') & ~isempty(rres)
     rres(i)=max(r_w(:,3));
   end
