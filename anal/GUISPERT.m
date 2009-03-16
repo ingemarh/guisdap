@@ -14,7 +14,7 @@ if (strcmp(name_ant(1:3),'vhf') & d_time(1,1)>1999) | ...
 end
 if ~exist('Magic_const')
  if strcmp(name_ant(1:3),'vhf')
-  if d_date<datenum(2008,2,8)
+  if d_date<datenum(2007,8,14)
    a_Magic_const=1.367;
   end
  elseif strcmp(name_ant(1:3),'uhf') & d_time(1,1)>2004

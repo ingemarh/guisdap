@@ -8,7 +8,7 @@ if name_site=='T'
  lpg_wom(lpgs,:)=lpg_wom(lpgs,:)/14;
  lpg_w(lpgs)=lpg_w(lpgs)/14;
  lpg_wr(:,lpgs)=lpg_wr(:,lpgs)/14;
- if d_date<2007
+ if d_date<datenum(2007,1,1)
   lpg_ra(1739:1740)=[25547 25563]; a_code=1:2;
  elseif isempty(a_code)
   if a_pponly
@@ -25,7 +25,7 @@ elseif name_site=='L'
  lpg_wom(lpgs,:)=lpg_wom(lpgs,:)/15;
  lpg_w(lpgs)=lpg_w(lpgs)/15;
  lpg_wr(:,lpgs)=lpg_wr(:,lpgs)/15;
- if d_date<2007
+ if d_date<datenum(2007,1,1)
   lpg_ra(1618:1619)=lpg_ra(1618:1619)-161*15; a_code=1:2;
  elseif isempty(a_code)
   if a_pponly
