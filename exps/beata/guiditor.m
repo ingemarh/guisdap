@@ -14,7 +14,7 @@ if d_date>datenum(2009,1,23)
  elseif name_site=='K' | name_site=='S'
   phasepush=-21; %Average for 640 us pulse
  elseif name_site=='L'
-  phasepush=phasecorr(d_raw(1:end/2),vc_penv(:,1:64),25,59);
+  phasepush=phasecorr(d_raw(1:64*64),vc_penv(:,1:64),25,60,3);
  end
  if ~isempty(phasepush), r_phasepush=phasepush; end
 end

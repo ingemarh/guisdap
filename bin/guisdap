@@ -17,7 +17,7 @@ else
 	MEXD=mex7
 fi
 mex=
-if [ $matver = "R2008b" ]
+if [ $matver = "R2008b" ] | [ $matver = "R2009a" ]
 then
 	mflags="-nodesktop -nosplash"
 fi
