@@ -32,6 +32,10 @@ global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
 global r_RECloc path_tmp path_GUP result_path webfile local owner
 nvargin=length(varargin);
 naction=1;
+if strcmp(action(naction,nvargin,varargin),'myb')
+  varargout(1)={myb(action(naction+1,nvargin,varargin),action(naction+2,nvargin,varargin))};
+  return
+end
 vizufig=findobj('type','figure','userdata',6);
 if strcmp(action(naction,nvargin,varargin),'new')
   naction=naction+1;
@@ -366,7 +370,6 @@ if isempty(vizufig)
 % set(gcf,'PaperType','A4','PaperUnits','centimeters','NumberTitle','off',...
 %  'defaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
  uimenu('label','Update','callback','vizu(''update'')');
- uimenu('label','Edit','callback','vizu(''verbose'')');
  if isunix
   uimenu('label','Save','callback','vizu(''save'')');
   uimenu('label','Print','callback','vizu(''print'')');
@@ -670,8 +673,9 @@ return
 
 function f=myb(nl,cut)
 % create palette with nl levels
-if nargin<2, cut=0; end
+if nargin<2, cut=[]; end
 if nargin==0, nl=[]; end
+if isempty(cut), cut=0; end
 if isempty(nl)
  nl=size(get(gcf,'colormap'),1);
 end

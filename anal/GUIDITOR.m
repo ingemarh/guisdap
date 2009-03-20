@@ -16,6 +16,6 @@ end
 if isempty(r_phasepush) & d_date>datenum(2009,1,23) & ~isempty(strfind('KST',name_site))
   r_phasepush=-21;
 end
-if ~isempty(r_phasepush)
+if ~isempty(r_param) & ~isempty(r_phasepush)
   r_param(:,5)=r_param(:,5)-r_phasepush*v_lightspeed/ch_fradar(1)/2*sin(sc_angle/2);
 end

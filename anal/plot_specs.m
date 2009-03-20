@@ -13,7 +13,7 @@ else
  sc_angle=r_SCangle*2; p_om0=r_om0; d_time=r_time;
 end
 dh=diff(r_h)/2;
-clf, set(gcf,'DefaultsurfaceEdgeColor','none')
+clf, set(gcf,'DefaultsurfaceEdgeColor','none'), colormap(vizu('myb',128))
 h=[r_h(1)-dh(1);r_h(1:end-1)+dh;r_h(end)+dh(end)];
 o2=ones(2,1);
 if isempty(r_freq)

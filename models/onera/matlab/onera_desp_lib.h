@@ -37,7 +37,7 @@ void make_lstar1_(int32_t *ntime, int32_t *kext,
 		  double *Bmin, double *J,
 		  double *MLT);
 
-void make_lstar_shell_splitting1_(int32_t *ntime, 
+void make_lstar_shell_splitting1_(int32_t *ntime,
 				  int32_t *Nipa,
 				  int32_t *kext,
 				  int32_t *options,
@@ -49,11 +49,11 @@ void make_lstar_shell_splitting1_(int32_t *ntime,
 				  double *x2,
 				  double *x3,
 				  double *alpha,
-				  double *maginput, 
+				  double *maginput,
 				  double *Lm,
-				  double *Lstar, 
+				  double *Lstar,
 				  double *Blocal,
-				  double *Bmin, 
+				  double *Bmin,
 				  double *J,
 				  double *MLT);
 
@@ -63,9 +63,9 @@ void drift_shell1_(int32_t *kext, int32_t *options,
 		   double *x1, double *x2, double *x3,
 		   double *maginput,
 		   double *Lm,
-		   double *Lstar, 
+		   double *Lstar,
 		   double *Blocal,
-		   double *Bmin, 
+		   double *Bmin,
 		   double *J,
 		   double *posit,
 		   int32_t *ind);
@@ -77,7 +77,7 @@ void trace_field_line1_(int32_t *kext, int32_t *options,
 		   double *maginput,
 		   double *Lm,
 		   double *Blocal,
-		   double *Bmin, 
+		   double *Bmin,
 		   double *J,
 		   double *posit,
 		   int32_t *ind);
@@ -91,7 +91,7 @@ void get_field1_(int32_t *kext, int32_t *options,
 		 double *Bgeo,
 		 double *B);
 
-void find_mirror_point1_(int32_t *kext, 
+void find_mirror_point1_(int32_t *kext,
 			 int32_t *options,
 			 int32_t *sysaxes,
 			 int32_t *iyear,int32_t *idoy,
@@ -103,7 +103,7 @@ void find_mirror_point1_(int32_t *kext,
 			 double *Bmirror,
 			 double *xGEO);
 
-void find_magequator1_(int32_t *kext, 
+void find_magequator1_(int32_t *kext,
 			 int32_t *options,
 			 int32_t *sysaxes,
 			 int32_t *iyear,int32_t *idoy,
@@ -118,18 +118,18 @@ void get_mlt1_(int32_t *iyr, int32_t *idoy,
 
 void fly_in_nasa_aeap1_(int32_t *ntime, int32_t *sysaxes,
 			int32_t *whichm, int32_t *whatf,
-			int32_t *Nene, double *energy, 
+			int32_t *Nene, double *energy,
 			int32_t *iyear, int32_t *idoy, double *UT,
 			double *x1,double *x2, double *x3,
 			double *flux);
 
 void get_ae8_ap8_flux_(int32_t *ntime, int32_t *whichm, int32_t *whatf,
-		       int32_t *Nene, double *energy, 
+		       int32_t *Nene, double *energy,
 		       double *BBo, double *L, double *flux);
 
 void fly_in_afrl_crres1_(int32_t *ntime, int32_t *sysaxes,
 			 int32_t *whichm, int32_t *whatf,
-			 int32_t *nene, double *energy, 
+			 int32_t *nene, double *energy,
 			 int32_t *iyear, int32_t *idoy, double *UT,
 			 double *x1, double *x2, double *x3,
 			 double *Ap15,
@@ -138,7 +138,7 @@ void fly_in_afrl_crres1_(int32_t *ntime, int32_t *sysaxes,
 			 int32_t *strlen);
 
 void get_crres_flux_(int32_t *ntime, int32_t *whichm, int32_t *whatf,
-		     int32_t *nene, double *energy, 
+		     int32_t *nene, double *energy,
 		     double *BBo,double *L, double *Ap15,
 		     double *flux,
 		     char *ascii_path,
@@ -160,8 +160,8 @@ void coord_trans_vec1_(int32_t *ntime, int32_t *sysaxesIN,int32_t *sysaxesOUT,
 		   int32_t *iyr,int32_t *idoy,double *secs,
 		   double *xINV,double *xOUTV);
 
-void rv2coe_(double *R, double *V, 
-	     double *P, double *A, double *Ecc, double *Incl, double *Omega, 
+void rv2coe_(double *R, double *V,
+	     double *P, double *A, double *Ecc, double *Incl, double *Omega,
 	     double *Argp, double *Nu, double *M, double *ArgLat,
 	     double *TrueLon, double *LonPer);
 
