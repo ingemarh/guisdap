@@ -13,7 +13,7 @@ end
 if exist('a_phasepush','var')
   r_phasepush=a_phasepush;
 end
-if isempty(r_phasepush) & d_date>datenum(2009,1,23) & ~isempty(strfind('KST',name_site))
+if isempty(r_phasepush) & d_date>datenum(2009,1,1) & ~isempty(strfind('KST',name_site))
   r_phasepush=-21;
 end
 if ~isempty(r_param) & ~isempty(r_phasepush)

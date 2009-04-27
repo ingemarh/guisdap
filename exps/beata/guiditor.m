@@ -1,5 +1,5 @@
 global d_raw
-if d_date>datenum(2009,1,23)
+if d_date>datenum(2009,1,1)
  if name_site=='T'
   if d_date<datenum(2007,11,14)
    phasepush=phasecorr(d_raw,vc_penv(:,1:64),10,63,4);

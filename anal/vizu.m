@@ -415,7 +415,7 @@ elseif Y_PARAM==3
  for i=1:s,for j=1:size(y_param,1)
   d=loc2gg(r_RECloc,[ll(i,:) y_param(j,i)]); y_param(j,i)=d(1);
  end,end
- Yscale=[];
+ Yscale=LAT_SCALE;
 end
 if stretchSecs & s>1
  dt=(Time(1,2:end)-Time(2,1:end-1));
