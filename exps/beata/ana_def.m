@@ -2,6 +2,7 @@
 %a_satch.sigma=4;
 %a_satch.plot=8;
 if name_site=='L'
+  a_satch.cut=1;
   if strfind(data_path,'@32p')
     analysis_txpower=8;
     analysis_intfixforce=[NaN NaN NaN 960];

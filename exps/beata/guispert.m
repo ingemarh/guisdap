@@ -13,7 +13,7 @@ elseif name_site=='L'
       a_satch.clutter=repmat(a_satch.clutter,1,2);
       a_satch.repair=repmat(a_satch.repair,1,2);
     end
-    ch_gain(3:4)=ch_gain(3:4)*1.1; % for 16 jan 2009
+    ch_gain(3:4)=ch_gain(3:4)*0.8;
   end
  end
  %glp=1182;

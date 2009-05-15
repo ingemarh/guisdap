@@ -28,10 +28,19 @@ if ~exist('Magic_const')
    a_Magic_const=2.45; %AW
   elseif d_date<datenum(2007,10,15)
    a_Magic_const=1.59; %after snow clearence IH
-  else
+  elseif d_date<datenum(2009,05,01)
    a_Magic_const=2.0;
+  elseif d_date<datenum(2009,06,01)
+   a_Magic_const=4.0;
+  else
+   a_Magic_const=1.5;
   end
  end
+end
+if strcmp(name_ant(1:3),'42m') & ~exist('ad_coeff_no_Pt','var')
+ d=find(ch_gain~=ch_gain(1));
+ % Only transmission affected for tx on 42m and rx on 32m
+ ch_gain(d)=sqrt(a_Magic_const)*ch_gain(d);
 end
 
 % Range not always recorded
