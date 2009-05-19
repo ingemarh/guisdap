@@ -42,7 +42,7 @@ for i=1:s
   if fft
    f=round((polyval(poly,hf,[],mu)-zscale(1))/diff(zscale)*(lf-1));
    d=find(f>-1 & f<lf & hf>logh(1) & hf<logh(end)); f=f+(0:lh-1)*lf+1;
-   fmat(f(d))=fpow(d);		%"plot" into matrix
+   fmat(f(d))=fpow(d).*f(d);	%"plot" into matrix, P~sqrt(ne)
    freq(:,i)=sum(fmat,2);	%integrate along height
    fmat(f(d))=0;		%reset "plot window"
    [d,j]=max(freq(:,i)); peak(i,2)=freqs(j);	%find strongest line
