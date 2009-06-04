@@ -14,8 +14,13 @@ td_t2=t_to_ps(:,2)';
 td_am=t_to_ps(:,3)';
 td_ch=t_to_ps(:,4)';
 if site=='L'
- ch_adcint=5;
- ch_filter={'b100d75.fir'};
+ if rc==3
+  ch_adcint=2;
+  ch_filter={'b170d30.fir'};
+ else
+  ch_adcint=5;
+  ch_filter={'b100d75.fir'};
+ end
  ch_f=500;
 else
  ch_adcint=3;
