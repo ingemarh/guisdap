@@ -101,7 +101,7 @@ for i=1:n_tot
   end
   Time(:,i)	=datenum(r_time);
   if npar1>npar1D
-   par1D=[par1D;zeros(ntot,npar1-npar1D)];
+   par1D=[par1D;zeros(n_tot,npar1-npar1D)];
    npar1D=npar1;
   end 
   par1D(i,1:npar1)=par1;
