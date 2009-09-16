@@ -3,6 +3,6 @@
 %
 % See also: GUISPERT GUIZARD
 %
-if length(d_data)==39061
+if length(d_data)==39061  | length(d_data)==57166
   lpg_cut(find(lpg_h*.15>300))
 end
