@@ -3,7 +3,7 @@
 %
 function var_prof(N_averaged,M_averaged,N_avpref)
 global d_var1 d_var2 d_data lpg_ra lpg_ri lpg_nt lpg_bcs ADDR_SHIFT ad_coeff
-global a_code ad_code lpg_code
+global a_code ad_code lpg_code lpg_lag lpg_ND
 
 addr=1:min(length(ad_coeff),length(d_data));
 coeff=ad_coeff(addr)'; coeff(find(ad_coeff(addr)==0))=1;
@@ -23,6 +23,7 @@ lpgs=find(lpg_bcs=='s' | lpg_bcs=='x');
 if ~isempty(a_code)
  lpgs=lpgs(find(ismember(lpg_code(lpgs),unique(a_code))));
 end
+lpgbad=[]; lpgok=[];
 for lpg=lpgs
   addr=(0:lpg_nt(lpg)-1)'*lpg_ri(lpg)+lpg_ra(lpg)+ADDR_SHIFT;
   if laver==1
@@ -34,9 +35,11 @@ for lpg=lpgs
     Na=length(addr); N_av=sum(naver);
   end
   if N_av<3
+    lpgbad=[lpgbad lpg];
     d_var1(addr)=0;
     d_var2(addr)=0;
   else
+    lpgok=[lpgok lpg];
     if Na<N0
       N=Na; f=ones(N,1)/N; L=floor((N-1)/2); R=ceil((N-1)/2);
       N_avtot=min(N_avtot,N_av);
@@ -54,6 +57,24 @@ for lpg=lpgs
     L=ones(L,1); R=ones(R,1);
     d_var1(addr)=[L*var1(N);var1(N:Na);R*var1(Na)];
     d_var2(addr)=[L*var2(N);var2(N:Na);R*var2(Na)];
+  end
+end
+if ~isempty(lpgbad)
+  warning('GUISDAP:default','Making dirty variances, increase integration or set analysis_control(4)=2 for better estimates')
+  [dum,i,j]=unique([lpg_code(lpgbad);lpg_lag(lpgbad)]','rows');
+  for ind=i'
+    lpgs=lpgok(find(lpg_code(lpgbad(ind))==lpg_code(lpgok) & lpg_lag(lpgbad(ind))==lpg_lag(lpgok)));
+    addo=[];
+    for lpgo=lpgs
+      addo=[addo;(0:lpg_nt(lpgo)-1)'*lpg_ri(lpgo)+lpg_ra(lpgo)+ADDR_SHIFT];
+    end
+    lpgND=mean(lpg_ND(lpgs)); var1=mean(d_var1(addo)); var2=mean(d_var2(addo));
+    for lpg=lpgbad(find(j==find(ind==i)))
+      coef=lpgND/lpg_ND(lpg);
+      addr=(0:lpg_nt(lpg)-1)'*lpg_ri(lpg)+lpg_ra(lpg)+ADDR_SHIFT;
+      d_var1(addr)=var1*coef;
+      d_var2(addr)=var2*coef;
+    end
   end
 end
 

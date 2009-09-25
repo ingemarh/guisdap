@@ -11,9 +11,15 @@ for l=1:length(lag)
  ad=find(lpg_lag(lpgs)==lag(l));
  adi=ad+nd/2;
  acf(l)=sum(data(ad)./weight(ad)./wt(ad))/sum(1../wt(ad));
+ err(l)=sum(1../weight(ad)./wt(ad))/sum(1../wt(ad));
  if wt(adi)~=0
   acf(l)=acf(l)+j*sum(data(adi)./weight(adi)./wt(adi))/sum(1../wt(adi));
  end
+end
+l0=find(lag==0);
+if ~isempty(l0) & err(l0)==max(err)
+%plot(lag,err),drawnow
+ acf(l0)=[]; err(l0)=[]; lag(l0)=[];
 end
 
 dt=median(diff(lag));
