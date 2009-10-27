@@ -2,6 +2,7 @@
 d=find(analysis_altit<1300);
 analysis_altit=analysis_altit(d);
 analysis_maxwidth=analysis_maxwidth(d);
+analysis_ppshortlags=1;
 
 a_satch.clutter=[10 30]; a_satch.skip=1;
 a_satch.sigma=4;
