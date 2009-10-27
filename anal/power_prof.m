@@ -54,12 +54,14 @@ if any(ad_lag(addr)>0)
     rres=max(1,min(a1_w)); %range resolution given by p_dtau or smallest volume
     ranges=round(ad_range(addr(a1))/rres)+1e-2*round((a1_w-mean(a1_w))/std(a1_w));
     for range=unique(ranges)
-      a2=find(ranges==range);
+      a2=a1(find(ranges==range));
       if length(a2)>1
         w2=1./sigma_std(a2).^2;
         sigma(a2(1))=sum(sigma(a2).*w2)/sum(w2);
         sigma_std(a2(1))=1/sqrt(sum(w2));
-        a3=[a3 a1(a2(2:end))];
+        PPw(a2(1))=sum(PPw(a2).*w2')/sum(w2);
+        PPrange(a2(1))=sum(PPrange(a2).*w2')/sum(w2);
+        a3=[a3 a2(2:end)];
       end
     end
   end

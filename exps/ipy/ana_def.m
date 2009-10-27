@@ -4,6 +4,7 @@ a_satch.sigma=4;
 %a_satch.plot=8;
 a_satch.repair=[Inf];
 a_satch.cut=1;
+analysis_ppshortlags=1;
 d=find(analysis_altit>455); analysis_altit(d(1))=600;
 global spearcount, spearcount='/analysis/results/spearcount';
 if strfind(data_path,'@32p')
