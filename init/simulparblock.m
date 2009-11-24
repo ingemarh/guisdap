@@ -11,3 +11,4 @@ ch_Pt=a_simul(3)*ones(1,len);
 ch_range=a_simul(5)*ones(1,len);
 ch_az=a_simul(6)*ones(1,len);
 ch_el=a_simul(7)*ones(1,len);
+ant_id=strfind('LLVTKS',name_site);
