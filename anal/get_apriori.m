@@ -24,7 +24,7 @@ height=range_to_height(range,ch_el(ch));
 % Exit here, if the a_priori model is loaded for simulation purposes,
 % or it should not be updated with the measured raw electron denstity 
 if simul
- [a_priori,a_priorierror]=ionomodel(height');
+ [a_priori,a_priorierror]=ionomodel(height',0);
  a_priori=real_to_scaled(a_priori);
  a_priorierror=real_to_scaled(a_priorierror);
  return

@@ -38,6 +38,7 @@ while ~EOF
  
   if any(a_simul)
     OK=1;EOF=1;
+    analysis_save=0; simulparblock
   else
     if a_rawdata
       [OK,EOF]=integr_NW;

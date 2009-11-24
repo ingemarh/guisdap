@@ -58,7 +58,7 @@ if exist('analysis_simul','var')
  % a_simul(8): The calibration temperature
  a_simul=[0 1 1.2e6 100 300 180 90 210];
  a_simul(1:length(analysis_simul))=analysis_simul;
- a_year=2222;
+ a_year=2000;
  a_start=7200*a_simul(2);
  a_end=7200*a_simul(2)+a_simul(1);
  analysis_control(4)=2;

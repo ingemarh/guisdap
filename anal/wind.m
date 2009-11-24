@@ -5,16 +5,14 @@
 % vector.
 %
 % z=wind(x,y)
-%
-  function [z,zz]=wind(x,y)
-%
-  z=[];zz=[]; 
-  sy=sort(col(y));dsy=diff(sy);
-  sx=sort(col(x));dsx=diff(sx);
-  if isempty(dsy==0), error('GUISDAP:wind','y not an index'), end
-  if length(x)>length(y), error('GUISDAP:wind','wrong order'), end
-  for i=row(x) 
-    w=find(y==i);
-    z=[z w];
-    zz=[zz w(1)];
-  end
+function [z,zz]=wind(x,y)
+z=[];zz=[]; 
+sy=sort(col(y));dsy=diff(sy);
+sx=sort(col(x));dsx=diff(sx);
+if ~isempty(dsy) & isempty(dsy==0), error('GUISDAP:wind','y not an index'), end
+if length(x)>length(y), error('GUISDAP:wind','wrong order'), end
+for i=row(x) 
+  w=find(y==i);
+  z=[z w];
+  zz=[zz w(1)];
+end

@@ -288,6 +288,7 @@ elseif strcmp(nameant,'vhf')
  FIGURE_TITLE='EISCAT VHF RADAR';
  fradar=224e6;
 end
+s=1:size(par2D,2);
 if strcmp(act,'VERBOSE')
  GATES=minput('Gates',GATES);
  if length(GATES)>1
@@ -296,6 +297,9 @@ if strcmp(act,'VERBOSE')
    LAT_SCALE=minput('Scale (lat)',LAT_SCALE);
   end
   Y_TYPE=minput('Y scale type',Y_TYPE,1);
+  screen=[-Inf Inf -Inf Inf];
+  screen=minput('AzEl screen values',screen);
+  s=find(par1D(s,1)>screen(1) & par1D(s,1)<screen(2) & par1D(s,2)>screen(3) & par1D(s,2)<screen(4))';
  end
  SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res)',SCALE')';
  if [findstr(WHICH_PARAM,'P') findstr(WHICH_PARAM,'L')]
@@ -400,7 +404,6 @@ end
 add_plot=0;
 height(1)=(0.80-(n_tot-1)*height(2))/n_tot;
 colormap(myb(78,1));
-s=size(par2D,2);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Determine the Y-Axis parameter
 if Y_PARAM<3
@@ -412,21 +415,21 @@ elseif Y_PARAM==3
  YTitle='Latitude (\circN)';
  y_param=par2D(:,:,1);
  ll=par1D(:,[2 1]);
- for i=1:s,for j=1:size(y_param,1)
+ for i=1:size(par2D,2),for j=1:size(y_param,1)
   d=loc2gg(r_RECloc,[ll(i,:) y_param(j,i)]); y_param(j,i)=d(1);
  end,end
  Yscale=LAT_SCALE;
 end
-if stretchSecs & s>1
- dt=(Time(1,2:end)-Time(2,1:end-1));
+if stretchSecs & length(s)>1
+ dt=Time(1,s(2:end))-Time(2,s(1:end-1));
  if stretchSecs==1
   d=find(dt>0 & dt<=median(dt)+1/86399);
  else
   d=find(dt>0 & dt<=stretchSecs/86399);
  end
  if ~isempty(d)
-  Time(2,d)=Time(2,d)+dt(d)/2;
-  Time(1,d+1)=Time(2,d);
+  Time(2,s(d))=Time(2,s(d))+dt(d)/2;
+  Time(1,s(d+1))=Time(2,s(d));
  end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -496,7 +499,7 @@ if option(11)
 end
 if option(13)
  ll=[par1D(:,[3 2 1]) par2D(GATES,:,1)'];
- for i=1:s, ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
+ for i=1:size(par2D,2), ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
  if size(par1D,2)>3, ll=[ll par1D(:,4:end)]; end
  d=many(ll,[0 300])+[-10 10];
  line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {'Latitude (\circN)','Longitude (\circE)'} TITLE(2) TITLE1(4) {'Offset (\mus)'}],[])
@@ -550,7 +553,7 @@ if strcmp(lg,'log')
  zparam=log10(zparam); zscale=log10(zscale);
 end
 o2=ones(1,2);
-for i=1:s
+for i=s
  d=max([2;find(isfinite(yparam(:,i)))]);
  if d
   yp=yparam(1:d,i);
@@ -616,16 +619,16 @@ else
 end
 
 o2=ones(2,1);
-if s>1
+if length(s)>1
  d1=1;
- d=[find(Time(1,2:end)-Time(2,1:end-1)>0) s];
+ d=[find(Time(1,s(2:end))-Time(2,s(1:end-1))>0) length(s)];
  nc=size(yparam,2);
  for i=1:length(d)
-  line(col(Time(:,d1:d(i))),reshape(o2*row(yparam(d1:d(i),:)),2*(d(i)-d1+1),nc))
+  line(col(Time(:,s(d1:d(i)))),reshape(o2*row(yparam(s(d1:d(i)),:)),2*(d(i)-d1+1),nc))
   d1=d(i)+1;
  end
 else
- line(Time,o2*yparam)
+ line(Time(:,s),o2*yparam(s,:))
 end
 return
 

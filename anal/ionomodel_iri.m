@@ -38,7 +38,9 @@ if ~isempty(d)
  d1=find(isfinite(m_iri(:,1)));
  if isempty(d1)
   ne(:)=1e7;
- else 
+ elseif min(altitude(d))>max(altitude(d1)) | max(altitude(d))<min(altitude(d1))
+  ne(d)=1e7;
+ else
   ne(d)=exp(inter3(altitude(d),altitude(d1),log(ne(d1))))';
  end
 end
