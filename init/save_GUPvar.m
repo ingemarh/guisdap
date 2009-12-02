@@ -7,9 +7,12 @@ GUP_iniver=GUP_ver;
 
 if max(lp_nfir)==1 | isa(lp_fir,'int8')
   lp_firsto=lp_fir;
-else 
+elseif all(all(ismember(lp_fir,[-1 0 1])))
+  lp_firsto=int8(lp_fir);
+else
   lp_firsto=sparse(diff([zeros(size(lp_vc));lp_fir]));
 end
+clear lp_fir
 
 if ~exist('apustr'), apustr=''; end
 GUPvarfile=[path_expr name_expr name_site apustr 'GUPvar'];

@@ -6,7 +6,11 @@ if name_site=='V'
 elseif name_site=='T'
   fit_altitude(2:5,1)=[100;130;107;90];
   first=50; last=600; d1=.45; d2=1; n1=100;
-  h1=230; h2=370;
+  if expver>2
+   h1=310, h2=500,
+  else
+   h1=230; h2=370;
+  end
 elseif name_site=='L'
   fit_altitude([2 3 5],1)=[100;130;90];
   first=50; last=600; d1=.75; d2=1; n1=60;
