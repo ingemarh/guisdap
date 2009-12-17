@@ -288,7 +288,8 @@ elseif strcmp(nameant,'vhf')
  FIGURE_TITLE='EISCAT VHF RADAR';
  fradar=224e6;
 end
-s=1:size(par2D,2);
+S=size(par2D,2);
+s=1:S;
 if strcmp(act,'VERBOSE')
  GATES=minput('Gates',GATES);
  if length(GATES)>1
@@ -463,9 +464,9 @@ if option(14)
   surf_plot(s,y_param(GATES,:),lf,PLF_SCALE,Yscale,YTitle,'Plasma line frequency (MHz)',[])
  end
  if option(14)>1
-  lf=find_plf_peak(s,y_param(GATES,:),Yscale,lf,16,PLF_SCALE,fix(option(14)/2)-1);
+  lf=find_plf_peak(S,y_param(GATES,:),Yscale,lf,16,PLF_SCALE,fix(option(14)/2)-1);
   if fix(option(14)/2)-1
-   surf_plot(s,lf{2}'*ones(1,s),lf{3},[0 max(max(lf{3}))],PLF_SCALE,'Plasma line spectrum (MHz)','Power (any unit)',[])
+   surf_plot(s,lf{2}'*ones(1,S),lf{3},[0 max(max(lf{3}))],PLF_SCALE,'Plasma line spectrum (MHz)','Power (any unit)',[])
   else
    d=many(lf,PLF_SCALE);
    line_plot(s,lf,d,'Cutoff plasma line frequency (MHz)',[],[])
@@ -479,7 +480,7 @@ if option(16)
  end
  if option(16)>1
   polen=plf_polen; if isempty(polen), polen=7; end
-  pf=find_plf_peak(s,y_param(GATES,:),Yscale,pf,polen,PLF_SCALE,0);
+  pf=find_plf_peak(S,y_param(GATES,:),Yscale,pf,polen,PLF_SCALE,0);
   d=many(pf,PLF_SCALE);
   line_plot(s,pf,d,'Cutoff plasma frequency (MHz)',[],[])
  end

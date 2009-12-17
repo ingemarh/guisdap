@@ -1,4 +1,5 @@
 % Analysis defaults
+analysis_ppshortlags=1;
 if name_site=='V'
   a_satch.skip=40;
   analysis_code=[1 2];
