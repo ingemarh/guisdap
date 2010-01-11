@@ -3,6 +3,7 @@ if name_site=='V'
   fit_altitude([2 3 5],1)=[120;350;100];
   first=50; last=600; d1=.45; d2=1; n1=100;
   h1=230; h2=370;
+  a_satch.clutter=90;
 elseif name_site=='T'
   fit_altitude(2:5,1)=[100;130;107;90];
   first=50; last=600; d1=.45; d2=1; n1=100;

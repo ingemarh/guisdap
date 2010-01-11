@@ -14,7 +14,8 @@ td_t2=t_to_ps(:,2)';
 td_am=t_to_ps(:,3)';
 td_ch=t_to_ps(:,4)';
 p_rep=240000;
-if site=='L'
+name_site=upper(site);
+if name_site=='L'
  ch_f=500;
  if rc==3
   ch_adcint=2;
@@ -26,13 +27,14 @@ if site=='L'
  if rc>1
   p_rep=160000;
  end
-elseif site=='V'
- ch_f=9;
+elseif name_site=='V'
  if rc==3
+  ch_f=10;
   ch_adcint=4;
   ch_filter={'b125d60.fir'};
   p_rep=320000;
  else
+  ch_f=9;
   ch_adcint=3;
   ch_filter={'b170d45.fir'};
  end
@@ -51,6 +53,5 @@ p_offsetppd=0;
 for f=1:length(ch_f)
  td_ch(find(td_ch==ch_f(f)))=f;
 end
-name_expr='manda',
-name_site=upper(site);
+name_expr='manda';
 save_PS
