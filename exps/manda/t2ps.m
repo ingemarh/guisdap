@@ -43,6 +43,7 @@ else
  if rc==3
   ch_adcint=2;
   ch_filter={'b170d30.fir'};
+  %ch_filter={'b250d30.fir'};
   p_rep=320000;
  else
   ch_adcint=3;
