@@ -21,8 +21,11 @@ if ~exist('Magic_const')
  elseif strcmp(name_ant(1:3),'uhf')
   if d_time(1,1)>2004
    a_Magic_const=0.80;
-   if d_date>datenum(2009,10,26) % polarizer back
+   if d_date>datenum(2009,10,26) % polariser back
     a_Magic_const=1.14;  %MTR
+   end
+   if d_date>datenum(2010,02,02) % polariser calibrated against Kiruna
+    a_Magic_const=0.70;  %MTR
    end
   end
  elseif strcmp(name_ant(1:3),'42m')
