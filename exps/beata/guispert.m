@@ -13,7 +13,15 @@ elseif name_site=='L'
       a_satch.clutter=repmat(a_satch.clutter,1,2);
       a_satch.repair=repmat(a_satch.repair,1,2);
     end
-    ch_gain(3:4)=ch_gain(3:4)*0.8;
+    if d_date>datenum(2010,4,11)
+      ch_gain(3:4)=ch_gain(3:4)*1.1;
+    elseif d_date>datenum(2010,4,1)
+      ch_gain=ch_gain.*[.5 .5 0.88 0.88], % Tx on 32m
+    elseif d_date>datenum(2010,2,23)
+      ch_gain=ch_gain.*[.3 .3 .7 .7];
+    else
+      ch_gain(3:4)=ch_gain(3:4)*0.8;
+    end
   end
  end
  %glp=1182;

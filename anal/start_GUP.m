@@ -66,7 +66,7 @@ switch local.site
  case 'T'
   local.printer='hp4550';
  case 'L'
-  data_path='/data1/';
+  data_path='/data/';
   local.printer='Hpcolor';
  case 'HQ'
   local.browser='mozilla';
