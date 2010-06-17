@@ -37,7 +37,7 @@ end
 
 C=tan(el*pi/180);
 Nsat=0; j=0; x0max=0; pbmax=NaN;
-n_echo=6; min_v=.065; skip=a_satch.skip;
+n_echo=6; min_v=.062; skip=a_satch.skip;
 
 %check signal
 lp=setdiff(find(lpg_lag==0 & (lpg_bcs=='s' | lpg_bcs=='x') & lpg_bac~=0),a_satch.lpg_skip);
