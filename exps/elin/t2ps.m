@@ -1,10 +1,16 @@
 function dum=t2ps(name_site)
 rep=5150; tb=200;
 load elin.ac
+apustr='';
+name_site=upper(name_site);
 %ch_adcint=[40 40];
 %ch_filter={'b12d600.fir' 'b12d600.fir'};
 ch_adcint=[50 50];
 ch_filter={'b7d750.fir' 'b7d750.fir'};
+if 0
+ apustr=['_2'];
+ ch_filter={'b800d6.fir' 'b800d6.fir'};
+end
 ch_f=[10 11];
 nsc=size(elin,1); nb=size(elin,2); nf=length(ch_f);
 if name_site=='V'
@@ -33,4 +39,5 @@ if name_site=='V'
 end
 p_rep=nsc*rep;
 p_offsetppd=0;
-eval(['save elin' name_site 'pat_PS ch_* p_* td_*'])
+name_expr='elin';
+save_PS

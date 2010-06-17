@@ -27,13 +27,18 @@ end
 if dumdum>1
  s=fix(min([t1 t2])/dumdum)*dumdum+1; lenn=t1-vc_penvo(vch)-st; len=lenn+(t2-t1);
 end
+if abs(len-round(len))<eps('single'), len=round(len); end
+if abs(lenn-round(lenn))<eps('single'), lenn=round(lenn); end
 if st+lenn>size(vc_penv,1)
   vc_penv=[vc_penv;zeros(st+lenn-size(vc_penv,1),size(vc_penv,2))];
 end
 if st+len>size(vc_penv,1)
   vc_penv=[vc_penv;zeros(st+len-size(vc_penv,1),size(vc_penv,2))];
 end
-wwr=vc_penv(st+(s:lenn),vch).*vc_penv(st+(s+t2-t1:len),vch);
+if abs(st-round(st))<eps('single'), st=round(st); end
+stt=s+t2-t1;
+if abs(stt-round(stt))<eps('single'), stt=round(stt); end
+wwr=vc_penv(st+(s:lenn),vch).*vc_penv(st+(stt:len),vch);
 wwr=flipud(wwr);
 r=t1-vc_penvo(vch)-st+(-lenn+1:1-s);
 if dumdum==1, % calculate support for two-dim. ambiguities

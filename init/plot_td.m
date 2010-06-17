@@ -181,7 +181,8 @@ end
 		while (j <= nargin)
 			if  eval(['strcmp(arg' int2str(j) ',''panel'')'])
 				%% Each panel specified separately ...
-				j = j+1; if (j+1 > nargin)
+				j = j+1;
+				if (j+1 > nargin)
 					error('Usage of (2)')
 				else
 					if eval(['isempty (arg' int2str(j) ')'])
@@ -405,28 +406,18 @@ end
 		temp2 = temp1(~isnan(temp1)); 
 		if (size(temp2,1) < 4)
 			tdiff = temp2(2)-temp2(1);
-			if     (tdiff > 1000000)
-				dt1 = 100000;
-				dt2 =  20000;
-			elseif (tdiff > 100000)
-				dt1 = 10000;
-				dt2 = 5000;
-			elseif (tdiff > 50000)
-				dt1 = 2000;
-				dt2 =  500;
-			elseif (tdiff > 1000)
-				dt1 = 1000;
-				dt2 =  200;
-			elseif (tdiff >= 100)
-				dt1 = 100;
-				dt2 =  20;
-			elseif (tdiff >= 10)
-				dt1 = 10;
-				dt2 = 10;
+			tdl=log10(tdiff); tdf=10^(rem(tdl,1)),
+			if tdf>5
+				dt1=0.5; dt2=0.1;
+			elseif tdf>3
+				dt1=0.2; dt2=0.1;
+			elseif tdf>1
+				dt1=0.1; dt2=0.05;
 			else
-				dt1 = temp2(2);
-				dt2 = temp2(2);
+				dt1=0.05; dt2=0.01;
 			end
+			tdf=10^floor(tdl);
+			dt1=max(dt1*tdf,1); dt2=max(dt2*tdf,1);
 			times(:,i) = [temp2(1);temp2(2);dt1;dt2];
 		else
 			times(:,i) = temp1;

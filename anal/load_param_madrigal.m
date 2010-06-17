@@ -27,9 +27,12 @@ if exist(data_path,'file')
  name_expr='unknown'; name_ant='unk';
  if strfind(filename,'NCAR') & ldp>ll
   at=strfind(filename(ll+1:end),'@');
+  if isempty(at)
+   at=strfind(filename(ll+1:end),'_');
+  end
   if at
-   name_expr=filename(16+[1:at-1]);
-   name_ant=filename(16+at+1:end);
+   name_expr=filename(16+[1:at(end)-1]);
+   name_ant=filename(16+at(end)+1:end);
   end
  end
  i=fix((strfind(cell2mat(antennas),name_ant(1:3))+2)/3);

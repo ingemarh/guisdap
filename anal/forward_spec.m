@@ -5,10 +5,10 @@ weight=sum(abs(f_womega),2);
 nd=length(weight);
 weight(nd/2+1:end)=weight(1:nd/2);
 wt=var(1:nd)./weight;
-lags=lpg_lag(lpgs);
+lags=round(lpg_lag(lpgs)/p_dtau)*p_dtau;
 lag=sort(unique(lags)); acf=zeros(size(lag)); err=acf;
 for l=1:length(lag)
- ad=find(lpg_lag(lpgs)==lag(l));
+ ad=find(lags==lag(l));
  adi=ad+nd/2;
  acf(l)=sum(data(ad)./weight(ad)./wt(ad))/sum(1../wt(ad));
  err(l)=sum(1../weight(ad)./wt(ad))/sum(1../wt(ad));
@@ -21,6 +21,12 @@ if ~isempty(l0) & err(l0)==max(err)
 %plot(lag,err),drawnow
  acf(l0)=[]; err(l0)=[]; lag(l0)=[];
 end
+for l=1:0
+  if err(1)==max(err)
+   acf(1)=[]; err(1)=[]; lag(1)=[];
+  end
+end
+%[mean(err) sum(err)]
 
 dt=median(diff(lag));
 ml=max(lag); nl=round(ml/dt); l=(0:nl)/nl*ml; fl=find(lag);

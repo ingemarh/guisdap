@@ -12,7 +12,7 @@ global p_R0 p_dtau ipp vc_routine
 dummyrange=0;
 if name_site=='R',
 % dummyrange to avoid negative range, should maybe be > offsetppd
-  dummyrange=p_R0/p_dtau;
+  dummyrange=ceil(p_R0/p_dtau);
 end
 wsum=0; p2p=0; clash=0;
 lps=lpg_lp(lpg);
@@ -25,9 +25,10 @@ if strmatch('COR_pulsetopulse',vc_routine(lp_vc(lps)))
 end
 for lp=lps
   [w,r]=wr(lp_vc(lp),lp_t1(lp),lp_t2(lp),clash);
-  if length(r)>0,
-    maxr=r(length(r))+(lp_nfir(lp)-1)*lp_dt(lp)+dummyrange;
-    if length(wsum)<maxr,wsum(maxr,1)=0;end;
+  if length(r)>0
+    maxr=r(end)+(lp_nfir(lp)-1)*lp_dt(lp)+dummyrange;
+    if abs(maxr-round(maxr))<eps(2), maxr=round(maxr); end
+    if length(wsum)<maxr, wsum(maxr,1)=0; end;
     for ind=1:lp_nfir(lp)
       R=round(r+(ind-1)*lp_dt(lp)+dummyrange);
       wsum(R)=wsum(R)+double(lp_fir(ind,lp))*w;
