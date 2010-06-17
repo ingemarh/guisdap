@@ -68,12 +68,14 @@ if ~isempty(lpgbad)
     for lpgo=lpgs
       addo=[addo;(0:lpg_nt(lpgo)-1)'*lpg_ri(lpgo)+lpg_ra(lpgo)+ADDR_SHIFT];
     end
-    lpgND=mean(lpg_ND(lpgs)); var1=mean(d_var1(addo)); var2=mean(d_var2(addo));
-    for lpg=lpgbad(find(j==find(ind==i)))
-      coef=lpgND/lpg_ND(lpg);
-      addr=(0:lpg_nt(lpg)-1)'*lpg_ri(lpg)+lpg_ra(lpg)+ADDR_SHIFT;
-      d_var1(addr)=var1*coef;
-      d_var2(addr)=var2*coef;
+    if ~isempty(addo)
+      lpgND=mean(lpg_ND(lpgs)); var1=mean(d_var1(addo)); var2=mean(d_var2(addo));
+      for lpg=lpgbad(find(j==find(ind==i)))
+        coef=lpgND/lpg_ND(lpg);
+        addr=(0:lpg_nt(lpg)-1)'*lpg_ri(lpg)+lpg_ra(lpg)+ADDR_SHIFT;
+        d_var1(addr)=var1*coef;
+        d_var2(addr)=var2*coef;
+      end
     end
   end
 end
