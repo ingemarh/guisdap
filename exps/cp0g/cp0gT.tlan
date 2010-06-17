@@ -1,0 +1,46 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  ***  T A R L A N   P R O G R A M M E   F O R   T R O M S O    ***
+%%
+%%  EXPERIMENT: COMMON PROGRAMME ZERO              VERSION G
+%%
+%%  TYPE: COMMON PROGRAMME     
+%%
+%%  FILE NAME: (EXP)CP-0-G-T:TLAN
+%%
+%% EISCAT/TROMSO 26 JULY 1982    PHIL WILLIAMS
+%% MOVED BUFLIP 40 MICROSEC. AFTER STOP SAMPLING                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+AT    1 TRANS,CHQPULS
+AT   10 RXPROT,LOPROT
+AT   40 BEAMON
+AT   60 F8                 % FREQUENCY SET AT 933.5 MHZ
+AT  100 RFON              % 360 US PULSE FOR F-REGION AND REMOTE SITES
+AT  460 RFOFF
+AT  465 F7                % SWITCH FREQUENCY TO 933.0 MHZ
+AT  500 RFON              % 60 US PULSE FOR POWER PROFILE
+AT  560 RFOFF,BEAMOFF
+AT  850 RXPOFF
+AT  950 LOPOFF                
+AT  995 RECEV
+%
+%   F7 (933.0 MHZ) > CHANNEL 3 > ADC 3 > POWER PROFILE
+%   F8 (933.5 MHZ) > CHANNEL 4 > ADC 4 > ACFS
+%
+AT 1001 CH4               % FIRST GATE AT 128 KM
+AT 1160 CH3               % FIRST GATE AT  93 KM
+AT 2957 CH3OFF            % LAST GATE AT 346 KM
+AT 5318 CH4OFF            % LAST GATE AT 706 KM
+AT 5750 CAL100
+AT 5791 CH4               % CALIBRATION GATE FOR ACFS AT 826 KM
+AT 6090 CH3               % CALIBRATION GATE FOR PP AT 811 KM
+AT 6148 ALLOFF,CAL0
+AT 6881 CH4               % FIRST BACKGROUND GATE FOR ACFS AT 986 KM
+AT 7660 CH3               % FIRST BACKGROUND GATE FOR PP AT 1041 KM
+AT 7955 STC
+AT 7958 ALLOFF            % STOP BACKGROUND SAMPLING FOR ACF AT 1090 KM
+                          % AND FOR PP AT 1076 KM
+AT 7994 BUFLIP
+AT 8000 REP               % 8 MS REPEAT TIME
