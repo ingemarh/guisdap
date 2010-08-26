@@ -14,10 +14,12 @@ if strfind(data_path,'@32p')
  analysis_plasmaline=1;
  if expver==1
   plasma_range=20+col(ones(3*50,1)*(0:1)*19898+(1:3*50)'*ones(1,2)+22*50+21*768);
- else
+ elseif expver==2
   plasma_range=20+col(ones(3*50,1)*(0:1)*29814+(1:3*50)'*ones(1,2)+34*50+33*768);
+ else
+  plasma_range=20+col(ones(4*75,1)*(0:1)*66545+(1:4*75)'*ones(1,2)+51*75+50*1152);
  end
-else
+elseif analysis_end(1)<2009
  analysis_intfix(5)=67;
  analysis_intfixforce=[NaN NaN NaN NaN 0];
  analysis_intallow=[.11 .11 1000 0 1];

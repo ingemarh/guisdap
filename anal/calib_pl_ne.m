@@ -177,7 +177,11 @@ plsig=reshape(plsig,nfft,nfreq,[]);
 %Find frequencies of the maximum point
 freq_scale=invert*(-nfft/2:nfft/2-1)/dt/nfft;
 if exist('uparfreq','var')
- freq=(uparfreq+invert*d_parbl(46+(1:nfreq))')*1e6;
+ if isnan(uparfreq(1))
+  freq=1e6*d_parbl(46+(1:nfreq))';
+ else
+  freq=(uparfreq+invert*d_parbl(46+(1:nfreq))')*1e6;
+ end
 end
 df=abs(diff(freq_scale(1:2)));
 if plots
