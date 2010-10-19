@@ -30,7 +30,7 @@ if exist('analysis_plasmaline','var') & analysis_plasmaline
  if length(d)==1
   d_saveint.dir=[d_saveint.dir(1:d-1) sprintf('%s_%s%d_%d@%sp',datestr(analysis_start,29),name_expr,expver,analysis_integr(1),name_site)];
  end
- d_saveint.range=plasma_range;
+ if exist('plasma_range','var'), d_saveint.range=plasma_range; end
 end
 if ~isempty(d_saveint)
  d_saveint.dir=fullfile(d_saveint.dir,filesep);
