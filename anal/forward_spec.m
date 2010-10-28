@@ -5,7 +5,7 @@ weight=sum(abs(f_womega),2);
 nd=length(weight);
 weight(nd/2+1:end)=weight(1:nd/2);
 wt=var(1:nd)./weight;
-lags=round(lpg_lag(lpgs)/p_dtau)*p_dtau;
+lags=round(lpg_lag(lpgs));
 lag=sort(unique(lags)); acf=zeros(size(lag)); err=acf;
 for l=1:length(lag)
  ad=find(lags==lag(l));
@@ -16,21 +16,12 @@ for l=1:length(lag)
   acf(l)=acf(l)+j*sum(data(adi)./weight(adi)./wt(adi))/sum(1../wt(adi));
  end
 end
-l0=find(lag==0);
-if ~isempty(l0) & err(l0)==max(err)
-%plot(lag,err),drawnow
- acf(l0)=[]; err(l0)=[]; lag(l0)=[];
-end
-for l=1:0
-  if err(1)==max(err)
-   acf(1)=[]; err(1)=[]; lag(1)=[];
-  end
-end
-%[mean(err) sum(err)]
-
+%[err(1:5)/mean(err) std(err)/mean(err)]
+%keyboard
 dt=median(diff(lag));
+l=find(err>mean(err)+3*std(err)); acf(l)=[]; lag(l)=[];
 ml=max(lag); nl=round(ml/dt); l=(0:nl)/nl*ml; fl=find(lag);
-acf=interp1([-lag(fl(1)) lag],[conj(acf(fl(1))) acf],l,'spline');
+acf=interp1([-lag(fl) lag],[conj(acf(fl)) acf],l,'spline');
 [s,f]=acf2spec(acf.',l*p_dtau*1e-6);
 if isempty(r_freq)
  r_freq=f'; r_spec=s;

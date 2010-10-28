@@ -9,7 +9,7 @@ elseif name_site=='V'
  d1=5; n1=6;
 end
 
-if name_site=='T' | name_site=='L' | name_site=='V'
+if name_site=='T' | name_site=='L' | name_site=='V' | name_site=='P'
  altd=[0 ones(1,n1)*d1 d1:d2:(sqrt((last-first)*2*d2))];
  analysis_altit=first+cumsum(altd);
  analysis_maxwidth=[altd(2:end) altd(end)];

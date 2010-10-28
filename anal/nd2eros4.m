@@ -9,7 +9,10 @@ lpb=64;
 parbl=-1*ones(lpb,1);
 parbl(1:2:6)=floor(d_parbl(2:4)/100)+[1900;0;0];
 parbl(2:2:6)=rem(d_parbl(2:4),100);
-parbl([7:10 63])=d_parbl([94 99 9 6 97]).*[1;1000;.1;.1;1000]; 
+parbl([7:10 63])=d_parbl([94 99 9 6 97]).*[1;1000;.1;.1;1000];
+if any(abs(d_parbl([6 9]))>[7200;950]) & parbl(2)<1984
+ parbl([9 10])=parbl([9 10])/10;
+end
 parbl(58:62)=d_parbl(121:125); 
 parbl(57)=d_parbl(92);
 parbl(22)=1;

@@ -101,7 +101,9 @@ C 2007.02 10/31/08 outf(100) -> outf(500), numhei=numstp=500
 C 2007.03 02/12/09 Jf(24)=.false.-> outf(1,60-140km)=FIRI- M. Friedrich
 C 2007.04 03/14/09 SOCO(70->80;500->300km) --------------- R. Davidson
 C 2007.05 03/26/09 call for APF_ONLY includes F107M
-C 2007.06 08/17/09 STROM off if input; fof2in, fof1in,foein corr
+C 2007.09 08/17/09 STROM off if input; fof2in, fof1in,foein corr
+C 2007.10 02/03/10 F10.7D = F10.7M = COV if EOF
+C 2007.11 04/19/10 irifun.for, cira.for 
 C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
@@ -281,6 +283,7 @@ c      CHARACTER FILNAM*53
      &  igin,igino,dnight,enight,fnight,TOPO,TOPC
 
       COMMON /CONST/UMR  /const1/humr,dumr   /ARGEXP/ARGMAX
+     &	 /const2/icalls,nmono,iyearo,idaynro,rzino,igino,ut0
      &   /BLOCK1/HMF2,NMF2,HMF1,F1REG  /BLOCK2/B0,B1,C1  
      &   /BLOCK3/HZ,T,HST              /BLOCK4/HME,NME,HEF 
      &   /BLOCK5/ENIGHT,E              /BLOCK6/HMD,NMD,HDX
@@ -646,7 +649,6 @@ C
 C        CALL GGM(JMAG,XLONGI1,XLATI1,XMLONG1,XMLAT1)
 
         call igrf_dip(lati,longi,ryear,300.0,dip,magbr,modip)
-
         if(.not.jf(18)) then
         CALL FIELDG(LATI,LONGI,300.0,XMA,YMA,ZMA,BET,DIP,DEC,MODIP)
         	MAGBR=ATAN(0.5*TAN(DIP*UMR))/UMR
@@ -662,11 +664,11 @@ C CALCULATION OF UT/LT  ...............
 c
         IF(DHOUR.le.24.0) then
         	HOUR=DHOUR					! dhour =< 24 is LT
-            ut=hour-longi/15.
-            if(ut.lt.0) ut=ut+24.
+            hourut=hour-longi/15.
+            if(hourut.lt.0) hourut=hourut+24.
 		else
-        	UT=DHOUR-25.				 ! dhour>24 is UT+25
-        	hour=ut+longi/15.	 		 ! hour becomes LT
+        	hourut=DHOUR-25.				 ! dhour>24 is UT+25
+        	hour=hourut+longi/15.	 		 ! hour becomes LT
         	if(hour.gt.24.) hour=hour-24.
         endif
 
@@ -704,7 +706,7 @@ C
         sam_yea=(iyear.eq.iyearo)
         sam_doy=(daynr.eq.idaynro)
         sam_date=(sam_yea.and.sam_doy)
-        sam_ut=(ut.eq.ut0)
+        sam_ut=(hourut.eq.ut0)
         if(sam_date.and..not.rzino.and..not.rzin.
      &                   and..not.igin.and..not.igino) goto 2910
      
@@ -740,7 +742,7 @@ c        COVSAT=63.75+rlimit*(0.728+rlimit*0.00089)
         	f107d=cov
         	f107m=cov
         	call APF_ONLY(iyear,month,iday,F107DX,F107MX)
-            if(f107dx.gt.-2) then
+            if(f107dx.gt.-100.0) then
             	f107d=f107dx
             	f107m=f107mx
 				endif
@@ -850,13 +852,14 @@ c
         WRITE(FILNAM,104) path(1:index(path,' ')-1),MONTH+10
 104         FORMAT(a,'/ccir',I2,'.asc')
 c       WRITE(FILNAM,104) MONTH+10
-c104        FORMAT('ccir',I2,'.asc')
+c104         FORMAT('ccir',I2,'.asc')
 c-binary- if binary files than use:
 c-binary-104   FORMAT('ccir',I2,'.bin')
 c-web- special for web-version:
 c104   FORMAT('/usr/local/etc/httpd/cgi-bin/models/IRI/ccir',I2,'.asc')
 c-web- special for web-version:
 c
+c       OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,
         OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,ACTION='read',
      &          FORM='FORMATTED')
 c-binary- if binary files than use:
@@ -876,12 +879,13 @@ C
           WRITE(FILNAM,1144) path(1:index(path,' ')-1),MONTH+10
 1144          FORMAT(a,'/ursi',I2,'.asc')
 c         WRITE(FILNAM,1144) MONTH+10
-c1144         FORMAT('ursi',I2,'.asc')
+c1144          FORMAT('ursi',I2,'.asc')
 c-web- special for web-version:
 c1144  FORMAT('/usr/local/etc/httpd/cgi-bin/models/IRI/ursi',I2,'.asc')
 c-binary- if binary files than use:
 c-binary-1144          FORMAT('ursi',I2,'.bin')
 
+c         OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,
           OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,ACTION='read',
      &         FORM='FORMATTED')
 c-binary- if binary files than use:
@@ -905,8 +909,9 @@ c
 c first CCIR ..............................................
 c
 
-        WRITE(FILNAM,104) path(1:index(path,' ')-1),NMONTH+10
 c       WRITE(FILNAM,104) NMONTH+10
+c       OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,
+        WRITE(FILNAM,104) path(1:index(path,' ')-1),NMONTH+10
         OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,ACTION='read',
      &          FORM='FORMATTED')
 c-binary- if binary files than use:
@@ -922,8 +927,9 @@ C
 C then URSI if chosen .....................................
 C
         if(URSIF2) then
-          WRITE(FILNAM,1144) path(1:index(path,' ')-1),NMONTH+10
 c         WRITE(FILNAM,1144) NMONTH+10
+c         OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,
+          WRITE(FILNAM,1144) path(1:index(path,' ')-1),NMONTH+10
           OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,ACTION='read',
      &         FORM='FORMATTED')
 c-binary- if binary files than use:
@@ -967,10 +973,10 @@ C
               XM0N(K)=FM3N(J,I,1)*RR1N+FM3N(J,I,2)*RR2N
 30            XM0(K)=FM3(J,I,1)*RR1+FM3(J,I,2)*RR2
 
-4292    zfof2  =  FOUT(MODIP,LATI,LONGI,UT,FF0)
-        fof2n  =  FOUT(MODIP,LATI,LONGI,UT,FF0N)
-        zm3000 = XMOUT(MODIP,LATI,LONGI,UT,XM0)
-        xm300n = XMOUT(MODIP,LATI,LONGI,UT,XM0N)
+4292    zfof2  =  FOUT(MODIP,LATI,LONGI,HOURUT,FF0)
+        fof2n  =  FOUT(MODIP,LATI,LONGI,HOURUT,FF0N)
+        zm3000 = XMOUT(MODIP,LATI,LONGI,HOURUT,XM0)
+        xm300n = XMOUT(MODIP,LATI,LONGI,HOURUT,XM0N)
         midm=15
         if(month.eq.2) midm=14
         if (iday.lt.midm) then
@@ -1008,10 +1014,10 @@ c
       stormcorr=-1.
       if(jf(26).and.jf(8)) then
             if(.not.sam_date.or..not.sam_ut)  
-     &          call apf(iyear,month,iday,ut,indap)
+     &          call apf(iyear,month,iday,hourut,indap)
             if(indap(1).gt.-2) then
                 icoord=1
-                kut=int(ut)
+                kut=int(hourut)
                 call STORM(indap,lati,longi,icoord,cglat,kut,
      &                     daynr,stormcorr)
                 fof2=fof2*stormcorr
@@ -1024,7 +1030,7 @@ c
         idaynro=daynr
         rzino=rzin
         igino=igin
-        ut0=ut
+        ut0=hourut
 
 c
 c topside profile parameters .............................
@@ -1351,7 +1357,7 @@ C
 
 4933  HTA=120.0
       IF(NOTEM) GOTO 240
-      SEC=UT*3600.
+      SEC=hourut*3600.
       CALL CIRA86(DAYNR,SEC,LATI,LONGI,HOUR,COV,TEXOS,TN120,SIGMA)
       IF(HOUR.NE.0.0) THEN
          iyz=iyear

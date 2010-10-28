@@ -34,10 +34,11 @@ addr=lpg_addr(find(lpg_bcs=='s'))+ADDR_SHIFT;
 if ~isempty(a_code)
   addr=addr(find(ismember(ad_code(addr),unique(a_code))));
 end
-if a_ppshortlags
+if a_ppshortlags(1)
   ad_h=range_to_height(ad_range(addr),ch_el(ch));
   %exp(1-ad_h/150)*a_ppshortlags*2e3/k_radar(ch);
-  addr(find(ad_lag(addr)>3e7*a_ppshortlags/k_radar(ch)./ad_h.^2))=[];
+  addr(find(ad_lag(addr)>3e7*a_ppshortlags(1)/k_radar(ch)./ad_h.^2))=[];
+  addr(find(ad_lag(addr)>0 & ad_w(addr)>a_ppshortlags(2)/.15))=[];
   % default about 75(10) us at 100(300) km for UHF
 else
   addr(find(ad_lag(addr)>0))=[];

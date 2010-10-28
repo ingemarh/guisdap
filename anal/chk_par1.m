@@ -223,6 +223,9 @@ a_ppshortlags=0;
 if exist('analysis_ppshortlags','var')
  a_ppshortlags=analysis_ppshortlags;
 end
+if length(a_ppshortlags)==1
+ a_ppshortlags(2)=Inf;
+end
 a_gating=0;
 if exist('analysis_gating','var')
  a_gating=analysis_gating;

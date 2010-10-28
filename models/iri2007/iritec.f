@@ -19,8 +19,8 @@ C Version-mm/dd/yy-Description (person reporting correction)
 C 2000.01 05/07/01 current version
 c 2000.02 10/28/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
 c 2000.03 11/08/02 common block1 in iri_tec with F1reg
-C 2007.00 05/18/07 Release of IRI-2007
-c 2007.01 10/31/08 outf(.,100) -> outf(.,500)
+c 2007.00 05/18/07 Release of IRI-2007
+c 2007.02 10/31/08 outf(.,100) -> outf(.,500)
 c-----------------------------------------------------------------------        
 C
 C
@@ -37,7 +37,7 @@ C          iy,md        date as yyyy and mmdd (or -ddd)
 C          hour         decimal hours LT (or UT+25)
 c          hbeg,hend    upper and lower integration limits in km
 C 
-C  OUTPUT: TEC          Total Electron Content in M-2
+C  OUTPUT: TEC          Total Electron Content in m-2
 C          tecb,tect    percentage of bottomside and topside content
 c-----------------------------------------------------------------------        
 

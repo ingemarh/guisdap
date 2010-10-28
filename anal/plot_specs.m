@@ -14,7 +14,7 @@ else
 end
 dh=diff(r_h)/2;
 clf, set(gcf,'DefaultsurfaceEdgeColor','none'), colormap(vizu('myb',128))
-h=[r_h(1)-dh(1);r_h(1:end-1)+dh;r_h(end)+dh(end)];
+h=[r_h(1)-dh(1);r_h(2:end)-dh;r_h(end)+dh(end)];
 o2=ones(2,1);
 if isempty(r_freq)
  freq=r_om*p_om0(1)*sin(sc_angle/2)/2/pi*1e-3;
@@ -24,7 +24,7 @@ if isempty(r_freq)
   f=freq(jj);
   df=diff(f)/2;
   f=[f(1)-df(1);f(2:end)-df;f(end)+df(end)]'; s=[sp(jj,i)' sp(jj(end),i)];
-  surface(o2*f,h(i+[0:1]),o2*s)
+  surface(o2*f,h(i+[0 1]),o2*s)
  end
  set(gca,'xlim',[freq(1) freq(end)])
 else
@@ -33,10 +33,11 @@ else
   f=r_freq(jj,i)/1000;
   df=diff(f)/2;
   f=[f(1)-df(1);f(2:end)-df;f(end)+df(end)]'; s=[r_spec(jj,i)' r_spec(jj(end),i)];
-  surface(o2*f,h(i+[0:1]),o2*s)
+  surface(o2*f,h(i+[0 1]),o2*s)
  end
  set(gca,'xlim',[min(min(r_freq)) max(max(r_freq))]/1000)
 end
+sminmax=caxis; caxis([0 sminmax(2)])
 set(gca,'xgrid','on','ygrid','on','box','on','layer','top')
 xlabel('Frequency (kHz)'), ylabel('Altitude (km)')
 title(sprintf('%s@%s %s',name_expr,name_ant,datestr(d_time(2,:),31)))

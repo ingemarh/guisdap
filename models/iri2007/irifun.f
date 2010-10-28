@@ -81,14 +81,17 @@ C 2005.02 05/11/06 NeQuick: XE1,TOPQ, M3000HM; stormvd,
 C 2005.02 03/27/07 STORM: hourly interpolation of Ap  [A. Oinats]
 C 2007.00 05/18/07 Release of IRI-2007
 C 2007.01 09/19/07 vdrift et al.: without *8 (no change in results)
-C 2007.01 02/07/09 IONLOW: N+ correction [V. Truhlik]
-C 2007.02 03/30/09 NMDED: avoid exp underflow [K. Choi] 
-C 2007.02 03/30/09 spreadf_brazil: bspl2f et al b(20->30) [Tab Ji]
-C 2007.02 03/30/09 APF_ONLY: Compute monthly F10.7
-C 2007.03 05/26/09 APF_ONLY: replace i with 1 and IMN with ID [R.Conde]
-C 2007.04 07/10/09 CONVER/DATA: 015.78 -> 005.78 [E. Araujo] 
-C 2007.05 07/23/09 STORM/CONVER: long. discont. [R. Conde, E. Araujo] 
-C 2007.05 07/23/09 APF,APF_ONLY: use YearBegin from ap.dat [R. Conde] 
+C 2007.04 02/07/09 IONLOW: N+ correction [V. Truhlik]
+C 2007.05 03/30/09 NMDED: avoid exp underflow [K. Choi] 
+C 2007.05 03/30/09 spreadf_brazil: bspl2f et al b(20->30) [Tab Ji]
+C 2007.05 03/30/09 APF_ONLY: Compute monthly F10.7
+C 2007.06 05/26/09 APF_ONLY: replace i with 1 and IMN with ID [R.Conde]
+C 2007.07 07/10/09 CONVER/DATA: 015.78 -> 005.78 [E. Araujo] 
+C 2007.08 07/23/09 STORM/CONVER: long. discont. [R. Conde, E. Araujo] 
+C 2007.08 07/23/09 APF,APF_ONLY: use YearBegin from ap.dat [R. Conde] 
+C 2007.10 02/03/10 APF: eof error message; clean-up APF and APF_only
+C 2007.11 04/19/10 ELTEIK:     IF (ALT .GE. 900) THEN      [A. Senior]
+C 2007.11 04/19/10 INILAY: HFFF,XFFF when NIGHT=F1REG=f    [A. Senior]
 C
 C**************************************************************  
 C********** INTERNATIONAL REFERENCE IONOSPHERE ****************  
@@ -1857,7 +1860,8 @@ C     900km level
         T900B=T0B900+F107Y*(T1B900*F107+T2B900)+SEASY*T3B900
         T900=(T900B-T900A)/(DDDB-DDDA)*(DDDD-DDDA)+T900A
        END IF
-       IF (ALT .GT. 900) THEN
+       IF (ALT .GE. 900) THEN
+c       IF (ALT .GT. 900) THEN
 C     1500km level
         T0A150=0.0
         T0B150=0.0
@@ -2953,12 +2957,12 @@ c       do 5 i=1,7
           beth(i)= var(6)
           hx=h-hm(i)
 c         if(hx) 1,2,3
-          if(hx.lt.0.) then
+          if(hx.lt.0.)then
 1               arg = hx * (hx * all(i) + betl(i)) 
                 cn(i) = 0.
                 if(arg.gt.-argmax) cn(i) = cm(i) * exp( arg )
 c               goto 4
-          elseif(hx.eq.0.) then
+          elseif(hx.eq.0.)then
 2               cn(i) = cm(i)
 c               goto 4
           else
@@ -5702,6 +5706,8 @@ c
                 SCL(3) = 9.
                 SCL(4) = 6.
                 HXL(3) = HV2
+                HFFF=HHALF
+                XFFF=XHALF
 c
 C DAY CONDITION--------------------------------------------------
 c earlier tested:       HXL(2) = HMF1 + SCL(2)
@@ -6145,24 +6151,24 @@ c--------------------------------------------------------------------
 c       Open(13,FILE='ap.dat',
 c-web-sepcial vfor web version
 c        OPEN(13,FILE='/var/www/omniweb/cgi/vitmo/IRI/ap.dat',
-      Open(13,FILE=path(1:index(path,' ')-1)//'/ap.dat',ACTION='read',
-     *		FORM='FORMATTED',STATUS='OLD') 
-      READ(13,10) JY,JMN,JD,iiap,F
-      IYBEG=JY+1900
-       CLOSE(13)
-
-c       Open(13,FILe='ap.dat',
-c-web-sepcial vfor web version
-C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
-      Open(13,FILE=path(1:index(path,' ')-1)//'/ap.dat',ACTION='read',
+        Open(13,FILE=path(1:index(path,' ')-1)//'/ap.dat',ACTION='read',
      *    ACCESS='DIRECT',RECL=39,FORM='FORMATTED',STATUS='OLD')
-                
+        READ(13,10,REC=1,ERR=21) JY,JMN,JD,iiap,F
+        IYBEG=JY+1900
+        CLOSE(13)
+       
         do i=1,8
               iap(i)=-1
               enddo
 
         if(iyyyy.lt.IYBEG) goto 21   ! file starts at Jan 1, 1958
 
+c       Open(13,FILe='ap.dat',
+c-web-sepcial vfor web version
+C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
+        Open(13,FILE=path(1:index(path,' ')-1)//'/ap.dat',ACTION='read',
+     *    ACCESS='DIRECT',RECL=39,FORM='FORMATTED',STATUS='OLD')
+                
         is=0
         if(iyyyy.gt.IYBEG) then
             do i=IYBEG,iyyyy-1
@@ -6209,8 +6215,7 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
                 iap(j2+i)=iiap(i)
                 enddo
              iss=is-2
-             READ(13,10,REC=ISS,ERR=21,iostat=ier) JY,JMN,JD,iiap,F
-             if(ier.ne.0)goto21
+             READ(13,10,REC=ISS,ERR=21) JY,JMN,JD,iiap,F
         	 do i9=1,8
         		if(iiap(i9).lt.-2) goto 21
         		enddo
@@ -6219,13 +6224,15 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/ap.dat',
                 enddo
         endif         
   10    FORMAT(3I3,8I3,F5.1)
+        CLOSE(13)
         goto 20
+        
 21      if(konsol.gt.1) write(konsol,100)
 100     format(1X,'Date is outside range of Ap indices file.',
      &     ' STORM model is turned off.')
         IAP(1)=-5
-20      CLOSE(13)
-      RETURN
+      
+20    RETURN
       END
 C
 C
@@ -6248,18 +6255,19 @@ c--------------------------------------------------------------------
 c       Open(13,FILE='ap.dat',
 c-web-sepcial vfor web version
 c        OPEN(13,FILE='/var/www/omniweb/cgi/vitmo/IRI/ap.dat',
-      Open(13,FILE=path(1:index(path,' ')-1)//'/ap.dat',ACTION='read',
-     *		FORM='FORMATTED',STATUS='OLD') 
-      READ(13,10) JY,JMN,JD,iiap,F
-      IYBEG=JY+1900
-       CLOSE(13)
+        Open(13,FILE=path(1:index(path,' ')-1)//'/ap.dat',ACTION='read',
+     *    ACCESS='DIRECT',RECL=39,FORM='FORMATTED',STATUS='OLD')
+        READ(13,10,REC=1,ERR=21) JY,JMN,JD,iiap,F
+        IYBEG=JY+1900
+        CLOSE(13)
+
+        if(iyyyy.lt.IYBEG) goto 21   ! AP.DAT starts at Jan 1, 1958
 
 c       Open(13,FILE='ap.dat',
 c-web-sepcial vfor web version
 C      OPEN(13,FILE='/var/www/omniweb/cgi/vitmo/IRI/ap.dat',
-      Open(13,FILE=path(1:index(path,' ')-1)//'/ap.dat',ACTION='read',
+        Open(13,FILE=path(1:index(path,' ')-1)//'/ap.dat',ACTION='read',
      *    	ACCESS='DIRECT',RECL=39,FORM='FORMATTED',STATUS='OLD')
-        if(iyyyy.lt.IYBEG) goto 21   ! AP.DAT starts at Jan 1, 1958
 
         is=0
         do i=IYBEG,iyyyy-1
@@ -6290,13 +6298,15 @@ C      OPEN(13,FILE='/var/www/omniweb/cgi/vitmo/IRI/ap.dat',
 
         
 10      FORMAT(3I3,8I3,F5.1)
+        CLOSE(13)
         goto 20
 
 21      if(konsol.gt.1) write(konsol,100)
-100     format(1X,'Date is outside range of F10.7D indices file.')
-
-20      CLOSE(13)
-      RETURN
+100     format(1X,'Date is outside range of F10.7D indices file',
+     &    ' (F10.7D = F10.7M = F10.7RM12).')
+        F107D = -111.0
+     
+20    RETURN
       END
 
 C      

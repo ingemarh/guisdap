@@ -60,12 +60,12 @@ else
 
   if exist('analysis_maxwidth')
     len=length(analysis_maxwidth);
-    if len~=lenr
+    if len>1 & len~=lenr
       a_maxwidth=diff(a_range);
     elseif exist('analysis_altit')
-      a_maxwidth(1:len)=height_to_range(analysis_maxwidth,ch_el(1));
+      a_maxwidth(1:lenr)=height_to_range(analysis_maxwidth,ch_el(1));
     else
-      a_maxwidth(1:len)=analysis_maxwidth*fac;
+      a_maxwidth(1:lenr)=analysis_maxwidth*fac;
     end
   end
 
@@ -101,10 +101,15 @@ end
 a_addr=[];
 a_adstart=[];
 a_adend=[];
+if exist('analysis_overlap')
+ a_overlap=analysis_overlap*fac;
+else
+ a_overlap=0;
+end
 bad_var=0;
 diffran=diff(a_range);
 for gate=find(diffran>0)
-  addr=find(ad_range>a_range(gate) & ad_range<=a_range(gate+1));
+  addr=find(ad_range>a_range(gate)-a_overlap & ad_range<=a_range(gate+1)+a_overlap);
   if ~isempty(addr)
     % Select suitable codes 
     if length(acode)>0

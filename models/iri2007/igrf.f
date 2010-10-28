@@ -3,8 +3,8 @@ c-----------------------------------------------------------------------
 C
 C Subroutines to compute IGRF parameters for IRI and all functions and 
 C subroutines required for this computation, including:
-C 	igrf_sub, FINDB0, SHELLG, STOER, FELDG, FELDCOF, GETSHC, INTERSHC, 
-C 	EXTRASHC, INITIZE, GEODIP, SPHCAR, GEOMAG, and RECALC  
+C 	IGRF_SUB, IGRF_DIP, FINDB0, SHELLG, STOER, FELDG, FELDCOF, GETSHC, 
+C 	INTERSHC, EXTRASHC, INITIZE, GEODIP, SPHCAR, GEOMAG, and RECALC  
 C
 C UNIT number for reading the IGRF coefficients (in GETSHC) is 14
 C
@@ -23,10 +23,17 @@ C 2000.02 11/08/02 change unit for coefficients to 14
 C 2000.03 06/05/03 correct DIPL computation (V. Truhlik)
 C 2005.00 04/25/05 CALL FELDI and DO 1111 I=1,7 (Alexey Petrov)
 C 2005.01 11/10/05 added igrf_dip and geodip (MLAT) 
-C 2005.02 11/10/05 updated to IGRF-10 version
+C 2005.02 11/10/05 FELDCOF: updated to IGRF-10 version
 C 2005.03 12/21/06 GH2(120) -> GH2(144)
 C 2007.00 05/18/07 Release of IRI-2007
+C 2007.08 07/30/09 SHELLG,STOER,FELDG,FELDCOF: NMAX=13; H/G-arrays(195) 
+C 2007.10 02/26/10 FELDCOF: updated to IGRF-11; DGRF05, IGRF10, IGRF10S
+C 2007.11 04/27/10 RECALC: updated to IGRF-11
+C 2007.11 04/27/10 Make all arrays(195) to arrays(196) 
+C 2007.11 04/27/10 FELDCOF: corrected Filmod and also IGRF10.DAT
+C 2007.11 04/29/10 New files dgrf%%%%.asc; new GETSHC; char*12 to 13
 C
+C 
         subroutine igrf_sub(xlat,xlong,year,height,
      &          xl,icode,dipl,babs)
 c-----------------------------------------------------------------------        
@@ -104,116 +111,26 @@ c       DIPL1=ATAN(0.5*TAN(DIP))/UMR
       END
 c
 c
-C SHELLIG.FOR, Version 2.0, January 1992
+C SHELLIG.FOR
 C
 C 11/01/91 SHELLG: lowest starting point for B0 search is 2  
 C  1/27/92 Adopted to IGRF-91 coeffcients model
 C  2/05/92 Reduce variable-names: INTER(P)SHC,EXTRA(P)SHC,INITI(ALI)ZE
 C  8/08/95 Updated to IGRF-45-95; new coeff. DGRF90, IGRF95, IGRF95S
 C  5/31/00 Updated to IGRF-45-00; new coeff.: IGRF00, IGRF00s
+C  3/24/05 Updated to IGRF-45-10; new coeff.: IGRF05, IGRF05s
+C  4/25/05 ENTRY FELDI(XI,H) and  DO 1111 I=1,7 [Alexey Petrov]
+C  7/22/09 SHELLG: NMAX=13 for DGRF00 and IGRF05; H/G-arrays(195)
+C  2/26/10 FELDCOF: Updated IGRF45-15; new coeff: DGRF05, IGRF10, IGRF10S
+C  4/29/10 H/H-arrays(196); FELDCOF: corrected IGRF00 and ..00S
+C  4/29/10 Change to new files dgrf%%%%.asc; new GETSHC; char*12 to 13
+C
 C*********************************************************************
-C  SUBROUTINES FINDB0, SHELLG, STOER, FELDG, FELDCOF, GETSHC,        *
+C  SUBROUTINES SHELLG, STOER, FELDG, FELDCOF, GETSHC,        *
 C       INTERSHC, EXTRASHC, INITIZE                                  *
 C*********************************************************************
 C*********************************************************************
 C
-C
-      SUBROUTINE FINDB0(STPS,BDEL,VALUE,BEQU,RR0)
-C--------------------------------------------------------------------
-C FINDS SMALLEST MAGNETIC FIELD STRENGTH ON FIELD LINE
-C
-C INPUT:   STPS   STEP SIZE FOR FIELD LINE TRACING
-C       COMMON/FIDB0/
-C          SP     DIPOLE ORIENTED COORDINATES FORM SHELLG; P(1,*),
-C                 P(2,*), P(3,*) CLOSEST TO MAGNETIC EQUATOR 
-C          BDEL   REQUIRED ACCURACY  = [ B(LAST) - BEQU ] / BEQU  
-C                 B(LAST)  IS FIELD STRENGTH BEFORE BEQU
-C
-C OUTPUT:  VALUE  =.FALSE., IF BEQU IS NOT MINIMAL VALUE ON FIELD LINE
-C          BEQU   MAGNETIC FIELD STRENGTH AT MAGNETIC EQUATOR
-C          RR0    EQUATORIAL RADIUS NORMALIZED TO EARTH RADIUS
-C          BDEL   FINAL ACHIEVED ACCURACY
-C--------------------------------------------------------------------
-      DIMENSION         P(8,4),SP(3)
-      LOGICAL           VALUE
-      COMMON/FIDB0/     SP
-C
-      STEP=STPS
-      IRUN=0
-7777  IRUN=IRUN+1
-      IF(IRUN.GT.5) THEN
-        VALUE=.FALSE.
-        GOTO 8888
-        ENDIF
-C*********************FIRST THREE POINTS 
-      P(1,2)=SP(1)
-      P(2,2)=SP(2)
-      P(3,2)=SP(3)
-      STEP=-SIGN(STEP,P(3,2))
-      CALL STOER(P(1,2),BQ2,R2)
-      P(1,3)=P(1,2)+0.5*STEP*P(4,2)
-      P(2,3)=P(2,2)+0.5*STEP*P(5,2)
-      P(3,3)=P(3,2)+0.5*STEP
-      CALL STOER(P(1,3),BQ3,R3)
-      P(1,1)=P(1,2)-STEP*(2.*P(4,2)-P(4,3))
-      P(2,1)=P(2,2)-STEP*(2.*P(5,2)-P(5,3))
-      P(3,1)=P(3,2)-STEP
-      CALL STOER(P(1,1),BQ1,R1)
-      P(1,3)=P(1,2)+STEP*(20.*P(4,3)-3.*P(4,2)+P(4,1))/18.
-      P(2,3)=P(2,2)+STEP*(20.*P(5,3)-3.*P(5,2)+P(5,1))/18.
-      P(3,3)=P(3,2)+STEP
-      CALL STOER(P(1,3),BQ3,R3)
-C******************INVERT SENSE IF REQUIRED
-      IF(BQ3.LE.BQ1) GOTO 2
-        STEP=-STEP
-        R3=R1
-        BQ3=BQ1
-        DO 1 I=1,5
-                ZZ=P(I,1)
-                P(I,1)=P(I,3)
-1               P(I,3)=ZZ
-C******************INITIALIZATION 
-2       STEP12=STEP/12.
-        VALUE=.TRUE.
-        BMIN=1.E4
-        BOLD=1.E4
-C******************CORRECTOR (FIELD LINE TRACING)
-        N=0
-5555  P(1,3)=P(1,2)+STEP12*(5.*P(4,3)+8.*P(4,2)-P(4,1))
-        N=N+1
-      P(2,3)=P(2,2)+STEP12*(5.*P(5,3)+8.*P(5,2)-P(5,1))
-C******************PREDICTOR (FIELD LINE TRACING)
-      P(1,4)=P(1,3)+STEP12*(23.*P(4,3)-16.*P(4,2)+5.*P(4,1))
-      P(2,4)=P(2,3)+STEP12*(23.*P(5,3)-16.*P(5,2)+5.*P(5,1))
-      P(3,4)=P(3,3)+STEP
-      CALL STOER(P(1,4),BQ3,R3)
-        DO 1111 J=1,3
-C        DO 1111 I=1,8
-        DO 1111 I=1,7
-1111    P(I,J)=P(I,J+1)
-        B=SQRT(BQ3)
-        IF(B.LT.BMIN) BMIN=B
-        IF(B.LE.BOLD) THEN
-                BOLD=B
-                ROLD=1./R3
-                SP(1)=P(1,4)
-                SP(2)=P(2,4)
-                SP(3)=P(3,4)
-                GOTO 5555
-                ENDIF
-        IF(BOLD.NE.BMIN) THEN
-                VALUE=.FALSE.
-                ENDIF
-        BDELTA=(B-BOLD)/BOLD
-        IF(BDELTA.GT.BDEL) THEN
-                STEP=STEP/10.
-                GOTO 7777
-                ENDIF
-8888    RR0=ROLD
-        BEQU=BOLD
-        BDEL=BDELTA
-        RETURN
-        END
 C
 C
       SUBROUTINE SHELLG(GLAT,GLON,ALT,DIMO,FL,ICODE,B0)
@@ -227,6 +144,7 @@ c-----------------------------------------------------------------------
 C CHANGES (D. BILITZA, NOV 87):
 C   - USING CORRECT DIPOL MOMENT I.E.,DIFFERENT COMMON/MODEL/
 C   - USING IGRF EARTH MAGNETIC FIELD MODELS FROM 1945 TO 1990
+C 09/07/22 NMAX=13 for DGRF00 and IGRF05; H/G-arrays(195)
 c-----------------------------------------------------------------------        
 C  INPUT:  ENTRY POINT SHELLG
 C             GLAT  GEODETIC LATITUDE IN DEGREES (NORTH)
@@ -254,7 +172,7 @@ C                          APPROXIMATION IS USED.
 C          B0           MAGNETIC FIELD STRENGTH IN GAUSS
 c-----------------------------------------------------------------------        
       DIMENSION         V(3),U(3,3),P(8,100),SP(3)
-      COMMON/IGRF/      X(3),H(144)
+      COMMON/IGRF2/     X(3),H(196)
       COMMON/FIDB0/     SP
       COMMON/IGRF1/     UMR,ERA,AQUAD,BQUAD
 C
@@ -370,7 +288,7 @@ C*****INNER LOOP (FOR QUADRATURE)
       FF=SQRT(1.+3.*ZQ/RQ)                              
       RADIK=B0-((D2*T+D1)*T+D0)*R*RQ*FF                 
 c     IF(R-RMAX)44,44,45                                
-      if(R-RMAX.gt.0.)then                               
+      IF(R-RMAX.gt.0.)then                                
 45    ICODE=2                                           
       RADIK=RADIK-12.*(R-RMAX)**2                       
       endif
@@ -457,9 +375,11 @@ C
 C*******************************************************************
 C* SUBROUTINE USED FOR FIELD LINE TRACING IN SHELLG                *
 C* CALLS ENTRY POINT FELDI IN GEOMAGNETIC FIELD SUBROUTINE FELDG   *
+C
+C 09/07/22 NMAX=13 for DGRF00 and IGRF05; H/G-arrays(195)
 C*******************************************************************
       DIMENSION         P(7),U(3,3)
-      COMMON/IGRF/      XI(3),H(144)
+      COMMON/IGRF2/     XI(3),H(196)
 C*****XM,YM,ZM  ARE GEOMAGNETIC CARTESIAN INVERSE CO-ORDINATES          
       ZM=P(3)                                                           
       FLI=P(1)*P(1)+P(2)*P(2)+1E-15
@@ -507,6 +427,7 @@ c-----------------------------------------------------------------------
 C CHANGES (D. BILITZA, NOV 87):
 C   - FIELD COEFFICIENTS IN BINARY DATA FILES INSTEAD OF BLOCK DATA
 C   - CALCULATES DIPOL MOMENT
+C 09/07/22 NMAX=13 for DGRF00 and IGRF05; H/G-arrays(195)
 c-----------------------------------------------------------------------        
 C  INPUT:  ENTRY POINT FELDG
 C               GLAT  GEODETIC LATITUDE IN DEGREES (NORTH)
@@ -542,10 +463,11 @@ C                 POINTING IN THE TANGENTIAL PLANE TO THE NORTH, EAST
 C                 AND DOWNWARD.   
 C-----------------------------------------------------------------------
       DIMENSION         V(3),B(3)   
-      CHARACTER*12      NAME
-      COMMON/IGRF/      XI(3),H(144)
-      COMMON/MODEL/     NAME,NMAX,TIME,G(144)  
+      CHARACTER*13      NAME
+      COMMON/IGRF2/	    XI(3),H(196)
+      COMMON/MODEL/     NAME,NMAX,TIME,G(196)  
       COMMON/IGRF1/     UMR,ERA,AQUAD,BQUAD
+
 C
 C-- IS RECORDS ENTRY POINT
 C
@@ -558,13 +480,14 @@ C*****ENTRY POINT  FELDG  TO BE USED WITH GEODETIC CO-ORDINATES
       RLON=GLON*UMR
       CP=COS(RLON)                                                      
       SP=SIN(RLON)                                                      
-       ZZZ=(ALT+BQUAD/D)*CT/ERA
-       RHO=(ALT+AQUAD/D)*ST/ERA
-       XXX=RHO*CP                                                       
-       YYY=RHO*SP                                                       
-      GOTO10                                                            
-      ENTRY FELDC(V,B)                                                  
+      ZZZ=(ALT+BQUAD/D)*CT/ERA
+      RHO=(ALT+AQUAD/D)*ST/ERA
+      XXX=RHO*CP                                                       
+      YYY=RHO*SP                                                       
+      GOTO 10                                                            
+
 C*****ENTRY POINT  FELDC  TO BE USED WITH CARTESIAN CO-ORDINATES        
+      ENTRY FELDC(V,B)                                                  
       IS=2                                                              
       XXX=V(1)                                                          
       YYY=V(2)                                                          
@@ -573,53 +496,60 @@ C*****ENTRY POINT  FELDC  TO BE USED WITH CARTESIAN CO-ORDINATES
       XI(1)=XXX*RQ                                                      
       XI(2)=YYY*RQ                                                      
       XI(3)=ZZZ*RQ                                                      
-      GOTO20                                                            
-      ENTRY FELDI                                                       
+      GOTO 20                                                            
+
 C*****ENTRY POINT  FELDI  USED FOR L COMPUTATION                        
+      ENTRY FELDI                                                       
       IS=3                                                              
 20    IHMAX=NMAX*NMAX+1                                                 
       LAST=IHMAX+NMAX+NMAX                                              
       IMAX=NMAX+NMAX-1                                                  
       DO 8 I=IHMAX,LAST                                                 
-8     H(I)=G(I)                                                         
+8     	H(I)=G(I)                                                         
       DO 6 K=1,3,2                                                      
-      I=IMAX                                                            
-      IH=IHMAX                                                          
-1     IL=IH-I                                                           
-      F=2./FLOAT(I-K+2)                                                 
-      X=XI(1)*F                                                         
-      Y=XI(2)*F                                                         
-      Z=XI(3)*(F+F)                                                     
-      I=I-2                                                             
-c     IF(I-1)5,4,2                                                      
-      if(I-1.gt.0)then                                                      
-2     DO 3 M=3,I,2                                                      
-      H(IL+M+1)=G(IL+M+1)+Z*H(IH+M+1)+X*(H(IH+M+3)-H(IH+M-1))           
-     A                               -Y*(H(IH+M+2)+H(IH+M-2))           
-3     H(IL+M)=G(IL+M)+Z*H(IH+M)+X*(H(IH+M+2)-H(IH+M-2))                 
-     A                         +Y*(H(IH+M+3)+H(IH+M-1))                 
-      endif
-      if(I-1.ge.0)then                                                      
-4     H(IL+2)=G(IL+2)+Z*H(IH+2)+X*H(IH+4)-Y*(H(IH+3)+H(IH))             
-      H(IL+1)=G(IL+1)+Z*H(IH+1)+Y*H(IH+4)+X*(H(IH+3)-H(IH))             
-      endif
-5     H(IL)=G(IL)+Z*H(IH)+2.*(X*H(IH+1)+Y*H(IH+2))                      
-      IH=IL                                                             
-      IF(I.GE.K)GOTO1                                                   
-6     CONTINUE                                                          
-      IF(IS.EQ.3)RETURN                                                 
+      	I=IMAX                                                            
+      	IH=IHMAX                                                          
+1     	IL=IH-I                                                           
+      	F=2./FLOAT(I-K+2)                                                 
+      	X=XI(1)*F                                                         
+      	Y=XI(2)*F                                                         
+      	Z=XI(3)*(F+F)                                                     
+      	I=I-2                                                             
+c     	IF(I-1) 5,4,2
+        IF(I-1.gt.0)then
+      	                                                      
+2     	DO 3 M=3,I,2                                                      
+      		H(IL+M+1)=G(IL+M+1)+Z*H(IH+M+1)+X*(H(IH+M+3)-          
+     A                H(IH+M-1))-Y*(H(IH+M+2)+H(IH+M-2))           
+3     		H(IL+M)=G(IL+M)+Z*H(IH+M)+X*(H(IH+M+2)-                
+     A                H(IH+M-2))+Y*(H(IH+M+3)+H(IH+M-1))
+        endif
+        if(I-1.ge.0)then
+                      
+4     	H(IL+2)=G(IL+2)+Z*H(IH+2)+X*H(IH+4)-Y*(H(IH+3)+H(IH))             
+      	H(IL+1)=G(IL+1)+Z*H(IH+1)+Y*H(IH+4)+X*(H(IH+3)-H(IH))             
+        endif
+5     	H(IL)=G(IL)+Z*H(IH)+2.*(X*H(IH+1)+Y*H(IH+2))                      
+      	IH=IL                                                             
+      	IF(I.GE.K) GOTO 1                                                   
+6     	CONTINUE
+                                                          
+      IF(IS.EQ.3) RETURN 
+                                                      
       S=.5*H(1)+2.*(H(2)*XI(3)+H(3)*XI(1)+H(4)*XI(2))                   
       T=(RQ+RQ)*SQRT(RQ)                                                
       BXXX=T*(H(3)-S*XXX)                                               
       BYYY=T*(H(4)-S*YYY)                                               
-      BZZZ=T*(H(2)-S*ZZZ)                                               
-      IF(IS.EQ.2)GOTO7                                                  
+      BZZZ=T*(H(2)-S*ZZZ) 
+                                                    
+      IF(IS.EQ.2) GOTO 7                                                  
       BABS=SQRT(BXXX*BXXX+BYYY*BYYY+BZZZ*BZZZ)
       BEAST=BYYY*CP-BXXX*SP                                             
       BRHO=BYYY*SP+BXXX*CP                                              
       BNORTH=BZZZ*ST-BRHO*CT                                            
       BDOWN=-BZZZ*CT-BRHO*ST                                            
-      RETURN                                                            
+      RETURN 
+                                                                 
 7     B(1)=BXXX                                                         
       B(2)=BYYY                                                         
       B(3)=BZZZ                                                         
@@ -635,29 +565,30 @@ C       INPUT:  YEAR    DECIMAL YEAR FOR WHICH GEOMAGNETIC FIELD IS TO
 C                       BE CALCULATED
 C       OUTPUT: DIMO    GEOMAGNETIC DIPOL MOMENT IN GAUSS (NORMALIZED 
 C                       TO EARTH'S RADIUS) AT THE TIME (YEAR)
-C  D. BILITZA, NSSDC, GSFC, CODE 633, GREENBELT, MD 20771, 
-C       (301)286-9536   NOV 1987.
-C  ### updated to IGRF-10 version -dkb- 11/10/2005
+C 05/31/2000 updated to IGRF-2000 version (###) 
+C 03/24/2000 updated to IGRF-2005 version (###) 
+C 07/22/2009 NMAX=13 for DGRF00 and IGRF05; H/G-arrays(195)
+C 02/26/2010 updated to IGRF-2010 version (###)  
 c-----------------------------------------------------------------------        
-        CHARACTER*12    FILMOD, FIL1, FIL2           
-C ### FILMOD, DTEMOD arrays +1
-        DIMENSION       GH1(144),GH2(144),GHA(144),FILMOD(14)
-        DIMENSION		DTEMOD(14)
+        CHARACTER*13    FILMOD, FIL1, FIL2           
+C ### FILMOD, DTEMOD array-size is number of IGRF maps
+        DIMENSION       GH1(196),GH2(196),GHA(196),FILMOD(15)
+        DIMENSION		DTEMOD(15)
         DOUBLE PRECISION X,F0,F 
         COMMON/MODEL/   FIL1,NMAX,TIME,GH1
         COMMON/IGRF1/   UMR,ERAD,AQUAD,BQUAD
-C ### updated to 2005
-        DATA            FILMOD /'dgrf45.dat', 'dgrf50.dat',            
-     1                  'dgrf55.dat', 'dgrf60.dat', 'dgrf65.dat',      
-     2                  'dgrf70.dat', 'dgrf75.dat', 'dgrf80.dat',      
-     3                  'dgrf85.dat', 'dgrf90.dat', 'dgrf95.dat',
-     4                  'dgrf00.dat','igrf05.dat','igrf05s.dat'/
-        DATA   DTEMOD / 1945., 1950., 1955., 1960., 1965., 1970.,
-     1       1975., 1980., 1985., 1990., 1995., 2000.,2005.,2010./      
+C ### updated coefficient file names and corresponding years
+        DATA  FILMOD   / 'dgrf1945.dat','dgrf1950.dat','dgrf1955.dat',           
+     1    'dgrf1960.dat','dgrf1965.dat','dgrf1970.dat','dgrf1975.dat',
+     2    'dgrf1980.dat','dgrf1985.dat','dgrf1990.dat','dgrf1995.dat',
+     3    'dgrf2000.dat','dgrf2005.dat','igrf2010.dat','igrf2010s.dat'/
+        DATA  DTEMOD / 1945., 1950., 1955., 1960., 1965.,           
+     1   1970., 1975., 1980., 1985., 1990., 1995., 2000.,2005.,
+     2   2010., 2015./      
 C
-C ### numye = numye + 1 ; is number of years represented by IGRF
+C ### numye is number of IGRF coefficient files minus 1
 C
-        NUMYE=13
+        NUMYE=14
 C
 C  IS=0 FOR SCHMIDT NORMALIZATION   IS=1 GAUSS NORMALIZATION
 C  IU  IS INPUT UNIT NUMBER FOR IGRF COEFFICIENT SETS
@@ -720,19 +651,13 @@ C-- DETERMINE MAGNETIC DIPOL MOMENT AND COEFFIECIENTS G
         END
 C
 C
-        SUBROUTINE GETSHC (IU, FSPEC, NMAX, ERAD, GH, IER)           
-                                                                                
+        SUBROUTINE GETSHC (IU, FSPEC, NMAX, ERAD, GH, IER)                                                                                           
 C ===============================================================               
-C                                                                               
-C       Version 1.01                                                 
-C                                                                               
 C       Reads spherical harmonic coefficients from the specified     
 C       file into an array.                                          
-C                                                                               
 C       Input:                                                       
 C           IU    - Logical unit number                              
 C           FSPEC - File specification                               
-C                                                                               
 C       Output:                                                      
 C           NMAX  - Maximum degree and order of model                
 C           ERAD  - Earth's radius associated with the spherical     
@@ -743,66 +668,36 @@ C                   harmonic coefficients
 C           IER   - Error number: =  0, no error                     
 C                                 = -2, records out of order         
 C                                 = FORTRAN run-time error number    
-C                                                                    
-C       A. Zunde                                                     
-C       USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225    
-C                                                                               
 C ===============================================================               
                                                                                 
-        CHARACTER  FSPEC*(*), FOUT*55                                    
-        DIMENSION       GH(*)                                        
+        CHARACTER  FSPEC*(*), FOUT*80                                    
         character path*100
+        DIMENSION       GH(196) 
+        
+        do 1 j=1,196  
+1          GH(j)=0.0
+
 C ---------------------------------------------------------------               
 C       Open coefficient file. Read past first header record.        
 C       Read degree and order of model and Earth's radius.           
 C ---------------------------------------------------------------               
-       call getenv('IRIPATH',path)
-c      WRITE(FOUT,667) FSPEC
-       FOUT=path(1:index(path,' ')-1)//'/'//FSPEC
-c special for IRIWeb version
-c 667  FORMAT('/usr/local/etc/httpd/cgi-bin/models/IRI/',A12)
-c 667    FORMAT(A12)
-       OPEN(IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,ACTION='read')     
+        call getenv('IRIPATH',path)
+c       WRITE(FOUT,667) FSPEC
+        FOUT=path(1:index(path,' ')-1)//'/'//FSPEC
+ 667    FORMAT(A13)
+c 667    FORMAT('/var/www/omniweb/cgi/vitmo/IRI/',A13)
+c       OPEN (IU, FILE=FOUT, STATUS='OLD', IOSTAT=IER, ERR=999)     
+       OPEN (IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,ACTION='read')     
+        READ (IU, *, IOSTAT=IER, ERR=999)                            
+        READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD, XMYEAR 
+        nm=nmax*(nmax+2)                
+        READ (IU, *, IOSTAT=IER, ERR=999) (GH(i),i=1,nm) 
+        goto 888 
+               
+999     write(monito,100) FOUT
+100     FORMAT('Error while reading ',A13)
 
-       READ (IU, *, IOSTAT=IER, ERR=999) 
-        READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD 
-C ---------------------------------------------------------------               
-C       Read the coefficient file, arranged as follows:              
-C                                                                               
-C                                       N     M     G     H          
-C                                       ----------------------       
-C                                   /   1     0    GH(1)  -          
-C                                  /    1     1    GH(2) GH(3)       
-C                                 /     2     0    GH(4)  -          
-C                                /      2     1    GH(5) GH(6)       
-C           NMAX*(NMAX+3)/2     /       2     2    GH(7) GH(8)       
-C              records          \       3     0    GH(9)  -          
-C                                \      .     .     .     .          
-C                                 \     .     .     .     .          
-C           NMAX*(NMAX+2)          \    .     .     .     .          
-C           elements in GH          \  NMAX  NMAX   .     .          
-C                                                                               
-C       N and M are, respectively, the degree and order of the       
-C       coefficient.                                                 
-C ---------------------------------------------------------------               
-                                                                                
-        I = 0                                                        
-        DO 2211 NN = 1, NMAX                                              
-            DO 2233 MM = 0, NN
-                READ (IU, *, IOSTAT=IER, ERR=999) N, M, G, H 
-                IF (NN .NE. N .OR. MM .NE. M) THEN                   
-                    IER = -2                                         
-                    GOTO 999                                         
-                ENDIF                                                
-                I = I + 1                                            
-                GH(I) = G                                            
-                IF (M .NE. 0) THEN                                   
-                    I = I + 1                                        
-                    GH(I) = H                                        
-                ENDIF                                                
-2233        CONTINUE                                                    
-2211    CONTINUE                                                        
-999     CLOSE (IU)                                                   
+888     CLOSE (IU)                                                                                                                                   
         RETURN                                                       
         END                                                          
 C
@@ -904,7 +799,7 @@ C       USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225
 C                                                                               
 C ===============================================================               
                                                                                 
-        DIMENSION       GH1(*), GH2(*), GH(*)                          
+        DIMENSION       GH1(*), GH2(*), GH(*)                        
                                                                                 
 C ---------------------------------------------------------------               
 C       The coefficients (GH) of the resulting model, at date          
@@ -1254,14 +1149,20 @@ C  VALUES FOR THE NEAREST EPOCHS:
         ELSEIF (IY.LT.2005) THEN                        !2000-2005
            F2=(FLOAT(IY)+FLOAT(IDAY)/365.-2000.)/5.
            F1=1.D0-F2
-           G10=29619.4*F1+29556.8*F2
-           G11=-1728.2*F1-1671.8*F2
-           H11= 5186.1*F1+5080.0*F2
-        ELSE                                            !2005-2010
-           DT=FLOAT(IY)+FLOAT(IDAY)/365.-2005.
-           G10=29556.8-8.8*DT
-           G11=-1671.8+10.8*DT
-           H11= 5080.0-21.3*DT
+           G10=29619.4*F1+29554.63*F2
+           G11=-1728.2*F1-1669.05*F2
+           H11= 5186.1*F1+5077.99*F2
+        ELSEIF (IY.LT.2010) THEN                        !2005-2010
+           F2=(FLOAT(IY)+FLOAT(IDAY)/365.-2005.)/5.
+           F1=1.D0-F2
+           G10=29554.63*F1+29496.5*F2
+           G11=-1669.05*F1-1585.9*F2
+           H11= 5077.99*F1+4945.1*F2
+        ELSE                                            !2010-2015
+           DT=FLOAT(IY)+FLOAT(IDAY)/365.-2010.
+           G10=29496.5-11.4*DT
+           G11=-1585.9+16.7*DT
+           H11= 4945.1-28.8*DT
         ENDIF
 
 C  NOW CALCULATE THE COMPONENTS OF THE UNIT VECTOR EzMAG IN GEO COORD
