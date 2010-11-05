@@ -1,4 +1,4 @@
-startup
+start_GUP
 %default values
 rt=0;
 [intper,t1,t2,siteid,expver]=auto_parse(0);

@@ -1,11 +1,12 @@
 function ratio=calib_pl_ne(pl_dir,expt,gate,plots)
-% function ratio=calib_pl_ne(pl_dir,expt,plots)
+% function ratio=calib_pl_ne(pl_dir,expt,gate,plots)
 % GUISDAP 8.4  8 Oct 2004  Copyright EISCAT
 % Calibration routine of radar constant using simultaneous wide band plasma
 % lines and GUISDAP results
 % Using setup in pl_def.m in experiment directory
 % input: pl_dir Directory containing integrated plasma lines (needed)
 %        expt   Name of experiment (or guessed from pl_dir)
+%        gate   Gate number to fit
 %        plots  Display a number of plots for internal checks
 % output: ratio Vector containing
 %                Density ratio
@@ -13,7 +14,7 @@ function ratio=calib_pl_ne(pl_dir,expt,gate,plots)
 %                Calculated new Magic constant
 %                Emperical best guess taking Te changes into account
 %                Number of "good" points used
-% see also CALIB_NE
+% see also CALIB_NE, PLASMA_SUMMARY
 if nargin<2, expt=[]; end
 if nargin<3
  gate=[];
@@ -24,24 +25,26 @@ global Time par1D par2D axs r_Magic_const DATA_PATH local START_TIME END_TIME fp
 edge_dist=10;
 
 %Get plasmaline data
-if plots>1
+if isempty(plots) | plots
  ogcf=gcf; figure(9)
 end
 disp('Reading plasmaline data')
-[pl,p]=plasma_summary(pl_dir,expt,gate,plots);
-if plots>1
+[pl,p]=plasma_summary(pl_dir,expt,[],plots);
+if isempty(plots) | plots
  set(0,'currentfigure',ogcf)
 end
+if isempty(gate), gate=p.gate; end
+if isempty(gate), gate=1; end
 
 re=6370; ratio=[];
 %First guess of altitudes (Not very important)
-alt=re*sqrt(1+p.ran/re.*(p.ran/re+2*sin(p.ele/57.2957795)))-re;
+alt=re*sqrt(1+p.ran(gate,:)/re.*(p.ran(gate,:)/re+2*sin(p.ele/57.2957795)))-re;
 if p.ele==0, alt=[150 450]; end
 %Read in the analysed data
 lf=vizu('verbose',alt,'L1 AE');
 for i=1:2
- hlim(:,i)=p.ran(i)*(p.ran(i)/re+2*sin(par1D(:,2)/57.2957795));
- hlim(:,i)=p.ran(i)*(p.ran(i)/re+2*sin(par1D(:,2)/57.2957795));
+ hlim(:,i)=p.ran(gate,i)*(p.ran(gate,i)/re+2*sin(par1D(:,2)/57.2957795));
+ hlim(:,i)=p.ran(gate,i)*(p.ran(gate,i)/re+2*sin(par1D(:,2)/57.2957795));
 end
 hlim=re*sqrt(1+hlim/re)-re;
 fgup=fullfile(DATA_PATH,'.gup');
@@ -59,9 +62,9 @@ nfl=length(d);
 if nfl==0
  error('You stupid! Choose a better data set.')
 else
- pl.t=pl.t(:,d); pl.f=pl.f(:,:,d); pl.s=pl.s(:,:,d);
+ pl.t=pl.t(:,d); pl.f=pl.f(:,:,d); pl.s=pl.s(gate,:,:,d);
 end
-nfreq=size(pl.s,2); nfft=size(pl.s,1);
+nfreq=size(pl.s,3); nfft=size(pl.s,2); pl.s=reshape(pl.s,nfft,nfreq,nfl);
 
 %make pl_matrix
 fres=.1; %100kHz
