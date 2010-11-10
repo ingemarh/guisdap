@@ -10,13 +10,13 @@ if d_date>datenum(2007,11,11)
 end
 if vs>=3.0
   nlag=75; ngates=4;
+  dt=0.4e-6; uparfreq=NaN;
+  ran=[41 248;113 320;185 392;257 464];
 end
 if length(d_data)==2*ngates*nlag
   startad=(0:1)*ngates*nlag+1;
 elseif vs>=3.0
   startad=(0:1)*66545+51*nlag+50*1152+21;
-  dt=0.4e-6; uparfreq=NaN;
-  ran=[41 248;113 320;185 392;257 464];
 elseif vs>=2.0
   startad=(0:1)*29814+34*nlag+33*768+21;
 else

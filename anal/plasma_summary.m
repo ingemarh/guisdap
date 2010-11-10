@@ -179,7 +179,7 @@ elseif isempty(plots)
  'DefaultAxesFontSize',14,'DefaultTextFontSize',14)
 
  for g=1:dgates
-  mmmsig=max(max(max(plsig(g,:,:,:))));
+  mmmsig=mean(max(max(plsig(g,:,:,:))));
   for j=1:nfreq
    pn=((g-1)*nfreq+j-1);
    plfreqj=reshape(([plfreq(:,j,:);plfreq(end,j,:)+df]-df/2)/1e6,nfft+1,nfl);
@@ -203,7 +203,7 @@ elseif isempty(plots)
  [h,d]=strtok(d_ExpInfo);
  h=title(sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)));
  set(h,'interpreter','none')
- colormap(myb)
+ colormap(vizu('myb'))
  load(fullfile(path_GUP,'matfiles','logo'))
  axes('Position',[.07 .92 .08 .06]); plot(y,x,'.k')
  set(get(gca,'child'),'markersize',1)
