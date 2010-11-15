@@ -18,5 +18,10 @@ elseif name_site=='T' | name_site=='V'
   a_satch.sigma=3;
   a_satch.cut=1;
   analysis_ppshortlags=1;
-  plasma_range=83111+(1:3*25);
+  if expver==1
+    plasma_range=83111+(1:3*25);
+  elseif expver==2
+    plasma_range=col(ones(4*50,1)*(0:2)*82232+(1:4*50)'*ones(1,3)+108611);
+  end
+  if local.site=='T', d_saveint.dir='/data1/integrated/AUTO'; end
 end

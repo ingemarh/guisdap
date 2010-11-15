@@ -7,7 +7,7 @@ function [varargout]=plasma_summary(pl_dir,expt,gates,plots)
 %        expt   Name of experiment (or guessed from pl_dir)
 %        gates  Gates to display
 %        plots  Display a number of plots for internal checks
-% output: pl containing
+% output: pl structure containing
 %            .t Time
 %            .s Spectra
 %            .f Freqeuencies
@@ -168,6 +168,7 @@ if nargout
 end
 %plsig=plsig/median(plsig(:));
 %plsig(find(plsig<1))=1; plsig=log(plsig);
+[d,forder]=sort(freq); plsig=plsig(:,:,forder,:); plfreq=plfreq(:,forder,:);
 if plots
  plot(plfreq(:,:,round(nfl/2)),reshape(plsig(gate,:,:,round(nfl/2)),nfft,nfreq))
  pause

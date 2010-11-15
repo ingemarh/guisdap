@@ -1,4 +1,5 @@
 %ran=[47 143;123 219;200 326];
+ran=[49 233;180 323;227 413]; %180 should be 137 
 ran=[49 233;137 323;227 413];
 nfft=0; nint=1; ngates=3;
 maxe=2; nup_d=1; skip_if=0;
@@ -19,7 +20,7 @@ else
  ele=77.5; updown=0; nlag=50;
  startad=83111+1;
  if vs==2.0
-  uparfreq=NaN; ngates=4; nup_d=3;
+  uparfreq=NaN; ngates=4; nup_d=3; freq=[-3.6 -6 -8.4]*1e6;
   ran=[47 221;128 302;209 383;290 464];
   startad=(0:2)*82232+108611+1;
  end

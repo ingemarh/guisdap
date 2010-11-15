@@ -116,7 +116,7 @@ if length(p.updown)==2
  end
  plf(d)=mean(abs(plpeak_c(d,:)),2)/1e6;
 else
- plf=abs(plpeak_c(:,1+updown))/1e6;
+ plf=abs(plpeak_c(:,1+p.updown))/1e6;
 end
 if plots>1
  ogcf=gcf; figure(9)
