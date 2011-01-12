@@ -1,6 +1,5 @@
 function forward_spec(data,var,lpgs,f_womega)
-global lpg_lag p_dtau r_spec r_freq
-
+global lpg_lag p_dtau r_spec r_freq r_lag r_acf r_ace di_spectra
 weight=sum(abs(f_womega),2);
 nd=length(weight);
 weight(nd/2+1:end)=weight(1:nd/2);
@@ -18,25 +17,45 @@ for l=1:length(lag)
 end
 %[err(1:5)/mean(err) std(err)/mean(err)]
 %keyboard
-dt=median(diff(lag));
-l=find(err>mean(err)+3*std(err)); acf(l)=[]; lag(l)=[];
-ml=max(lag); nl=round(ml/dt); l=(0:nl)/nl*ml; fl=find(lag);
-acf=interp1([-lag(fl) lag],[conj(acf(fl)) acf],l,'spline');
-[s,f]=acf2spec(acf.',l*p_dtau*1e-6);
-if isempty(r_freq)
- r_freq=f'; r_spec=s;
-else
- lrf=size(r_freq,1); lf=length(f);
- if lrf<lf
-  r_freq(end+1:lf,:)=NaN;
-  r_spec(end+1:lf,:)=NaN;
- elseif lrf>lf
-  f(end+1:lrf)=NaN;
-  s(end+1:lrf)=NaN;
+if di_spectra==-1
+ if isempty(r_acf)
+  r_acf=acf';
+  r_ace=err';
+  r_lag=lag';
+ else
+  lrf=size(r_lag,1); lf=length(lag);
+  if lrf<lf
+   r_lag(end+1:lf,:)=NaN;
+   r_acf(end+1:lf,:)=NaN;
+   r_ace(end+1:lf,:)=NaN;
+  elseif lrf>lf
+   lag(end+1:lrf)=NaN;
+   acf(end+1:lrf)=NaN;
+   err(end+1:lrf)=NaN;
+  end
+  r_lag(:,end+1)=lag'; r_acf(:,end+1)=acf'; r_ace(:,end+1)=err';
  end
- r_freq(:,end+1)=f'; r_spec(:,end+1)=s;
-end
+else
+ dt=median(diff(lag));
+ l=find(err>mean(err)+3*std(err)); acf(l)=[]; lag(l)=[];
+ ml=max(lag); nl=round(ml/dt); l=(0:nl)/nl*ml; fl=find(lag);
+ acf=interp1([-lag(fl) lag],[conj(acf(fl)) acf],l,'spline');
+ [s,f]=acf2spec(acf.',l*p_dtau*1e-6);
+ if isempty(r_freq)
+  r_freq=f'; r_spec=s;
+ else
+  lrf=size(r_freq,1); lf=length(f);
+  if lrf<lf
+   r_freq(end+1:lf,:)=NaN;
+   r_spec(end+1:lf,:)=NaN;
+  elseif lrf>lf
+   f(end+1:lrf)=NaN;
+   s(end+1:lrf)=NaN;
+  end
+  r_freq(:,end+1)=f'; r_spec(:,end+1)=s;
+ end
 %plot(f,s),drawnow
+ end
 
 
 function [f,w]=acf2spec(acf,lag,m)
