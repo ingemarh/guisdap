@@ -22,7 +22,7 @@ end
 if nargin<4, plots=0; end
 global Time par1D par2D axs r_Magic_const DATA_PATH local START_TIME END_TIME fpp_plot pl
 
-edge_dist=10;
+edge_dist=10; overlap=2;
 
 %Get plasmaline data
 if isempty(plots) | plots
@@ -128,7 +128,7 @@ end
 % find the density ratio (need a few iterations)
 disp('Fitting')
 d=find(isfinite(plf));
-Gtime=mean(Time); Ptime=mean(pl.t); maxs=mean(diff(Time))/2;
+Gtime=mean(Time); Ptime=mean(pl.t); maxs=overlap/2*mean(diff(Time));
 ip=[]; il=[];
 for i=d'
  [s j]=min(abs(Ptime(i)-Gtime));

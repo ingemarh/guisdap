@@ -168,7 +168,11 @@ if nargout
 end
 %plsig=plsig/median(plsig(:));
 %plsig(find(plsig<1))=1; plsig=log(plsig);
-[d,forder]=sort(freq,1); plsig=plsig(:,:,forder,:); plfreq=plfreq(:,forder,:);
+[d,forder]=sort(freq);
+for i=1:nfl
+ plsig(:,:,:,i)=plsig(:,:,forder(:,i),i);
+ plfreq(:,:,i)=plfreq(:,forder(:,i),i);
+end
 if plots
  plot(plfreq(:,:,round(nfl/2)),reshape(plsig(gate,:,:,round(nfl/2)),nfft,nfreq))
  pause
