@@ -69,6 +69,7 @@ if verbose
  gates=minput('Gates to display?',gates);
 end
 nfreq=length(freq); dgates=length(gates);
+if ~ismember(gate,gates), gate=gates(end); end
 
 endad=startad+(nfft+nlag)*ngates*nint*nfreq/length(startad)-1;
 add=[]; for i=1:length(startad), add=[add startad(i):endad(i)]; end
@@ -104,7 +105,7 @@ plsig=zeros(size(plspec));
 
 bands=unique(upar(1,:));
 for band=1:length(bands)
- b=find(upar(1,:)==bands(band));
+ b=find(upar(1,:)==bands(band)); lb=length(b);
  %Get spectral shape and find interferences
  disp('Removing noise')
  wrap=9;
@@ -112,14 +113,12 @@ for band=1:length(bands)
   spec_shape=reshape(median(plspec(g,:,:,b),4),nfft,nfreq);
   filt_shape=spec_shape;
   fsh=[filt_shape(end-wrap+1:end,:);filt_shape;filt_shape(1:wrap,:)];
-  d2=diff(filt_shape,2);
-  fd2=-std(d2);
+  d2=diff(filt_shape);
+   fd2=2*std(d2); jj=-(wrap-1):nfft+wrap;
   for i=1:nfreq
-   d=find(d2(:,i)<2*fd2(i));
-   for j=d'
-    jj=3; if j>nfft-3, jj=2; end
-    filt_shape(j+(1:jj),i)=interp1([-3:-1 5:7]',fsh(j+wrap+[-3:-1 5:7],i),(1:jj)','spline');
-   end
+   dd=find(d2(:,i)<-fd2(i)); du=find(d2(:,i)>fd2(i));
+   d=unique([dd;du+1]); jd=jj; jd(d+wrap)=[];
+   filt_shape(:,i)=interp1(jd,fsh(jd+wrap,i),1:nfft,'spline');
   end
   if plots
    plot([filt_shape spec_shape]), pause
@@ -131,21 +130,21 @@ for band=1:length(bands)
   end
  
  %Find a timevarying background (Use Tsys instead?)
-  fp=reshape(median(plspec(g,:,:,b),2),nfreq,[]);
-  nplspec=zeros(size(plspec(g,:,:,b)));
-  spnorm=median(filt_shape,1);
+  fp=reshape(median(plspec(g,:,:,b),2),nfreq,lb);
+  nplspec=zeros(nfft,nfreq,lb);
+  spnorm=median(fp,2);
+  %spnorm=median(filt_shape,1);
   for i=1:nfreq
-   nplspec(1,:,i,:)=(filt_shape(:,i)*fp(i,:)/spnorm(i));
+   nplspec(:,i,:)=filt_shape(:,i)*fp(i,:)/spnorm(i);
   end
-  %Add interference lines to background
-  nplspec=reshape(reshape(nplspec,nfft*nfreq,[])+interf_spec(:)*ones(1,length(b)),1,nfft,nfreq,[]);
- 
-  %Remove background and normalise signal
-  plsig(g,:,:,b)=plspec(g,:,:,b)-nplspec;
-  if plots
-   imagesc(reshape(plsig(g,:,:,b),nfft*nfreq,[])), pause
-  end
+  %Remove background and interference
+  plsig(g,:,:,b)=reshape(plspec(g,:,:,b),nfft,nfreq,lb)-nplspec-reshape(interf_spec(:)*ones(1,lb),nfft,nfreq,lb);
+  %Normalise signal
+  %plsig(g,:,:,b)=plsig(g,:,:,b)./reshape(nplspec,1,nfft,nfreq,lb);
  end
+end
+if plots
+ imagesc(reshape(plsig(gate,:,:,:),nfft*nfreq,[])), pause
 end
  
 freq_scale=invert*(-nfft/2:nfft/2-1)/dt/nfft;
