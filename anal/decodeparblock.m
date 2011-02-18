@@ -42,7 +42,7 @@ if ant_id==3
   ch_el=d_parbl(9:10);
   ch_az=zeros(size(ch_el));
 end
-if lpb>41 & (ant_id==5 | ant_id==6)
+if lpb>41 & (ant_id==5 | ant_id==6) & d_parbl(42)
   ch_range=d_parbl(42)/1000;
 else
   ch_range=[];
