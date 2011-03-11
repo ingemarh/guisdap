@@ -17,7 +17,7 @@ p_rep=240000;
 name_site=upper(site);
 if name_site=='L'
  ch_f=500;
- if rc==3
+ if rc==3 | rc==4
   ch_adcint=2;
   ch_filter={'b170d30.fir'};
  else
