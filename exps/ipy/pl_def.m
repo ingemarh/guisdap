@@ -4,7 +4,7 @@ ran=41+(0:2)'*65*ones(1,2)+ones(3,1)*[0 140];
 maxe=2; ele=81.6; updown=0:1; nup_d=1; skip_if=0;
 uparfreq=[3.65 11.65];
 vs=d_parbl(57);
-d_date=datenum(d_parbl(1:6));
+d_date=datenum(row(d_parbl(1:6)));
 if d_date>datenum(2007,11,11)
   ran=[41 252;117 329;194 405];
 end
