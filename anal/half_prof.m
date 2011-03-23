@@ -23,7 +23,7 @@ for g_ind=1:length(a_adstart)
   addr=a_addr(a_adstart(g_ind):a_adend(g_ind));
   lpgs=ad_lpg(addr+ADDR_SHIFT); % These are the lag profile groups of the data points
 
-  aa=a_priori(g_ind,:); 
+  aa=a_priori(g_ind,:);
   a_priorivar=a_priorierror(g_ind,:)'.^2;
   p_coeffg=[ad_coeff(addr+ADDR_SHIFT),ad_coeff(addr+ADDR_SHIFT)]';
   signal_acf=[real(d_data(addr+ADDR_SHIFT));imag(d_data(addr+ADDR_SHIFT))];

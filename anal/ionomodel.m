@@ -129,7 +129,7 @@ if nargout>1
 %   max(fit_chaps(log(chap),nepp,hpp,forc,tol,fac,0))
 %   hold on,plot(fit_chaps(log(chap),nepp,hpp,forc,tol,fac,0),[hpp',10:10:60],'go'),hold off,drawnow
    end
-   ne_from_pp=nepp+1e9;
+   ne_from_pp=nepp;
   elseif ionomodel_control<8
    global d_time p_XMITloc
    tsec=tosecs(d_time(1,:));
@@ -139,12 +139,15 @@ if nargout>1
   end
   apriori(:,6)=comp_model(heights2,Ne210);
  end
+
  if ionomodel_control~=1
-  d=find(ne_from_pp~=0); apriori(d,1)=ne_from_pp(d);
+  d=find(isfinite(ne_from_pp)); apriori(d,1)=ne_from_pp(d);
  end
 
  apriorierror=ones(size(apriori));
  for par=1:size(apriori,2)
+  apriori(apriori(:,par)<fit_altitude(par,7),par)=fit_altitude(par,7);
+  apriori(apriori(:,par)>fit_altitude(par,8),par)=fit_altitude(par,8);
   h1=fit_altitude(par,1); h2=fit_altitude(par,2); hd=fit_altitude(par,3)+eps;
   err=(tanh((heights-h1)/hd)+tanh((h2-heights)/hd))/2;
   apriorierror(:,par)=err*fit_altitude(par,4);

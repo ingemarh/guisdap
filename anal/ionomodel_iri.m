@@ -32,10 +32,9 @@ if ~isempty(d)
  d1=find(isfinite(m_iri(:,2)));
  m_iri(d,2:3)=exp(inter3(altitude(d),altitude(d1),log(m_iri(d1,2))))'*ones(1,2);
 end
-ne=m_iri(:,1);
-d=find(isnan(ne));
+ne=m_iri(:,1); net=(isnan(ne) | ne<=0); d=find(net);
 if ~isempty(d)
- d1=find(isfinite(m_iri(:,1)));
+ d1=find(~net);
  if isempty(d1)
   ne(:)=1e7;
  elseif min(altitude(d))>max(altitude(d1)) | max(altitude(d))<min(altitude(d1))

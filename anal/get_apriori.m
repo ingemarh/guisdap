@@ -44,15 +44,15 @@ else
   addr(find(ad_lag(addr)>0))=[];
 end
 
-ne_from_pp=zeros(size(height'));
+ne_from_pp=NaN*ones(size(height'));
 if length(addr)>0
   [pp_profile,pp_range,pp_sigma,pp_err,pp_w]=power_prof(addr',0);
   pp_height=range_to_height(pp_range,ch_el(ch));
 
   for gate=1:length(a_adstart)
     ind=find(abs(pp_range-range(gate))<ad_w(ADDR_SHIFT+a_addr(a_adstart(gate))));
-    if length(ind)>0 & any(pp_profile(ind)>0),
-      ne_from_pp(gate)=mean(min(2e12,max(5e9,p_N0*pp_profile(ind)))); 
+    if length(ind)>0 & any(pp_profile(ind)>0)
+      ne_from_pp(gate)=mean(p_N0*pp_profile(ind)); 
     end
   end
 
