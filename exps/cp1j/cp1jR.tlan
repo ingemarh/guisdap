@@ -1,0 +1,5519 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR            0
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  1,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       4      B7
+AT       5      B7OFF
+AT       6      B8
+AT       7      B8OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  1,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE #  1,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR         7651
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  1,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  1,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE #  1,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        15302
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  2,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  2,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE #  2,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        22953
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  2,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  2,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE #  2,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        30604
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  3,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  3,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE #  3,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        38255
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  3,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  3,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE #  3,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        45906
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  4,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  4,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE #  4,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        53557
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  4,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  4,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE #  4,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        61208
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  5,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  5,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE #  5,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        68859
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  5,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  5,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE #  5,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        76510
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  6,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  6,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE #  6,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        84161
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  6,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  6,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE #  6,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        91812
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  7,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  7,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE #  7,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR        99463
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  7,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  7,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE #  7,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       107114
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  8,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  8,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE #  8,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       114765
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  8,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  8,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE #  8,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       122416
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  9,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  9,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE #  9,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       130067
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  9,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  9,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE #  9,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       137718
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 10,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 10,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 10,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       145369
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 10,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 10,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 10,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       153020
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 11,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 11,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 11,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       160671
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 11,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 11,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 11,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       168322
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 12,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 12,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 12,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       175973
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 12,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 12,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 12,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       183624
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 13,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 13,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 13,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       191275
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 13,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 13,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 13,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       198926
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 14,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 14,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 14,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       206577
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 14,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 14,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 14,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       214228
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 15,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 15,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 15,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       221879
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 15,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 15,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 15,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       229530
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 16,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 16,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 16,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       237181
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 16,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 16,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 16,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       244832
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 17,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 17,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 17,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       252483
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 17,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 17,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 17,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       260134
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 18,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 18,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 18,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       267785
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 18,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 18,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 18,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       275436
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 19,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 19,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 19,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       283087
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 19,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 19,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 19,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       290738
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 20,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 20,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 20,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       298389
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 20,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 20,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 20,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       306040
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 21,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 21,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 21,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       313691
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 21,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 21,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 21,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       321342
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 22,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 22,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 22,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       328993
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 22,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 22,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 22,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       336644
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 23,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 23,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 23,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       344295
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 23,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 23,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 23,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       351946
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 24,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 24,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 24,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       359597
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 24,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 24,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 24,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       367248
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 25,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 25,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 25,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       374899
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 25,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 25,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 25,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       382550
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 26,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 26,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 26,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       390201
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 26,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 26,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 26,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       397852
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 27,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 27,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 27,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       405503
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 27,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 27,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 27,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       413154
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 28,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 28,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 28,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       420805
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 28,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 28,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 28,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       428456
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 29,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 29,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 29,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       436107
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 29,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 29,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 29,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       443758
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 30,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 30,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 30,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       451409
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 30,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 30,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 30,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       459060
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 31,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 31,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 31,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       466711
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 31,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 31,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 31,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       474362
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 32,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 32,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH6   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH6OFF
+AT      5061    CH5   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH5OFF
+% 
+%   CYCLE # 32,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH6   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       482013
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 32,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 32,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH5   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH5OFF
+AT      5061    CH6   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH6OFF
+% 
+%   CYCLE # 32,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH5   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       489664
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  1,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       4      B7
+AT       5      B7OFF
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  1,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE #  1,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       497315
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  1,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  1,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE #  1,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       504966
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  2,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  2,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE #  2,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       512617
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  2,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  2,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE #  2,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       520268
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  3,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  3,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE #  3,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       527919
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  3,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  3,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE #  3,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       535570
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  4,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  4,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE #  4,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       543221
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  4,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  4,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE #  4,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       550872
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  5,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  5,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE #  5,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       558523
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  5,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  5,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE #  5,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       566174
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  6,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  6,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE #  6,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       573825
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  6,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  6,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE #  6,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       581476
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  7,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  7,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE #  7,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       589127
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  7,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  7,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE #  7,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       596778
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  8,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  8,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE #  8,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       604429
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  8,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  8,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE #  8,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       612080
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  9,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  9,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE #  9,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       619731
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE #  9,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE #  9,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE #  9,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       627382
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 10,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 10,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 10,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       635033
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 10,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 10,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 10,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       642684
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 11,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 11,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 11,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       650335
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 11,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 11,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 11,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       657986
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 12,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 12,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 12,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       665637
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 12,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 12,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 12,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       673288
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 13,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 13,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 13,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       680939
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 13,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 13,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 13,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       688590
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 14,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 14,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 14,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       696241
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 14,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 14,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 14,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       703892
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 15,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 15,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 15,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       711543
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 15,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 15,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 15,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       719194
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 16,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 16,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 16,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       726845
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 16,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 16,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 16,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       734496
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 17,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 17,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 17,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       742147
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 17,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 17,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 17,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       749798
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 18,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 18,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 18,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       757449
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 18,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 18,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 18,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       765100
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 19,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 19,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 19,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       772751
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 19,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 19,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 19,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       780402
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 20,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 20,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 20,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       788053
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 20,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 20,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 20,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       795704
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 21,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 21,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 21,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       803355
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 21,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 21,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 21,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       811006
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 22,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 22,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 22,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       818657
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 22,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 22,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 22,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       826308
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 23,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 23,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 23,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       833959
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 23,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 23,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 23,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       841610
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 24,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 24,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 24,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       849261
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 24,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 24,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 24,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       856912
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 25,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 25,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 25,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       864563
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 25,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 25,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 25,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       872214
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 26,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 26,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 26,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       879865
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 26,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 26,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 26,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       887516
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 27,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 27,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 27,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       895167
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 27,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 27,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 27,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       902818
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 28,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 28,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 28,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       910469
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 28,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 28,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 28,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       918120
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 29,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 29,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 29,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       925771
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 29,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 29,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 29,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       933422
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 30,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 30,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 30,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       941073
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 30,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 30,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 30,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       948724
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 31,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 31,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 31,1 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       956375
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 31,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 31,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 31,2 CALIBR.
+%%%%
+AT      5540    VCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       964026
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 32,1 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT       6      B8
+AT       7      B8OFF
+AT       8      B9
+AT       9      B9OFF
+AT      10      B9
+AT      11      B9OFF
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 32,1 receive part 
+%%
+AT        76    RECEV
+AT        80    CH3   
+AT       750    CH8   
+AT      1275    CH3OFF
+AT      1725    CH4   
+AT      1727    CH3   
+AT      4540    CH8OFF
+AT      5061    CH7   
+AT      5500    CH4OFF
+AT      5502    CH3OFF
+AT      5513    CH7OFF
+% 
+%   CYCLE # 32,1 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH8   
+AT      5709    CH4   
+AT      5710    CH3   
+AT      7594    CH4OFF
+AT      7595    CH3OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+SETTCR       971677
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%%
+%   CYCLE # 32,2 DECODER CONTR
+% 
+AT      1      TRANS,CHQPULS
+%%
+AT      12      B9
+AT      13      B9OFF
+%%
+%   CYCLE # 32,2 receive part 
+%%
+AT        76    RECEV
+AT        80    CH4   
+AT       750    CH7   
+AT      1275    CH4OFF
+AT      1725    CH3   
+AT      1727    CH4   
+AT      4540    CH7OFF
+AT      5061    CH8   
+AT      5500    CH3OFF
+AT      5502    CH4OFF
+AT      5513    CH8OFF
+% 
+%   CYCLE # 32,2 CALIBR.
+%%%%
+AT      5540    HCAL
+AT      5620    CH7   
+AT      5709    CH3   
+AT      5710    CH4   
+AT      7594    CH3OFF
+AT      7595    CH4OFF
+AT      7600    STC
+AT      7605    ALLOFF,CALOFF
+AT      7645    BUFLIP
+%%%
+%%%
+%  Padding cycle to ensure proper decoding
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%   END OF CODE GROUP - RECYCLE !  %
+%%
+SETTCR          0
+%
+AT         986000      RECEV
+AT         986900      HCAL          % DUMMIES TO PREVENT THE DUMP SIGNAL
+AT         986901      CALOFF        % FROM APPEARING PREMATURELY IN LAST CYCLE
+AT         986979      REP
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
