@@ -1,4 +1,4 @@
-GUISDAP 8.6
+GUISDAP 8.7
 
 This release of guisdap contains several new features and bugfixes, but
 everything is made compatible with older versions (hopefully). The package
@@ -7,11 +7,11 @@ may not) be some problems on specific platforms.
 
 Install
 
-Guisdap-8.6 has been succesfully installed on Solaris and linux, and the
-makefiles are written for those systems. Other architectures may have to change
-the makefiles, if you want speed, othervise it should run without the compiled
-routines. On Windows systems it is recommended to run under the cygwin
-environment for best compabilitiy. Please report any changes needed for other
+Guisdap-8.7 has been succesfully installed on linux. Other architectures may
+have to change the makefiles, if speed is desired, othervise it should run
+without the compiled routines.
+On Windows systems it is recommended to run under the cygwin
+environment for best compabilitiy. Please report any changes needed for any
 systems.
 
 untar the distribution at your favourite place
@@ -38,7 +38,7 @@ At the prompt, type "guisdap --help" to see all the switches available. Normal
 analysis is done running "guisdap -a" which will bring up a window with some
 entries to fill in. (Hopefully selfexplained) This is the same as "guisdap" and
 then "analyse". When finished hit "GO". A more detailed instruction can be found
-at http://www.eiscat.se:8080/raw/GUISDAP/doc/howto.html.
+at http://www.eiscat.se/raw/GUISDAP/doc/howto.html.
 
 There is also a course presentation describing how to initialise new experiments
 and some useful tips on more specialised analysis. The initialisation scripts

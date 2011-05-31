@@ -31,7 +31,7 @@ plf_polen=polen;
 a=vizu('verbose',alt,'P1 AE');
 global Time axs par1D DATA_PATH START_TIME END_TIME r_Magic_const
 d=datevec(Time(1));
-[dd,fo]=get_fo(d(1),d(2));
+[dd,fo]=get_fo(Time(1),Time(end));
 t=[]; f=[];
 d=find(dd>datenum(START_TIME) & dd<datenum(END_TIME) & fo(:,F)>folim(1) & fo(:,F)<folim(2));
 dd=dd(d); fo=fo(d,:);

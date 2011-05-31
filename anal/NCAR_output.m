@@ -18,7 +18,7 @@ if nargin==0
     for fid=NCAR_fid(find(NCAR_fid)), fclose(fid); end
   end
   NCAR_fid=[]; return
-elseif isempty(NCAR_fid)
+elseif isempty(NCAR_fid) | all(NCAR_fid<1)
   NCAR_fid=[0 0];
 % output files.  Set any file to zero length to disable that output
   if nargin<3, NCAR_binary=[]; end
