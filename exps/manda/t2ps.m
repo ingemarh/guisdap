@@ -28,7 +28,12 @@ if name_site=='L'
   p_rep=160000;
  end
 elseif name_site=='V'
- if rc==3
+ if rc==4
+  ch_f=10;
+  ch_adcint=1.2;
+  ch_filter={'b300d18.fir'};
+  p_rep=192000;
+ elseif rc==3
   ch_f=10;
   ch_adcint=4;
   ch_filter={'b125d60.fir'};
