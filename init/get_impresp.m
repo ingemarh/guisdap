@@ -56,7 +56,8 @@ function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot)
     n = floor(t2/p_dtau);
     t1 = t2 - n*p_dtau;
     t4 = t3 + n*p_dtau;
-    t_ip = t1:p_dtau:t4;
+    %t_ip = t1:p_dtau:t4;
+    t_ip = (0:round((t4-t1)/p_dtau))*p_dtau+t1;
  
     h2 = interp1(t_ddf,ddf,t_ip,'*cubic');
 

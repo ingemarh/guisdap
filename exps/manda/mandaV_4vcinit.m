@@ -12,4 +12,3 @@ for scan=0:N_scan-1
   vc_t1(1+scan)=0+SHIFT;
   vc_t2(1+scan)=T_scan+SHIFT;
 end
-

@@ -30,10 +30,10 @@ for i=find(lpg_bcs=='s' | lpg_bcs=='x')
   ranges=(lpg_h(i)+[0 (lpg_nt(i)-1)*lpg_dt(i)])*p_dtau;
   if lpg_nt(i)>1
     fprintf('Lpg %d: ranges %.0f-%.0f us',i,ranges)
-    fprintf(' (%.1f-%.1f km) width %.0f us\n',ranges*.15,lpg_w(i)*p_dtau)
+    fprintf(' (%.1f-%.1f km) width %.1f us\n',ranges*.15,lpg_w(i)*p_dtau)
   else
     fprintf('Lpg %d: range %.0fus',i,ranges(1))
-    fprintf(' (%.1f km) width %.0f us\n',ranges(1)*.15,lpg_w(i)*p_dtau)
+    fprintf(' (%.1f km) width %.1f us\n',ranges(1)*.15,lpg_w(i)*p_dtau)
   end
   plot(r*p_dtau,w)
   title(['range ambiguity function for lpg=' num2str(i)]), grid

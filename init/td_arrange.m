@@ -16,14 +16,20 @@ if length(vc_mf)==0, vc_mf=zeros(1,length(vc_t1)); end
 td_t1=td_t1/p_dtau; td_t2=td_t2/p_dtau; 
 vc_t1=vc_t1/p_dtau; vc_t2=vc_t2/p_dtau; 
 p_rep=p_rep/p_dtau;
+d=find(abs(td_t1-round(td_t1))<eps(1e3)); td_t1(d)=round(td_t1(d));
+d=find(abs(td_t2-round(td_t2))<eps(1e3)); td_t2(d)=round(td_t2(d));
+d=find(abs(vc_t1-round(vc_t1))<eps(1e3)); vc_t1(d)=round(vc_t1(d));
+d=find(abs(vc_t2-round(vc_t2))<eps(1e3)); vc_t2(d)=round(vc_t2(d));
+if abs(p_rep-round(p_rep))<eps(1e3), p_rep=round(p_rep); end
 
 % Produce another set of td-variables by adding p_rep to all  
 % This increases flexibility in the virtual channel definition AH 94-04-20
-td_ch=[td_ch,td_ch];
-td_am=[td_am,td_am];
-td_t1=[td_t1,td_t1+p_rep];
-td_t2=[td_t2,td_t2+p_rep];
-
+%if any(vc_t1>p_rep) | any(vc_t2>p_rep)
+ td_ch=[td_ch,td_ch];
+ td_am=[td_am,td_am];
+ td_t1=[td_t1,td_t1+p_rep];
+ td_t2=[td_t2,td_t2+p_rep];
+%end
 
 % Produce ADC intervals for all virtual channels in units of p_dtau
 vc_adcint=zeros(1,length(vc_ch));

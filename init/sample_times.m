@@ -45,5 +45,5 @@ elseif  length(ind)==0 & (stype==type2ind('b') | stype==type2ind('c'));
   end
 end
 
-start_sampling=fix(vc_sampling(ind,3));
-stop_sampling=fix(vc_sampling(ind,4));
+start_sampling=vc_sampling(ind,3);
+stop_sampling=vc_sampling(ind,4);
