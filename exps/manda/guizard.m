@@ -6,6 +6,6 @@
 ld=length(d_data);
 if ld==39061 | ld==57166
   lpg_cut(find(lpg_h*.15>300))
-elseif ld==2*69400
+elseif ld==2*69400 | ld==2*101252
   lpg_rep(2)
 end

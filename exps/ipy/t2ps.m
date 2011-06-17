@@ -18,8 +18,13 @@ td_t2=t_to_ps(:,2)';
 td_am=t_to_ps(:,3)';
 td_ch=t_to_ps(:,4)';
 if p
- ch_adcint=[.6];
- ch_filter={'w600d6.fir'};
+ if rc<3
+  ch_adcint=[.6];
+  ch_filter={'w600d6.fir'};
+ else
+  ch_adcint=[.4];
+  ch_filter={'b800d6.fir'};
+ end
  ch_f=[499.85];
  sig=find(td_ch==ch_f & td_am==2 & rem(td_ch,3750)<1500);
  td_t1(sig)=td_t1(sig)+.2;
