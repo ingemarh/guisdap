@@ -1,6 +1,6 @@
 GUISDAP 8.7
 
-This release of guisdap contains several new features and bugfixes, but
+This release of guisdap contains a few new features and bugfixes, but
 everything is made compatible with older versions (hopefully). The package
 should be compatible with Matlab versions higher then 6.5, but there may (or
 may not) be some problems on specific platforms.
@@ -41,51 +41,36 @@ then "analyse". When finished hit "GO". A more detailed instruction can be found
 at http://www.eiscat.se/raw/GUISDAP/doc/howto.html.
 
 There is also a course presentation describing how to initialise new experiments
-and some useful tips on more specialised analysis. The initialisation scripts
-are avaiable with "guisdap -i".
+and some useful tips on more specialised analysis in the EISCAT web site. The
+initialisation scripts are avaiable with "guisdap -i".
 
 New features
 
-* Vector velocity extractions have been added. One specifies 'volumes' in UT
-  time, invariant latitude and altitude, for the supplied data. The data can be
-  mono-, bi-, or multistatic. All individual ion velocity measurements within
-  this volume together with possible constraints on vertical or field aligned
-  velocities are used to derive full vectors. The vector is in geographic
-  orientation, but since the full covariance matrix is calculated, it can be
-  easily be correctly rotated into geomagnetic coordinates. A wrapper,
-  velocity_wrapper.m, contains velocity setups for different CP combinations.
-* There has been a need for getting spectra from the lag profiles most
-  experiments contain. Previosly there have been the inversion possiblity from
-  lagprofiles to spectra taking care of the receiver and transmitter effects.
-  However, the inversion needs careful adjustment at the desired height to
-  produce a good spectrum. Now, also a forward method have been added, like
-  the RTG displays, but more accurate. This can be enabled by the boolean
-  display_spectra.
-* A number of new experiments have been added, different site versions of beata
-  and folke. Some of the beata experiments contain time slices of short lags to
-  be used as high resolution profiles. To analyse profiles like this, a
-  parameter have been added, analyse_pponly, to separate spectra and power
-  analysis.
-* For demanding experiments like tau7 and tau8, with relatively high sampling
-  rates, and producing many lags, the analysis can be speeded up by gating the
-  lagprofiles before fitting. This is controlled with analyse_gating, to be set
-  to either 1 or 2 for different gating strategy. The normal case would be 2.
-* Numerous hidden improvements and refinements
-
-  - Allow adjustment of polynomial length in calib_ne
-  - Move plasma defs to exps dir
-  - added analysis_sweep wrapper
-  - Enable other plfreqs
-  - Give NaN to shorten arrays in minput
-  - Read errors also from madrigal for vel calcs
-  - Spear gate
-  - Added a genereric lpg_rep to repete several blocks
-  - Updates for eiscat3d tau8
-  - Added max_ppw parameter
-  - Decimated offppd estimate
-  - Allow for amp mod codes in radar_eq
-  - Make zoomed web plots more default
-  - 2008b needs jvm, allow overrides in scan setups
+* To get raw density values also using nonzero lag profiles a parameter
+  analysis_ppshortlags have been added. The value is default set to 1 on some
+  experiments, but can be adjusted. The value sets how far out in the lag to go.
+  To separate the different power profiles in the result file, the parameter
+  r_ppw, specifying the range resolution, can be used.
+* For experiments with transmitter samples on UHF and ESR, the phasepushing of
+  the klystrons is calculated and taken into account of. For remote sites and
+  experiments without defined transmitter samples after 1 January 2009 a default
+  value of -21 Hz is used. One can adjust the value manually with the
+  a_phasepush parameter.
+* A summary plot for the plasmalines is added. First one need to integrate the
+  data with guisdap, either via the d_saveint.dir parameter specifying the
+  directory where to save it or 'AUTO', or set the analysis_plasmaline flag for
+  faster handling of the data. The plot is then issued with
+  'plasma_summary directory' command in the matlab window.
+* There are of course numerous hidden improvements and refinements
+  - new magic constants
+  - option to save forward acfs
+  - intro to plasmaline analysis
+  - got back simulation (not fully)
+  - make dirty variances for single dumps
+  - fixes for new vs of matlab and madrigal
+  - fixes for non integer samplings
+  - specifying 32bit ints in library interfaces
+  - updates from IRI
   - ...
 
 Further information can be found at www.eiscat.se.
