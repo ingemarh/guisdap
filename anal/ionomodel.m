@@ -142,6 +142,7 @@ if nargout>1
 
  if ionomodel_control~=1
   d=find(isfinite(ne_from_pp)); apriori(d,1)=ne_from_pp(d);
+  apriori(apriori(:,1)<1e9)=1e9;
  end
 
  apriorierror=ones(size(apriori));
