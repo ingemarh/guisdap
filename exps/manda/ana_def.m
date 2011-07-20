@@ -11,10 +11,12 @@ if name_site=='V'
 elseif name_site=='T'
   fit_altitude(2:5,1)=[100;130;107;90];
   first=50; last=600; d1=.45; d2=1; n1=100;
-  if expver>2
+  h1=230; h2=370;
+  if fix(expver)==4
+    a_satch.clutter=250;
+    h1=200; d1=.36; first=20; n1=225;
+  elseif expver>2
    h1=310; h2=500;
-  else
-   h1=230; h2=370;
   end
 elseif name_site=='L'
   fit_altitude([2 3 5],1)=[100;130;90];
