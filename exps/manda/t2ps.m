@@ -50,8 +50,13 @@ else
  if rc==4
   d=find(rem(td_t1,1500)<1000);
   td_t1(d)=td_t1(d)-1; td_t2(d)=td_t2(d)-1;
-  ch_adcint=1.2;
-  ch_filter={'b300d18.fir'};
+  if name_site=='T'
+   ch_adcint=1.2;
+   ch_filter={'b300d18.fir'};
+  else
+   ch_adcint=2.4;
+   ch_filter={'b210d36.fir'};
+  end
   p_rep=192000;
  elseif rc==3
   ch_adcint=2;
