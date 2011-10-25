@@ -22,7 +22,7 @@ end
 natd=txsam-nbit+1;
 atd=zeros(nbit,natd);
 for i=1:natd
- for j=1:nbit
+ for j=1:ncod
   atd(:,i)=atd(:,i)+ac(:,j).*dr(i:nbit-1+i,j);
  end
 end

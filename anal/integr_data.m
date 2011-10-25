@@ -30,7 +30,7 @@ global a_ind a_interval a_year a_start a_integr a_skip a_end
 global a_txlim a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
 persistent a_antold a_max secs a_posold a_nnold fileslist
- 
+
 OK=0; EOF=0; jj=0; N_averaged=0; M_averaged=0;
 d_ExpInfo=[]; d_raw=[]; txdown=0;
 if a_ind==0
@@ -75,6 +75,11 @@ while i<length(files)
   i=i+1; file=files(i);
   filename=fullfile(file.dir,sprintf('%08d%s',file.file,file.ext));
   i_averaged=1; i_var1=[]; i_var2=[];
+  q_dir=dir(canon(filename,0));
+  if a_realtime & ((now-q_dir.datenum)<1/86400)
+%   Check that the data file is old enough as it might still be being written to!
+    pause(1)
+  end
   try, load(canon(filename,0))
   %catch,end
 
