@@ -8,9 +8,6 @@ else
 end
 t2psfile=['t_to_ps.txt' apustr '.' lower(site)];
 t_to_ps=load(t2psfile,'-ascii');
-if site=='r'
-  d=find(t_to_ps(:,4)==12.2); t_to_ps(d,:)=[];
-end
 p_offsetppd=0;
 td_t1=t_to_ps(:,1)';
 td_t2=t_to_ps(:,2)';
