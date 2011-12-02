@@ -15,6 +15,7 @@ if name_site=='L'
     analysis_ppshortlags=1;
   end
 elseif name_site=='T' | name_site=='V'
+  a_satch.clutter=[2];
   a_satch.sigma=3;
   a_satch.cut=1;
   analysis_ppshortlags=1;

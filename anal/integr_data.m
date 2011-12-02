@@ -47,7 +47,7 @@ if a_ind==0
     if i>0, a_start=a_start+i*a_cycle; end
   end
   a_interval=a_start+[0 a_integr(1)];
-  a_max.gap=30; a_max.adiff=0.3;
+  a_max.gap=30; a_max.adiff=0.1*pi/180; %max 30s gap and 0.1 deg/s
   a_posold=zeros(1,9);
   a_nnold=zeros(1,9);
 else
@@ -121,7 +121,8 @@ while i<length(files)
    d_parbl(non_negative(d))=a_nnold(d);
   end
   a_nnold=d_parbl(non_negative);
-  a_ant=d_parbl([el az]);
+  a_ant=d_parbl([el az])/180*pi;
+  [dx,dy,dz]=sph2cart(a_ant(2),a_ant(1),1); a_ant=[dx dy dz];
   a_tx=d_parbl(a_txpower(1))*a_txpower(2);
   if a_integr<=0
     if isempty(a_antold)
@@ -133,24 +134,22 @@ while i<length(files)
     if a_integr<0 & exist('starttime','var')
       tdiff=tdiff | starttime-secs1<a_integr;
     end
-    adiff=a_antold-a_ant;
+    adiff=atan2(norm(cross(a_ant,a_antold)),dot(a_ant,a_antold))/a_inttime;
     a_antold=a_ant;
-    if any(fix(adiff/a_max.adiff)) | tdiff
-      if abs(a_ant(1)-90)>a_max.adiff+min(0,adiff(1)) | tdiff
-        a_interval(2)=file.file;
-        if tdiff & M_averaged>1
-          a_interval(2)=file.file-.5; a_antold=[];
-        elseif M_averaged==0
-	  secs=secs1; return
-        else
-	  secs=secs1;
-        end
-        d_parbl=prev_parbl;
-        break
+    if adiff>a_max.adiff | tdiff
+      a_interval(2)=file.file;
+      if tdiff & M_averaged>1
+        a_interval(2)=file.file-.5; a_antold=[];
+      elseif M_averaged==0
+        secs=secs1; return
       else
-        allow(find(fixed==az))=Inf;
+        secs=secs1;
       end
+      d_parbl=prev_parbl;
+      break
     end
+    allow(find(fixed==az))=Inf;
+    allow(find(fixed==el))=Inf;
   end
 
   secs=secs1;
@@ -168,7 +167,7 @@ while i<length(files)
   if ~dumpOK
     if ~txdown, fprintf('Tx down\n'), txdown=1; end
   elseif ~isempty(a_satch)
-    [dumpOK,ad_sat]=satch(a_ant(1),secs,a_inttime);
+    [dumpOK,ad_sat]=satch(d_parbl(el),secs,a_inttime);
   end
   if ~isempty(a_intfixforce)
     d=find(isfinite(a_intfixforce));
