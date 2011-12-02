@@ -76,7 +76,7 @@ while i<length(files)
   filename=fullfile(file.dir,sprintf('%08d%s',file.file,file.ext));
   i_averaged=1; i_var1=[]; i_var2=[];
   q_dir=dir(canon(filename,0));
-  if a_realtime & ((now-q_dir.datenum)<1/86400)
+  if a_realtime & now-datenum(q_dir.date)<1e-4
 %   Check that the data file is old enough as it might still be being written to!
     pause(1)
   end
