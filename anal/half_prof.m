@@ -130,8 +130,12 @@ for g_ind=1:length(a_adstart)
      fit_altitude(:,6));
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     status=(iter>=maxiter);
-    if status==0 & (any(result(afree)-eps<=physlim(1,afree)) | any(result(afree)+eps>=physlim(2,afree)))
-      status=3;
+    if status==0
+      if any(result(afree)-eps<=physlim(1,afree)) | any(result(afree)+eps>=physlim(2,afree))
+        status=3;
+      elseif sqrt(alpha(1))/result(1)>abs(errorlim)
+        status=2; % No fit should have been done...
+      end
     end
   end
   % Forward only the variances (not covariances) to store_results
