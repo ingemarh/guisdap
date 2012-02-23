@@ -14,15 +14,15 @@ C KEEP THE ABOVE SUBROUTINE, ARGUMENT, AND FUNCTION DECLARATIONS FOR USE
 C IN ALL YOUR FORTRAN MEX FILES.
 C---------------------------------------------------------------------
       INTEGER parp,rp(12)
-      logical jf(30)
+      logical jf(50)
       real*8 par(4500),dum(12)
-      real outf(20,500),oarr(50),tim(2),pos(2),h(3)
+      real outf(20,1000),oarr(100),tim(2),pos(2),h(3)
       save jf,nrp,rp,tim,pos,h
-c jf tttff ffttt ftttt ttftf ttttt tt---
-c jf tttff ffttt ffttt ttttf ttttt ttftt
-      data jf/3*.true.,4*.false.,3*.true.,2*.false.,7*.true.,.false.,
-     ,7*.true.,.false.,2*.true./,nrp/3/,rp/1,4,3,9*0/,
-     ,tim/15552090.,1996./,pos/69.2,19.2/,h/100.,590.,0./
+c jf tttff ftttt ttttt ttttt ftftt ttfff ttftf ----- ----- -----
+      data jf/3*.true.,3*.false.,14*.true.,.false.,.true.,.false.,
+     ,4*.true.,3*.false.,2*.true.,.false.,.true.,.false.,15*.true./,
+     ,nrp/3/,rp/1,4,3,9*0/,tim/15552090.,1996./,pos/69.2,19.2/,
+     ,h/100.,590.,0./
 C CHECK FOR PROPER NUMBER OF ARGUMENTS
       IF(NLHS.GT.1)CALL MEXERRMSGTXT('Only one output argument')
       if(nrhs.gt.0)then
