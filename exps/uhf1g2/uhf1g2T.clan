@@ -1,0 +1,764 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                           %
+%        CORRELATOR PROGRAM GEN-E-L1U1P3:CLAN               %
+%       **************************************              %
+%                                                           %
+%    THIS PROGRAM CONTAINS THE FOLLOWING SUBROUTINES:       %
+%                                                           %
+%                  LONGPULSE                                %
+%                  UNIPROG                                  %
+%                  POWERPROFILE1                            %
+%                  POWERPROFILE2                            %
+%                  POWERPROFILE3                            %
+%                                                           %
+%                                                           %
+%          GEN-SERIES OF CORRELATOR PROGRAMS                %
+%                                                           %
+%                  GEN-A-L3P2                               %
+%                  GEN-B-L2U1P2                             %
+%                  GEN-C-L1U2P3                             %
+%                  GEN-D-L1U2P2                             %
+%                  GEN-E-L1U1P3                             %
+%                  GEN-F-L1U1P2                             %
+%                  GEN-G-L1U1S1P2                           %
+%                  GEN-H-U3P2                               %
+%                  GEN-REMOTE                               %
+%                                                           %
+%     THE PROGRAM NAME SHOWS THE SUBROUTINE STRUCTURE,      %
+%     GEN-REMOTE IS A REMOTE  STATION ORIENTED PROGRAM.     %
+%                                                           %
+%                                                           %
+%     PROGRAM DEVELOPMENT: TAUNO TURUNEN                    %
+%                          EISCAT HQ , MAY 1985             %
+%                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%             TABLE OF INDEXES
+%          **********************
+%
+%             APB STACK REGISTERS
+%             ___________________
+%
+%       ***LONGPULSE APB STACK***
+INDEX VOLUMEINDEX=15,LPLAGMAX=14,LPNOGATES=13       
+%
+%       ***UNIPROG APB STACK***
+INDEX UNILAGINCR=12,UNILAGMAX=11,UNINOSAMPLES=10
+%
+%
+%       ***POWERPROFILE1 APB STACK***
+INDEX PPNOSAMPLES1=9
+%
+%       ***POWERPROFILE2 APB STACK***
+INDEX PPNOSAMPLES2=8
+%
+%       ***POWERPROFILE3 APB STACK***
+INDEX PPNOSAMPLES3=7    
+%
+%       ***FREE REGISTERS FOR THE USER***
+%
+INDEX USERREG1=6,USERREG2=5,USERREG3=4
+%
+%       ***TEMPORARY STORAGES USED BY THE PROGRAM***
+INDEX LAGINDEXCOUNTER=3
+INDEX BUFFERJUMPER=2 
+INDEX BUFSTARTADD=1
+%
+%       ***CONSTANT (=1)***
+INDEX APBINCR=0
+%
+%
+%                APM STACK REGISTERS
+%                ___________________
+%
+%        ***PROGRAMMABLE RESULT MEMORY START ADDRESSES***
+INDEX RESENTRY1=15,RESENTRY2=14,RESENTRY3=13,RESENTRY4=12
+INDEX RESENTRY5=11,RESENTRY6=10,RESENTRY7=9,RESENTRY8=8
+INDEX RESENTRY9=7,RESENTRY10=6,RESENTRY11=5,RESENTRY12=4
+%
+%       *** LONGPULSE (SAME VALUE AS IN LPLAGMAX)*** 
+INDEX LPMAXLAG=3
+%
+%       *** TEMPORARY STORAGES USED BY PROGRAM***
+INDEX RESULTJUMPER=2
+INDEX RESTARTADD=1
+%
+%       ***CONSTANT (=1)***
+INDEX APMINCR=0
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                           %
+%    COMPILER SUBSTITUTES THE NAMES WITH THE GIVEN NUMBERS  %
+%                                                           %
+%    EXAMPLES: RSAPB(LAGMAX)=RSAPB(14)                      %
+%              RSAPM(APMINCR)=RSAPM(0)                      %
+%                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    USER'S PROGRAMS CONTAIN USUALLY A LIST OF SUBROUTINE CALLS.
+%    THE NUMBER OF FREE PROGRAM STEPS IS 16.
+%
+%    THE OWING FIVE DIFFERENT SUBROUTINE CALLS ARE ALLOWED:
+%
+%    NEXT
+%    RSAPM(RESTARTADD)=RSAPM(RESENTRYN)
+%    RELOAD LCR3
+%    RELOADVALUE=(ANY SUITABLE REGISTER COMBINATION)
+%    CALL LONGPULSE
+%
+%
+%    NEXT
+%    RSAPM(RESTARTADD)=RSAPM(RESENTRYN)
+%    RELOAD LCR1
+%    RELOADVALUE= ( ANY SUITABLE REGISTER COMBINATION)
+%    CALL UNIPROG
+%
+%
+%    NEXT
+%    RSAPM(RESTARTADD)=RSAPM(RESENTRYN)
+%    RELOAD LCR1
+%    RELOADVALUE= (ANY SUITABLE REGISTER COMBINATION)
+%    CALL POWERPROFILE1
+%
+%
+%    NEXT
+%    RSAPM(RESTARTADD)=RSAPM(RESENTRYN) 
+%    RELOAD LCR1
+%    RELOADVALUE= (ANY SUITABLE REGISTER COMBINATION) 
+%    CALL POWERPROFILE2
+%
+%    NEXT
+%    RSAPM(RESTARTADD)=RSAPM(RESENTRYN) 
+%    RELOAD LCR1
+%    RELOADVALUE= (ANY SUITABLE REGISTER COMBINATION) 
+%    CALL POWERPROFILE3
+%
+%
+%    NOTE: IN THE EXAMPLE COMMANDS THE RESENTRYN MUST BE SOME
+%          OF THE POSSIBILITIES RESENTRY1,RESENTRY2...RESENTRY12.
+%
+%    NOTE: THE RSAPM(RESTARTADD)=.... CAN ALSO BE IN THE FORM:
+%
+%                RSAPM(RESTARTADD)=0
+%
+%    NOTE: THE RSAPM(RESTARTADD)=.. SPECIFIES THE FIRST RESULT
+%          MEMORY ADDRESS  USED BY THE CALLED SUBROUTINE. THIS
+%          ADDRESS IS GIVEN BY THE USER IN THE CORRELATOR APM 
+%          STACK LOADING. REGISTERS APM(15)-APM(4) HAVE BEEN 
+%          RESERVED FOR RESENTRIES RESENTRY1....RESENTRY12.
+%
+%    NOTE: IF THE LINE RSAPM(RESTARTADD)=... IS OMITTED ,THE
+%          DEFAULT VALUE IS THE FIRST HIGHER ADDRESS WHICH WAS NOT
+%          USED BY THE PREVIOUS SUBROUTINE AND IN CASE OF THE FIRST
+%          SUBROUTINE CALL THE DEFAULT VALUE IS  ZERO.
+%
+%    NOTE: IN LONGPULSE ROUTINE ONE HAS TO LOAD LCR3 TO A VALUE      
+%          WHICH GIVES THE NUMBER OF GATES. ONE REGISTER IS
+%          RESERVED FOR THE PURPOSE AND THE OTHER VALUES HAS TO BE
+%          FORMED BY SUITABLE ARITHMETICAL OPERATIONS IN SIMILAR
+%          WAY AS IN THE UNIPROG GATING EXPLAINED BELOW.
+%
+%    NOTE: IN UNIPROG AND POWERPROFILE CALLS ONE HAS TO
+%          LOAD LCR1. THIS COMMANDS THE GATING. 
+%                             
+%          THE VALUE GIVEN IS THE NUMBER OF RANGES ADDED
+%          TOGETHER -1. THUS A COMMAND
+%
+%                 RELOAD LCR1
+%                 RELOADVALUE=0
+%
+%          CAUSES "NORMAL" POWERPROFILE AND UNIPROG BEHAVIOUR.
+%          THREE REGISTERS ARE FREE FOR GATING CONTROL AND
+%          OTHER USER PURPOSES LIKE NUMBER OF LONG PULSE GATES.
+%
+%                  EXAMPLES:
+%
+%                  RELOADVALUE=0
+%                  RELOADVALUE=RSAPB(USERREG2)
+%                  RELOADVALUE=RSAPB(APBINCR)
+%                  RELOADVALUE=RSAPB(UNILAGINCR)-RSAPB(APBINCR)
+%
+%
+%    NOTE: THE LAST EXAMPLE, WHEN USED IN
+%          CONNECTION WITH UNIPROG CALL, CAUSES THAT
+%          THE OUTPUT IS ALWAYS EQUIVALENT TO LAGINCREMENT=1
+%          DATA. SO THE ROUTINE ADDS THEN ALTITUDE
+%          GATES TOGETHER AND LAGINCREMENT GIVES THE NUMBER
+%          OF ADDED GATES. WHEN USED IN CONNECTION WITH
+%          UNIPROG AND THE MODULATION IS PULSE CODE,
+%          THE LAGINCREMENT DIVIDED BY THE NUMBER OF
+%          RANGEGATES ADDED TOGETHER MUST BE AN INTEGER.
+%          OTHERWISE THE DATA CANNOT BE DECODED.
+%             
+%
+%
+%    NOTE: THE SUBROUTINES ARE WRITTEN SO THAT THE 
+%          FIRST SAMPLE TAKEN FROM THE BUFFER MEMORY
+%          IS IMMEDIATELY AFTER THE LAST USED SAMPLE
+%          OF THE PREVIOUS SUBROUTINE. THE FIRST 
+%          SUBROUTINE ASSUMES BUFFER MEMORY START
+%          ADDRESS TO BE ZERO.
+%
+%    NOTE: THE LAST CALLED SUBROUTINE MUST USE THE HIGHEST
+%          ADDRESSES OF THE RESULT MEMORY. IF THIS RULE IS
+%          VIOLATED, SPECIAL ARRANGEMENTS HAS TO BE DONE FOR
+%          GETTING SCANCOUNT INTO A CORRECT ADDRESS.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%   THE FIRST COMMAND IS THE IDLE LOOP   %%%%%%%%%%%%%%%%%%
+%%%%      DO NOT TOUCH THIS COMMAND         %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+LOCATION=0
+LABEL ZERO
+RSAPB(BUFSTARTADD)=0
+RSAPM(RESTARTADD)=0
+CONTINUE  %THE IDLE LOOP ENDS HERE
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%  THE MAIN PROGRAM DEFINED BY THE USER BEGINS HERE  %%%%%%
+%%%%%%%%%%  GET-STRING LABEL MAINPROG  %%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    GEN-2A-T-SUBR:LIST
+%
+%   FOR  MASTER PROGRAM GEN-E-L1U1P3
+%   TAUNO TURUNEN EISCAT HQ, OCT. 1985
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+NEXT
+CALL LIST
+
+NEXT
+CALL LIST
+%
+%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% THE USER'S MAIN PROGRAM ENDS HERE %%%%%%%%%%%%%%%%%%%%%%
+%%%%% POSSIBLE USER'S SUBROUTINES CAN   %%%%%%%%%%%%%%%%%%%%%%
+%%%%% START AFTER THE SCANCOUNT COMMAND %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                            %
+%    SCANCOUNT TERMINATES THE COMPUTATION AND                %
+%    MUST BE THE FIRST COMMAND AFTER THE USERS               %
+%    MAIN PROGRAM                                            %
+%                                                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NEXT
+LABEL SCANCOUNT
+RESMEMADDRESS=RSAPM(RESTARTADD)
+CHANNEL1=-1 CHANNEL2=-1
+INITIALIZE ACCUMULATOR
+LOAD IREG
+STORE OREG
+STROBE IREG
+GOTO LASTCOMMAND
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                            %
+%     THE SUBROUTINES WRITTEN BY THE USER CAN START HERE     %
+%                                                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+NEXT
+SUBROUTINE LIST
+RSAPM(RESTARTADD)=RSAPM(RESENTRY1)
+RELOAD LCR1
+RELOADVALUE=RSAPB(APBINCR)+RSAPB(APBINCR)
+CALL POWERPROFILE1       %E-LAYER POWERPROFILE
+
+NEXT
+RSAPM(RESTARTADD)=RSAPM(RESENTRY3)
+RELOAD LCR1
+RELOADVALUE=RSAPB(APBINCR)+RSAPB(APBINCR)
+CALL UNIPROG         %CODE 3152 MATRIX)
+
+NEXT
+RSAPM(RESTARTADD)=RSAPM(RESENTRY2)
+RELOAD LCR1
+RELOADVALUE=RSAPB(USERREG3)
+CALL POWERPROFILE3    %E-CAL
+%
+% CODE 3152 CHANNEL COMPUTED
+%
+NEXT
+RSAPM(RESTARTADD)=RSAPM(RESENTRY4)
+RELOAD LCR1
+RELOADVALUE=RSAPB(APBINCR)+RSAPB(APBINCR)
+CALL POWERPROFILE1     %EPP2 COMPUTED
+
+NEXT
+RSAPM(RESTARTADD)=RSAPM(RESENTRY6)
+RELOAD LCR1
+RELOADVALUE=RSAPB(APBINCR)+RSAPB(APBINCR)
+CALL UNIPROG            %CODE 2513
+
+NEXT
+RSAPM(RESTARTADD)=RSAPM(RESENTRY5)
+RELOAD LCR1
+RELOADVALUE=RSAPB(USERREG3)
+CALL POWERPROFILE3     %E-CAL2
+%
+%   CODE 2513 COMPUTED
+%
+NEXT
+RSAPM(RESTARTADD)=RSAPM(RESENTRY7)
+RELOAD LCR1
+RELOADVALUE=RSAPB(USERREG2)
+CALL POWERPROFILE2    %FPP COMPUTED
+
+NEXT
+RSAPM(RESTARTADD)=RSAPM(RESENTRY8)
+RELOAD LCR3
+RELOADVALUE=RSAPB(USERREG1)
+CALL LONGPULSE        %LP BACKGROUND GATES
+
+NEXT
+RSAPM(RESTARTADD)=RSAPM(RESENTRY9)
+RELOAD LCR3
+RELOADVALUE=RSAPB(APBINCR)
+CALL LONGPULSE        %LP NOISE INJECTION GATE
+
+NEXT
+RELOAD LCR3
+RELOADVALUE=RSAPB(LPNOGATES)
+RSAPM(RESTARTADD)=RSAPM(RESENTRY10)
+GOTO LONGPULSE        %LP SCATTER GATES
+%
+%  LONG PULSE DATA COMPUTED, LAST COMMAND CAUSES DIRECT RETURN
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                            %
+%     EVERYTHING WRITTEN BY THE USER MUST END HERE                                                                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                            %
+%                  SUBROUTINE UNIPROG                        %
+%                                                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+NEXT
+SUBROUTINE UNIPROG
+RSAPB(LAGINDEXCOUNTER)=0
+CONTINUE
+
+NEXT
+LC1=LCR1
+RELOAD LCR3
+RELOADVALUE=RSAPB(UNILAGMAX)
+CALL DUMMY
+
+NEXT
+LC3=LCR3
+CONTINUEANDPUSH
+
+NEXT
+LABEL UNICOMPUTE
+RELOAD LCR2
+RELOADVALUE=RSAPB(UNINOSAMPLES)-RSAPB(LAGINDEXCOUNTER)
+GOTO UNIENTRY
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                           %
+%     PROGRAM UNIPROG                                       %
+%     LC1=GATINGCOUNTER                                     %
+%     LC2=PRODUCT COUNTER                                   %
+%     LC3=LAG COUNTER                                       %
+%                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+NEXT
+LABEL UNIENTRY
+CONTINUE
+
+NEXT
+LC2=LCR2
+QAPB=RSAPB(BUFSTARTADD)-RSAPB(APBINCR)
+QAPM=RSAPM(RESTARTADD)
+CONTINUE
+
+NEXT
+LABEL SAMERESADDRESS
+BUFFERADDRESS=QAPB+RSAPB(APBINCR)
+QAPB=BUFFERADDRESS
+RESMEMADDRESS=QAPM
+QAPM=RESMEMADDRESS
+CHANNEL1=X*X+Y*Y
+CHANNEL2=Y*X-X*Y
+IF (LC2=0) THEN GOTO LAGTEST ELSE CONTINUE
+
+NEXT
+LABEL PROFILECOMPUTE
+BUFFERADDRESS=QAPB+RSAPB(LAGINDEXCOUNTER)
+RESMEMADDRESS=QAPM
+RSAPM(RESTARTADD)=RESMEMADDRESS
+CHANNEL1=OLDVALUE*X+OLDVALUE*Y
+CHANNEL2=OLDVALUE*X-OLDVALUE*Y
+INITIALIZE ACCUMULATOR
+STROBE IREG
+LOAD IREG
+STORE OREG
+LC2=LC2-1
+IF (LC1=0) THEN LC1=LCR1 ELSE LC1=LC1-1
+IF (LC1=0) THEN CONTINUE ELSE GOTO SAMERESADDRESS
+
+NEXT
+BUFFERADDRESS=QAPB+RSAPB(APBINCR)
+QAPB=BUFFERADDRESS
+RESMEMADDRESS=QAPM+RSAPM(APMINCR)
+QAPM=RESMEMADDRESS
+CHANNEL1=X*X+Y*Y
+CHANNEL2=Y*X-X*Y
+IF (LC2=0) THEN CONTINUE ELSE GOTO PROFILECOMPUTE
+
+NEXT
+LABEL LAGTEST
+QAPB=QAPB+RSAPB(LAGINDEXCOUNTER)
+RSAPM(RESTARTADD)=QAPM
+IF (LC3=0) THEN GOTOANDPOP UNIFINISH ELSE CONTINUE
+
+NEXT
+RSAPB(LAGINDEXCOUNTER)=RSAPB(LAGINDEXCOUNTER)+RSAPB(UNILAGINCR)
+LC3=LC3-1
+GOBACK
+
+NEXT
+LABEL UNIFINISH
+RSAPB(BUFSTARTADD)=QAPB
+RETURN
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                           %
+%     THE LAST PROGRAM STEPS OF POWERPROPFILE3              %
+%                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+NEXT
+LABEL CONTINUEPOWER3
+LC1=LCR1
+RELOAD LCR3
+RELOADVALUE=0
+CALL DUMMY
+
+NEXT
+LC3=LCR3
+RELOAD LCR2
+RELOADVALUE=RSAPB(PPNOSAMPLES3)
+GOTOANDPUSH UNIENTRY
+
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                           %
+%   PROGRAM GEN-DUMP                                        %
+%                                                           %
+%   THIS PROGRAM CONTROLS THE DATA TRANSFER   AND           %
+%   MUST START FROM THE LOCATION 32                         %
+%                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
+LOCATION=32
+RELOAD LCR1
+RELOADVALUE=DATAI
+PREPARETRANSFER
+CONTINUE
+
+NEXT
+PREPARETRANSFER
+CONTINUE
+
+NEXT
+TRANSFER STATUSWORD
+QAPM=-RSAPM(APMINCR)
+LC1=LCR1
+CONTINUE
+
+NEXT
+TRANSFER CONTROLWORD
+CONTINUE
+
+NEXT
+LABEL TRANSFERLOOP
+LC1=LC1-1
+RESMEMADDRESS=QAPM+RSAPM(APMINCR)
+QAPM=RESMEMADDRESS
+QAPB=RSAPB(APBINCR)+RSAPB(APBINCR)
+TRANSFER CHANNEL1 MSPART
+CONTINUE
+
+NEXT
+RESMEMADDRESS=QAPM
+TRANSFER CHANNEL1 LSPART
+RELOAD LCR2
+RELOADVALUE=QAPB+RSAPB(APBINCR)
+CONTINUE
+
+NEXT
+RESMEMADDRESS=QAPM
+TRANSFER CHANNEL2 MSPART
+CONTINUE
+
+NEXT
+RESMEMADDRESS=QAPM
+TRANSFER CHANNEL2 LSPART=LCR2
+IF (LC1=0) THEN CONTINUEANDPUSH ELSE GOTO TRANSFERLOOP
+
+NEXT
+LABEL FINISHLOOP
+LC2=LC2-1
+FINISHTRANSFER
+SET START-EXPERIMENT MODE
+IF (LC2=0) THEN GOTO ZERO ELSE GOBACK
+
+
+%
+%   THE TRANSFER ROUTINE ENDS HERE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                           %
+%                  SUBROUTINE DUMMY                         %
+%                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+NEXT
+SUBROUTINE DUMMY
+RETURN
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                           %
+%                                                           %
+%     SUBROUTINE POWERPROFILE1                              %
+%                                                           %
+%     LC1=GATING COUNTER                                    %
+%     LC2=SAMPLE COUNTER                                    %
+%                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+NEXT
+SUBROUTINE POWERPROFILE1
+RSAPB(LAGINDEXCOUNTER)=0
+CONTINUE
+
+NEXT
+LC1=LCR1
+RELOAD LCR3
+RELOADVALUE=0
+CALL DUMMY
+
+NEXT
+LC3=LCR3
+RELOAD LCR2
+RELOADVALUE=RSAPB(PPNOSAMPLES1)
+GOTOANDPUSH UNIENTRY
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                           %
+%                                                           %
+%     SUBROUTINE POWERPROFILE2                              %
+%                                                           %
+%     LC1=GATING COUNTER                                    %
+%     LC2=SAMPLE COUNTER                                    %
+%                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+NEXT
+SUBROUTINE POWERPROFILE2
+RSAPB(LAGINDEXCOUNTER)=0
+CONTINUE
+
+NEXT
+LC1=LCR1
+RELOAD LCR3
+RELOADVALUE=0
+CALL DUMMY
+
+NEXT
+LC3=LCR3
+RELOAD LCR2
+RELOADVALUE=RSAPB(PPNOSAMPLES2)
+GOTOANDPUSH UNIENTRY
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                           %
+%     SUBROUTINE POWERPROFILE3                              %
+%                                                           %
+%     LC1=GATING COUNTER                                    %
+%     LC2=SAMPLE COUNTER                                    %
+%                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+NEXT
+SUBROUTINE POWERPROFILE3
+RSAPB(LAGINDEXCOUNTER)=0
+GOTO CONTINUEPOWER3
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                          %
+%     SUBROUTINE LONGPULSE                                 %
+%                                                          %
+%     THIS SUBROUTINE COMPUTES THE TARGET ACF ESTIMATE     %
+%     IN THE WAY THAT THE ABSOLUTE VOLUME BOUNDARIES ARE   %
+%     THE SAME AT ALL LAGS                                 %
+%                                                          %
+%     LC1=LAGCOUNTER                                       %
+%     LC2=VOLUME INDEX CONTROL COUNTER                     %
+%     LC3=GATE COUNTER                                     %
+%                                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+NEXT
+SUBROUTINE LONGPULSE
+RSAPB(BUFSTARTADD)=RSAPB(BUFSTARTADD)+RSAPB(LPLAGMAX) 
+CONTINUE
+
+NEXT
+LC3=LCR3
+RELOAD LCR1
+RELOADVALUE=RSAPB(LPLAGMAX)
+CALL DUMMY
+
+NEXT
+LC1=LCR1
+RSAPM(RESTARTADD)=RSAPM(RESTARTADD)-RSAPM(APMINCR)
+RELOAD LCR2
+RELOADVALUE=RSAPB(VOLUMEINDEX)
+LC3=LC3-1
+IF (LC3=0) THEN RETURN ELSE CALL DUMMY
+
+NEXT
+LABEL LONGGATE
+LC2=LCR2
+LCR1A=LC1
+RSAPB(BUFSTARTADD)=RSAPB(BUFSTARTADD)+RSAPB(VOLUMEINDEX)
+RSAPM(RESTARTADD)=RSAPM(RESTARTADD)+RSAPMINCR)
+
+INITIALIZE ACCUMULATOR       % CHANGE INTRODUCED 1986-03-24 UGW
+
+CONTINUE
+
+NEXT
+RSAPB(BUFFERJUMPER)=-RSAPB(APBINCR)
+RSAPM(RESULTJUMPER)=-RSAPM(APMINCR)
+CONTINUE
+
+NEXT
+LABEL FULLROW
+BUFFERADDRESS=RSAPB(BUFSTARTADD)-RSAPB(APBINCR)
+QAPB=BUFFERADDRESS
+RESMEMADDRESS=RSAPM(RESTARTADD)
+QAPM=RESMEMADDRESS
+CHANNEL1=X*X+Y*Y
+CHANNEL2=Y*X-X*Y
+LCR1A=LC1
+LC1=LC1-1
+LC2=LC2-1
+STROBE IREG
+LOAD IREG
+STORE OREG
+IF (LC1=0) THEN GOTO TESTWHATTODO ELSE CONTINUE
+
+NEXT
+LABEL COLUMNLAG
+BUFFERADDRESS=QAPB+RSAPB(APBINCR)
+QAPB=BUFFERADDRESS
+RESMEMADDRESS=QAPM+RSAPM(APMINCR)
+QAPM=RESMEMADDRESS
+LC1=LC1-1
+CHANNEL1=OLDVALUE*X+OLDVALUE*Y
+CHANNEL2=OLDVALUE*X-OLDVALUE*Y
+STROBE IREG
+LOAD IREG
+STORE OREG
+IF (LC1=0) THEN CONTINUE ELSE GOTO COLUMNLAG
+
+NEXT
+LABEL TESTWHATTODO
+LC1=LCR1A
+RESMEMADDRESS=QAPM-RSAPM(LPMAXLAG)
+QAPM=RESMEMADDRESS
+RSAPB(BUFSTARTADD)=RSAPB(BUFSTARTADD)-RSAPB(APBINCR)
+
+ACCUMULATE                   % CHANGE INTRODUCED 1986-03-24
+
+IF (LC2=0) THEN CONTINUE ELSE GOTO FULLROW
+
+NEXT
+LABEL ROWPIECE
+LC1=LC1-1
+RSAPM(RESULTJUMPER)=RSAPM(RESULTJUMPER)+RSAPM(APMINCR)
+RSAPB(BUFFERJUMPER)=RSAPB(BUFFERJUMPER)+RSAPB(APBINCR)
+IF (LC1=0) THEN GOTO NEXTGATE ELSE CONTINUE
+
+NEXT
+LCR1A=LC1
+BUFFERADDRESS=RSAPB(BUFSTARTADD)-RSAPB(APBINCR)
+QAPB=BUFFERADDRESS
+CHANNEL1=X*X+Y*Y
+CHANNEL2=Y*X-X*Y             % EDITED 1986-03-24 UGW
+CONTINUE
+
+NEXT
+BUFFERADDRESS=QAPB+RSAPB(BUFFERJUMPER)
+QAPB=BUFFERADDRESS
+RESMEMADDRESS=RSAPM(RESTARTADD)+RSAPM(RESULTJUMPER)
+QAPM=RESMEMADDRESS
+CHANNEL1=OLDVALUE*X+OLDVALUE*Y
+CHANNEL2=OLDVALUE*X-OLDVALUE*Y
+GOTO COLUMNLAG
+
+NEXT
+LABEL NEXTGATE
+LC1=LCR1
+LC2=LCR2
+RSAPB(BUFSTARTADD)=QAPB+RSAPB(VOLUMEINDEX)
+RSAPM(RESTARTADD)=RSAPM(RESTARTADD)+RSAPM(LPMAXLAG)
+LC3=LC3-1
+IF (LC3=0) THEN CONTINUE ELSE GOTO LONGGATE
+
+NEXT
+RSAPB(BUFSTARTADD)=RSAPB(BUFSTARTADD)+RSAPB(LPLAGMAX)
+RSAPM(RESTARTADD)=RSAPM(RESTARTADD)+RSAPM(APMINCR)
+RETURN
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                          %
+% THE LAST COMMAND TERMINATES THE COMPUTATION AND          %
+% THE CORRELATOR GOES TO THE IDLE LOOP                     %
+%                                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+NEXT
+LABEL LASTCOMMAND
+STROBE IREG
+SET CONTINUE-EXPERIMENT MODE
+GOTO ZERO
+
+END
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           

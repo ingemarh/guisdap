@@ -1,0 +1,224 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%      PROGRAM SP-VI-UHF1-G2-T:ELAN
+%
+%      BY GUDMUND WANNBERG
+%      EISCAT KIRUNA/ KGI, DEC. 1985
+%
+%      UPDATED AND FINALIZED H.O., MARCH 1986
+%
+%      ADAPTED FOR USE IN VIKING/EISCAT CAMPAIGN FROM
+%      GEN-2B , JUNE 1985 VERSION
+%      THE MAJOR CHANGE COMPARED TO THE ORIGINAL GEN-2B SCHEME
+%      IS IN THE LONG PULSE RECEPTION PART; ONLY 10 SIGNAL GATES
+%      ARE COMPUTED WITH THE FIRST ONE CENTERED AT 181.0 KM.
+%      24 LAGS/ACF (0 - 23) ARE COMPUTED INSTEAD OF 16 IN THE GEN
+%      LIBRARY VERSION - THIS IS TO SATISFY A REQUEST FOR LONG
+%      PULSE DATA WHICH CAN POTENTIALLY BE FITTED FOR COMPOSITION.
+%      THUS THE LONGEST LAG IS AT 322 US (23*14 US).
+%
+%      BASEBAND FILTERS ARE 35.4 KHZ ONES IN ALL MULTIPULSE CHANNELS
+%      (RISETIME = 14 US) AND 25 KHZ ONES IN THE LONG PULSE/ FPP PART
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+WRITE-EXP-HEAD
+WRITE-FILE (EXP)SP-VI-UHF1-G2:DESC
+WRITE-FILE (EXP)SP-VI-UHF1-G2-T:ELAN
+WRITE-FILE (EXP)SP-VI-UHF1-G2-T:TLAN
+WRITE-FILE (EXP)SP-VI-UHF1-G2-T:CLAN
+%
+POINT-REF-H 180.0,76.8,207.1
+%
+%      POINTS TO 207.1 KM, TANGENTIAL TO FIELD ACCORDING TO USCG MC811
+%      MODEL FOR 1985.5
+%
+SET-PARAMETER                I20,1     % SETS POSITION COUNTER TO 1
+SET-PARAMETER                I19,11    % INDICATES PROGRAM TYPE AND VERSION
+%
+SYNC -120
+%
+%Z-ABORT      VIKING                   % HAS TO BE STARTED FROM EROS
+%Z-RT         VIKING                   % MANUALLY AT ALL THREE SITES
+%
+%
+LOAD-CORR (EXP)SP-VI-UHF1-G2-T:CCOD    %MASTER PROGRAM GEN-E-L1U1P3
+SYNC 30
+%
+LOAD-RA-CON (EXP)SP-VI-UHF1-G2-T
+SYNC 10
+%
+%
+SET-ADC-INT 1,14             %LP1
+SET-ADC-INT 2,14             %LP2
+SET-ADC-INT 3,14             %FPP1
+SET-ADC-INT 4,14             %FPP2
+SET-ADC-INT 5,5              %E1,CODE 3152
+SET-ADC-INT 6,5              %E2,CODE 2513
+SET-ADC-INT 7,5              %E3,CODE 3152
+SET-ADC-INT 8,5              %E4,CODE 2513
+%
+SET-LO1 1053.5
+%
+SET-LO2 1,94.0
+SET-LO2 2,93.5
+SET-LO2 3,93.0
+SET-LO2 4,92.5
+SET-LO2 5,92.0
+SET-LO2 6,91.5
+SET-LO2 7,91.0
+SET-LO2 8,90.5
+%
+SET-BUF-MEM 2,3558    %LP2 121+61+196 = 378 POINTS  SKY+NOISE INJ.+DATA
+SET-BUF-MEM 3,1380    %FPP1 50+10+150 = 210 POINTS  SKY+NOISE INJ.+DATA
+SET-BUF-MEM 4,3348    %FPP2 50+10+150 = 210 POINTS
+SET-BUF-MEM 5,0000    %E1 189+231+216+54 = 690 POINTS  EPP+CODE+SKY+N.I.
+SET-BUF-MEM 6,0690    %E2 189+231+216+54 = 690 POINTS
+SET-BUF-MEM 7,1968    %E3 189+231+216+54 = 690 POINTS
+SET-BUF-MEM 8,2658    %E4 189+231+216+54 = 690 POINTS
+SET-BUF-MEM 1,1590    %LP1 121+61+196 = 378 POINTS  SKY+NOISE INJ.+DATA
+%                     %THE LAST USED ADDRESS IS 3935
+%
+SYNC 10
+%
+SET-SIG-PATH ALLX
+SET-SIG-ATT X,5
+%
+SET-CH-ATT 1,2 
+SET-CH-ATT 2,3               % ATT. CHECKED WITH GEN-CAL ON 5.4.1986
+SET-CH-ATT 3,4               % CH1 CHANGED FROM 5 TO 2, CH2 FROM 6 TO 3
+SET-CH-ATT 4,2               % REST OK.  H.O.
+SET-CH-ATT 5,2
+SET-CH-ATT 6,1
+SET-CH-ATT 7,2
+SET-CH-ATT 8,1
+%
+SET-FILTER 1,BU,25.0         % 25 KHZ BUTTERWORTH FILTERS USED IN LONG
+SET-FILTER 2,BU,25.0         % PULSE ACF CHANNELS !!!
+SET-FILTER 3,LIN,25.0        % 25 KHZ PHASE LINEAR FILTERS USED IN 
+SET-FILTER 4,LIN,25.0        % F REGION POWER PROFILE CHANNELS (11 US RISETIME)
+SET-FILTER 5,LIN,35.4
+SET-FILTER 6,LIN,35.4
+SET-FILTER 7,LIN,35.4        % 14 US RISETIME FILTERS INSTALLED IN
+SET-FILTER 8,LIN,35.4        % ALL MULTIPULSE CHANNELS FOR OPTIMUM S/N
+%
+%
+TRANSFER-NOISE               RAD
+%
+%                            %NOTE THAT FILTER CHANGES CAUSE TINY CHANGES 
+SYNC 20                      %ALSO IN THE TLAN FILE (DELAYS)
+%
+%
+SET-COR-APB 15,15    %VOLUMEINDEX
+SET-COR-APB 14,23    %LPLAGMAX                   NOTE: CHANGED FROM GEN-2B
+SET-COR-APB 13,10    %LPNOGATES ,SIGNAL GATES
+SET-COR-APB 12,6     %UNILAGINCR
+SET-COR-APB 11,10    %UNILAGMAX
+SET-COR-APB 10,231   %UNINOSAMPLES  (GATING+1=3)
+SET-COR-APB  9,189   %PPNOSAMPLES1=E-LAYER POWERPROFILES, GATING+1=3, EPP
+SET-COR- 8,210   %PPNOSAMPLES2=F-LAYER POWERPROFILES, GATING+1=5, FPP
+SET-COR-APB  7,270   %PPNOSAMPLES3=E-CHANNEL CALIBRATIONS,GATING+1=27,E-CAL
+SET-COR-APB  6,5     %USERREG1,NUMBER OF BACKGROUND GATES 
+SET-COR-APB  5,4     %USERREG2,FPP GATING
+SET-COR-APB  4,26    %USERREG3,E-CALIBRATION GATING
+SET-COR-APB  0,1     %APBINCR , ALSO UNIPROG AND E-PP GATING  (1+1)
+%                               AND NUMBER OF LP NOISE INJECTION GATES  (1)
+%
+SET-COR-APM 15,0000  %RESENTRY1,  EPP1                (63)
+SET-COR-APM 14,0063  %RESENTRY2,  E-CAL1              (10=8+2 BACKG.,NI)
+SET-COR-APM 13,0073  %RESENTRY3,  CODE1 MATRIX (3152) (737, 11 PROFILES)
+SET-COR-APM 12,0810  %RESENTRY4,  EPP2                (63)
+SET-COR-APM 11,0873  %RESENTRY5,  E-CAL2              (10=8+2)
+SET-COR-APM 10,0883  %RESENTRY6,  CODE2 MATRIX (2513) (737)
+SET-COR-APM  9,1620  %RESENTRY7,  FPP                 (42=10+2+30,BACKG.NI,DAT)
+SET-COR-APM  8,1662  %RESENTRY8,  LP BACKGROUND       (120=5*24)
+SET-COR-APM  7,1782  %RESENTRY9,  LP NOISE INJECTION  (24 = 1*24)
+SET-COR-APM  6,1806  %RESENTRY10, LP SCATTER GATES    (240 = 10*24)
+%
+SET-COR-APM  3,23
+%
+SET-COR-APM  0,1     %APMINCR
+%
+%
+SET-COR-DATAIO 2047
+%
+%
+%  *********FOR THE LAYOUT OF THE DATA DUMP, SEE THE SP-VI-UHF1-G2:DESC********
+%  (ADD 1 TO ALL ADRESSES GIVEN THERE, SINCE DATAIO COUNTS FROM 1 INSTEAD OF 0)
+%
+SYNC 20
+%
+START-CORR
+SYNC 10
+%
+ENABLE-DMA
+%
+SYNC 10
+%                                 *****************************************
+START-RA-CON 10,1,5             % ******** NOTE: 5 SEC DUMPTIME !! ********
+%                                 *****************************************
+%
+SYNC 11
+%%%%%%%%%%%%%%%BLOCK 1%%%%%%%%%%%
+BLOCK 1
+START-REC-DATA
+DO -1
+SYNC 220 
+SET-PARAMETER I20,99
+SYNC 80
+SET-PARAMETER I20,99
+SYNC 60
+SET-PARAMETER I20,4                    % PARAMETER I20=99 SETS FIELD-
+SYNC 220                               % ALIGNED VELOCITY TO ZERO IN
+SET-PARAMETER I20,99                   % REAL-TIME VELOCITY ESTIMATE
+SYNC 70
+SET-PARAMETER I20,99
+SYNC 70
+SET-PARAMETER I20,1
+NEW-FILE
+ENDDO
+%-ABORT VIKING
+STOP-EXPERIMENT,,
+%
+%%%%%%%%%%%%%%%%%%BLOCK 2%%%%%%%%
+%
+%      FOR FREEZING THE BEAMS IN THE F REGION IN DYNAMIC SITUATIONS
+%      THE POSITION INDEX COUNTER IS CHANGED EVERY 60 SECONDS TO FORCE
+%      A TRISTATIC VELOCITY ESTIMATE.
+%
+BLOCK 2
+STOP-REC-DATA
+SET-PARAMETER I20,1
+START-REC-DATA
+DO -1
+SYNC 60
+SET-PARAMETER I20,4
+SYNC 60
+SET-PARAMETER I20,1
+SYNC 60
+SET-PARAMETER I20,4
+SYNC 60
+SET-PARAMETER I20,1
+SYNC 60
+SET-PARAMETER I20,4
+SYNC 60
+SET-PARAMETER I20,1
+SYNC 60
+SET-PARAMETER I20,4
+SYNC 60
+SET-PARAMETER I20,1
+SYNC 60
+SET-PARAMETER I20,4
+SYNC 60
+SET-PARAMETER I20,1
+SYNC 60
+SET-PARAMETER I20,4
+SYNC 60
+SET-PARAMETER I20,1
+NEW-FILE
+ENDDO 
+%
+%-ABORT VIKING
+STOP-EXPERIMENT,,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         

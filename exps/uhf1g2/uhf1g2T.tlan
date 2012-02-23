@@ -1,0 +1,184 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%      SP-VI-UHF1-G2-T:TLAN
+%
+%      A GEN-2B BASED PROGRAM FOR USE DURING THE VIKING/EISCAT CAMPAIGN
+%
+%
+%      THIS VERSION CHANGED FOR UHF-1 USE BY G. WANNBERG
+%      KIRUNA DEC 19, 1985
+%
+%      UPDATED AND FINALIZED H.O. , MARCH 1986
+%
+%      LONG PULSE ACFS ARE 24 LAGS @ 14US/LAG
+%      FIRST LONG PULSE GATE CENTERED AT 181.0 KM, 10 SIG+BACKG GATES
+%      AT GATE - GATE SEPARATION OF 31.5 KM.
+%      LAST LONG PULSE GATE AT 464.5 KM
+%
+%      E REGION POWER PROFILE AND PULSE CODE PART IDENTICAL TO GEN-2B
+%      F REGION POWER PROFILE DITTO
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+AT 1 TRANS,CHQPULS
+AT 10 RXPROT, LOPROT
+AT 50 BEAMON
+AT 80 F4
+AT 100 RFON            %PP1, CH5,F4
+AT 114 RFOFF,F5
+AT 115 RFON            %PP2, CH6,F5
+AT 129 RFOFF,F6        
+AT 130 RFON            %PP3, CH7,F6
+AT 144 RFOFF,F7
+AT 145 RFON            %PP4, CH8,F7
+AT 159 RFOFF,BEAMOFF
+AT 420 RXPOFF
+AT 480 LOPOFF
+%
+AT 520 RECEV
+%
+%
+AT 587 CH5                   %THE FIRST EPP-GATE AT 72.0 KM
+AT 602 CH6                   %487US-7US (1/2 FI-DELAY 35.4 KHZ) = 480US
+AT 617 CH7
+AT 632 CH8
+%
+AT 1529 CH5OFF
+AT 1544 CH6OFF
+AT 1559 CH7OFF
+AT 1574 CH8OFF
+%                      % 189 POWERPROFILE POINTS TAKEN AT EVERY CHANNEL
+%                      % FOR 63 GATES, RANGE 72.0-211.5 KM
+SETTCR 1580
+%
+AT 1 TRANS,CHQPULS
+AT 10 RXPROT,LOPROT
+AT 50 BEAMON
+AT 80 F5
+AT 100 RFON                  %PC2 (2513),CH6,F5
+AT 114 RFOFF,F7
+AT 115 RFON                  %PC4 (2513),CH8,F7
+AT 129 RFOFF,F4
+AT 130 RFON                  %PC1 (3152),CH5,F4
+AT 144 RFOFF,F6
+AT 145 RFON                  %PC3 (3152),CH7,F6
+AT 159 RFOFF,F5
+AT 160 RFON
+AT 174 RFOFF,F7
+AT 175 RFON
+AT 189 RFOFF,F4
+%
+AT 220 RFON
+AT 234 RFOFF,F6
+AT 235 RFON
+AT 249 RFOFF,F4
+AT 250 RFON
+AT 264 RFOFF,F6
+AT 265 RFON
+AT 279 RFOFF,F5
+%
+AT 310 RFON
+AT 324 RFOFF,F7
+AT 325 RFON
+AT 339 RFOFF,F5
+AT 340 RFON
+AT 354 RFOFF,F7
+AT 355 RFON
+AT 369 RFOFF,F4
+%
+AT 400 RFON
+AT 414 RFOFF,F6
+AT 415 RFON
+AT 429 RFOFF,F5
+AT 430 RFON
+AT 444 RFOFF,F7
+AT 445 RFON
+AT 459 RFOFF,F4
+AT 460 RFON
+AT 474 RFOFF,F6
+AT 475 RFON
+AT 489 RFOFF,BEAMOFF
+AT 620 RXPOFF
+AT 670 LOPOFF
+%
+AT 690 RECEV
+%
+AT 707 CH6                   %THE FIRST GATE AT 90.0 KM RANGE IN PULSECODES
+AT 722 CH8                   %607US - 7US (1/2 FI-DELAY 35.4 KHZ)=600 US
+AT 737 CH5
+AT 752 CH7
+%
+AT 917  CH1,CH2              %BACKGROUND SAMPLING FOR LP CHANNELS
+%
+%
+AT 1859 CH6OFF
+AT 1874 CH8OFF
+AT 1889 CH5OFF
+AT 1904 CH7OFF              %231 POINTS CH5,CH6,CH7,CH8  FOR 55 GATES
+%                           %RANGE 90.0-211,5 KM, GATE SEPARATION 2.25 KM
+%
+AT 1911 CH3,CH4              %BACKGROUND SAMPLING FOR FPP CHANNELS
+AT 2604 ALLOFF,CAL100        %50 BACKGROUND POINTS/CH3,CH4 (FPP)=10 GATES
+%                            %121 BACKGROUND POINTS/CH1,CH2 (LP)= 5 GATES
+%                                                       
+%
+AT 2650 CH1,CH2
+AT 3362 CH3,CH4                   %10 NOISE INJECTION POINTS /CH3,CH4 (FPP)
+AT 3497 ALLOFF,CAL0               %61 NOISE INJECTION POINTS /CH1,CH2 (LP)
+%
+SETTCR 5120
+%
+%     PHASE 2
+%
+AT 1 TRANS,CHQPULS
+AT 10 RXPROT, LOPROT
+AT 50 BEAMON
+AT 80 F0
+AT 100 RFON            %LP1, CH1,F0  (350 US)
+AT 450 RFOFF,F1
+AT 455 RFON            %LP2, CH2,F1  (350 US)
+AT 805 RFOFF,F2        
+AT 810 RFON            %FPP1,CH3,F2  (70 US)
+AT 880 RFOFF,F3
+AT 885 RFON            %FPP2,CH4,F3  (70 US)
+AT 955 RFOFF,BEAMOFF
+AT 1020 RXPOFF
+AT 1057 LOPOFF               % F-LAYER RECEPTION CHANGED FROM -G1 VERSION
+%
+AT 1060 RECEV                %************************************************
+%                            %** NOTE THE USE OF 25 KHZ BU FILTERS FOR LP-ACFS 
+%                            %** PUTS THE LP GATES ABOUT 0.5 KM LOWER !!!
+%                            %** (FILTER DELAY CA 24 US INSTEAD OF 21 US)
+AT 1076 CH1                  %************************************************
+AT 1331 CH3                  % THE FIRST FPP GATE CENTERE 75 KM (RES 10.5)
+AT 1406 CH4                  % 521US-21US (1/1 FI-DELAY 25 KHZ FILTER) = 500 US
+AT 1431 CH2                  % THE FIRST LP GATE CENTERED AT 181.0 KM RANGE
+%                            %% c/2*(t*maxlag + t*V/2 - T/2) = 37.8 km
+%                            %% ==> delay to 1. sample = 966 us 
+%                            %% (976-21=955us*0.15=143.25+37.8=181.0 km)
+%                            %% (this puts the second gate at 207 km altitude)
+AT 3424 CH3OFF
+AT 3499 CH4OFF               % 150 SAMPLES IN FPP (CH3,CH4) CHANNELS, 30 GATES
+%                            % RANGE  75.0 - 379.5 KM
+%
+%
+AT 3813 CH1OFF               % 196 SAMPLES IN LP CHANNELS (CH1,CH2), 10 GATES
+AT 4168 CH2OFF               % RANGE 181.0 - 464.5 KM                          
+%
+%  SAMPLING GAP FOR FAST ADC BUFFER DATA TRANSFER
+%
+AT 4923 CH5,CH6,CH7,CH8      % BACKGROUND SAMPLING FOR E-LAYER CHANNELS
+AT 6000 ALLOFF,CAL100        % 216 BACKGROUND SAMPLES IN E-LAYER CHANNELS
+%                            % FOR 8 BACKGROUND "GATES" (GATING+1=27)
+%
+%  SAMPLING GAP FOR FAST ADC BUFFER DATA TRANSFER (AVAILABLE TIME 332US,ENOUGH)
+%
+AT 6093 CH5,CH6,CH7,CH8      % NOISE INJECTION SAMPLING FOR E-LAYER CHANNELS
+AT 6300 STC
+AT 6360 ALLOFF,CAL0          % 54 NOISE INJECTION POINTS SAMPLED FOR 2 "GATES"
+AT 6400 BUFLIP
+%
+SETTCR 0000
+AT 11713 REP
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
