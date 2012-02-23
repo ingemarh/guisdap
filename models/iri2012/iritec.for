@@ -21,6 +21,15 @@ c 2000.02 10/28/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
 c 2000.03 11/08/02 common block1 in iri_tec with F1reg
 c 2007.00 05/18/07 Release of IRI-2007
 c 2007.02 10/31/08 outf(.,100) -> outf(.,500)
+c
+C 2011.00 10/05/11 IRI-2011: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
+C 2011.00 10/05/11    bottomside Ni model (iriflip.for), auroral foE
+C 2011.00 10/05/11    storm model (storme_ap), Te with PF10.7 (elteik),
+C 2011.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for), 
+C 2011.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
+C 2011.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
+C 2011.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
+
 c-----------------------------------------------------------------------        
 C
 C
@@ -32,7 +41,7 @@ C to h=alth.
 C       
 C  INPUT:  ALATI,ALONG  LATITUDE NORTH AND LONGITUDE EAST IN DEGREES
 C          jmag         =0 geographic   =1 geomagnetic coordinates
-C          jf(1:30)     =.true./.false. flags; explained in IRISUB.FOR
+C          jf(1:50)     =.true./.false. flags; explained in IRISUB.FOR
 C          iy,md        date as yyyy and mmdd (or -ddd)
 C          hour         decimal hours LT (or UT+25)
 c          hbeg,hend    upper and lower integration limits in km
@@ -41,8 +50,8 @@ C  OUTPUT: TEC          Total Electron Content in m-2
 C          tecb,tect    percentage of bottomside and topside content
 c-----------------------------------------------------------------------        
 
-        dimension       outf(20,500),oarr(50)
-        logical         jf(30)
+        dimension       outf(20,1000),oarr(100)
+        logical         jf(50)
 
 c
 c  select various options and choices for IRI-94
@@ -109,8 +118,11 @@ c-----------------------------------------------------------------------
 
         logical         expo
         dimension       step(5),hr(6)
+        logical     	f1reg
         common  /block1/hmf2,xnmf2,hmf1,f1reg
-        logical     f1reg
+     &         /QTOP/Y05,H05TOP,QF,XNETOP,XM3000,HHALF,TAU
+C NEW-GUL------------------------------
+c     &         /QTOP/Y05,H05TOP,QF,XNETOP,XM3000,hht,TAU
 
 ctest   
         save
@@ -118,6 +130,14 @@ ctest
         expo = .false.
         numstep = 5
         xnorm = xnmf2/1000.
+C NEW-2003: Half-density: XNETOP at htop in [hmf2,1000 km)
+        xxx=xnmf2/2.
+        ht1=hmf2
+        xne1=xnmf2
+        ht2=ht1
+        xne2=xne1
+        hht=0.0
+C NEW-2003: Half-density: XNETOP at htop in [hmf2,1000 km)
 
         hr(1) = 100.
         hr(2) = hmf2-10.
@@ -198,8 +218,25 @@ C
                 sumbot = sumbot + yyy
         else
                 sumtop = sumtop + yyy
+
+C NEW-GUL: remember xne2 at ht2 :
+                ht2=hx
+                xne2=yne
+C NEW-GUL------------------------------
+
         endif
-        if (expo.and.(hh.ge.hr(4))) goto 5
+
+C NEW-GUL: interpolate for htop
+        if ((hx.le.hmf2).or.(hht.gt.0.0)) goto 4
+        if ((xxx.le.xne1).and.(xxx.gt.xne2)) then
+           hht=ht1+(ht2-ht1)/(xne2-xne1)*(xxx-xne1)
+        else
+           ht1=ht2
+           xne1=xne2
+        endif
+C NEW-GUL------------------------------
+
+4       if (expo.and.(hh.ge.hr(4))) goto 5
         if (hh.lt.hend.and.i.lt.6) goto 1
 
         zzz = sumtop + sumbot

@@ -1,5 +1,5 @@
 L=	../../lib/
-MLIST=	irisub.f irifun.f iritec.f iridreg.f igrf.f cira.f
+MLIST=	cira.for igrf.f iridreg.for iriflip.for irifun.f irisub.f iritec.for
 N=	libiri
 ALIB=
 EXF=
@@ -26,9 +26,9 @@ EXF =-fno-second-underscore -fstatic -fmultiple-save
 ALIB=/usr/lib/g95/i586-mandriva-linux-gnu/4.0.4/libf95.a /usr/lib/libc_nonshared.a
 else
 FC=gfortran
-EXF =-fno-automatic
+EXF = -fno-automatic -fno-align-commons
 endif
-FFLAGS =-O3 -fPIC -c $(EXF)
+FFLAGS =-O2 -fPIC -c $(EXF)
 LDFLAGS=-shared
 endif
 

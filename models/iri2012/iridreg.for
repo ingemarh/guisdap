@@ -3,8 +3,8 @@ c-----------------------------------------------------------------------
 C
 C This file contains the D-region models of Danilov, Rodevich, and
 C Smirnova, Adv. Space Res. 15, #2, 165, 1995 (subroutine DRegion)
-C and the model by Friedrich and Torkar, Adv. Space Res., to be 
-C published, 2001 (subroutine F00 and block data statement).
+C and the model by Friedrich and Torkar, Adv. Space Res., 2001
+C (subroutine F00 and block data statement).
 c
 c-----------------------------------------------------------------------
 C Corrections/Version Numbers:
@@ -18,8 +18,8 @@ C
 C
       Subroutine DRegion(z,it,f,vKp,f5SW,f6WA,elg)
 c-----------------------------------------------------------------------
-c D-region model of Danilov, Rodevich, and Smirnova, Adv. Space Res.  
-C 15, #2, 165, 1995.
+c Reference: Danilov, Rodevich, and Smirnova, Adv. Space Res.  
+C     15, #2, 165, 1995.
 C
 C Input:     z    - solar zenith angle in degrees
 C            it   - season (month)
@@ -330,7 +330,7 @@ C
       COMMON/FIRCOM/EDEN(81,5,12,12,3),
      1              TABHE(81),TABLA(5),TABMO(12),TABZA(12),TABFL(3)
 C
-      INTEGER I,L
+C      INTEGER I,L
 C
 C     altitudes in km
       DATA (TABHE(I),I=1,81)/
