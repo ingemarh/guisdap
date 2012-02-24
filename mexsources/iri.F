@@ -20,9 +20,8 @@ C---------------------------------------------------------------------
       save jf,nrp,rp,tim,pos,h
 c jf tttff ftttt ttttt ttttt ftftt ttfff ttftf ----- ----- -----
       data jf/3*.true.,3*.false.,14*.true.,.false.,.true.,.false.,
-     ,4*.true.,3*.false.,2*.true.,.false.,.true.,.false.,15*.true./,
-     ,nrp/3/,rp/1,4,3,9*0/,tim/15552090.,1996./,pos/69.2,19.2/,
-     ,h/100.,590.,0./
+     ,4*.true.,3*.false.,2*.true.,3*.false.,15*.true./,nrp/3/,
+     ,rp/1,4,3,9*0/,tim/15552090.,1996./,pos/69.2,19.2/,h/100.,590.,0./
 C CHECK FOR PROPER NUMBER OF ARGUMENTS
       IF(NLHS.GT.1)CALL MEXERRMSGTXT('Only one output argument')
       if(nrhs.gt.0)then
