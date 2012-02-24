@@ -11,12 +11,14 @@ else
  loc=p_XMITloc(1:2);
 end
 if modinfo
- [i1,i2,i3,i4]=textread(fullfile(getenv('IRIPATH'),'ig_rz.dat'),'%d,%d,%d,%d',1,'headerlines',2);
+ iripath=getenv('IRIPATH');
+ [i1,i2,i3,i4]=textread(fullfile(iripath,'ig_rz.dat'),'%d,%d,%d,%d',1,'headerlines',2);
  i5=datenum(dtime);
  if i5>datenum(i4,i3,31) | i5<datenum(i2,i1,1)
   error('Date is outside iri model time range, please update the iri model')
  end
- fprintf('** The model uses the IRI-2007 model at the tx position (%.1f %.1f)**\n',loc)
+ [d1,d]=fileparts(iripath);
+ fprintf('** The model uses the %s model at the tx position (%.1f %.1f)**\n',d,loc)
 end
 [tsec,year]=tosecs(dtime);
 hh=[min(heights)-1 max(heights)+1.1 1]; if hh(2)-hh(1)>100, hh(3)=0; end
