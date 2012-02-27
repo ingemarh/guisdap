@@ -19,7 +19,8 @@ C---------------------------------------------------------------------
       real outf(20,1000),oarr(100),tim(2),pos(2),h(3)
       save jf,nrp,rp,tim,pos,h
 c jf tttff ftttt ttttt ttttt ftftt ttfff ttftf ----- ----- -----
-      data jf/3*.true.,3*.false.,14*.true.,.false.,.true.,.false.,
+c jf tttff ttttt ttttt ttttt ftftt ttfff ttftf ----- ----- ----- error on jf(6)?
+      data jf/3*.true.,2*.false.,15*.true.,.false.,.true.,.false.,
      ,4*.true.,3*.false.,2*.true.,3*.false.,15*.true./,nrp/3/,
      ,rp/1,4,3,9*0/,tim/15552090.,1996./,pos/69.2,19.2/,h/100.,590.,0./
 C CHECK FOR PROPER NUMBER OF ARGUMENTS
