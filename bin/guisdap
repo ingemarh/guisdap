@@ -31,6 +31,7 @@ if [ ! -d $TMP ]; then
 	mkdir $TMP
 fi
 SHELL=/bin/sh
+TZ=UTC
 
 #find GUP
 filename=$0
@@ -122,5 +123,5 @@ if [ -d $GUP/NW/lib ]; then
 fi
 
 #echo "$matlab $mflags $tail"
-export TMP MATLABPATH IRIPATH PATH LD_LIBRARY_PATH SHELL
+export TMP MATLABPATH IRIPATH PATH LD_LIBRARY_PATH SHELL TZ
 $matlab $mflags $tail
