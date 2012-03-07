@@ -9,7 +9,12 @@ then
 	matlab="matlab"
 fi
 MATLAB=`$matlab -n | grep " MATLAB " | awk '{ print $NF }'`
-matver=`cat $MATLAB/.VERSION`
+if [ -e $MATLAB/.VERSION ]
+then
+	matver=`cat $MATLAB/.VERSION`
+else
+	matver="2012a"
+fi
 if [ $matver = "R13" ]
 then
 	MEXD=mex6
