@@ -18,7 +18,13 @@ w
 q
 !
 fi
-ed $1/$2.$3 <<!
+
+editor=ed
+if ! `hash $editor 2>/dev/null`
+then
+	editor="vi -e"
+fi
+$editor $1/$2.$3 <<!
 /%%Title
 c
 %%Title: $2
