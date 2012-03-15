@@ -20,9 +20,9 @@ if d_parbl(128)>4 & d_parbl(128)<=10,
   % Put the remote receiver locations to GUP variables
   % Why? Because the remote sites may have common initialization file
   if name_site=='K'
-    p_RECloc=[67.863, 20.44, .412];
+    p_RECloc=[67.863 20.44 .412];
   elseif name_site=='S'
-    p_RECloc=[67.367, 26.65, .180];
+    p_RECloc=[67.367 26.65 .180];
   end
 
   % The radar controller program number
@@ -68,6 +68,8 @@ if d_parbl(128)>4 & d_parbl(128)<=10,
   ch_range=range*ones(1,8)/10;
   if (name_site=='K' | name_site=='S')
     calTemp=30;
+  elseif year<1984
+    calTemp=100;
   else
     calTemp=210;
   end
