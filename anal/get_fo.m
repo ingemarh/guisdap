@@ -7,6 +7,9 @@ if isempty(t2), t2=t1; end
 if nargin<3, site='tromso'; end
 if findstr(site(1),'TV'), site='tromso'; end
 if site(1)=='L', site='svalbard'; end
+site3=site(1:3);
+if strcmp(site3,'32m') | strcmp(site3,'42m') | strcmp(site3,'esr'), site='svalbard'; end 
+if strcmp(site3,'uhf') | strcmp(site3,'vhf'), site='tromso'; end 
 of=local.tfile;
 day=[]; fo=[];
 

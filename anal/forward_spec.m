@@ -17,7 +17,7 @@ for l=1:length(lag)
 end
 %[err(1:5)/mean(err) std(err)/mean(err)]
 %keyboard
-if di_spectra==-1
+if di_spectra<0
  if isempty(r_acf)
   r_acf=acf';
   r_ace=err';
@@ -37,9 +37,11 @@ if di_spectra==-1
  end
 else
  dt=median(diff(lag));
- l=find(err>mean(err)+3*std(err)); acf(l)=[]; lag(l)=[];
- ml=max(lag); nl=round(ml/dt); l=(0:nl)/nl*ml; fl=find(lag);
+ l=find(err>mean(err)+3*di_spectra*std(err)); acf(l)=[]; lag(l)=[];
+ ml=max(lag); nl=round(ml/dt); l=(0:nl)/nl*ml; fl=fliplr(find(lag));
+ aend=0; if imag(acf(end))==0, aend=1; end
  acf=interp1([-lag(fl) lag],[conj(acf(fl)) acf],l,'spline');
+ if aend, acf(end)=real(acf(end)); end
  [s,f]=acf2spec(acf.',l*p_dtau*1e-6);
  if isempty(r_freq)
   r_freq=f'; r_spec=s;
@@ -55,7 +57,7 @@ else
   r_freq(:,end+1)=f'; r_spec(:,end+1)=s;
  end
 %plot(f,s),drawnow
- end
+end
 
 
 function [f,w]=acf2spec(acf,lag,m)
