@@ -8,13 +8,21 @@ d_date=datenum(row(d_parbl(1:6)));
 if d_date>datenum(2007,11,11)
   ran=[41 252;117 329;194 405];
 end
+if d_date>datenum(2011,11,11)
+ invert=1;
+end
 if vs>=3.0
   nlag=75; ngates=4;
   dt=0.4e-6; uparfreq=NaN;
   ran=[41 248;113 320;185 392;257 464];
+  if vs>=4.0
+   ran=[26 251;116 341;206 431;296 521];
+  end
 end
 if length(d_data)==2*ngates*nlag
   startad=(0:1)*ngates*nlag+1;
+elseif vs>=4.0
+  startad=(0:1)*87377+67*nlag+66*1152+21;
 elseif vs>=3.0
   startad=(0:1)*66545+51*nlag+50*1152+21;
 elseif vs>=2.0

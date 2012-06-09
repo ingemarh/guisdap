@@ -8,7 +8,7 @@ else
  apustr=['_' int2str(rc)];
 end
 t2psfile=['t_to_ps.txt' apustr '.' lower(site)];
-if p
+if p & rc<4
  t2psfile=['t_to_ps.txt_1.' lower(site)];
 end
 t_to_ps=load(t2psfile,'-ascii');
@@ -36,6 +36,7 @@ elseif site=='l'
  ch_adcint=[15 15];
  ch_filter={'b30d225.fir' 'b30d225.fir'};
  ch_f=[499.85 499.95];
+ if rc>3, ch_f(2)=500.15; end
 else
  error('giveup')
 end

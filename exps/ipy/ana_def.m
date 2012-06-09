@@ -26,8 +26,10 @@ if strfind(data_path,'@32p')
    plasma_range=20+col(ones(3*50,1)*(0:1)*19898+(1:3*50)'*ones(1,2)+22*50+21*768);
   elseif expver==2
    plasma_range=20+col(ones(3*50,1)*(0:1)*29814+(1:3*50)'*ones(1,2)+34*50+33*768);
-  else
+  elseif expver==2
    plasma_range=20+col(ones(4*75,1)*(0:1)*66545+(1:4*75)'*ones(1,2)+51*75+50*1152);
+  else
+   plasma_range=20+col(ones(4*75,1)*(0:1)*87377+(1:4*75)'*ones(1,2)+67*75+66*1152);
   end
  end
 elseif analysis_end(1)<2009
