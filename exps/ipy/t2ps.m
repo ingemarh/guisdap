@@ -36,7 +36,10 @@ elseif site=='l'
  ch_adcint=[15 15];
  ch_filter={'b30d225.fir' 'b30d225.fir'};
  ch_f=[499.85 499.95];
- if rc>3, ch_f(2)=500.15; end
+ if rc>3
+  ch_f(2)=500.15;
+  ch_filter={'b25d225.fir' 'b25d225.fir'};
+ end
 else
  error('giveup')
 end
