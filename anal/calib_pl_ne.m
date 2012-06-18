@@ -29,7 +29,7 @@ if isempty(plots) | plots
  ogcf=gcf; figure(9)
 end
 disp('Reading plasmaline data')
-[pl,p]=plasma_summary(pl_dir,expt,[],plots);
+[pl,p]=plasma_summary(pl_dir,[],expt,[],plots);
 if isempty(plots) | plots
  set(0,'currentfigure',ogcf)
 end

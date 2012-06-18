@@ -1,9 +1,10 @@
-function [varargout]=plasma_summary(pl_dir,expt,gates,plots)
+function [varargout]=plasma_summary(pl_dir,printdir,expt,gates,plots)
 % function plasma_summary(pl_dir,expt,gates,plots)
 % GUISDAP 8.6  8 Oct 2010  Copyright EISCAT
 % Get/plot summary for plasmalines
 % Using setup in pl_def.m in experiment directory
 % input: pl_dir Directory containing integrated plasma lines (needed)
+%        printdir Directory to save plot to (eps and png)
 %        expt   Name of experiment (or guessed from pl_dir)
 %        gates  Gates to display
 %        plots  Display a number of plots for internal checks
@@ -11,15 +12,16 @@ function [varargout]=plasma_summary(pl_dir,expt,gates,plots)
 %            .t Time
 %            .s Spectra
 %            .f Freqeuencies
-if nargin<2, expt=[]; end
+if nargin<2, printdir=[]; end
+if nargin<3, expt=[]; end
 verbose=0;
-if nargin<3
+if nargin<4
  gates=[];
 elseif gates==0
  gates=[]; verbose=1;
 end
 gate=[];
-if nargin<4, plots=[]; end
+if nargin<5, plots=[]; end
 if isempty(expt)
  [i,expt]=fileparts(pl_dir);
  if isempty(expt), [i,expt]=fileparts(i); end
@@ -217,4 +219,18 @@ elseif isempty(plots)
   'String','EISCAT Scientific Association');
  text('Position',-[70 1400],'String','Frequency offset [MHz]','Rotation',90,...
   'VerticalAlignment','middle','HorizontalAlignment','center')
+ if ~isempty(printdir)
+  global local
+  if pl_dir(end)==filesep, pl_dir(end)=[]; end
+  [dum,fname]=fileparts(pl_dir);
+  fname=fullfile(printdir,[fname '_plasmaline']);
+  fname=minput('Print file name',fname,1);
+  print(gcf,'-deps2c',[fname,'.eps'])
+  if local.x
+   print(gcf,'-dpng',[fname,'.png'])
+  else
+   print(gcf,'-dpng256',[fname,'.png'])
+  end
+  fprintf('%s.eps and .png saved\n',fname);
+ end
 end
