@@ -222,14 +222,14 @@ elseif isempty(plots)
  if ~isempty(printdir)
   global local
   if pl_dir(end)==filesep, pl_dir(end)=[]; end
+  if pl_dir=='.', pl_dir=pwd; end
   [dum,fname]=fileparts(pl_dir);
-  fname=fullfile(printdir,[fname '_plasmaline']);
-  fname=minput('Print file name',fname,1);
-  print(gcf,'-deps2c',[fname,'.eps'])
+  fname=minput('Print file name (.eps .png)',fullfile(printdir,[fname '_plasmaline']),1);
+  print(gcf,'-deps2c',[fname '.eps'])
   if local.x
-   print(gcf,'-dpng',[fname,'.png'])
+   print(gcf,'-dpng',[fname '.png'])
   else
-   print(gcf,'-dpng256',[fname,'.png'])
+   print(gcf,'-dpng256',[fname '.png'])
   end
   fprintf('%s.eps and .png saved\n',fname);
  end
