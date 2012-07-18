@@ -359,9 +359,9 @@ t1=['Produced@' LOCATION ', ' date];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 drawnow
 if isempty(vizufig)
- figure
+ gupfigure
  if ~local.x & round(10*local.matlabversion)==65
-  close(gcf),figure; % Matlab R13 bug
+  close(gcf),gupfigure; % Matlab R13 bug
  end
  set(gcf,'Position',[400 30 587 807],'DefaultAxesFontSize',FS,...
    'DefaultAxesTickDir','out','DefaultTextFontSize',FS,'UserData',6,...

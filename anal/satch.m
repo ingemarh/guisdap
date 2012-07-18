@@ -145,7 +145,7 @@ end
 OK=Nsat==0;
 if ~OK %| Nsatb>0
  if a_satch.plot
-  drawnow, figure(a_satch.plot), set(gcf,'Name','Satellites detected')
+  drawnow, gupfigure(a_satch.plot), set(gcf,'Name','Satellites detected')
   for i=1:j
    eval(['dat=dat' num2str(i) '; pc=pc' num2str(i) ';'])
    if local.matlabversion<7
@@ -274,7 +274,7 @@ end
 %if n_sat>0
 %y',x0'
 % th=th*x0;
-% figure(9),subplot(3,1,1)
+% gupfigure(9),subplot(3,1,1)
 % plot([dat dat_m]);
 % subplot(3,1,2)
 % plot([th dat_c])

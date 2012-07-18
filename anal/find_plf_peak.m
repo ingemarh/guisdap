@@ -14,7 +14,7 @@ end
 height=ones(s,1)*NaN;
 loghl=log(hlim);
 if fpp_plot
- oldfig=gcf; figure(9)
+ oldfig=gcf; gupfigure(9)
 end
 for i=1:s
  if size(hlim,1)>=s

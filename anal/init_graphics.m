@@ -22,7 +22,7 @@ for i=1:4
  if di_figures(i)
   if isempty(F)
    F=1; while ~isempty(find(used==F)), F=F+1; end
-   figure(F), clf
+   gupfigure(F), clf
    set(F,'Position',Positions(i,:),'NumberTitle','off','Name',Names(i,:),'UserData',i);
    set(F,'DefaultAxesFontWeight','bold','DefaultTextFontWeight','bold')
    used=[used;F];

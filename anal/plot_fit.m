@@ -478,7 +478,7 @@ hlabel = makelabels(hmajor);
 
 %% Now plot the picture
 goodgap = 0.05;
-figure(gcf), clf, set(gcf,'Resize','On','Name','plot_fit')
+gupfigure(gcf), clf, set(gcf,'Resize','On','Name','plot_fit')
 
 
 if (~use_ws)

@@ -39,7 +39,7 @@ mphd=pi2/rdt; aatd=atd(:,ind)./abs(atd(:,ind));
 fit_tx=inline('norm(exp(complex(0,P1*x(1)+x(2)))-P2)',2);
 opts=optimset('fminsearch'); optimset(opts,'display','off');
 [x,f,flag]=phasesearch(fit_tx,opts,flim,t,aatd,p,[phd_old*pi2 mean(ca)]);
-%figure(9), plot(t,[ca angle(exp(complex(0,t*x(1)+x(2))))]), drawnow
+%gupfigure(9), plot(t,[ca angle(exp(complex(0,t*x(1)+x(2))))]), drawnow
 if f<flim
  phd=rem(x(1),mphd)/pi2;
  phd_old=phd;

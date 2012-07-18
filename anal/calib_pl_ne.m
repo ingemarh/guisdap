@@ -26,7 +26,7 @@ edge_dist=10; overlap=2;
 
 %Get plasmaline data
 if isempty(plots) | plots
- ogcf=gcf; figure(9)
+ ogcf=gcf; gupfigure(9)
 end
 disp('Reading plasmaline data')
 [pl,p]=plasma_summary(pl_dir,[],expt,[],plots);
@@ -119,7 +119,7 @@ else
  plf=abs(plpeak_c(:,1+p.updown))/1e6;
 end
 if plots>1
- ogcf=gcf; figure(9)
+ ogcf=gcf; gupfigure(9)
  plot([abs(plpeak_c)/1e6 plf]), pause
  set(0,'currentfigure',ogcf)
 end
@@ -148,7 +148,7 @@ while mr==r0 | abs(mr-1)>.01
  mr=mr*r0; r0=mr;
  lf=8.98e-6*sqrt(par2D(:,:,3))/mr.*sqrt(1+3*7.52e5*(p.fradar/3e8)^2*par2D(:,:,4)./par2D(:,:,3)*mr^2);
  if plots>1
-  ogcf=gcf; figure(9)
+  ogcf=gcf; gupfigure(9)
   fpp_plot=1:100:s;
  end
  lf=find_plf_peak(s,h,hlim,lf,16,freq_th,1);

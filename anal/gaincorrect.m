@@ -43,5 +43,5 @@ while lld~=length(d)
  d=find(abs(data-g)<3*sd);
 end
 if p
- figure(p),plot(t,data,t,g),drawnow
+ gupfigure(p),plot(t,data,t,g),drawnow
 end

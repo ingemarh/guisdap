@@ -127,7 +127,7 @@ if di_figures(3)<0 | a_savespec
   end
 end
 if di_figures(3)
-  drawnow, figure(abs(di_figures(3))),%clf
+  drawnow, gupfigure(abs(di_figures(3))),%clf
   subplot('Position',[.1 .1 .7 .8])
   if di_figures(3)<0
     [nin0,tit0,mim0,psi,vi]=transf(result,p_m0);
