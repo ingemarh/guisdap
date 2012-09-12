@@ -57,7 +57,7 @@ if length(addr)>0
   end
 
   if di_figures(2)
-    drawnow, figure(di_figures(2))
+    drawnow, gupfigure(di_figures(2))
     p=plot(pp_profile*p_N0/1e11,pp_height,'ro');
     a=get(gca,'xlim'); a=min([max([a;-0.5 -0.5]);100 100]);
     set(gca,'xlim',a,'NextPlot','replace'), set(p,'MarkerSize',2)
