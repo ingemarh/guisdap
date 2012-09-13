@@ -165,7 +165,7 @@ while ~EOF
       end
       save_results
       if di_figures(4)
-        drawnow, figure(abs(di_figures(4)))
+        drawnow, gupfigure(abs(di_figures(4)))
         if di_figures(4)<0 & a_savespec | di_spectra>0
           plot_specs
         elseif di_spectra==0

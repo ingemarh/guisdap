@@ -83,12 +83,14 @@ global r_param r_error r_dp r_status r_h ch_el d_time
 lr=size(r_param,2);
 	
 
+gcf1=gcf;
 global name_expr name_site
-if sum(get(gcf,'color'))>2
+if sum(get(gcf1,'color'))>2
  white='k'; 
 else
  white='w'; 
 end
+
 
 %% Except for composition, the order of the other
 %% fitted parameters is as in the array r_param.
@@ -478,7 +480,7 @@ hlabel = makelabels(hmajor);
 
 %% Now plot the picture
 goodgap = 0.05;
-figure(gcf), clf, set(gcf,'Resize','On','Name','plot_fit')
+clf(gcf1), set(gcf1,'Resize','On','Name','plot_fit')
 
 
 if (~use_ws)
@@ -601,13 +603,13 @@ for i = 1 : npanels
 	title(labels(index(i),:))
 end
 
-axes(panels(1)), set(gca,'Yticklabel',hlabel)
+set(gcf1,'currentaxes',panels(1)), set(gca,'Yticklabel',hlabel)
 
 %% Store the panels handles for subsequent use ....
-if sum(get(gcf,'UserData'))~=4
+if sum(get(gcf1,'UserData'))~=4
 	disp(['Note: Individual panel handles are obtained using: ' ...
-	'get(gcf,''UserData'')'])
-	set(gcf,'UserData',panels');	%% ROW OF PANEL HANDLES ...
+	'get(gcf1,''UserData'')'])
+	set(gcf1,'UserData',panels');	%% ROW OF PANEL HANDLES ...
 end
 
 %% Put time string(s) in, indicating when dump was made ...
