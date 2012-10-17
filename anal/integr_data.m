@@ -100,7 +100,7 @@ while i<length(files)
   non_negative=[9 42 63];      % parameters which are positive
   if lpb>40 & d_parbl(41)==3   % for vhf antenna
    non_negative=[9 10 42 63];
-   averaged=[8:10 42 63 70];
+   averaged=[8:10 42 63 70 75];
   end
   % do not work on unavailable parameters
   averaged(find(averaged>lpb))=[];

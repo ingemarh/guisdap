@@ -26,7 +26,7 @@ function [varargout]=vizu(varargin)
 % >> vizu new [action]
 
 global Time par2D par1D rpar2D name_expr name_ant axs axc maxdy rres
-persistent hds
+persistent hds OLD_WHICH
 global height n_tot add_plot manylim plf_polen max_ppw
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
 global r_RECloc path_tmp path_GUP result_path webfile local owner
@@ -273,6 +273,10 @@ elseif ~REALT
  START_TIME=datevec(median(Time(:))); START_TIME(4:6)=[0 0 0];
  END_TIME=START_TIME+[0 0 0 24 0 0];
 end
+if strcmp(lower(act),'update') & ~isempty(OLD_WHICH)
+ WHICH_PARAM=OLD_WHICH;
+end
+OLD_WHICH=WHICH_PARAM;
 if isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);
 end
