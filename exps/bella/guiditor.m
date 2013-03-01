@@ -4,4 +4,4 @@ if name_site=='T'
 elseif name_site=='K' | name_site=='S'
  phasepush=-21; %Average for 640 us pulse
 end
-if ~isempty(phasepush), r_phasepush=phasepush; end
+if exist('phasepush') & ~isempty(phasepush), r_phasepush=phasepush; end

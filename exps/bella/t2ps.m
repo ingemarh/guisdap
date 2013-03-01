@@ -35,10 +35,10 @@ elseif site=='t'
  ch_f=[14 14.2];
  p_rep=720000;
 elseif site=='v'
- ch_adcint=[20 20];
- ch_filter={'b18d300.fir' 'b18d300.fir'};
- ch_f=[12 12.2];
- p_rep=357120;
+ ch_adcint=[45 45];
+ ch_filter={'b11d675.fir' 'b11d675.fir'};
+ ch_f=[6 5.8];
+ p_rep=720000;
 else
  error('giveup')
 end
