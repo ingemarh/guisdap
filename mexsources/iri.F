@@ -45,7 +45,7 @@ C CHECK FOR PROPER NUMBER OF ARGUMENTS
       len=(h(2)-h(1))/h(3)+1
       if(len.GT.500)CALL MEXERRMSGTXT('Max 500 heights')
       if(len*nrp.gt.4500)CALL MEXERRMSGTXT('Max 9par*500 heights')
-      call initialize
+c     call initialize
       call iri_sub(jf,0,pos(1),pos(2),iy,id-1,ut+25.,h(1),h(2),h(3),
      ,outf,oarr)
       i=1
