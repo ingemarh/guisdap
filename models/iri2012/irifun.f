@@ -1,29 +1,32 @@
 c irifun.for, version number can be found at the end of this comment.
 c-----------------------------------------------------------------------
-C
-C Functions and subroutines for the International Reference 
-C Ionosphere model. These functions and subroutines are called by
-C IRI_SUB subroutine (IRISUB.FOR).
+C Functions and subroutines for the International Reference Ionosphere 
+C (IRI) model. These functions and subroutines are called by the main
+C IRI subroutine IRI_SUB in IRISUB.FOR.
+c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+c Required i/o units:  
+c  KONSOL= 6 Program messages (used when jf(12)=.true. -> konsol)
+c  KONSOL=11 Program messages (used when jf(12)=.false. -> MESSAGES.TXT)
 c
-c-----------------------------------------------------------------------
-C   
-c i/o units:  6   messages (during execution) to Konsol (Monitor)
-c            10   CCIR and URSI coefficients
-c            11   alternate unit for message file (if jf(12)=.false.)
-c            12   solar/ionospheric indices: ig_rz.dat        
-c            13   magnetic indices and F10.7: apf107.dat
-c            14   igrf coefficients
-c        
-c-----------------------------------------------------------------------
+c     COMMON/iounit/konsol is used to pass the value of KONSOL from 
+c     IRISUB to IRIFUN and IGRF. If KONSOL=1 than messages are turned off.
+c     
+c  UNIT=12 TCON: Solar/ionospheric indices IG12, R12 (IG_RZ.DAT) 
+c  UNIT=13 APF,APFMSIS,APF_ONLY: Magnetic indices and F10.7 (APF107.DAT) 
+c
+c I/o Units used in other programs:
+c  IUCCIR=10 in IRISUB for CCIR and URSI coefficients (CCIR%%.ASC, %%=month+10)
+c  UNIT=14 in IGRF/GETSHC for IGRF coeff. (DGRF%%%%.DAT, %%%%=year)
+c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c changes from IRIFU9 to IRIF10:
 c       SOCO for solar zenith angle 
 c       ACOS and ASIN argument forced to be within -1 / +1
 c       EPSTEIN functions corrected for large arguments
-c-----------------------------------------------------------------------
+c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c changes from IRIF10 to IRIF11: 
 c       LAY subroutines introduced
 c       TEBA corrected for 1400 km
-c-----------------------------------------------------------------------
+c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c changes from IRIF11 to IRIF12:
 C       Neutral temperature subroutines now in CIRA86.FOR 
 C       TEDER changed
@@ -31,7 +34,7 @@ C       All names with 6 or more characters replaced
 C       10/29/91 XEN: 10^ in loop, instead of at the end
 C       1/21/93 B0_TAB instead of B0POL
 C       9/22/94 Alleviate underflow condition in IONCOM exp()
-c-----------------------------------------------------------------------
+c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c changes from IRIF12 to IRIF13:
 C        9/18/95 MODA: add leap year and number of days in month
 C        9/29/95 replace F2out with FOUT and XMOUT.
@@ -57,7 +60,7 @@ C       04/30/99 MODA: reset bb(2)=28
 C       11/08/99 avoid negative x value in function XE2. Set x=0.
 C       11/09/99 added COMMON/const1/humr,dumr also for CIRA86
 C       11/30/99 EXIT in APROK replaced with GOTO (N. Smirnova)
-c-----------------------------------------------------------------------
+c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c changes from IRIF13 to IRIFUN:
 C-Version-mm/dd/yy-description [person reporting correction]
 C 2000.01 05/09/00 Include B0_98 subroutine to replace B0_NEW and B0POL
@@ -93,70 +96,45 @@ C 2007.10 02/03/10 APF: eof error message; clean-up APF and APF_only
 C 2007.11 04/19/10 ELTEIK:     IF (ALT .GE. 900) THEN      [A. Senior]
 C 2007.11 04/19/10 INILAY: HFFF,XFFF when NIGHT=F1REG=f    [A. Senior]
 C
-C 2011.00 10/05/11 IRI-2011: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
-C 2011.00 10/05/11 bottomside Ni model (iriflip.for), auroral foE
-C 2011.00 10/05/11 storm model (storme_ap), Te with PF10.7 (elteik),
-C 2011.00 10/05/11 oval kp model (auroral_boundary),IGRF-11(igrf.for), 
-C 2011.00 10/05/11 NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
-C 2011.00 10/05/11 81-day 365-day indices (apf107.dat), ap->kp (ckp),
-C 2011.00 10/05/11 array size change jf(50) outf(20,1000), oarr(100).
-C 2011.00 11/08/11 SHAMDB0D+: Initialize COMMON variables outside DATA
-C 2011.00 11/08/11 SCHNEVPD,LEGFUN: COSD(x) -> COS(x*UMR)
-C 2011.00 11/08/11 auroral_boundary: i1.gt/ge.48
-C 2011.00 11/08/11 CALION: F107D upper/lower boundary 220/65
+C 2012.00 10/05/11 IRI-2012: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
+C 2012.00 10/05/11   bottomside Ni model (iriflip.for), auroral foE
+C 2012.00 10/05/11   storm model (storme_ap), Te with PF10.7 (elteik),
+C 2012.00 10/05/11   oval kp model (auroral_boundary),IGRF-11(igrf.for), 
+C 2012.00 10/05/11   NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
+C 2012.00 10/05/11   81-day 365-day indices (apf107.dat), ap->kp (ckp),
+C 2012.00 10/05/11   array size change jf(50) outf(20,1000), oarr(100).
+C 2012.00 10/05/11   No longer needed: TEDER,DTNDH
+C 2012.01 11/08/11 SHAMDB0D+: Initialize COMMON variables outside DATA
+C 2012.01 11/08/11 SCHNEVPD,LEGFUN: COSD(x) -> COS(x*UMR)
+C 2012.01 11/08/11 auroral_boundary: i1.gt/ge.48
+C 2012.01 11/08/11 CALION: F107D upper/lower boundary 220/65
+C 2012.01 01/06/12 delete PAUSE statement in SPLINT
+C 2012.01 01/24/12 STORME_AP: change 365 to 366 leap year    [F. Simoes]
+C 2012.01 06/30/12 HMF2ED: hmF2 too low foF2/foE ge 1.7 [I.Zakharenkova]
 C                  
-C**************************************************************  
-C********** INTERNATIONAL REFERENCE IONOSPHERE ****************  
-C**************************************************************  
-C****************  FUNCTIONS,SUBROUTINES  *********************
-C**************************************************************
-C** initialize:	INITIALIZE 
-C** NE:         XE1,TOPQ,ZERO,DXE1N,XE2,XE3_1,XE4_1,XE5,XE6,
-C**             XE_1
-C** TE/TI:      ELTEIK{INTERP,KODERR,KOEFD,KOF107,LOCATE,SPHARM_IK, 
-C**		        SPLINE,SPLINT,SWAPEL,TEDIFI,TPCAS,TPCORR},TEBA,SPHARM,
-C**             ELTE,TEDE,TI,TEDER,TN,DTNDH
-C** NI:         RPID,RDHHE,RDNO,KOEFP1,KOEFP2,KOEFP3,SUFE,IONDANI, 
-C**             IONCO1,IONCO2,APROK,CALION,IONLOW,IONHIGH,INVDPC
-C** PEAKS:      FOUT,XMOUT,HMF2ED,FOF1ED,f1_c1,f1_prob,FOEEDI,XMDED,
-C**		        GAMMA1
-C** PROFILE PAR:TOPH05, CHEBISH, SHAMDB0D, SHAB1D, SCHNEVPD, TBFIT,  
-C**             LEGFUN,B0_98,TAL,VALGUL
-C** MAG. FIELD: FIELDG, CONVER(Geom. Corrected Latitude)
-C** FUNCTIONS:  REGFA1
-C** TIME:       SOCO,HPOL,MODA,UT_LT,CLCMLT,SUN
-C** EPSTEIN:    RLAY,D1LAY,D2LAY,EPTR,EPST,EPSTEP,EPLA
-C** LAY:        XE2TO5,XEN,ROGUL,LNGLSN,LSKNM,INILAY
-C** INDICES:    TCON,APF,APFMSIS,APF_ONLY
-C** Storm:   	CONVER, STORM, STORME_AP
-C** Ion drift:  vdrift,bspl4_time,bspl4_long,g,stormvd,
-C**             bspl4_ptime
-C** spread-F:	spreadf_brazil,bspl2f,bspl2l,bspl2s,bspl4t
-C** Auroral B.: auroral_boundary, ckp
-C**************************************************************  
-C  
-C**************************************************************  
-C***  -------------------ADDRESSES------------------------  ***
-C***  I  PROF. K. RAWER             DR. D. BILITZA       I  ***
-C***  I  HERRENSTR. 43              GSFC CODE 632        I  ***
-C***  I  7801 MARCH 1               GREENBELT MD 20771   I  ***
-C***  I  F.R.G.                     USA                  I  ***
-C***  ----------------------------------------------------  ***
-C**************************************************************  
-C**************************************************************  
+c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+c IRI functions and subroutines:
+C Ne:       XE1,TOPQ,ZERO,DXE1N,XE2,XE3_1,XE4_1,XE5,XE6,XE_1
+C Te, Ti:   ELTEIK{INTERP,KODERR,KOEFD,KOF107,LOCATE,SPHARM_IK, 
+C		    SPLINE,SPLINT,SWAPEL,TEDIFI,TPCAS,TPCORR},TEBA,SPHARM,
+C           ELTE,TEDE,TI,TN
+C Ni:       RPID,RDHHE,RDNO,KOEFP1,KOEFP2,KOEFP3,SUFE,IONDANI,IONCO1, 
+C           IONCO2,APROK,CALION,IONLOW,IONHIGH,INVDPC
+C PEAKS:    FOUT,XMOUT,HMF2ED,FOF1ED,f1_c1,f1_prob,FOEEDI,XMDED,GAMMA1
+C PROFILE:  TOPH05, CHEBISH, SHAMDB0D, SHAB1D, SCHNEVPD, TBFIT,  
+C           LEGFUN,B0_98,TAL,VALGUL, DREGION
+C MAG. FIELD: FIELDG, CONVER(Geom. Corrected Latitude)
+C TIME:     SOCO,HPOL,MODA,UT_LT,CLCMLT,SUN
+C EPSTEIN:  RLAY,D1LAY,D2LAY,EPTR,EPST,EPSTEP,EPLA
+C LAY:      XE2TO5,XEN,ROGUL,LNGLSN,LSKNM,INILAY
+C INDICES:  TCON,APF,APFMSIS,APF_ONLY
+C STORM:   	CONVER, STORM, STORME_AP
+C Vi:       vdrift,bspl4_time,bspl4_long,g,stormvd,bspl4_ptime
+C Spread-F:	spreadf_brazil,bspl2f,bspl2l,bspl2s,bspl4t
+C Auroral: 	auroral_boundary, ckp
+C Misc:     REGFA1
+c-----------------------------------------------------------------------
 C
-C
-        subroutine initialize
-c no longer needed; is now done in IRISUB
-        COMMON  /CONST/UMR  /ARGEXP/ARGMAX  /const1/humr,dumr
-        ARGMAX=88.0
-        pi=atan(1.0)*4.
-        UMR=pi/180.
-        humr=pi/12.
-        dumr = pi / 182.5
-        return 
-        end
-
 C        
 C*************************************************************   
 C*************** ELECTRON DENSITY ****************************   
@@ -1804,7 +1782,6 @@ C-------------------------------------------------------------------------------
       goto 1
       endif
       h=xa(khi)-xa(klo)
-      if (h.eq.0.) write(*,*) 'bad xa input in splint'
       a=(xa(khi)-x)/h
       b=(x-xa(klo))/h
       y=a*ya(klo)+b*ya(khi)+((a**3-a)*y2a(klo)+(b**3-b)*y2a(khi))*(h**
@@ -4867,11 +4844,13 @@ C*************************************************************
 C
 C
       real function FOUT(XMODIP,XLATI,XLONGI,UT,FF0)
+c--------------------------------------------------------------
 C CALCULATES CRITICAL FREQUENCY FOF2/MHZ USING SUBROUTINE GAMMA1.      
 C XMODIP = MODIFIED DIP LATITUDE, XLATI = GEOG. LATITUDE, XLONGI=
 C LONGITUDE (ALL IN DEG.), MONTH = MONTH, UT =  UNIVERSAL TIME 
 C (DEC. HOURS), FF0 = ARRAY WITH RZ12-ADJUSTED CCIR/URSI COEFF.
 C D.BILITZA,JULY 85.
+c--------------------------------------------------------------
       DIMENSION FF0(988)
       INTEGER QF(9)
       DATA QF/11,11,8,4,1,0,0,0,0/
@@ -4881,11 +4860,13 @@ C D.BILITZA,JULY 85.
 C
 C
       real function XMOUT(XMODIP,XLATI,XLONGI,UT,XM0)
+c--------------------------------------------------------------
 C CALCULATES PROPAGATION FACTOR M3000 USING THE SUBROUTINE GAMMA1.
 C XMODIP = MODIFIED DIP LATITUDE, XLATI = GEOG. LATITUDE, XLONGI=
 C LONGITUDE (ALL IN DEG.), MONTH = MONTH, UT =  UNIVERSAL TIME 
 C (DEC. HOURS), XM0 = ARRAY WITH RZ12-ADJUSTED CCIR/URSI COEFF.
 C D.BILITZA,JULY 85.
+c--------------------------------------------------------------
       DIMENSION XM0(441)
       INTEGER QM(7)
       DATA QM/6,7,5,2,1,0,0/
@@ -4895,30 +4876,38 @@ C D.BILITZA,JULY 85.
 C
 C
       REAL FUNCTION HMF2ED(XMAGBR,R,X,XM3)         
+c--------------------------------------------------------------
 C CALCULATES THE PEAK HEIGHT HMF2/KM FOR THE MAGNETIC                           
-C LATITUDE XMAGBR/DEG. AND THE SMOOTHED ZUERICH SUNSPOT                         
+C LATITUDE XMAGBR/DEGREE AND THE SMOOTHED ZUERICH SUNSPOT                         
 C NUMBER R USING CCIR-M3000 XM3 AND THE RATIO X=FOF2/FOE.                       
 C [REF. D.BILITZA ET AL., TELECOMM.J., 46, 549-553, 1979]                       
 C D.BILITZA,1980.     
-      F1=(2.32E-3)*R+0.222                         
-      F2=1.2-(1.16E-2)*EXP((2.39E-2)*R)            
+c--------------------------------------------------------------
+      F1=0.00232*R+0.222                         
+      F2=1.2-0.0116*EXP(0.0239*R)            
       F3=0.096*(R-25.0)/150.0                      
-      DELM=F1*(1.0-R/150.0*EXP(-XMAGBR*XMAGBR/1600.0))/(X-F2)+F3                
-      HMF2ED=1490.0/(XM3+DELM)-176.0               
+      F4=1.0-R/150.0*EXP(-XMAGBR*XMAGBR/1600.0)
+      if(x.lt.1.7) x=1.7
+      DELM=F1*F4/(X-F2)+F3                
+      HMF2ED=1490.0/(XM3+DELM)-176.0 
       RETURN          
       END             
 C
 C
       REAL FUNCTION XM3000HM(XMAGBR,R,X,HMF2)         
+c--------------------------------------------------------------
 C CALCULATES THE PROPAGATION FACTOR M3000 FOR THE MAGNETIC LATITUDE
 C XMAGBR/DEG. AND THE SMOOTHED ZUERICH SUNSPOT NUMBER R USING THE                        
 C PEAK HEIGHT HMF2/KM AND THE RATIO X=FOF2/FOE. Reverse of HMF2ED.                      
 C [REF. D.BILITZA ET AL., TELECOMM.J., 46, 549-553, 1979]                       
-C D.BILITZA,1980.     
-      F1=(2.32E-3)*R+0.222                         
-      F2=1.2-(1.16E-2)*EXP((2.39E-2)*R)            
+C D.BILITZA,1980. ----- no longer used    
+c--------------------------------------------------------------
+      F1=0.00232*R+0.222                         
+      F2=1.2-0.0116*EXP(0.0239*R)            
       F3=0.096*(R-25.0)/150.0                      
-      DELM=F1*(1.0-R/150.0*EXP(-XMAGBR*XMAGBR/1600.0))/(X-F2)+F3                
+      F4=1.0-R/150.0*EXP(-XMAGBR*XMAGBR/1600.0)
+      if(x.lt.1.4) x=1.4
+      DELM=F1*F4/(X-F2)+F3                
 	  XM3000HM=1490.0/(HMF2+176.0)-DELM
       RETURN          
       END             
@@ -5081,58 +5070,73 @@ C
 C
         REAL FUNCTION GAMMA1(SMODIP,SLAT,SLONG,HOUR,
      &                          IHARM,NQ,K1,M,MM,M3,SFE)      
+C---------------------------------------------------------------
 C CALCULATES GAMMA1=FOF2 OR M3000 USING CCIR NUMERICAL MAP                      
 C COEFFICIENTS SFE(M3) FOR MODIFIED DIP LATITUDE (SMODIP/DEG)
 C GEOGRAPHIC LATITUDE (SLAT/DEG) AND LONGITUDE (SLONG/DEG)  
-C AND UNIVERSIAL TIME (HOUR/DECIMAL HOURS).
+C AND UNIVERSIAL TIME (HOUR/DECIMAL HOURS). IHARM IS THE MAXIMUM
+C NUMBER OF HARMONICS USED FOR DESCRIBING DIURNAL VARIATION.
 C NQ(K1) IS AN INTEGER ARRAY GIVING THE HIGHEST DEGREES IN 
-C LATITUDE FOR EACH LONGITUDE HARMONIC.                  
-C M=1+NQ1+2(NQ2+1)+2(NQ3+1)+... .                  
+C LATITUDE FOR EACH LONGITUDE HARMONIC WHERE K1 GIVES THE NUMBER 
+C OF LONGITUDE HARMONICS. M IS THE NUMBER OF COEFFICIENTS FOR 
+C DESCRIBING VARIATIONS WITH SMODIP, SLAT, AND SLONG. MM IS THE
+C NUMBER OF COEFFICIENTS FOR THE FOURIER TIME SERIES DESCRIBING
+C VARIATIONS WITH UT.
+C M=1+NQ(1)+2*[NQ(2)+1]+2*[NQ(3)+1]+... , MM=2*IHARM+1, M3=M*MM  
 C SHEIKH,4.3.77.      
+C---------------------------------------------------------------
       REAL*8 C(12),S(12),COEF(100),SUM             
       DIMENSION NQ(K1),XSINX(13),SFE(M3)           
       COMMON/CONST/UMR
       HOU=(15.0*HOUR-180.0)*UMR                    
       S(1)=SIN(HOU)   
       C(1)=COS(HOU)   
+
       DO 250 I=2,IHARM                             
-      C(I)=C(1)*C(I-1)-S(1)*S(I-1)                 
-      S(I)=C(1)*S(I-1)+S(1)*C(I-1)                 
-250   CONTINUE        
+        C(I)=C(1)*C(I-1)-S(1)*S(I-1)                 
+        S(I)=C(1)*S(I-1)+S(1)*C(I-1)                 
+250     CONTINUE        
+
       DO 300 I=1,M    
-      MI=(I-1)*MM     
-      COEF(I)=SFE(MI+1)                            
-      DO 300 J=1,IHARM                             
-      COEF(I)=COEF(I)+SFE(MI+2*J)*S(J)+SFE(MI+2*J+1)*C(J)                       
-300   CONTINUE        
+        MI=(I-1)*MM     
+        COEF(I)=SFE(MI+1)                            
+        DO 300 J=1,IHARM                             
+          COEF(I)=COEF(I)+SFE(MI+2*J)*S(J)+SFE(MI+2*J+1)*C(J)                       
+300       CONTINUE        
+
       SUM=COEF(1)     
       SS=SIN(SMODIP*UMR)                           
       S3=SS           
       XSINX(1)=1.0    
       INDEX=NQ(1)     
+
       DO 350 J=1,INDEX                             
-      SUM=SUM+COEF(1+J)*SS                         
-      XSINX(J+1)=SS   
-      SS=SS*S3        
-350   CONTINUE        
+        SUM=SUM+COEF(1+J)*SS                         
+        XSINX(J+1)=SS   
+        SS=SS*S3        
+350     CONTINUE        
+
       XSINX(NQ(1)+2)=SS                            
       NP=NQ(1)+1      
       SS=COS(SLAT*UMR)                             
       S3=SS           
+
       DO 400 J=2,K1   
-      S0=SLONG*(J-1.)*UMR                          
-      S1=COS(S0)      
-      S2=SIN(S0)      
-      INDEX=NQ(J)+1   
-      DO 450 L=1,INDEX                             
-      NP=NP+1         
-      SUM=SUM+COEF(NP)*XSINX(L)*SS*S1              
-      NP=NP+1         
-      SUM=SUM+COEF(NP)*XSINX(L)*SS*S2              
-450   CONTINUE        
-      SS=SS*S3        
-400   CONTINUE        
+        S0=SLONG*(J-1.)*UMR                          
+        S1=COS(S0)      
+        S2=SIN(S0)      
+        INDEX=NQ(J)+1   
+        DO 450 L=1,INDEX                             
+          NP=NP+1         
+          SUM=SUM+COEF(NP)*XSINX(L)*SS*S1              
+          NP=NP+1         
+          SUM=SUM+COEF(NP)*XSINX(L)*SS*S2              
+450       CONTINUE        
+        SS=SS*S3        
+400     CONTINUE
+        
       GAMMA1=SUM      
+
       RETURN          
       END 
 C
@@ -5344,7 +5348,7 @@ C                   latitude is the same as of the orginal site.
 C			FLON	=LONGITUDE+15.*UT(hours)
 C			T		Month as a REAL number (1.0 to 12.0)
 C			RZ		12-month running mean
-C OUTOUT	B		=B0
+C OUTPUT	B		=B0
 C
 C  Blanch E., D. Arrazola, D. Altadill, D. Buresova, M. Mosert, 
 C     Adv. Space Res. 39, 701-710, 2007.
@@ -5538,9 +5542,11 @@ C	COMPUTES THE HOURLY VALUES OF B1 FROM A SET OF SH COEFFICIENTS
 C	IN A POINT OF A GIVEN GEOCENTRIC LATITUDE AND LONGITUDE
 C	OF THE EARTH'S SURFACE FOR A GIVEN MONTH AND A GIVEN SUSPOT NUMER
 C
-C   PARAMETERS ARE THE SAME AS IN SHAMDB0D, EXCEPT:
-C		FLAT	Geographic latitude
-C		B		=B1
+C   INPUT:	FLAT	Geographic latitude
+C			FLON	=LONGITUDE+15.*UT(hours)
+C			T		Month as a REAL number (1.0 to 12.0)
+C			RZ		12-month running mean
+C   OUTPUT:	B		=B1
 C
 C	***** PARAMS & COEFFS IN DATA SENTENCES *****
 C-------------------------------------------------------------------
@@ -6259,6 +6265,76 @@ C
         RETURN
         END
 C
+C
+      Subroutine dummyDRegion(z,it,f,vKp,f5SW,f6WA,elg)
+c-----------------------------------------------------------------------
+c Reference: Danilov, Rodevich, and Smirnova, Adv. Space Res.  
+C     15, #2, 165, 1995.
+C
+C Input:     z    - solar zenith angle in degrees
+C            it   - season (month)
+C            f    - F10.7 solar radio flux (daily)
+C            vKp  - Kp magnetic index (3-hour)
+C            f5SW - indicator for Stratospheric Warming (SW) conditions
+C                   =0 no SW, =0.5 minor SW, =1 major SW
+C            f6WA - indicator for Winter Anomaly (WA) conditions
+C                   =0 no WA, =0.5 weak WA, =1 strong WA
+C Criteria for SW and WA indicators:
+C      SW minor:  Temperature increase at the 30 hPa level by 10 deg.
+C      SA major:  The same but by 20 degrees.
+C         Temperature data for each year are published  
+C         in Beilage zur Berliner Wetterkarte (K. Labitzke et al.).
+C      WA weak:   An increase of the absorption in the 2-2.8 MHz  
+C                 range at short A3 paths by 15 dB
+C      WA strong: The same by 30 dB.
+C 
+C       Only for month 12 to 2 (winter).
+C
+C Output:      elg(7)  alog10 of electron density [cm-3] at h=60,65,
+C                  70,75,80,85, and 90km
+c-----------------------------------------------------------------------
+c            
+cor   dimension h(7),A0(7),A1(7),A2(7),A3(7),A4(7),A5(7),A6(7),elg(7)
+      dimension A0(7),A1(7),A2(7),A3(7),A4(7),A5(7),A6(7),elg(7)
+      data A0/1.0,1.2,1.4,1.5,1.6,1.7,3.0/
+      data A1/0.6,0.8,1.1,1.2,1.3,1.4,1.0/
+      data A2/0.,0.,0.08,0.12,0.05,0.2,0./
+      data A3/0.,0.,0.,0.,0.,0.,1./
+      data A4/0.,0.,-0.30,0.10,0.20,0.30,0.15/
+      data A5/0.,-0.10,-0.20,-0.25,-0.30,-.30,0./
+      data A6/0.,0.1,0.3,0.6,1.,1.,0.7/
+        pi=3.14159265
+         if(z.le.45) then
+           f1z=1.
+         else
+           if(z.lt.90) then
+             f1z=1.1892*(cos(z*pi/180))**0.5
+           else
+             f1z=0.
+           endif
+         endif
+         f4S=1.
+       if((it.ge.5).and.(it.le.9))then
+         f4S=0.
+         f5SW=0
+         f6WA=0
+       endif
+       if((it.eq.3).or.(it.eq.4).or.(it.eq.10).or.(it.eq.11))then
+         f4S=0.5
+         f5SW=0
+         f6WA=0
+       endif
+         f2Kp=vKp
+         if(vKp.gt.2) f2Kp=2.
+         f3F=(f-60.)/300.*f1z
+         do 1 i=1,7
+         elg(i)=A0(i)+A1(i)*f1z+A2(i)*f2Kp+A3(i)*f3F+A4(i)*f4S
+     *         +A5(i)*f5SW+A6(i)*f6WA
+   1     continue
+         end
+C
+C
+C
 C                     
 C************************************************************                   
 C*************** EARTH MAGNETIC FIELD ***********************                   
@@ -6684,6 +6760,7 @@ C--------------------------------------------------------------------
        REAL LAM,LAMS,DELLAM 
        DATA DTOR/0.017453293/
        DATA PI/3.14159265/
+
        XG=COS(GLAT*DTOR)*COS(GLON*DTOR)
        YG=COS(GLAT*DTOR)*SIN(GLON*DTOR)
        ZG=SIN(GLAT*DTOR)
@@ -7241,43 +7318,35 @@ c               rsn             interpolation parameter
 c               nmonth          previous or following month depending
 c                               on day
 c
-c rz(1), ig(1) contain the indices for the month mm and rz(2), ig(2)
+c Requires I/O UNIT=12 to read the Rz12 and IG12 indices file IG_RZ.DAT 
+c 
+c rz(1) & ig(1) contain the indices for the month mm and rz(2) & ig(2)
 c for the previous month (if day less than 15) or for the following
 c month (otherwise). These indices are for the mid of the month. The
 c indices for the given day are obtained by linear interpolation and
 c are stored in rz(3) and ig(3).
 c
-c the indices are obtained from the indices file ig_rz.dat that is 
-c read in subroutine initialize and stored in COMMON/indices/
-c----------------------------------------------------------------
-
-           integer      yr, mm, day, iflag, iyst, iyend,iymst
-           integer      imst,iymend
-           real         ionoindx(722),indrz(722)
-           real         ig(3),rz(3)
-           character path*100
-
-           common /iounit/konsol
-
-           save         ionoindx,indrz,iflag,iyst,iymst,
-     &                  iymend,imst
-c
-c Rz12 and IG are determined from the file IG_RZ.DAT which has the
-c following structure: 
-c day, month, year of the last update of this file,
-c start month, start year, end month, end year,
-c the 12 IG indices (13-months running mean) for the first year, 
-c the 12 IG indices for the second year and so on until the end year,
-c the 12 Rz indices (13-months running mean) for the first year,
-c the 12 Rz indices for the second year and so on until the end year.
-c The inteporlation procedure also requires the IG and Rz values for
-c the month preceeding the start month and the IG and Rz values for the
-c month following the end month. These values are also included in 
-c IG_RZ.
+c The indices file IG_RZ.DAT is structured as follows (values are 
+c separated by comma): 
+c   day, month, year of the last update of this file,
+c   a blank line
+c   start month, start year, end month, end year,
+c   a blank line
+c   the IG index for December of start year - 1 (needed for interpolation)
+c   the 12 IG indices (13-months running mean) for start year, 
+c   the 12 IG indices for the second year 
+c       .. and so on until the end year,
+c   the IG index for January of end year + 1 (needed for interpolation)
+c   a blank line
+c   the Rz index for December of start year - 1 (needed for interpolation)
+c   the 12 Rz indices (13-months running mean) for the start year,
+c   the 12 Rz indices for the second year 
+c       .. and so on until the end year.
+c   the Rz index for January of end year + 1 (needed for interpolation)
 c 
 c A negative Rz index means that the given index is the 13-months-
 C running mean of the solar radio flux (F10.7). The close correlation 
-C between (Rz)12 and (F10.7)12 is used to derive the (Rz)12 indices.
+C between (Rz)12 and (F10.7)12 is used to compute the (Rz)12 indices.
 c
 c An IG index of -111 indicates that no IG values are available for the
 c time period. In this case a correlation function between (IG)12 and 
@@ -7290,43 +7359,60 @@ C therefore requires predictions of the indix for the next six months.
 C Starting from six months before the UPDATE DATE (listed at the top of 
 c the file) and onward the indices are therefore based on indices 
 c predictions.
-c
-        if(iflag.eq.0) then
-      
-c-web- special for web version
-c          open(unit=12,file=
-c     *'/usr/local/etc/httpd/cgi-bin/models/IRI/ig_rz.dat',
-        call getenv('IRIPATH',path)
-         open(unit=12,file=path(1:index(path,' ')-1)//'/ig_rz.dat',
+c----------------------------------------------------------------
+
+           integer      yr, mm, day, iflag, iyst, iyend,iymst
+           integer      imst,iymend
+           real         ionoindx(722),indrz(722)
+           real         ig(3),rz(3)
+           character path*100
+
+           common /iounit/konsol
+
+           save         ionoindx,indrz,iflag,iyst,iymst,iymend,imst
+
+        if(iflag.eq.0) then      
+            call getenv('IRIPATH',path)
+            open(unit=12,file=path(1:index(path,' ')-1)//'/ig_rz.dat',
      *status='old',action='read')
+
+c-web- special for web version
+c            open(unit=12,file=
+c     *         '/usr/local/etc/httpd/cgi-bin/models/IRI/ig_rz.dat',
+c     *         status='old')
 
 c Read the update date, the start date and the end date (mm,yyyy), and
 c get number of data points to read.
-          read(12,*) iupd,iupm,iupy
-          read(12,*) imst,iyst, imend, iyend
-          iymst=iyst*100+imst
-          iymend=iyend*100+imend
+
+            read(12,*) iupd,iupm,iupy
+            read(12,*) imst,iyst,imend,iyend
+            iymst=iyst*100+imst
+            iymend=iyend*100+imend
+
 c inum_vals= 12-imst+1+(iyend-iyst-1)*12 +imend + 2
-c            1st year \ full years       \last y\ before & after
-          inum_vals= 3-imst+(iyend-iyst)*12 +imend
-c Read all the ionoindx and indrz values
-          read(12,*) (ionoindx(i),i=1,inum_vals)
-          read(12,*) (indrz(i),i=1,inum_vals)
-          do 1 jj=1,inum_vals
+c 1st year \ full years       \last y\ before & after
+
+            inum_vals= 3-imst+(iyend-iyst)*12 +imend
+
+c read all the IG12 (ionoindx) and Rz12 (indrz) values
+
+            read(12,*) (ionoindx(i),i=1,inum_vals)
+            read(12,*) (indrz(i),i=1,inum_vals)
+            do 1 jj=1,inum_vals
                 rrr=indrz(jj)
                 if(rrr.lt.0.0) then
-                        covr=abs(rrr)
-                        rrr=33.52*sqrt(covr+85.12)-408.99
-                        if(rrr.lt.0.0) rrr=0.0
-                        indrz(jj)=rrr
-                        endif
+                    covr=abs(rrr)
+                    rrr=33.52*sqrt(covr+85.12)-408.99
+                    if(rrr.lt.0.0) rrr=0.0
+                    indrz(jj)=rrr
+                    endif
                 if(ionoindx(jj).gt.-90.) goto 1
-                  zi=-12.349154+(1.4683266-2.67690893e-03*rrr)*rrr
-                  if(zi.gt.274.0) zi=274.0
-                  ionoindx(jj)=zi
+                    zi=-12.349154+(1.4683266-2.67690893e-03*rrr)*rrr
+                    if(zi.gt.274.0) zi=274.0
+                    ionoindx(jj)=zi
 1               continue
-          close(unit=12)
-          iflag = 1
+            close(unit=12)
+            iflag = 1
         endif
 
         iytmp=yr*100+mm
@@ -7396,40 +7482,37 @@ C
 C
 
         SUBROUTINE APF(IYYYY,IMN,ID,HOUR,IAP)
-c--------------------------------------------------------------------
+c-----------------------------------------------------------------------
 c Finds 3-hourly Ap indices for IRI-STORM model
-c
 c    INPUTS: 	IYYYY (yyyy)	year 
 c 				IMN (mm)		month 
 c				ID (dd)			day 
 c				HOUR			UT in decimal hours
-c     OUTPUT:   IAP(13)			3-hourly Ap index
+c    OUTPUT:    IAP(13)			3-hourly Ap index
 c								IAP(13) Ap index for current UT
 c								IAP(1) AP index for UT-39 hours.
 c
 c Reads APF107.DAT file (on UNIT=13) that is structured as follows:
 c 		JY(I3),JMN(I3),JD(I3)	year, month, day 
-c		iiap(8)	(8I3)			3-hour Ap indices for the UT intervals 
+c		IIAP(8)	(8I3)			3-hour Ap indices for the UT intervals 
 c								(0-3),)3-6),)6-9), .., )18-21),)21-24(
-c		iapd (I3)				daily Ap
+c		IAPD (I3)				daily Ap
 c		IR (I3)					sunspot number for the day (empty)
 c		F107 (F5.1)				F10.7 radio flux for the day
 c		F107_81 (F5.1)			81-day average of F10.7 radio flux 
-c       F107_365 (F5.1)         and 365-day average of F10.7
-c                               centered on the date of interest. At
-c								start and end of index file it takes 
-c                               all available indices, e.g. for the first
-c                               date the avergae is only over 40 F10.7 values
-c                               and on the 2nd date over 41 F10.7 values.  
+c       F107_365 (F5.1)         365-day average of F10.7 centered on 
+c                               the date of interest. At start and end  
+c								of index file it takes all available  
+c                               indices, e.g. for the first date the 
+c                               average is only over 40 F10.7 values  
+c                               and over 41 values on the 2nd date.  
 c
-c If date is outside the range of the Ap indices file than iap(1)=-5  
-c--------------------------------------------------------------------
+c If date is outside the range of the Ap indices file than IAP(1)=-5  
+c-----------------------------------------------------------------------
 
         DIMENSION iiap(8),iap(13),lm(12)
         character path*100
-
-        common /iounit/konsol
-
+        COMMON /iounit/konsol
         DATA LM/31,28,31,30,31,30,31,31,30,31,30,31/
 
         IYBEG=1958
@@ -7441,11 +7524,10 @@ c--------------------------------------------------------------------
         if(iyyyy.lt.IYBEG) goto 21   ! file starts at Jan 1, 1958
 
         call getenv('IRIPATH',path)
-c       Open(13,FILe='apf107.dat',
-c-web-sepcial vfor web version
-C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
-       Open(13,FILe=path(1:index(path,' ')-1)//'/apf107.dat',
+        OPEN(13,FILe=path(1:index(path,' ')-1)//'/apf107.dat',
      ,action='read',
+c-web-sepcial vfor web version
+c      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
      *    ACCESS='DIRECT',RECL=55,FORM='FORMATTED',STATUS='OLD')
                 
         is=0
@@ -7469,9 +7551,7 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
         if(ihour.gt.8) ihour=8
 
         if(is*8+ihour.lt.13) goto 21   ! at least 13 indices available	
-        READ(13,10,REC=IS,ERR=21,iostat=ier) JY,JMN,JD,iiap,iapd,IR,F,
-     ,F81,F365
-        if(iostat.ne.0)goto21
+        READ(13,10,REC=IS,ERR=21) JY,JMN,JD,iiap,iapd,IR,F,F81,F365
         do i9=1,8
         	if(iiap(i9).lt.-2) goto 21
         	enddo
@@ -7480,9 +7560,7 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
            iap(j1+i)=iiap(i)
            enddo
         iss=is-1
-        READ(13,10,REC=ISS,ERR=21,iostat=ier) JY,JMN,JD,iiap,iapd,IR,F,
-     ,F81,F365
-        if(iostat.ne.0)goto21
+        READ(13,10,REC=ISS,ERR=21) JY,JMN,JD,iiap,iapd,IR,F,F81,F365
         do i9=1,8
         	if(iiap(i9).lt.-2) goto 21
         	enddo
@@ -7496,9 +7574,7 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
                 iap(j2+i)=iiap(i)
                 enddo
              iss=is-2
-         READ(13,10,REC=ISS,ERR=21,iostat=ier) JY,JMN,JD,iiap,iapd,IR,F,
-     ,F81,F365
-        if(iostat.ne.0)goto21
+             READ(13,10,REC=ISS,ERR=21) JY,JMN,JD,iiap,iapd,IR,F,F81,F365
         	 do i9=1,8
         		if(iiap(i9).lt.-2) goto 21
         		enddo
@@ -7520,11 +7596,11 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
 C
 C
         SUBROUTINE APFMSIS(IYYYY,IMN,ID,HOUR,IAPO)
-c--------------------------------------------------------------------
-c Finds 3-hourly Ap indices for NRLMSIS00 model for 
-C given year IYYYY (yyyy), month (IMN), day (ID), and UT (HOUR, decimal 
-c hours). The indices are stored in IAP(13) providing the 13 3-hourly 
-c indices prior to HOUR. 
+c-----------------------------------------------------------------------
+c Finds 3-hourly Ap indices for NRLMSIS00 model for given year IYYYY 
+C (yyyy), month (IMN), day (ID), and UT (HOUR, decimal hours). The 
+c indices are stored in IAP(13) providing the 13 3-hourly indices 
+c prior to HOUR. 
 C   IAPO(1) DAILY AP
 C   IAPO(2) 3-HR AP INDEX FOR CURRENT TIME			   	STORM  MSIS
 C   IAPO(3) 3-HR AP INDEX FOR 3 HRS BEFORE CURRENT TIME	STORM  MSIS
@@ -7536,10 +7612,11 @@ C   IAPO(7) AVERAGE OF EIGHT 3 HR AP INDICIES FROM 36 TO 57 HRS PRIOR
 C                    TO CURRENT TIME
 c
 c The 3-hour UT intervals during the day are: (0-3),)3-6),)6-9),)9-12),
-c )12-15),)15-18),)18-21),)21-24(. 
-c If date is outside the range of the Ap indices file than iap(1)=-5  
-c--------------------------------------------------------------------
-
+c )12-15),)15-18),)18-21),)21-24(.
+c 
+c If date is outside the range of the Ap indices file than IAPO(1)=-5  
+c-----------------------------------------------------------------------
+c
 		REAL IAPO
         DIMENSION iiap(8),iap(21),lm(12),iapo(7)
         character path*100
@@ -7560,6 +7637,7 @@ c--------------------------------------------------------------------
         if(iyyyy.lt.IYBEG) goto 21   ! file starts at Jan 1, 1958
 
         call getenv('IRIPATH',path)
+c       Open(13,FILe='apf107.dat',
 c-web-sepcial vfor web version
 C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
         Open(13,FILe=path(1:index(path,' ')-1)//'/apf107.dat',
@@ -7588,7 +7666,9 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
 C
 C calculate daily Ap for day of interest
 C
-        READ(13,10,REC=IS,ERR=21) JY,JMN,JD,iiap,iapd,IR,F,F81,F365
+        READ(13,10,REC=IS,ERR=21,iostat=ier) JY,JMN,JD,iiap,iapd,IR,F,
+     ,F81,F365
+        if(iostat.ne.0)goto21
 		iapsum=0
             do 1234 ijk=1,8
 1234			iapsum=iapsum+iiap(ijk)
@@ -7609,7 +7689,9 @@ C
            enddo
 
         iss=is-1
-        READ(13,10,REC=ISS,ERR=21) JY,JMN,JD,iiap,iapd,IR,F,F81,F365
+        READ(13,10,REC=ISS,ERR=21,iostat=ier) JY,JMN,JD,iiap,iapd,IR,F,
+     ,F81,F365
+        if(iostat.ne.0)goto21
         j1=ihour+9
         do i=1,8
         	if(iiap(i).lt.-2) goto 21
@@ -7617,7 +7699,9 @@ C
         	enddo
 
         iss=is-2
-        READ(13,10,REC=ISS,ERR=21) JY,JMN,JD,iiap,iapd,IR,F,F81,F365
+        READ(13,10,REC=ISS,ERR=21,iostat=ier) JY,JMN,JD,iiap,iapd,IR,F,
+     ,F81,F365
+        if(iostat.ne.0)goto21
         j1=ihour+17
         j2=8-(20-ihour-8)+1
         if(j2.lt.1) j2=1
@@ -7628,7 +7712,9 @@ C
 
         if(ihour.lt.4) then
           iss=is-3
-          READ(13,10,REC=ISS,ERR=21) JY,JMN,JD,iiap,iapd,IR,F,F81,F365
+          READ(13,10,REC=ISS,ERR=21,iostat=ier) JY,JMN,JD,iiap,iapd,IR,
+     ,F,F81,F365
+          if(iostat.ne.0)goto21
           j1=ihour+25
           j2=8-(20-ihour-16)+1
           do i=j2,8
@@ -7663,7 +7749,7 @@ C
 C
         SUBROUTINE APF_ONLY(IYYYY,IMN,ID,F107D,F107PD,F107_81,F107_365,
      *        IAPDA)
-c--------------------------------------------------------------------
+c-----------------------------------------------------------------------
 c Finds daily F10.7, daily Ap, and 81-day and 365-day F10.7 index: 
 c
 c    INPUTS: 	IYYYY (yyyy)	year 
@@ -7682,22 +7768,23 @@ c
 c Is used for vdrift and foeedi.
 c
 c If date is outside the range of indices file than F107D=F107_81=-11.1  
-c--------------------------------------------------------------------
+c-----------------------------------------------------------------------
 
         DIMENSION iiap(8),lm(12)
         character path*100
+
         common /iounit/konsol
 
         DATA LM/31,28,31,30,31,30,31,31,30,31,30,31/
 
         IYBEG=1958
         if(iyyyy.lt.IYBEG) goto 21   ! APF107.DAT starts at Jan 1, 1958
-        call getenv('IRIPATH',path)
 
-c-web-sepcial vfor web version
-C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
+        call getenv('IRIPATH',path)
         Open(13,FILe=path(1:index(path,' ')-1)//'/apf107.dat',
      ,action='read',
+c-web-sepcial vfor web version
+C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
      *    ACCESS='DIRECT',RECL=55,FORM='FORMATTED',STATUS='OLD')
 
         is=0
@@ -8354,7 +8441,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
      &          -45.0,-40.0,-35.0,-30.0,-25.0,-20.0,-15.0,-10.0,-5.0,
      &          0.0,5.0,10.0,15.0,20.0,25.0,30.0,35.0,40.0,45.0,50.0,
      &          55.0,60.0,65.0,70.0,75.0,80.0,85.0,90.0/
-      DATA IDBD/79,171,264,354,365/
+      DATA IDBD/79,171,264,354,366/
 C
 C JDOY        | 0-79 ||80-171||172-264||265-354||355-365|
 C

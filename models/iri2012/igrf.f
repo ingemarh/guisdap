@@ -9,9 +9,16 @@ C
 C CGM coordinates : GEOCGM01, OVL_ANG, CGMGLA, CGMGLO, DFR1DR, 
 C   AZM_ANG, MLTUT, MFC, FTPRNT, GEOLOW, CORGEO, GEOCOR, SHAG, RIGHT, 
 C   IGRF, RECALC, SPHCAR, BSPCAR, GEOMAG, MAGSM, SMGSM
-C 
-C UNIT number for reading the IGRF coefficients (in GETSHC) is 14
-C
+c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+c Required i/o units:  
+c  KONSOL= 6 Program messages (used when jf(12)=.true. -> konsol)
+c  KONSOL=11 Program messages (used when jf(12)=.false. -> MESSAGES.TXT)
+c
+c     COMMON/iounit/konsol is used to pass the value of KONSOL from 
+c     IRISUB to IRIFUN and IGRF. If KONSOL=1 than messages are turned off.
+c     
+c  UNIT=14 IGRF/GETSHC: IGRF coeff. (DGRF%%%%.DAT or IGRF%%%%.DAT, %%%%=year)
+c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C Corrections:
 C 11/01/91 SHELLG: lowest starting point for B0 search is 2  
 C  1/27/92 Adopted to IGRF-91 coeffcients model
@@ -37,14 +44,14 @@ C 2007.11 04/27/10 Make all arrays(195) to arrays(196)
 C 2007.11 04/27/10 FELDCOF: corrected Filmod and also IGRF10.DAT
 C 2007.11 04/29/10 New files dgrf%%%%.asc; new GETSHC; char*12 to 13
 C
-C 2011.00 10/05/11 IRI-2011: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
-C 2011.00 10/05/11    bottomside Ni model (iriflip.for), auroral foE
-C 2011.00 10/05/11    storm model (storme_ap), Te with PF10.7 (elteik),
-C 2011.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for), 
-C 2011.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
-C 2011.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
-C 2011.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
-C
+C 2012.00 10/05/11 IRI-2012: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
+C 2012.00 10/05/11    bottomside Ni model (iriflip.for), auroral foE
+C 2012.00 10/05/11    storm model (storme_ap), Te with PF10.7 (elteik),
+C 2012.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for), 
+C 2012.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
+C 2012.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
+C 2012.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
+c-----------------------------------------------------------------------        
 C 
         subroutine igrf_sub(xlat,xlong,year,height,
      &          xl,icode,dipl,babs)
@@ -475,7 +482,7 @@ C-----------------------------------------------------------------------
       DIMENSION         V(3),B(3)   
       CHARACTER*13      NAME
       COMMON/IGRF2/	XI(3),H(196)
-      COMMON/MODEL/     NAME,NMAX,TIME,G(196)  
+      COMMON/MODEL/     NMAX,TIME,G(196),NAME  
       COMMON/IGRF1/     UMR,ERA,AQUAD,BQUAD
 
 C
@@ -575,13 +582,14 @@ C 05/31/2000 updated to IGRF-2000 version (###)
 C 03/24/2000 updated to IGRF-2005 version (###) 
 C 07/22/2009 NMAX=13 for DGRF00 and IGRF05; H/G-arrays(195)
 C 02/26/2010 updated to IGRF-2010 version (###)  
+C 10/05/2011 added COMMON/DIPOL/ for MLT computation in DPMTRX (IRIFUN)
 c-----------------------------------------------------------------------        
         CHARACTER*13    FILMOD, FIL1, FIL2           
 C ### FILMOD, DTEMOD array-size is number of IGRF maps
         DIMENSION       GH1(196),GH2(196),GHA(196),FILMOD(15)
         DIMENSION		DTEMOD(15)
         DOUBLE PRECISION X,F0,F 
-        COMMON/MODEL/   FIL1,NMAX,TIME,GH1
+        COMMON/MODEL/   NMAX,TIME,GH1,FIL1
         COMMON/IGRF1/   UMR,ERAD,AQUAD,BQUAD
         COMMON/DIPOL/	GHI1,GHI2,GHI3
 C ### updated coefficient file names and corresponding years
@@ -680,7 +688,7 @@ C                                 = -2, records out of order
 C                                 = FORTRAN run-time error number    
 C ===============================================================               
                                                                                 
-        CHARACTER  FSPEC*(*), FOUT*80,path*100                                    
+        CHARACTER  FSPEC*(*), FOUT*80,path*100
         DIMENSION       GH(196) 
         COMMON/iounit/konsol        
         do 1 j=1,196  
@@ -694,7 +702,7 @@ C ---------------------------------------------------------------
         WRITE(FOUT,667) path(1:index(path,' ')-1),FSPEC
  667    FORMAT(a,'/',A13)
 c 667    FORMAT('/var/www/omniweb/cgi/vitmo/IRI/',A13)
-       OPEN (IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,action='read')     
+       OPEN (IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,action='read')
         READ (IU, *, IOSTAT=IER, ERR=999)                            
         READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD, XMYEAR 
         nm=nmax*(nmax+2)                
@@ -1389,6 +1397,8 @@ C  Numerical Recipes Fortran 77 Version 2.07
 C  Copyright (c) 1986-1995 by Numerical Recipes Software
 C **********************************************************************
 
+        COMMON/iounit/konsol        
+
       INTEGER NTAB
       REAL dfridr,err,h,x,func,CON,CON2,BIG,SAFE
       PARAMETER (CON=1.4,CON2=CON*CON,BIG=1.E30,NTAB=10,SAFE=2.)
@@ -1396,7 +1406,11 @@ C **********************************************************************
 
       INTEGER i,j
       REAL errt,fac,hh,a(NTAB,NTAB)
-       if(h.eq.0.) write(*,*) 'h must be nonzero in dfridr'
+       if(h.eq.0.) then
+          if (konsol.gt.1) write(konsol,100) 
+100       FORMAT('h must be nonzero in dfridr')
+          return
+          endif
        hh = h
        a(1,1) = (func(x+hh)-func(x-hh))/(2.0*hh)
        err = BIG
@@ -1414,7 +1428,7 @@ C **********************************************************************
           endif
   11    continue
          if(abs(a(i,i)-a(i-1,i-1)).ge.SAFE*err) return
-  12  continue
+  12   continue
 
       return
       END
