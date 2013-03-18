@@ -120,7 +120,9 @@ elseif strcmpi(act,'print') | strcmpi(act,'save')
       dirs=DATA_PATH;
       if exist(fullfile(DATA_PATH,'.gup'),'file')
         load('-mat',fullfile(DATA_PATH,'.gup'),'intper')
-        if intper>0
+        if length(intper)>1
+          fig=sprintf('%s_scan',fig);
+        elseif intper>0
           fig=sprintf('%s_%d',fig,intper);
         end
       end

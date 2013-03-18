@@ -1,5 +1,5 @@
 function [varargout]=plasma_summary(pl_dir,printdir,expt,gates,plots)
-% function plasma_summary(pl_dir,expt,gates,plots)
+% function plasma_summary(pl_dir,printdir,expt,gates,plots)
 % GUISDAP 8.6  8 Oct 2010  Copyright EISCAT
 % Get/plot summary for plasmalines
 % Using setup in pl_def.m in experiment directory
