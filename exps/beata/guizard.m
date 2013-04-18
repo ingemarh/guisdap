@@ -3,7 +3,11 @@
 %
 % See also: GUISPERT GUIZARD
 %
-if name_site=='T'
+if name_site=='P'
+ % i=0 for lowest (UHF) freq (-3.6MHz)pl-line band, 1 for 2nd (-6.0MHz), 2 for  3rd (-8.4MHz)
+ i=1;   %set 20130228  MTR  
+ lpg_ra=lpg_ra+i*82232;
+elseif name_site=='T'
  lpgs=find(ismember(lpg_code,3:16));
  lpg_wom(lpgs,:)=lpg_wom(lpgs,:)/14;
  lpg_w(lpgs)=lpg_w(lpgs)/14;
