@@ -9,7 +9,7 @@ end
 t2psfile=['t_to_ps.txt' apustr '.' lower(site)];
 t_to_ps=load(t2psfile,'-ascii');
 if site=='r'
-  d=find(t_to_ps(:,4)==12.2); t_to_ps(d,:)=[];
+  d=find(rem(t_to_ps(:,4),1)); t_to_ps(d,:)=[];
 end
 p_offsetppd=0;
 td_t1=t_to_ps(:,1)';
@@ -38,6 +38,12 @@ elseif site=='r'
  ch_filter={'b35d150.fir'};
  ch_f=[12];
  p_rep=357120;
+ if rc==2
+td_ch=t_to_ps(:,4)';
+  d=find(td_ch==4); td_ch(d)=12;
+  ch_adcint=[20];
+  ch_filter={'b25d300.fir'};
+ end
 elseif site=='v'
  ch_adcint=[20 20];
  %ch_filter={'b18d300.fir' 'b18d300.fir'}; % until 11Apr13
