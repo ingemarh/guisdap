@@ -50,6 +50,11 @@ elseif site=='v'
  ch_filter={'b25d300.fir' 'b25d300.fir'};
  ch_f=[12 12.2];
  p_rep=357120;
+ if rc==3
+  ch_adcint=[10 10];
+  ch_f=[4 4.2];
+  ch_filter={'b35d150.fir' 'b35d150.fir'};
+ end
 else
  error('giveup')
 end

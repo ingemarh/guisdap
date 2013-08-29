@@ -1,0 +1,21 @@
+N_SCAN=64;
+
+COR_init((1488+1+1+1+14*31)*N_SCAN,63)
+for vc=1:N_SCAN
+  COR_fraclp(480,vc,'s',432-2*31,32,20,(1:63)*10,1)
+  COR_pp(48,1,vc,'s',1,432,0,1)
+  COR_pp(37680+14*431+32,1,vc+N_SCAN,'b',1,432,0,2)
+  for i=0:13
+    COR_fraclp(37680+i*431,vc,'s',432-2*31,32,20,10,i+3)
+  end
+end
+
+for vc=1:2:N_SCAN
+  COR_pp(0,1,vc,'b',1,16,0,1)
+end
+for vc=2:2:N_SCAN
+  COR_pp(16,1,vc,'c',1,16,0,1)
+  COR_pp(37680+14*431+16,1,vc+N_SCAN,'c',1,16,0,2)
+end
+   
+COR_end
