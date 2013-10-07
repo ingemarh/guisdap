@@ -29,11 +29,16 @@ elseif site=='t'
   ch_f=[14];
   site='P';
  end
-elseif site=='t'
+elseif site=='r'
  ch_adcint=[15 15];
  ch_filter={'b25d225.fir' 'b25d225.fir'};
  ch_f=[14 14.2];
  p_rep=720000;
+ if rc==2
+  ch_adcint=[45];
+  ch_filter={'b11d675.fir'};
+  ch_f=[6];
+ end
 elseif site=='v'
  ch_adcint=[45 45];
  ch_filter={'b11d675.fir' 'b11d675.fir'};
