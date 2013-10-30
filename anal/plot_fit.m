@@ -352,7 +352,7 @@ end
 %% Check that variables have been declared as global outside
 %% this function i.e. whether they are really available!
 if (isempty(param) | isempty(err)  | isempty(dp) | isempty(status) | ...
-    isempty(h) | isempty(el) | isempty(d_time))
+    isempty(h) | isempty(el) | isempty(time))
 	disp('Error: (Global) variable set incomplete .....')
 	disp('*****: Check r_param,r_error,r_status,r_dp,r_h,ch_el & d_time')
 	return
