@@ -80,8 +80,6 @@ function plot_fit(arg1,  arg2,  arg3,  arg4,  arg5,  ...
 		  arg16, arg17, arg18, arg19, arg20)
 
 global r_param r_error r_dp r_status r_h ch_el d_time
-lr=size(r_param,2);
-	
 
 gcf1=gcf;
 global name_expr name_site
@@ -90,7 +88,6 @@ if sum(get(gcf1,'color'))>2
 else
  white='w'; 
 end
-
 
 %% Except for composition, the order of the other
 %% fitted parameters is as in the array r_param.
@@ -320,15 +317,16 @@ if (~use_ws)
 	name=[]; site=[];
 	for k = 1 : nfiles
 		load(canon(file(k,:),0))
-		param  = pad(param,r_param,NaN);
-		err    = pad(err,r_error(:,1:lr),NaN);
-		status = pad(status,r_status,NaN);
-		h      = pad(h,r_h,NaN);
-		dp     = pad(dp,r_dp,NaN);
-		el     = pad(el,r_el,NaN);
-		time   = [time;r_time];
-		name   = str2mat([name; name_expr]);
-		site   = str2mat([site; name_site]);
+		param = pad(param,r_param,NaN);
+		lr    = size(r_param,2);
+		err   = pad(err,r_error(:,1:lr),NaN);
+		status= pad(status,r_status,NaN);
+		h     = pad(h,r_h,NaN);
+		dp    = pad(dp,r_dp,NaN);
+		el    = pad(el,r_el,NaN);
+		time  = [time;r_time];
+		name  = str2mat([name; name_expr]);
+		site  = str2mat([site; name_site]);
 	end
 else
 	if (isempty(r_param) | isempty(r_error) | isempty(r_status) | ...
@@ -338,19 +336,21 @@ else
 %	else
 %		disp('Note: Using variables on the workspace')
 	end
-	param  = r_param;
-	err    = r_error(:,1:lr);
-	status = r_status;
-	h      = r_h;
-	dp     = r_dp;
-	el     = ch_el(1);
-	time   = d_time;
-	name   = name_expr;
-	site   = name_site;
+	param = r_param;
+	lr    = size(r_param,2);
+	err   = r_error(:,1:lr);
+	status= r_status;
+	h     = r_h;
+	dp    = r_dp;
+	el    = ch_el(1);
+	time  = d_time;
+	name  = name_expr;
+	site  = name_site;
 end
 
 %% Check that variables have been declared as global outside
 %% this function i.e. whether they are really available!
+whos param err dp status h el time
 if (isempty(param) | isempty(err)  | isempty(dp) | isempty(status) | ...
     isempty(h) | isempty(el) | isempty(time))
 	disp('Error: (Global) variable set incomplete .....')
@@ -492,13 +492,13 @@ if (~use_ws)
 	%% columns, and what the desired parameters are.
 	q  = size(status,1);
 	%% 1) Fits ...................
-	fm = remainder(fits,q);
+	fm = remscale(fits,q);
 	fn = (fits-fm)/q;
-	foo = fn*lr*q + fm;
+	foo= fn*lr*q + fm;
 	%% 2) No-fits ................
-	nm = remainder(nofits,q);
+	nm = remscale(nofits,q);
 	nn = (nofits-nm)/q;
-	noo = nn*lr*q + nm;
+	noo= nn*lr*q + nm;
 end	
 
 %% Step through the different parameters ...
@@ -640,3 +640,10 @@ elseif (write_text)
 		      'Fontweight',font_wght');
 	end
 end
+
+function a = remscale(b,factor)
+
+	a = rem(b,factor);
+	if any(a==0)
+		a(a==0) = dupcol(factor,length(find(a==0)));
+	end
