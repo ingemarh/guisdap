@@ -16,8 +16,11 @@ function ratio=calib_pl_ne(pl_dir,expt,gate,plots)
 %                Number of "good" points used
 % see also CALIB_NE, PLASMA_SUMMARY
 if nargin<2, expt=[]; end
+gates=[];
 if nargin<3
  gate=[];
+elseif gate==0
+ gates=0;
 end
 if nargin<4, plots=0; end
 global Time par1D par2D axs r_Magic_const DATA_PATH local START_TIME END_TIME fpp_plot pl
@@ -29,11 +32,11 @@ if isempty(plots) | plots
  ogcf=gcf; gupfigure(9)
 end
 disp('Reading plasmaline data')
-[pl,p]=plasma_summary(pl_dir,[],expt,[],plots);
+[pl,p]=plasma_summary(pl_dir,[],expt,gates,plots);
 if isempty(plots) | plots
  set(0,'currentfigure',ogcf)
 end
-if isempty(gate), gate=p.gate; end
+if isempty(gate) | gate==0, gate=p.gate; end
 if isempty(gate), gate=1; end
 
 re=6370; ratio=[];

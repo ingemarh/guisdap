@@ -68,7 +68,10 @@ if verbose
  ele=minput('Approx elevation',ele);
  updown=minput('Up/Down shifted (0/1)',updown);
  startad=minput('Start address',startad);
- gates=minput('Gates to display?',gates);
+ gates=minput('Gates to display',gates);
+ upar0=minput('Start of upar',46);
+else
+ upar0=46;
 end
 nfreq=length(freq); dgates=length(gates);
 if ~ismember(gate,gates), gate=gates(end); end
@@ -97,7 +100,7 @@ for i=1:nfl
  end
  plspec(:,:,:,i)=d;
  if exist('uparfreq','var')
-  upar(:,i)=d_parbl(46+(1:nfreq));
+  upar(:,i)=d_parbl(upar0+(1:nfreq));
  end
 end
 if plots
