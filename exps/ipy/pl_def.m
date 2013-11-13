@@ -15,12 +15,17 @@ if vs>=3.0
   nlag=75; ngates=4;
   dt=0.4e-6; uparfreq=NaN;
   ran=[41 248;113 320;185 392;257 464];
-  if vs>=4.0
+  if vs>=4.1
+   freq=[-4.2 -6.6 4.2 6.6]*1e6; nup_d=2;
+   ran=[26 251;116 341;206 431;296 521];
+  elseif vs>=4.0
    ran=[26 251;116 341;206 431;296 521];
   end
 end
 if length(d_data)==2*ngates*nlag
   startad=(0:1)*ngates*nlag+1;
+elseif vs>=4.1
+  startad=(0:3)*86626+67*nlag+66*1152+21;
 elseif vs>=4.0
   startad=(0:1)*87377+67*nlag+66*1152+21;
 elseif vs>=3.0
