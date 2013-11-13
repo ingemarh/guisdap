@@ -3,7 +3,7 @@ ran=[49 233;180 323;227 413]; %180 should be 137
 ran=[49 233;137 323;227 413];
 nfft=0; nint=1; ngates=3;
 maxe=2; nup_d=1; skip_if=0;
-vs=d_parbl(57); d_date=datenum(d_parbl(1:6));
+vs=d_parbl(57); d_date=datenum(row(d_parbl(1:6)));
 if d_parbl(41)==3, %VHF
  ran=2+ran;
  freq=[4.5 -4.5]*1e6; dt=0.8e-6; invert=-1; fradar=224e6;
@@ -15,6 +15,12 @@ elseif d_parbl(41)==8, %ESR-p
  freq=[-4.0 4.0]*1e6; dt=0.4e-6; invert=-1; fradar=500e6;
  ele=81.6; updown=0:1; nlag=125; ngates=2;
  startad=(0:1)*39259+43509+1;
+ if d_date>datenum(2011,11,11)
+  invert=1;
+ end
+ if d_date>datenum(2012,05,02)
+  freq=[-5.5 5.5]*1e6;
+ end
 else
  freq=-5.0e6; dt=0.4e-6; invert=1; fradar=930e6;
  ele=77.5; updown=0; nlag=50;
