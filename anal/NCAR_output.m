@@ -104,6 +104,13 @@ if exist('r_param') & ~isempty(r_param)
  d=find(r_status~=0); var(d,:)=BadData; evar(d,:)=BadData;
  d=find(r_error(:,1:5)==0); evar(d)=ModelData; var(d)=mvar(d);
  pos=[fix(r_h) rem(r_h,1)*1e4];
+ if strfind('TVL',name_site) & exist('r_w')
+  mvarcod=[mvarcod(1:2) 115 116 mvarcod(3:end)];
+  Earth_radius=6372; sin_el=sin(pi*r_el/180);
+  ran2=(r_range+r_w(:,1)/2)/Earth_radius; ran1=(r_range-r_w(:,1)/2)/Earth_radius;
+  hw=Earth_radius*(sqrt(1+2*ran2*sin_el+ran2.^2)-sqrt(1+2*ran1*sin_el+ran1.^2));
+  pos=[pos fix(hw) rem(hw,1)*1e4];
+ end
  mvar=round([pos r_status [r_res(:,1) r_dp]*1e3 var evar]);
  NCAR_write(NCAR_fid,KINDAT,prol,spar,mvarcod,mvar,AbsentData,BadData)
 end
@@ -113,6 +120,11 @@ if strfind('TVL',name_site) & exist('r_pp') & ~isempty(r_pp)
  mvarcod=[120 121 505];
  var=real(log10(r_pp(:,1))*1e3);
  pos=[fix(r_pprange) rem(r_pprange,1)*1e4];
+ if exist('r_pperr') & exist('r_ppw')
+  mvarcod=[120 121 125 126 505 -505];
+  pos=[pos fix(r_ppw) rem(r_ppw,1)*1e4];
+  var=[var real(log10(r_pperr(:,1))*1e3)];
+ end
  mvar=round([pos var]);
  NCAR_write(NCAR_fid,KINDAT+1,prol,spar,mvarcod,mvar,AbsentData,BadData)
 end

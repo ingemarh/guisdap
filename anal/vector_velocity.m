@@ -263,7 +263,12 @@ try
  k=convhull(x,y);
 catch
  try
-  k=convhull(x,y,{'QJ'});
+  global local
+  if local.matlabversion<8
+   k=convhull(x,y,{'QJ'});
+  else
+   k=convhull(x,y,'simplify',true);
+  end
  catch
   [t,p]=cart2pol(x-median(x),y-median(y));
   [dum,k]=sort(t);

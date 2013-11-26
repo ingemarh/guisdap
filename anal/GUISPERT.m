@@ -53,7 +53,8 @@ if strcmp(name_ant(1:3),'42m') & ~exist('ad_coeff_no_Pt','var')
 end
 
 % Range not always recorded
-if isempty(ch_range) & (name_site=='K' | name_site=='S')
+if name_site=='K' | name_site=='S'
+ if isempty(ch_range)
   global v_lightspeed
   if exist('ch_height','var')
     ch_range=height_to_range(ch_height,ch_el(1))*(v_lightspeed*p_dtau*1e-6/2/1e3);
@@ -61,7 +62,12 @@ if isempty(ch_range) & (name_site=='K' | name_site=='S')
     ch_range=height_to_range(300,ch_el(1))*(v_lightspeed*p_dtau*1e-6/2/1e3);
     warning('GUISDAP:default','range is dummy!')
   end
+ end
+ if d_date>datenum(2013,1,1)
+  ch_fradar(:)=radar_freqs(3);
+ end
 end
+
 % Correct transmitter power when wrongly recorded
 %d_secs=tosecs(d_time(1,:));
 %if (name_site=='T' & d_time(1,1)==2001 & d_secs>27334800 & d_secs<25660800) 
