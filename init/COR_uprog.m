@@ -28,7 +28,7 @@ end
 
 ra_prev=ra;
 
-adcint=vc_adcint(vc); lags=lags/p_dtau; 
+adcint=vc_adcint(vc); lags=gupround(lags/p_dtau);
 COR_check(lags,adcint)
 
 N_lags=length(lags);

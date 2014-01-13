@@ -15,8 +15,10 @@ group=1;
 vcs=find(vc_ch~=0); % These channels are in use
 while length(vcs)>0,
   vc=vcs(1);
-  index=find(max(abs(vc_env(:,vcs)-vc_env(:,vc)*ones(1,length(vcs))))<100*eps ...
-         & max(abs(vc_p(:,vcs)-vc_p(:,vc)*ones(1,length(vcs))))<100*eps);
+  %index=find(max(abs(vc_env(:,vcs)-vc_env(:,vc)*ones(1,length(vcs))))<100*eps ...
+  %       & max(abs(vc_p(:,vcs)-vc_p(:,vc)*ones(1,length(vcs))))<100*eps);
+  index=find(all(vc_env(:,vcs)==(vc_env(:,vc)*ones(1,length(vcs)))) ...
+         & all(vc_p(:,vcs)==(vc_p(:,vc)*ones(1,length(vcs)))));
   vc_group(vcs(index))=group*ones(size(index));
   fprintf(' Group %.0f contains virtual channels ',group);
   fprintf(' %.0f',vcs(index)); fprintf('\n')

@@ -27,7 +27,7 @@ for lp=lps
   [w,r]=wr(lp_vc(lp),lp_t1(lp),lp_t2(lp),clash);
   if length(r)>0
     maxr=r(end)+(lp_nfir(lp)-1)*lp_dt(lp)+dummyrange;
-    if abs(maxr-round(maxr))<eps(2), maxr=round(maxr); end
+    %if abs(maxr-round(maxr))<eps(2), maxr=round(maxr); end
     if length(wsum)<maxr, wsum(ceil(maxr),1)=0; end;
     for ind=1:lp_nfir(lp)
       R=round(r+(ind-1)*lp_dt(lp)+dummyrange);

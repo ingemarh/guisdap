@@ -62,7 +62,8 @@ for code=codes;
         fprintf(' No background needed for lpg %3.0f, lag value %3.0f us\n',lpg,lpg_lag(lpg)*p_dtau)
       else
         % bac contains all possible background measurements for the given lpg
-        bac=find(abs(lpg_lag(bac_gr)-lpg_lag(lpg))<=1000*eps);
+        %bac=find(abs(lpg_lag(bac_gr)-lpg_lag(lpg))<=1000*eps);
+        bac=find(lpg_lag(bac_gr)==lpg_lag(lpg));
         lenbac=length(bac);
         if lenbac>=1, 
           % First the case when at least one background measurement was found

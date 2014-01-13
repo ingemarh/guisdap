@@ -4,7 +4,8 @@
 % function res=cheq(x)
 function res=cheq(x)
 maxim=max(x);minim=min(x);
-if((maxim-minim)<=1000*eps*max(abs([1,maxim,minim]))),
+%if((maxim-minim)<=1000*eps*max(abs([1,maxim,minim]))),
+if maxim==minim
   res=x(1);
 else
   fprintf(' The input values to cheq are not all equal\n')

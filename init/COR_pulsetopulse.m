@@ -36,11 +36,11 @@ adcint=vc_adcint(vc);
 
 % Transform the user specified lag values to p_dtau units
 % and check that they are exact multiples of it
-lags=lags/p_dtau;
+lags=gupround(lags/p_dtau);
 COR_check(lags,adcint)
 
 bitsep=adcint;
-ipp=Ipp/p_dtau;
+ipp=gupround(Ipp/p_dtau);
 
 % This is the heart of the routine. Here we define how each lag profile is filtered. 
 

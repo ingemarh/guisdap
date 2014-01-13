@@ -17,7 +17,7 @@ function res=Aenv(vch,t);
 global vc_Aenv
 
 t=abs(t(:))+1;
-if all(abs(t-round(t))<eps('single')), t=round(t); end
+%if all(abs(t-round(t))<eps('single')), t=round(t); end
 [len,hups]=size(vc_Aenv);
 ii=find(t>len);
 t(ii)=len*ones(length(ii),1);
