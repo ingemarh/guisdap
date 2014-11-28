@@ -94,6 +94,14 @@ else
  end
  if a_rawdata==1 & exist('PI_init')==3, % NW's package is to be used
   NW2
+ elseif a_rawdata==2, % HDF5 format
+  d_filelist=h5read(data_path,'/Time/MatlabTime');
+  i=datevec(d_filelist(1));
+  d_filelist=(d_filelist-datenum(i(1),1,1))*86400;
+  a_start=tosecs(analysis_start); % the programs uses internally only seconds,
+  a_end  =tosecs(analysis_end);   % counted from the beginning of year
+  a_year=analysis_start(1);
+  a_ind=0;
  else
   % The normal case where it is expeced the data are matlab files
   if ~a_realtime

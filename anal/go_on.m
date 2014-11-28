@@ -24,7 +24,7 @@ else
  end
  [siteid,t1,t2,rt,intper,figs,extra,data_path,result_path,expver]=save_setup;
 end
-if ~isnan(bg)
+if ishandle(bg) | ~isnan(bg)
  save_noglobal([path_tmp '.gup'],name_expr,expver,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
 end
 sites='KSTVLLP'; name_site=sites(siteid);

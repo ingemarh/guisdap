@@ -81,7 +81,7 @@ while i<length(files)
     pause(1)
   end
   try, load(canon(filename,0))
-  %catch,end
+  catch,end
 
   lpb=length(d_parbl);
   if lpb==128
@@ -233,7 +233,7 @@ while i<length(files)
     d=cell2mat({d_filelist.file});
     files=d_filelist(find(d>a_interval(1) & d<=a_interval(2)));
   end
-  catch, disp(lasterr), end
+  %catch, disp(lasterr), end
 end
 
 if OK, % if at least one good data dump was found

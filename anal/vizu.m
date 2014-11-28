@@ -200,6 +200,7 @@ SCALE =[50 900		% Range km
 	.1 10]; 	% Res
 Y_TYPE	='linear';	% Y scale type
 PLF_SCALE	=[0 10];	% Langmuir freq MHz
+TEC_SCALE	=[0 10];	% TEC scale
 RAWNE_SCALE	=10.^[9 12];	% Raw Ne
 LAT_SCALE	=[65 78];	% Geogr Lat deg
 AE_SCALE	=[-30 360];	% Radar parms
@@ -264,7 +265,7 @@ if strcmp(lower(act),'verbose')
   SCALE(2,:)=minput('Altitude scale',10*[floor(min(par2D(GATES(1),:,2))/10) ceil(max(par2D(GATES(end),:,2))/10)]);
  end
  if isempty(a3)
-  disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Co Nr Lf L1 Ls Pf P1')
+  disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Co Nr Lf L1 Ls Pf P1 TC')
   WHICH_PARAM=minput('Choose',WHICH_PARAM,1);
  end
 elseif ~REALT
@@ -336,6 +337,7 @@ if findstr(WHICH_PARAM,'L1'), option(14)=option(14)+2; end
 if findstr(WHICH_PARAM,'Ls'), option(14)=option(14)+4; end
 if findstr(WHICH_PARAM,'Pf'), option(16)=option(16)+1; end
 if findstr(WHICH_PARAM,'P1'), option(16)=option(16)+2; end
+if findstr(WHICH_PARAM,'TC'), option(16)=option(16)+4; end
 if findstr(WHICH_PARAM,'Co'), option(7)=1; end
 if findstr(WHICH_PARAM,'Nr') & ~isempty(rpar2D), option(15)=1; end
 n_tot=sum(rem(option,2)+fix(option/2)-fix(option/4));
@@ -486,9 +488,15 @@ if option(16)
  end
  if option(16)>1
   polen=plf_polen; if isempty(polen), polen=7; end
-  pf=find_plf_peak(S,y_param(GATES,:),Yscale,pf,polen,PLF_SCALE,0);
-  d=many(pf,PLF_SCALE);
-  line_plot(s,pf,d,'Cutoff plasma frequency (MHz)',[],[])
+  [pf,d,TC]=find_plf_peak(S,y_param(GATES,:),Yscale,pf,polen,PLF_SCALE,0);
+  if rem(option(16),4)>1
+   d=many(pf,PLF_SCALE);
+   line_plot(s,pf,d,'Cutoff plasma frequency (MHz)',[],[])
+  end
+  if option(16)>4
+   d=many(TC,TEC_SCALE);
+   line_plot(s,TC,d,'Total electron content (m-2)',[],[])
+  end
  end
 end
 if option(15)

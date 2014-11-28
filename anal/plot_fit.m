@@ -350,7 +350,6 @@ end
 
 %% Check that variables have been declared as global outside
 %% this function i.e. whether they are really available!
-whos param err dp status h el time
 if (isempty(param) | isempty(err)  | isempty(dp) | isempty(status) | ...
     isempty(h) | isempty(el) | isempty(time))
 	disp('Error: (Global) variable set incomplete .....')

@@ -49,7 +49,7 @@ switch scan
  case {'cp3kstl'}
   alt=f; td=1440.; ptype='p'; uperr=50; ld=60:.5:90;
  case {'ip3'}
-  alt=[e f]; td=1440./[1 2]; uperr=10; ld=60:.5:90; ptype='p';
+  alt=[e f]; td=1440./[1 2]; uperr=50; ld=60:.5:90; ptype='p';
   plots(2:length(alt)-3)={'Vg'}; plots([1 end+2])={[] 'Vm'};
  case {'cp1' 'cp1kst'}
   alt=f; td=1;

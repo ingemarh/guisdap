@@ -18,6 +18,7 @@
   Cbeam=0.460; % This factor depends on the beam geometry
   if nargin==0, eff=0.651; end
   lambda=v_lightspeed./ch_fradar;
+  ch_gain0=ch_gain(1); %Transmitter antenna gain
 % antenna efficiency is the ratio of the true gain and
 % the theoretical gain 4*pi*A/lambda^2
 
@@ -70,6 +71,7 @@ else
   opening_angle=0.6*pi/180*(1+sin(sc_angle)^2);
   if ch_fradar(1)<300e6
    opening_angle=2.7*pi/180*(1+sin(sc_angle)^2);
+   ch_gain0=10^4.31; %VHF tx
   end
   %rx beam width   opening_angle*range*sc_angle_factor/pulse_speed
   range_cover=round(opening_angle*sc_R1/sin(sc_angle)/scale);
@@ -106,7 +108,7 @@ end
   polfac=1-0.5*sin(sc_angle)^2;
 %fprintf(' Polarization factor is %.2f\n',polfac)
   P0perPt=4*pi*(v_electronradius^2)*polfac*...
-    (ch_gain./(4*pi*sc_R0^2)).*(ch_gain./(4*pi*sc_R1^2)).*(lambda.^2/(4*pi));
+    (ch_gain0./(4*pi*sc_R0^2)).*(ch_gain./(4*pi*sc_R1^2)).*(lambda.^2/(4*pi));
 
   p_coeff0=P0perPt.*Veff*p_N0; 
 % Calculate now the factor for virtual channels

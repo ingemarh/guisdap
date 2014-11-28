@@ -90,7 +90,7 @@ for i=1:n_tot
     d=find(r_status>status(1) | r_res(:,1)>status(2));
     [d1,d2]=find(r_error(d,1:size(r_param,2))>0);
     r_param(d(d1),d2)=NaN;
-    r_err(d(d1),d2)=NaN;
+    r_error(d(d1),d2)=NaN;
   end
   par2D(n,i,[1 2 8 9])=[r_range(:,1) r_h(:,1) r_dp(:,1) r_res(:,1)];
   par2D(n,i,[3 5 7])=r_param(:,myparams);
