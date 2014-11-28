@@ -9,7 +9,7 @@ if d_date>datenum(2009,1,1)
   else
    phasepush=phasecorr(d_raw,vc_penv(:,1:64),10,64,4);
   end
- elseif name_site=='V'
+ elseif name_site=='V' | name_site=='P'
   phasepush=[];
  elseif name_site=='K' | name_site=='S'
   phasepush=-21; %Average for 640 us pulse
