@@ -52,14 +52,14 @@ end
 hlim=re*sqrt(1+hlim/re)-re;
 fgup=fullfile(DATA_PATH,'.gup');
 Magic_const=1;
-if exist(r_code), a_code=r_code; end
+if exist('r_code','var'), a_code=r_code; end
 if ~isempty(r_Magic_const)
  Magic_const=mean(r_Magic_const);
 elseif exist(fgup)
  load(fgup,'-mat')
  for i=1:size(extra,1),eval(extra(i,:));end
 end
-if len(r_Magic_const)>1 & exist(a_code), Magic_const=mean(r_Magic_const(a_code)); end
+if length(r_Magic_const)>1 & exist('a_code','var'), Magic_const=mean(r_Magic_const(a_code)); end
 
 d=find(pl.t(2,:)>max([Time(1) datenum(START_TIME)]) & ...
   pl.t(1,:)<=min([Time(end) datenum(END_TIME)]));
@@ -146,9 +146,9 @@ s=size(Time,2); h=par2D(:,:,2); r0=1; mr=1; mrpp=100;
 freq_th=[0 10];
 while mr==r0 | abs(mr-1)>.01
  mrp=abs(mr-1);
- if mrp>mrpp
-  error('Cannot fit this')
- end
+ % if mrp>mrpp
+ % error('Cannot fit this')
+ % end
  if mr~=r0, mrpp=mrp; end
  mr=mr*r0; r0=mr;
  lf=8.98e-6*sqrt(par2D(:,:,3))/mr.*sqrt(1+3*7.52e5*(p.fradar/3e8)^2*par2D(:,:,4)./par2D(:,:,3)*mr^2);

@@ -37,7 +37,7 @@ for i=1:s
    height(i)=exp(j(dd(g))*mu(2)+mu(1));
   end
   ipol=polyint([conv(poly,poly)/8.98e-6^2 0]);
-  TEC(i)=polyval(ipol,hl(2))-ployval(ipol,hl(1));
+  TEC(i)=polyval(ipol,hl(2))-polyval(ipol,hl(1));
   if any(fpp_plot==i) & ~fft
    plot(p(d,i),h(d,i),polyval(poly,logh,[],mu),h(d,i)),hold on
   end
