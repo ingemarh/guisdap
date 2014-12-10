@@ -45,16 +45,10 @@ elseif site=='r'
   ch_filter={'b25d300.fir'};
  end
 elseif site=='v'
- ch_adcint=[20 20];
- %ch_filter={'b18d300.fir' 'b18d300.fir'}; % until 11Apr13
- ch_filter={'b25d300.fir' 'b25d300.fir'};
- ch_f=[12 12.2];
- p_rep=357120;
- if rc==3
-  ch_adcint=[10 10];
-  ch_f=[4 4.2];
-  ch_filter={'b35d150.fir' 'b35d150.fir'};
- end
+ ch_adcint=[3 3];
+ ch_filter={'b170d45.fir' 'b170d45.fir'};
+ ch_f=[4 5];
+ p_rep=3145728;
 else
  error('giveup')
 end
