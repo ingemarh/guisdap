@@ -31,10 +31,10 @@ end
 if length(d_data)>34863 & d_rcprog==2
   calTemp=[163 163 228 228];
   if all(ch_gain==ch_gain(1))
-    if isempty(a_code)
+%   if isempty(a_code)
       a_satch.clutter=repmat(a_satch.clutter,1,2);
       a_satch.repair=repmat(a_satch.repair,1,2);
-    end
+%   end
     ch_gain(3:4)=ch_gain(3:4)*0.64;
   end
 end

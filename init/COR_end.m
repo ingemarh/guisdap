@@ -13,7 +13,7 @@ global lp_nt lp_vc lp_ri lp_bcs lp_code lp_ind
 global ra_next ra_prev bm_next vc_next
 
 len=length(lp_t1);
-if lp_ind<=len,
+if lp_ind<=len
   lp_t1(lp_ind+1:len)=[];
   lp_t2(lp_ind+1:len)=[];
   lp_h(lp_ind+1:len)=[];
@@ -31,7 +31,7 @@ if lp_ind<=len,
 end
 [M,N]=size(lp_fir);
 MA=max(lp_nfir);
-if MA<M,
+if MA<M
   lp_fir(MA+1:M,:)=[];
 end
-clear lp_ind ind
+clear lp_ind

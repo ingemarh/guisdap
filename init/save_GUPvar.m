@@ -17,7 +17,9 @@ clear lp_fir
 if ~exist('apustr'), apustr=''; end
 GUPvarfile=[path_expr name_expr name_site apustr 'GUPvar'];
 saveflag='';
-if local.matlabversion>=7
+if local.matlabversion>=8.4 & isa(lp_firsto,'int8')
+ saveflag='-v7.3';
+elseif local.matlabversion>=7
  saveflag='-v6';
 end
 

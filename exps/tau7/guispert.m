@@ -7,7 +7,7 @@ if name_site=='L'
  if length(d_data)>290942
   calTemp=[163 163 228 228];
   if all(ch_gain==ch_gain(1))
-   if isempty(a_code)
+   if (isempty(a_code) | length(a_code)==2)
     a_satch.clutter=repmat(a_satch.clutter,1,2);
     a_satch.repair=repmat(a_satch.repair,1,2);
    end

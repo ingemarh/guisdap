@@ -27,11 +27,15 @@ for i=1:4
    set(F,'DefaultAxesFontWeight','bold','DefaultTextFontWeight','bold')
    used=[used;F];
   end
-  di_figures(i)=sign(di_figures(i))*F;
+  if local.matlabversion<8.4
+   di_figures(i)=sign(di_figures(i))*F;
+  else
+   di_figures(i)=sign(di_figures(i))*get(F,'Number');
+  end
  elseif ~isempty(F)
   close(F)
   used=used(find(used~=F));
  end
 end
 
-clear Positions Names used F
+clear Positions Names used F Fn

@@ -2,7 +2,7 @@
 
 #wd=`dirname $0`
 #wd=`dirname $wd`/webgup
-wd=/opt/webgup
+wd=/data/webgup
 wwwreq="anareg.txt"
 locreq="anareq_done.txt"
 wwwsite="http://www.eiscat.se/schedule"
@@ -14,7 +14,7 @@ fsiz() {
 	#return `ls -l $1 | awk '{print $5}'`
 }
 mail_it() {
-	nail -s "Analysis results" -r "GUISDAP <ingemar@eiscat.se>" $* <<!
+	mailx -s "Analysis results" -r "GUISDAP <ingemar@eiscat.se>" $* <<!
 Enclosed you find the requested analysis.
 EISCAT
 !
