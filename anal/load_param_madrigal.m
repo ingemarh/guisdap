@@ -91,9 +91,11 @@ else
 end
 
 if do_err
- param='UT1 UT2 AZM ELM GDALT GDLAT GLON RANGE CHISQ POWER SYSTMP CO DCOL NEL DNEL TE DTE TI DTI VO DVO VOBI DVOBI PO+';
+%param='UT1 UT2 AZM ELM GDALT GDLAT GLON RANGE CHISQ POWER SYSTMP CO DCOL NEL DNEL TE DTE TI DTI VO DVO VOBI DVOBI PO+';
+ param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER NEL DNEL TI DTI TE DTE VO DVO VOBI DVOBICO DCOL PO+';
 else
- param='UT1 UT2 AZM ELM GDALT GDLAT GLON RANGE CHISQ POWER SYSTMP CO NEL POPL TE TI VO VOBI PO+';
+%param='UT1 UT2 AZM ELM GDALT GDLAT GLON RANGE CHISQ POWER SYSTMP CO NEL POPL TE TI VO VOBI PO+';
+ param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER POPL NEL TI TE VO VOBI CO PO+';
 end
 t2=clock;
 arg=sprintf('fileName=%s&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',data_path,t2(1),param);
@@ -105,21 +107,31 @@ end
 if mad
  return
 end
+%pwant=strread(param,'%s');
+%pread=textread(of,'%s',length(pwant),'headerlines',hl-1);
 data=textread(of,'','headerlines',hl);
-%fid=fopen(of,'r'); data=cell2mat(textscan(fid,'','headerlines',8,'TreatAsEmpty','assumed')); fclose(fid);
 delete(of)
 if isempty(data)
  return
 end
 
-avec=[8 5 13 15 16 17 12 19 9];
+%vec=[3 4 10 11];
+rvec=[5 6 11 10];
+%vec=[8 5 13 15 16 17 12 19 9];
+avec=[4 3 13 15 14 16 18 19 9];
+pp=[];
 if do_err
-  data(:,13:15)=10.^data(:,13:15);
-  avec=[8 5 14 16 18 20 12 24 9];
-  evec=[15 17 19 21 13];
+  data(:,12:13)=10.^data(:,12:13);
+% avec=[8 5 14 16 18 20 12 24 9];
+  avec=[4 3 12 16 14 18 22 24 9];
+% evec=[15 17 19 21 13];
+  evec=[13 17 15 23 23];
 else
-  data(:,13:14)=10.^data(:,13:14);
+  %vec=[8 5 14];
+  pvec=[4 3 12];
+  data(:,12:13)=10.^data(:,12:13);
   evec=[];
+  pp=find(isfinite(data(:,pvec(3))));
 end
 npar2D=length(avec);
 nrpar2D=3;
@@ -128,13 +140,12 @@ ppres=.25; % pp resolution (km)
 acres=.25; % acf resolution (km)
 
 acf=find(isfinite(data(:,avec(3))));
-pp=find(isfinite(data(:,avec(4))));
 [Time,ia,ja]=unique(data(acf,1:2),'rows');
 n_tot=size(Time,1);
 n_alt=max(diff(ia));
 Time=datenum(1950,1,1)+Time'/86400;
 
-par1D=data(acf(ia),[3 4 10 11]);
+par1D=data(acf(ia),rvec);
 par1D(:,1)=mod(par1D(:,1)+360,360); %0-360 degrees
 par1D(:,3)=par1D(:,3)/10; %10 kW
 par2D=ones(n_alt,n_tot,npar2D)*NaN;
@@ -144,7 +155,6 @@ nralt=0;
 
 if nargout>3
  if do_err
-  pp=[];
   err2D=ones(n_alt,n_tot,nerr2D)*NaN;
  elseif ~isempty(pp)
   [dum,ip,jp]=unique(data(pp,1:2),'rows');
@@ -172,7 +182,7 @@ for i=1:n_tot
   par2D(1:nalt,i,:)=ppar;
   naalt=max(naalt,nalt);
   if n_ralt>0
-    ppp=data(pp(find(jp==i)),[8 5 14]);
+    ppp=data(pp(find(jp==i)),pvec);
     [ppr,k,l]=unique(round(ppp(:,1)/ppres));
     nalt=size(ppr,1); ppar=ones(nalt,3);
     for n=1:nalt

@@ -139,13 +139,13 @@ elseif strcmpi(act,'print') | strcmpi(act,'save')
    set(vizufig,'PaperOrient','landscape','PaperPosition',[0 3 ppos([4 3])-[0 3]])
   end
   [i,j]=unix('which addlogo.sh');
-  if ~i, set(hds(2:3),'visible','off'), end
+  if ~i | local.matlabversion>8.3, set(hds(2:3),'visible','off'), end
   file=fullfile(dirs,fig);
   print(vizufig,['-d' ext '2c'],[file '.' ext]);
   if rotate
    set(vizufig,'PaperOrient','portrait','PaperPosition',ppos)
   end
-  if ~i
+  if ~i | local.matlabversion>8.3
    set(hds(2:3),'visible','on')
    unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
   end
