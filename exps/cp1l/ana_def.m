@@ -4,6 +4,7 @@ if name_site=='T'
  altd=[0 ones(1,7)*d1 d1:d2:(sqrt((last-first-7*d1)*2*d2))];
  analysis_altit=first+cumsum(altd);
  analysis_maxwidth=[altd(2:end) altd(end)]*1.5;
+ analysis_ppshortlags=1;
 else
  analysis_range=0:500:1000;
 end

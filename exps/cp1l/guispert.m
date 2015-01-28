@@ -25,3 +25,21 @@ end
 if name_site=='K' && d_date>datenum(2001,04,02) & d_date<datenum(2001,06,25)
  ch_Pt=ch_Pt(1)/2.0;  % one klystron but 2 assumed.
 end
+
+if (d_date>=datenum(2012,10,31) & d_date<datenum(2012,10,31,23,59,0))
+  f_ch_Pt=1020e3;
+  fprintf('GUISPERT: fixing uhf tx power estimate 1')
+  if (d_date>=datenum(2012,10,31,12,50,0)) 
+    f_ch_Pt=430e3;
+    fprintf('GUISPERT: fixing uhf tx power estimate 2')
+  end
+  if (d_date>=datenum(2012,10,31,13,44,0))
+    f_ch_Pt=1030e3;
+    fprintf('GUISPERT: fixing uhf tx power estimate 3')
+  end
+  if (d_date>=datenum(2012,10,31,15,03,0))
+    f_ch_Pt=1150e3;
+    fprintf('GUISPERT: fixing uhf tx power estimate 4')
+  end  
+end
+

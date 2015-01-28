@@ -68,6 +68,8 @@ else
 end
 if ~isempty(list)
   [dum,d]=sort(cell2mat({list.file})); list=list(d);
+  global maxlend
+  if ~isempty(maxlend) & length(d)>maxlend, list=list(1:maxlend); end
 elseif isempty(newer)
   msg=[dirpath ' - No valid mat files'];
 end
