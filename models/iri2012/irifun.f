@@ -8,8 +8,8 @@ c Required i/o units:
 c  KONSOL= 6 Program messages (used when jf(12)=.true. -> konsol)
 c  KONSOL=11 Program messages (used when jf(12)=.false. -> MESSAGES.TXT)
 c
-c     COMMON/iounit/konsol is used to pass the value of KONSOL from 
-c     IRISUB to IRIFUN and IGRF. If KONSOL=1 than messages are turned off.
+c     COMMON/iounit/konsol,mess is used to pass the value of KONSOL from 
+c     IRISUB to IRIFUN and IGRF. If mess=false then messages are turned off.
 c     
 c  UNIT=12 TCON: Solar/ionospheric indices IG12, R12 (IG_RZ.DAT) 
 c  UNIT=13 APF,APFMSIS,APF_ONLY: Magnetic indices and F10.7 (APF107.DAT) 
@@ -111,6 +111,12 @@ C 2012.01 11/08/11 CALION: F107D upper/lower boundary 220/65
 C 2012.01 01/06/12 delete PAUSE statement in SPLINT
 C 2012.01 01/24/12 STORME_AP: change 365 to 366 leap year    [F. Simoes]
 C 2012.01 06/30/12 HMF2ED: hmF2 too low foF2/foE ge 1.7 [I.Zakharenkova]
+C 2012.01 09/14/12 SHAMDB0D,SHAB1D: initializing CONS2      [P. Coisson]
+C 2012.02 12/12/12 STORME_AP: add KONSOL and ERROR ouput STORME_AP=-5.
+C 2014.00 01/22/14 TPCORR: INVDIP --> INVDP                [J.K. Knight]
+C 2014.02 07/24/14 COMMON/iounit/ added 'mess'
+C 2014.03 08/25/14 ELTEIK,INVDPC,SOCO: ACOS: if(abs(x).gt.1) x=sign(1,x)
+C 2014.03 10/02/14 IONLOW,IONHIGH: C1(82) added for SPHARM_IK [J.C. Xue]
 C                  
 c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c IRI functions and subroutines:
@@ -143,12 +149,24 @@ C
 
         FUNCTION XE1(H)    
 c----------------------------------------------------------------
-C REPRESENTING ELECTRON DENSITY(M-3) IN THE TOPSIDE IONOSPHERE   
-C (H=HMF2....1000 KM) BY HARMONIZED BENT-MODEL ADMITTING 
-C VARIABILITY OFGLOBAL PARAMETER ETA,ZETA,BETA,DELTA WITH        
-C GEOM. LATITUDE, SMOOTHED SOLAR FLUX AND CRITICAL FREQUENCY     
-C (SEE MAIN PROGRAM).    
-C [REF.:K.RAWER,S.RAMAKRISHNAN,1978]     
+C DETERMINING ELECTRON DENSITY(M-3) IN THE TOPSIDE IONOSPHERE   
+C (H=HMF2....2000 KM) BY HARMONIZED BENT-MODEL ADMITTING 
+C VARIABILITY OF THE GLOBAL PARAMETERS BETA,ETA,DELTA,ZETA WITH        
+C GEOM. LATITUDE, SMOOTHED SOLAR FLUX AND CRITICAL FREQUENCY.     
+C BETA,ETA,DELTA,ZETA are computed in IRISUB program and 
+C communicated via COMMON /BLO10. This is the IRI-2001 approach
+C [REF.:K.RAWER,S.RAMAKRISHNAN,1978] 
+C New options include:
+C (1) IRI-corrected: TC3,alg10,hcor1 in COMMON /BLO11. 
+C   TC3     correction term divided by (1500-(hcor1-hmF2))
+C   alg10   = alog(10.)
+C	hcor1	lower height boundary for correction
+C (2) NeQuick:  B2TOP  in COMMON /BLO11.
+C	B2TOP   is the topside scale height that depends on foF2 and 
+C           hmF2. 
+C Switch for choosing the desired option is itopn in COMMON /BLO11
+C   itopn   =0 IRI-2001, =1 IRI-2001-corrected, =2 NeQuick
+C           =3 Gulyaeva-0.5 is not yet implemented. 
 c----------------------------------------------------------------
         COMMON  /BLOCK1/HMF2,XNMF2,HMF1,F1REG
      &          /BLO10/BETA,ETA,DELTA,ZETA
@@ -474,6 +492,7 @@ C      accurate polynomial expansion
        ASA=A*(B(1)+B(2)*A+B(3)*A**2+B(4)*A**3+B(5)*A**4+
      &        B(6)*A**5+B(7)*A**6+B(8)*A**7)
        IF (ASA .GT. 1.0) ASA=1.0
+       IF (ASA .LT. 0.0) ASA=0.0
 C      invariant latitude (absolute value)
        RINVL=ACOS(SQRT(ASA))
        INVL=RINVL/DTOR
@@ -628,7 +647,7 @@ C     model errTe
       E2000B=10**E2000B 
 C
       IF (PF107Y .EQ. 1) THEN
-       CALL TPCORR(INVDIP,MLT,DDD,PF107,
+       CALL TPCORR(INVDP,MLT,DDD,PF107,
      &             P350A,P350B,P550A,P550B,P850A,P850B,
      &             P1400A,P1400B,P2000A,P2000B, 
      &             TP350A,TP350B,TP550A,TP550B,TP850A,TP850B,
@@ -3362,10 +3381,10 @@ C
 C REFERENCES:
 C   Triskova, L., Truhlik, V., Smilauer, J. An empirical model of ion
 C      composition in the outer ionosphere. Adv. Space Res. 31 (3), 
-C      653Ð663, 2003.
+C      653â€“663, 2003.
 C   Truhlik, V., Triskova, L., Smilauer, J. New advances in empirical
 C      modeling of ion composition in the outer ionosphere. Adv. Space
-C      Res. 33, 844Ð849, 2004.
+C      Res. 33, 844â€“849, 2004.
 C
 C Author of the code:
 C         Vladimir Truhlik
@@ -4488,7 +4507,7 @@ C---------------------------------------------------------------------------
       DIMENSION  D(3,3,49),MIRREQ(49)
       REAL INVDP,INVDPC,DTOR
       REAL RMLT,RCOLAT
-      REAL C(49)
+      REAL C(49),C1(82)
       INTEGER SEZA,SEZB,SEZAI,SEZBI,DDDA,DDDB,DDDD
       REAL N0A400,N0B400,N400A,N400B,N400
       REAL N0A650,N0B650,N650A,N650B,N650
@@ -4515,7 +4534,10 @@ C     coefficients for mirroring
       END IF
       RMLT=MLT*DTOR*15.0
       RCOLAT=(90.0-INVDP)*DTOR
-      CALL SPHARM_IK(C,6,6,RCOLAT,RMLT)
+      CALL SPHARM_IK(C1,6,6,RCOLAT,RMLT)
+      do i=1,49
+      	c(i)=c1(i)
+      	enddo
 C     21.3. - 20.6.
       IF ((DDD .GE. 79) .AND. (DDD .LT. 171)) THEN
        SEZA=1
@@ -4661,7 +4683,7 @@ C---------------------------------------------------------------------------
       DIMENSION  D(4,3,49),MIRREQ(49)
       REAL INVDP,INVDPC,DTOR
       REAL RMLT,RCOLAT
-      REAL C(49)
+      REAL C(49),C1(82)
       INTEGER SEZA,SEZB,SEZAI,SEZBI,DDDA,DDDB,DDDD
       REAL N0A550,N0B550,N550A,N550B,N550
       REAL N0A900,N0B900,N900A,N900B,N900
@@ -4690,7 +4712,10 @@ C     coefficients for mirroring
       END IF
       RMLT=MLT*DTOR*15.0
       RCOLAT=(90.0-INVDP)*DTOR
-      CALL SPHARM_IK(C,6,6,RCOLAT,RMLT)
+      CALL SPHARM_IK(C1,6,6,RCOLAT,RMLT)
+      do i=1,49
+      	c(i)=c1(i)
+      	enddo
 C     21.3. - 20.6.
       IF ((DDD .GE. 79) .AND. (DDD .LT. 171)) THEN
        SEZA=1
@@ -4827,6 +4852,7 @@ C---------------------------------------------------------------------------
        ASA=A*(B(1)+B(2)*A+B(3)*A**2+B(4)*A**3+B(5)*A**4+
      &        B(6)*A**5+B(7)*A**6+B(8)*A**7)
        IF (ASA .GT. 1.0) ASA=1.0
+       IF (ASA .LT. 0.0) ASA=0.0
 C      invariant latitude (absolute value)
        RINVL=ACOS(SQRT(ASA))
        INVL=RINVL/DTOR
@@ -4879,7 +4905,9 @@ C
 c--------------------------------------------------------------
 C CALCULATES THE PEAK HEIGHT HMF2/KM FOR THE MAGNETIC                           
 C LATITUDE XMAGBR/DEGREE AND THE SMOOTHED ZUERICH SUNSPOT                         
-C NUMBER R USING CCIR-M3000 XM3 AND THE RATIO X=FOF2/FOE.                       
+C NUMBER R USING CCIR-M3000 XM3 AND THE RATIO X=FOF2/FOE.
+C FOLLOWING CCIR RECOMMENDATION X IS LIMITED TO VALUE
+C GREATER OR EQUAL TO 1.7 .                       
 C [REF. D.BILITZA ET AL., TELECOMM.J., 46, 549-553, 1979]                       
 C D.BILITZA,1980.     
 c--------------------------------------------------------------
@@ -4906,7 +4934,7 @@ c--------------------------------------------------------------
       F2=1.2-0.0116*EXP(0.0239*R)            
       F3=0.096*(R-25.0)/150.0                      
       F4=1.0-R/150.0*EXP(-XMAGBR*XMAGBR/1600.0)
-      if(x.lt.1.4) x=1.4
+      if(x.lt.1.7) x=1.7
       DELM=F1*F4/(X-F2)+F3                
 	  XM3000HM=1490.0/(HMF2+176.0)-DELM
       RETURN          
@@ -4916,9 +4944,10 @@ C
       REAL FUNCTION FOF1ED(YLATI,R,CHI)
 c--------------------------------------------------------------
 C CALCULATES THE F1 PEAK PLASMA FREQUENCY (FOF1/MHZ)
-C FOR   DIP-LATITUDE (YLATI/DEGREE)
-c       SMOOTHED ZURICH SUNSPOT NUMBER (R)
-c       SOLAR ZENITH ANGLE (CHI/DEGREE)
+C INPUT:   
+C		YLATI	ABSOLUT VALUE OF DIP-LATITUDE IN DEGREE
+c       R		12-MONTH RUNNING MEAN OF SUNSPOT NUMBER 
+c       CHI		SOLAR ZENITH ANGLE IN DEGREE
 C REFERENCE: 
 c       E.D.DUCHARME ET AL., RADIO SCIENCE 6, 369-378, 1971
 C                                      AND 8, 837-839, 1973
@@ -4999,13 +5028,17 @@ C
         REAL FUNCTION FOEEDI(COV,XHI,XHIM,XLATI)
 C-------------------------------------------------------
 C CALCULATES FOE/MHZ BY THE EDINBURGH-METHOD.      
-C INPUT: MONTHLY MEAN 10.7CM SOLAR RADIO FLUX measured at ground level  
-C (COV), GEOGRAPHIC LATITUDE (XLATI/DEG), SOLAR ZENITH ANGLE (XHI/DEG 
-C AND XHIM/DEG AT NOON).
+C INPUT: 
+C 	COV		MONTHLY MEAN 10.7CM SOLAR RADIO FLUX measured at 
+C           ground level  
+C   XHI		SOLAR ZENITH ANGLE IN DEGREE 
+C   XHIM	SOLAR ZENITH ANGLE AT NOON IN DEGREE
+C   XLATI 	ABSOLUTE VALUE OF GEOGRAPHIC LATITUDE IN DEGREE, 
 C REFERENCE: 
 C       KOURIS-MUGGELETON, CCIR DOC. 6/3/07, 1973
 C       TROST, J. GEOPHYS. RES. 84, 2736, 1979 (was used
 C               to improve the nighttime varition)
+C       RAWER AND BILITZA, Adv. Space Res. 10(8), 5-14, 1990
 C D.BILITZA--------------------------------- AUGUST 1986.    
         COMMON/CONST/UMR
 C variation with solar activity (factor A) ...............
@@ -5032,7 +5065,7 @@ C adjusted solar zenith angle during nighttime (XHIC) .............
         D=COS(XHIC*UMR)**SP       
 C determine foE**4 ................................................
         R4FOE=A*B*C*D     
-C minimum allowable foE (sqrt[SMIN])...............................
+C minimum allowable foE (foe_min=sqrt[SMIN])...............................
         SMIN=0.121+0.0015*(COV-60.)
         SMIN=SMIN*SMIN
         IF(R4FOE.LT.SMIN) R4FOE=SMIN                     
@@ -5343,12 +5376,12 @@ C	IN A POINT OF A GIVEN GEOCENTRIC LATITUDE AND LONGITUDE
 C	OF THE EARTH'S SURFACE FOR A GIVEN MONTH AND A GIVEN SUSPOT NUMER
 C
 C INPUT:	RLAT    The geogrphic latitude on the meridian given by 
-C			  the local time (FLON), where the modified dip
+C					the local time (FLON), where the modified dip
 C                   latitude is the same as of the orginal site.
 C			FLON	=LONGITUDE+15.*UT(hours)
 C			T		Month as a REAL number (1.0 to 12.0)
 C			RZ		12-month running mean
-C OUTPUT	B		=B0
+C OUTOUT	B		=B0
 C
 C  Blanch E., D. Arrazola, D. Altadill, D. Buresova, M. Mosert, 
 C     Adv. Space Res. 39, 701-710, 2007.
@@ -5358,31 +5391,30 @@ C  Altadill, D., J.M. Torta, and E. Blanch,
 C     Adv. Space Res. 43,1825-1834, 2009.
 C-------------------------------------------------------------------
       PARAMETER   (IBO=0,JBO=1,KDIM=6,LDIM=4,L=-1)
-      DIMENSION   FN(0:KDIM,0:KDIM), CONS1(0:KDIM,0:KDIM),
-     *            CONS2(0:KDIM,0:KDIM)
+      DIMENSION   FN(0:KDIM,0:KDIM), CONST(0:KDIM,0:KDIM)
       DIMENSION   GNM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *			HNM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM)
-	DIMENSION   GANM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
+	  DIMENSION   GANM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *			HANM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *            GBNM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *			HBNM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM)
       DIMENSION   BINT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *            BEXT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM)
       CHARACTER*1 IE       
+      COMMON  BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
+     *              LEXT,KMAX,FN
+C     ,CONST
 
-      COMMON      BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
-     *                 LEXT,KMAX,FN,CONS2
- 
-c      DATA THETA,RE,TZERO,IFIT,ICEN,IREF,IB,KINT,LINT,KEXT,LEXT
-c     *      /180.,6371.2,1.0,-1,0,0,2,6,4,0,-1/
+      DATA THETA,RE,    TZERO,IFIT,ICEN,IREF,IB,KINT,LINT,KEXT,LEXT
+     *     /180.,6371.2,1.0,  -1,  0,   0,   2, 6,   4,   0,   -1/
 
-  	DATA ((CONS1(N,M), M=0,N), N=0,KDIM)
-     *     /4*1.,1.73205,0.866025,1.,2.44949,1.93649,0.7905691,1.,
-     *     3.16228,3.35410,2.09165,0.739510,1.,3.87298,5.12348,
-     *     4.18330,2.21853,0.701561,1.,4.58258,2*7.24569,4.96078,
-     *     2.32681,0.671693/
+  	  DATA ((CONST(N,M), M=0,N), N=0,KDIM)
+     *	 /4*1.,1.73205,0.866025,1.,2.44949,1.93649,0.7905691,1.,
+     *	  3.16228,3.35410,2.09165,0.739510,1.,3.87298,5.12348,
+     *	  4.18330,2.21853,0.701561,1.,4.58258,2*7.24569,4.96078,
+     *      2.32681,0.671693/
 
-	DATA IE /"I"/
+	  DATA IE /"I"/
 
       DATA (((GANM(N,M,J),GBNM(N,M,J),HANM(N,M,J),HBNM(N,M,J),
      *    	J=0,LDIM), M=0,N), N=0,KDIM)
@@ -5464,21 +5496,6 @@ c     *      /180.,6371.2,1.0,-1,0,0,2,6,4,0,-1/
      *   28.514,-0.057, -30.282, 0.326, -22.924, 0.164,  11.602,-0.073,
      * 40*0.000/                                
 
-           THETA=180.           
-           RE=6371.2         
-           TZERO=1.0
-           IFIT=-1
-           ICEN=0
-           IREF=0
-           IB=2
-           KINT=6
-           LINT=4
-           KEXT=0
-           LEXT=-1
-      do 1234 M=0,N 
-      do 1234 N=0,K
-1234    CONS2(N,M)=CONS1(N,M)
-
       KMAX = MAX(KINT,KEXT)
       IF (KMAX .GT. KDIM)  GO TO 9999
       KT = MAX(LINT,LEXT)
@@ -5503,8 +5520,6 @@ c     *      /180.,6371.2,1.0,-1,0,0,2,6,4,0,-1/
       FN(N,M) = FLOAT(N)
 
       IF (M .GT. 0)  GO TO 300
-C      PRINT 255, IE,N,M, FNN,CON,(GNM(J),J=1-IBO-JBO,LJ)
-C  255 FORMAT (1X,A1,2I3,F9.4,E15.6,F10.3,4F20.3:/(22X,5F20.3))
       DO 301 J=1-IBO-JBO,KT
       IF (IE .EQ. 'I')  THEN
          BINT(N,M,J)   = GNM(N,M,J)
@@ -5514,8 +5529,6 @@ C  255 FORMAT (1X,A1,2I3,F9.4,E15.6,F10.3,4F20.3:/(22X,5F20.3))
   301 CONTINUE
       GO TO 500
   300 continue
-C  300 PRINT 260, IE,N,M,FNN,CON,(GNM(J),HNM(J),J=1-IBO-JBO,LJ)
-C  260 FORMAT (1X,A1,2I3,F9.4,E15.6,10F10.3:/(32X,10F10.3))
       DO 302 J=1-IBO-JBO,LJ
       IF (IE .EQ. 'I')  THEN
          BINT(N,M,J)   = GNM(N,M,J)
@@ -5542,42 +5555,40 @@ C	COMPUTES THE HOURLY VALUES OF B1 FROM A SET OF SH COEFFICIENTS
 C	IN A POINT OF A GIVEN GEOCENTRIC LATITUDE AND LONGITUDE
 C	OF THE EARTH'S SURFACE FOR A GIVEN MONTH AND A GIVEN SUSPOT NUMER
 C
-C   INPUT:	FLAT	Geographic latitude
-C			FLON	=LONGITUDE+15.*UT(hours)
-C			T		Month as a REAL number (1.0 to 12.0)
-C			RZ		12-month running mean
-C   OUTPUT:	B		=B1
+C   PARAMETERS ARE THE SAME AS IN SHAMDB0D, EXCEPT:
+C		FLAT	Geographic latitude
+C		B		=B1
 C
 C	***** PARAMS & COEFFS IN DATA SENTENCES *****
 C-------------------------------------------------------------------
 C
       PARAMETER   (IBO=0,JBO=1,KDIM=6,LDIM=4,L=-1)
-      DIMENSION   FN(0:KDIM,0:KDIM), CONS1(0:KDIM,0:KDIM),
-     *                  CONS2(0:KDIM,0:KDIM)
+      DIMENSION   FN(0:KDIM,0:KDIM), CONST(0:KDIM,0:KDIM)
       DIMENSION   GNM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *			HNM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM)
-	DIMENSION   GANM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
+	  DIMENSION   GANM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *			HANM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *            GBNM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *			HBNM(0:KDIM,0:KDIM,1-IBO-JBO:LDIM)
       DIMENSION   BINT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *            BEXT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM)
       CHARACTER*1 IE       
-      COMMON      BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
-     *              LEXT,KMAX,FN,CONS2
+      COMMON  BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
+     *              LEXT,KMAX,FN
+C      ,CONST
 
-	DATA ALT /300./
+	  DATA ALT /300./
 
-C      DATA THETA,RE,TZERO,IFIT,ICEN,IREF,IB,KINT,LINT,KEXT,LEXT
-C     *     /180.,6371.2,1.0,  -1,  0,   0,   2, 6,   4,   0,   -1/
+      DATA THETA,RE,    TZERO,IFIT,ICEN,IREF,IB,KINT,LINT,KEXT,LEXT
+     *     /180.,6371.2,1.0,  -1,  0,   0,   2, 6,   4,   0,   -1/
 
-  	DATA ((CONS1(N,M), M=0,N), N=0,KDIM)
+  	  DATA ((CONST(N,M), M=0,N), N=0,KDIM)
      *	 /4*1.,1.73205,0.866025,1.,2.44949,1.93649,0.7905691,1.,
      *	  3.16228,3.35410,2.09165,0.739510,1.,3.87298,5.12348,
      *	  4.18330,2.21853,0.701561,1.,4.58258,2*7.24569,4.96078,
      *      2.32681,0.671693/
 
-	DATA IE /"I"/
+	  DATA IE /"I"/
 
       DATA (((GANM(N,M,J),GBNM(N,M,J),HANM(N,M,J),HBNM(N,M,J),
      *    	J=0,LDIM), M=0,N), N=0,KDIM)
@@ -5640,21 +5651,6 @@ C     *     /180.,6371.2,1.0,  -1,  0,   0,   2, 6,   4,   0,   -1/
      *   -0.894, 0.007, -2.121, 0.019,  0.669,-0.007,  0.933,-0.010,
      * 80*0.000/ 
 
-           THETA=180.           
-           RE=6371.2         
-           TZERO=1.0
-           IFIT=-1
-           ICEN=0
-           IREF=0
-           IB=2
-           KINT=6
-           LINT=4
-           KEXT=0
-           LEXT=-1
-      do 1234 M=0,N 
-      do 1234 N=0,K
-1234    CONS2(N,M)=CONS1(N,M)
-
       KMAX = MAX(KINT,KEXT)
       IF (KMAX .GT. KDIM)  GO TO 9999
       KT = MAX(LINT,LEXT)
@@ -5679,8 +5675,7 @@ C     *     /180.,6371.2,1.0,  -1,  0,   0,   2, 6,   4,   0,   -1/
       FN(N,M) = FLOAT(N)
 
       IF (M .GT. 0)  GO TO 300
-C      PRINT 255, IE,N,M, FNN,CON,(GNM(J),J=1-IBO-JBO,LJ)
-C  255 FORMAT (1X,A1,2I3,F9.4,E15.6,F10.3,4F20.3:/(22X,5F20.3))
+  255 FORMAT (1X,A1,2I3,F9.4,E15.6,F10.3,4F20.3:/(22X,5F20.3))
       DO 301 J=1-IBO-JBO,KT
       IF (IE .EQ. 'I')  THEN
          BINT(N,M,J)   = GNM(N,M,J)
@@ -5690,8 +5685,7 @@ C  255 FORMAT (1X,A1,2I3,F9.4,E15.6,F10.3,4F20.3:/(22X,5F20.3))
   301 CONTINUE
       GO TO 500
   300 continue
-C  300 PRINT 260, IE,N,M,FNN,CON,(GNM(J),HNM(J),J=1-IBO-JBO,LJ)
-C  260 FORMAT (1X,A1,2I3,F9.4,E15.6,10F10.3:/(32X,10F10.3))
+  260 FORMAT (1X,A1,2I3,F9.4,E15.6,10F10.3:/(32X,10F10.3))
       DO 302 J=1-IBO-JBO,LJ
       IF (IE .EQ. 'I')  THEN
          BINT(N,M,J)   = GNM(N,M,J)
@@ -5724,41 +5718,48 @@ C     COMPUTES GENERAL FUNCTION BV, ITS HORIZONTAL NORTH DERIVATIVE BN,
 C     AND ITS HORIZONTAL EAST DERIVATIVE BE, ON SPHERICAL CAP SURFACE.
 C     NOTE THAT THESE ARE METRICAL DERIVATIVES, AND BE IS THE
 C     LONGITUDINAL DERIVATIVE DIVIDED BY SIN(COLATITUDE).
-C
-C     FLAT,FLON,R ARE GEOCENTRIC SPHERICAL CAP LATITUDE, LONGITUDE, 
-C     RADIAL DISTANCE; T IS TIME.
-C
-C     L =  0  ON FIRST CALL:  RETURNS SPHERICAL CAP POLE POSITION 
-C     FLATO, FLONO AND HALF-ANGLE THETA AS BN,BE, AND BV AFTER 
-C     INITIALIZATION. ON SUBSEQUENT CALLS:  ACTS AS L=1.
-C     1  COMPUTES POTENTIAL FIELD COMPONENTS FROM INTERNAL COEFFS.
-C     2  COMPUTES POTENTIAL FIELD COMPONENTS FROM EXTERNAL COEFFS.
-C     3  COMPUTES FIELD FROM BOTH INTERNAL AND EXTERNAL COEFFICIENTS.
-C    -1  COMPUTES GENERAL FUNCTION BV AND DERIVATIVES BN WITH RESPECT 
-C      TO LATITUDE AND BE WITH RESPECT TO LONGITUDE DIVIDED BY COS(LAT)
-C      (R IS DUMMY VARIABLE IN THIS CASE).
-C  NOTE:   SUBROUTINE IS INITIALIZED DURING FIRST CALL REGARDLESS OF L.
-C
+
+C     FLAT,FLON,R ARE GEOCENTRIC SPHERICAL CAP LATITUDE,LONGITUDE,RADIAL
+C     DISTANCE; T IS TIME.
+
+C     L =  0  ON FIRST CALL:  RETURNS SPHERICAL CAP POLE POSITION FLATO,FLONO
+C             AND HALF-ANGLE THETA AS BN,BE, AND BV AFTER INITIALIZATION.
+C             ON SUBSEQUENT CALLS:  ACTS AS L=1.
+C          1  COMPUTES POTENTIAL FIELD COMPONENTS FROM INTERNAL COEFFICIENTS.
+C          2  COMPUTES POTENTIAL FIELD COMPONENTS FROM EXTERNAL COEFFICIENTS.
+C          3  COMPUTES FIELD FROM BOTH INTERNAL AND EXTERNAL COEFFICIENTS.
+C         -1  COMPUTES GENERAL FUNCTION BV AND DERIVATIVES BN WITH RESPECT TO
+C             LATITUDE AND BE WITH RESPECT TO LONGITUDE DIVIDED BY COS(LAT)
+C             (R IS DUMMY VARIABLE IN THIS CASE).
+C     NOTE:   SUBROUTINE IS INITIALIZED DURING FIRST CALL REGARDLESS OF L.
+
 C     SUBPROGRAM USED:  LEGFUN
-C
+
 C	***** PARAMS & COEFFS TRANSFERRED FROM MAIN PROGRAM *****
-C
-C	ADAPTED FROM SUBROUTINE SCHNEV OF G.V. HAINES (COMPUTERS & 
-C     GEOSCIENCES, 14, 413-447, 1988)
+
+C	ADAPTED FROM SUBROUTINE SCHNEV OF G.V. HAINES (COMPUTERS & GEOSCIENCES, 
+C      14, 413-447, 1988)
 C-------------------------------------------------------------------
 
       PARAMETER   (IBO=0,JBO=1,KDIM=6,LDIM=4)                                     
-      DIMENSION   FN(0:KDIM,0:KDIM), CONS1(0:KDIM,0:KDIM)
+      DIMENSION   FN(0:KDIM,0:KDIM), CONST(0:KDIM,0:KDIM)
       DIMENSION   CML(KDIM), SML(KDIM)
       DIMENSION   DELT(0:LDIM)
       DIMENSION   BINT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *            BEXT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM)
+      COMMON      BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
+     *              LEXT,KMAX,FN
+C     ,CONST
       CHARACTER*1 IE,RESP
+C
+      DATA ((CONST(N,M), M=0,N), N=0,KDIM)
+     *	 /4*1.,1.73205,0.866025,1.,2.44949,1.93649,0.7905691,1.,
+     *	  3.16228,3.35410,2.09165,0.739510,1.,3.87298,5.12348,
+     *	  4.18330,2.21853,0.701561,1.,4.58258,2*7.24569,4.96078,
+     *      2.32681,0.671693/
 
-      COMMON	BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
-     *              LEXT,KMAX,FN,CONS1
-      COMMON/CONST/UMR
- 
+        dfarg=(atan(1.0)*4.)/180.
+
 C     IBF   =  0   TO USE ORDINARY POLYNOMIALS AS BASIS FUNCTIONS
 C              1          LEGENDRE POLYNOMIALS
 C              2          FOURIER SERIES
@@ -5853,8 +5854,8 @@ c     change to intercept form of fourier series.
   106 COLAT = 90. - FLAT
       DO 150 N=1,KMAX
       IF (N .GT. 1)  GO TO 115
-      CL = COS(FLON*UMR)
-      SL = SIN(FLON*UMR)
+      CL = COS(FLON*dfarg)
+      SL = SIN(FLON*dfarg)
       CML(1) = CL
       SML(1) = SL
       GO TO 120
@@ -5866,7 +5867,7 @@ c     change to intercept form of fourier series.
       NMM = N - M
       IF ((NMM/2)*2 .NE. NMM)  GO TO 150
   121 FFN = FN(N,M)
-      CALL LEGFUN (M,FFN,CONS1(N,M),COLAT,P,DP,PMS,0)
+      CALL LEGFUN (M,FFN,CONST(N,M),COLAT,P,DP,PMS,0)
       IF (L .GE. 0)  THEN
          AR = AOR**(FFN+2.)
       ELSE
@@ -5990,19 +5991,18 @@ C-------------------------------------------------------------------
       REAL*8  FNN,AL,A,B,PNM,DPNM
       DIMENSION  AM(60), BM(60)
 
-      COMMON/CONST/UMR
-
       DATA   JMAX/60/
 
+      dfarg=(atan(1.0)*4.)/180.
       FNN = FN*(FN+1.)
       IF (COLAT .LT. 60.)  THEN
-          X = SIN(COLAT/2.*UMR)**2
+          X = SIN(dfarg*COLAT/2.)**2
           C = 1. - 2.*X
       ELSE
-          C = COS(COLAT*UMR)
+          C = COS(COLAT*dfarg)
           X = (1. - C)/2.
           END IF
-      S = SIN(COLAT*UMR)
+      S = SIN(COLAT*dfarg)
       IF (M .GT.1)  GO TO 20
       IF (M .LT. 0)  STOP
       AL = CONST
@@ -6031,30 +6031,21 @@ C     CHECK FOR TERMINATION OF SERIES.
       IF (ABSA .LT. 1.E-7)  GO TO 110
   160 IF (ABSB .GE. 1.E+13)  GO TO 105
       IF (ABSA .GE. 1.E+13)  GO TO 105
-C
 C     CHANGE CHECK LIMITS ACCORDING TO ACCURACY DESIRED AND ACCORDING
-C     TO WORD SIZE OF COMPUTER. FOR 32-BIT WORD, DOUBLE PRECISION, 
-C     E-8 AND E+8 GIVE 7 DIGITS ACCURACY. FOR 60-BIT WORD, DOUBLE 
-C     PRECISION, E-15 AND E+15 GIVE 14 DIGITS ACCURACY. FOR 60-BIT 
-C     WORD, SINGLE PRECISION, E-8 AND E+7 GIVE 7 DIGITS ACCURACY.
+C     TO WORD SIZE OF COMPUTER.
+C     FOR 32-BIT WORD, DOUBLE PRECISION, E-8 AND E+8 GIVE 7 DIGITS ACCURACY.
+C     FOR 60-BIT WORD, DOUBLE PRECISION, E-15 AND E+15 GIVE 14 DIGITS ACCURACY.
+C     FOR 60-BIT WORD, SINGLE PRECISION, E-8 AND E+7 GIVE 7 DIGITS ACCURACY.
 C     (DOUBLE OR SINGLE PRECISION REFER TO FNN,AL,A,B,PNM,DPNM)
-C
       IF (J .LT. JMAX)  GO TO 100
-C
 C     CONVERGENCE SLOW OR JMAX TOO SMALL
-C
   105 CONTINUE
-C
 C     NUMERICAL ERROR UNACCEPTABLY LARGE DUE TO ADDING OF
 C     LARGE AND SMALL NUMBERS.
-C
-C      PRINT 108, M,FN,CONST,J,A,B
-C  108 FORMAT (//12H ** ERROR **/1X,I5,F10.5,E15.7,I5,2D15.7)
-C
+      PRINT*, M,FN,CONST,J,A,B
+  108 FORMAT (//12H ** ERROR **/1X,I5,F10.5,E15.7,I5,2D15.7)
       STOP
-C
 C     SERIES TRUNCATED SUCCESSFULLY.
-C
   110 PS = PNM
       DPS = DPNM
       IF (M .NE. 0)  GO TO 115
@@ -6066,19 +6057,17 @@ C
       P = PS*S
       DP = DPS*S*S/2. + C*PMS
   120 CONTINUE
-C
 C     PRINT TERMS OF SERIES
-C
       IF (IPRT .EQ. 0)  RETURN
-      PRINT 125,  M,FN,CONST,COLAT,P,DP,PMS,J
+      PRINT *,  M,FN,CONST,COLAT,P,DP,PMS,J
   125 FORMAT (/1X,I5,F10.5,E20.12,F10.2,3F25.14,I5)
       IF (IPRT .LT. 0)  RETURN
       IF (IPRT .EQ. 2)  GO TO 135
-      PRINT 130, (AM(I),I=1,J)
+      PRINT *, (AM(I),I=1,J)
   130 FORMAT (1X,16E8.1)
       IF (IPRT .EQ. 1)  RETURN
   135 CONTINUE
-      PRINT 130, (BM(I),I=1,J)
+C  135 PRINT *, (BM(I),I=1,J)
       RETURN
       END
 C      
@@ -6266,7 +6255,7 @@ C
         END
 C
 C
-      Subroutine dummyDRegion(z,it,f,vKp,f5SW,f6WA,elg)
+      Subroutine DRegion(z,it,f,vKp,f5SW,f6WA,elg)
 c-----------------------------------------------------------------------
 c Reference: Danilov, Rodevich, and Smirnova, Adv. Space Res.  
 C     15, #2, 165, 1995.
@@ -6476,12 +6465,12 @@ C THEN SCHALT=.TRUE.
       F2=FX22-FW     
       K=.FALSE.       
       NG=2       
-      LFD=0     
+      LFD=0  
       IF(F1*F2.LE.0.0) GOTO 200
         X=0.0           
         SCHALT=.TRUE.   
         RETURN
-200   X=(X1*F2-X2*F1)/(F2-F1)                      
+200   X=(X1*F2-X2*F1)/(F2-F1) 
       GOTO 400        
 300     L1=LINKS        
         DX=(X2-X1)/NG
@@ -6565,8 +6554,8 @@ c
 c
         a = sin(fa) * sin(dc)
         b = cos(fa) * cos(dc)
-        cosx = a + b * cos(phi)
-        if(abs(cosx).gt.1.) cosx=sign(1.,cosx)
+        	cosx = a + b * cos(phi)
+        	if(abs(cosx).gt.1.) cosx=sign(1.,cosx)
         zenith = acos(cosx) / dtr
 c
 c calculate sunrise and sunset times --  at the ground...........
@@ -6590,8 +6579,9 @@ c allow for sun never rising - high latitude winter..............
         sunrse = -99.
         if(secphi.gt.0.0.and.secphi.lt.1.) return
 c
-        if(cosphi.gt.1.) cosphi=sign(1.,cosphi)
-        phi = acos(cosphi)
+        	cosx = cosphi
+        	if(abs(cosx).gt.1.) cosx=sign(1.,cosx)
+        phi = acos(cosx)
         et = et / humr
         phi = phi / humr
         sunrse = 12. - phi - et
@@ -7365,15 +7355,16 @@ c----------------------------------------------------------------
            integer      imst,iymend
            real         ionoindx(722),indrz(722)
            real         ig(3),rz(3)
+           logical		mess
            character path*100
-
-           common /iounit/konsol
+           
+           common /iounit/konsol,mess
 
            save         ionoindx,indrz,iflag,iyst,iymst,iymend,imst
 
         if(iflag.eq.0) then      
             call getenv('IRIPATH',path)
-            open(unit=12,file=path(1:index(path,' ')-1)//'/ig_rz.dat',
+      open(unit=12,file=path(1:index(path,' ')-1)//'/ig_rz.dat',
      *status='old',action='read')
 
 c-web- special for web version
@@ -7417,7 +7408,7 @@ c read all the IG12 (ionoindx) and Rz12 (indrz) values
 
         iytmp=yr*100+mm
         if (iytmp .lt. iymst .or. iytmp .gt. iymend) then
-               if(konsol.gt.1) write(konsol,8000) iytmp,iymst,
+               if(mess) write(konsol,8000) iytmp,iymst,
      &                                            iymend
  8000          format(1x,I10,'** OUT OF RANGE **'/,5x,
      &  'The file IG_RZ.DAT which contains the indices Rz12',
@@ -7511,9 +7502,10 @@ c If date is outside the range of the Ap indices file than IAP(1)=-5
 c-----------------------------------------------------------------------
 
         DIMENSION iiap(8),iap(13),lm(12)
-        character path*100
-        COMMON /iounit/konsol
+        LOGICAL	mess
+        COMMON /iounit/konsol,mess
         DATA LM/31,28,31,30,31,30,31,31,30,31,30,31/
+        character path*100
 
         IYBEG=1958
        
@@ -7523,7 +7515,7 @@ c-----------------------------------------------------------------------
 
         if(iyyyy.lt.IYBEG) goto 21   ! file starts at Jan 1, 1958
 
-        call getenv('IRIPATH',path)
+         call getenv('IRIPATH',path)
         OPEN(13,FILe=path(1:index(path,' ')-1)//'/apf107.dat',
      ,action='read',
 c-web-sepcial vfor web version
@@ -7586,7 +7578,7 @@ c      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
         CLOSE(13)
         goto 20
         
-21      if(konsol.gt.1) write(konsol,100)
+21      if(mess) write(konsol,100)
 100     format(1X,'Date is outside range of Ap indices file.',
      &     ' STORM model is turned off.')
         IAP(1)=-5
@@ -7619,9 +7611,9 @@ c-----------------------------------------------------------------------
 c
 		REAL IAPO
         DIMENSION iiap(8),iap(21),lm(12),iapo(7)
+        LOGICAL  mess
         character path*100
-
-        common /iounit/konsol
+        common /iounit/konsol,mess
 
         DATA LM/31,28,31,30,31,30,31,31,30,31,30,31/
 
@@ -7637,11 +7629,10 @@ c
         if(iyyyy.lt.IYBEG) goto 21   ! file starts at Jan 1, 1958
 
         call getenv('IRIPATH',path)
-c       Open(13,FILe='apf107.dat',
-c-web-sepcial vfor web version
-C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
         Open(13,FILe=path(1:index(path,' ')-1)//'/apf107.dat',
      ,action='read',
+c-web-sepcial vfor web version
+C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
      *    ACCESS='DIRECT',RECL=55,FORM='FORMATTED',STATUS='OLD')
                 
         is=0
@@ -7739,7 +7730,7 @@ c        iapo(7)=int(sum2/8.+.5)
         iapo(7)=sum2/8.
         goto 20
         
-21      if(konsol.gt.1) write(konsol,100)
+21      if(mess) write(konsol,100)
 100     format(1X,'MSIS: Only Ap-daily dependence not history')
         IAPO(2)=-5.0
       
@@ -7771,9 +7762,10 @@ c If date is outside the range of indices file than F107D=F107_81=-11.1
 c-----------------------------------------------------------------------
 
         DIMENSION iiap(8),lm(12)
+        LOGICAL mess
         character path*100
 
-        common /iounit/konsol
+        common /iounit/konsol,mess
 
         DATA LM/31,28,31,30,31,30,31,31,30,31,30,31/
 
@@ -7816,7 +7808,7 @@ C      OPEN(13,FILE='/usr/local/etc/httpd/cgi-bin/models/IRI/apf107.dat',
         CLOSE(13)
         goto 20
 
-21      if(konsol.gt.1) write(konsol,100)
+21      if(mess) write(konsol,100)
 100     format(1X,'Date is outside range of F10.7D indices file',
      &    ' (F10.7D = F10.7_81 = F10.7RM12).')
         F107D = -11.1
@@ -8437,6 +8429,10 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       PARAMETER(NMLG=37,NDBD=5)
       DIMENSION C3(NMLG,NDBD)
       DIMENSION XMLG(NMLG),IDBD(NDBD),C1(NMLG,NDBD),C2(NMLG,NDBD)
+      LOGICAL mess
+
+      COMMON /iounit/konsol,mess
+
       DATA XMLG/-90.0,-85.0,-80.0,-75.0,-70.0,-65.0,-60.0,-55.0,-50.0,
      &          -45.0,-40.0,-35.0,-30.0,-25.0,-20.0,-15.0,-10.0,-5.0,
      &          0.0,5.0,10.0,15.0,20.0,25.0,30.0,35.0,40.0,45.0,50.0,
@@ -8574,9 +8570,11 @@ C
         IF((JDOY.GT.IDBD(IS-1)).AND.(JDOY.LE.IDBD(IS))) IDXS=IS
       ENDDO
       IF(IDXS.EQ.0) THEN
-        WRITE(*,*) '!!! PROBLEM FINDING SEASON-AVERAGED COEFFICIENT'
-        WRITE(*,*) '!!! INPUT DAY OF YEAR = ',JDOY
-        STOP 'ERROR IN STORME_AP'
+        if(mess) WRITE(konsol,*) 'ERROR IN STORME_AP: ',
+     &   'PROBLEM FINDING SEASON-AVERAGED COEFFICIENT',
+     &   'DAY OF YEAR = ',JDOY
+        STORME_AP=-5.0
+        GOTO 222 
       ENDIF
 C
 C ... Find Magnetic Latitude Coefficient Index
@@ -8594,9 +8592,11 @@ C
         IF((XMLAT.GT.YMM).AND.(XMLAT.LE.YMP)) IDXL=IL
       ENDDO
       IF(IDXL.EQ.0) THEN
-        WRITE(*,*) '!!! PROBLEM FINDING MAGNETIC LATITUDE COEFFICIENT'
-        WRITE(*,*) '!!! INPUT MAGNETIC LATITUDE (DEGREES) = ',XMLAT
-        STOP 'ERROR IN STORME_AP'
+        if(mess) WRITE(konsol,*) 'ERROR IN STORME_AP: ', 
+     &     'PROBLEM FINDING MAGNETIC LATITUDE COEFFICIENT',
+     &     'MAGNETIC LATITUDE(DEGREES) = ',XMLAT
+        STORME_AP=-5.0
+        GOTO 222
       ENDIF
 C
 C ... COMPUTE E-REGION ELECTRON DENSITY GEOMAGNETIC STORM ENHANCEMET
@@ -8606,7 +8606,7 @@ C
       IF(SQR.LT.1.0) SQR=1.0
       STORME_AP=SQR
    
-      RETURN
+222   RETURN
       END    
 C
 C
@@ -9158,7 +9158,6 @@ CC
      #                      +Coff15(3,J)*dAEt_75)*bspl4_ptime(J,SLT)
           END DO
           DynamoVd=0.0D0
-	  print*,AEd1_6,AEd7_12,AEd22_28P,Alfa,Beta
           DO J=1,9
              DynamoVd=DynamoVd +(Coff15(4,J)*AEd1_6+
      #                           Coff15(5,J)*Alfa*AEd7_12+
@@ -9643,7 +9642,7 @@ C corresponds to the given MLT value (xmlt).
 C
 C Y. Zhang and L.J. Paxton, An empirical Kp-dependent global auroral 
 C model based on TIMED/GUVI FUV data, Journal of Atmospheric and 
-C Solar-Terrestrial Physics 70, 1231Ð1242, 2008.
+C Solar-Terrestrial Physics 70, 1231â€“1242, 2008.
 C 
 C----------------------------------------------------------------------- 
 

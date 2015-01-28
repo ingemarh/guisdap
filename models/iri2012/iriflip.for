@@ -1,27 +1,31 @@
 C flipiri.for 
 C
-C 2011.00 10/05/11 IRI-2011: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
-C 2011.00 10/05/11    bottomside Ni model (iriflip.for), auroral foE
-C 2011.00 10/05/11    storm model (storme_ap), Te with PF10.7 (elteik),
-C 2011.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for), 
-C 2011.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
-C 2011.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
-C 2011.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
-C 2011.00 12/12/11    Deleted ALT_RATES (not used)
-
+C 2012.00 10/05/11 IRI-2012: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
+C 2012.00 10/05/11    bottomside Ni model (iriflip.for), auroral foE
+C 2012.00 10/05/11    storm model (storme_ap), Te with PF10.7 (elteik),
+C 2012.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for), 
+C 2012.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
+C 2012.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
+C 2012.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
+C 2012.01 12/12/11 Deleted ALT_RATES (not used)
+C 2012.01 01/04/12 Deleted FINDAP,READAP,CONV_DATE,GET_DATA,RATCHK (not used)
+C 2012.01 01/04/12 Deleted BRACE,ACTUAL_DAY,EPHEM SOLDEC,TFILE,RUN_ERROR (not used)
+C 2012.01 01/04/12 COP2D: 99 FOMRAT ',' missing; commented out all WRITEs
+C 2014.01 07/17/14 COP4S: NPLUS=0; PR(13)=0.0 ------------------------- A Shabanloui
 C****************************************************************************************
 C subroutines for IDC model
 C
 C includes: main subroutine CHEMION and the following subroutines and functions
 C           KEMPPRN.FOR: CN2D, CNO, CN4S, CN2PLS, CNOP, CO2P, COP4S, COP2D, COP2P,
-C                        CNPLS, CN2A, CN2P, CNOPV, TFILE
-C           FLIPAP.FOR: FINDAP, RAEDAP, CONV_DATE, GET_DATA
-C           RATES.FOR: RATS, RATCHK
-C           PESIMP.FOR: SECIPRD, FLXCAL, FACFLX, SIGEXS, TXSION, OXRAT, T_XS_N2, 
-C                       T_XS_OX, OXSIGS
-C           RSPRIM.FOR: PRIMPR, SCOLUM, PARAMS, PROBS, PROBN2, YLDISS, PROBO2, 
-C                       SCHUMN, FACEUV, FACSR, EPHEM SOLDEC, GETLTSZA, ACTUAL_DAY,
-C                       BRACE, RUN_ERROR
+C                        CNPLS, CN2A, CN2P, CNOPV
+C           RATES.FOR:   RATS 
+C           PESIMP.FOR:  SECIPRD, FLXCAL, FACFLX, SIGEXS, TXSION, OXRAT, T_XS_N2, 
+C                        T_XS_OX, OXSIGS
+C           RSPRIM.FOR:  PRIMPR, SCOLUM, PARAMS, PROBS, PROBN2, YLDISS, PROBO2, 
+C                        SCHUMN, FACEUV, FACSR,  
+C  
+C turn on printout of intermediate quantities with JPRINT=1 also in PARAMS, PROBS, 
+C PROBN2, YLDISS, and PROBO2 with ISW=1.
 C 
 C Richards, P. G., D. Bilitza, and D. Voglozin (2010), Ion density calculator (IDC): 
 C 	A new efficient model of ionospheric ion densities, Radio Sci., 45, RS5007, 
@@ -120,9 +124,11 @@ C-------------------------------------------------------------------------------
       CALL RATS(0,TE,TI,TN,RTS)  !.. Get the reaction rates
 
       !.. PRIMPR calculates solar EUV production rates. 
+c      print*,'ALT,OXN,N2N,O2N,HEN,SZAD*0.01745,TN,F107,F107A,N4S'
+c      print*,ALT,OXN,N2N,O2N,HEN,SZAD*0.01745,TN,F107,F107A,N4S
+      UVDISN=OTHPR1(1)
       CALL PRIMPR(1,ALT,OXN,N2N,O2N,HEN,SZAD*0.01745,TN,F107,F107A,N4S)
       UVDISN=OTHPR1(1)
-
       !.. Calculate secondary Production from photoelectrons
       CALL SECIPRD(ALT,SZAD,F107,F107A,TE,TN,OXN,O2N,N2N,NE,N2APRD)
 
@@ -369,7 +375,7 @@ C........no
       P1=PR(1)+PR(2)+PR(3)+PR(4)+PR(5)
       L1=LR(1)+LR(2)+LR(3) + LR(4) + (LR(5)+LR(6))
       IF(JPT.EQ.1.AND.JPR.GT.0) WRITE(I,192)
- 192   FORMAT(/2X,'NO',17X,'PRODUCTION',20X,':',10X,'LOSS RATES'/
+ 192  FORMAT(/2X,'NO',17X,'PRODUCTION',20X,':',10X,'LOSS RATES'/
      > ,4X,'ALT',3X,'[NO]',5X,'[NO]c',3X,'O2+N2D',
      > 3X,'O2+N4S   N2P+O2   N2A+O    N++O2    N4S+NO   O2P+NO   O++NO'
      > ,3X,'N2D+NO   hv<1910   Lyman-a')
@@ -536,7 +542,8 @@ C.........pr(1)= euv production of o+(4s)
       PR(10)=RTS(85)*OP2P*O2N              !.. Fox
       PR(11)=HEPLUS*O2N*(RTS(91)+RTS(93))  !..Fox
       PR(12)=RTS(95)*NNO*HEPLUS            !..Fox
-      !PR(13)=RTS(22)*NPLUS*O2N             !..Fox
+C      PR(13)=RTS(22)*NPLUS*O2N             !..Fox
+      PR(13)=0.0
       LR(1)=N2N*VCON*RTS(3)
       LR(2)=O2N*RTS(4)
       LR(3)=NNO*RTS(24)
@@ -580,8 +587,8 @@ C.......o+(2d)
       IF(JPT.EQ.1.AND.JPR.GT.0) WRITE(I,99)
  99   FORMAT(/2X,'O+(2D)',13X,'PRODUCTION',27X,':',18X,'LOSS RATES'/
      > ,3X,'ALT',3X,'[O+2D]',3X,'hv+O',4X,'e*+O',4X,'O+2P+e',3X,
-     > 'O+2P>hv',2X,'He++O2     +N2    E3726_29    +e       +O      +O2'
-     > '      +NO     +N  +N2>NO+')
+     > 'O+2P>hv',2X,'He++O2     +N2    E3726_29    +e       +O',
+     > '      +O2      +NO     +N  +N2>NO+')
       IF(JPR.GT.0) WRITE(I,7) Z,OP2D,PR(1),PR(5),PR(2),PR(3),PR(4)
      > ,(LR(K)*OP2D,K=1,8)
       RETURN
@@ -824,354 +831,6 @@ C...... Written by P. Richards in February 2004
      >   (NOPV(K),K=1,4),(PR(K),K=1,9),LR(1)*NOP
 
       RETURN
-      END
-C:::::::::::::::::::::::::::::::: TFILE :::::::::::::::::::::::::
-C------- This file checks to see if a file exists for the FORTRAN unit
-C------- JUNIT and returns 0 for no and 1 for yes
-       SUBROUTINE TFILE(JUNIT,IOPEN)
-       CHARACTER ACHAR
-       IOPEN=1
-       READ(JUNIT,90,END=70,ERR=70) ACHAR 
- 90    FORMAT(A)
-       REWIND JUNIT
-       RETURN
-
- 70    CONTINUE
-       !--- File did not exist
-       IOPEN=0 
-       RETURN
-       END
-C
-C
-C.................... FLIPAP.FOR;2 ..........14-JUN-1994 21:36:29.18 
-C....... This subroutine provides the 7 Ap indices for the MSIS model given
-C....... the time history of the Kp at 3 hour intervals.
-C....... Original programmer - D. A. Burns, June  1988
-C....... UTHRS is the universal time at which Ap is to be evaluated (hours)
-C....... RUNHRS is the length of the run (hours). Ap is the output array
-C....... This routine was modified by P. Richards in July 1991 to input the
-C....... 3 hr Kp indices instead of Ap and also F10.7. The Kp and F10.7 (Sa)
-C....... indices can be found in the
-C....... back of JGR and are read from a file coverted to Ap and stored in
-C....... the array AP3HR. SW is an array of switches for the MSIS model
-C....... If a negative Kp is read, the plasmaspheric H+ density (HPEQ) is
-C....... reduced to simulate emptying of flux tubes.
-C....... Modified July 1995 by Scot Braze to read Kp and F10.7 values from
-C....... a master file.  STDAY is the start day in YYYYDDD format.  F107A 
-C....... is the average F10.7 value.  It reflects the average of the 40
-C....... days prior to the date and 40 days after the date.
-C
-      SUBROUTINE FINDAP (STDAY,UTHRS,RUNHRS,AP,AP3HR,SW,HPEQ,F107
-     >                   ,F107A)
-C
-      INTEGER IND,INDSAV,NUMAP3,STDAY,I,DAYDIM
-      PARAMETER (DAYDIM=801)
-      REAL AP3HR(8001),AP(7),SW(25),HP3HR(8001),F107,F107A
-     > ,T107(DAYDIM),T107A(DAYDIM),UTHRS
-      REAL HPEQ,RUNHRS
-      LOGICAL DEBUG
-C
-      DATA  UTST,INDSAV, DEBUG   ,    T107    ,   T107A    , THPEQ
-     >   /   0.0,  1   , .FALSE. , DAYDIM*-1.0, DAYDIM*-1.0, 0.0/
-C
-C........ If this is the first call to FINDAP, call READAP  to read
-C........ the 3 Hour Ap indices and check there is enough. HP3HR is
-C........ used to reduce plasmaspheric content if negative
-C
-      IF (AP3HR(1).LT. 0.0) THEN
-         CALL READAP(STDAY,UTST,AP3HR,NUMAP3,UTHRS,RUNHRS,HP3HR,T107
-     >               ,T107A)
-C....... call TSELEC and GSELEC to allow MSIS and HWM to use the 3 hour AP
-         SW(9)= -1.0
-         CALL TSELEC(SW) 
-C
-      ENDIF
-C
-C------ Set daily F10.7 flux
-      F107 = T107(INT((UTHRS-UTST)/24)+1)
-      F107A= T107A(INT((UTHRS-UTST)/24)+1)
-C
-C....  IND - index of the 3 hour AP for the current time - UTHRS
-      IND = 20 + INT((UTHRS-UTST)/3)
-C
-C...... If the index has not changed do not recalculate APs
-      IF (IND .EQ. INDSAV) THEN
-         RETURN
-      ELSE
-         INDSAV = IND
-      ENDIF
-
-      !*** HPEQ is now adjusted in RSMNSD 19 July 2000
- 
-      IF (DEBUG) WRITE(6,*) 'START:',UTST,' ','NUMAP3 = ',NUMAP3
-C
-C..... Calculate the daily Ap (AP(1)) by first determining the day which
-C..... corresponds to the current UTHRS, then calculate the index that
-C..... corresponds to the first 3 hour Ap of that day. Then sum 8 3 hour
-C..... APs for that day
-      DAY = INT(UTHRS/24)
-      IDAY = 20 + NINT((DAY * 24 - UTST)/3)
-      AP(1)=0.0
-      DO 25 I = IDAY, (IDAY+7)
-         AP(1) = AP(1)+AP3HR(I)
-25    CONTINUE
-      AP(1)=AP(1)/8.0
-C
-C..... Fill the next 4 elements of AP with the corresponding 3 hour values
-      DO 20 I = 2, 5
-        AP(I) = AP3HR(IND-I+2)
-        IF (DEBUG) WRITE (6,*)'I=',I,' ','IND=',IND,' ','AP3HR=',
-     >   AP3HR(IND-I+2),'CT=',UTHRS
-20    CONTINUE
-C
-C...... AP(6) is the average of eight 3 hour indices from 12 to 33 hours
-C...... prior to current time
-      AP(6) = 0.0
-      DO 30 I = 4, 11
-        AP(6) = AP(6) + AP3HR(IND-I)
-        IF (DEBUG) WRITE(6,*)'I=',I,' ','SUM6=',AP(6),'AP3HR=',
-     >     AP3HR(IND-I),'CT=',UTHRS
-30    CONTINUE
-      AP(6) = AP(6)/8.0
-C
-C...... AP(7) is the average of eight 3 hour indices from 36 to 60 hours
-C...... prior to current time
-      AP(7) = 0.0
-      DO 40 I = 12, 19
-        AP(7) = AP(7) + AP3HR(IND-I)
-        IF (DEBUG) WRITE(6,*)'I=',I,' ','SUM7=',AP(7),'AP3HR=',
-     >     AP3HR(IND-I),'CT=',UTHRS
-40    CONTINUE
-      AP(7) = AP(7)/8.0
-      RETURN
-      END
-C:::::::::::::::::::::::::::::::::: READAP ::::::::::::::::::::::::::
-C..... This subroutine reads in the Start time for the run (UTST) and the
-C..... 3 hour Kp indices converts them to Ap and returns them in (AP3HR).
-C..... It also returns the number of 3 hour indices (NUMAP3). and tests
-C..... the data to see if there is enough
-C..... and if it within the range 0-300. UTHRS is the first time that the
-C..... Kp is required. It is tested to see if it is within an hour of UTST
-C..... RUNHRS is the length of the run. All times are in hours.  Modified
-C..... 8/7/95 by Scot A Braze.  STDAY is the start day in YYYYDDD format.
-C..... FYYYY AND FDDD are the start year and day num (out of 365) of the 
-C..... run.  SYYYY AND SDDD are the day and year that the data extraction
-C..... begins.  CYYYY AND CDDD are the current day and year being read.  
-C..... IKPAP is the integer array used to hold kp values to be converted 
-C..... to real. T107A is the average F10.7 value.  The f10.7 values are 
-C..... returned in T107, and the Ap values are returned in AP3HR.
-C
-      SUBROUTINE READAP (STDAY,UTST,AP3HR,NUMAP3,UTHRS,RUNHRS
-     >                   ,HP3HR,T107,T107A)
-      IMPLICIT NONE
-C
-      INTEGER STDAY,SYYYY,SDDD,CDDD,CMONTH,CDAY,FYYYY,FDDD
-     >        ,IKPAP(8),NDAY,I,K,NUMAP3,IDD,IOPEN,CYYYY,DAYDIM
-      PARAMETER (DAYDIM=801)
-      REAL UTST,AP3HR(8001),KPTOAP(0:90),HP3HR(8001)
-     >         ,T107(DAYDIM),T107A(DAYDIM),UTHRS,SENT
-      REAL RUNHRS
-      LOGICAL DEBUG
-C......Maximum number of AP indices allowed for a FLIP run
-      DATA DEBUG / .FALSE. /
-C....... Conversion factors from Kp = 1..9. AP = KPTOAP(KP) - obsolete
-      !..     Kp= 0    1    2   3    4    5    6     7     8    9
-      !..     AP= 0,   3,   7,  15,  27,  48,  80,  140,  240, 400
-      !.. 90 Ap values for easy conversion to Ap
-      DATA KPTOAP/3*0,4*2,3*3,3*4,4*5,3*6,3*7,4*9,3*12,3*15,4*18,3*22
-     >   ,3*27,4*32,3*39,3*49,4*56,3*67,3*80,4*94,3*111,3*132,4*154
-     >   ,3*179,3*207,4*236,3*300,400/
-C
-      IF (DEBUG) WRITE (6,*)'*******ENTERING READAP********'
-C------- Test to see if the data file exists
-      CALL TFILE(20,IOPEN)
-      IF(IOPEN.EQ.0) THEN
-        WRITE(6,79) 
- 79     FORMAT(/1X,'*** File with 3 hour Ap and F10.7 is missing ***'/)
-        CALL RUN_ERROR    !.. print ERROR warning in output files
-        STOP
-      ENDIF
-C
-C.... Set the number of days for the run. Add a day to be sure
-      NDAY = NINT((UTHRS+RUNHRS)/24.0)+1
-      IF(NDAY.GT.801) THEN
-        WRITE(6,*) ' '
-        WRITE(6,*) ' ** RUN is too long must be <= one YEAR **'
-        CALL RUN_ERROR    !.. print ERROR warning in output files
-        STOP
-      ENDIF 
-C
-C---- Get the day the FLIP run begins.  FYYYY and FDDD are
-C---- the flip starting year and day for the run.  
-      FYYYY=STDAY/1000
-      FDDD=MOD(STDAY,1000)
-C---- Check to see if 3 days prior to run is in the previous year.
-      IF(FDDD.LT.4) THEN
-          IF(MOD(FYYYY-1,4).EQ.0) THEN
-              SDDD=366-(3-FDDD)
-              SYYYY=FYYYY-1
-          ELSE
-              SDDD=365-(3-FDDD)
-              SYYYY=FYYYY-1
-          ENDIF
-      ELSE
-          SDDD=FDDD-3
-          SYYYY=FYYYY
-      ENDIF
-      IF(DEBUG) WRITE(6,*) 'Start date for Kp values is',SYYYY,SDDD
-C
-C.... First discard the header lines.
-  30  CONTINUE
-      READ(20,444,ERR=30) SENT
-      IF(DEBUG) WRITE(6,*) 'SENT = ',SENT
-  444 FORMAT(F4.1)
-C
-C**************************** MAIN LOOP *****************************
-C---- Read F10.7 indices for up to DAYDIM days. T107 & T107A are padded with
-C---- negative values.  Loop through until 3 days prior to the start of 
-C---- the run.  The Kp values for these 3 days must be extracted as well 
-C---- as the F10.7 and Kp values for the length of the run.
-      DO 10 I=1,999999
-         READ(20,*,END=999,ERR=999) CYYYY,CMONTH,CDAY,(IKPAP(K)
-     >                             ,K=1,8),T107(1),T107A(1)
-         CALL CONV_DATE(CDDD,CYYYY,CMONTH,CDAY)
-         IF(SDDD.EQ.CDDD .AND. SYYYY.EQ.CYYYY) THEN
-              CALL GET_DATA(CYYYY,CDDD,NDAY,IKPAP,HP3HR,T107,T107A)
-              GOTO 50
-         ENDIF
-   10 CONTINUE
-C************************** end main loop. ********************
-C
-  50  CONTINUE
-C....... Test F107 for bad data.
-      DO 125 IDD=1,NDAY
-        IF(T107(IDD).LT.50.0.OR.T107(IDD).GT.400.OR.
-     >    T107A(IDD).LT.50.0.OR.T107A(IDD).GT.400) THEN
-          WRITE(6,96) 
- 96       FORMAT(/'  ERROR!, Invalid F10.7 or F107A value'
-     >  ,1X,'in F10_Kp data file'/)
-          CALL RUN_ERROR    !.. print ERROR warning in output files
-          STOP
-        ENDIF
- 125  CONTINUE
-C
-C----- Check the Kp for bad data
- 490  DO  25 I = 1, 8*(NDAY+2)+3
-         AP3HR(I)= ABS(HP3HR(I))
-         NUMAP3 = NUMAP3 + 1
-C.....   Kp was read from file: check magnitude and convert to Ap
-         IF(AP3HR(I).GT.9) THEN
-            WRITE(6,*) ' **** Kp index in file must be 0< Kp <=9  ****'
-            CALL RUN_ERROR    !.. print ERROR warning in output files
-            STOP
-         ELSE 
-            AP3HR(I) = KPTOAP(NINT(AP3HR(I)*10))  !.. look up Ap
-         ENDIF
-         !..  WRITE (16,*) AP3HR(I),' ','AP INDEX',I
-25    CONTINUE
-      RETURN
-  999 WRITE(6,*) '*** ERROR -- Start date not found in Kp data file.'
-      WRITE(6,*) '*** Check the F10_KP input file in run file.'
-
-      CALL RUN_ERROR    !.. print ERROR warning in output files
-      STOP
-      END
-C************************** SUBROUTINE CONV_DATE ***********************
-C---- Scot A Braze,  8/7/95
-C---- This subroutine converts the date from YYYY MM DD to YYYY DDD. 
-C
-      SUBROUTINE CONV_DATE(DDD,YYYY,MM,DD)
-      IMPLICIT NONE
-      INTEGER DDD,MM,DD,NCONV(12),LYCONV(12),YYYY
-      LOGICAL DEBUG
-      DATA DEBUG /.FALSE./
-C
-      DATA NCONV/0,31,59,90,120,151,181,212,243,273,304,334/
-      DATA LYCONV/0,31,60,91,121,152,182,213,244,274,305,335/
-C
-      IF(MOD(YYYY,4).EQ.0) THEN
-          DDD=LYCONV(MM)+DD
-      ELSE
-          DDD=NCONV(MM)+DD
-      ENDIF
-      IF(DEBUG) WRITE(6,*) YYYY,DDD
-      END
-C*************************** SUBROUTINE GET_DATA ************************
-C---- Scot A Braze,   8/7/95
-C---- This subroutine gets the kp values from the data file.  It gets the 
-C---- 19 values prior to 0.0 UT.  It then gets the kp and F10.7 values for 
-C---- the length of the run.
-C
-      SUBROUTINE GET_DATA(PYYYY,PDDD,NDAY,IKPAP,HP3HR,T107,T107A)
-      IMPLICIT NONE
-      INTEGER IKPAP(8),I,J,K,L,NDAY,CDDD,CYYYY,PDDD,PYYYY,TDAY,TMONTH
-     > ,DAYDIM
-      PARAMETER (DAYDIM=801)
-      REAL HP3HR(8001),T107(DAYDIM),T107A(DAYDIM)
-      LOGICAL LY
-      DATA J,L /2*1/
-C
-C---- first get the 3 values from the third day before start day.
-      DO 300 I=6,8
-         HP3HR(J)=REAL(IKPAP(I))/10
-         J=J+1
-  300 CONTINUE
-C---- now loop through for NDAY + 2 days to get kp values prior to and
-C---- after start day and the F10.7 value for the length of the run.
-      DO 200 I=1,(NDAY+2)
-          READ(20,*,END=500,ERR=500) CYYYY,TMONTH,TDAY,(IKPAP(K),K=1,8)
-     >              ,T107(L),T107A(L)
-          CALL CONV_DATE(CDDD,CYYYY,TMONTH,TDAY)
-C---- Check to see if prev year is leap year or not.
-      IF(MOD(PYYYY,4).EQ.0) THEN
-          LY=.TRUE.
-      ELSE
-          LY=.FALSE.
-      ENDIF
-C---- Now check to make sure dates are contiguous. 
-          IF(CYYYY.EQ.PYYYY) THEN 
-             IF(PDDD.EQ.CDDD-1) THEN
-                GOTO 310
-             ELSE
-                GOTO 510
-             ENDIF
-          ELSE
-             IF(PYYYY+1.EQ.CYYYY) THEN
-                IF(LY .EQV. .TRUE.) THEN
-                   IF(CDDD.EQ.1 .AND. PDDD.EQ.366) THEN
-                      GOTO 310
-                   ELSE
-                      GOTO 510
-                   ENDIF
-                 ELSE
-                   IF(CDDD.EQ.1 .AND. PDDD.EQ.365) THEN
-                      GOTO 310
-                   ELSE 
-                      GOTO 510
-                   ENDIF
-                 ENDIF            
-             ELSE
-                 GOTO 510
-             ENDIF
-          ENDIF
-  310     DO 210 K=1,8
-             HP3HR(J)=REAL(IKPAP(K))/10
-             J=J+1
-  210     CONTINUE
-          IF(I.GT.2) L=L+1
-          PYYYY=CYYYY
-          PDDD=CDDD
-  200 CONTINUE
-      CLOSE(20)
-      RETURN
-  500 WRITE(6,*) '******* Not enough Kp values for the length of the ',
-     >   'run.'
-      CALL RUN_ERROR    !.. print ERROR warning in output files
-      STOP
-  510 WRITE(6,*) '****** Error, not enough days in the data Kp file',
-     >  ' for the run.'
-      CALL RUN_ERROR    !.. print ERROR warning in output files
-      STOP
       END
 C
 C
@@ -1546,74 +1205,6 @@ C.... 2001, page 21,305. Rates different from Fox and Sung indicated by PGR
 
         RETURN
         END
-C:::::::::::::::::::::::::::::::::::: RATCHK :::::::::::::::::::::::::::::
-C.. this subroutine checks the reaction rates from subroutine rats
-C.. against a standard set and prints a warning if any are different
-C.. Modified in April 20008 to write warnings in multiple files
-      SUBROUTINE RATCHK(NUMU,  !.. number of files to write rate message
-     >               UNITNUM)  !.. Unit numbers to write message
-      REAL RTS(99),RATIO,TSTAND
-      INTEGER K              !.. loop control
-      INTEGER NUMU           !.. number of units to write message
-      INTEGER UNITNUM(22)    !.. Unit numbers for writing warning
-      INTEGER IRTS(99)       !.. # of rates changed    
-      REAL R(99)             !.. standard reaction rate values
-      DATA RTS/99*0.0/
-      !.. rate values at the standard temperature
-      DATA R/4.96E-10,6.40E-10,6.7E-13,8.56E-12,1.44E-07,8.41E-08
-     > ,5.68E-13,1.02E-09,3.40E-11,7.83E-11,1.13E-07,3.30E-08,1.01E-07
-     > ,1.66E-08,6.90E-13,8.06E-12,1.26E-11,2.08E-19,2.91E-10,3.88E-10
-     > ,1.00E-10,0.0E-10,4.5E-10,1.99E-12,3.47E-10,4.0E-10,0.0,1.0E-11
-     > ,1.30E-10,7.42E-11,2.20E-12,1.46E+00,2.00E-11,3.42E-11,2.50E-11
-     > ,2.00E-11,1.70E-11,3.67E-12,2.20E-11,1.80E-10,6.70E-11,6.94E-02
-     > ,7.00E-10,5.20E-10,7.80E-10,8.50E-09,4.83E-10,1.95E-12,2.16E-08
-     > ,1.22E-07,9.34E-08,4.21E-09,4.60E-01,9.34E-03,1.06E+00,1.06E-01
-     > ,7.90E-02,5.00E-03,6.00E-13,3.70E-01,1.07E-05,5.00E-01,4.00E-01
-     > ,1.00E-01,1.49E-10,3.01E-10,1.00E-03,1.00E-01,7.66E-12,6.00E-02
-     > ,3.00E-01,3.00E-02,8.00E-02,1.00E-01,9.20E-12,2.37E-10,1.80E-10
-     > ,8.65E-10,1.00E-11,3.60E-10,3.54E-10,6.24E-11,1.20E-09,1.50E-10
-     > ,1.30E-10,1.30E-10,1.00E-11,1.20E-09,3.80E-09,2.50E-11,2.39E-11
-     > ,6.04E-10,4.60E-11,1.35E-09,1.00E-10,5.67E-10,9.50E-09,8.58E-10
-     > ,5.31E-12/
-
-
-      JRTS=0
-      !.. call RATS with standard temperature TSTAND = 999
-      TSTAND = 999.0
-      CALL RATS(1,TSTAND,TSTAND,TSTAND,RTS)
-      DO 20 I=1,99
-      IF(R(I).GT.0) RATIO=RTS(I)/R(I)
-      IF(R(I).LE.0.AND.RTS(I).EQ.0) RATIO=1.0
-      IF(R(I).LE.0.AND.RTS(I).NE.0) RATIO=2.0
-      IF(RATIO.GT.1.01.OR.RATIO.LT.0.99) THEN
-        JRTS=JRTS+1
-        IRTS(JRTS)=I
-	ENDIF
- 20   CONTINUE
-
-      !.. Write warning in files
-      IF(JRTS.GT.0) THEN
-        DO K=1,NUMU
-          WRITE(UNITNUM(K),88) (IRTS(I),I=1,JRTS)
-        ENDDO
-        DO K=1,NUMU
-          WRITE(UNITNUM(K),89) (R(IRTS(I)),I=1,JRTS)
-        ENDDO
-        DO K=1,NUMU
-          WRITE(UNITNUM(K),90) (RTS(IRTS(I)),I=1,JRTS)
-        ENDDO
-        DO K=1,NUMU
-          WRITE(UNITNUM(K),*) ' '  !.. add a blank line
-        ENDDO
-      ENDIF
- 88   FORMAT(2X,'*** WARNING: Non-standard reaction rates'
-     >  ,1X,'in FLIP, #s:',9I9)
- 89   FORMAT(2X,'*** The FLIP standard reaction rates at'
-     > ,1X,'Te=Ti=Tn=999 K:',1P,9E9.2)
- 90   FORMAT(2X,'*** The  non-standard reaction rates at'
-     > ,1X,'Te=Ti=Tn=999 K:',1P,9E9.2)
-      RETURN
-      END
 C
 C
 C.........................<PESIMP.FOR>......................3 APR 92
@@ -1742,9 +1333,12 @@ C------ AFAC = the solar EUV attenuation warning flag
       INTEGER RDIM,IMAX
       REAL EMAX             !.. maximum photoelectron energy.
       PARAMETER (RDIM=84)
+c      REAL RJOX(RDIM),RJN2(RDIM),XN(3),COLUM(3),PEFLUX(IDIM)
+c     >  ,DE(RDIM),DELTE(RDIM),EV(RDIM),EN(RDIM),UVFAC,EUV
+c      COMMON/SOL/UVFAC(59),EUV
       REAL RJOX(RDIM),RJN2(RDIM),XN(3),COLUM(3),PEFLUX(IDIM)
-     >  ,DE(RDIM),DELTE(RDIM),EV(RDIM),EN(RDIM),UVFAC,EUV
-      COMMON/SOL/UVFAC(59),EUV
+     >  ,DE(RDIM),DELTE(RDIM),EV(RDIM),EN(RDIM),UVFAC(59),EUV
+      COMMON/SOL/UVFAC,EUV
 
       !.. photoelectron production frequencies by 1.0E9. Renormalized below
       !-- O production frequencies
@@ -2022,6 +1616,8 @@ C.... Samson and Pareek Phys. Rev. A, 31, 1470, 1985
 
       RETURN
       END
+C
+C
 C:::::::::::::::::::::: OXSIGS :::::::::::::::::::::::::::::::::::::
       SUBROUTINE OXSIGS(E,SIGEX,SIGEXT)
 C....... Inelastic cross sections for electron impact on atomic oxygen
@@ -2060,19 +1656,26 @@ C.... This routine evaluates the ionization rates for photon impact
 C.... It is based on a FLIP model routine that was modified in August 
 C.... 2009 for the chemical equilibrium model by P. richards. 
       SUBROUTINE PRIMPR(IJ,Z,ZOX,ZN2,ZO2,HE,SZA,TN,F107,F107A,N4S)
-      IMPLICIT REAL(A-H,O-Z)
-      INTEGER IVERT
-      REAL Z,ZOX,ZN2,ZO2,HE,SZA,TN,CHI,ZZ,TNJ,TAU,FLUX,HEPLS,FBSBN
-     >  ,DISN,TAUGAM,FLUXG,ALTG,XNSIGF,DSPECT,GL,N4S
+      IMPLICIT NONE
+      INTEGER IVERT,I,IJ,IK,IPROBS,IS,K,L,LMAX,NNI,K1
+      REAL EUVION,F107,F107A,F107SV,FNFAC,FREQLY,FREQSR,O2LYXS,
+     >  O2SRXS,TAUN,UVFAC,ZLAM,EUV,FLUXN,LAMAX,PEPION,PEXCIT,
+     >  SIGABS,SIGION,TPOT,ZFLUX
+      REAL Z,ZOX,ZN2,ZO2,HE,SZA,TN,CHI,ZZ,TNJ,TAU,FLUX,HEPLS,
+     >  FBSBN,DISN,TAUGAM,FLUXG,ALTG,XNSIGF,DSPECT,GL,N4S
       REAL COLUM(3),OTHPR1,OTHPR2,OTHPR3(6)
       REAL COLUMN(3),XN(3),PROB(3,6,37),XSNPLS(37),FNITE(37),CLNITE(3)
+cpgr
+      REAL TPROB(3,6,37)
+cpgr      
 
       !-- common to hold the EUV and photoelectron production rates 
-      COMMON/EUVPRD/EUVION(3,12),PEXCIT(3,12),PEPION(3,12),OTHPR1(6)
-     >   ,OTHPR2(6)
+      COMMON/EUVPRD/EUVION(3,12),PEXCIT(3,12),PEPION(3,12),
+     >   OTHPR1(6),OTHPR2(6)
       COMMON/SIGS/ZFLUX(37),SIGABS(3,37),ZLAM(37),SIGION(3,37),
      > TPOT(3,10),NNI(3),LAMAX
       COMMON/SOL/UVFAC(59),EUV
+      SAVE PROB,F107SV,TPROB    !.. Save values that are only calc once
 
       DATA LMAX/0/, F107SV/0.0/, IPROBS/0/
       !.. Fluxes for nighttime ion production in the 37 wavelength bins of
@@ -2090,15 +1693,24 @@ C.... 2009 for the chemical equilibrium model by P. richards.
         !.. update UV flux factors
         CALL FACEUV(UVFAC,F107,F107A)
         CALL FACSR(UVFAC,F107,F107A)
+        
         !.. call params to get solar flux data and cross sections
         CALL PARAMS(0,LMAX)
         F107SV=F107
-
-        !..  find probability for formation of each state  ........
-        IF(IPROBS.EQ.0) CALL PROBS(0,PROB,ZLAM,LMAX,NNI)
-        IPROBS=1
-
       ENDIF
+
+      !..  find probability for formation of each state  ........
+      IF(IPROBS.EQ.0) THEN
+        CALL PROBS(0,PROB,ZLAM,LMAX,NNI)
+        DO I=1,3
+        DO K=1,6
+        DO L=1,37
+          TPROB(I,K,L)=PROB(I,K,L)
+        ENDDO
+        ENDDO
+        ENDDO
+        IPROBS=1
+       ENDIF
 
       !... initialization of production rates. 1.0E-15 stabilizes 
       !... e density evaluation at low altitudes in CMINOR
@@ -2218,6 +1830,9 @@ C
             !.. calculation of ion heating rate......
             EUVION(1,10)=EUVION(1,10)+DSPECT*TPOT(I,K)
 
+cp           write(6,'(3I4,1P,9E10.2)') I,K,L,PROB(I,K,L),TPROB(I,K,L)
+cp     >     ,XN(I),SIGION(I,L),FLUX,XNSIGF,EUVION(I,K),XSNPLS(1),FNITE(1)
+
  302      CONTINUE
  304    CONTINUE
  6    CONTINUE
@@ -2228,9 +1843,13 @@ C.........Store UV disoc of N2 2 atoms produced for every dissociation
       OTHPR1(1)=2.0*DISN
 C........ Transfer He+ production to storage
       OTHPR1(2)=OTHPR1(2)+HEPLS
-C
+
+cp      WRITE(6,*) 'After 6: EUVION(1,1), EUVION(2,1), EUVION(3,1)'
+cp      write(6,'(1P,9E10.2)') EUVION(1,1), EUVION(2,1), EUVION(3,1)
+
  777  RETURN
       END
+
 C:::::::::::::::::::::::::::: SCOLUM ::::::::::::::::::::::::::::::::::
 C.... this routine evaluates the neutral column density for O, O2, and N2
 C.... see Smith & Smith JGR 1972 p 3592
@@ -2324,10 +1943,14 @@ C:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 C........ this program determines the cross sections, solar fluxes, and
 C........ given in m. torr et al g.r.l 1979 p771, table 2 and 3. but
 C........ the longer wavelengths come first
+      IMPLICIT NONE
+      INTEGER  I,IN,IS,ISW,J,L,LAMAX,LMAX,NNI
+      REAL EUV,FFAC, SIGABS,SIGION,TPOT,UVFAC,ZFLUX,ZLAM
+      REAL  X1(111),X2(111),X3(18),ZLX(37),ZFX(37)
       COMMON/SIGS/ZFLUX(37),SIGABS(3,37),ZLAM(37),SIGION(3,37),
      > TPOT(3,10),NNI(3),LAMAX
       COMMON/SOL/UVFAC(59),EUV
-      DIMENSION  X1(111),X2(111),X3(18),ZLX(37),ZFX(37)
+
 C
 C....... ionization potentials for o,o2 and n2 see kirby et al note the
 C....... o2 2(pi)u and 2(sigma-)u , and n2 f2(sigma)u pots are guesses
@@ -2420,7 +2043,9 @@ C.... program for finding branching ratios (probabilities for various ion
 C.... and molecular states) of o,o2,n2
 C.... ---refs--- m. torr et al grl 1979 page 771, kirby et al atomic data
 C.... and nuclear tables 1979 23,page 63
-      DIMENSION YO(37,5),PROB(3,6,37),ZLAM(37),NNI(3)
+      IMPLICIT NONE
+      INTEGER I,IS,ISW,J,L,LL,LMAX,NNI(3)
+      REAL YO(37,5),PROB(3,6,37),ZLAM(37),SUM
 C...... coefficients of o ionization cross sections from torr et al
 C..... table 2
       DATA YO/.19,.486,.952,1.311,1.539,1.77,1.628,1.92,1.925,2.259
@@ -2469,7 +2094,9 @@ C...... (x,a,b). the dissociation yield is divided between the 3 higher
 C...... energy states according to wight et al. j.phys. b, 1976
 C...... the 2 other states of kirby et al are not included
 C
-      DIMENSION A(6),B(6),X(14),Y(14,6),PROB(3,6,37)
+      IMPLICIT NONE
+      INTEGER I,IPTS,ISW,J,JPTS,L
+      REAL A(6),B(6),X(14),Y(14,6),PROB(3,6,37),SUM,YIELD,YLAM,ZLAM
       DATA IPTS/14/
       DATA X/50.,210.,240.,280.,300.,332.,428.,500.,600.,660.,660.01,
      > 720.,747.,796./
@@ -2518,7 +2145,9 @@ C:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
          SUBROUTINE YLDISS(ISW,ZLAM,YIELD)
 C..... determination of dissociative yield of n+, refer to kirby et al
 C..... page 66 and table b
-      DIMENSION X(9),Y(9)
+      IMPLICIT NONE
+      INTEGER ISW,I,IPTS
+      REAL X(9),Y(9),ZLAM,YIELD
       DATA IPTS/9/
       DATA X/50.,210.,240.,302.,387.,477.,496.,509.,2000./
       DATA Y/.36,.36,.346,.202,.033,.041,.024,0.0,0.0/
@@ -2543,7 +2172,9 @@ C:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
          SUBROUTINE PROBO2(ISW,L,ZLAM,PROB,JPTS)
 C....... o2 branching ratios are taken from kirby et al table d
 C....... columns 4 & 9 are combined. columns 5,6,7&8 are combined
-      DIMENSION A(5),B(5),X(20),Y(20,5),PROB(3,6,37)
+      IMPLICIT NONE
+      INTEGER ISW,I,IPTS,J,JPTS,L
+      REAL A(5),B(5),X(20),Y(20,5),PROB(3,6,37),SUM,YLAM,ZLAM
       DATA IPTS,X/20,304.,323.,454.,461.,504.,537.,556.,573.,584.,598.
      >  ,610.,637.,645.,662.,684.,704.,720.,737.,774.,1026./
       DATA Y/.365,.374,.432,.435,.384,.345,.356,.365,.306,.23,.235,.245,
@@ -2586,10 +2217,11 @@ C......... production of o(1d) by schumann-runge bands
 C......... The fluxes are from Torr et al. GRL 1980 p6063. Scaling is
 C......... done using UVFAC which may be set according to F10.7 cm flux
 C......... may be done in FACEUV
-      IMPLICIT REAL(A-H,O-Z)
-      REAL Z,ZO2,SCHUPR,SCHUHT,COLUMN,HSRX,FLD
+      IMPLICIT NONE
+      INTEGER J,JTI,LMAX,LSR
+      REAL Z,ZO2,SCHUPR,SCHUHT,HSRX,FLD,EUV,SRXSCT,UVFAC
       COMMON/SOL/UVFAC(59),EUV
-      DIMENSION COLUMN(3),SRFLUX(8),SRXS(8),SRLAM(8)
+      REAL COLUMN(3),SRFLUX(8),SRXS(8),SRLAM(8)
       DATA SRFLUX/2.4,1.4,.63,.44,.33,.17,.12,.053/
       DATA SRXS/.5,1.5,3.4,6,10,13,15,12/
       DATA SRLAM/1725,1675,1625,1575,1525,1475,1425,1375/
@@ -2623,7 +2255,9 @@ C----- The EUVAC flux model is based on the F74113 solar reference
 C----- spectrum and Hinteregger's scaling factors. This subroutine
 C----- just provides the scaling factors as a function of the proxy
 C----- (F107+F107A)/2
-      DIMENSION UVFAC(59),HFG200(37)
+      IMPLICIT NONE
+      INTEGER I
+      REAL UVFAC(59),HFG200(37),A,B,C,F107,F107A,F107AV
       DATA HFG200/2.202,1.855,2.605,3.334,1.333,17.522,4.176,4.0
      >  ,1.4,3.694,1.791,5.385,1.889,1.899,3.427,2.051,1.392,1.619
      >  ,1.439,2.941,1.399,2.416,1.512,1.365,1.570,1.462,2.537,1.393
@@ -2646,7 +2280,9 @@ C::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       SUBROUTINE FACSR(UVFAC,F107,F107A)
 C........ The Schumann-Runge factors are scaled according to F10.7
 C........ from Torr et al. GRL 1980 p6063
-      DIMENSION UVFAC(59),SRFLUX(8),SRA(8),SRB(8)
+      IMPLICIT NONE
+      INTEGER I,LSR
+      REAL UVFAC(59),SRFLUX(8),SRA(8),SRB(8),F107,F107A
       !............. Schumann-Runge scaling
       DATA SRFLUX/2.4,1.4,.63,.44,.33,.17,.12,.053/
       !...... first two SRA and SRB values out of order in Marsha's paper
@@ -2666,205 +2302,3 @@ C
       !ENDIF
       RETURN
       END
-C::::::::::::::::::::::::: EPHEM ::::::::::::::::::::::::::::::::::::::
-      SUBROUTINE EPHEM(IDAY,ETRAN)
-      DIMENSION EPTRAN(26)
-      DATA EPTRAN/4338,4374,4398,4404,4392,
-     >  4374,4344,4320,4302,4296,4302
-     > ,4320,4338,4356,4356,4344,4320
-     > ,4290,4260,4236,4218,4224,4248,4284
-     > ,4320,4350/
-      ANUM=(MOD(IDAY,1000)+15.)/15.
-      INUM=ANUM
-      FRAC=ANUM-INUM
-      ETRAN=(EPTRAN(INUM)*(1.0-FRAC)+EPTRAN(INUM+1)*FRAC)*10.
-      RETURN
-      END
-C::::::::::::::::::::::::::: SOLDEC :::::::::::::::::::::::::
-C...... This routine calculates the solar declination (DELTA radians)
-C...... and ephemeris transit time (ETRAN in secs). ETRAN is the time
-C...... the sun is overhead in Greenwich
-C...... REFERENCE - page 484 "Explanatory Supplement to the Astronomical
-C...... Almanac" Kenneth Seidelmann, University Science Books, 20 Edgehill 
-C...... Road, Mill Valley, CA 94941, 1992
-C...... IDAY is yyyyddd (eg 1988015 = feb 15), UT is the universal time
-C...... in hours (0-24) 
-       SUBROUTINE SOLDEC(IDAY,UT,DELTA,ETRAN)
-      !.... Find day of year (0-366), and year (1996), then Julian day
-       INTEGER JD,DAYNUM
-       REAL T,YEAR,UT,L,G,LAMBDA,EPSIL,E,GHA,DELTA,SD,ETRAN,DTOR
-       DOUBLE PRECISION DJD,DUT
-       DATA DTOR/57.29578/   ! degrees to radians
-      !..... Recover year and date and make sure UT is less than 24
-       DAYNUM=MOD(IDAY,1000)
-       YEAR=(IDAY-DAYNUM)/1000
-       JD=INT(365.25*(YEAR-1900)+DAYNUM)+2415020      ! Julian day
-       DJD=JD                                ! extra precision needed         
-       DUT=UT
-       T=(DJD+DUT/24.0-2451545.0)/36525.0         ! # of centuries
-      !..     WRITE(6,*) DAYNUM,YEAR,JD,UT
-       L=AMOD(280.460+36000.770*T,360.0)              ! aberration
-       G=AMOD(357.528+35999.050*T,360.0)              ! mean anomaly
-      !...... LAMBDA= ecliptic longitude. DELTA=obliquity of the ecliptic.
-       LAMBDA=AMOD(L+1.915*SIN(G/DTOR)+0.020*SIN(2.0*G/DTOR),360.0)
-       EPSIL=23.4393-0.01300*T
-      !...... Equation of time. Time difference between noon and overhead sun
-       E=-1.915*SIN(G/DTOR)-0.020*SIN(2.0*G/DTOR)
-     >   +2.466*SIN(2*LAMBDA/DTOR)-0.053*SIN(4*LAMBDA/DTOR)
-       GHA=15*UT-180+E                    ! Greenwich hour angle
-       DELTA=ASIN(SIN(EPSIL/DTOR)*SIN(LAMBDA/DTOR))  ! solar declination
-       SD=0.267/(1-0.017*COS(G/DTOR))    ! 
-       ETRAN=(12-E/15)*3600 ! Ephemeris transit time in secs for FLIP
-       RETURN
-       END
-C::::::::::::::::::::::: GETLTSZA ::::::::::::::::::::::::::::
-      SUBROUTINE GETLTSZA(IDAY,SEC,GLATR,GLOND,SAT,SZA,DEC)
-      IMPLICIT NONE
-      INTEGER IDAY      !.. Day of year in form YYYYDDD
-      REAL SEC          !.. UT in seconds
-      REAL GLATR,GLOND  !.. Geographic Latitude and Longitude
-      REAL SAT          !.. Solar Apparent time
-      REAL SZA,SZA_ARG  !.. Solar zenith angle & argument 
-      REAL DEC          !.. Solar declination
-      REAL HH           !.. Hour angle
-      REAL ETRAN        !.. ephemeris transit time
-
-      CALL EPHEM(IDAY,ETRAN)  !.. get ephemeris transit
-      !..... Get solar declination and ephemeris transit time
-
-      CALL SOLDEC(IDAY,SEC/3600.0,DEC,ETRAN)
-
-      !...... Evaluate Solar apparent time
-      SAT=(SEC-ETRAN+43200.0)/3600+GLOND/15.0
-      IF(SAT.LT.0) SAT=SAT+24
-      IF(SAT.GT.24) SAT=SAT-24
-
-      !...... Evaluate Solar zenith angle
-      HH=(SAT-12.)*15.0*3.141592654/180.       !.. hour angle
-      !.. Evaluate argument for ACOS and test because roundoff error 
-      !.. may cause invalid ACOS argument      
-      SZA_ARG=COS(GLATR)*COS(DEC)*COS(HH)+SIN(GLATR)*SIN(DEC)
-      IF(SZA_ARG.GT.1.0) SZA_ARG=1.0
-      SZA=ACOS(SZA_ARG)                 !.. solar zenith angle
-      RETURN
-      END
-C::::::::::::::::::::::::::::::::: ACTUAL_DAY:::::::::::::::::::::::::
-C...... Since IDAY does not change and UT continually increases, need to
-C...... evaluate actual day (ID) and UT (SX) for MSIS, HWM, and IRI.
-C...... Modified by P. Richards in November 2008 to allow for long runs
-      SUBROUTINE ACTUAL_DAY(IDAY,    !.... FLIP start day YYYYDDD
-     >                       SEC,    !.... Current UT in secs (continuous)
-     >                        ID,    !.... actual day YYYYDDD (output) 
-     >                        SX)    !.... UT (0-24) in secs (output)
-      
-      IMPLICIT NONE
-	INTEGER SDIM                  !.. Dimension for array
-	PARAMETER(SDIM=11)
-      INTEGER I,IWR                 !.. Loop control, IWR= write control 
-      INTEGER IDAY,ID               !.. FLIP start YYYYDDD, ID= current YYYYDDD
-      INTEGER YSTART,DSTART         !.. Start year YYYY and start day DDD
-      INTEGER NYRS,NDAYS,NSECS(SDIM)  !.. # of years, days, and seconds in these years
-      INTEGER IDAYS                 !.. # Number of days in run so far
-      REAL SEC,SX                   !.. UT in secs, actual UT in secs (output)
-	DATA IWR/0/
-
-      !.. Check the run is not too long
-      IF(SEC.GT.SDIM*3.16E+7) THEN
-         WRITE(6,55) SDIM
-         CALL RUN_ERROR    !.. print ERROR warning in output files
-         STOP
-      ENDIF
- 55   FORMAT(2X,'** ERROR: FLIP cannot do more than',I3,' year run **')
-
-      YSTART=IDAY/1000               !.. Determine the start year YYYY
-      DSTART=MOD(IDAY,1000)          !.. Determine the start day DDD
-
-      !.. Determine the number of days and seconds simulated so far 
-      !.. in order to determine the current year and the UT in that year
-      NDAYS=0
-      DO I=1,SDIM
-        IF(MOD(YSTART+I-1,4).EQ.0) THEN     !.. leap year
-           NDAYS=NDAYS+366
-        ELSE
-           NDAYS=NDAYS+365                  !.. normal year
-        ENDIF
-
-        !.. Time elapsed since the start day in seconds
-        NSECS(I)=(NDAYS-DSTART+1)*24*3600
-
-        !.. Jump out of loop when the time exceeds the current FLIP run time
-        IF(NSECS(I).GT.INT(SEC)) THEN
-           NYRS=I-1
-           GOTO 10
-        ENDIF
-      ENDDO
-
- 10   CONTINUE
-
-      !.. Determine year and UT in the first year and then later years
-      IF(NYRS.LE.0) THEN
-        IDAYS=INT(SEC)/3600/24
-        ID=(YSTART)*1000+DSTART+IDAYS
-      ELSE                                   !.. after first year
-        IDAYS=(INT(SEC)-NSECS(NYRS))/3600/24
-        ID=(YSTART+NYRS)*1000+IDAYS+1
-      ENDIF
-
-      SX=AMOD(SEC,8.64E+4)  !.. UT 
-
-      IF(MOD(ID/1000,4).EQ.0) THEN     !.. leap year
-	  IF(IDAYS.GT.366) THEN
-          WRITE(6,*) '  ** ERROR > 366 days in leap year'
-          CALL RUN_ERROR    !.. print ERROR warning in output files
-        ENDIF
-      ELSE
-	  IF(IDAYS.GT.365) THEN
-          WRITE(6,*) '  ** ERROR > 365 days in normal year'
-          CALL RUN_ERROR    !.. print ERROR warning in output files
-        ENDIF
-      ENDIF
-
-      IWR=0  !..IWR+1  !.. IWR=0 switches off DEBUG write statements
-      IF(IWR.EQ.1) WRITE(6,191) 
- 191  FORMAT(5X,'IDAY',8X,'ID    NYRS IDAYS     SX',9X,'SEC',8X,'Days')
-	IF(IWR.GT.0) WRITE(6,'(2I11,2I5,9I11)') IDAY,ID,NYRS,IDAYS,
-     >    INT(SX),INT(SEC),NDAYS,NSECS(NYRS)
-
-      RETURN
-      END
-C::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-C...... Empirical Te model from Brace and Theis GRL p275, 1978
-      SUBROUTINE BRACE(H,NE,TN,TB)
-      REAL H,NE,TN,TB,NEB
-      NEB=NE
-      IF(NEB.LT.1000) NEB=1000
-	IF(NEB.GT.4E6)  NEB=4E6
-      TB=1051+(17.07*H-2746)*
-     >  EXP(-5.122E-4*H+6.094E-6*NEB-3.353E-8*H*NEB)
-      IF(TB.LT.TN) TB=TN
-      IF(TB.GT.4000) TB=4000
-      RETURN
-      END
-C::::::::::::::::::::::::::::::::: RUN_ERROR :::::::::::::::::::::::::::::::::
-C..   This routine is used to put a generic warning in all the FLIP run output 
-C..   files. Written by P. Richards, April 2008
-      SUBROUTINE RUN_ERROR
-
-      IMPLICIT NONE
-      INTEGER UNITNUM(9)     !.. Unit numbers for writing error message
-      INTEGER K
-
-      DATA UNITNUM/4,6,7,8,9,10,11,12,17/ !.. Unit numbers for writing error message
-
-      DO K=1,9
-        WRITE(UNITNUM(K),199)
-      ENDDO
-
- 199   FORMAT(//3X,'**** ERROR **** ERROR **** ERROR **** '
-     >  ,'Check the'//3X,' TOP and BOTTOM of the output file:- '
-     >  ' *LOG*.txt (Unit FOR006) for detailed messages ***')
-
-      RETURN
-      END
-
-

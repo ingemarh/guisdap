@@ -14,8 +14,8 @@ c Required i/o units:
 c  KONSOL= 6 Program messages (used when jf(12)=.true. -> konsol)
 c  KONSOL=11 Program messages (used when jf(12)=.false. -> MESSAGES.TXT)
 c
-c     COMMON/iounit/konsol is used to pass the value of KONSOL from 
-c     IRISUB to IRIFUN and IGRF. If KONSOL=1 than messages are turned off.
+c     COMMON/iounit/konsol,mess is used to pass the value of KONSOL from 
+c     IRISUB to IRIFUN and IGRF. If mess=false then messages are turned off.
 c     
 c  UNIT=14 IGRF/GETSHC: IGRF coeff. (DGRF%%%%.DAT or IGRF%%%%.DAT, %%%%=year)
 c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,6 +51,9 @@ C 2012.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for),
 C 2012.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
 C 2012.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
 C 2012.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
+C 2012.02 12/17/12 igrf_dip: Add magnetic declination as output parameter
+C 2014.01 07/20/14 igrf_dip: ASIN(x): if(abs(x).gt.1.0) x=sign(1.,x)
+C 2014.02 07/24/14 COMMON/iounit: added 'mess' 
 c-----------------------------------------------------------------------        
 C 
         subroutine igrf_sub(xlat,xlong,year,height,
@@ -59,7 +62,7 @@ c-----------------------------------------------------------------------
 c INPUT:
 c    xlat      geodatic latitude in degrees
 c    xlong     geodatic longitude in degrees
-c    year      decimal year (year+month/12.0-0.5 or 
+c    year      decimal year (year+(month-0.5)/12.0-0.5 or 
 c                  year+day-of-year/365 or ../366 if leap year) 
 c    height    height in km
 c OUTPUT:
@@ -90,7 +93,7 @@ c        DIPL=ATAN(0.5*TAN(DIP*UMR))/UMR
       END
 c
 c
-      subroutine igrf_dip(xlat,xlong,year,height,dip,dipl,ymodip)
+      subroutine igrf_dip(xlat,xlong,year,height,dec,dip,dipl,ymodip)
 c-----------------------------------------------------------------------        
 c INPUT:
 c    xlat      geodatic latitude in degrees
@@ -99,6 +102,7 @@ c    year      decimal year (year+month/12.0-0.5 or
 c                  year+day-of-year/365 or ../366 if leap year) 
 c    height    height in km
 c OUTPUT:
+c    dec       magnetic declination in degrees
 c    dip       magnetic inclination (dip) in degrees
 c    dipl      dip latitude in degrees
 c    ymodip    modified dip latitude = asin{dip/sqrt[dip^2+cos(LATI)]} 
@@ -115,16 +119,21 @@ c
 		h = height
         CALL FELDCOF(YEAR,DIMO)
         CALL FELDG(XLATI,XLONGI,H,BNORTH,BEAST,BDOWN,BABS)
-        DIP=ASIN(BDOWN/BABS)
-        dipdiv=DIP/SQRT(DIP*DIP+cos(XLATI*UMR))
-        IF(ABS(dipdiv).GT.1.) dipdiv=SIGN(1.,dipdiv)
+          DECARG=BEAST/SQRT(BEAST*BEAST+BNORTH*BNORTH)
+          IF(ABS(DECARG).GT.1.) DECARG=SIGN(1.,DECARG)
+        DEC=ASIN(DECARG)
+          BDBA=BDOWN/BABS
+          IF(ABS(BDBA).GT.1.) BDBA=SIGN(1.,BDBA)
+        DIP=ASIN(BDBA)
+          dipdiv=DIP/SQRT(DIP*DIP+cos(XLATI*UMR))
+          IF(ABS(dipdiv).GT.1.) dipdiv=SIGN(1.,dipdiv)
         SMODIP=ASIN(dipdiv)
         
-c       DEC=ASIN(BEAST/SQRT(BEAST*BEAST+BNORTH*BNORTH))/UMR
 c       DIPL1=ATAN(0.5*TAN(DIP))/UMR
 
       DIPL=ATAN(BDOWN/2.0/sqrt(BNORTH*BNORTH+BEAST*BEAST))/umr
       YMODIP=SMODIP/UMR                            
+      DEC=DEC/UMR
       DIP=DIP/UMR
       RETURN
       END
@@ -689,8 +698,9 @@ C                                 = FORTRAN run-time error number
 C ===============================================================               
                                                                                 
         CHARACTER  FSPEC*(*), FOUT*80,path*100
-        DIMENSION       GH(196) 
-        COMMON/iounit/konsol        
+        DIMENSION       GH(196)
+        LOGICAL		mess 
+        COMMON/iounit/konsol,mess        
         do 1 j=1,196  
 1          GH(j)=0.0
 
@@ -709,7 +719,7 @@ c 667    FORMAT('/var/www/omniweb/cgi/vitmo/IRI/',A13)
         READ (IU, *, IOSTAT=IER, ERR=999) (GH(i),i=1,nm) 
         goto 888 
                
-999     if (konsol.gt.1) write(konsol,100) FOUT
+999     if (mess) write(konsol,100) FOUT
 100     FORMAT('Error while reading ',A13)
 
 888     CLOSE (IU)                                                                                                                                   
@@ -931,7 +941,7 @@ C
 		
 		common/findRLAT/xlong,year
 		
-      	call igrf_dip(xlat,xlong,year,300.,dip,dipl,ymodip)
+      	call igrf_dip(xlat,xlong,year,300.,dec,dip,dipl,ymodip)
       	fmodip=ymodip
 
       	return
@@ -1397,17 +1407,18 @@ C  Numerical Recipes Fortran 77 Version 2.07
 C  Copyright (c) 1986-1995 by Numerical Recipes Software
 C **********************************************************************
 
-        COMMON/iounit/konsol        
-
       INTEGER NTAB
       REAL dfridr,err,h,x,func,CON,CON2,BIG,SAFE
+      LOGICAL mess
       PARAMETER (CON=1.4,CON2=CON*CON,BIG=1.E30,NTAB=10,SAFE=2.)
       EXTERNAL func
+
+        COMMON/iounit/konsol,mess        
 
       INTEGER i,j
       REAL errt,fac,hh,a(NTAB,NTAB)
        if(h.eq.0.) then
-          if (konsol.gt.1) write(konsol,100) 
+          if (mess) write(konsol,100) 
 100       FORMAT('h must be nonzero in dfridr')
           return
           endif
@@ -1638,9 +1649,11 @@ C  This takes care if SLA or CLA are dummy values (e.g., 999.99)
 
 C  Defining the Altitude Adjusted CGM coordinates for a given point
 
-         COL = (90. - CLA)*0.017453293
-         SN2 = (SIN(COL))**2
-        ACOL = ASIN(SQRT((SN2*RF)/RH))
+        COL = (90. - CLA)*0.017453293
+        SN2 = (SIN(COL))**2
+          DECARG=SQRT((SN2*RF)/RH)
+          IF(ABS(DECARG).GT.1.) DECARG=SIGN(1.,DECARG)
+        ACOL = ASIN(DECARG)
         ACLA = 90. - ACOL*57.29577951
         IF(CLA.LT.0.) ACLA = -ACLA
         ACLO = CLO
@@ -3420,7 +3433,7 @@ C  *********************************************************************
      2       A33,DS3,F2,F1,G10,G11,H11,DT,SQ,SQQ,SQR,S1,S2,
      3       S3,CGST,SGST,DIP1,DIP2,DIP3,Y1,Y2,Y3,Y,Z1,Z2,Z3,DJ,
      4       T,OBLIQ,DZ1,DZ2,DZ3,DY1,DY2,DY3,EXMAGX,EXMAGY,EXMAGZ,
-     5       EYMAGX,EYMAGY,GST,SLONG,SRASN,SDEC,BA(8)
+     5       EYMAGX,EYMAGY,GST,SLONG,SRASN,SDEC,BA(8),DECARG
 
         INTEGER IYR,IDAY,IHOUR,MIN,ISEC,K,IY,IDE,IYE,IPR
 
@@ -3671,13 +3684,17 @@ C  EM32=(EZGSM,EYGSE)=-EM23, AND EM33=(EZGSM,EZGSE)=EM22
 
       CHI=Y1*DY1+Y2*DY2+Y3*DY3
       SHI=Y1*DZ1+Y2*DZ2+Y3*DZ3
-      HI=ASIN(SHI)
+          DECARG=SHI
+          IF(ABS(DECARG).GT.1.) DECARG=SIGN(1.,DECARG)
+      HI=ASIN(DECARG)
 
 C  TILT ANGLE: PSI=ARCSIN(DIP,EXGSM)
 
       SPS=DIP1*S1+DIP2*S2+DIP3*S3
       CPS=SQRT(1.-SPS**2)
-      PSI=ASIN(SPS)
+          DECARG=SPS
+          IF(ABS(DECARG).GT.1.) DECARG=SIGN(1.,DECARG)
+      PSI=ASIN(DECARG)
 
 C  THE ELEMENTS OF THE MATRIX MAG TO SM ARE THE SCALAR PRODUCTS:
 C  CFI=GM22=(EYSM,EYMAG), SFI=GM23=(EYSM,EXMAG); THEY CAN BE DERIVED

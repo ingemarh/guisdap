@@ -5,13 +5,14 @@ C    GTD7, GTD7D, GHP7, GLATF, VTST7, GTS7, METERS, SCALH, GLOBE7, TSELEC,
 C    GLOBE7S, DENSU, DENSM, SPLINEM, SPLINTM, SPLINI,DNET, CCOR, CCOR2,
 C    BLOCKDATA GTD7BK
 C
-C 2011.00 10/05/11 IRI-2011: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
-C 2011.00 10/05/11    bottomside Ni model (iriflip.for), auroral foE
-C 2011.00 10/05/11    storm model (storme_ap), Te with PF10.7 (elteik),
-C 2011.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for), 
-C 2011.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
-C 2011.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
-C 2011.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
+C 2012.00 10/05/11 IRI-2012: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
+C 2012.00 10/05/11    bottomside Ni model (iriflip.for), auroral foE
+C 2012.00 10/05/11    storm model (storme_ap), Te with PF10.7 (elteik),
+C 2012.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for), 
+C 2012.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
+C 2012.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
+C 2012.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
+C 2014.02 07/24/14 COMMON/iounit/konsol, mess turn off messages
 C
 
       SUBROUTINE GTD7(IYD,SEC,ALT,GLAT,GLONG,STL,F107A,F107,AP,MASS,D,T)
@@ -425,8 +426,10 @@ C        D(9) - HOT O NUMBER DENSITY(CM-3)
 C        T(1) - EXOSPHERIC TEMPERATURE
 C        T(2) - TEMPERATURE AT ALT
 C-----------------------------------------------------------------------
+		LOGICAL mess
       COMMON/PARMB/GSURF,RE
       COMMON/METSEL/IMR
+      COMMON/iounit/konsol,mess
       DIMENSION D(9),T(2),AP(7)
       SAVE
       DATA BM/1.3806E-19/,RGAS/831.4/
@@ -474,7 +477,7 @@ C         New altitude estimate using scale height
         ENDIF
         GOTO 10
    20 CONTINUE
-      IF(L.EQ.LTEST) WRITE(6,100) PRESS,DIFF
+      IF(mess.and.(L.EQ.LTEST)) WRITE(konsol,100) PRESS,DIFF
   100 FORMAT(1X,29HGHP7 NOT CONVERGING FOR PRESS, 1PE12.2,E12.2)
       ALT=Z
       RETURN
@@ -611,7 +614,8 @@ C        T(1) - EXOSPHERIC TEMPERATURE
 C        T(2) - TEMPERATURE AT ALT
 C-----------------------------------------------------------------------
       DIMENSION ZN1(5),ALPHA(9),APLOW(7)
-
+      LOGICAL mess
+      COMMON/iounit/konsol,mess
       COMMON/GTS3C/TLB,S,DB04,DB16,DB28,DB32,DB40,DB48,DB01,ZA,T0,Z0
      & ,G0,RL,DD,DB14,TR12
       COMMON/MESO7/TN1(5),TN2(4),TN3(5),TGN1(2),TGN2(2),TGN3(2)
@@ -711,7 +715,7 @@ C
       DO 10 J = 1,11
       IF(MASS.EQ.MT(J))   GO TO 15
    10 CONTINUE
-      WRITE(6,100) MASS
+      if(mess) WRITE(konsol,100) MASS
       GO TO 90
    15 IF(Z.GT.ALTL(6).AND.MASS.NE.28.AND.MASS.NE.48) GO TO 17
 C
@@ -1287,6 +1291,8 @@ C-----------------------------------------------------------------------
 C      VERSION OF GLOBE FOR LOWER ATMOSPHERE 10/26/99
 C-----------------------------------------------------------------------
       REAL LONG
+      LOGICAL mess
+      COMMON/iounit/konsol,mess
       COMMON/LPOLY/PLG(9,4),CTLOC,STLOC,C2TLOC,S2TLOC,C3TLOC,S3TLOC,
      $ IYR,DAY,DF,DFA,APD,APDF,APT(4),LONG
       COMMON/CSW/SW(25),ISW,SWC(25)
@@ -1298,7 +1304,7 @@ C      DIMENSION P(1),T(14)
 C       CONFIRM PARAMETER SET
       IF(P(100).EQ.0) P(100)=PSET
       IF(P(100).NE.PSET) THEN
-        WRITE(6,900) PSET,P(100)
+        if(mess) WRITE(konsol,900) PSET,P(100)
   900   FORMAT(1X,'WRONG PARAMETER SET FOR GLOB7S',3F10.1)
         STOP
       ENDIF
@@ -1391,7 +1397,6 @@ C--------------------------------------------------------------------
       SAVE
       DATA RGAS/831.4/
       ZETA(ZZ,ZL)=(ZZ-ZL)*(RE+ZL)/(RE+ZZ)
-CCCCCCWRITE(6,*) 'DB',ALT,DLB,TINF,TLB,XM,ALPHA,ZLB,S2,MN1,ZN1,TN1
       DENSU=1.
 C        Joining altitude of Bates and spline
       ZA=ZN1(1)
@@ -1608,6 +1613,8 @@ C        X: ABSCISSA FOR INTERPOLATION
 C        Y: OUTPUT VALUE
 C-----------------------------------------------------------------------
       DIMENSION XA(N),YA(N),Y2A(N)
+      LOGICAL mess      
+	  COMMON/iounit/konsol,mess
       SAVE
       KLO=1
       KHI=N
@@ -1622,7 +1629,7 @@ C-----------------------------------------------------------------------
         GOTO 1
       ENDIF
       H=XA(KHI)-XA(KLO)
-      IF(H.EQ.0) WRITE(6,*) 'BAD XA INPUT TO SPLINT'
+      IF(mess.and.(H.EQ.0)) WRITE(konsol,*) 'BAD XA INPUT TO SPLINT'
       A=(XA(KHI)-X)/H
       B=(X-XA(KLO))/H
       Y=A*YA(KLO)+B*YA(KHI)+
@@ -1677,10 +1684,13 @@ C          XMM - full mixed molecular weight
 C          XM  - species molecular weight
 C          DNET - combined density
 C-----------------------------------------------------------------------
+		LOGICAL mess
+		COMMON/iounit/konsol,mess
+		
       SAVE
       A=ZHM/(XMM-XM)
       IF(DM.GT.0.AND.DD.GT.0) GOTO 5
-        WRITE(6,*) 'DNET LOG ERROR',DM,DD,XM
+        if(mess) WRITE(konsol,*) 'DNET LOG ERROR',DM,DD,XM
         IF(DD.EQ.0.AND.DM.EQ.0) DD=1.
         IF(DM.EQ.0) GOTO 10
         IF(DD.EQ.0) GOTO 20

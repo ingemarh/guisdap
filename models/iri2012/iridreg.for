@@ -1,10 +1,17 @@
 c iridreg.for, version number can be found at the end of this comment.
 c-----------------------------------------------------------------------
 C
-C This file contains the D-region models of Danilov, Rodevich, and
-C Smirnova, Adv. Space Res. 15, #2, 165, 1995 (subroutine DRegion)
-C and the model by Friedrich and Torkar, Adv. Space Res., 2001
+C This file contains the D-region models of Friedrich and Torkar (2001)
 C (subroutine F00 and block data statement).
+C The subroutine DRegion of Danilov et al. (1995) was moved to IRIFUN,
+C because of consistent problems of some Fortran compilers wit the long
+C BLOCK DATA statement. 
+C
+C !!!USER NOTE!!! If your compiler has problems with this subroutine you 
+C can compile IRI without this file. But you first have to comment out  
+C the following two line in IRISUB: 
+C            call F00(HEIGHT,LATI,DAYNR,XHI,F107D,EDENS,IERROR)
+C            if(ierror.eq.0.or.ierror.eq.2) outf(1,kk)=edens
 c
 c-----------------------------------------------------------------------
 C Corrections/Version Numbers:
@@ -13,75 +20,9 @@ C 2001.01 05/07/01 initial version
 C 2001.02 07/11/01 new version of F00 (as provided by K. Torkar)
 C 2002.01 28/10/02 replace TAB/6 blanks, PARAMETER () (D. Simpson)
 C 2007.00 05/18/07 Release of IRI-2007
+C 2012.00 12/29/11 Release of IRI-2012; no change in iridreg.for
+C 2012.00 01/18/12 Moved subroutine DRegion (Danilov model) to IRIFUN
 c-----------------------------------------------------------------------
-C
-C
-      Subroutine DRegion(z,it,f,vKp,f5SW,f6WA,elg)
-c-----------------------------------------------------------------------
-c Reference: Danilov, Rodevich, and Smirnova, Adv. Space Res.  
-C     15, #2, 165, 1995.
-C
-C Input:     z    - solar zenith angle in degrees
-C            it   - season (month)
-C            f    - F10.7 solar radio flux (daily)
-C            vKp  - Kp magnetic index (3-hour)
-C            f5SW - indicator for Stratospheric Warming (SW) conditions
-C                   =0 no SW, =0.5 minor SW, =1 major SW
-C            f6WA - indicator for Winter Anomaly (WA) conditions
-C                   =0 no WA, =0.5 weak WA, =1 strong WA
-C Criteria for SW and WA indicators:
-C      SW minor:  Temperature increase at the 30 hPa level by 10 deg.
-C      SA major:  The same but by 20 degrees.
-C         Temperature data for each year are published  
-C         in Beilage zur Berliner Wetterkarte (K. Labitzke et al.).
-C      WA weak:   An increase of the absorption in the 2-2.8 MHz  
-C                 range at short A3 paths by 15 dB
-C      WA strong: The same by 30 dB.
-C 
-C       Only for month 12 to 2 (winter).
-C
-C Output:      elg(7)  alog10 of electron density [cm-3] at h=60,65,
-C                  70,75,80,85, and 90km
-c-----------------------------------------------------------------------
-c            
-cor   dimension h(7),A0(7),A1(7),A2(7),A3(7),A4(7),A5(7),A6(7),elg(7)
-      dimension A0(7),A1(7),A2(7),A3(7),A4(7),A5(7),A6(7),elg(7)
-      data A0/1.0,1.2,1.4,1.5,1.6,1.7,3.0/
-      data A1/0.6,0.8,1.1,1.2,1.3,1.4,1.0/
-      data A2/0.,0.,0.08,0.12,0.05,0.2,0./
-      data A3/0.,0.,0.,0.,0.,0.,1./
-      data A4/0.,0.,-0.30,0.10,0.20,0.30,0.15/
-      data A5/0.,-0.10,-0.20,-0.25,-0.30,-.30,0./
-      data A6/0.,0.1,0.3,0.6,1.,1.,0.7/
-        pi=3.14159265
-         if(z.le.45) then
-           f1z=1.
-         else
-           if(z.lt.90) then
-             f1z=1.1892*(cos(z*pi/180))**0.5
-           else
-             f1z=0.
-           endif
-         endif
-         f4S=1.
-       if((it.ge.5).and.(it.le.9))then
-         f4S=0.
-         f5SW=0
-         f6WA=0
-       endif
-       if((it.eq.3).or.(it.eq.4).or.(it.eq.10).or.(it.eq.11))then
-         f4S=0.5
-         f5SW=0
-         f6WA=0
-       endif
-         f2Kp=vKp
-         if(vKp.gt.2) f2Kp=2.
-         f3F=(f-60.)/300.*f1z
-         do 1 i=1,7
-         elg(i)=A0(i)+A1(i)*f1z+A2(i)*f2Kp+A3(i)*f3F+A4(i)*f4S
-     *         +A5(i)*f5SW+A6(i)*f6WA
-   1     continue
-         end
 C
 C
       SUBROUTINE F00(HGT,GLAT1,IDAY,ZANG,F107T,EDENS,IERROR)
@@ -125,6 +66,8 @@ C
 C     SUBROUTINES AND FUNCTION SUBPROGRAMS REQUIRED
 C        none
 C
+C     Reference: Friedrich, M., Torkar, K. FIRI: a semiempirical model of the lower
+C                ionosphere. J. Geophys. Res. 106 (A10), 21409Ð21418, 2001.
 C     WRITTEN BY K. TORKAR, IWF GRAZ
 C     Klaus.Torkar@oeaw.ac.at
 C

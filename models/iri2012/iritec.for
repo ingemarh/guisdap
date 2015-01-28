@@ -22,13 +22,13 @@ c 2000.03 11/08/02 common block1 in iri_tec with F1reg
 c 2007.00 05/18/07 Release of IRI-2007
 c 2007.02 10/31/08 outf(.,100) -> outf(.,500)
 c
-C 2011.00 10/05/11 IRI-2011: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
-C 2011.00 10/05/11    bottomside Ni model (iriflip.for), auroral foE
-C 2011.00 10/05/11    storm model (storme_ap), Te with PF10.7 (elteik),
-C 2011.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for), 
-C 2011.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
-C 2011.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
-C 2011.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
+C 2012.00 10/05/11 IRI-2012: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
+C 2012.00 10/05/11    bottomside Ni model (iriflip.for), auroral foE
+C 2012.00 10/05/11    storm model (storme_ap), Te with PF10.7 (elteik),
+C 2012.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for), 
+C 2012.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
+C 2012.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
+C 2012.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
 
 c-----------------------------------------------------------------------        
 C
