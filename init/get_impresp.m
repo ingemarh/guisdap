@@ -1,18 +1,36 @@
-function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot)
+function [impresp,t0,h,M] = get_impresp(firpar_file, p_dtau, do_plot)
 
-%GET_IMPRESP - Get impulse response from ESR filter definition file.
-%[IMPRESP, T0] = GET_IMPRESP(FIRDEF_FILE,P_DTAU,PLOT_FLAG)
-%   The impulse response is returned with tap spacing of p_dtau usec,
-%   interpolated from the actual impulse response. The first tap point
-%   is in the interval [0,p_dtau], at time T0.
-%   The IMPRESP is normalized to unit area.
-%   Ex.
-%   >> [impresp,t0] = get_impresp('w25d200.fir',2);
+% GET_IMPRESP - Get impulse response from an EISCAT filter definition file.
+% INPUT
+%       FIRFILE     .fir file path.
+%       P_DTAU      Time step in miscrosec of the returned continuous-
+%                   time h(t).
+%       PLOT_FLAG   (Optional) If nonzero, plot the impulse response of
+%                   the HDF, FDF, and DDF.
+% OUTPUT
+%       IMPRESP     The continuous-time (pchip-interpolated) version of
+%                   impulse response. The IMPRESP is normalized to unit
+%                   area.
+%       TSTART      Start time of the interpolated IMPRESP.
+%       DDF         Taps of the equivalent filter.
+%       DECIM       Decimation factor of the equivalent filter.
+%
+% EXAMPLE
+%       >> [impresp, t0, taps, decim] = get_impresp('b25d300.fir',1);
+%
+% (c) EISCAT Scientific Association 1998-
 
-%   24-Jul-1998 Jm
-%   23-Feb-2001 Jm: Handling of odd number opf taps changed
-%   (c) EISCAT Scientific Association
-%=========================================================================    
+% 24-Jul-1998 Jm
+% 23-Feb-2001 Jm: Handling of odd number of taps changed.
+% 13-May-2014 Jm: Plotting made more precise espcially for high-speed
+%                 filters. Also note that for those, the returned
+%                 "interpolated" impulse response can be a pretty bad
+%                 approximation. Also return the normalized taps of
+%                 the equivalent filter h = conv(h1,h2^(M1)),
+%                 where h1 is the HDF and h2^(M1) is zero-stuffed FDF,
+%                 with M1-1 zeros between each pair of taps of the FDF.
+%  6-Aug-2014 Jm: Also return the total decimation factor M = M1*M2.
+%=========================================================================
 
     [a,b]=fileparts(firpar_file);
     adc_rate=15;
@@ -31,21 +49,32 @@ function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot)
         error('Invalid argument -- p_dtau must be numeric')
     end
 
-    [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file); 
+    [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file);
     if ~isempty(msg)
         error(msg)
     elseif firpar_file(1)=='b'
         adc_rate=15;
     end
+    M = h_dec*f_dec;
     fir = fir/max(fir);
 
     hdf = hcic(h_order,h_dec); hdf = hdf/max(abs(hdf));
 
     fir2 = insertz(fir,h_dec - 1); fir2 = fir2/max(abs(fir2));
 
-    ddf = conv(hdf,fir2); ddf = ddf/sum(ddf/adc_rate);
+    h = conv(hdf,fir2);
+    h = h / sum(h);
+
+    ddf = h/sum(h/adc_rate);
 
     t_ddf = (0:length(ddf)-1)/adc_rate;
+
+    if p_dtau <= 0
+        impresp= NaN;
+        t0 = NaN;
+        return
+    end
+
 
 % Find times (t_ip) for the interpolated points.
 
@@ -58,30 +87,56 @@ function [impresp,t0] = get_impresp(firpar_file, p_dtau, do_plot)
     t4 = t3 + n*p_dtau;
     %t_ip = t1:p_dtau:t4;
     t_ip = (0:round((t4-t1)/p_dtau))*p_dtau+t1;
- 
-    %h2 = interp1(t_ddf,ddf,t_ip,'*cubic');
+
     h2 = interp1(t_ddf,ddf,t_ip,'pchip');
 
     if do_plot
+        [path,name,ext] = fileparts(firpar_file);
+
         %getfigure('get_impresp','white');
         t_hdf = (0:length(hdf)-1)/adc_rate;
         t_fir = h_dec*(0:length(fir)-1)/adc_rate;
         tlim = [0,t_ddf(end)];
 
-        subplot(2,1,1)
-        plot(t_hdf,hdf,t_fir,fir)
-        set(gca,'XLimMode','manual','XLim',tlim,'Box','off')
-        [path,name,ext,ver] = fileparts(firpar_file);
-        title(name)
-        ylabel('HDF & FIR')
+        subplot(2,2,1)
+        if length(hdf) < 20
+            stem(t_hdf,hdf)
+            Dt = t_hdf(end) - t_hdf(1);
+            set(gca,'xlim',[t_hdf(1)-0.05*Dt, t_hdf(end)+0.05*Dt]);
+            box off
+        else
+            plot(t_hdf,hdf,'-')
+        end
+        title(['HDF / ' name '  +  Decimation ' num2str(h_dec)])
 
-        subplot(2,1,2)
-        plot(t_ddf,ddf,'r',t_ip,h2,'ro')
+        subplot(2,2,2)
+        if length(fir) < 20
+            stem(t_fir,fir)
+            box off
+            Dt = t_fir(end) - t_fir(1);
+            set(gca,'xlim',[t_fir(1)-0.05*Dt, t_fir(end)+0.05*Dt]);
+        else
+            plot(t_fir,fir,'-')
+        end
+        title(['FIR / ' name '  +  Decimation ' num2str(f_dec)])
+
         set(gca,'XLimMode','manual','XLim',tlim,'Box','off')
-        ylabel('DDF')
+%        title(name)
+%        ylabel('HDF & FIR')
+
+        subplot(2,1,2);
+        if length(ddf) < 20
+            stem(t_ddf,ddf,'b');
+            h = line(t_ip,h2); set(h,'color','r','marker','+')
+            box off
+        else
+            plot(t_ddf,ddf,'b-',t_ip,h2,'r-')
+        end
+        set(gca,'XLimMode','manual','XLim',tlim,'Box','off')
+        title('DDF')
         xlabel('time [\mus]')
     end
- 
+
     if nargout > 0
         impresp = h2;
         t0 = t1;
@@ -98,16 +153,16 @@ function [key,val] = token(s)
     if isempty(key), return, end
 
     if isempty(s), return, end
- 
+
     [val1, s] = strtok(s);
     if isempty(val1), return, end
- 
+
     val1 = sscanf(val1,'%i');
     if isempty(val1), return, end
     val(1) = val1;
- 
+
     if ~strcmp(key,'TAP'), return, end
- 
+
     if isempty(s), val = []; return, end
 
     [val2, s] = strtok(s);
@@ -115,7 +170,7 @@ function [key,val] = token(s)
     val2 = sscanf(val2,'%i');
     if isempty(val2), val = []; return, end
     val(2) = val2;
- 
+
 function s = strip(ss)
 %---------------------
     %STRIP remove trailing and leading blanks
@@ -143,9 +198,9 @@ function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
     [fid,msg] = fopen(firpar_file);
     if fid < 1
         msg = [firpar_file ': ', msg];
-        return
+        error(msg);
     end
- 
+
     k = 0;
     while 1
         line = fgetl(fid);
@@ -157,7 +212,7 @@ function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
     end
 
     fclose(fid);
- 
+
     if k == 0
         msg = [firpar_file ' appears empty'];
         return
@@ -187,7 +242,7 @@ function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
             end
         end
     end
- 
+
     if ~tap
         msg = 'TAPs not defined';
         return
@@ -201,12 +256,12 @@ function [fir, f_dec, h_dec, h_order, msg] = get_fir(firpar_file)
     h_dec  = val_list(3)+1;
     f_dec = val_list(4)+1;
     f_taps = val_list(5)+1;
- 
+
     if f_esym == 1
         if rem(f_taps,2) == 0                % 23 Feb 2001 Jm
             taps = [tap tap(end:-1:1)];      %
         else                                 %
-            taps = [tap tap(end-1:-1:1)];    %   
+            taps = [tap tap(end-1:-1:1)];    %
         end                                  %
     elseif f_esym == 0
         taps = [tap tap(end-1:-1:1)];
