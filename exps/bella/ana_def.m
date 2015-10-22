@@ -22,7 +22,7 @@ elseif name_site=='T' | name_site=='V'
   if name_site=='T'
     analysis_maxwidth=1.5*analysis_maxwidth;
     if expver==1
-      plasma_range=col(ones(4*75,1)*(0:3)*93482+(1:4*75)'*ones(1,4)+118909);
+      plasma_range=col(ones(5*75,1)*(0:3)*8087+(1:5*75)'*ones(1,4)+40114);
     end
   end
 end
