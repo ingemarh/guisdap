@@ -15,19 +15,19 @@ day=[]; fo=[];
 
 %get the foF2 file
 %wget=(['wget -O ' of ' %s%s >/dev/null 2>&1']);
-wget=(['wget -O ' of ' %s%s']);
+wget=(['LD_LIBRARY_PATH="/usr/lib" wget -O ' of ' %s%s']);
 if t1>datenum(2010,11,22)
  www='http://dynserv.eiscat.uit.no/';
  for t=fix(t1):fix(t2)
-  t1=datevec(t);
-  fof2_link=sprintf('DD/myque.php?q=select\\ dDay,foE,foF2\\ from\\ %s.resul%d_%02d_%02d\\ where\\ foE\\>0\\ or\\ foF2\\>0',site,t1(1:3));
+ tt=datevec(t); 
+  fof2_link=sprintf('DD/myque.php?q=select\\ dDay,foE,foF2\\ from\\ %s.resul%d_%02d_%02d\\ where\\ foE\\>0\\ or\\ foF2\\>0',site,tt(1:3));
   [i,devnull]=system(sprintf(wget,www,fof2_link));
   if ~i
    form='%f%f%f%*[^\n]';
    [d,foE,foF2]=textread(of,form,'headerlines',2);
    fo=[fo;[foE foF2]];
    fo(find(fo==0))=NaN;
-   day=[day;d+datenum(t1(1),1,1)-1];
+   day=[day;d+datenum(tt(1),1,1)-1];
   end
  end
 else
@@ -53,4 +53,5 @@ else
   day=day+datenum(y,1,1)-1;
  end
 end
+
 delete(of)
