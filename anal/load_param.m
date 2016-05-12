@@ -18,7 +18,7 @@ if isempty(max_ppw), max_ppw=Inf; end % pp resolution (km)
 do_rpar=nargout==4;
 do_err=nargout==5;
 
-if isempty(strfind(data_path,'*')) & ~isdir(data_path)
+if isempty(strfind(data_path,'*')) && ~isdir(data_path)
   [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,[],do_err);
   return
 end
@@ -46,7 +46,7 @@ for i=1:n_tot
   else
     rOff=[];
   end
-  if isfinite(max_ppw) & exist('r_ppw','var')
+  if isfinite(max_ppw) && exist('r_ppw','var')
     d=find(r_ppw<max_ppw);
     r_pp=r_pp(d); r_pprange=r_pprange(d); r_pperr=r_pperr(d);
   end
@@ -57,7 +57,7 @@ for i=1:n_tot
     n_alt=size(r_param,1);
     par2D	=ones(n_alt,n_tot,npar2D)*NaN;
     par1D=zeros(n_tot,npar1D);
-    if do_rpar & strfind('TVL',name_site) & ~isempty(r_pp)
+    if do_rpar && strfind('TVL',name_site) && ~isempty(r_pp)
       n_ralt=length(unique(round(r_pprange/ppres)));
       rpar2D=ones(n_ralt,n_tot,3)*NaN;
     else
@@ -87,7 +87,7 @@ for i=1:n_tot
   if load_apriori
     r_param=r_apriori;
   else
-    d=find(r_status>status(1) | r_res(:,1)>status(2));
+    d=find(r_status>status(1) || r_res(:,1)>status(2));
     [d1,d2]=find(r_error(d,1:size(r_param,2))>0);
     r_param(d(d1),d2)=NaN;
     r_error(d(d1),d2)=NaN;
@@ -107,7 +107,7 @@ par1
    npar1D=npar1;
   end 
   par1D(i,1:npar1)=par1;
-  if exist('r_w','var') & ~isempty(rres)
+  if exist('r_w','var') && ~isempty(rres)
     rres(i)=max(r_w(:,3));
   end
   if isfinite(n_ralt)

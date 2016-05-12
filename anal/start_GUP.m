@@ -45,14 +45,19 @@ local.site=getenv('EISCATSITE');
 local.host=getenv('HOSTNAME');
 local.browser='netscape';
 local.x=prod(get(0,'ScreenSize'))-1;
-matver=ver('matlab'); matver=matver.Version;
-d=strfind(matver,'.'); matver(d(2:end))=[];
-local.matlabversion=str2num(matver);
-d=computer;
-if ~usejava('jvm') & local.matlabversion>7.4
- set(0,'DefaultAxesButtonDownFcn','zoom')
+matver=ver('matlab');
+if isempty(matver.Name)
+ local.matlabversion=4;
+else
+ matver=matver.Version;
+ d=strfind(matver,'.'); matver(d(2:end))=[];
+ local.matlabversion=str2num(matver);
 end
-if local.matlabversion>7.6 & local.matlabversion<7.9 & ~isempty(strfind(d,'64')) & ~strcmp(d,'SOL64')
+d=computer;
+if ~usejava('jvm') && local.matlabversion>7.4
+  set(0,'DefaultAxesButtonDownFcn','zoom')
+end
+if local.matlabversion>7.6 && local.matlabversion<7.9 && ~isempty(strfind(d,'64')) && ~strcmp(d,'SOL64')
  disp('Matlab-EISCAT fault detected'), quit
 end
 clear matver d

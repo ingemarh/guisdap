@@ -59,9 +59,9 @@ elseif exist(fgup)
  load(fgup,'-mat')
  for i=1:size(extra,1),eval(extra(i,:));end
 end
-if length(r_Magic_const)>1 & exist('a_code','var'), Magic_const=mean(r_Magic_const(a_code)); end
+if length(r_Magic_const)>1 && exist('a_code','var'), Magic_const=mean(r_Magic_const(a_code)); end
 
-d=find(pl.t(2,:)>max([Time(1) datenum(START_TIME)]) & ...
+d=find(pl.t(2,:)>max([Time(1) datenum(START_TIME)]) && ...
   pl.t(1,:)<=min([Time(end) datenum(END_TIME)]));
 nfl=length(d);
 if nfl==0
@@ -98,7 +98,7 @@ s=std(validpl(find(abs(validpl-median(validpl))<std(validpl))));
 for j=1:nfreq
  for i=1:nfl
   [a,b]=max(pl.s(:,j,i));
-  if a>s & b>edge_dist & b<nfft-edge_dist+1
+  if a>s && b>edge_dist && b<nfft-edge_dist+1
    plpeak(:,i,j)=[pl.f(b,j,i);a];
   end
  end
@@ -137,7 +137,7 @@ Gtime=mean(Time); Ptime=mean(pl.t); maxs=overlap/2*mean(diff(Time));
 ip=[]; il=[];
 for i=d'
  [s j]=min(abs(Ptime(i)-Gtime));
- if s<maxs & isfinite(lf(j))
+ if s<maxs && isfinite(lf(j))
   ip=[ip i]; il=[il j];
  end
 end

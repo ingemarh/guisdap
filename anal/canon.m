@@ -9,7 +9,7 @@ ext='.mat';
 if isempty(strfind(fn,ext))
   fn=[fn ext];
 end
-if isempty(strfind(fn,'.bz2')) & isempty(strfind(fn,'.gz')) & ~exist(fn,'file')
+if isempty(strfind(fn,'.bz2')) && isempty(strfind(fn,'.gz')) && ~exist(fn,'file')
   if exist([fn '.bz2'],'file')
     fn=[fn '.bz2'];
   elseif exist([fn '.gz'],'file')

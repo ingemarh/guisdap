@@ -11,8 +11,8 @@
   function [secs,years]=tosecs(x)
 
 [m,n]=size(x);
-if n~=2 & n~=3 & n~=6,
-  if m==2 | m==3 | m==6,
+if n~=2 && n~=3 && n~=6,
+  if m==2 || m==3 || m==6,
      x=x'; n=m;
   else
     fprintf('Illegal argument:')

@@ -26,8 +26,8 @@ if nargin<3, site='tromso'; end
 if findstr(site(1),'TV'), site='tromso'; end
 if site(1)=='L', site='svalbard'; end
 site3=site(1:3);
-if strcmp(site3,'32m') | strcmp(site3,'42m') | strcmp(site3,'esr'), site='svalbard'; end 
-if strcmp(site3,'uhf') | strcmp(site3,'vhf'), site='tromso'; end 
+if strcmp(site3,'32m') || strcmp(site3,'42m') || strcmp(site3,'esr'), site='svalbard'; end 
+if strcmp(site3,'uhf') || strcmp(site3,'vhf'), site='tromso'; end 
 
 if nargin<4, epar='foE'; end
 if epar==1, epar='FMXE'; end
@@ -62,7 +62,7 @@ else
  www='http://www.eiscat.uit.no/';
  fof2_link=sprintf('DataBases/Dynasonde/dsnd/DSND%02d%02d.FEF',rem(y,100),m);
  [i,devnull]=system(sprintf(wget,www,fof2_link));
- if i & y==t(1)
+ if i && y==t(1)
   fof2_link='DataBases/Dynasonde/dsnd/autodsnd.FEF';
   [i,devnull]=system(sprintf(wget,www,fof2_link));
  end

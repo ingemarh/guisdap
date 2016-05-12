@@ -41,7 +41,7 @@ if isempty(mind), mind=3; end
 if length(mind)==1, mind(2)=10; end
 ndir=length(dirs);
 if isempty(odir)
- if ndir>1 | strfind(dirs{1},'*')
+ if ndir>1 || strfind(dirs{1},'*')
   odir=path_tmp;
  else
   odir=dirs{1};
@@ -75,7 +75,7 @@ for d1=1:ndir
  fprintf('Reading %s...\n',dirs{d1})
  [Time,par2D,par1D,dum,err2D]=load_param(dirs{d1});
  ng=size(par2D,1);
- [g,dump]=find(par2D(:,:,2)>alt(1) & par2D(:,:,2)<alt(end) & isfinite(par2D(:,:,6)));
+ [g,dump]=find(par2D(:,:,2)>alt(1) && par2D(:,:,2)<alt(end) && isfinite(par2D(:,:,6)));
  [d,dum,dd]=unique(dump); dd=dd+size(Data1D,1);
  Data1D=[Data1D;[Time(:,d)' par1D(d,1:2)]]; % only time+el+az used
  D2D=[reshape(par2D(:,:,[1 2 6]),[],3) col(err2D(:,:,4))]; % only alt+ran+vi+vie used
@@ -85,7 +85,7 @@ for d1=1:ndir
  if td(1)==d1
   timint=mean(Time)-median(diff(Time));
  end
- if strfind(dirs{1},'*') & strcmp(name_ant(2:3),'2m')
+ if strfind(dirs{1},'*') && strcmp(name_ant(2:3),'2m')
   name_ant='esr';
  end
  name_ants=[name_ants;name_ant(1:3)];
@@ -130,11 +130,11 @@ end
 %%%%%%%%%%%%%%%%%
 fprintf('Combining...\n')
 for tim=timint
- count=find(dates>=tim & dates<=tim+td(1));
+ count=find(dates>=tim && dates<=tim+td(1));
  if length(count)>=mindumps
   gates=find(ismember(Data2D(:,end),count));
   for ia=1:length(alt)-1
-   g=gates(find(Data2D(gates,2)>alt(ia) & Data2D(gates,2)<alt(ia+1)));
+   g=gates(find(Data2D(gates,2)>alt(ia) && Data2D(gates,2)<alt(ia+1)));
    dump=Data2D(g,end); d=unique(dump);
    if length(d)>=mindumps
     Date=[min(Data1D(d,1));max(Data1D(d,2))];
@@ -164,13 +164,13 @@ for tim=timint
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for il=1:length(ld)-1
      if isfinite(ld(1))
-      ll=find(mlat>ld(il) & mlat<ld(il+1));
+      ll=find(mlat>ld(il) && mlat<ld(il+1));
      else
       ll=1:ng;
      end
      gid=sum(log(g(ll))); %ID for the selection
      seldumps=unique(dump(ll));
-     if length(seldumps)>=mindumps & ~any(gid==Gid)
+     if length(seldumps)>=mindumps && ~any(gid==Gid)
       gg_sp=gc2gg(mean(gc(ll,:)));
       %az1=az(ll)*degrad; el1=el(ll)*degrad;
       %A=[cos(el1).*sin(az1) cos(el1).*cos(az1) sin(el1)];

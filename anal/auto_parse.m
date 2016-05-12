@@ -40,7 +40,7 @@ if ~warn
  wstate=warning('query','GUISDAP:parse');
  warning('off','GUISDAP:parse');
 end
-if ~isempty(b) & ishandle(b(1))
+if ~isempty(b) && ishandle(b(1))
  set_b=1;
 else
  set_b=0;
@@ -53,7 +53,7 @@ expid=[expid ext];
 if ~isempty(msg)
  warning('GUISDAP:parse',['Unable to parse directory name: ' msg])
 else
- nameexpr=pulse(find(pulse~='_' & pulse~='-'));
+ nameexpr=pulse(find(pulse~='_' && pulse~='-'));
  while ~exist(fullfile(path_exps,nameexpr))
   nameexpr=nameexpr(1:end-1);
  end

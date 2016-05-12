@@ -13,8 +13,8 @@ if first
  end 
  fs=get(gca,'fontsize'); set(gca,'fontsize',fs/1.4) % To encourage more ticks
  datetick(gca,'x',tickform,'keeplimits')
- xticks=get(gca,'xtick'); lt=sum((xlim(1)<xticks)&(xticks<xlim(2)));
- if ~local.x & (isempty(xticks) | lt==0 | (lt<4 & td>.003))
+ xticks=get(gca,'xtick'); lt=sum((xlim(1)<xticks) && (xticks<xlim(2)));
+ if ~local.x && (isempty(xticks) || lt==0 || (lt<4 && td>.003))
    freduce=12.429; %Matlab bug...
  elseif lt<4
    freduce=2;

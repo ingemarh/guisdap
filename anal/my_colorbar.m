@@ -1,6 +1,6 @@
 function handle=my_colorbar(label,lg)
 
-if nargin<2 | isempty(lg), lg='linear'; end
+if nargin<2 || isempty(lg), lg='linear'; end
 ax=[];
 
 % Determine color limits by context.  If any axes child is an image

@@ -41,7 +41,7 @@ global Time axs par1D DATA_PATH START_TIME END_TIME r_Magic_const name_ant
 d=datevec(Time(1));
 [dd,fo]=get_fo(Time(1),Time(end),name_ant,epar,fpar);
 t=[]; f=[];
-d=find(dd>datenum(START_TIME) & dd<datenum(END_TIME) & fo(:,F)>folim(1) & fo(:,F)<folim(2));
+d=find(dd>datenum(START_TIME) && dd<datenum(END_TIME) && fo(:,F)>folim(1) && fo(:,F)<folim(2));
 dd=dd(d); fo=fo(d,:);
 if ~isempty(dd)
  set(gcf,'currentaxes',axs(1))
@@ -51,7 +51,7 @@ if ~isempty(dd)
 
  %find guisdap data for sounding time
  for i=find(isfinite(fo(:,F)))'
-  d=find(Time(2,:)>dd(i) & Time(1,:)<dd(i)+225/86400 & isfinite(a)' & par1D(:,2)'>minel);
+  d=find(Time(2,:)>dd(i) && Time(1,:)<dd(i)+225/86400 && isfinite(a)' && par1D(:,2)'>minel);
   if ~isempty(d)
    t=[t;dd(i)]; f=[f;[fo(i,F) mean(a(d))]];
   end

@@ -54,7 +54,7 @@ if strcmp(action(naction,nvargin,varargin),'rtgup')
   if isempty(START_TIME)
     START_TIME=toYMDHMS(a_year,a_start);
     END_TIME=toYMDHMS(a_year,a_end);
-    if isstruct(a_autodir) & any([START_TIME(1:3)~=END_TIME(1:3) ~a_realtime naction>1])
+    if isstruct(a_autodir) && any([START_TIME(1:3)~=END_TIME(1:3) ~a_realtime naction>1])
       START_TIME=[a_autodir.date 0 0 0];
       END_TIME=START_TIME+[0 0 0 24 0 0];
     end
@@ -80,13 +80,13 @@ if isempty(DATA_PATH)
       max_ppw=minput('Maximum pp resolution (km)',Inf);
     end
   elseif ~REALT
-    if isdir(act) | strfind(act,'/')
+    if isdir(act) || strfind(act,'/')
       DATA_PATH=act; naction=naction+1;
       MESSAGE1=action(naction,nvargin,varargin); naction=naction+1;
     else
       disp(['Available data directories in ' result_path]);
       dirs=dir(result_path);
-      for i=1:length(dirs), if dirs(i).isdir & dirs(i).name(1)~='.'
+      for i=1:length(dirs), if dirs(i).isdir && dirs(i).name(1)~='.'
         disp(dirs(i).name);
       end, end
       DATA_PATH=sprintf('%s%s',result_path,minput('Data directory',' ',1));
@@ -97,7 +97,7 @@ end
 act=action(naction,nvargin,varargin);
 a2=action(naction+1,nvargin,varargin);
 a3=action(naction+2,nvargin,varargin);
-if isempty(act) | strcmp(lower(act),'verbose')
+if isempty(act) || strcmp(lower(act),'verbose')
  if isempty(Time)
   [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS);
  end
@@ -107,7 +107,7 @@ if isempty(act) | strcmp(lower(act),'verbose')
 elseif strcmp(act,'update')
  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
  set(0,'currentfig',vizufig)
-elseif strcmpi(act,'print') | strcmpi(act,'save')
+elseif strcmpi(act,'print') || strcmpi(act,'save')
  if isempty(axs)
   disp('Nothing to print!')
  elseif isunix
@@ -139,7 +139,7 @@ elseif strcmpi(act,'print') | strcmpi(act,'save')
    set(vizufig,'PaperOrient','landscape','PaperPosition',[0 3 ppos([4 3])-[0 3]])
   end
   [i,j]=unix('which addlogo.sh');
-  i=i|local.matlabversion>8.3;
+  i=i || local.matlabversion>8.3;
   if ~i, set(hds(2:3),'visible','off'), end
   file=fullfile(dirs,fig);
   print(vizufig,['-d' ext '2c'],[file '.' ext]);
@@ -150,7 +150,7 @@ elseif strcmpi(act,'print') | strcmpi(act,'save')
    set(hds(2:3),'visible','on')
    unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
   end
-  if strcmpi(act,'print') | strcmpi(a3,'print')
+  if strcmpi(act,'print') || strcmpi(a3,'print')
     if isempty(a2), dev=local.printer; else, dev=a2; end
     unix(['lp -c -d' dev ' ' file '.' ext ' >/dev/null 2>&1']);
     if strcmpi(act,'print'), delete([file '.' ext]), end
@@ -262,7 +262,7 @@ if strcmp(lower(act),'verbose')
  end
  START_TIME=minput('Start time',START_TIME);
  END_TIME=minput('  End time',END_TIME);
- if isempty(a2) & length(GATES)>1
+ if isempty(a2) && length(GATES)>1
   SCALE(2,:)=minput('Altitude scale',10*[floor(min(par2D(GATES(1),:,2))/10) ceil(max(par2D(GATES(end),:,2))/10)]);
  end
  if isempty(a3)
@@ -277,7 +277,7 @@ elseif ~REALT
  START_TIME=datevec(median(Time(:))); START_TIME(4:6)=[0 0 0];
  END_TIME=START_TIME+[0 0 0 24 0 0];
 end
-if strcmp(lower(act),'update') & ~isempty(OLD_WHICH)
+if strcmp(lower(act),'update') && ~isempty(OLD_WHICH)
  WHICH_PARAM=OLD_WHICH;
 end
 OLD_WHICH=WHICH_PARAM;
@@ -285,11 +285,11 @@ if isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);
 end
 nameant=lower(name_ant(1:3));
-if strcmp(nameant,'32m') | strcmp(nameant,'42m') | strcmp(nameant,'esr')
+if strcmp(nameant,'32m') || strcmp(nameant,'42m') || strcmp(nameant,'esr')
  FIGURE_TITLE='EISCAT SVALBARD RADAR';
  stretchSecs=65;
  fradar=500e6;
-elseif strcmp(nameant,'uhf') | strcmp(nameant,'kir') | strcmp(nameant,'sod')
+elseif strcmp(nameant,'uhf') || strcmp(nameant,'kir') || strcmp(nameant,'sod')
  FIGURE_TITLE='EISCAT UHF RADAR';
  fradar=930e6;
 elseif strcmp(nameant,'vhf')
@@ -308,7 +308,7 @@ if strcmp(act,'VERBOSE')
   Y_TYPE=minput('Y scale type',Y_TYPE,1);
   screen=[-Inf Inf -Inf Inf];
   screen=minput('AzEl screen values',screen);
-  s=find(par1D(s,1)>screen(1) & par1D(s,1)<screen(2) & par1D(s,2)>screen(3) & par1D(s,2)<screen(4))';
+  s=find(par1D(s,1)>screen(1) && par1D(s,1)<screen(2) && par1D(s,2)>screen(3) && par1D(s,2)<screen(4))';
  end
  SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res)',SCALE')';
  if [findstr(WHICH_PARAM,'P') findstr(WHICH_PARAM,'L')]
@@ -329,8 +329,8 @@ if findstr(WHICH_PARAM,'Te'), option(4)=1; end
 if findstr(WHICH_PARAM,'Ti'), option(5)=1; end
 if findstr(WHICH_PARAM,'Vi'), option(6)=1; end
 if findstr(WHICH_PARAM,'AE'), option(11)=1; end
-if findstr(WHICH_PARAM,'TT') & length(GATES)==1, option(12)=1; end
-if findstr(WHICH_PARAM,'LL') & length(GATES)==1, option(13)=1; end
+if findstr(WHICH_PARAM,'TT') && length(GATES)==1, option(12)=1; end
+if findstr(WHICH_PARAM,'LL') && length(GATES)==1, option(13)=1; end
 if findstr(WHICH_PARAM,'O+'), option(8)=1; end
 if findstr(WHICH_PARAM,'Rs'), option(9)=1; end
 if findstr(WHICH_PARAM,'Lf'), option(14)=option(14)+1; end
@@ -340,7 +340,7 @@ if findstr(WHICH_PARAM,'Pf'), option(16)=option(16)+1; end
 if findstr(WHICH_PARAM,'P1'), option(16)=option(16)+2; end
 if findstr(WHICH_PARAM,'TC'), option(16)=option(16)+4; end
 if findstr(WHICH_PARAM,'Co'), option(7)=1; end
-if findstr(WHICH_PARAM,'Nr') & ~isempty(rpar2D), option(15)=1; end
+if findstr(WHICH_PARAM,'Nr') && ~isempty(rpar2D), option(15)=1; end
 n_tot=sum(rem(option,2)+fix(option/2)-fix(option/4));
 if n_tot>6, FS=8; height(2)=.02; TL=TL/2; end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -369,7 +369,7 @@ t1=['Produced@' LOCATION ', ' date];
 drawnow
 if isempty(vizufig)
  gupfigure
- if ~local.x & round(10*local.matlabversion)==65
+ if ~local.x && round(10*local.matlabversion)==65
   close(gcf),gupfigure; % Matlab R13 bug
  end
  set(gcf,'Position',[400 30 587 807],'DefaultAxesFontSize',FS,...
@@ -420,7 +420,7 @@ if Y_PARAM<3
  YTitle=TITLE(Y_PARAM);
  y_param=par2D(:,:,Y_PARAM);
  Yscale=SCALE(Y_PARAM,:);
- if isinf(maxdy) & ~isempty(rres), maxdy=rres; end
+ if isinf(maxdy) && ~isempty(rres), maxdy=rres; end
 elseif Y_PARAM==3
  YTitle='Latitude (\circN)';
  y_param=par2D(:,:,1);
@@ -430,12 +430,12 @@ elseif Y_PARAM==3
  end,end
  Yscale=LAT_SCALE;
 end
-if stretchSecs & length(s)>1
+if stretchSecs && length(s)>1
  dt=Time(1,s(2:end))-Time(2,s(1:end-1));
  if stretchSecs==1
-  d=find(dt>0 & dt<=median(dt)+1/86399);
+  d=find(dt>0 && dt<=median(dt)+1/86399);
  else
-  d=find(dt>0 & dt<=stretchSecs/86399);
+  d=find(dt>0 && dt<=stretchSecs/86399);
  end
  if ~isempty(d)
   Time(2,s(d))=Time(2,s(d))+dt(d)/2;
@@ -509,7 +509,7 @@ if option(11)
  else
   ae=par1D(:,[3 1 2:2:end]);
  end
- d=find(ae(:,3)<90.1 & ae(:,3)>89.9); ae(d,2)=NaN;
+ d=find(ae(:,3)<90.1 && ae(:,3)>89.9); ae(d,2)=NaN;
  d=many(ae,AE_SCALE);
  line_plot(s,ae,d,'Radar parameters',TITLE1([3 1 2 4 5]),[])
 end
@@ -523,7 +523,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 xlabel('UNIVERSAL TIME')
 drawnow
-if REALT & ~isempty(Loc) & a_realtime & isunix
+if REALT && ~isempty(Loc) && a_realtime && isunix
  if local.x
   flag='-dpng'; flag2='-r72';
  else
@@ -538,7 +538,7 @@ if nargout
  while i<nargout
   i=i+1;
   if j<5, j=j+1; end
-  while ~exist(argout(j,:),'var') & j<5
+  while ~exist(argout(j,:),'var') && j<5
    j=j+1;
   end
   varargout(i)={eval(argout(j,:))};
@@ -623,7 +623,7 @@ if length(axs)<add_plot
  end
  jj=0;
  for j=1:size(yparam,2)
-  if ~isempty(Clabel) & any(isfinite(yparam(:,j)))
+  if ~isempty(Clabel) && any(isfinite(yparam(:,j)))
    color=get(gca,'ColorOrder'); jj=jj+1;
    text('String',char(Clabel(j)),'Units','Normalized',...
         'Position',[1+.025*jj 0.5],'Rotation',-90,'Color',color(j,:))
@@ -686,10 +686,10 @@ x=sort(x(find(isfinite(x))));
 llx=length(x);
 p=p/100; if length(p)<2, p=ones(1,2)*p; end
 p=round([1 llx]+[1 -1].*p*manylim*lx);
-if llx>p(1) & p(1)>0 & x(p(1))<l(1)
+if llx>p(1) && p(1)>0 && x(p(1))<l(1)
  l(1)=x(p(1));
 end
-if llx>p(2) & p(2)>0 & x(p(2))>l(2)
+if llx>p(2) && p(2)>0 && x(p(2))>l(2)
  l(2)=x(p(2));
 end
 

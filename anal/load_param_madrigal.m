@@ -25,7 +25,7 @@ if exist(data_path,'file')
  [devnull,filename]=fileparts(data_path); ll=16;
  ldp=length(filename); ll=16;
  name_expr='unknown'; name_ant='unk';
- if strfind(filename,'NCAR') & ldp>ll
+ if strfind(filename,'NCAR') && ldp>ll
   at=strfind(filename(ll+1:end),'@');
   if isempty(at)
    at=strfind(filename(ll+1:end),'_');
@@ -36,7 +36,7 @@ if exist(data_path,'file')
   end
  end
  i=fix((strfind(cell2mat(antennas),name_ant(1:3))+2)/3);
- if i<1|i>7, i=1; elseif i>5, i=5; end
+ if i<1 || i>7, i=1; elseif i>5, i=5; end
  r_RECloc=REClocs(i,:);
  r_XMITloc=XMITlocs(i,:);
  hl=10;
@@ -67,7 +67,7 @@ else
  delete(of)
  antennas={'kir' 'uhf' 'sod' 'vhf' 'esr'};
  i=min(kinst-70,5);
- if i<1 | i>5
+ if i<1 || i>5
   r_RECloc=REClocs(1,:);
   r_XMITloc=XMITlocs(i,:);
  else
@@ -99,7 +99,7 @@ else
 end
 t2=clock;
 arg=sprintf('fileName=%s&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',data_path,t2(1),param);
-for i=fliplr(find(arg=='&' | arg==' '))
+for i=fliplr(find(arg=='&' || arg==' '))
  arg=[arg(1:i-1) '\' arg(i:end)];
 end
 

@@ -29,7 +29,7 @@ if isempty(scan)
 end
 if isempty(dirs)
  nd=0;
- while nd<1 | ~isempty(dirs{nd})
+ while nd<1 || ~isempty(dirs{nd})
   nd=nd+1;
   dirs{nd}=minput(sprintf('Data directory no %d',nd),[],1);
  end
@@ -92,7 +92,7 @@ for i=1:np
  end
 end
 % Squeeze things before printing
-if strcmp(ptype,'p') | np>1
+if strcmp(ptype,'p') || np>1
  gc=get(gcf,'children');
  pos=get(gc,'pos');
  for i=1:length(gc)
@@ -107,7 +107,7 @@ if strcmp(ptype,'p') | np>1
 end
 print('-deps2c',r)
 print('-dpng256',r)
-if strcmp(ptype,'p') | np>1
+if strcmp(ptype,'p') || np>1
  for i=1:length(gc)
   set(gc(i),'pos',pos{i})
  end

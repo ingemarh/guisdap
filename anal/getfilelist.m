@@ -11,7 +11,7 @@ end
 
 if isempty(dirpath)
   msg='Empty directory path';
-elseif isunix & a_realtime | strfind(dirpath,'?')
+elseif isunix && a_realtime || strfind(dirpath,'?')
   i=' ';
   if ~isempty(newer)
     i=sprintf(' -newer %s/%08d%s ',newer.dir,newer.file,newer.ext);
@@ -20,7 +20,7 @@ elseif isunix & a_realtime | strfind(dirpath,'?')
   d=[local.tfile '.txt'];
   dirpath(strfind(dirpath,'\'))=[]; % remove escapes
   cmd=sprintf('find %s -name %s%s-print >%s 2>/dev/null',dirpath(1:end-1),template,i,d);
-  if unix(cmd) & unix(cmd)
+  if unix(cmd) && unix(cmd)
     msg=['Error listing mat files in ' dirpath ' ' cmd];
   elseif exist(d)
     try
