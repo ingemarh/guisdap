@@ -53,7 +53,7 @@ expid=[expid ext];
 if ~isempty(msg)
  warning('GUISDAP:parse',['Unable to parse directory name: ' msg])
 else
- nameexpr=pulse(find(pulse~='_' && pulse~='-'));
+ nameexpr=pulse(find(pulse~='_' & pulse~='-'));
  while ~exist(fullfile(path_exps,nameexpr))
   nameexpr=nameexpr(1:end-1);
  end

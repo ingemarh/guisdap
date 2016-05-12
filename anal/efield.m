@@ -59,7 +59,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % plot data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-d=find(Vpos(:,3)>alt(1) && Vpos(:,3)<alt(2) && Vpos(:,1)>lat(1) && Vpos(:,1)<lat(2));
+d=find(Vpos(:,3)>alt(1) & Vpos(:,3)<alt(2) & Vpos(:,1)>lat(1) & Vpos(:,1)<lat(2));
 MLT=[]; ilat=[];
 if ~isempty(p)
  global path_GUP
@@ -99,7 +99,7 @@ if ~isempty(p)
    maxverr=minput('Max error to plot',maxverr);
   end
  end
- d=d(find(max(vpe(d,:),[],2)<maxverr && max(abs(vp(d,:)),[],2)<maxv));
+ d=d(find(max(vpe(d,:),[],2)<maxverr & max(abs(vp(d,:)),[],2)<maxv));
  if isempty(d)
   error('No data within the limits')
  end

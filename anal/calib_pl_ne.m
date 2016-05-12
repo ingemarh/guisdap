@@ -59,9 +59,9 @@ elseif exist(fgup)
  load(fgup,'-mat')
  for i=1:size(extra,1),eval(extra(i,:));end
 end
-if length(r_Magic_const)>1 && exist('a_code','var'), Magic_const=mean(r_Magic_const(a_code)); end
+if length(r_Magic_const)>1 & exist('a_code','var'), Magic_const=mean(r_Magic_const(a_code)); end
 
-d=find(pl.t(2,:)>max([Time(1) datenum(START_TIME)]) && ...
+d=find(pl.t(2,:)>max([Time(1) datenum(START_TIME)]) & ...
   pl.t(1,:)<=min([Time(end) datenum(END_TIME)]));
 nfl=length(d);
 if nfl==0

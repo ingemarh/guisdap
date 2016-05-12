@@ -1,7 +1,7 @@
 function [el,az,gain]=vhf_elaz(el_mec,ph,gain)
 phtab=[0 1.22 2.44 3.67 4.89 6.12 7.35 8.58 9.82 11.06 ...
        12.31 13.56 14.82 16.09 17.37 18.65 19.95 21.25];
-d=find(ph<=length(phtab) && ~rem(ph,1));
+d=find(ph<=length(phtab) & ~rem(ph,1));
 ph(d)=phtab(ph(d)+1);
 c=180/pi;
 a0=359.45;

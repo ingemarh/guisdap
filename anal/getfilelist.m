@@ -11,7 +11,7 @@ end
 
 if isempty(dirpath)
   msg='Empty directory path';
-elseif isunix && a_realtime || strfind(dirpath,'?')
+elseif isunix & a_realtime | strfind(dirpath,'?')
   i=' ';
   if ~isempty(newer)
     i=sprintf(' -newer %s/%08d%s ',newer.dir,newer.file,newer.ext);

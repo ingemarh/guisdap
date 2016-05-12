@@ -87,7 +87,7 @@ for i=1:n_tot
   if load_apriori
     r_param=r_apriori;
   else
-    d=find(r_status>status(1) || r_res(:,1)>status(2));
+    d=find(r_status>status(1) | r_res(:,1)>status(2));
     [d1,d2]=find(r_error(d,1:size(r_param,2))>0);
     r_param(d(d1),d2)=NaN;
     r_error(d(d1),d2)=NaN;

@@ -308,7 +308,7 @@ if strcmp(act,'VERBOSE')
   Y_TYPE=minput('Y scale type',Y_TYPE,1);
   screen=[-Inf Inf -Inf Inf];
   screen=minput('AzEl screen values',screen);
-  s=find(par1D(s,1)>screen(1) && par1D(s,1)<screen(2) && par1D(s,2)>screen(3) && par1D(s,2)<screen(4))';
+  s=find(par1D(s,1)>screen(1) & par1D(s,1)<screen(2) & par1D(s,2)>screen(3) & par1D(s,2)<screen(4))';
  end
  SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res)',SCALE')';
  if [findstr(WHICH_PARAM,'P') findstr(WHICH_PARAM,'L')]
@@ -329,8 +329,8 @@ if findstr(WHICH_PARAM,'Te'), option(4)=1; end
 if findstr(WHICH_PARAM,'Ti'), option(5)=1; end
 if findstr(WHICH_PARAM,'Vi'), option(6)=1; end
 if findstr(WHICH_PARAM,'AE'), option(11)=1; end
-if findstr(WHICH_PARAM,'TT') && length(GATES)==1, option(12)=1; end
-if findstr(WHICH_PARAM,'LL') && length(GATES)==1, option(13)=1; end
+if findstr(WHICH_PARAM,'TT') & length(GATES)==1, option(12)=1; end
+if findstr(WHICH_PARAM,'LL') & length(GATES)==1, option(13)=1; end
 if findstr(WHICH_PARAM,'O+'), option(8)=1; end
 if findstr(WHICH_PARAM,'Rs'), option(9)=1; end
 if findstr(WHICH_PARAM,'Lf'), option(14)=option(14)+1; end
@@ -340,7 +340,7 @@ if findstr(WHICH_PARAM,'Pf'), option(16)=option(16)+1; end
 if findstr(WHICH_PARAM,'P1'), option(16)=option(16)+2; end
 if findstr(WHICH_PARAM,'TC'), option(16)=option(16)+4; end
 if findstr(WHICH_PARAM,'Co'), option(7)=1; end
-if findstr(WHICH_PARAM,'Nr') && ~isempty(rpar2D), option(15)=1; end
+if findstr(WHICH_PARAM,'Nr') & ~isempty(rpar2D), option(15)=1; end
 n_tot=sum(rem(option,2)+fix(option/2)-fix(option/4));
 if n_tot>6, FS=8; height(2)=.02; TL=TL/2; end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -433,9 +433,9 @@ end
 if stretchSecs && length(s)>1
  dt=Time(1,s(2:end))-Time(2,s(1:end-1));
  if stretchSecs==1
-  d=find(dt>0 && dt<=median(dt)+1/86399);
+  d=find(dt>0 & dt<=median(dt)+1/86399);
  else
-  d=find(dt>0 && dt<=stretchSecs/86399);
+  d=find(dt>0 & dt<=stretchSecs/86399);
  end
  if ~isempty(d)
   Time(2,s(d))=Time(2,s(d))+dt(d)/2;
@@ -509,7 +509,7 @@ if option(11)
  else
   ae=par1D(:,[3 1 2:2:end]);
  end
- d=find(ae(:,3)<90.1 && ae(:,3)>89.9); ae(d,2)=NaN;
+ d=find(ae(:,3)<90.1 & ae(:,3)>89.9); ae(d,2)=NaN;
  d=many(ae,AE_SCALE);
  line_plot(s,ae,d,'Radar parameters',TITLE1([3 1 2 4 5]),[])
 end
