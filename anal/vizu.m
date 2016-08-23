@@ -295,6 +295,9 @@ elseif strcmp(nameant,'uhf') || strcmp(nameant,'kir') || strcmp(nameant,'sod')
 elseif strcmp(nameant,'vhf')
  FIGURE_TITLE='EISCAT VHF RADAR';
  fradar=224e6;
+elseif strcmp(nameant,'quj')
+ FIGURE_TITLE='QUJING RADAR';
+ fradar=500e6;
 end
 S=size(par2D,2);
 s=1:S;

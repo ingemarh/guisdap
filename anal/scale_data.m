@@ -38,8 +38,8 @@ end
 
 %*********************** AND BY CALIBRATION POWER ************************
 %calculate first scale for all calibration measurements
-calibs=diff_val(lpg_cal(lpgs));      % find all different values
-calibs=calibs(find(calibs>0)); % Accept non-zero values
+calibs=diff_val(lpg_cal(lpgs)); % find all different values
+calibs=calibs(find(calibs>0));  % Accept non-zero values
 scale=zeros(size(lpg_cal));
 if ~isempty(calTemp)
  sysTemp=[];
@@ -56,7 +56,11 @@ if ~isempty(calTemp)
  end
 elseif ~isempty(sysTemp)
 %*********************** OR BY BACKGROUND POWER ************************
+ lpg_cal=lpg_bac;
+ calibs=diff_val(lpg_bac(lpgs)); % find all different values
+ calibs=calibs(find(calibs>0));  % Accept non-zero values
  for cal=calibs
+  lpg_cal(find(lpg_code==lpg_code(cal)))=cal;
   bac=lpg_bac(cal);
   bac_power=median(d_data(lpg_addr(bac)+ADDR_SHIFT));
   scale(cal)=bac_power/sysTemp;
@@ -64,6 +68,7 @@ elseif ~isempty(sysTemp)
 else
  error('GUISDAP:default','No calibration temperature')
 end
+
 for lpg=lpgs
  cal=lpg_cal(lpg);
  addr=lpg_addr(lpg)+ADDR_SHIFT; % To change from radar to Matlab addressing

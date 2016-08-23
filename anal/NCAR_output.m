@@ -48,6 +48,7 @@ if exist('Vdate','var')
   case 'kir', KINST=71;
   case 'sod', KINST=73;
   case 'esa', KINST=70;
+  case 'quj', KINST=99;
   otherwise, KINST=AbsentData;
  end
  sparcod=[]; name_site=[];
@@ -60,6 +61,7 @@ else
   case 'T', KINST=72; % EISCAT Tromso UHF
   case 'S', KINST=73; mvel=590; % EISCAT Sodankyla UHF
   case 'V', KINST=74; % EISCAT Tromso VHF
+  case 'Q', KINST=99; % Quing IS radar
   otherwise, KINST=AbsentData;
              KINDAT=AbsentData;
  end
@@ -104,7 +106,7 @@ if exist('r_param') & ~isempty(r_param)
  d=find(r_status~=0); var(d,:)=BadData; evar(d,:)=BadData;
  d=find(r_error(:,1:5)==0); evar(d)=ModelData; var(d)=mvar(d);
  pos=[fix(r_h) rem(r_h,1)*1e4];
- if strfind('TVL',name_site) & exist('r_w')
+ if strfind('TVLQ',name_site) & exist('r_w')
   mvarcod=[mvarcod(1:2) 115 116 mvarcod(3:end)];
   Earth_radius=6372; sin_el=sin(pi*r_el/180);
   ran2=(r_range+r_w(:,1)/2)/Earth_radius; ran1=(r_range-r_w(:,1)/2)/Earth_radius;
@@ -115,7 +117,7 @@ if exist('r_param') & ~isempty(r_param)
  NCAR_write(NCAR_fid,KINDAT,prol,spar,mvarcod,mvar,AbsentData,BadData)
 end
 
-if strfind('TVL',name_site) & exist('r_pp') & ~isempty(r_pp)
+if strfind('TVLQ',name_site) & exist('r_pp') & ~isempty(r_pp)
 %power profiles
  mvarcod=[120 121 505];
  var=real(log10(r_pp(:,1))*1e3);

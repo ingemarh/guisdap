@@ -27,7 +27,7 @@ else
 #Linux
 CFLAGS=-O3 -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
 ifeq ($(FC),gfortran)
-MEXOPTS="FC=gfortran"
+MEXOPTS="FC=gfortran-4.4"
 else
 ifeq ($(FC),g77)
 MEXOPTS="FLIBS=-lm"

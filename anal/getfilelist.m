@@ -20,7 +20,7 @@ elseif isunix & a_realtime | strfind(dirpath,'?')
   d=[local.tfile '.txt'];
   dirpath(strfind(dirpath,'\'))=[]; % remove escapes
   cmd=sprintf('find %s -name %s%s-print >%s 2>/dev/null',dirpath(1:end-1),template,i,d);
-  if unix(cmd) && unix(cmd)
+  if unix(cmd)
     msg=['Error listing mat files in ' dirpath ' ' cmd];
   elseif exist(d)
     try

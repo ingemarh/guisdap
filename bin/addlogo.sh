@@ -1,12 +1,12 @@
 #!/bin/sh
 
-pos1=780
+pos1="86 780"
 rot1=
 landscape=`grep landscapeMode $1/$2.$3 | grep csm`
 echo $landscape
 if [ "$landscape" ]
 then
-	pos1=100
+	pos1="36 100"
 	rot1="90 rotate"
 	ed $1/$2.$3 <<!
 /%%BeginObject
@@ -123,7 +123,7 @@ a
  
 gsave
 newpath
-86 $pos1 translate $rot1 3.0 3.0 scale ^eiscatlogo
+$pos1 translate $rot1 3.0 3.0 scale ^eiscatlogo
 13 -3 translate .9 .9 scale ^engaddress
 grestore
 .

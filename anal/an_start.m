@@ -27,11 +27,11 @@ nat_const
 get_ADDRSHIFT
 init_graphics
 spektri_init % Loads in plasma dispersion function table
-name_antennas={'32m' '42m' 'vhf' 'uhf' 'kir' 'sod' 'unk' '32p'};
-radar_freqs=[500 500 224 930 930 930 NaN 500]*1e6;
-radar_gains=10.^[4.25 4.48 4.31 4.81 4.81 4.81 NaN 4.25];
-radar_effs=[.66 .68 .64 .66 .66 .66 NaN .66];
-if analysis_start(1)>2002
+name_antennas={'32m' '42m' 'vhf' 'uhf' 'kir' 'sod' 'unk' '32p' 'quj'};
+radar_freqs=[500 500 224 930 930 930 NaN 500 500]*1e6;
+radar_gains=10.^[4.25 4.48 4.31 4.81 4.81 4.81 NaN 4.25 4.2];
+radar_effs=[.66 .68 .64 .66 .66 .66 NaN .66 .66];
+if analysis_start(1)>2011
   radar_freqs(5:6)=[224 224]*1e6;
   radar_gains(5:6)=10.^[3.54];
   radar_effs(5:6)=[.58 .58];
@@ -44,7 +44,9 @@ while ~EOF
     OK=1;EOF=1;
     analysis_save=0; simulparblock
   else
-    if a_rawdata
+    if name_site=='Q'
+      [OK,EOF,N_averaged,M_averaged]=integr_qujing;
+    elseif a_rawdata
       [OK,EOF]=integr_NW;
     else
       [OK,EOF,N_averaged,M_averaged]=integr_data;
@@ -101,10 +103,10 @@ while ~EOF
         d1=d(find(N_averaged(d)>0));
         N_averaged(d1)=M_averaged(1)./N_averaged(d1);
         d_data(d)=d_data(d).*N_averaged(d);
-      	if a_control(4)==1 & M_averaged(2)>=6
+        if a_control(4)==1 & M_averaged(2)>=6
           d_var1(d)=d_var1(d).*N_averaged(d).^2;
           d_var2(d)=d_var2(d).*N_averaged(d).^2;
-      	end
+        end
       end
     end
     if exist([path_expr 'guispert.m'])==2

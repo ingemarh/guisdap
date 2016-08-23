@@ -57,7 +57,7 @@ for i=1:n_tot
     n_alt=size(r_param,1);
     par2D	=ones(n_alt,n_tot,npar2D)*NaN;
     par1D=zeros(n_tot,npar1D);
-    if do_rpar && strfind('TVL',name_site) && ~isempty(r_pp)
+    if do_rpar && strfind('TVLQ',name_site) && ~isempty(r_pp)
       n_ralt=length(unique(round(r_pprange/ppres)));
       rpar2D=ones(n_ralt,n_tot,3)*NaN;
     else

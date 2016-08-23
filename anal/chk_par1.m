@@ -102,6 +102,16 @@ else
   a_end  =tosecs(analysis_end);   % counted from the beginning of year
   a_year=analysis_start(1);
   a_ind=0;
+ elseif name_site=='Q'
+  % The data are binary Quijing files
+  [d_filelist,msg]=qetfilelist(data_path);
+  if ~isempty(msg)
+   error(msg)
+  end
+  a_start=86400*datenum(analysis_start); % the programs uses internally only seconds,
+  a_end  =86400*datenum(analysis_end);   % counted from the beginning of year
+  a_year=analysis_start(1);
+  a_ind=0;
  else
   % The normal case where it is expeced the data are matlab files
   if ~a_realtime
@@ -118,8 +128,8 @@ else
   if ~isempty(msg)
    error(msg)
   end
-  a_start=tosecs(analysis_start); % the programs uses internally only seconds,
-  a_end  =tosecs(analysis_end);   % counted from the beginning of year
+  a_start=datenum(analysis_start);
+  a_end  =datenum(analysis_end);
   a_year=analysis_start(1);
   a_ind=0;
  end
