@@ -19,9 +19,11 @@ if iscell(ch_filter)
   end
  end
  clear ind l1 l2 impulsen
+elseif isvector(ch_filter)
+ ch_p=box_filt(ch_filter);
 else
-channels=find(ch_filter(1,:)==1 | ch_filter(1,:)==2); % these channels in use
-while length(channels)>0,
+ channels=find(ch_filter(1,:)==1 | ch_filter(1,:)==2); % these channels in use
+ while length(channels)>0,
   filtertype=ch_filter(1,channels(1));
   BW=ch_filter(2,channels(1));
   ind=find(ch_filter(1,channels)==filtertype & ch_filter(2,channels)==BW);
@@ -31,6 +33,6 @@ while length(channels)>0,
     lin_filt(BW,channels(ind));
   end
   channels(ind)=[];
-end
-clear filtertype BW ind channels
+ end
+ clear filtertype BW ind channels
 end
