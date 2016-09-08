@@ -19,13 +19,15 @@ else
     dirs.name=dirpath;
   end
   for j=1:length(dirs)
-    dirlist=dir(fullfile(dp,dirs(j).name,'*.bin'));
+    dirlist=dir(fullfile(dp,dirs(j).name,'ch3*.bin'));
+    if isempty(dirlist)
+      dirlist=dir(fullfile(dp,dirs(j).name,'ch2*.rst'));
+    end
     dirlen=length(dirlist);
-    l=repmat(struct('dir',fullfile(dp,dirs(j).name),'file',0,'ch',0,'time',0),[dirlen 1]);
+    l=repmat(struct('dir',fullfile(dp,dirs(j).name),'file',0,'time',0),[dirlen 1]);
     for i=1:dirlen
       l(i).file=dirlist(i).name;
       a=sscanf(dirlist(i).name,'ch%1d_%4d%2d%2d_%2d%2d%2d');
-      l(i).ch=a(1);
       l(i).time=86400*datenum(row(a(2:7)));
     end
     list=[list;l];

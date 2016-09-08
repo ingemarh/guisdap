@@ -587,9 +587,9 @@ for i=s
   yp=[yp-[dy(1);dy];yp(end)+dy(end)];
   d=find(isnan(zp)); jp=0;
   for j=[d' length(zp)+1]
-   jj=(jp+1):(j-1); jp=j;
-   if length(jj)
-    surface(Time(:,i),yp([jj jp])*o2,zp([jj jp-1])*o2)
+   jj=(jp+1):(j-1); jp=j; ljj=length(jj);
+   if ljj
+    surface(ones(ljj+1,1)*Time(:,i)',yp([jj jp])*o2,zp([jj jp-1])*o2)
    end
   end
  end

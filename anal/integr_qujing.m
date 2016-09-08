@@ -34,8 +34,7 @@ d_ExpInfo=[]; d_raw=[]; txdown=0;
 if a_ind==0
   a_ind=1;
   d=cell2mat({d_filelist.time});
-  dc=cell2mat({d_filelist.ch});
-  d=find(d<=a_start | d>a_end | dc~=3);
+  d=find(d<=a_start | d>a_end);
   d_filelist(d)=[];
   a_interval=a_start+[0 a_integr(1)];
 else
@@ -58,7 +57,7 @@ while i<length(files)
   i=i+1; file=files(i);
   filename=fullfile(file.dir,file.file);
   i_averaged=1; i_var1=[]; i_var2=[];
-  [d_parbl,d_data]=load_qfile(filename,file.time,file.ch);
+  [d_parbl,d_data]=load_qfile(filename);
 
   lpb=length(d_parbl);
   tvec=1:6;            % parameters holding time
