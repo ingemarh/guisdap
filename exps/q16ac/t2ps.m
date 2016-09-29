@@ -2,7 +2,7 @@ function dum=t2ps(name_site)
 rep=30000; tb=30;
 load q16ac.ac
 ch_adcint=[30];
-ch_filter={'b16d450.fir'};
+ch_filter=32;
 ch_f=[14];
 nsc=size(q16ac,1); nb=size(q16ac,2); nf=length(ch_f);
 if name_site=='Q'
