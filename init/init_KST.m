@@ -44,7 +44,7 @@ elseif name_site=='V'
 % ch_gain=10^4.60; full antenna?
   ch_fradar=224e6;
 elseif name_site=='Q'
-  ch_gain=10^4.25;
+  ch_gain=10^4.1;
   ch_fradar=500e6;
 end
 % For compatibility with the experiment design package define
@@ -65,8 +65,7 @@ elseif name_site=='L' | name_site=='P'
   p_RECloc=[78.153 16.029 .438];
   %p_RECloc=[78.15313 16.02875 0.445];
 elseif name_site=='Q'
-  p_RECloc=[25.4999 103.7881 1];
-  p_RECloc=[25.6,103.8 1];
+  p_RECloc=[25.6,103.8 2.04];
   p_XMITloc=p_RECloc;
 end
 

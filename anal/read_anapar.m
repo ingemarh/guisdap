@@ -3,9 +3,9 @@ fit_altitude=NaN*ones(9,8);
 
 first=75; last=2500; d1=3; d2=1; n1=10;
 
-if name_site=='L' | name_site=='Q'
+if name_site=='L'
  d1=4; n1=8;
-elseif name_site=='V'
+elseif name_site=='V' | name_site=='Q'
  d1=5; n1=6;
 end
 

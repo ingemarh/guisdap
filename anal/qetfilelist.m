@@ -28,7 +28,7 @@ else
     for i=1:dirlen
       l(i).file=dirlist(i).name;
       a=sscanf(dirlist(i).name,'ch%1d_%4d%2d%2d_%2d%2d%2d');
-      l(i).time=86400*datenum(row(a(2:7)));
+      l(i).time=86400*(datenum(row(a(2:7)))-8/24);
     end
     list=[list;l];
   end

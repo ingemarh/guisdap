@@ -1,12 +1,12 @@
 function dum=t2ps(name_site)
-rep=30000; tb=30;
+rep=12000; tb=30;
 load q16ac.ac
 ch_adcint=[30];
-ch_filter=32;
+ch_filter=30;
 ch_f=[14];
 nsc=size(q16ac,1); nb=size(q16ac,2); nf=length(ch_f);
 if name_site=='Q'
- t=[0 tb*nb]; s=[800 5800]; c=[2795 2875]; n=[2760 2875];
+ t=[0 tb*nb]; s=[1000 6000]; c=[2795 2875]; n=[2760 2875];
  j=1;
  for i=1:nsc
   i1=i-1;

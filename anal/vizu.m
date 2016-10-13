@@ -298,6 +298,7 @@ elseif strcmp(nameant,'vhf')
 elseif strcmp(nameant,'quj')
  FIGURE_TITLE='QUJING RADAR';
  fradar=500e6;
+ stretchSecs=200;
 end
 S=size(par2D,2);
 s=1:S;
