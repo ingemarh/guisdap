@@ -118,7 +118,7 @@ if ~isempty(d)
   t1=[dt(1:2) 1 0 0 0];
   t2=datevec(datenum(t1+[0 1 0 0 0 0])-1)+[0 0 0 24 0 0];
  end
- if set_b
+ if set_b & ~isempty(t1)
   set(b(4),'string',sprintf('%04d %02d %02d  %02d %02d %02d',t1))
   set(b(5),'string',sprintf('%04d %02d %02d  %02d %02d %02d',t2))
  end

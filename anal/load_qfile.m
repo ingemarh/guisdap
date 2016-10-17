@@ -37,7 +37,9 @@ ACF=fread(fid, numofrange*lengthofACF, 'float32', 'ieee-be');
 if lengthofACF==lengthofPSD
  ACF=complex(ACF(1:2:end),ACF(2:2:end));
 end
-PSD=spec2acf(reshape(fread(fid, numofrange*lengthofPSD, 'float32', 'ieee-be'),lengthofPSD,numofrange));
+PSD=fread(fid, numofrange*lengthofPSD, 'float32', 'ieee-be');
+b=sort(PSD); BACK=median(b(1:end/2));
+PSD=spec2acf(reshape(PSD-BACK,lengthofPSD,numofrange));
 PP=fread(fid, numofrange, 'float32', 'ieee-be');
 fclose(fid);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -46,4 +48,4 @@ d_parbl(43:54)=[a(1) mode wavegate range0 range1 numofrange length(ACF)/numofran
 d_parbl(41)=9;
 d_parbl(1:6)=datevec(datenum(a(2:7)')-8/24);
 d_parbl(7)=numofsound*ipp*nsc;
-d_data=[PP;ACF;PSD(:)];
+d_data=[PP;ACF;PSD(:);BACK];
