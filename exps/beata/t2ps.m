@@ -19,10 +19,16 @@ td_ch=t_to_ps(:,4)';
 if p
  ch_adcint=[.4];
  ch_filter={'b800d6.fir'};
- ch_f=[12];
+ if site=='T'
+  ch_f=[12];
+  p_rep=357120;
+  apustr='_2';
+ elseif site=='L'
+  ch_f=[500.3];
+  p_rep=400000;
+  apustr='';
+ end
  site='P';
- p_rep=357120;
- apustr='_2';
 elseif site=='l'
  ch_adcint=[25 25];
  ch_filter={'b14d375.fir' 'b14d375.fir'};
@@ -39,7 +45,7 @@ elseif site=='r'
  ch_f=[12];
  p_rep=357120;
  if rc==2
-td_ch=t_to_ps(:,4)';
+  td_ch=t_to_ps(:,4)';
   d=find(td_ch==4); td_ch(d)=12;
   ch_adcint=[20];
   ch_filter={'b25d300.fir'};
