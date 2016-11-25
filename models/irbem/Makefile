@@ -159,7 +159,7 @@ LIBNAME_linux64_gnu32=linux_x86
 
 FOPTIONS_SHARED_linux64_gnu64=-mno-align-double -fno-second-underscore -w -m64
 FOPTIONS_NONSHARED_linux64_gnu64=-c -mno-align-double -w -m64
-FC_linux64_gnu64=gfortran
+FC_linux64_gnu64=gfortran-4.8
 PIC_linux64_gnu64=-fPIC
 LDOPTIONS_linux64_gnu64=-shared
 WRAPPER_linux64_gnu64=64

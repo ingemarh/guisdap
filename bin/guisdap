@@ -118,7 +118,7 @@ case $sys in
 		;;
 	Linux)
 		export HISTSIZE=0
-		LD_LIBRARY_PATH=$GUP/lib
+		LD_LIBRARY_PATH=$GUP/lib:/opt/madrigal/lib
 		PATH=$PATH:$GUP/bin
 		unset `env | grep UTF | awk -F = '{ print $1 }'`
 		;;

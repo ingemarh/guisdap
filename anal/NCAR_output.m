@@ -45,8 +45,8 @@ if exist('Vdate','var')
   case 'esr', KINST=95;
   case 'uhf', KINST=72;
   case 'vhf', KINST=74;
-  case 'kir', KINST=71;
-  case 'sod', KINST=73;
+  case 'kir', KINST=71; if r_time(1)>2012, KINST=75; end
+  case 'sod', KINST=73; if r_time(1)>2012, KINST=76; end
   case 'esa', KINST=70;
   case 'quj', KINST=100;
   otherwise, KINST=AbsentData;
@@ -58,8 +58,10 @@ else
  switch name_site
   case 'L', KINST=95; % EISCAT Svalbard Radar
   case 'K', KINST=71; mvel=590; % EISCAT Kiruna UHF
+            if r_time(1)>2012, KINST=75; end
   case 'T', KINST=72; % EISCAT Tromso UHF
   case 'S', KINST=73; mvel=590; % EISCAT Sodankyla UHF
+            if r_time(1)>2012, KINST=76; end
   case 'V', KINST=74; % EISCAT Tromso VHF
   case 'Q', KINST=100; % Quing IS radar
   otherwise, KINST=AbsentData;

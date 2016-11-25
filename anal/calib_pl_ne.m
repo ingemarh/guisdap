@@ -128,7 +128,6 @@ if plots>1
  plot([abs(plpeak_c)/1e6 plf]), pause
  set(0,'currentfigure',ogcf)
 end
-
 % We have (lf Time) vs (plf p_time), now do the comparison and
 % find the density ratio (need a few iterations)
 disp('Fitting')
@@ -144,11 +143,13 @@ end
 if isempty(ip), error('No overlapping times GUISDAP vs PL'), end
 s=size(Time,2); h=par2D(:,:,2); r0=1; mr=1; mrpp=100;
 freq_th=[0 10];
-while mr==r0 | abs(mr-1)>.01
+nloop=0;
+while (mr==r0 | abs(mr-1)>.01) & nloop < 16
+ nloop=nloop+1
  mrp=abs(mr-1);
- % if mrp>mrpp
+ %if mrp>mrpp
  % error('Cannot fit this')
- % end
+ %end
  if mr~=r0, mrpp=mrp; end
  mr=mr*r0; r0=mr;
  lf=8.98e-6*sqrt(par2D(:,:,3))/mr.*sqrt(1+3*7.52e5*(p.fradar/3e8)^2*par2D(:,:,4)./par2D(:,:,3)*mr^2);

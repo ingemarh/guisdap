@@ -128,8 +128,8 @@ then
   mv $resdir/NCAR* .
   bzip2 -9 NCAR*
  fi
- inhouse="@eiscat.se @eiscatk.eiscat.irf.se @eiscat.irf.se @eiscat.sgo.fi @eiscat.uit.no @esr.eiscat.no @lancaster.ac.uk @fys.uio.no"
- datrep="denis.alcayde@cesr.fr steve@mail.eiscat.rl.ac.uk cesar.la.hoz@phys.uit.no hans.nilsson@irf.se ritva.kuula@oulu.fi yogawa@nipr.ac.jp mike@eiscat.uit.no"
+ inhouse="@eiscat.se @eiscatk.eiscat.irf.se @eiscat.irf.se @eiscat.sgo.fi @eiscat.uit.no @esr.eiscat.no"
+ goodguys="andkav@bas.ac.uk steve@mail.eiscat.rl.ac.uk cesar.la.hoz@phys.uit.no hans.nilsson@irf.se ritva.kuula@oulu.fi yogawa@nipr.ac.jp mike@eiscat.uit.no bjorn.gustavsson@uit.no"
 
  trusted=0
  mh=`expr substr $resultpath $atpos 99`
@@ -140,7 +140,7 @@ then
    trusted=1
   fi
  done 
- for eis in $datrep
+ for eis in $goodguys
  do
   if [ "$eis" = "$resultpath" ]
   then

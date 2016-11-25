@@ -20,7 +20,7 @@ LDFLAGS= -dy -G -h $N$S -z text
 else
 ifeq ($(FC),gfortran) 
 FFLAGS = -O3 -fPIC -c -fno-automatic
-FC=gfortran-4.4
+FC=gfortran-4.8
 else
 FC=g77
 FFLAGS = -O3 -fPIC -c -static -finit-local-zero
