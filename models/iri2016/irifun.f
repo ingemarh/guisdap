@@ -137,6 +137,7 @@ C 2016.02 03/23/16 CALION, IONLOW, IONHIGH, INVDPC  revised  [V. Truhlik]
 C 2016.03 07/19/16 XE3_1: change D1F1 to C1                   [I. Galkin]
 C 2016.04 09/08/16 CALION: Version 2.5 C/NOFS correction      [V. Truhlik]
 C 2016.04 09/08/16 NEW: model_hmF2                            [V. Shubin]
+C 2016.05 10/19/16 read_ig_rz: *0.7 for r12_new starting 01/2014
 C                  
 c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c IRI functions and subroutines:
@@ -5759,7 +5760,7 @@ c
 	  return
 	
 c 10   format('data\mcsat',i2,'.dat')
- 10   format(a,'mcsat',i2,'.dat')
+ 10   format(a,'/mcsat',i2,'.dat')
  20   format(6(d12.5))
       end
 c
@@ -8444,8 +8445,13 @@ c 1st year \ full years       \last y\ before & after
 c read all the IG12 (ionoindx) and Rz12 (indrz) values
             read(12,*) (aig(i),i=1,inum_vals)
             read(12,*) (arz(i),i=1,inum_vals)
-c            do 1 jj=1,inum_vals
-c                rrr=arz(jj)
+
+c use scale factor 0.7 for new sunspot number starting from Jan 2014
+c and starting with ig_rz file for Oct 2016.
+            if(iupy*100+iupm.gt.201609) then
+            	inum_chan= 3-imst+(2014-iyst)*12 
+            	do 1 jj=inum_chan,inum_vals
+                	arz(jj)=arz(jj)*0.7
 c                ggg=aig(jj)
 c                if(rrr.lt.0.0) then
 c                    covr=abs(rrr)
@@ -8459,8 +8465,8 @@ c                    ggg=zi
 c                    endif
 c                arz(jj)=rrr
 c                aig(jj)=ggg    
-c1               continue
-
+1               	continue
+				endif
             close(unit=12)
 
             return

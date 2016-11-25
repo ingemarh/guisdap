@@ -160,7 +160,9 @@ C 2016.03 08/15/16 Corrected input of F10.7D,Y,81, and 365..M.Hausman
 C 2016.03 08/15/16 ITOPN=3(Gulyaeva topside) not yet active M.Hausman
 C 2016.04 09/08/16 CHEMION call now with n(H) input
 C 2016.04 09/08/16 Replace SDMF2 with model_hmF2 (Shubin)
-C 2016.05 09/22/16 COMMON: NmF2s,NmEs 
+C 2016.05 09/22/16 COMMON: NmF2s,NmEs (STORM foF2, foE for profile)
+C 2016.06 10/20/16 IG12_in->R12=f(IG12_in), R12_in->IG12=f(R12_in)
+C 2016.06 10/20/16 F10.7_81_in -> F10.7_365 = F10.7_81_in
 C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
@@ -348,7 +350,7 @@ C*****************************************************************
       INTEGER    DAYNR,DDO,DO2,SEASON,SEADAY
       REAL       LATI,LONGI,MO2,MO,MODIP,NMF2,MAGBR,INVDIP,IAPO,  
      &           NMF1,NME,NMD,MM,MLAT,MLONG,NMF2S,NMES,INVDPC
-      CHARACTER  FILNAM*12,path*100
+      CHARACTER  FILNAM*112,path*100
 c-web-for webversion
 c      CHARACTER FILNAM*53
 
@@ -362,7 +364,7 @@ c      CHARACTER FILNAM*53
      &  DAT(11,4), PLA(4), PLO(4)
 
       LOGICAL  EXT,SCHALT,TECON(2),sam_mon,sam_yea,sam_ut,sam_date,
-     &  F1REG,FOF2IN,HMF2IN,URSIF2,LAYVER,DY,DREG,rzino,FOF1IN,
+     &  F1REG,FOF2IN,HMF2IN,URSIF2,LAYVER,RBTT,DREG,rzino,FOF1IN,
      &  HMF1IN,FOEIN,HMEIN,RZIN,sam_doy,F1_OCPRO,F1_L_COND,NODEN,
      &  NOTEM,NOION,TENEOP,OLD79,JF(50),URSIFO,igin,igino,mess,
      &  dnight,enight,fnight,fstorm_on,estorm_on,B0IN
@@ -514,7 +516,7 @@ c
       NOTEM=(.not.jf(2))
       NOION=(.not.jf(3))
       if(.not.NOION) NODEN=.false.
-      DY=(.not.jf(6))
+      RBTT=(.not.jf(6))
       LAYVER=(.not.jf(11))
       OLD79=(.not.jf(7))
       F1_OCPRO=(jf(19))
@@ -548,6 +550,7 @@ c
       else
           oarr(46)=-1.
       ENDIF
+
 c
 c Topside density ....................................................
 c
@@ -711,8 +714,8 @@ c          if (itopn.eq.3) write(konsol,9206)
 
 2889    continue
 
-        if((.not.NOION).and.(DY)) write(konsol,9031) 
-        if((.not.NOION).and.(.not.DY)) write(konsol,9039) 
+        if((.not.NOION).and.(RBTT)) write(konsol,9031) 
+        if((.not.NOION).and.(.not.RBTT)) write(konsol,9039) 
 
         if(NOTEM) goto 8201
           if(TENEOP) write(konsol,9032) 
@@ -924,18 +927,30 @@ C
         	rzar(1) = rrr
         	rzar(2) = rrr
         	rzar(3) = rrr
-c       	zi=-12.349154+(1.4683266-2.67690893e-03*rrr)*rrr
-c       	if(zi.gt.174.0) zi=174.0
-c       	arig(1) = zi
-c       	arig(2) = zi
-c       	arig(3) = zi
+        	if(.not.IGIN) then
+            	zi=(-0.0031*ARZIN+1.5332)*ARZIN-11.5634
+c       		if(zi.gt.174.0) zi=174.0
+       			arig(1) = zi
+       			arig(2) = zi
+      			arig(3) = zi
+        		endif
         	endif
+        	
         if(IGIN) then
         	zi = aigin
         	arig(1) = zi
         	arig(2) = zi
         	arig(3) = zi
+        	if(.not.RZIN) then
+        		xigin=aigin
+        		if(xigin.gt.178.0066) xigin=178.0066
+        		rrr = 247.29 - 17.96*sqrt(178.0066-xigin)
+        		rzar(1) = rrr
+        		rzar(2) = rrr
+        		rzar(3) = rrr
+        		endif
         	endif
+
         rssn=rzar(3)
         gind=arig(3)
         COV=63.75+RSSN*(0.728+RSSN*0.00089)
@@ -963,10 +978,11 @@ C observed (at the ground) value.
 			endif
 		if(.not.jf(25)) then
         	f107d=f107din 		! user input: F10.7 daily 
-        	f107y=f107din 		! user input: F10.7 previous day 
+        	f107y=f107din 		! user input: F10.7 previous day
         	endif
 		if(.not.jf(32)) then
-        	f10781=f10781in 	! F10.7_81 user input
+        	f10781=f10781in 	! user input: F10.7 81-day average
+        	f107365=f10781in	! F10.7_365 = F10.7_81
 			endif		
 		pf107 = (f107d+f10781)/2.
 
@@ -1858,8 +1874,9 @@ C
 
 240   IF(NOION) GOTO 141
       HNIA=75.
-      if(DY) HNIA=80.
+      if(RBTT) HNIA=80.
       HNIE=2000.
+       
 C
 C CALCULATION FOR THE REQUIRED HEIGHT RANGE.......................
 C In the absence of an F1 layer hmf1=hz since hmf1 is used in XE
@@ -1925,7 +1942,7 @@ c
             RNOX=-1.
             RO2X=-1.
             RCLUST=-1.
-      if(DY) then
+      if(RBTT) then
         if (height.gt.300.) then
 c Triskova-Truhlik-Smilauer-2003 model
 c       		call igrf_sub(lati,longi,ryear,height,
