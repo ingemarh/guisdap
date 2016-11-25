@@ -102,7 +102,7 @@ else
 fi
 
 MATLABPATH=$my$mex$GUP/anal$init
-IRIPATH=$GUP/models/iri2012
+IRIPATH=$GUP/models/iri2016
 
 sys=`uname -s`
 case $sys in

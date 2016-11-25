@@ -20,8 +20,10 @@ C---------------------------------------------------------------------
       save jf,nrp,rp,tim,pos,h
 c jf tttff ftttt ttttt ttttt ftftt ttfff ttftf ----- ----- -----
 c jf tttff ttttt ttttt ttttt ftftt ttfff ttftf ----- ----- ----- error on jf(6)?
-      data jf/3*.true.,2*.false.,15*.true.,.false.,.true.,.false.,
-     ,4*.true.,3*.false.,2*.true.,3*.false.,15*.true./,nrp/3/,
+c jf tttff ftttt ttttt ttttt ftftt ttfff ttfff tttft tt--- ----- 
+      data jf/3*.true.,3*.false.,14*.true.,.false.,.true.,.false.,
+     ,4*.true.,3*.false.,2*.true.,3*.false.,3*.true.,
+     ,.false.,11*.true./,nrp/3/,
      ,rp/1,4,3,9*0/,tim/15552090.,1996./,pos/69.2,19.2/,h/100.,590.,0./
 C CHECK FOR PROPER NUMBER OF ARGUMENTS
       IF(NLHS.GT.1)CALL MEXERRMSGTXT('Only one output argument')
@@ -46,6 +48,8 @@ C CHECK FOR PROPER NUMBER OF ARGUMENTS
       if(len.GT.500)CALL MEXERRMSGTXT('Max 500 heights')
       if(len*nrp.gt.4500)CALL MEXERRMSGTXT('Max 9par*500 heights')
 c     call initialize
+      call read_ig_rz
+      call readapf107
       call iri_sub(jf,0,pos(1),pos(2),iy,id-1,ut+25.,h(1),h(2),h(3),
      ,outf,oarr)
       i=1
