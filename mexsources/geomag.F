@@ -39,7 +39,7 @@ C CHECK FOR PROPER NUMBER OF ARGUMENTS
       endif
       year=tim(1)+(tim(2)-1)/12.+
      +((tim(3)-1)+(tim(4)+(tim(5)+tim(6)/60.)/60.)/24.)/365.
-      CALL INITIZE
+      CALL INITs
       CALL FELDCOF(YEAR,DIMO)
       if(nrhs.eq.0.or.mxGetM(prhs(1)).ne.3)then
         CALL mexErrMsgTxt('Exact three numbers in row')
@@ -74,3 +74,14 @@ c     DEC=ASIN(BEAST/SQRT(BEAST*BEAST+BNORTH*BNORTH))/UMR
 c      if(icode.eq.2)out(4)=mexgetnan()
       RETURN
       END
+      subroutine inits
+      common /IGRF1/ERA,AQUAD,BQUAD,DIMO
+      ERA=6371.2
+      EREQU=6378.16
+      ERPOL=6356.775
+      AQUAD=EREQU*EREQU
+      BQUAD=ERPOL*ERPOL
+      EEXC=0.01675
+      dimo=0.311653
+      return
+      end
