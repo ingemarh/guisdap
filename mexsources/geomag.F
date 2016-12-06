@@ -37,10 +37,8 @@ C CHECK FOR PROPER NUMBER OF ARGUMENTS
         enddo
        endif
       endif
-      year=tim(1)+(tim(2)-1)/12.+
-     +((tim(3)-1)+(tim(4)+(tim(5)+tim(6)/60.)/60.)/24.)/365.
-      CALL INITs
-      CALL FELDCOF(YEAR,DIMO)
+      call read_ig_rz
+      call readapf107
       if(nrhs.eq.0.or.mxGetM(prhs(1)).ne.3)then
         CALL mexErrMsgTxt('Exact three numbers in row')
       endif
@@ -55,6 +53,7 @@ C ASSIGN POINTER
         do j=1,3
          pos(j)=par(j)
         enddo
+        call dumiri(pos,tim)
         call myigrf(pos(1),pos(2),pos(3),par)
         call mxcopyreal8toptr(par,magp+i*4*8,4)
       enddo
@@ -74,14 +73,17 @@ c     DEC=ASIN(BEAST/SQRT(BEAST*BEAST+BNORTH*BNORTH))/UMR
 c      if(icode.eq.2)out(4)=mexgetnan()
       RETURN
       END
-      subroutine inits
-      common /IGRF1/ERA,AQUAD,BQUAD,DIMO
-      ERA=6371.2
-      EREQU=6378.16
-      ERPOL=6356.775
-      AQUAD=EREQU*EREQU
-      BQUAD=ERPOL*ERPOL
-      EEXC=0.01675
-      dimo=0.311653
+      subroutine dumiri(pos,tim)
+      logical jf(50)
+      real outf(20,1000),oarr(100),pos(*)
+      integer tim(*)
+      data jf/5*.false.,15*.true.,3*.false.,4*.true.,3*.false.,2*.true.,
+     ,3*.false.,15*.true./
+c jf fffff ttttt ttttt ttttt ffftt ttfff ttfff ttttt tt--- ----- error on jf(6)?
+      iy=tim(1)
+      id=tim(2)*100+tim(3)
+      ut=tim(4)+tim(5)/60.+tim(6)/3600.
+      call iri_sub(jf,0,pos(1),pos(2),iy,id,ut+25.,pos(3),pos(3),1.,
+     ,outf,oarr)
       return
       end
