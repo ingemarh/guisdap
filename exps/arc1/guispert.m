@@ -5,8 +5,13 @@
 %
 ch_Pt=ch_Pt(1);
 if name_site=='T'
- npp=426; nslic=9; prep=443904;
- lpg_bcs(1:nslic)='x';
+ if expver>1
+  npp=440; nslic=25; prep=320000;
+  lpg_bcs(1:nslic)='x';
+ else
+  npp=426; nslic=9; prep=443904;
+  lpg_bcs(1:nslic)='x';
+ end
 elseif name_site=='L'
  npp=505; nslic=10; prep=1009920/2;
  lpg_bcs(1:nslic)='x';
