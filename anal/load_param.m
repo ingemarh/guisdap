@@ -101,8 +101,6 @@ for i=1:n_tot
   end
   Time(:,i)	=datenum(r_time);
   if npar1>npar1D
-[npar1D npar1 n_tot size(par1D)]
-par1
    par1D=[par1D zeros(n_tot,npar1-npar1D)];
    npar1D=npar1;
   end 
@@ -154,3 +152,8 @@ end
 % Cast azimuth and elevation into range 0-360, 0-90 degrees
 d=find(par1D(:,2)>90); par1D(d,2)=180-par1D(d,2); par1D(d,1)=par1D(d,1)+180;
 par1D(:,1)=mod(par1D(:,1)+360,360);
+
+[s1,s]=sort(Time(1,:));
+Time=Time(:,s); par2D=par2D(:,s,:); par1D=par1D(s,:);
+if ~isempty(rpar2D), rpar2D=rpar2D(:,s,:); end
+if ~isempty(err2D), err2D=err2D(:,s,:); end
