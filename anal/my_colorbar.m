@@ -31,7 +31,7 @@ h=gca;
 ch=get(gcf,'children'); ax=[];
 for i=1:length(ch),
   d=get(ch(i),'userdata');
-  if prod(size(d))==1 & d==h
+  if prod(size(d))==1 && d==h
     ax=ch(i); break
   end
 end
@@ -70,7 +70,7 @@ else
 % set(ax,'yticklabel',strjust(get(ax,'yticklabel')))
 end
 
-set(ax,'userdata',h,'YaxisLoc','right','xtick',[])
+set(ax,'userdata',h,'YaxisLocation','right','xtick',[])
 ylabel(label,'Rotation',-90,'VerticalAlignment','baseline')
 set(gcf,'CurrentAxes',h)
 set(gcf,'Nextplot','Replace')

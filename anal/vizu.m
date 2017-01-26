@@ -409,7 +409,7 @@ if isempty(vizufig)
       'FontWeight','bold','String','EISCAT Scientific Association');
  load(fullfile(path_GUP,'matfiles','logo'))
  axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
- hds(3)=get(gca,'child'); set(hds(3),'markersize',1)
+ hds(3)=get(gca,'children'); set(hds(3),'markersize',1)
  set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
  vizufig=gcf;
 else
