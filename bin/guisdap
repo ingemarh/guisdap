@@ -72,7 +72,7 @@ do
 		   mflags=
 		   matlab="nohup $matlab"
 		   ;;
-		B) tail="-r $OPTARG >$TMP/$OPTARG 2>&1 &"
+		B) tail="-r go_on('$OPTARG') >$TMP/$OPTARG 2>&1 &"
 		   mflags=
 		   matlab="nohup $matlab"
 		   ;;
