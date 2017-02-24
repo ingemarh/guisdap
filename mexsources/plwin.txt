@@ -1,0 +1,36 @@
+﻿plwin.c
+Decoding and calculating lag profiles. And more. Using fft. Data
+vector may be zero-padded on both lower edge and upper edge of
+range. Can work with fractional lags.
+
+Layout of parameter file:
+Line	Name		Notes
+0	npar		Number of parameters in the parameter file
+1	fft_len		Size of fft
+2	nr_gates	Number of range gates
+3	nr_undec	Number of undecoded gates
+4	nr_win		Number of different subsets in the code (number of data windows)
+5	nr_rep		Total number of subcycles in one integration period
+6	nr_samp		Number of samples per subcycle
+7	win_len		Number of bits in the code
+8	frac		Number of samples per code bit
+9	res_mult	Number of subsets of code (normally 1)
+10	nr_pp-nr_samp	Number of extra samples in the power profile
+11	lower_tail/frac	Number of padded zeros at lower edge, code bit units
+12	upper_tail/frac	Number of padded zeros at upper edge, code bit units
+13	undec1		Start gate for undecoded
+14	undec2		Stop gate for undecoded
+15	debug		>0: Display debugging messages
+			>1: Display more debugging messages
+16	maxthreads	Maximum number of threads in the calcuclations
+17	dl_short	Number of short D-layer lags
+18	dl_long		Number of long D-layer lags
+19	nr_dgates	Number of D-layer gates (including lower tail)
+20	Offset in input data vector
+21	do_pp		If non-zero: Calculate power profile
+22	nr_clutter	Number of points to de-clutter
+23	notch		Filter width for clutter reduction (actual width: 2*notch+1)
+			If negative: Use value provided through EROS
+≥24	The code
+
+Number of lines: 24+nr_win*win_len
