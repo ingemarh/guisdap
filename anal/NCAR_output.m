@@ -14,11 +14,11 @@ function NCAR_output(matfile,NCAR_ascii,NCAR_binary)
 global NCAR_fid
 
 if nargin==0
-  if ~isempty(NCAR_fid) & any(NCAR_fid)
+  if ~isempty(NCAR_fid) && any(NCAR_fid)
     for fid=NCAR_fid(find(NCAR_fid)), fclose(fid); end
   end
   NCAR_fid=[]; return
-elseif isempty(NCAR_fid) | all(NCAR_fid<1)
+elseif isempty(NCAR_fid) || all(NCAR_fid<1)
   NCAR_fid=[0 0];
 % output files.  Set any file to zero length to disable that output
   if nargin<3, NCAR_binary=[]; end
@@ -29,7 +29,7 @@ elseif isempty(NCAR_fid) | all(NCAR_fid<1)
   if ~isempty(NCAR_binary)
     NCAR_fid(2)=fopen(NCAR_binary,'w','b');
   end
-elseif ~NCAR_fid(1) & ~isempty(NCAR_ascii)
+elseif ~NCAR_fid(1) && ~isempty(NCAR_ascii)
   NCAR_fid(1)=fopen(NCAR_ascii,'w');
 end
 
@@ -93,7 +93,7 @@ else
 end
 prol=fix([KINST KINDAT ITIM(1,:) ITIM(2,:) 0 0 0 0]); %the prologe
 
-if exist('r_param') & ~isempty(r_param)
+if exist('r_param') && ~isempty(r_param)
  % set up NCAR multi-valued parameters
  %mvarcod=[Altitude(km),Alt(dm),Status,Resid,O+/Ne,...
  %       Log10_Ne,Ti,TeTi,CollFreq,Vi,...
@@ -108,7 +108,7 @@ if exist('r_param') & ~isempty(r_param)
  d=find(r_status~=0); var(d,:)=BadData; evar(d,:)=BadData;
  d=find(r_error(:,1:5)==0); evar(d)=ModelData; var(d)=mvar(d);
  pos=[fix(r_h) rem(r_h,1)*1e4];
- if strfind('TVLQ',name_site) & exist('r_w')
+ if strfind('TVLQ',name_site) && exist('r_w')
   mvarcod=[mvarcod(1:2) 115 116 mvarcod(3:end)];
   Earth_radius=6372; sin_el=sin(pi*r_el/180);
   ran2=(r_range+r_w(:,1)/2)/Earth_radius; ran1=(r_range-r_w(:,1)/2)/Earth_radius;
@@ -119,7 +119,7 @@ if exist('r_param') & ~isempty(r_param)
  NCAR_write(NCAR_fid,KINDAT,prol,spar,mvarcod,mvar,AbsentData,BadData)
 end
 
-if strfind('TVLQ',name_site) & exist('r_pp') & ~isempty(r_pp)
+if strfind('TVLQ',name_site) && exist('r_pp') && ~isempty(r_pp)
 %power profiles
  mvarcod=[120 121 505];
  var=real(log10(r_pp(:,1))*1e3);
