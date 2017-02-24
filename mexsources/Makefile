@@ -25,16 +25,11 @@ LDFLAGS= -dy -G -h libguisdap.so -z text
 FC=f95
 else
 #Linux
-CFLAGS=-O3 -fPIC -ansi -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
-ifeq ($(FC),gfortran)
-MEXOPTS="FC=gfortran-4.8"
-else
-ifeq ($(FC),g77)
-MEXOPTS="FLIBS=-lm"
-else
-MEXOPTS="FC=g77"
-endif
-endif
+CFLAGS=-O3 -fPIC -ansi -march=native -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
+PLFLAGS= -Wall -g -O4 -march=native -shared -fPIC -lfftw3f
+
+MEXOPTS=FC=gfortran-5 GCC=gcc-5
+CC=gcc-5
 LDFLAGS= -shared
 endif
 
@@ -61,6 +56,8 @@ msis:
 	$(MEX) $(MEXOPTS) msis.F $(MSISLIB)
 
 lib:
+	$(CC) plwin.c -o $M/plwin.so $(PLFLAGS)
+	cp plwin.h $M
 	$(COMPILE.c) mrqmndiag_worker.c dirthe_worker.c GULIPS_addm_worker.c GULIPS_cov_worker.c GULIPS_invR_worker.c GULIPS_mul_worker.c spec_worker.c transf_worker.c addr_covar_worker.c
 	$(LD) -o $M/libguisdap.so $(LDFLAGS) *.o
 	$(AR) cr $M/libguisdap.a *.o
