@@ -56,7 +56,7 @@ msis:
 	$(MEX) $(MEXOPTS) msis.F $(MSISLIB)
 
 lib:
-	$(CC) $(PLFLAGS) plwin.c -o $M/plwin.so
+	$(CC) plwin.c -o $M/plwin.so $(PLFLAGS)
 	cp plwin.h $M
 	$(COMPILE.c) mrqmndiag_worker.c dirthe_worker.c GULIPS_addm_worker.c GULIPS_cov_worker.c GULIPS_invR_worker.c GULIPS_mul_worker.c spec_worker.c transf_worker.c addr_covar_worker.c
 	$(LD) -o $M/libguisdap.so $(LDFLAGS) *.o
