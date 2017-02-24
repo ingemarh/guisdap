@@ -85,7 +85,7 @@ for d1=1:ndir
  if td(1)==d1
   timint=mean(Time)-median(diff(Time));
  end
- if strfind(dirs{1},'*') && strcmp(name_ant(2:3),'2m')
+ if any(strfind(dirs{1},'*')) && strcmp(name_ant(2:3),'2m')
   name_ant='esr';
  end
  name_ants=[name_ants;name_ant(1:3)];
