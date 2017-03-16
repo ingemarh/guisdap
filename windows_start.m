@@ -9,8 +9,14 @@
 % Happy Guisdapping!
 %
 %
+% --- comment out
+disp('Edit this file first.')
+disp('You should insert the path to your GUISDAP directory')
+% ---
+%
 % --- modify and uncomment
-addpath('C:\Users\fredrik\Desktop\guisdap8\anal')
-start_GUP
-analyse
+% mypath='C:\Users\myuser\mydir\guisdap8';
+% addpath(fullfile(mypath,'anal'))
+% start_GUP
+% analyse
 % ---
