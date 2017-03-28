@@ -23,7 +23,7 @@ FC=g77
 FFLAGS = -O3 -fPIC -c -static -finit-local-zero
 else
 FFLAGS = -O3 -fPIC -c -fno-automatic
-FC=gfortran-5
+FC=gfortran
 endif
 LDFLAGS= -shared
 endif

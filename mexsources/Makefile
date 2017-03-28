@@ -28,8 +28,8 @@ else
 CFLAGS=-O3 -fPIC -ansi -march=native -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
 PLFLAGS= -Wall -g -O4 -march=native -shared -fPIC -lfftw3f
 
-MEXOPTS=FC=gfortran-5 GCC=gcc-5
-CC=gcc-5
+MEXOPTS=FC=gfortran-4.9 GCC=gcc-4.9 -compatibleArrayDims
+CC=gcc-4.9
 LDFLAGS= -shared
 endif
 
@@ -43,6 +43,7 @@ ifeq ($(th),1)
 CFLAGS:=	$(CFLAGS) -DGUPTHREAD
 GUPLIB:=	$(GUPLIB) -lpthread
 endif
+
 
 all: iri msis geomag lib mex install
 

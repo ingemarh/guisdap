@@ -1,5 +1,5 @@
 if analysis_ppcombine
- if ~exist(pp_sigma)
+ if ~exist('pp_sigma','var')
   global pp_range pp_sigma pp_err pp_w
  end
  [pp_range,ia,ic]=unique(pp_range); 
