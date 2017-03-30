@@ -112,11 +112,13 @@ if ~isempty(p)
   text('Position',[0.5 0.5],... %'VerticalAlignment','bottom',...
     'Horizontal','center','FontSize',24,'FontWeight','bold',...
     'String','EISCAT Scientific Association','userdata','logo');
-  load(fullfile(path_GUP,'matfiles','logo'))
-  axes('Position',[xp/10 yp xp/2 1-yp]); plot(y,x,'.k')
-  axis square
-  hds=get(gca,'child'); set(hds,'markersize',1,'userdata','logo')
-  set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
+  %load(fullfile(path_GUP,'matfiles','logo'))
+  %axes('Position',[xp/10 yp xp/2 1-yp]); plot(y,x,'.k')
+  %axis square
+  %hds=get(gca,'child'); set(hds,'markersize',1,'userdata','logo')
+  %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
+  axes('Position',[xp/10 yp xp/2 1-yp]); eiscatlogo(1,4.2)
+  set(gca,'userdata','logo')
   set(gcf,'currentaxes',ax);
  end
  vdd=[Vdate(2,d(1)) Vdate(1,d(end))];

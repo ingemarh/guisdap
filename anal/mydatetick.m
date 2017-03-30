@@ -11,7 +11,7 @@ if first
  elseif td>.003
   set(gca,'xlim',[ceil(xlim(1)*1440) floor(xlim(2)*1440)]/1440)
  end 
- fs=get(gca,'fontsize'); set(gca,'fontsize',fs/1.4) % To encourage more ticks
+ fs=get(gca,'fontsize'); set(gca,'fontsize',fs/1.3) % To encourage more ticks
  datetick(gca,'x',tickform,'keeplimits')
  xticks=get(gca,'xtick'); lt=sum((xlim(1)<xticks) & (xticks<xlim(2)));
  if ~local.x && (isempty(xticks) || lt==0 || (lt<4 && td>.003))
@@ -27,6 +27,7 @@ if first
   xticks=get(gca,'xtick');
  end
  set(gca,'fontsize',fs,'xlim',xlim)
+else
+ set(gca,'xtick',xticks)
+ datetick(gca,'x',tickform,'keeplimits','keepticks')
 end
-set(gca,'xtick',xticks)
-datetick(gca,'x',tickform,'keeplimits','keepticks')

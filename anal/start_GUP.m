@@ -57,6 +57,12 @@ d=computer;
 if ~usejava('jvm') && local.matlabversion>7.4
   set(0,'DefaultAxesButtonDownFcn','zoom')
 end
+if local.matlabversion>8.4
+ local.host=char(getHostName(java.net.InetAddress.getLocalHost));
+ set(groot,'defaultAxesTitleFontSizeMultiplier',1)
+ set(groot,'defaultAxesLabelFontSizeMultiplier',1)
+ set(groot,'defaultAxesTitleFontWeight','normal')
+end
 if local.matlabversion>7.6 && local.matlabversion<7.9 && ~isempty(strfind(d,'64')) && ~strcmp(d,'SOL64')
  disp('Matlab-EISCAT fault detected'), quit
 end

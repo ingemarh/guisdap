@@ -26,7 +26,7 @@ if isempty(expt)
  [i,expt]=fileparts(pl_dir);
  if isempty(expt), [i,expt]=fileparts(i); end
 end
-global path_exps path_GUP
+global path_exps path_GUP local
 %Get plasmaline data
 [fl,msg]=getfilelist(fullfile(pl_dir,filesep));
 if msg, error(msg), end
@@ -214,17 +214,17 @@ elseif isempty(plots)
  h=title(sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)));
  set(h,'interpreter','none')
  colormap(vizu('myb'))
- load(fullfile(path_GUP,'matfiles','logo'))
- axes('Position',[.07 .92 .08 .06]); plot(y,x,'.k')
- set(get(gca,'child'),'markersize',1)
- set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
+ %load(fullfile(path_GUP,'matfiles','logo'))
+ %axes('Position',[.07 .92 .08 .06]); plot(y,x,'.k')
+ %set(get(gca,'child'),'markersize',1)
+ %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
+ axes('Position',[.07 .92 .08 .06]); eiscatlogo(1,4.2)
  text('Position',[220 200],'VerticalAlignment','top','FontSize',16,...
   'HorizontalAlignment','Left','FontWeight','bold',...
   'String','EISCAT Scientific Association');
  text('Position',-[70 1400],'String','Frequency offset [MHz]','Rotation',90,...
   'VerticalAlignment','middle','HorizontalAlignment','center')
  if ~isempty(printdir)
-  global local
   if pl_dir(end)==filesep, pl_dir(end)=[]; end
   if pl_dir=='.', pl_dir=pwd; end
   [dum,fname]=fileparts(pl_dir);
