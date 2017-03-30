@@ -80,7 +80,7 @@ if isempty(DATA_PATH)
       max_ppw=minput('Maximum pp resolution (km)',Inf);
     end
   elseif ~REALT
-    if isdir(act) || strfind(act,'/')
+    if isdir(act) | strfind(act,'/')
       DATA_PATH=act; naction=naction+1;
       MESSAGE1=action(naction,nvargin,varargin); naction=naction+1;
     else
@@ -138,18 +138,18 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
    ppos=get(vizufig,'PaperPosition');
    set(vizufig,'PaperOrient','landscape','PaperPosition',[0 3 ppos([4 3])-[0 3]])
   end
-  [i,j]=unix('which addlogo.sh');
-  i=i || local.matlabversion>8.3;
-  if ~i, set(hds(2:3),'visible','off'), end
+  %[i,j]=unix('which addlogo.sh');
+  %i=i || local.matlabversion>8.3;
+  %if ~i, set(hds(2:3),'visible','off'), end
   file=fullfile(dirs,fig);
   print(vizufig,['-d' ext '2c'],[file '.' ext]);
   if rotate
    set(vizufig,'PaperOrient','portrait','PaperPosition',ppos)
   end
-  if ~i
-   set(hds(2:3),'visible','on')
-   unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
-  end
+  %if ~i
+  % set(hds(2:3),'visible','on')
+  % unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
+  %end
   if strcmpi(act,'print') || strcmpi(a3,'print')
     if isempty(a2), dev=local.printer; else, dev=a2; end
     unix(['lp -c -d' dev ' ' file '.' ext ' >/dev/null 2>&1']);
@@ -405,15 +405,16 @@ if isempty(vizufig)
       'Color',[.5 .5 .5],'VerticalAlignment','top','String',MESSAGE2)
  axs=[]; axc=[];
  %logo...
- hds(2)=text('Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
+ text('Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
       'FontWeight','bold','String','EISCAT Scientific Association');
- load(fullfile(path_GUP,'matfiles','logo'))
- axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
- hds(3)=get(gca,'children'); set(hds(3),'markersize',1)
- set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
+ %load(fullfile(path_GUP,'matfiles','logo'))
+ axes('Position',[.07 .9 .1 .075]); eiscatlogo(1,4.5)
+ %axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
+ %hds(3)=get(gca,'children'); set(hds(3),'markersize',1)
+ %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
  vizufig=gcf;
 else
- set(hds(1),'string',t2)
+ set(hds,'string',t2)
 end
 add_plot=0;
 height(1)=(0.80-(n_tot-1)*height(2))/n_tot;
@@ -654,7 +655,6 @@ return
 
 function setup_axes(yscale,YTitle)
 global axs height n_tot START_TIME END_TIME add_plot
-persistent xticks
 axs=[axs axes('Position',[.12 .06+(n_tot-add_plot)*sum(height) .7 height(1)])];
 set(gca,'xgrid','on','ygrid','on')
 mydatetick([datenum(START_TIME) datenum(END_TIME)],length(axs)==1)

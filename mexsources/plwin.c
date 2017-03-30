@@ -3,7 +3,7 @@ plwin.c -- decodump routine for decoding fft
 *****************************************************************************/
 
 #include <stdlib.h>
-#include <string.h>	/* Included as we are using the bzero function */
+#include <string.h>
 #include <strings.h>
 #include <unistd.h>
 #include <math.h>
@@ -256,7 +256,7 @@ int decoder_6(ulong nbits,int *par,ulong fbits,float *fpar,DSPCMPLXSHORT *in,
 	if(pth.nr_dgates>0) {
 		start[3]=gethrtime();
 		pth.out+=(pth.noud*pth.res_mult);
-		bzero(pth.out+pth.nr_dgates*pth.dl_short,pth.nr_dgates*(pth.dl_long+1)*sizeof(DSPCMPLX));
+		memset(pth.out+pth.nr_dgates*pth.dl_short,0,pth.nr_dgates*(pth.dl_long+1)*sizeof(DSPCMPLX));
 		for(k=0,i=0;i<pth.nth;i++,k=k2) {
 			k2=pth.nr_dgates*(i+1)/pth.nth;
 			pth.th=i; pth.k1=k; pth.k2=k2;
@@ -316,20 +316,20 @@ void *plwin_loop(struct pth *pth)
 	inf=pth->inf+th*(pth->fft_len*2+pth->fft_len_2);
 	outf=inf+pth->fft_len;
 	inf_2=inf+pth->fft_len*2;
-	bzero(inf+pth->win_len*pth->frac,pth->nex*sizeof(fftwf_complex));
-	bzero(inf_2,pth->fft_len_2*sizeof(fftwf_complex));
+	memset(inf+pth->win_len*pth->frac,0,pth->nex*sizeof(fftwf_complex));
+	memset(inf_2,0,pth->fft_len_2*sizeof(fftwf_complex));
 
 	of=(DSPCMPLX *)inf;
 	to=(DSPCMPLX *)outf;
 	of_2=(DSPCMPLX *)inf_2;
 	out0=(float *)malloc(pth->fft_len_2*pth->nr_ugates*sizeof(float));
 	add=(DSPCMPLX *)malloc(pth->nr_virtsamp*sizeof(DSPCMPLX));
-	bzero(add,pth->lower_tail*sizeof(DSPCMPLX));
-	bzero(add+pth->nr_samp+pth->lower_tail,pth->upper_tail*sizeof(DSPCMPLX));
+	memset(add,0,pth->lower_tail*sizeof(DSPCMPLX));
+	memset(add+pth->nr_samp+pth->lower_tail,0,pth->upper_tail*sizeof(DSPCMPLX));
 
 for(win=k1;win<k2;win++) {
 	wind=pth->windows+win*pth->win_len;
-	bzero(out0,pth->fft_len_2*pth->nr_ugates*sizeof(float));
+	memset(out0,0,pth->fft_len_2*pth->nr_ugates*sizeof(float));
 	out_t=pth->out_t+(th*pth->res_mult+win%pth->res_mult)*pth->nout;
 
 	for(k=win;k<pth->nr_rep;k+=pth->nr_win) {
@@ -422,7 +422,7 @@ void *pldec_loop(struct pth *pth)
 
 	of=(DSPCMPLX *)inf;
 	to=(DSPCMPLX *)outf;
-	bzero(of,pth->fft_len*sizeof(DSPCMPLX));
+	memset(of,0,pth->fft_len*sizeof(DSPCMPLX));
 	if(pth->nr_undec>0) ustep=(pth->undec2-pth->undec1+1)/pth->nr_undec;
 	out_tt=pth->out_t+pth->nr_gates*pth->fft_len+k*pth->nout;
 	add=pth->out+(pth->nr_gates+1)*pth->frac+pth->nr_gates*pth->nr_lags+k*pth->noud;
@@ -438,7 +438,7 @@ void *pldec_loop(struct pth *pth)
 			add[j*pth->nr_undec].im=to[j].im;
 		}
 		add++;
-		bzero(of,pth->fft_len_2*sizeof(DSPCMPLX));
+		memset(of,0,pth->fft_len_2*sizeof(DSPCMPLX));
 	}
 	out_tt=pth->out_t+k*pth->nout;
 	add=pth->out+k*pth->noud+(pth->nr_gates+1)*pth->frac;
@@ -549,7 +549,7 @@ void *plwin_clutter(struct pth *pth)
 					clx[k/pth->nr_win].re=in->re;
 					clx[k/pth->nr_win].im=in->im;
 				}
-				bzero(clx+i,(pth->fft_clutter-i)*sizeof(DSPCMPLX));
+				memset(clx+i,0,(pth->fft_clutter-i)*sizeof(DSPCMPLX));
 				fftwf_execute_dft(pth->pc,(fftwf_complex *)clx,(fftwf_complex *)cly);
 				for(k=0;k<pth->fft_clutter;k++)
 					clt[k]+=(cly[k].re*cly[k].re+cly[k].im*cly[k].im);
@@ -575,10 +575,10 @@ void *plwin_clutter(struct pth *pth)
 					clx[k/pth->nr_win].re=in->re;
 					clx[k/pth->nr_win].im=in->im;
 				}
-				bzero(clx+i,(pth->fft_clutter-i)*sizeof(DSPCMPLX));
+				memset(clx+i,0,(pth->fft_clutter-i)*sizeof(DSPCMPLX));
 				fftwf_execute_dft(pth->pc,(fftwf_complex *)clx,(fftwf_complex *)cly);
-				bzero(cly,(notch+1)*sizeof(DSPCMPLX));
-				bzero(cly+pth->fft_clutter-notch,notch*sizeof(DSPCMPLX));
+				memset(cly,0,(notch+1)*sizeof(DSPCMPLX));
+				memset(cly+pth->fft_clutter-notch,0,notch*sizeof(DSPCMPLX));
 				fftwf_execute_dft(pth->pcb,(fftwf_complex *)cly,(fftwf_complex *)clx);
 				for(k=win;k<pth->nr_rep;k+=pth->nr_win) {
 					in=pth->in+k*pth->nr_pp+j;

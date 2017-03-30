@@ -9,11 +9,11 @@
 % Debyecorr: Two different options are available
 %          The first one is faster but neglects Debye correction (Debyecorr=0)
 %          The other one is slower but includes Debye correction (Debyecorr=1)
-% output: pp_prof : Raw electron density with the a priori Te/Ti model
-%         pp_range: The range to the center of gate
-%         pp_sigma: Raw power profile with Te/Ti=1, excl. Debye term
-%         pp_std:   Standard error raw power
-%         pp_w:     Range resolution
+% output: PPprof : Raw electron density with the a priori Te/Ti model
+%         PPrange: The range to the center of gate
+%         PPsigma: Raw power profile with Te/Ti=1, excl. Debye term
+%         PPstd:   Standard error raw power
+%         PPw:     Range resolution
 %
 % See also: get_apriori
 %
