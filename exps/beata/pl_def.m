@@ -5,10 +5,18 @@ nfft=0; nint=1; ngates=3;
 maxe=2; nup_d=1; skip_if=0;
 vs=d_parbl(57); d_date=datenum(row(d_parbl(1:6)));
 if d_parbl(41)==3, %VHF
- ran=2+ran;
- freq=[4.5 -4.5]*1e6; dt=0.8e-6; invert=-1; fradar=224e6;
- ele=90; updown=0:1; nlag=25;
- startad=(0:1)*27907+32815+1;
+ if vs<2
+  ran=2+ran;
+  freq=[4.5 -4.5]*1e6; dt=0.8e-6; invert=-1; fradar=224e6;
+  ele=90; updown=0:1; nlag=25;
+  startad=(0:1)*27907+32815+1;
+ else
+  ran=[47 221;128 302;209 383;290 464]; ngates=4;
+  freq=[3.6 -3.6]*1e6; dt=0.4e-6; invert=-1; fradar=224e6;
+  ele=90; updown=0:1; nlag=50;
+  startad=(0:1)*82232+83840+1;
+startad=startad(2); updown=0; freq=-3.6e6;
+ end
 elseif d_parbl(41)==8, %ESR-p
  %ran=[42 379;162 499];
  ran=[42 379;200 499]; %Aviod fvalley

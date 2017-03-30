@@ -32,6 +32,7 @@ if strfind(fn,'.bz2')
    if isunix
        % should work on posix-compliant systems: linux, OSX, and even Cygwin
         system(['bunzip2 -c ' fn ' >' local.tfile ext]);
+        %system(['pbzip2 -cd ' fn ' >' local.tfile ext]);
    elseif ispc
          %We run on Windows. adapt this path as needed
         system(['"C:\Program Files\7-Zip\7z.exe" e -so "' fn '" >' local.tfile ext] ); 

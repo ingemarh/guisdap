@@ -186,7 +186,7 @@ elseif isempty(plots)
  height(2)=.03; height(1)=(0.85-(npanel-1)*height(2))/npanel;
  set(gcf,'Position',[200 30 587 807],'renderer','painters','PaperPosition',[0.4 0.7 20.65 28.4],...
  'DefaultAxesFontName','Helvetica','DefaultTextFontName','Helvetica',...
- 'DefaultAxesFontSize',14,'DefaultTextFontSize',14)
+ 'DefaultAxesFontSize',12,'DefaultTextFontSize',12)
 
  for g=1:dgates
   mmmsig=mean(max(max(plsig(g,:,:,:))));
@@ -211,18 +211,18 @@ elseif isempty(plots)
   end
  end
  [h,d]=strtok(d_ExpInfo);
- h=title(sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)));
- set(h,'interpreter','none')
  colormap(vizu('myb'))
  %load(fullfile(path_GUP,'matfiles','logo'))
  %axes('Position',[.07 .92 .08 .06]); plot(y,x,'.k')
  %set(get(gca,'child'),'markersize',1)
  %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
- axes('Position',[.07 .92 .08 .06]); eiscatlogo(1,4.2)
- text('Position',[220 200],'VerticalAlignment','top','FontSize',16,...
+ axes('Position',[.07 .92 .08 .06]); eiscatlogo(1,3.2)
+ text('Position',[11 10],'VerticalAlignment','top','FontSize',16,...
   'HorizontalAlignment','Left','FontWeight','bold',...
   'String','EISCAT Scientific Association');
- text('Position',-[70 1400],'String','Frequency offset [MHz]','Rotation',90,...
+ text('Position',[11 -8],'interpreter','none',...
+  'String',sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)))
+ text('Position',-[15 150],'String','Frequency offset [MHz]','Rotation',90,...
   'VerticalAlignment','middle','HorizontalAlignment','center')
  if ~isempty(printdir)
   if pl_dir(end)==filesep, pl_dir(end)=[]; end
