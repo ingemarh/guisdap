@@ -73,15 +73,27 @@ if isempty(files) & a_integr<=0, EOF=1; return, end
 i=0;
 while i<length(files)
   i=i+1; file=files(i);
-  filename=fullfile(file.dir,sprintf('%08d%s',file.file,file.ext));
   i_averaged=1; i_var1=[]; i_var2=[];
-  q_dir=dir(canon(filename,0));
-  if a_realtime & now-datenum(q_dir.date)<1e-4
-%   Check that the data file is old enough as it might still be being written to!
-    pause(1)
+  if isfield(file,'ext') %.mat files
+    filename=fullfile(file.dir,sprintf('%08d%s',file.file,file.ext));
+    q_dir=dir(canon(filename,0));
+    if a_realtime & now-datenum(q_dir.date)<1e-4
+%     Check that the data file is old enough as it might still be being written to!
+      pause(1)
+    end
+    try, load(canon(filename,0))
+    size(d_data)
+    catch,end
+  else %hdf5 files
+    d_parbl=h5read(file.fname,sprintf('/Data/%08d/Parameters',file.file));
+    d_data=h5read(file.fname,sprintf('/Data/%08d/L2',file.file));
+    d_data=complex(double(d_data.r(:)),double(d_data.i(:)));
+    try
+      d_ExpInfo=['kst0 ' char(h5read(file.fname,'/MetaData/ExperimentName'))];
+      d_raw=h5read(file.fname,sprintf('/Data/%08d/L1',file.file));
+      d_raw=complex(d_raw.r(:),d_raw.i(:));
+    catch,end
   end
-  try, load(canon(filename,0))
-  catch,end
 
   lpb=length(d_parbl);
   if lpb==128

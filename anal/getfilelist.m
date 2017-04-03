@@ -61,6 +61,28 @@ else
     end
     list=[list;l];
   end
+  if isempty(list) % Look for hdf5 files
+    if isempty(dirs)
+      dp=[];
+      dirs=struct('name',fileparts(dirpath));
+    end
+    list=[];
+    for j=dirs'
+      dirlist=dir(fullfile(dp,j.name,'*.hdf5'));
+      for f=dirlist'
+        h5file=fullfile(j.name,f.name);
+        h5d=h5info(h5file);
+        h5d=struct2cell(h5d.Groups(1).Groups);
+        dirlen=length(h5d); h5f=char(h5d(1,:));
+        l=repmat(struct('fname',h5file,'file',0),[dirlen 1]);
+        for i=dirlen:-1:1
+          l(i).file=sscanf(h5f(i,:),'/Data/%08d');
+          if ~isnumeric(l(i).file), l(i)=[]; end
+        end
+        list=[list;l];
+      end
+    end
+  end
   if ~isempty(newer)
     d=find(cell2mat({list.file})>newer.file);
     list=list(d);
@@ -71,5 +93,5 @@ if ~isempty(list)
   global maxlend
   if ~isempty(maxlend) & length(d)>maxlend, list=list(1:maxlend); end
 elseif isempty(newer)
-  msg=[dirpath ' - No valid mat files'];
+  msg=[dirpath ' - No valid mat/hdf5 files'];
 end
