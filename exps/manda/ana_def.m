@@ -7,6 +7,8 @@ if name_site=='V'
   if fix(expver)==4
     a_satch.clutter=250;
     h1=200; d1=.36; first=20; n1=250;
+    analysis_lagprofiling.par=load([path_expr 'manda_va.par]);
+    analysis_lagprofiling.lib='plwin';
   end
 elseif name_site=='T'
   fit_altitude(2:5,1)=[100;130;107;90];

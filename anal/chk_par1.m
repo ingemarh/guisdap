@@ -255,6 +255,10 @@ a_pponly=0;
 if exist('analysis_pponly','var')
  a_pponly=analysis_pponly;
 end
+a_lagprofiling.do=0;
+if exist('analysis_lagprofiling','var')
+ a_lagprofiling=analysis_lagprofiling;
+end
 
 if exist('display_analysis_pars','var')
  empty_pars=[];
