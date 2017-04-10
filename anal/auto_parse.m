@@ -52,7 +52,6 @@ expid=[expid ext];
 [msg,pulse,scan,comment,owner,antenna]=expparts(expid);
 if ~isempty(msg)
 %try for hdf5 files, use the first found
- fullfile(data_path,'*.hdf5'),
  files=dir(fullfile(data_path,'*.hdf5'));
  nf=length(files);
  if ~nf
@@ -61,21 +60,21 @@ if ~isempty(msg)
   for i=1:nf
    file=fullfile(data_path,files(i).name);
    t=datenum(h5read(file,'/MetaData/StartTime'),'yyyy-mm-dd HH:MM:SS');
-   if isempty(t1) || t<t1, t1=t, end
+   if isempty(t1) || t<t1, t1=t; end
    t=datenum(h5read(file,'/MetaData/StopTime'),'yyyy-mm-dd HH:MM:SS');
-   if isempty(t2) || t>t2, t2=t, end
+   if isempty(t2) || t>t2, t2=t; end
   end
   if set_b
    set(b(4),'string',[datestr(t1,'yyyy mm dd') '  00 00 00'])
    set(b(5),'string',datestr(t2,'yyyy mm dd  HH MM SS'))
   end
   t1=datevec(fix(t1)); t2=datevec(t2);
-  name_expr=h5read(file,'/MetaData/DSPexp')
+  name_expr=char(h5read(file,'/MetaData/DSPexp'));
   if set_b, set(b(1),'string',name_expr), end
-  expver=h5read(file,'/MetaData/DSPver')
+  expver=h5read(file,'/MetaData/DSPver');
   if set_b, set(b(11),'value',expver+1), end
-  siteid=strmatch(h5read(file,'/MetaData/Antenna'),{'kir' 'sod' 'uhf' 'vhf' '32m' '42m' '32p' 'esr'}),
-  if set_b, set(b(11),'value',expver+1), end
+  siteid=strmatch(h5read(file,'/MetaData/Antenna'),{'kir' 'sod' 'uhf' 'vhf' '32m' '42m' '32p' 'esr'});
+  if set_b, set(b(11),'value',expver+1); end
   return
  end
 else

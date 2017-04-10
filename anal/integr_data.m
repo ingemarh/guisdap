@@ -83,7 +83,6 @@ while i<length(files)
       pause(1)
     end
     try, load(canon(filename,0))
-    size(d_data)
     catch,end
   else %hdf5 files
     d_parbl=h5read(file.fname,sprintf('/Data/%08d/Parameters',file.file));
