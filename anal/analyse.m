@@ -62,7 +62,7 @@ else
  if ~strcmp(dpath,data_path)
   data_path=dpath;
   [intp,tt1,tt2,sitid,expver]=auto_parse;
-  if tt1, t1=tt1; t2=tt2; end
+  if ~isempty(tt1), t1=tt1; t2=tt2; end
   if ~isempty(intp), intper=intp; end
   if ~isempty(sitid), siteid=sitid; end
  end
