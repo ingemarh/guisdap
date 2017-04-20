@@ -407,7 +407,7 @@ if isempty(vizufig)
  text('Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
       'FontWeight','bold','String','EISCAT Scientific Association');
  %load(fullfile(path_GUP,'matfiles','logo'))
- axes('Position',[.07 .9 .1 .075]); eiscatlogo(1,4.5)
+ axes('Position',[.07 .9 .1 .075]); eiscatlogo(.8,4.5)
  %axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
  %hds(3)=get(gca,'children'); set(hds(3),'markersize',1)
  %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')

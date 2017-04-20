@@ -214,7 +214,7 @@ elseif isempty(plots)
  %axes('Position',[.07 .92 .08 .06]); plot(y,x,'.k')
  %set(get(gca,'child'),'markersize',1)
  %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
- axes('Position',[.07 .92 .08 .06]); eiscatlogo(1,3.2)
+ axes('Position',[.07 .92 .08 .06]); eiscatlogo(.7,3.2)
  text('Position',[11 10],'VerticalAlignment','top','FontSize',16,...
   'HorizontalAlignment','Left','FontWeight','bold',...
   'String','EISCAT Scientific Association');
