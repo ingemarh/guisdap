@@ -7,7 +7,7 @@ if name_site=='V'
   if fix(expver)==4
     a_satch.clutter=250;
     h1=200; d1=.36; first=20; n1=250;
-    analysis_lagprofiling.par=load([path_expr 'manda_va.par]);
+    analysis_lagprofiling.par=load([path_expr 'manda_va.par']);
     analysis_lagprofiling.lib='plwin';
     analysis_lagprofiling.do=0;
   end
@@ -18,7 +18,7 @@ elseif name_site=='T'
   if fix(expver)==4
     a_satch.clutter=250;
     h1=200; d1=.36; first=20; n1=250;
-    analysis_lagprofiling.par=load([path_expr 'manda_va.par]);
+    analysis_lagprofiling.par=load([path_expr 'manda_va.par']);
     analysis_lagprofiling.lib='plwin';
     analysis_lagprofiling.do=0;
   elseif expver>2
