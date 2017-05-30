@@ -57,6 +57,7 @@ while i<length(files)
   i=i+1; file=files(i);
   filename=fullfile(file.dir,file.file);
   i_averaged=1; i_var1=[]; i_var2=[];
+  try
   [d_parbl,d_data]=load_qfile(filename);
 
   lpb=length(d_parbl);
@@ -98,6 +99,10 @@ while i<length(files)
       fprintf('\n')
       dumpOK=0;
     end
+  end
+  catch
+    dumpOK=0;
+    disp(filename)
   end
   if dumpOK & OK
     indfixed=fixed(find(abs(d_parbl(fixed)-prev_parbl(fixed))>allow));
