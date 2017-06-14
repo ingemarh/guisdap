@@ -72,7 +72,7 @@ end
 
 % (5) We check for TYPE -- this would be the string after the last '_'
 
-ant_str=s(K(end)+1:end),
+ant_str=s(K(end)+1:end);
 types={'CP','FI','FR','GE','NO','NI','SW','UK','EI','3P','SP','AA','IPY'};
 [type_msg,type] = check_type(ant_str,types);
 % the last part was not TYPE, but it still could be either

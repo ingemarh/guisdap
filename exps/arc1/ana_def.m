@@ -1,7 +1,6 @@
 % Analysis defaults
 if name_site=='T'
-% a_satch.sigma=4;
-  a_satch.skip=8;
-% a_satch.plot=8;
-% a_satch.repair=-Inf;
+ a_satch.skip=1;
+ a_satch.cut=1;
+ a_satch.clutter=6;
 end
