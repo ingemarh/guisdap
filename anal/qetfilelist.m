@@ -25,7 +25,7 @@ else
       dirlist=dir(fullfile(dp,dirs(j).name,'ch2*.rst'));
     end
     if isempty(dirlist)
-      dirlist=dir(fullfile(dp,dirs(j).name,'1.14-42-00-000_00000*'));
+      dirlist=dir(fullfile(dp,dirs(j).name,'*-00-000_00000*'));
       qraw=1;
     end
     dirlen=length(dirlist);

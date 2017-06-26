@@ -14,7 +14,8 @@ fsiz() {
 	#return `ls -l $1 | awk '{print $5}'`
 }
 mail_it() {
-	mailx -s "Analysis results" -r "GUISDAP <ingemar@eiscat.se>" $* <<!
+#	mailx -s "Analysis results" -r "GUISDAP <ingemar@eiscat.se>" $* <<!
+	mutt -s "Analysis results" -e "my_hdr From: GUISDAP <ingemar@eiscat.se>" $* <<!
 Enclosed you find the requested analysis.
 EISCAT
 !
@@ -190,7 +191,7 @@ do
  fsiz $fil
  if [ $((nsiz+filesize)) -gt $maxsize ] && [ $nsiz -ne 0 ]
  then
-  mail_it $matt $resultpath
+  mail_it $matt -- $resultpath
   sleep 30
   matt=""
   nsiz=0
@@ -198,6 +199,6 @@ do
  matt="$matt -a $fil"
  nsiz=$((nsiz+filesize))
 done
-mail_it $matt $resultpath
+mail_it $matt -- $resultpath
 cd ..
 #rm -rf $rundir
