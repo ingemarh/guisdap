@@ -10,12 +10,17 @@ if d_parbl(41)==3, %VHF
   freq=[4.5 -4.5]*1e6; dt=0.8e-6; invert=-1; fradar=224e6;
   ele=90; updown=0:1; nlag=25;
   startad=(0:1)*27907+32815+1;
- else
+ elseif vs<2.1
   ran=[47 221;128 302;209 383;290 464]; ngates=4;
   freq=[3.6 -3.6]*1e6; dt=0.4e-6; invert=-1; fradar=224e6;
   ele=90; updown=0:1; nlag=50;
   startad=(0:1)*82232+83840+1;
-startad=startad(2); updown=0; freq=-3.6e6;
+  startad=startad(2); updown=0; freq=-3.6e6;
+ else
+  ran=[47 221;128 302;209 383;290 464]; ngates=4;
+  freq=[-3.6 -6]*1e6; dt=0.4e-6; invert=-1; fradar=224e6;
+  nup_d=2; ele=90; updown=0; nlag=50;
+  startad=(0:1)*82232+83840+1;
  end
 elseif d_parbl(41)==8, %ESR-p
  %ran=[42 379;162 499];
