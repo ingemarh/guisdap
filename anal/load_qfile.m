@@ -1,7 +1,10 @@
-function [d_parbl,d_data]=load_qfile(file)
+function [d_parbl,d_data]=load_qfile(file,dat)
 
-if strfind(file,'1.14-42-00-000_000000.')
-  [d_parbl,d_data]=load_qraw(file);
+if strfind(file,'-00-000_000000.')
+  if nargin<2
+    d=dir(file); dat=d.date;
+  end
+  [d_parbl,d_data]=load_qraw(file,datevec(dat));
   return
 end
 
@@ -56,7 +59,7 @@ d_parbl(7)=numofsound*ipp*nsc;
 d_data=[PP;ACF;PSD(:);BACK];
 return
 
-function [d_parbl,d_data]=load_qraw(file)
+function [d_parbl,d_data]=load_qraw(file,d_date)
 
 global a_lagprofiling
 %setup
@@ -95,7 +98,6 @@ ns=floor(Pperprof/tt);
 %parameter block
 d_parbl(64)=Prtperfile;
 d_parbl(41)=9;
-d=dir(file); d_date=datevec(d.date);
 t1=datenum([ones(2,1)*d_date(1:3) t([1 end],[3 2 1])]);
 d_parbl(1:6)=datevec(t1(2,:)-8/24);
 %d_parbl(7)=diff(t1)*86400;
