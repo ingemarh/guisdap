@@ -58,7 +58,7 @@ while i<length(files)
   filename=fullfile(file.dir,file.file);
   i_averaged=1; i_var1=[]; i_var2=[];
   try
-  [d_parbl,d_data]=load_qfile(filename);
+  [d_parbl,d_data]=load_qfile(filename,file.time/86400+8/24);
 
   lpb=length(d_parbl);
   tvec=1:6;            % parameters holding time
