@@ -1,7 +1,12 @@
 function r=minput(Q,D,s)
+persistent in
 if nargin>2
  a=input([Q '? [' row(D') '] '],'s');
 else
+ if isempty(in) && length(D)>1
+  disp('Enter NaN to shortern the vector')
+  in=1;
+ end 
  a=str2num(input([Q '? [ ' sprintf('%g ',D) ']'],'s'));
 end
 if isempty(a)
