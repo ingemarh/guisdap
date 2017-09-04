@@ -47,7 +47,7 @@ local.site=getenv('EISCATSITE');
 local.host=getenv('HOSTNAME');
 local.browser='netscape';
 local.x=prod(get(0,'ScreenSize'))-1;
-local.x=usejava('desktop');
+local.x=~usejava('jvm') || feature('ShowFigureWindows');
 matver=ver('matlab');
 if isempty(matver) || isempty(matver.Name)
  local.matlabversion=4;
