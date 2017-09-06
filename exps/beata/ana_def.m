@@ -30,4 +30,10 @@ elseif name_site=='T' | name_site=='V'
     end
   end
   if local.site=='T', d_saveint.dir='/analysis/integrated/AUTO'; end
+elseif name_site=='P'
+ display_spectra=1;
+ a_satch.do=0;
+ analysis_range=[100:3:400];
+ analysis_overlap=1;
+ analysis_maxwidth=10;
 end
