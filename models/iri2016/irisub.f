@@ -163,6 +163,8 @@ C 2016.04 09/08/16 Replace SDMF2 with model_hmF2 (Shubin)
 C 2016.05 09/22/16 COMMON: NmF2s,NmEs (STORM foF2, foE for profile)
 C 2016.06 10/20/16 IG12_in->R12=f(IG12_in), R12_in->IG12=f(R12_in)
 C 2016.06 10/20/16 F10.7_81_in -> F10.7_365 = F10.7_81_in
+C 2017.01 01/26/17 B1 user input; 0.6<B1<6; B1_user only if B0_user
+C 2017.02 02/23/17 XM3_CCIR for NeQuick; foF2s option for M3000F2in
 C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
@@ -234,6 +236,7 @@ C   40    hmF2 AMTB-model        Shubin-COSMIC model                 t
 C   41    Use COV=F10.7_365      COV=f(IG12) (IRI before Oct 2015)   t
 C   42    Te with PF10.7 dep.	 w/o PF10.7 dependance               t
 C   43    B0 from model          B0 user input                       t
+C   44    B1 from model          B1 user input                       t
 C      ....
 C   50    
 C   ------------------------------------------------------------------
@@ -256,6 +259,7 @@ C    jf(17) =.flase.     OARR(33)=user input for Rz12
 C    jf(25) =.false.     OARR(41)=user input for daily F10.7 index
 C    jf(27) =.false.     OARR(39)=user input for IG12
 C    jf(43) =.false.     OARR(10)=user input for B0
+C    jf(44) =.false.     OARR(87)=user input for B1
 C
 C
 C  OUTPUT:  OUTF(1:20,1:1000)
@@ -301,7 +305,7 @@ C       OARR(27) = MODIFIED DIP LAT.  OARR(28) = Geographic latitude
 C       OARR(29) = sunrise/dec. hours OARR(30) = sunset/dec. hours
 C       OARR(31) = ISEASON (1=spring) OARR(32) = Geographic longitude
 C      #OARR(33) = Rz12               OARR(34) = Covington Index
-C       OARR(35) = B1                 OARR(36) = M(3000)F2
+C      #OARR(35) = B1                 OARR(36) = M(3000)F2
 C      $OARR(37) = TEC/m-2           $OARR(38) = TEC_top/TEC*100.
 C      #OARR(39) = gind (IG12)        OARR(40) = F1 probability 
 C      #OARR(41) = F10.7 daily        OARR(42) = c1 (F1 shape)
@@ -367,7 +371,7 @@ c      CHARACTER FILNAM*53
      &  F1REG,FOF2IN,HMF2IN,URSIF2,LAYVER,RBTT,DREG,rzino,FOF1IN,
      &  HMF1IN,FOEIN,HMEIN,RZIN,sam_doy,F1_OCPRO,F1_L_COND,NODEN,
      &  NOTEM,NOION,TENEOP,OLD79,JF(50),URSIFO,igin,igino,mess,
-     &  dnight,enight,fnight,fstorm_on,estorm_on,B0IN
+     &  dnight,enight,fnight,fstorm_on,estorm_on,B0IN,B1IN
 
       COMMON /CONST/UMR,PI  /const1/humr,dumr   /ARGEXP/ARGMAX
 c     &	 /const2/icalls,montho,nmono,iyearo,idaynro,ursifo,rzino,
@@ -411,7 +415,8 @@ C
 8398    oarr(kind)=-1.
         do 8378 kind=17,32,1
 8378    oarr(kind)=-1.
-        do 8478 kind=34,38,1
+        oarr(34)=-1.
+        do 8478 kind=36,38,1
 8478    oarr(kind)=-1.
         oarr(40)=-1.
         do 8428 kind=42,100,1
@@ -647,6 +652,16 @@ c
                 oarr(10)=-1.
         endif
 c
+c B1 bottomside profile shape ......................................
+c
+      B1IN=(.not.jf(44))
+      if(jf(43)) B1IN=.false.
+       IF(B1IN) then
+                B1_US=OARR(35)
+        else
+                oarr(35)=-1.
+        endif
+c
 C TE-NE MODEL OPTION ..............................................
 C
       TENEOP=(.not.jf(10))
@@ -696,6 +711,7 @@ c          if (itopn.eq.3) write(konsol,9206)
         if(foein) write(konsol,9022) 
         if(HMEIN) write(konsol,9023) 
         if(B0IN) write(konsol,9923) 
+        if(B1IN) write(konsol,9927) 
         if(F1_OCPRO) write(konsol,9024) 
         if(F1_L_COND) write(konsol,9025) 
         if(DREG) then 
@@ -758,6 +774,7 @@ c          if (itopn.eq.3) write(konsol,9206)
 9022    format('Ne, foE/NmE: provided by user.')
 9023    format('Ne, hmE: provided by user.')
 9923    format('Ne, B0: provided by user.')
+9927    format('Ne, B1: provided by user.')
 9024    format('Ne, foF1: probability function used.')
 9025    format('Ne, foF1: L condition cases included.')
 9026    format('Ne, D: IRI1990')
@@ -1178,6 +1195,7 @@ C
                 yfof2 = zfof2 + ttt * (fof2n-zfof2)
                 xm3000= zm3000+ ttt * (xm300n-zm3000)
         endif
+        XM3_CCIR=XM3000
 			
 501     IF(FOF2IN) THEN
           FOF2=AFOF2
@@ -1273,18 +1291,24 @@ C            zmlt=cgm_mlt
              	endif
           	RLAT=XRLAT
           	ENDIF
-		
+          	
+c Computation of hmF2: user input or 3 model options		
+
     	IF(HMF2IN) THEN
         	IF(AHMF2.LT.50.0) THEN
           		XM3000=AHMF2
-          		HMF2=HMF2ED(MAGBR,RSSN,FOF2/FOE,XM3000)
+        		ratf=fof2/foe
+c if jf(36)=false then foF2_storm in hmF2 formula  
+          		if(.not.jf(36)) ratf=fof2s/foe
+          		HMF2=HMF2ED(MAGBR,RSSN,RATF,XM3000)
           	ELSE 
           		HMF2=AHMF2
+c No longer used because NeQuick only with CCIR-M(3000)F2
 c          		XM3000=XM3000HM(MAGBR,RSSN,FOF2/FOE,HMF2)
           	ENDIF
     	ELSE IF(JF(39)) THEN
         	ratf=fof2/foe
-c set jf(36)=false to use foF2_storm in hmF2 formula  
+c if jf(36)=false then foF2_storm in hmF2 formula  
           	if(.not.jf(36)) ratf=fof2s/foe
           	HMF2=HMF2ED(MAGBR,RSSN,RATF,XM3000)
 		ELSE IF(JF(40)) THEN
@@ -1292,7 +1316,8 @@ c AMTB digisonde model
  	      	CALL SHAMDHMF2(RLAT,FLON,ZMONTH,RSSN,HMF2)
         ELSE
 c SHUBIN-COSMIC model
-			CALL model_hmF2(iday,month,hourut,modip,longi,F10781,HMF2)
+			CALL model_hmF2(iday,month,hourut,modip,longi,
+     &				    F10781,HMF2)
 		ENDIF
 
         nmono=nmonth
@@ -1367,12 +1392,13 @@ c          endif
 c NEW-GUL--------------------------------
 
 c
-c NeQuick topside parameters (use CCIR-M3000F2 even if user-hmF2)
+c NeQuick topside parameters 
+C Use CCIR-M3000F2 even if user_hmF2 or user_M(3000)F2
 c
       if (itopn.eq.2) then
          fo2=foF2s
          if(jf(37)) fo2=foF2
-         dNdHmx=-3.467+1.714*log(fo2)+2.02*log(XM3000)
+         dNdHmx=-3.467+1.714*log(fo2)+2.02*log(XM3_CCIR)
          dNdHmx=exp(dNdHmx)*0.01
          B2bot=0.04774*fo2*fo2/dNdHmx
          b2k = 3.22-0.0538*fo2-0.00664*hmF2+0.113*hmF2/B2bot
@@ -1399,6 +1425,10 @@ c
           B0 = B0CNEW/BCOEF
         endif
         if(B0IN) B0=B0_US
+        if(B1IN) B1=B1_US
+        if(B1.gt.6) B1=6.0
+        if(B1.lt.0.6) B1=0.6
+        
 c
 c F1 layer height hmF1, critical frequency foF1, peak density NmF1
 c

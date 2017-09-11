@@ -138,6 +138,7 @@ C 2016.03 07/19/16 XE3_1: change D1F1 to C1                   [I. Galkin]
 C 2016.04 09/08/16 CALION: Version 2.5 C/NOFS correction      [V. Truhlik]
 C 2016.04 09/08/16 NEW: model_hmF2                            [V. Shubin]
 C 2016.05 10/19/16 read_ig_rz: *0.7 for r12_new starting 01/2014
+C 2017.01 02/23/17 SHAB1D: new SCHNEVPDB1 and COMMON/ATB1/ 
 C                  
 c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c IRI functions and subroutines:
@@ -6722,6 +6723,230 @@ C     **********************************************************
       END
 C
 C
+      SUBROUTINE SCHNEVPD (RZ,FLAT,FLON,R,T,L,BN,BE,BV)
+C-------------------------------------------------------------------
+C     WHEN L IS POSITIVE:
+C     COMPUTES SPHERICAL CAP HARMONIC (GEOCENTRIC) FIELD COMPONENTS
+C     HORIZONTAL NORTH BN,HORIZONTAL EAST BE,AND VERTICAL DOWNWARD BV.
+C     WHEN L IS NEGATIVE:
+C     COMPUTES GENERAL FUNCTION BV, ITS HORIZONTAL NORTH DERIVATIVE BN,
+C     AND ITS HORIZONTAL EAST DERIVATIVE BE, ON SPHERICAL CAP SURFACE.
+C     NOTE THAT THESE ARE METRICAL DERIVATIVES, AND BE IS THE
+C     LONGITUDINAL DERIVATIVE DIVIDED BY SIN(COLATITUDE).
+
+C     FLAT,FLON,R ARE GEOCENTRIC SPHERICAL CAP LATITUDE,LONGITUDE,RADIAL
+C     DISTANCE; T IS TIME.
+
+C     L =  0  ON FIRST CALL:  RETURNS SPHERICAL CAP POLE POSITION FLATO,FLONO
+C             AND HALF-ANGLE THETA AS BN,BE, AND BV AFTER INITIALIZATION.
+C             ON SUBSEQUENT CALLS:  ACTS AS L=1.
+C          1  COMPUTES POTENTIAL FIELD COMPONENTS FROM INTERNAL COEFFICIENTS.
+C          2  COMPUTES POTENTIAL FIELD COMPONENTS FROM EXTERNAL COEFFICIENTS.
+C          3  COMPUTES FIELD FROM BOTH INTERNAL AND EXTERNAL COEFFICIENTS.
+C         -1  COMPUTES GENERAL FUNCTION BV AND DERIVATIVES BN WITH RESPECT TO
+C             LATITUDE AND BE WITH RESPECT TO LONGITUDE DIVIDED BY COS(LAT)
+C             (R IS DUMMY VARIABLE IN THIS CASE).
+C     NOTE:   SUBROUTINE IS INITIALIZED DURING FIRST CALL REGARDLESS OF L.
+
+C     SUBPROGRAM USED:  LEGFUN
+
+C	***** PARAMS & COEFFS TRANSFERRED FROM MAIN PROGRAM *****
+
+C	ADAPTED FROM SUBROUTINE SCHNEV OF G.V. HAINES (COMPUTERS & GEOSCIENCES, 
+C      14, 413-447, 1988)
+C-------------------------------------------------------------------
+
+      PARAMETER   (IBO=0,JBO=1,KDIM=6,LDIM=4)                                     
+      DIMENSION   FN(0:KDIM,0:KDIM), CONSTP(0:KDIM,0:KDIM)
+      DIMENSION   CML(KDIM), SML(KDIM)
+      DIMENSION   DELT(0:LDIM)
+      DIMENSION   BINT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
+     *            BEXT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM)
+      COMMON	/CONST/dfarg,PI 
+     * 			/ATB/BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
+     *              LEXT,KMAX,FN
+      CHARACTER*1 IE,RESP
+C
+      DATA ((CONSTP(N,M), M=0,N), N=0,KDIM)
+     *	 /4*1.,1.73205,0.866025,1.,2.44949,1.93649,0.7905691,1.,
+     *	  3.16228,3.35410,2.09165,0.739510,1.,3.87298,5.12348,
+     *	  4.18330,2.21853,0.701561,1.,4.58258,2*7.24569,4.96078,
+     *      2.32681,0.671693/
+
+C     IBF   =  0   TO USE ORDINARY POLYNOMIALS AS BASIS FUNCTIONS
+C              1          LEGENDRE POLYNOMIALS
+C              2          FOURIER SERIES
+C              3          COSINE SERIES
+C              4          SINE SERIES
+C     NOTE:    TZERO AND THINT MAY DEPEND ON IBF.
+      IBF   =  2                                                       
+      T1=1.
+      T2=12.
+      CALL TBFIT (T1,T2,IBF,THINT,TZERO)                                
+
+C      IF (L .NE. 0)  GO TO 100
+C      BN = FLATO
+C      BE = FLONO
+C      BV = THETA
+C      RETURN
+
+  100 IF (L .GE. 0)  THEN
+         IF (IFIT .LT. 0)  GO TO 999
+         AOR = RE/R
+         AR = AOR**2
+         IF (L .GT. 1)  GO TO 107
+      ELSE
+         IF (IFIT .GE. 0)  GO TO 999
+         AR = -1.
+         END IF
+      KT = LINT
+      GO TO 109
+  107 IF (KEXT .GT. 0)  AOR3 = AOR*AR
+      IF (L .GT. 2)  GO TO 108
+      KT = LEXT
+      GO TO 109
+  108 KT = MAX (LINT,LEXT)
+  109 DELT(0) = 1.
+      IF (KT .LE. 0)  GO TO 103
+      DEL = (T - TZERO)/THINT
+      DO 102 I=1,KT
+      IF (I .EQ. 1)  THEN
+         IF (IBF .LE. 1) THEN
+             DELT(I) = DEL
+             ELSE IF (IBF .EQ. 2)  THEN
+             ST = SIN(DEL)
+             DELT(I) = ST
+             ELSE IF (IBF .EQ. 3)  THEN
+             DELT(I) = COS(DEL)
+             ELSE
+             DELT(I) = SIN(DEL)
+             ENDIF
+         GO TO 102
+         ENDIF
+      IF (IBF .EQ. 0)  THEN
+          DELT(I) = DELT(I-1)*DEL
+      ELSE IF (IBF .EQ. 1)  THEN
+          RECIP = 1./FLOAT(I)
+          DELT(I) = (2.-RECIP)*DELT(I-1)*DEL - (1.-RECIP)*DELT(I-2)
+      ELSE IF (IBF .EQ. 2)  THEN
+           IF ((I/2)*2 .EQ. I)  THEN
+             IF (I .EQ. 2)  THEN
+                CT = COS(DEL)
+                DELT(I) = CT
+                ELSE
+                DELT(I) = DELT(I-2)*CT - DELT(I-3)*ST
+                ENDIF
+             ELSE
+             DELT(I) = DELT(I-2)*CT + DELT(I-1)*ST
+             ENDIF
+      ELSE IF (IBF .EQ. 3)  THEN
+          DELT(I) = COS(I*DEL)
+      ELSE IF (IBF .EQ. 4)  THEN
+          DELT(I) = SIN(I*DEL)
+      ELSE
+          GO TO 999
+      ENDIF
+  102 CONTINUE
+      incept = 0                                                              
+      if ((ibf.eq.2 .or. ibf.eq.3) .and. incept .eq. 1)  then
+c     change to intercept form of fourier series.
+          do i=2,lint,4-ibf
+          delt(i) = 1. - delt(i)
+          enddo
+          endif
+  103 X = 0.
+      Y = 0.
+      Z = 0.
+      IF (L .EQ. 2)  GO TO 106
+      IF (KINT .LT. 0)  GO TO 106
+      GTI = 0.
+      DO 105 I=1-IBO-JBO,LINT
+  105 GTI = GTI + BINT(0,0,I)*DELT(I)
+      Z = -AR*GTI
+      N =  0
+  106 COLAT = 90. - FLAT
+      DO 150 N=1,KMAX
+      IF (N .GT. 1)  GO TO 115
+      CL = COS(FLON*dfarg)
+      SL = SIN(FLON*dfarg)
+      CML(1) = CL
+      SML(1) = SL
+      GO TO 120
+  115 SML(N) = SL*CML(N-1) + CL*SML(N-1)
+      CML(N) = CL*CML(N-1) - SL*SML(N-1)
+  120 CONTINUE
+      DO 150 M=0,N
+      IF (IB .EQ. 2)  GO TO 121
+      NMM = N - M
+      IF ((NMM/2)*2 .NE. NMM)  GO TO 150
+  121 FFN = FN(N,M)
+      CALL LEGFUN (M,FFN,CONSTP(N,M),COLAT,P,DP,PMS,0)
+      IF (L .GE. 0)  THEN
+         AR = AOR**(FFN+2.)
+      ELSE
+         AR = 1.
+         FFN = -2.
+         DP = -DP
+         PMS = -PMS
+         END IF
+      IF (M .NE. 0)  GO TO 130
+      BT1 = 0.
+      BT3 = 0.
+      BT  = 0.
+      IF (L .EQ. 2)  GO TO 123
+      IF (N .GT. KINT)  GO TO 123
+      GTI = 0.
+      DO 122 I=1-IBO-JBO,LINT
+  122 GTI  = GTI  + BINT(N,M,I)*DELT(I)
+      BT1  = AR*GTI
+      BT3  = BT1
+  123 IF (L .LE. 1)  GO TO 125
+      IF (N .GT. KEXT)  GO TO 125
+      GTE = 0.
+      DO 124 I=1-IBO-JBO,LEXT
+  124 GTE = GTE + BEXT(N,M,I)*DELT(I)
+      BT  = AOR3/AR*GTE
+      BT1 = BT1 + BT
+  125 X = X + BT1*DP
+      Z = Z - (FFN*(BT3-BT)+BT3)*P
+      GO TO 150
+  130 BT1 = 0.
+      BT2 = 0.
+      BT3 = 0.
+      BT  = 0.
+      IF (L .EQ. 2)  GO TO 133
+      IF (N .GT. KINT)  GO TO 133
+      GTI = 0.
+      HTI = 0.
+      DO 132 I=1-IBO-JBO,LINT
+      GTI = GTI + BINT(N,M,I)*DELT(I)
+  132 HTI = HTI + BINT(M-1,N,I)*DELT(I)
+      BT1 = AR*(GTI*CML(M) + HTI*SML(M))
+      BT2 = AR*(GTI*SML(M) - HTI*CML(M))
+      BT3 = BT1
+  133 IF (L .LE. 1)  GO TO 135
+      IF (N .GT. KEXT)  GO TO 135
+      GTE = 0.
+      HTE = 0.
+      DO 134 I=1-IBO-JBO,LEXT
+      GTE = GTE + BEXT(N,M,I)*DELT(I)
+  134 HTE = HTE + BEXT(M-1,N,I)*DELT(I)
+      RA = AOR3/AR
+      BT = RA*(GTE*CML(M) + HTE*SML(M))
+      BT1 = BT1 + BT
+      BT2 = BT2 + RA*(GTE*SML(M) - HTE*CML(M))
+  135 X = X + BT1*DP
+      Y = Y + BT2*PMS
+      Z = Z - (FFN*(BT3-BT)+BT3)*P
+  150 CONTINUE
+      BN = X
+      BE = Y
+      BV = Z
+      RETURN
+  999 STOP
+      END
+C
+C
       SUBROUTINE  SHAB1D (FLAT,FLON,T,RZ,B)
 C-------------------------------------------------------------------
 C	COMPUTES THE HOURLY VALUES OF B1 FROM A SET OF SH COEFFICIENTS
@@ -6746,7 +6971,7 @@ C
       DIMENSION   BINT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *            BEXT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM)
       CHARACTER*1 IE       
-      COMMON/ATB/BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
+      COMMON/ATB1/BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
      *              LEXT,KMAX,FN
 
 	  DATA ALT /300./
@@ -6872,14 +7097,14 @@ C
 C     **********************************************************
 C     SYNTHESIZES THE VALUE OF B1 FROM THE MODEL	
 C     **********************************************************
-      CALL SCHNEVPD(RZ,FLAT,FLON,dum,T,L,dum,dum,B)
+      CALL SCHNEVPDB1(RZ,FLAT,FLON,dum,T,L,dum,dum,B)
 C
       RETURN
 9999  STOP
       END
 C
 C
-      SUBROUTINE SCHNEVPD (RZ,FLAT,FLON,R,T,L,BN,BE,BV)
+      SUBROUTINE SCHNEVPDB1 (RZ,FLAT,FLON,R,T,L,BN,BE,BV)
 C-------------------------------------------------------------------
 C     WHEN L IS POSITIVE:
 C     COMPUTES SPHERICAL CAP HARMONIC (GEOCENTRIC) FIELD COMPONENTS
@@ -6919,7 +7144,7 @@ C-------------------------------------------------------------------
       DIMENSION   BINT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM),
      *            BEXT(0:KDIM,0:KDIM,1-IBO-JBO:LDIM)
       COMMON	/CONST/dfarg,PI 
-     * 			/ATB/BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
+     * 			/ATB1/BINT,BEXT,RE,TZERO,IFIT,IB,KINT,LINT,KEXT,
      *              LEXT,KMAX,FN
       CHARACTER*1 IE,RESP
 C
@@ -8415,8 +8640,8 @@ c predictions.
 c----------------------------------------------------------------
 
            integer	iyst,iyend,iymst,iupd,iupm,iupy,imst,imend
-           character path*100
            real		aig(806),arz(806)
+           character path*100
            
            common /igrz/aig,arz,iymst,iymend
 
@@ -8599,8 +8824,8 @@ c If date is outside the range of the Ap indices file then IAP(1)=-5
 C-------------------------------------------------------------------------
 C
         INTEGER		aap(23000,9),iiap(8)
-        character path*100
         DIMENSION 	af107(23000,3)
+        character path*100
         COMMON		/apfa/aap,af107,n
 
         call getenv('IRIPATH',path)

@@ -25,7 +25,7 @@ else
   EXF =-fno-second-underscore -fstatic -fmultiple-save
   ALIB=/usr/lib/g95/i586-mandriva-linux-gnu/4.0.4/libf95.a /usr/lib/libc_nonshared.a
  else
-  FC=gfortran
+  FC=gfortran-5
   EXF = -fno-automatic -fno-align-commons
  endif
  FFLAGS =-O2 -fPIC -c $(EXF)
