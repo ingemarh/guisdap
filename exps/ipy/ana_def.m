@@ -9,7 +9,9 @@ d=find(analysis_altit>455); analysis_altit(d(1))=600;
 global spearcount, spearcount='/analysis/results/spearcount';
 if strfind(data_path,'@32p')
  analysis_txpower=8;
- analysis_intfixforce=[NaN NaN NaN 400];
+ if expver<4
+  analysis_intfixforce=[NaN NaN NaN 400];
+ end
  analysis_intfix(5:6)=47:48;
  if name_site=='P'
   display_spectra=1;
