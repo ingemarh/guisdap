@@ -95,7 +95,7 @@ while i<length(files)
     catch,end
   end
   if ~isempty(d_raw) && a_lagprofiling.do
-   lagprofiling()
+   lagprofiler()
   end
 
   lpb=length(d_parbl);
@@ -170,7 +170,7 @@ while i<length(files)
 
   secs=secs1;
   if secs<file.file | file.file-secs>=1 | year~=a_year
-    fprintf('Filename %08d conflicts with time inside file: %d %08d\n',file.file,year,secs)
+    fprintf('Filename %08d conflicts with time inside file: %d %.0f\n',file.file,year,secs)
   end
 
   if isreal(d_data) % change to complex
