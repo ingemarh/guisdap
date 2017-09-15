@@ -15,7 +15,7 @@ disp('You should insert the path to your GUISDAP directory')
 % ---
 %
 % --- modify and uncomment
-% mypath='C:\Users\myuser\mydir\guisdap8';
+% mypath='C:\Users\myuser\mydir\guisdap9';
 % addpath(fullfile(mypath,'anal'))
 % start_GUP
 % analyse
