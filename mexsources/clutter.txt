@@ -1,0 +1,17 @@
+cluttter.c
+Removing clutter. Using fft.
+Layout of parameter file:
+Line	Name		Notes
+0	nr_win		Number of data windows
+1	nr_rep		Total number of subcycles in one integration period
+2	nr_pp		Number of samples per subcycle
+3	nr_clutter	Number of points to de-clutter
+4	notch		Filter width for clutter reduction
+				(actual width: 2*notch+1)
+			If negative: Use value provided through EROS
+5	clutthreads	Number of threads in the calcuclations
+6	debug		If >0: Display debugging messages
+			If >1: Display more debugging messages
+7	do_pp		If non-zero: Calculate power profile
+
+Number of lines: 8

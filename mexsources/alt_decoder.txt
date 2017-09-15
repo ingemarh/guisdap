@@ -1,0 +1,25 @@
+alt_decoder.c
+Decoding and calculating lag profiles. Data vector zero-padded on lower edge of
+range. Can work with fractional lags.
+Layout of parameter file:
+Line	Name		Notes
+0	nbits		Number of bits in the code
+1	nr_ipp		Total number of subcycles in one integration period
+2	vec_len		Number of samples per subcycle
+3	nfract		Number of samples per code bit
+4	nlags		Max lag (in samples)
+5	sub_int		Number of sub-intervals in the sample vector, normally 1
+6	nr_code_sets	Number of different subsets in the code
+If negative:		Calculate slices. One slice contains nr_code_sets
+			subcycles
+≥7			The code, number of lines = nbits*nr_code_sets
+
+Number of lines: 7+nbits*nr_code_sets
+
+Output:
+For fractionality 2: [lag 1, lag 2, lag 3(1), lag 3(2), lag 4, lag 5(1),
+	lag 5(2), lag 6, ... lag nfract(1), lag nfract(2)]
+For fractionality 3: [lag 1, lag 2, lag 3, lag 4(1), lag 4(2), lag 5(1),
+	lag 5(2), lag 6, lag7(1) lag 7(2), lag 8(1), lag 8(2), lag 9, ...
+	lag nfract(1), lag nfract(2)]
+...and so on.
