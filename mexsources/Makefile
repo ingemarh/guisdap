@@ -26,7 +26,7 @@ FC=f95
 else
 #Linux
 CFLAGS=-O3 -fPIC -ansi -march=native -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
-PLFLAGS= -Wall -g -O4 -march=native -shared -fPIC -lfftw3f
+PLFLAGS= -Wall -g -O4 -march=native -shared -fPIC
 
 MEXOPTS=FC=gfortran-5 GCC=gcc-5 -compatibleArrayDims
 CC=gcc-5
@@ -57,7 +57,9 @@ msis:
 	$(MEX) $(MEXOPTS) msis.F $(MSISLIB)
 
 lib:
-	$(CC) plwin.c -o $M/plwin.so $(PLFLAGS)
+	$(CC) plwin.c -o $M/plwin.so $(PLFLAGS) -lfftw3f
+	$(CC) alt_decoder.c -o $M/alt_decoder.so $(PLFLAGS)
+	$(CC) clutter.c -o $M/clutter.so $(PLFLAGS) -lfftw3f
 	cp plwin.h $M
 	$(COMPILE.c) mrqmndiag_worker.c dirthe_worker.c GULIPS_addm_worker.c GULIPS_cov_worker.c GULIPS_invR_worker.c GULIPS_mul_worker.c spec_worker.c transf_worker.c addr_covar_worker.c
 	$(LD) -o $M/libguisdap.so $(LDFLAGS) *.o
