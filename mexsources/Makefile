@@ -74,4 +74,5 @@ mex:
 	$(MEX) $(MEXOPTS) -DANSI_C addr_covar.c $(GUPLIB)
 
 install:
-	mv *.mex* plwin.h ../${MEXD}
+	mv *.mex* ../${MEXD}
+	cp plwin.h ../${MEXD}
