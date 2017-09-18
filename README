@@ -1,13 +1,13 @@
-GUISDAP 8.7
+GUISDAP 9.0
 
 This release of guisdap contains a few new features and bugfixes, but
 everything is made compatible with older versions (hopefully). The package
-should be compatible with Matlab versions higher then 6.5, but there may (or
+should be compatible with not too ancient Matlab versions (>2013), but there may (or
 may not) be some problems on specific platforms.
 
 Install
 
-Guisdap-8.7 has been succesfully installed on linux. Other architectures may
+Guisdap-9.0 has been succesfully installed on linux. Other architectures may
 have to change the makefiles, if speed is desired, othervise it should run
 without the compiled routines.
 On Windows systems it is recommended to run under the cygwin
@@ -17,8 +17,8 @@ systems.
 untar the distribution at your favourite place
 cd into the guisdap directory
 if you want the speed improvements the mex utility provides:
- make "lib" and "mex7" (or "mex6") directories
- cd models/iri2007
+ make "lib" and "mex7" directories
+ cd models/iri2016
  "make" (should be gnu-make)
  cd ../nrlmsise00
  "make"
@@ -46,32 +46,26 @@ initialisation scripts are avaiable with "guisdap -i".
 
 New features
 
-* To get raw density values also using nonzero lag profiles a parameter
-  analysis_ppshortlags have been added. The value is default set to 1 on some
-  experiments, but can be adjusted. The value sets how far out in the lag to go.
-  To separate the different power profiles in the result file, the parameter
-  r_ppw, specifying the range resolution, can be used.
-* For experiments with transmitter samples on UHF and ESR, the phasepushing of
-  the klystrons is calculated and taken into account of. For remote sites and
-  experiments without defined transmitter samples after 1 January 2009 a default
-  value of -21 Hz is used. One can adjust the value manually with the
-  a_phasepush parameter.
-* A summary plot for the plasmalines is added. First one need to integrate the
-  data with guisdap, either via the d_saveint.dir parameter specifying the
-  directory where to save it or 'AUTO', or set the analysis_plasmaline flag for
-  faster handling of the data. The plot is then issued with
-  'plasma_summary directory' command in the matlab window.
-* There are of course numerous hidden improvements and refinements
-  - new magic constants
-  - option to save forward acfs
-  - intro to plasmaline analysis
-  - got back simulation (not fully)
-  - make dirty variances for single dumps
-  - fixes for new vs of matlab and madrigal
-  - fixes for non integer samplings
-  - specifying 32bit ints in library interfaces
-  - updates from IRI
-  - ...
+With version 9 there are provisions for analysing raw voltage data.
+
+* The most common EISCAT dsp routines are included, and on some expeiments
+  there are wrappers to control the lagprofiling processing via the
+  analysis_lagprofiling parameter:
+*   analysis_lagprofiling.par  The control parameter list, normally static
+*   analysis_lagprofiling.data Start address to insert the results
+*   analysis_lagprofiling.raw  Start address for the raw data
+*   analysis_lagprofiling.do   Do or don't lagprofile
+*   analysis_lagprofiling.lib  Dsp routine to use
+*   Some generic names for the wrapping:
+*     analysis_lagprofiling.nsamp No raw samples per scan
+*     analysis_lagprofiling.nrep No repititions
+*     analysis_lagprofiling.nwin No windows (codes)
+*     analysis_lagprofiling.wlen Window length
+*     analysis_lagprofiling.p    [First last] profile to process
+
+Provisions for QuJing radar data
+
+Numerous bugfixings and updates
 
 Further information can be found at www.eiscat.se.
 
