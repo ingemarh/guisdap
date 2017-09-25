@@ -22,7 +22,7 @@ if you want the speed improvements the mex utility provides:
  "make" (should be gnu-make)
  cd ../nrlmsise00
  "make"
- cd ../onera
+ cd ../irbem
  make OS=... ENV=... all
  cd ../../mexsources
  "make"
