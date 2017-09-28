@@ -65,7 +65,7 @@ elseif name_site=='L' | name_site=='P'
   p_RECloc=[78.153 16.029 .438];
   %p_RECloc=[78.15313 16.02875 0.445];
 elseif name_site=='Q'
-  p_RECloc=[103.7151,25.6381,2.0448];
+  p_RECloc=[25.6381,103.7151,2.0448];
   p_XMITloc=p_RECloc;
 end
 
