@@ -142,7 +142,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   %i=i || local.matlabversion>8.3;
   %if ~i, set(hds(2:3),'visible','off'), end
   file=fullfile(dirs,fig);
-  print(vizufig,['-d' ext '2c'],[file '.' ext]);
+  print(vizufig,['-d' ext 'c'],[file '.' ext]);
   if rotate
    set(vizufig,'PaperOrient','portrait','PaperPosition',ppos)
   end

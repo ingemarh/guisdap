@@ -105,7 +105,7 @@ if strcmp(ptype,'p') || np>1
   set(gl,'pos',get(gl,'pos')+[.1 0 0 0])
  end
 end
-print('-deps2c',r)
+print('-depsc',r)
 print('-dpng256',r)
 if strcmp(ptype,'p') || np>1
  for i=1:length(gc)

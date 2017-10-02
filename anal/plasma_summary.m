@@ -227,7 +227,7 @@ elseif isempty(plots)
   if pl_dir=='.', pl_dir=pwd; end
   [dum,fname]=fileparts(pl_dir);
   fname=minput('Print file name (.eps .png)',fullfile(printdir,[fname '_plasmaline']),1);
-  print(gcf,'-deps2c',[fname '.eps'])
+  print(gcf,'-depsc',[fname '.eps'])
   if local.x
    print(gcf,'-dpng',[fname '.png'])
   else

@@ -38,7 +38,7 @@ set(0,'DefaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
 set(0,'DefaultFigurePaperType','A4')
 set(0,'DefaultFigurePaperUnits','centimeters')
 set(0,'DefaultFigureRenderer','painters')
-set(0,'DefaultAxesColor','none')
+%set(0,'DefaultAxesColor','none')
 warning off backtrace
 
 %localities
