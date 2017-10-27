@@ -6,4 +6,4 @@ analysis_Tsys=150;
 %iono_model='gup150';
 analysis_txpower=8;
 f_calTemp=[];
-r0_setup=1e-3; %first range form setup
+r0_setup=1e-3; %first range from setup

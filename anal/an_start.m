@@ -45,6 +45,8 @@ while ~EOF
     analysis_save=0; simulparblock
   else
     if name_site=='Q'
+      global qmeta
+      load(fullfile(path_GUP,'matfiles','q_metadata'))
       [OK,EOF,N_averaged,M_averaged]=integr_qujing;
     elseif a_rawdata
       [OK,EOF]=integr_NW;

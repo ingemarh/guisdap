@@ -37,6 +37,18 @@ if nargin<5, fpar='foF2'; end
 if fpar==1, fpar='FMXF'; end
 if isempty(fpar), fpar='foF2'; end
 
+if strcmp(site3,'quj')
+ ifile=minput('Enter ionosonde monthly foF2 table','KMG',1);
+ fof2table=xlsread(ifile);
+ %assumeing 00:00 01:00 ... 23:00, and local Kunming time (-7h)
+ d=datevec(t1);
+ ti1=datenum([d(1:2) 1 0 0 0]);
+ fof2=fof2table(:);
+ ti=(ti1+(0:length(fof2)-1)'/24)-7/24;
+ d=find(ti>t1-3599/86400 & ti<t2+3599/86400);
+ day=ti(d); fo=[ones(length(d),1)*NaN fof2(d)];
+ return
+end
 of=local.tfile;
 day=[]; fo=[];
 

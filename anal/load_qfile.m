@@ -1,6 +1,6 @@
 function [d_parbl,d_data]=load_qfile(file,dat)
-
-if strfind(file,'-00-000_000000.')
+global qmeta
+if strfind(file,'-000_000000.')
   if nargin<2
     d=dir(file); dat=d.date;
   end
@@ -10,7 +10,7 @@ end
 
 fid=fopen(file,'rb');
 
-ipp=12e-3; nsc=32; %huihui
+nsc=32; %huihui
 
 [p,f,e]=fileparts(file);
 a=sscanf(f,'ch%1d_%4d%2d%2d_%2d%2d%2d');
@@ -31,9 +31,6 @@ deltalag= fread(fid, 1, 'float32', 'ieee-be')*1e-6;
 filesizeofACF= fread(fid, 1, 'int32', 'ieee-be');
 filesizeofPSD= fread(fid, 1, 'int32', 'ieee-be');
 filesizeofPP= fread(fid, 1, 'int32', 'ieee-be');
-if deltalag==15e-6 || deltalag==20e-6
- ipp=8e-3;
-end
 
 %fread(fid, 1024-44, 'int8', 'ieee-be')'
 fseek(fid,1024,'bof');
@@ -54,22 +51,23 @@ fclose(fid);
 d_parbl(64)=numofsound;
 d_parbl(43:54)=[a(1) mode wavegate range0 range1 numofrange length(ACF)/numofrange size(PSD,1) deltalag begin_time];
 d_parbl(41)=9;
-d_parbl(1:6)=datevec(datenum(a(2:7)')-8/24);
+t2=datenum(a(2:7)')-8/24;
+d_parbl(1:6)=datevec(t2);
+[d1,d]=min(abs(mean(qmeta(:,1:2),2)-t2));
+ipp=qmeta(d,6);
 d_parbl(7)=numofsound*ipp*nsc;
 d_data=[PP;ACF;PSD(:);BACK];
 return
 
 function [d_parbl,d_data]=load_qraw(file,d_date)
 
-global a_lagprofiling
+global a_lagprofiling qmeta
 %setup
 Fs=6.25e6;	% sampling freq
-IPP=0.012;
-Pulsewidth=480e-6;	% 16*30us
+%Pulsewidth=480e-6;	% 16*30us
 Prtperfile=512;	% no profiles/file
 Pperprof=32760;	% (32768-8)
 Data_Raw=complex(zeros(Pperprof,Prtperfile));
-tt=Fs*30e-6;
 %d_date=[2015 3 3];
 
 %read data
@@ -92,19 +90,25 @@ for i=1:Prtperfile
 end
 if ftell(fid)~=d.bytes, disp('not at eof'), end
 fclose(fid);
-ns=floor(Pperprof/tt);
-%if ns-174, error('no resampled changed'), end
 
 %parameter block
 d_parbl(64)=Prtperfile;
 d_parbl(41)=9;
 t1=datenum([ones(2,1)*d_date(1:3) t([1 end],[3 2 1])]);
-d_parbl(1:6)=datevec(t1(2,:)-8/24);
+t2=t1(2,:)-8/24;
+d_parbl(1:6)=datevec(t2);
 %d_parbl(7)=diff(t1)*86400;
+[d1,d]=min(abs(mean(qmeta(:,1:2),2)-t2));
+IPP=qmeta(d,6);
 d_parbl(7)=IPP*Prtperfile;
-d_parbl(43)=ns;
+d_parbl(9:10)=qmeta(d,[4 3])';
 
 %resample
+tt=Fs*qmeta(d,7);
+ns=floor(Pperprof/tt);
+d_parbl(41)=9;
+d_parbl(43)=ns;
+d_parbl(46)=qmeta(d,10);
 d_raw_rs=zeros(ns,Prtperfile);
 ii=0;
 for i=1:tt:Pperprof-tt+1
@@ -113,6 +117,5 @@ for i=1:tt:Pperprof-tt+1
 end
 
 %correlate
-%load q16x30.par
 [d_data,upar]=plwin(a_lagprofiling.par,d_parbl,d_raw_rs(:));
 return

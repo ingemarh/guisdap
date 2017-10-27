@@ -25,7 +25,7 @@ else
       dirlist=dir(fullfile(dp,dirs(j).name,'ch2*.rst'));
     end
     if isempty(dirlist)
-      dirlist=dir(fullfile(dp,dirs(j).name,'*-00-000_000000.*'));
+      dirlist=dir(fullfile(dp,dirs(j).name,'*-000_000000.*'));
       qraw=1;
     end
     dirlen=length(dirlist);
@@ -40,12 +40,12 @@ else
       end
       l(i).time=86400*(d-8/24);
     end
-    if qraw && mean(diff(cell2mat({l.time})))<100
+    if qraw && mean(diff(cell2mat({l.time})))<6
       %d_date=datevec(l(1).time/86400);
       %d_date=minput(sprintf('Enter date for %s: ',dirs(j).name),d_date(1:3));
       [a,b]=fileparts(dirs(j).name); d_date=sscanf(b,'%4d_%2d_%2d_%2d-%2d*s')';
       for i=1:dirlen
-        d=gettimestamp(fullfile(l(i).dir,l(i).file),d_date);
+        d=gettimestamp(fullfile(l(i).dir,l(i).file),d_date),
         l(i).time=86400*(d-8/24);
       end
     end
