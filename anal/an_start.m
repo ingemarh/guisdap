@@ -29,7 +29,7 @@ init_graphics
 spektri_init % Loads in plasma dispersion function table
 name_antennas={'32m' '42m' 'vhf' 'uhf' 'kir' 'sod' 'unk' '32p' 'quj'};
 radar_freqs=[500 500 224 930 930 930 NaN 500 500]*1e6;
-radar_gains=10.^[4.25 4.48 4.31 4.81 4.81 4.81 NaN 4.25 4.2];
+radar_gains=10.^[4.25 4.48 4.31 4.81 4.81 4.81 NaN 4.25 4.1];
 radar_effs=[.66 .68 .64 .66 .66 .66 NaN .66 .66];
 if analysis_start(1)>2011
   radar_freqs(5:6)=[224 224]*1e6;
@@ -45,8 +45,6 @@ while ~EOF
     analysis_save=0; simulparblock
   else
     if name_site=='Q'
-      global qmeta
-      load(fullfile(path_GUP,'matfiles','q_metadata'))
       [OK,EOF,N_averaged,M_averaged]=integr_qujing;
     elseif a_rawdata
       [OK,EOF]=integr_NW;

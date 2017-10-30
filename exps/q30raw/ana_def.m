@@ -12,3 +12,4 @@ analysis_lagprofiling.nsamp=analysis_lagprofiling.par(7);
 analysis_lagprofiling.nrep=analysis_lagprofiling.par(6);
 analysis_lagprofiling.p=[0 analysis_lagprofiling.nrep-1]; %start/stop profiles to analyse
 r0_setup=2667e-6;
+analysis_timestamp=[3.6 4.5];

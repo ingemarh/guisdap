@@ -97,10 +97,16 @@ d_parbl(41)=9;
 t1=datenum([ones(2,1)*d_date(1:3) t([1 end],[3 2 1])]);
 t2=t1(2,:)-8/24;
 d_parbl(1:6)=datevec(t2);
-%d_parbl(7)=diff(t1)*86400;
-[d1,d]=min(abs(mean(qmeta(:,1:2),2)-t2));
+%[d1,d]=min(abs(mean(qmeta(:,1:2),2)-t2));
+[d1,d]=min(abs(col(qmeta(:,1:2)')-t2));
+d=floor((d-1)/2)+1;
 IPP=qmeta(d,6);
-d_parbl(7)=IPP*Prtperfile;
+dump1=diff(t1)*86400+IPP;
+dump2=IPP*Prtperfile;
+if dump1>2*dump2
+ fprintf('Warning: %s, integration time mismatch: %.3f %.3f\n',file,dump1,dump2)
+end
+d_parbl(7)=dump2;
 d_parbl(9:10)=qmeta(d,[4 3])';
 
 %resample

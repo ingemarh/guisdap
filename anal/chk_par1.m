@@ -104,6 +104,12 @@ else
   a_ind=0;
  elseif name_site=='Q'
   % The data are binary Quijing files
+  global a_timestamp qmeta
+  a_timestamp=[3.9 6.2];
+  if exist('analysis_timestamp','var')
+   a_timestamp(1:length(analysis_timestamp))=analysis_timestamp;
+  end
+  load(fullfile(path_GUP,'matfiles','q_metadata'))
   [d_filelist,msg]=qetfilelist(data_path);
   if ~isempty(msg)
    error(msg)

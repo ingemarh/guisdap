@@ -1,11 +1,11 @@
 function [list,msg]=qetfilelist(dirpath,newer)
-
 % [list,msg]= qetfilelist(dirpath,newer)
 
 list=[]; msg=''; dirlist=[];
 if nargin<2
  newer=[];
 end
+global a_timestamp
 
 if isempty(dirpath)
   msg='Empty directory path';
@@ -40,13 +40,20 @@ else
       end
       l(i).time=86400*(d-8/24);
     end
-    if qraw && mean(diff(cell2mat({l.time})))<6
-      %d_date=datevec(l(1).time/86400);
-      %d_date=minput(sprintf('Enter date for %s: ',dirs(j).name),d_date(1:3));
-      [a,b]=fileparts(dirs(j).name); d_date=sscanf(b,'%4d_%2d_%2d_%2d-%2d*s')';
-      for i=1:dirlen
-        d=gettimestamp(fullfile(l(i).dir,l(i).file),d_date),
-        l(i).time=86400*(d-8/24);
+    if qraw
+      mdt=median(diff(cell2mat({l.time})));
+      fprintf('Note: Mean timestamp increment is %.1fs, using ',mdt) 
+      if mdt>a_timestamp(1) && mdt<a_timestamp(2)
+        fprintf('quick filemark times\n')
+      else
+        fprintf('slow times in files\n')
+        %d_date=datevec(l(1).time/86400);
+        %d_date=minput(sprintf('Enter date for %s: ',dirs(j).name),d_date(1:3));
+        [a,b]=fileparts(dirs(j).name); d_date=sscanf(b,'%4d_%2d_%2d_%2d-%2d*s')';
+        for i=1:dirlen
+          d=gettimestamp(fullfile(l(i).dir,l(i).file),d_date);
+          l(i).time=86400*(d-8/24);
+        end
       end
     end
     list=[list;l];
