@@ -53,9 +53,11 @@ d_parbl(43:54)=[a(1) mode wavegate range0 range1 numofrange length(ACF)/numofran
 d_parbl(41)=9;
 t2=datenum(a(2:7)')-8/24;
 d_parbl(1:6)=datevec(t2);
-[d1,d]=min(abs(mean(qmeta(:,1:2),2)-t2));
+[d1,d]=min(abs(col(qmeta(:,1:2)')-t2));
+d=floor((d-1)/2)+1;
 ipp=qmeta(d,6);
 d_parbl(7)=numofsound*ipp*nsc;
+d_parbl(9:10)=qmeta(d,[4 3])';
 d_data=[PP;ACF;PSD(:);BACK];
 return
 
@@ -110,7 +112,7 @@ d_parbl(7)=dump2;
 d_parbl(9:10)=qmeta(d,[4 3])';
 
 %resample
-tt=Fs*qmeta(d,7);
+tt=Fs*qmeta(d,7)/a_lagprofiling.par(9);
 ns=floor(Pperprof/tt);
 d_parbl(41)=9;
 d_parbl(43)=ns;
