@@ -132,11 +132,12 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
     if ~isempty(a2), fig=sprintf('%s_%s',fig,a2); end
     fig=sprintf('%s@%s',fig,name_ant);
   end
-  rotate=0; if length(axs)==1, rotate=1; end
+  rotate=0; pngor='580x820'; if length(axs)==1, rotate=1; end
   if [strfind(act,'R') strfind(act,'V')], rotate=1-rotate; end
   if rotate
    ppos=get(vizufig,'PaperPosition');
    set(vizufig,'PaperOrient','landscape','PaperPosition',[0 3 ppos([4 3])-[0 3]])
+   pngor='820x580';
   end
   %[i,j]=unix('which addlogo.sh');
   %i=i || local.matlabversion>8.3;
@@ -161,7 +162,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
     gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
     if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
 %   unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',...
-    unix(sprintf('%s %s -dNOPAUSE -q -sDEVICE=png256 -g580x820 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
+    unix(sprintf('%s %s -dNOPAUSE -q -sDEVICE=png256 -g%s -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,pngor,file,file,ext));
     fprintf('Created %s.%s and .png\n',file,ext)
   end
  elseif strcmpi(act,'print')
