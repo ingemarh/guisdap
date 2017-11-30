@@ -34,5 +34,4 @@ for f=1:length(ch_f)
 end
 name_expr='folke';
 name_site=upper(site);
-apustr='';
 save_PS
