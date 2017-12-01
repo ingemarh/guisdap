@@ -8,7 +8,7 @@ if strfind(data_path,'@32p')
  analysis_plasmaline=1;
  analysis_txpower=8;
 elseif expver==2
- a_satch.clutter=[19 18],
+ a_satch.clutter=[19 18];
  if ~exist('analysis_code','var')
   if siteid==6
    analysis_code=2;

@@ -5,6 +5,7 @@ a_satch.sigma=4;
 a_satch.repair=[Inf];
 a_satch.cut=1;
 analysis_ppshortlags=1;
+analysis_maxwidth=analysis_maxwidth*2.;
 d=find(analysis_altit>555); analysis_altit(d(1))=700;
 if strfind(data_path,'@32p')
  analysis_txpower=8;
