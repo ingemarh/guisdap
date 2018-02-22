@@ -48,7 +48,7 @@ if ishandle(bg)
 end
 
 analysis_start=t1; analysis_end=t2; analysis_integr=intper;
-analysis_txlimit=100e3; analysis_realtime=rt; analysis_rcprog=expver;
+analysis_realtime=rt; analysis_rcprog=expver;
 
 if isunix
  recurse=sprintf('%04d????_??',t1(1));

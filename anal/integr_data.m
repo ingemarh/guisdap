@@ -22,12 +22,12 @@
 %
 % See also: an_start integrate
 % function  [OK,EOF]=integr_data
-function  [OK,EOF,N_averaged,M_averaged]=integr_data(txlim)
+function  [OK,EOF,N_averaged,M_averaged]=integr_data()
  
 global d_parbl d_data d_var1 d_var2 data_path d_filelist d_raw
 global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
-global a_txlim a_realtime a_satch a_txpower
+global a_txlimit a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
 global a_lagprofiling
 persistent a_antold a_max secs a_posold a_nnold fileslist
@@ -179,7 +179,7 @@ while i<length(files)
     d_data=d_data(1:2:lendata)+sqrt(-1)*d_data(2:2:lendata);
   end
 
-  dumpOK=(a_tx>=a_txlim);
+  dumpOK=(a_tx>=a_txlimit);
   if ~dumpOK
     if ~txdown, fprintf('Tx down\n'), txdown=1; end
   elseif ~isempty(a_satch)

@@ -1,7 +1,7 @@
 function anacont(no_gfd)
 % Continue an interrupted (gfd) analysis
 global path_GUP path_exps path_tmp name_expr name_site data_path result_path
-global a_integr a_txlim a_control a_interval a_year a_realtime a_end a_skip a_Magic_const a_NCAR a_code a_save a_ind a_rcprog
+global a_integr a_txlimit a_control a_interval a_year a_realtime a_end a_skip a_Magic_const a_NCAR a_code a_save a_ind a_rcprog
 global a_classic
 global di_figures di_results d_saveint
 
@@ -13,7 +13,7 @@ analysis_end=toYMDHMS(a_year,a_end);
 if analysis_end(2)>12, analysis_end=[a_year 12 31 24 0 0]; end
 analysis_integr=a_integr; analysis_skip=a_skip;
 a_ind=a_ind-1; if a_ind==0, a_ind=length(a_integr); end
-analysis_txlimit=a_txlim; analysis_realtime=a_realtime;
+analysis_txlimit=a_txlimit; analysis_realtime=a_realtime;
 Magic_const=a_Magic_const; NCAR=a_NCAR;
 analysis_code=a_code; analysis_save=a_save;
 analysis_control=a_control; analysis_classic=a_classic;

@@ -22,7 +22,7 @@ if isempty(source)
   else
     source=sprintf('EISCAT dtst {%s %s directory %s; site %s; %s}',t1,t2,data_path,name_site,rr);
   end
-  strategy=sprintf('filter time {%s %s} filter power {min %g kW;}',t1,t2,a_txlim/1000);
+  strategy=sprintf('filter time {%s %s} filter power {min %g kW;}',t1,t2,a_txlimit/1000);
   if length(a_integr)==1
     if a_integr
       strategy=[strategy sprintf(' integrate time {period %d; skip %d;}',a_integr,a_skip)];

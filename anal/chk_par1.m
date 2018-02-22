@@ -77,9 +77,9 @@ else
   a_realtime=0;
  end
  if exist('analysis_txlimit','var')
-  a_txlim=analysis_txlimit;
+  a_txlimit=analysis_txlimit;
  else
-  a_txlim=0;
+  a_txlimit=100e3;
  end
  if exist('analysis_skip','var')
   a_skip=analysis_skip;
