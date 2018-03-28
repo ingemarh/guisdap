@@ -102,7 +102,7 @@ if exist('r_param') && ~isempty(r_param)
                             -520 -550 -570 -720 -mvel];
  % Assemble output vector of codes and values for the multi-valued parameters
  var=real([log10(r_param(:,1))*1e3 r_param(:,2) r_param(:,3)*1e3 log10(r_param(:,4))*1e3 -r_param(:,5)]);
- evar=real([log10(r_error(:,1))*1e3 r_error(:,2) r_error(:,3)*1e3 log10(r_param(:,4))*1e3 r_error(:,5)]);
+ evar=real([log10(r_error(:,1))*1e3 r_error(:,2) r_error(:,3)*1e3 log10(r_error(:,4))*1e3 r_error(:,5)]);
  mvar=var;
  % only output results for fit parameter 0
  d=find(r_status~=0); var(d,:)=BadData; evar(d,:)=BadData;
