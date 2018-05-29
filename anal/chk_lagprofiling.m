@@ -1,4 +1,4 @@
-function lagprofiling()
+function chk_lagprofiling()
 global a_lagprofiling
 i=0;
 for lpf=a_lagprofiling'

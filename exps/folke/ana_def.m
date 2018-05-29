@@ -31,5 +31,8 @@ else
    analysis_code=1:2;
    analysis_txpower=[71 1250]; %4:1 ratio
   end
+  if analysis_start(1)==2008 || analysis_start(2)<6
+   clear analysis_txpower
+  end
  end
 end

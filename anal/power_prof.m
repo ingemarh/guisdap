@@ -52,7 +52,9 @@ if any(ad_lag(addr)>0)
     a1=find(ad_code(addr)==code);
     a1_w=PPw(a1);
     rres=max(1,min(a1_w)); %range resolution given by p_dtau or smallest volume
-    ranges=round(ad_range(addr(a1))/rres)+1e-2*round((a1_w-mean(a1_w))/std(a1_w));
+    a1_wn=unique(round(a1_w/rres));
+    a1_dwn=unique(diff(a1_ww))+1;
+    ranges=round(ad_range(addr(a1))/rres)+1e-3*round(a1_w/rres/a1_dwn(1));
     for range=unique(ranges)
       a2=a1(find(ranges==range));
       if length(a2)>1
