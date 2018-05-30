@@ -22,7 +22,7 @@ function [PPprof,PPrange,PPsigma,PPstd,PPw]=power_prof(addr,Debyecorr)
   
 global ad_range ch_el d_data lpg_womscaled ad_lpg p_om ad_coeff ad_lag ad_code ad_w
 global v_epsilon0 v_Boltzmann v_elemcharge k_radar p_N0 d_var1 d_var2
-global a_control p_ND p_rep p_dtau d_time sysTemp lpg_ND p_m0
+global a_control p_ND p_rep p_dtau d_time sysTemp lpg_ND p_m0 a_ppcombine
  
 if a_control(4)>1
  % do only variances here
@@ -45,15 +45,28 @@ len_eff=max(real(lpg_womscaled(ad_lpg(addr),:))')';
 sigfac=p_N0./(ad_coeff(addr)'.*len_eff);
 sigma=sigfac.*signal_power;
 sigma_std=sigfac.*sqrt(dvar(addr));
-if any(ad_lag(addr)>0)
-  %Reduce no powerpoints but keep different codes apart
+if any(ad_lag(addr)>0) | a_ppcombine
+  if a_ppcombine
+    codes=1;
+  else
+    %Reduce no powerpoints but keep different codes apart
+    codes=unique(ad_code(addr))
+  end
   a3=[];
-  for code=unique(ad_code(addr))
-    a1=find(ad_code(addr)==code);
+  for code=codes
+    if a_ppcombine
+      a1=1:length(addr);
+    else
+      a1=find(ad_code(addr)==code);
+    end
     a1_w=PPw(a1);
     rres=max(1,min(a1_w)); %range resolution given by p_dtau or smallest volume
     a1_wn=unique(round(a1_w/rres));
-    a1_dwn=unique(diff(a1_ww))+1;
+    if length(a1_wn)>1
+      a1_dwn=unique(diff(a1_wn))+1;
+    else
+      a1_dwn=1;
+    end
     ranges=round(ad_range(addr(a1))/rres)+1e-3*round(a1_w/rres/a1_dwn(1));
     for range=unique(ranges)
       a2=a1(find(ranges==range));

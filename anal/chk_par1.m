@@ -261,6 +261,10 @@ a_pponly=0;
 if exist('analysis_pponly','var')
  a_pponly=analysis_pponly;
 end
+a_ppcombine=0;
+if exist('analysis_ppcombine','var')
+ a_ppcombine=analysis_ppcombine;
+end
 a_lagprofiling.do=0;
 if exist('analysis_lagprofiling','var')
  a_lagprofiling=analysis_lagprofiling;

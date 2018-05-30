@@ -21,9 +21,6 @@ else
 end
 if exist('analysis_code','var')
  d_time=toYMDHMS(d_time(1),tosecs(d_time)+[min(analysis_code)-1;max(analysis_code)-nslic]*prep/1e6);
- analysis_ppcombine=0;
-else
- analysis_ppcombine=1;
 end
 ngat=npp-63;
 npr=ngat*16;
