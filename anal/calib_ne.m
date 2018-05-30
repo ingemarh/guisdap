@@ -7,7 +7,7 @@ function mr2=calib_ne(F,alt,maxe,minel,folim,polen,fpplt,ipar)
 %         alt: Altitude range, default 90-140, 180-500 resp.
 %         maxe: Maximum error allowed, default 1 (* std)
 %         minel: Minimum elevation allowed, default 75
-%         folim: Frequency range allowed, default [0 Inf]
+%         folim: Frequency range allowed, default [1 Inf]
 %         polen: Maximum length of polynomial fit, default 7, NaN=no fit
 %         fpplt: Indices to display the parabolic fits of plfs
 %         ipar: Ionosonde data type, 1 for asymptotic fit to crit freq (default)
@@ -29,7 +29,7 @@ if isempty(alt)
 end
 if isempty(maxe), maxe=1; end
 if isempty(minel), minel=75; end
-if isempty(folim), folim=[0 30]; end
+if isempty(folim), folim=[1 30]; end
 if isempty(ipar), ipar=1; end
 if ipar == 1, epar='foE';, fpar='foF2';
 else epar='fmxe';, fpar='fmxf';

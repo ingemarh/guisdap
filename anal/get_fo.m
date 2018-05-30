@@ -26,8 +26,8 @@ if nargin<3, site='tromso'; end
 if findstr(site(1),'TV'), site='tromso'; end
 if site(1)=='L', site='svalbard'; end
 site3=site(1:3);
-if strcmp(site3,'32m') || strcmp(site3,'42m') || strcmp(site3,'esr'), site='svalbard'; end 
-if strcmp(site3,'uhf') || strcmp(site3,'vhf'), site='tromso'; end 
+if strcmp(site3,'32m') | strcmp(site3,'42m') | strcmp(site3,'esr'), site='svalbard'; end 
+if strcmp(site3,'uhf') | strcmp(site3,'vhf'), site='tromso'; end 
 
 if nargin<4, epar='foE'; end
 if epar==1, epar='FMXE'; end
@@ -55,7 +55,7 @@ day=[]; fo=[];
 %get the foF2 file
 %wget=(['wget -O ' of ' %s%s >/dev/null 2>&1']);
 wget=(['LD_LIBRARY_PATH="/usr/lib" wget -O ' of ' %s%s']);
-if t1>datenum(2010,11,22)
+if t1>datenum(1996,02,02)
  www='http://dynserv.eiscat.uit.no/';
  for t=fix(t1):fix(t2)
  tt=datevec(t); 
