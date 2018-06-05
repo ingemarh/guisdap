@@ -1,5 +1,7 @@
 M=	$(PWD)/../lib
 sys=$(shell uname -s)
+GFORT=gfortran-5
+GC=gcc-5
 ifndef MEX
 MEX:=	mex
 endif
@@ -28,8 +30,8 @@ else
 CFLAGS=-O3 -fPIC -ansi -march=native -D_GNU_SOURCE -pthread -DANSI_C -I$(MATLAB)/extern/include
 PLFLAGS= -Wall -g -O4 -march=native -shared -fPIC
 
-MEXOPTS=FC=gfortran GCC=gcc -compatibleArrayDims
-CC=gcc
+MEXOPTS=FC=$(GFORT) GCC=$(GC) -compatibleArrayDims
+CC=$(GC)
 LDFLAGS= -shared
 endif
 

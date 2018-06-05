@@ -1,11 +1,12 @@
-############### PACKAGE INFO #############################
-__version__ = '0.2.0'
 __author__ = 'Mykhaylo Shumko'
-__contact__ = 'msshumko@gmail.com'
-__license__ = """Copyright 2017, Mykhaylo Shumko
+__last_modified__ = '2017-10-05'
+__credit__ = 'IRBEM-LIB development team'
+
+"""
+Copyright 2017, Mykhaylo Shumko
     
-IRBEM wrapper class for Python. Source code credit goes to the 
-IRBEM-LIB development team.
+IRBEM magnetic coordinates and fields wrapper class for Python. Source code
+credit goes to the IRBEM-LIB development team.
 
 ***************************************************************************
 IRBEM-LIB is free software: you can redistribute it and/or modify
@@ -20,6 +21,7 @@ GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with IRBEM-LIB.  If not, see <http://www.gnu.org/licenses/>.
+***************************************************************************
 """
 
 import os, glob, copy
@@ -39,27 +41,7 @@ extModels = ['None', 'MF75', 'TS87', 'TL87', 'T89', 'OPQ77', 'OPD88', 'T96',
     'OM97', 'T01', 'T04', 'A00']
 
 class MagFields:
-    """
-    Copyright 2017, Mykhaylo Shumko
-    
-    IRBEM magnetic coordinates and fields wrapper class for Python. Source code
-    credit goes to the IRBEM-LIB development team.
-
-    ***************************************************************************
-    IRBEM-LIB is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-    
-    IRBEM-LIB is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with IRBEM-LIB.  If not, see <http://www.gnu.org/licenses/>.
-    ***************************************************************************
-    
+    """  
     USE
     When initializing the instance, you can provide the directory 
     'IRBEMdir' and 'IRBEMname' arguments to the class to specify the location 
@@ -114,10 +96,6 @@ class MagFields:
             assert len(fullPaths) == 1, 'Either none or multiple .so files '+\
             'found in the sources folder!'
             self.compiledIRBEMname = os.path.basename(fullPaths[0])
-            
-        self.__author__ = 'Mykhaylo Shumko'
-        self.__last_modified__ = '2017-01-12'
-        self.__credit__ = 'IRBEM-LIB development team'
         
         # Open the shared object file.
         try:
@@ -383,9 +361,9 @@ class MagFields:
                 ctypes.byref(hemi_flag), ctypes.byref(self.maginput), \
                 ctypes.byref(XFOOT), ctypes.byref(BFOOT), \
                 ctypes.byref(BFOOTMAG))
-        self.foot_point_output = {'XFOOT':XFOOT[:], 'BFOOT':BFOOT[:], \
+        self.find_foot_point_output = {'XFOOT':XFOOT[:], 'BFOOT':BFOOT[:], \
         'BFOOTMAG':BFOOTMAG[:]}
-        return self.foot_point_output
+        return self.find_foot_point_output
         
     def trace_field_line(self, X, maginput, R0 = 1):
         """
@@ -493,6 +471,7 @@ class MagFields:
                (unphysical, but may be useful in certain applications).
                interpNum is the number of samples to take along the field line.
                Default is 100000, a good balance between speed and accuracy.
+               alpha is the local pitch angle
         AUTHOR: Mykhaylo Shumko
         RETURNS: Bounce period value or values, depending if E is an array or
                 a single value.
@@ -500,11 +479,12 @@ class MagFields:
         """
         Erest = kwargs.get('Erest', 511)
         R0 = kwargs.get('R0', 1)
+        alpha = kwargs.get('alpha', 90)
         interpNum = kwargs.get('interpNum', 100000)
         
         if self.TMI: print('IRBEM: Calculating bounce periods')
         
-        fLine = self._interpolate_field_line(X, maginput, R0 = R0)
+        fLine = self._interpolate_field_line(X, maginput, R0=R0, alpha=alpha)
                                              
         # If the mirror point is below the ground, Scipy will error, try 
         # to change the R0 parameter...
@@ -530,14 +510,14 @@ class MagFields:
         dy = np.convolve(fLine['fy'](sInterp), [-1,1], mode = 'same')
         dz = np.convolve(fLine['fz'](sInterp), [-1,1], mode = 'same')
         ds = 6.371E6*np.sqrt(dx**2 + dy**2 + dz**2)
-        dB = fLine['fB'](sInterp) + fLine['inputB']
+        dB = fLine['fB'](sInterp) + fLine['mirrorB']
         
         # This is basically an integral of ds/v||.
-        if type(E) is np.ndarray or type(E) is list:
-            self.Tb = [2*np.sum(np.divide(ds[1:-1], vparalel(Ei, fLine['inputB'], dB, 
+        if isinstance(E, (np.ndarray, list)):
+            self.Tb = [2*np.sum(np.divide(ds[1:-1], vparalel(Ei, fLine['mirrorB'], dB, 
                                               Erest = Erest)[1:-1])) for Ei in E]
         else:
-            self.Tb = 2*np.sum(np.divide(ds[1:-1], vparalel(E, fLine['inputB'], dB, 
+            self.Tb = 2*np.sum(np.divide(ds[1:-1], vparalel(E, fLine['mirrorB'], dB, 
                                              Erest = Erest)[1:-1]))
         return self.Tb
         
@@ -563,8 +543,7 @@ class MagFields:
         
         if self.TMI: print('IRBEM: Calculating mirror point altitude')
             
-        fLine = self._interpolate_field_line(X, maginput, R0 = R0, 
-                                             verbose = verbose)
+        fLine = self._interpolate_field_line(X, maginput, R0=R0)
                                              
         # If the mirror point is below the ground, Scipy will error, try 
         # to change the R0 parameter...
@@ -687,16 +666,18 @@ class MagFields:
 
         return self.maginput  
         
-    def _interpolate_field_line(self, X, maginput, R0 = 1):
+    def _interpolate_field_line(self, X, maginput, R0 = 1, alpha = 90):
         """
         NAME:  _interpolate_field_line(self, X, maginput)
         USE:   This function cubic spline interpolates a magnetic field line 
                that crosses the input location down to a radius, R0 from Earth 
-               center. R0 = 1 (Earth's surface) by default.
-               
-        INPUT: A dictionary, X containing the time and sampling location. 
+               center.               
+        INPUT: A dictionary, X containing the time and and location. 
                Input keys must be 'dateTime', 'x1', 'x2', 'x3'. maginput
-               dictionary provides model parameters.
+               dictionary contains model parameters.
+               Optionally, R0 = 1 (Earth's surface) can be changed.
+               alpha = 90 is the local pitch angle (for bounce period 
+               calculation).
         AUTHOR: Mykhaylo Shumko
         RETURNS: Interpolate objects of the B field, B field path coordinate S,
                  X, Y, Z GEO coordinates, and B field at input location.
@@ -719,37 +700,19 @@ class MagFields:
         S = range(len(out['blocal'][:out['Nposit']]))
         
         # Interpolate the magnetic field, as well as GEO coordinates.
-        fB = scipy.interpolate.interp1d(S, \
-        np.subtract(out['blocal'][:out['Nposit']], inputblocal), kind = 'cubic')
+        fB = scipy.interpolate.interp1d(S, 
+            np.subtract(out['blocal'][:out['Nposit']], inputblocal/np.sin(
+            np.deg2rad(alpha))**2), kind = 'cubic')
         fx = scipy.interpolate.interp1d(S, xGEO, kind = 'cubic')
         fy = scipy.interpolate.interp1d(S, yGEO, kind = 'cubic')
         fz = scipy.interpolate.interp1d(S, zGEO, kind = 'cubic')
         if self.TMI: print('Done interpolating magnetic field line.')
-        return {'S':S, 'fB':fB, 'fx':fx, 'fy':fy, 'fz':fz, 'inputB':inputblocal}
+        return {'S':S, 'fB':fB, 'fx':fx, 'fy':fy, 'fz':fz, 
+            'mirrorB':inputblocal/np.sin(np.deg2rad(alpha))**2}
         
         
 class Coords:
     """
-    Copyright 2017, Mykhaylo Shumko
-    
-    IRBEM geographic coordinate transform wrapper class for Python. Source code
-    credit goes to the IRBEM-LIB development team.
-
-    ***************************************************************************
-    IRBEM-LIB is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-    
-    IRBEM-LIB is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with IRBEM-LIB.  If not, see <http://www.gnu.org/licenses/>.
-    ***************************************************************************
-    
     USE
     When initializing the instance, you can provide the directory 
     'IRBEMdir' and 'IRBEMname' arguments to the class to specify the location 
@@ -813,7 +776,7 @@ class Coords:
         USE:   This function transforms coordinate systems from a point at time
                time and position pos from a coordinate system sysaxesIn to 
                sysaxesOut.
-        INPUT:  time - Either datetime object or ISO formatted time string 
+        INPUT:  time - datetime.datetime objects
                        (or arrays/lists containing them)
                 pos - A (nT x 3) array where nT is the number of points to transform.
                 
@@ -835,7 +798,7 @@ class Coords:
         RETURNS: Transformed positions as a 1d or 2d array.
         MOD:     2017-07-17
         """
-        # Create the position arrays
+        # Create the position arrays        
         if hasattr(time, '__len__'):
             pos = np.array(pos)
             pos = pos.reshape((len(time), 3))
@@ -958,3 +921,27 @@ These functions should be used with caution in your own applications!
 beta = lambda Ek, Erest = 511: np.sqrt(1-((Ek/Erest)+1)**(-2)) # Ek,a dErest must be in keV
 gamma = lambda Ek, Erest = 511:np.sqrt(1-beta(Ek, Erest = 511)**2)**(-1/2)
 vparalel = lambda Ek, Bm, B, Erest = 511:c*beta(Ek, Erest)*np.sqrt(1 - np.abs(B/Bm))
+
+############### PACKAGE INFO #############################
+__version__ = '0.2.0'
+__author__ = 'Mykhaylo Shumko'
+__contact__ = 'msshumko@gmail.com'
+__license__ = """Copyright 2017, Mykhaylo Shumko
+    
+IRBEM wrapper class for Python. Source code credit goes to the 
+IRBEM-LIB development team.
+
+***************************************************************************
+IRBEM-LIB is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+IRBEM-LIB is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with IRBEM-LIB.  If not, see <http://www.gnu.org/licenses/>.
+"""

@@ -103,6 +103,7 @@ fi
 
 MATLABPATH=$my$mex$GUP/anal$init
 IRIPATH=$GUP/models/iri2016
+TS07_DATA_PATH=$GUP/models/irbem-code/TS07D
 
 sys=`uname -s`
 case $sys in
@@ -128,5 +129,5 @@ if [ -d $GUP/NW/lib ]; then
 fi
 
 #echo "$matlab $mflags $tail"
-export TMP MATLABPATH IRIPATH PATH LD_LIBRARY_PATH SHELL TZ
+export TMP MATLABPATH IRIPATH TS07_DATA_PATH PATH LD_LIBRARY_PATH SHELL TZ
 $matlab $mflags $tail
