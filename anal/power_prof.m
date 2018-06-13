@@ -46,11 +46,12 @@ sigfac=p_N0./(ad_coeff(addr)'.*len_eff);
 sigma=sigfac.*signal_power;
 sigma_std=sigfac.*sqrt(dvar(addr));
 if any(ad_lag(addr)>0) | a_ppcombine
+  %Reduce no powerpoints
   if a_ppcombine
     codes=1;
   else
-    %Reduce no powerpoints but keep different codes apart
-    codes=unique(ad_code(addr))
+    %Keep different codes apart
+    codes=unique(ad_code(addr));
   end
   a3=[];
   for code=codes

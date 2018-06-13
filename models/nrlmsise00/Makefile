@@ -1,6 +1,7 @@
 L=	../../lib/
 MLIST=	nrlmsise00.f
 N=	libmsis
+GFORT=	gfortran-5
 
 A=	.a
 S=	.so
@@ -23,7 +24,7 @@ FC=g77
 FFLAGS = -O3 -fPIC -c -static -finit-local-zero
 else
 FFLAGS = -O3 -fPIC -c -fno-automatic
-FC=gfortran
+FC=$(GFORT)
 endif
 LDFLAGS= -shared
 endif

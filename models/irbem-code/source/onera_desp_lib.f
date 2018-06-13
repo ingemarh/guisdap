@@ -153,7 +153,7 @@ C
       k_ext = ext_field_select ( kext )
 c
       CALL INITIZE
-      if (k_ext .eq. 13) then !TS07D tail par init, only need it once
+      if (k_ext .eq. 13 .or. k_ext .eq. 14) then !TS07D tail par init, only need it once
           call INIT_TS07D_TLPR
       end if
 
@@ -178,7 +178,7 @@ c
 
           call set_magfield_inputs ( k_ext, maginput(1,isat), ifail )
 
-        if (k_ext .eq. 13) then !TS07D coeff init
+        if (k_ext .eq. 13 .or. k_ext .eq. 14) then !TS07D coeff init
             call INIT_TS07D_COEFFS(iyearsat(isat),idoy(isat),
      &      ut(isat),ifail)
         end if
@@ -297,7 +297,7 @@ C
       k_ext = ext_field_select ( kext )
 c
         CALL INITIZE
-        if (k_ext .eq. 13) then !TS07D tail par init, only need it once
+        if (k_ext .eq. 13 .or. k_ext .eq. 14) then !TS07D tail par init, only need it once
             call INIT_TS07D_TLPR
         end if
 
@@ -311,7 +311,7 @@ c
 
         call set_magfield_inputs ( k_ext, maginput(1,isat), ifail )
 
-       if (k_ext .eq. 13) then 
+       if (k_ext .eq. 13 .or. k_ext .eq. 14) then 
             call INIT_TS07D_COEFFS(iyearsat(isat),idoy(isat),
      &      ut(isat),ifail)
        end if
@@ -505,7 +505,7 @@ c
 
       call set_magfield_inputs ( k_ext, maginput, ifail )
 
-        if (k_ext .eq. 13) then
+        if (k_ext .eq. 13 .or. k_ext .eq. 14) then
             call INIT_TS07D_TLPR
             call INIT_TS07D_COEFFS(iyearsat,idoy,ut,ifail)
        end if
@@ -638,7 +638,7 @@ c
      6    alti, lati, longi, xGEO )
 
       call set_magfield_inputs ( k_ext, maginput, ifail )
-        if (k_ext .eq. 13) then
+        if (k_ext .eq. 13 .or. k_ext .eq. 14) then
             call INIT_TS07D_TLPR
             call INIT_TS07D_COEFFS(iyearsat,idoy,ut,ifail)
         end if
@@ -729,7 +729,7 @@ c
 
       call set_magfield_inputs ( k_ext, maginput, ifail )
 
-      if (k_ext .eq. 13) then
+      if (k_ext .eq. 13 .or. k_ext .eq. 14) then
         call INIT_TS07D_TLPR
         call INIT_TS07D_COEFFS(iyearsat,idoy,ut,ifail)
       end if
@@ -787,7 +787,8 @@ c Declare internal variables
       INTEGER*4    isat,iyear,Iint,ifail
       REAL*8     xMAG(3)
       real*8     alti,lati,longi
-      real*8     BxGEO(3),xGeop(3)
+      real*8     BxGEO(3),xGeop(3,25),myalpha(25)
+      real*8     MyBmir(25)
 c
 c Declare output variables
         REAL*8     BLOCAL,xGEO(3),BMIR
@@ -807,7 +808,7 @@ c
 
       call set_magfield_inputs ( k_ext, maginput, ifail )
 
-        if (k_ext .eq. 13) then
+        if (k_ext .eq. 13 .or. k_ext .eq. 14) then
             call INIT_TS07D_TLPR
             call INIT_TS07D_COEFFS(iyearsat,idoy,ut,ifail)
         end if
@@ -837,11 +838,13 @@ c          CALL CHAMP(Iint,xGEO,BxGEO,Blocal,Ifail) ! Iint is superfluous
         RETURN
       endif
 c
-        CALL find_bm_nalpha(xGeo,1,alpha
-     &     ,BLOCAL,BMIR,xGEOp)
-        xGEO(1)=xGeop(1)
-        xGEO(2)=xGeop(2)
-        xGEO(3)=xGeop(3)
+       myalpha(1)=alpha
+        CALL find_bm_nalpha(xGeo,1,myalpha
+     &     ,BLOCAL,myBMIR,xGEOp)
+        xGEO(1)=xGeop(1,1)
+        xGEO(2)=xGeop(2,1)
+        xGEO(3)=xGeop(3,1)
+        Bmir=MyBmir(1)
       END
 
 
@@ -909,7 +912,7 @@ c
 
       call set_magfield_inputs ( k_ext, maginput, ifail )
 
-        if (k_ext .eq. 13) then
+        if (k_ext .eq. 13 .or. k_ext .eq. 14) then
             call INIT_TS07D_TLPR
             call INIT_TS07D_COEFFS(iyearsat,idoy,ut,ifail)
         end if
@@ -978,6 +981,7 @@ C
       kint = int_field_select ( options(5) )
       k_ext = ext_field_select ( kext )
 c
+
       CALL INITIZE
 
       call init_fields ( kint, iyearsat, idoy, ut, options(2) )
@@ -987,7 +991,7 @@ c
 
       call set_magfield_inputs ( k_ext, maginput, ifail )
 
-        if (k_ext .eq. 13) then !special script to read files and
+        if (k_ext .eq. 13 .or. k_ext .eq. 14) then !special script to read files and
             call INIT_TS07D_TLPR
             call INIT_TS07D_COEFFS(iyearsat,idoy,ut,ifail)
         end if
@@ -1362,7 +1366,7 @@ c
              lati=xIN2
              longi=xIN3
              CALL RLL_GDZ(xMAG(1),lati,longi,alti)
-               CALL GDZ_GEO(lati,longi,alti,xGEO(1),xGEO(2),xGEO(3))
+             CALL GDZ_GEO(lati,longi,alti,xGEO(1),xGEO(2),xGEO(3))
          endif
 
          return
@@ -1619,7 +1623,7 @@ c Input for Alexeev 2000
            return
         endif
 
-        if (kext .eq. 13) then
+        if (kext .eq. 13 .or. kext .eq. 14) then
 c            if (maginput(5).eq.baddata) return
 c            Pdyn_nPa=maginput(5)
 c           no need for solar-wind inputs anymore
@@ -1628,15 +1632,16 @@ c           they are read directly from the coefficient files
             return
         endif
 
-        if (kext .eq. 14) then
+c not sure why this is here, it's not implemented in other places
+c        if (kext .eq. 14) then
 c Input for Mead-Tsyganenko
-           if (maginput(1).eq.baddata) return
-             fkp=maginput(1)*1.d0/10.d0
-             if (maginput(1).lt.0.d0 .or.
-     &         maginput(1).gt.90.d0) return
-           ifail = 0
-           return
-        endif
+c           if (maginput(1).eq.baddata) return
+c             fkp=maginput(1)*1.d0/10.d0
+c             if (maginput(1).lt.0.d0 .or.
+c     &         maginput(1).gt.90.d0) return
+c           ifail = 0
+c           return
+c        endif
        print *, ' invalid kext'
 
        return
@@ -3042,7 +3047,7 @@ c
 
       call set_magfield_inputs ( k_ext, maginput, ifail )
 
-        if (k_ext .eq. 13) then !special script to read files and
+        if (k_ext .eq. 13 .or. k_ext .eq. 14) then !special script to read files and
             call INIT_TS07D_TLPR
             call INIT_TS07D_COEFFS(iyearsat,idoy,ut,ifail)
         end if
