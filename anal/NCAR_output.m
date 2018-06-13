@@ -119,7 +119,7 @@ if exist('r_param') && ~isempty(r_param)
  NCAR_write(NCAR_fid,KINDAT,prol,spar,mvarcod,mvar,AbsentData,BadData)
 end
 
-if strfind('TVLQ',name_site) && exist('r_pp') && ~isempty(r_pp)
+if strfind('TVLQ',name_site) & exist('r_pp') & ~isempty(r_pp)
 %power profiles
  mvarcod=[120 121 505];
  var=real(log10(r_pp(:,1))*1e3);

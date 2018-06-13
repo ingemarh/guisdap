@@ -200,7 +200,7 @@ if ~isempty(p)
    lat=Vpos(d,1);
    tt='LT';
   else
-   addpath(fullfile(path_GUP,'models','onera','matlab'))
+   addpath(fullfile(path_GUP,'models','irbem-code','matlab'))
    try
     [Lm,Lstar,Blocal,Bmin,J,MLT]=onera_desp_lib_make_lstar([],[],'rll',vd',1+Vpos(d,3)/6378.135,Vpos(d,1),Vpos(d,2));
     ilat=acos(sqrt(1../abs(Lm)))/degrad;

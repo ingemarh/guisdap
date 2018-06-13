@@ -104,6 +104,7 @@ fi
 MATLABPATH=$my$mex$GUP/anal$init
 IRIPATH=$GUP/models/iri2016
 TS07_DATA_PATH=$GUP/models/irbem-code/TS07D
+IRBEM_LIB_DLL=$GUP/lib/matlab/onera_desp_lib.so
 
 sys=`uname -s`
 case $sys in
@@ -119,7 +120,7 @@ case $sys in
 		;;
 	Linux)
 		export HISTSIZE=0
-		LD_LIBRARY_PATH=$GUP/lib:/opt/madrigal/lib
+		LD_LIBRARY_PATH=$GUP/lib:/opt/madrigal/lib:/lib/x86_64-linux-gnu
 		PATH=$PATH:$GUP/bin
 		unset `env | grep UTF | awk -F = '{ print $1 }'`
 		;;
@@ -129,5 +130,5 @@ if [ -d $GUP/NW/lib ]; then
 fi
 
 #echo "$matlab $mflags $tail"
-export TMP MATLABPATH IRIPATH TS07_DATA_PATH PATH LD_LIBRARY_PATH SHELL TZ
+export TMP MATLABPATH IRIPATH TS07_DATA_PATH PATH LD_LIBRARY_PATH SHELL TZ IRBEM_LIB_DLL
 $matlab $mflags $tail

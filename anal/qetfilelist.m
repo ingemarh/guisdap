@@ -20,9 +20,9 @@ else
   end
   for j=1:length(dirs)
     qraw=0;
-    dirlist=dir(fullfile(dp,dirs(j).name,'ch3*.bin'));
+    dirlist=dir(fullfile(dp,dirs(j).name,'ch*.bin'));
     if isempty(dirlist)
-      dirlist=dir(fullfile(dp,dirs(j).name,'ch2*.rst'));
+      dirlist=dir(fullfile(dp,dirs(j).name,'ch*.rst'));
     end
     if isempty(dirlist)
       dirlist=dir(fullfile(dp,dirs(j).name,'*-000_000000.*'));

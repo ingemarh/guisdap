@@ -55,8 +55,9 @@ if exist('geomag')~=3
 end
 if isfinite(ld(1))
  ILAT=0;
- if max(ld)>90
-  addpath(fullfile(path_GUP,'models','onera','matlab'),'-end')
+ if ~isreal(ld) || max(ld)>90
+  ld=abs(ld),
+  addpath(fullfile(path_GUP,'models','irbem-code','matlab'),'-end')
   try
    onera_desp_lib_load
    ILAT=1;

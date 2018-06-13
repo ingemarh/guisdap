@@ -102,7 +102,7 @@ if strcmp(ptype,'p') || np>1
  end
  if strcmp(ptype,'p')
   gl=findobj(gcf,'visible','off','xlim',[0 202]);
-  set(gl,'pos',get(gl,'pos')+[.1 0 0 0])
+  if ~isempty(gl), set(gl,'pos',get(gl,'pos')+[.1 0 0 0]), end
  end
 end
 print('-depsc',r)
