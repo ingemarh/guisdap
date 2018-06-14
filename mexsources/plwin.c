@@ -589,9 +589,10 @@ void *plwin_clutter(struct pth *pth)
 	return NULL;
 }
 
-void matface(int *nbits,int *par,int *fbits,float *fpar,int *nin,double *in_r,double *in_i,
+void matface(int *par,int *nin,double *in_r,double *in_i,
 	int *nout, double *out_r, double *out_i, double *upar) {
-	ulong nb=*nbits,fb=*fbits;
+	ulong nb=par[0]+par[4]*par[7];
+	float *fpar=NULL;
 	int i;
 	DSPCMPLXSHORT *in;
 	DSPCMPLX *out;
@@ -601,7 +602,7 @@ void matface(int *nbits,int *par,int *fbits,float *fpar,int *nin,double *in_r,do
 		in[i].im=in_i[i];
 	}
 	out=(DSPCMPLX *)malloc(*nout*sizeof(DSPCMPLX));
-	decoder_6(nb,par,fb,fpar,in,out,upar);
+	decoder_6(nb,par,0,fpar,in,out,upar);
 	for(i=0;i<*nout;i++) {
 		out_r[i]=out[i].re;
 		out_i[i]=out[i].im;
