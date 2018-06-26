@@ -46,12 +46,18 @@ baudlen=[20 20 50 50 80 80 80 100 100 100 200 200 200 300 300 480 480 ...
 	 7.5 7.5 15 15]'*1e-6;
 n(:,6:8)=[ipplist(n(:,5)) baudlen(n(:,5)) n(:,6)];
 %r0, need also rend ?
+j2=1;
+if sn(2)>8, j2=2; end
 for i=1:sn(1)
- for j=1:2
+ for j=1:j2
   n(i,8+j)=sscanf(strtok(char(t(i,7+j)),'-'),'%g');
  end
 end
-n(:,10)=round(n(:,10)/.15)*1e-6;
+if sn(2)>8
+ n(:,10)=round(n(:,10)/.15)*1e-6;
+else
+ n(:,9:10)=NaN;
+end
 
 if find(isnan(n))
  warning(['Some fields not converted in ' q_xls_file])

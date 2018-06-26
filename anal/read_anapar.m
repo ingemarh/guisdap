@@ -20,3 +20,9 @@ end
 if exist([path_expr 'ana_def.m'])==2
   run([path_expr 'ana_def'])
 end
+if name_site=='Q'
+ f_ch_Pt=2e6;
+ analysis_Tsys=100;
+ analysis_txpower=8;
+ f_calTemp=[];
+end

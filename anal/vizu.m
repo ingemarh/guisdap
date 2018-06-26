@@ -282,9 +282,6 @@ if strcmp(lower(act),'update') && ~isempty(OLD_WHICH)
  WHICH_PARAM=OLD_WHICH;
 end
 OLD_WHICH=WHICH_PARAM;
-if isempty(MESSAGE1)
- MESSAGE1=minput('Type of experiment','CP',1);
-end
 nameant=lower(name_ant(1:3));
 if strcmp(nameant,'32m') || strcmp(nameant,'42m') || strcmp(nameant,'esr')
  FIGURE_TITLE='EISCAT SVALBARD RADAR';
@@ -300,6 +297,9 @@ elseif strcmp(nameant,'quj')
  FIGURE_TITLE='QUJING RADAR';
  fradar=500e6;
  stretchSecs=200;
+end
+if ~strcmp(nameant,'quj') && isempty(MESSAGE1)
+ MESSAGE1=minput('Type of experiment','CP',1);
 end
 S=size(par2D,2);
 s=1:S;
@@ -405,13 +405,15 @@ if isempty(vizufig)
       'Color',[.5 .5 .5],'VerticalAlignment','top','String',MESSAGE2)
  axs=[]; axc=[];
  %logo...
- text('Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
+ if ~strcmp(nameant,'quj')
+  text('Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
       'FontWeight','bold','String','EISCAT Scientific Association');
  %load(fullfile(path_GUP,'matfiles','logo'))
- axes('Position',[.07 .9 .1 .075]); eiscatlogo(.8,4.5)
+  axes('Position',[.07 .9 .1 .075]); eiscatlogo(.8,4.5)
  %axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
  %hds(3)=get(gca,'children'); set(hds(3),'markersize',1)
  %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
+ end
  vizufig=gcf;
 else
  set(hds,'string',t2)
