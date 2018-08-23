@@ -74,7 +74,7 @@ global r_RECloc name_ant name_expr r_XMITloc
 Data1D=[]; Data2D=[]; dirind=0; loc=[]; name_ants=[]; name_exps=[];
 for d1=1:ndir
  fprintf('Reading %s...\n',dirs{d1})
- [Time,par2D,par1D,dum,err2D]=load_param(dirs{d1});
+ [Time,par2D,par1D,dum,err2D]=load_param(dirs{d1},[1,Inf]);
  ng=size(par2D,1);
  [g,dump]=find(par2D(:,:,2)>alt(1) & par2D(:,:,2)<alt(end) & isfinite(par2D(:,:,6)));
  [d,dum,dd]=unique(dump); dd=dd+size(Data1D,1);
@@ -143,7 +143,7 @@ for tim=timint
     alti=mean(alt(ia:ia+1));
     [dum,site]=histc(g,dirind+.5);
     Vi=Data2D(g,3);
-    Vierr=Data2D(g,4);
+    Vierr=Data2D(g,4)+5;
     loc_sp=[Data1D(dump,[4 3]) Data2D(g,1)]; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     ng=length(g); gg=zeros(ng,3);
@@ -247,7 +247,10 @@ else
  else
   result_file
  end 
- save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants)
+ Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind);
+ save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,Vinputs)
+ 
+% function [Vdate,Vpos,Vg,Vgv]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
  fprintf('Making NCAR file...\n')
  NCAR_output
  NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))

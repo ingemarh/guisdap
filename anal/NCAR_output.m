@@ -48,7 +48,7 @@ if exist('Vdate','var')
   case 'kir', KINST=71; if r_time(1)>2012, KINST=75; end
   case 'sod', KINST=73; if r_time(1)>2012, KINST=76; end
   case 'esa', KINST=70;
-  case 'quj', KINST=100;
+  case 'quj', KINST=100; KINDAT=8800;
   otherwise, KINST=AbsentData;
  end
  sparcod=[]; name_site=[];
@@ -63,7 +63,7 @@ else
   case 'S', KINST=73; mvel=590; % EISCAT Sodankyla UHF
             if r_time(1)>2012, KINST=76; end
   case 'V', KINST=74; % EISCAT Tromso VHF
-  case 'Q', KINST=100; % Quing IS radar
+  case 'Q', KINST=100; KINDAT=8800; % Quing IS radar
   otherwise, KINST=AbsentData;
              KINDAT=AbsentData;
  end
