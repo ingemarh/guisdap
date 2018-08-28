@@ -50,9 +50,6 @@ if isempty(odir)
 end
 %dirs='/home/ingemar/tmp/2007-02-07_tau2pl_ant@uhf/';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if exist('geomag')~=3
- addpath(fullfile(path_GUP,'models','geopack'),'-end')
-end
 if isfinite(ld(1))
  ILAT=0;
  if ~isreal(ld) || max(ld)>90
@@ -143,7 +140,7 @@ for tim=timint
     alti=mean(alt(ia:ia+1));
     [dum,site]=histc(g,dirind+.5);
     Vi=Data2D(g,3);
-    Vierr=Data2D(g,4)+5;
+    Vierr=Data2D(g,4);
     loc_sp=[Data1D(dump,[4 3]) Data2D(g,1)]; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     ng=length(g); gg=zeros(ng,3);
@@ -250,7 +247,6 @@ else
  Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind);
  save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,Vinputs)
  
-% function [Vdate,Vpos,Vg,Vgv]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
  fprintf('Making NCAR file...\n')
  NCAR_output
  NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))
