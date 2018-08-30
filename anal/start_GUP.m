@@ -100,4 +100,6 @@ if ~exist(result_path,'dir'), result_path=path_tmp; end
 if exist('mrqmndiag')~=3
  fprintf('***** using no mex routine enhancements *****\n')
  addpath(fullfile(path_GUP,'models_m'),'-begin')
+else
+ addpath(fullfile(path_GUP,'models','irbem-code','matlab'))
 end

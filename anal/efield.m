@@ -200,16 +200,21 @@ if ~isempty(p)
    lat=Vpos(d,1);
    tt='LT';
   else
-   addpath(fullfile(path_GUP,'models','irbem-code','matlab'))
    try
     [Lm,Lstar,Blocal,Bmin,J,MLT]=onera_desp_lib_make_lstar([],[],'rll',vd',1+Vpos(d,3)/6378.135,Vpos(d,1),Vpos(d,2));
     ilat=acos(sqrt(1../abs(Lm)))/degrad;
-   catch %dirty workaround for old matlabs
-    MLT=onera_desp_lib_get_mlt(vd',gg2gc(Vpos(d,:)));
-    B=geomag(Vpos(d,:)',datevec(mean(vd)));
-    dip=-asin(B(3,:)./sqrt(sum(B(1:3,:).^2)))';
-    warning('GUISDAP:efield','Using modip instead of invariant latitude')
-    ilat=real(asin(dip./sqrt(dip.^2+cos(Vpos(d,1)*degrad))))/degrad; %modip
+   catch
+    magF=IGRF(); ilat=NaN*ones(size(vd)); MLT=ilat;
+    for i=1:length(d)
+     [dla,dlo,ilat(i),clo,pmi]=magF.GEOCOR(Vpos(vd(i),1),Vpos(vd(i),2),(1+Vpos(vd(i),3))/6378.135);
+     [secs,iyear]=tosecs(datevec(vd(i)));
+     MLT(i)=magF.CLCMLT(iyear,secs/365.,rem(secs/3600,24),Vpos(vd(i),1),Vpos(vd(i),2));
+    end
+    %MLT=onera_desp_lib_get_mlt(vd',gg2gc(Vpos(d,:)));
+    %B=geomag(Vpos(d,:)',datevec(mean(vd)));
+    %dip=-asin(B(3,:)./sqrt(sum(B(1:3,:).^2)))';
+    %warning('GUISDAP:efield','Using modip instead of invariant latitude')
+    %ilat=real(asin(dip./sqrt(dip.^2+cos(Vpos(d,1)*degrad))))/degrad; %modip
    end
    lt=(MLT/12-.5)*pi;
    lat=ilat;
