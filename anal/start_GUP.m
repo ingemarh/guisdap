@@ -10,7 +10,7 @@ clear all, clear global, clear functions
 
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local
 finish
-GUP_ver=9.0;
+GUP_ver=9.1;
 fprintf('GUISDAP vs. %g by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
 
 path_GUP=which('start_GUP','-all');
