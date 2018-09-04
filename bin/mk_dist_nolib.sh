@@ -2,14 +2,12 @@
 dir="guisdap9"
 excludeobj="lib mex7"
 excludelib="mexsources models"
+excludeP="exps/*/*P*.mat*"
 
 xclude=''
-for x in $excludeobj $excludelib
+for x in $excludeobj $excludelib $excludeP
 do 
- xclude="$xclude --exclude='$dir/$x'"
+ xclude="$xclude --exclude=$dir/$x"
 done
-echo $xclude
-#tar jcf guisdap9.tar.bz2 --exclude-vcs --exclude-backups $xclude guisdap9
-echo tar --exclude-vcs --exclude-backups $xclude jcfv /dev/null guisdap9
-#tar --exclude-vcs --exclude-backups $xclude jcfv /dev/null guisdap9
-tar $xclude jcvf /dev/null guisdap9
+echo "Cut and paste this:"
+tar --exclude-vcs --exclude-backups $xclude -cf - $dir | bzip2 -c9 > $dir.tar.bz2
