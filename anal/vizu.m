@@ -200,7 +200,7 @@ SCALE =[50 900		% Range km
 	10.^[0 5]	% collision freq Hz
 	0 1		% Comp
 	.1 10]; 	% Res
-Y_TYPE	='linear';	% Y scale type
+Y_TYPE1	='linear';	% Y scale type
 PLF_SCALE	=[0 10];	% Langmuir freq MHz
 TEC_SCALE	=[0 10];	% TEC scale
 RAWNE_SCALE	=10.^[9 12];	% Raw Ne
@@ -240,7 +240,7 @@ if strcmp(name_expr,'arcd')
 elseif strfind('dlayer cp6',name_expr)
  SCALE(2:3,:)=[59 121;10.^[9 12]]; WHICH_PARAM='Ne AE';
 elseif strcmp(name_expr,'manda')
- SCALE(2:3,:)=[50 500;10.^[9 12]]; WHICH_PARAM='Ne AE'; Y_TYPE='log';
+ SCALE(2:3,:)=[50 500;10.^[9 12]]; WHICH_PARAM='Ne AE'; Y_TYPE1='log';
  if isempty(rres), maxdy=60; end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,6 +260,8 @@ if strcmp(lower(act),'verbose')
  if isempty(START_TIME)
   START_TIME=floor(datevec(Time(1,1)));
   END_TIME=ceil(datevec(Time(2,end)));
+  Y_TYPE=Y_TYPE1;
+  WHICH_PARAM=OLD_WHICH;
  end
  START_TIME=minput('Start time',START_TIME);
  END_TIME=minput('  End time',END_TIME);

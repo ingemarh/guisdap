@@ -64,7 +64,7 @@ if isempty(r_h)
   beep
   fprintf('\n********** %s is not empty! **********\n\n',result_path)
  end
- if a_gfd & ~strcmp(path_tmp,result_path)
+ if ~isempty(a_gfd) & ~strcmp(path_tmp,result_path)
   save_setup([result_path '.gup']);
   save_setup([result_path 'gfd_setup.m']);
  end
