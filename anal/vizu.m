@@ -45,7 +45,7 @@ if strcmp(action(naction,nvargin,varargin),'new')
 end
 if isempty(vizufig)
   axs=[]; axc=[];
-  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[];
+  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[]; OLD_WHICH=[];
 end
 REALT=0; manylim=1;
 Loc=local.site;
@@ -250,10 +250,13 @@ end
 if ~exist('GATES')
  GATES=1:size(par2D,1);
 end
+if length(GATES)==1
+ WHICH_PARAM='Ne TT Vi LL';
+end
 if ~isempty(a3)
  WHICH_PARAM=a3;
-elseif length(GATES)==1
- WHICH_PARAM='Ne TT Vi LL';
+elseif ~isempty(OLD_WHICH)
+ WHICH_PARAM=OLD_WHICH;
 end
 %%%%%%%%%% Time scales %%%%%%%%%%%%%
 if strcmp(lower(act),'verbose')
@@ -261,7 +264,6 @@ if strcmp(lower(act),'verbose')
   START_TIME=floor(datevec(Time(1,1)));
   END_TIME=ceil(datevec(Time(2,end)));
   Y_TYPE=Y_TYPE1;
-  WHICH_PARAM=OLD_WHICH;
  end
  START_TIME=minput('Start time',START_TIME);
  END_TIME=minput('  End time',END_TIME);
