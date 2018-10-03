@@ -7,7 +7,7 @@ function [varargout]=plasma_summary(pl_dir,printdir,expt,gates,plots)
 %        printdir Directory to save plot to (eps and png)
 %        expt   Name of experiment (or guessed from pl_dir)
 %        gates  Gates to display
-%        plots  Display a number of plots for internal checks
+%        plots  Display a number of plots for internal checks (-1, don't clear)
 % output: pl structure containing
 %            .t Time
 %            .s Spectra
@@ -22,6 +22,7 @@ elseif gates==0
 end
 gate=[];
 if nargin<5, plots=[]; end
+if isempty(plots) | plots~=-1, clf, plots=[]; end
 if isempty(expt)
  [i,expt]=fileparts(pl_dir);
  if isempty(expt), [i,expt]=fileparts(i); end
