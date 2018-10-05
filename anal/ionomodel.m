@@ -21,11 +21,7 @@ heights=col(heights);
 
 if isempty(ionomodel_control), ionomodel_control=0; end
 if isempty(iono_model)
- if exist('iri')==3
-  iono_model='iri';
- else
-  iono_model='giveme';
- end
+ iono_model='iri';
 end
 if isempty(modinfo)
  modinfo=1;

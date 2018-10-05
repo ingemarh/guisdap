@@ -10,7 +10,7 @@ clear all, clear global, clear functions
 
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local
 finish
-GUP_ver=9.0;
+GUP_ver=9.1;
 fprintf('GUISDAP vs. %g by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
 
 path_GUP=which('start_GUP','-all');
@@ -99,4 +99,7 @@ if ~exist(data_path,'dir'), data_path=path_tmp; end
 if ~exist(result_path,'dir'), result_path=path_tmp; end
 if exist('mrqmndiag')~=3
  fprintf('***** using no mex routine enhancements *****\n')
+ addpath(fullfile(path_GUP,'models_m'),'-begin')
+else
+ addpath(fullfile(path_GUP,'models','irbem-code','matlab'))
 end

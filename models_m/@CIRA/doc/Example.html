@@ -1,0 +1,246 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>How to use the CIRA class</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-05-21"><meta name="DC.source" content="Example.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>How to use the CIRA class</h1><!--introduction--><p>This example shows various ways to use the CIRA class.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Section 1 Setting Up</a></li><li><a href="#2">Section 2 Running the Tests</a></li><li><a href="#3">Section 3 Calculating Pressure</a></li><li><a href="#4">Section 4 Calculate Lapse Rate</a></li></ul></div><h2>Section 1 Setting Up<a name="1"></a></h2><p>CIRA uses the Matlab class system and must be set up specifically the way Matlab is designed for.  The class must be in the @ folders.</p><p>mypath/OEIS.m</p><p>mypath/CODATA2006.m</p><p>mypath/@CIRA/CIRA.m</p><p>mypath/@CIRA/GTD7.m</p><p>...</p><p>Caution, these download links may break in the future but the procedure remains the same.  The files can be downloaded and unzipped manually as well.</p><pre class="codeinput">outputdir = <span class="string">'mypath'</span>;
+fexFiles = {<span class="string">'45604-cira-atmosphere'</span>,<span class="string">'45544-oeis'</span>,<span class="string">'45590-codata-2006'</span>};
+
+website = <span class="string">'http://www.mathworks.com'</span>;
+<span class="keyword">for</span> i=1:length(fexFiles)
+  url = sprintf(<span class="string">'%s/matlabcentral/fileexchange/%s'</span>,website,fexFiles{i});
+  entry=urlread(url);
+  ptr1=strfind(entry,<span class="string">'"btn download"'</span>);
+  ptr2=strfind(entry,<span class="string">'" itemprop="downloadUrl"'</span>);
+  link = sprintf(<span class="string">'%s%s'</span>,website,entry(ptr1+24:ptr2-1));
+  unzip(link,outputdir);
+<span class="keyword">end</span>
+addpath(outputdir);
+</pre><h2>Section 2 Running the Tests<a name="2"></a></h2><p>This example shows how to run all of the tests.  This will take a long time as they are exhaustive.  The tests are as follows:</p><div><ol><li>Test low altitude</li><li>Test medium altitude</li><li>Test high altitude</li><li>Test southern latitude</li><li>Test eastern longitude</li><li>Test earlier in day</li><li>Test plotting the variation in time of the pressure at a specific location</li></ol></div><pre class="codeinput">atm=CIRA();
+atm.run
+</pre><h2>Section 3 Calculating Pressure<a name="3"></a></h2><p>This is a simple example with no data overrides for New Year's Eve.</p><pre class="codeinput">xlat = 40; <span class="comment">% degrees</span>
+xlon = -104; <span class="comment">% degrees</span>
+hxx = 0.0; <span class="comment">% km</span>
+tjd = 2451545.0; <span class="comment">% Julian day for 2000 Jan 1.5</span>
+[ iyd, sec, stl ] = CIRA.year_dayofyear( tjd, xlon );
+f107a = 152.0; <span class="comment">% Jansky</span>
+f107 = 154.0; <span class="comment">% Jansky</span>
+ap = zeros(CIRA.maxAP,1); <span class="comment">% magnetic index</span>
+ap(CIRA.DAILY_AP) = 4.1;
+ap(CIRA.CURRENT_AP) = 4.2;
+ap(CIRA.CURRENT_M_3_AP) = 4.3;
+ap(CIRA.CURRENT_M_6_AP) = 4.4;
+ap(CIRA.CURRENT_M_9_AP) = 4.5;
+ap(CIRA.CURRENT_M_12_33_AP) = 4.6;
+ap(CIRA.CURRENT_M_36_57_AP) = 4.7;
+atm = CIRA();
+mass = atm.MT(CIRA.ALL_MASS); <span class="comment">% calculate all constituents</span>
+sw = CIRA.allSwitchesOn;
+sw(CIRA.TURBO_SCALE_SW) = 0; <span class="comment">% turn off turbo scale option</span>
+atm = atm.TSELEC(sw);
+[ D,T,atm ] = atm.GTD7(iyd,sec,hxx,xlat,xlon,stl,f107a,f107,ap,mass);
+press = atm.totalPressure(D,T);
+disp(T(CIRA.TemperatureIndex(CIRA.Der0))-273.15); <span class="comment">% 12.3561 C</span>
+disp(press); <span class="comment">%  1.0173e+03 hPa</span>
+</pre><h2>Section 4 Calculate Lapse Rate<a name="4"></a></h2><p>This is a simple example with data overrides for Spring Equinox.</p><pre class="codeinput">xlat = 40; <span class="comment">% degrees</span>
+xlon = -104; <span class="comment">% degrees</span>
+hxx = 10.0; <span class="comment">% km</span>
+YEAR = 2012;
+DOY = 32; <span class="comment">% Feb 1</span>
+sec = 43200.0; <span class="comment">% noon</span>
+iyd = YEAR*CIRA.YRDSHIFT + DOY;
+stl = sec/3600.0 + xlon/15.0;
+f107a = 152.0; <span class="comment">% Jansky</span>
+f107 = 154.0; <span class="comment">% Jansky</span>
+ap = zeros(CIRA.maxAP,1); <span class="comment">% magnetic index</span>
+ap(CIRA.DAILY_AP) = 4.1;
+ap(CIRA.CURRENT_AP) = 4.2;
+ap(CIRA.CURRENT_M_3_AP) = 4.3;
+ap(CIRA.CURRENT_M_6_AP) = 4.4;
+ap(CIRA.CURRENT_M_9_AP) = 4.5;
+ap(CIRA.CURRENT_M_12_33_AP) = 4.6;
+ap(CIRA.CURRENT_M_36_57_AP) = 4.7;
+atm = CIRA();
+mass = atm.MT(CIRA.ALL_MASS); <span class="comment">% calculate all constituents</span>
+sw = CIRA.allSwitchesOn;
+atm = atm.TSELEC(sw);
+[ D,T,atm ] = atm.GTD7(iyd,sec,hxx,xlat,xlon,stl,f107a,f107,ap,mass);
+dpress = atm.totalPressureGradient(D,T);
+disp(T(CIRA.TemperatureIndex(CIRA.DerAlt))); <span class="comment">% -4.0992 C/km</span>
+disp(D(CIRA.DensityIndex(CIRA.DerAlt,CIRA.ALL_MASS))); <span class="comment">% -5.4971e-05 g/cm^3/km</span>
+disp(dpress); <span class="comment">%  -40.1322 hPa/km</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% How to use the CIRA class
+% This example shows various ways to use the CIRA class.
+
+%% Section 1 Setting Up
+% CIRA uses the Matlab class system and must be set up specifically the way
+% Matlab is designed for.  The class must be in the @ folders.
+% 
+% mypath/OEIS.m
+%
+% mypath/CODATA2006.m
+%
+% mypath/@CIRA/CIRA.m
+%
+% mypath/@CIRA/GTD7.m
+%
+% ...
+%
+% Caution, these download links may break in the future but the procedure 
+% remains the same.  The files can be downloaded and unzipped manually as well.
+%
+outputdir = 'mypath';
+fexFiles = {'45604-cira-atmosphere','45544-oeis','45590-codata-2006'};
+
+website = 'http://www.mathworks.com';
+for i=1:length(fexFiles)
+  url = sprintf('%s/matlabcentral/fileexchange/%s',website,fexFiles{i});
+  entry=urlread(url);
+  ptr1=strfind(entry,'"btn download"');
+  ptr2=strfind(entry,'" itemprop="downloadUrl"');
+  link = sprintf('%s%s',website,entry(ptr1+24:ptr2-1));
+  unzip(link,outputdir);
+end
+addpath(outputdir);
+
+%% Section 2 Running the Tests
+% This example shows how to run all of the tests.  This will take a long time as
+% they are exhaustive.  The tests are as follows:
+% 
+% # Test low altitude
+% # Test medium altitude
+% # Test high altitude
+% # Test southern latitude
+% # Test eastern longitude
+% # Test earlier in day
+% # Test plotting the variation in time of the pressure at a specific
+% location
+% 
+
+atm=CIRA();
+atm.run
+
+%% Section 3 Calculating Pressure
+% This is a simple example with no data overrides for New Year's Eve.
+xlat = 40; % degrees
+xlon = -104; % degrees
+hxx = 0.0; % km
+tjd = 2451545.0; % Julian day for 2000 Jan 1.5
+[ iyd, sec, stl ] = CIRA.year_dayofyear( tjd, xlon );
+f107a = 152.0; % Jansky
+f107 = 154.0; % Jansky
+ap = zeros(CIRA.maxAP,1); % magnetic index
+ap(CIRA.DAILY_AP) = 4.1;
+ap(CIRA.CURRENT_AP) = 4.2;
+ap(CIRA.CURRENT_M_3_AP) = 4.3;
+ap(CIRA.CURRENT_M_6_AP) = 4.4;
+ap(CIRA.CURRENT_M_9_AP) = 4.5;
+ap(CIRA.CURRENT_M_12_33_AP) = 4.6;
+ap(CIRA.CURRENT_M_36_57_AP) = 4.7;
+atm = CIRA();
+mass = atm.MT(CIRA.ALL_MASS); % calculate all constituents
+sw = CIRA.allSwitchesOn;
+sw(CIRA.TURBO_SCALE_SW) = 0; % turn off turbo scale option
+atm = atm.TSELEC(sw);
+[ D,T,atm ] = atm.GTD7(iyd,sec,hxx,xlat,xlon,stl,f107a,f107,ap,mass);
+press = atm.totalPressure(D,T);
+disp(T(CIRA.TemperatureIndex(CIRA.Der0))-273.15); % 12.3561 C
+disp(press); %  1.0173e+03 hPa
+
+
+%% Section 4 Calculate Lapse Rate
+% This is a simple example with data overrides for Spring Equinox.
+xlat = 40; % degrees
+xlon = -104; % degrees
+hxx = 10.0; % km
+YEAR = 2012;
+DOY = 32; % Feb 1
+sec = 43200.0; % noon
+iyd = YEAR*CIRA.YRDSHIFT + DOY;
+stl = sec/3600.0 + xlon/15.0;
+f107a = 152.0; % Jansky
+f107 = 154.0; % Jansky
+ap = zeros(CIRA.maxAP,1); % magnetic index
+ap(CIRA.DAILY_AP) = 4.1;
+ap(CIRA.CURRENT_AP) = 4.2;
+ap(CIRA.CURRENT_M_3_AP) = 4.3;
+ap(CIRA.CURRENT_M_6_AP) = 4.4;
+ap(CIRA.CURRENT_M_9_AP) = 4.5;
+ap(CIRA.CURRENT_M_12_33_AP) = 4.6;
+ap(CIRA.CURRENT_M_36_57_AP) = 4.7;
+atm = CIRA();
+mass = atm.MT(CIRA.ALL_MASS); % calculate all constituents
+sw = CIRA.allSwitchesOn;
+atm = atm.TSELEC(sw);
+[ D,T,atm ] = atm.GTD7(iyd,sec,hxx,xlat,xlon,stl,f107a,f107,ap,mass);
+dpress = atm.totalPressureGradient(D,T);
+disp(T(CIRA.TemperatureIndex(CIRA.DerAlt))); % -4.0992 C/km
+disp(D(CIRA.DensityIndex(CIRA.DerAlt,CIRA.ALL_MASS))); % -5.4971e-05 g/cm^3/km
+disp(dpress); %  -40.1322 hPa/km
+
+##### SOURCE END #####
+--></body></html>

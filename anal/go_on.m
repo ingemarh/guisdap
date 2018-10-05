@@ -1,6 +1,6 @@
 function go_on(bg)
 global path_GUP path_exps path_tmp name_expr name_site data_path result_path b local a_gfd
-go_die=0; a_gfd=1;
+go_die=0;
 if nargin<1, bg=NaN; end
 
 if ~ishandle(bg)
@@ -13,8 +13,18 @@ if ~ishandle(bg)
   else
    load(bg,'-mat')
   end
+ elseif ~isempty(a_gfd)
+  name_expr=a_gfd.name_expr; expver=a_gfd.expver; siteid=a_gfd.siteid;
+  data_path=a_gfd.data_path; result_path=a_gfd.result_path; intper=a_gfd.intper;
+  t1=a_gfd.t1; t2=a_gfd.t2; rt=a_gfd.rt; figs=a_gfd.figs; extra=a_gfd.extra;
+  path_exps=a_gfd.path_exps;
  else
   bg=NaN; load([path_tmp '.gup'],'-mat')
+  if ~exist('extra','var'), extra=' '; end
+  a_gfd.name_expr=name_expr; a_gfd.expver=expver; a_gfd.siteid=siteid;
+  a_gfd.data_path=data_path; a_gfd.result_path=result_path; a_gfd.intper=intper;
+  a_gfd.t1=t1; a_gfd.t2=t2; a_gfd.rt=rt; a_gfd.figs=figs; a_gfd.extra=extra;
+  a_gfd.path_exps=path_exps;
  end
  if nargin>0, go_die=1; end
 else

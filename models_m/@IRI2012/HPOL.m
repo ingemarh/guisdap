@@ -1,0 +1,24 @@
+function [ HPOL ] = HPOL( HOUR,TW,XNW,SA,SU,DSA,DSU )
+%HPOL SMOOTH TIME-INTERPOLATION
+%
+%      FUNCTION HPOL(HOUR,TW,XNW,SA,SU,DSA,DSU)            
+%-------------------------------------------------------
+% PROCEDURE FOR SMOOTH TIME-INTERPOLATION USING EPSTEIN  
+% STEP FUNCTION AT SUNRISE (SA) AND SUNSET (SU). THE 
+% STEP-WIDTH FOR SUNRISE IS DSA AND FOR SUNSET DSU.
+% TW,NW ARE THE DAY AND NIGHT VALUE OF THE PARAMETER TO 
+% BE INTERPOLATED. SA AND SU ARE TIME OF SUNRIES AND 
+% SUNSET IN DECIMAL HOURS.
+% BILITZA----------------------------------------- 1979.
+  if abs(SU) > 25.0
+    if SU > 0.
+      HPOL=TW;
+    else
+      HPOL=XNW;
+    end
+  else
+    HPOL=XNW+(TW-XNW)*IRI2012.EPST(HOUR,DSA,SA)+ ...
+             (XNW-TW)*IRI2012.EPST(HOUR,DSU,SU);
+  end
+end
+

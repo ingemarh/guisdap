@@ -166,7 +166,7 @@ if ~isempty(p)
     set(gca,'XLim',xlim)
     ylabel([yfor1 ' ' dir{i} ' [' yfor2 ']'])
     set(gca,'xgrid','on','ygrid','on')
-    datetick(gca,'x',tickform,'keeplimits')
+    mydatetick(xlim,1)
     text('String',hgt,'Units','Normalized','Position',[1.025 0.5],'Rotation',-90,'Color','k')
    end
   else
@@ -174,10 +174,10 @@ if ~isempty(p)
    set(gca,'XLim',xlim)
    ylabel([yfor1 ' [' yfor2 '] ' hgt])
    set(gca,'xgrid','on','ygrid','on')
-   datetick(gca,'x',tickform,'keeplimits')
+   mydatetick(xlim,1)
    color=get(gca,'ColorOrder');
    for i=1:np
-    text('String',dir{i},'Units','Normalized','Position',[.98+i*.035 0.5],'Rotation',-90,'Color',color(i,:))
+    text('String',dir{i},'Units','Normalized','Position',[1.13-i*.035 0.5],'Rotation',-90,'Color',color(i,:))
    end
   end
   xlabel([tit ' [UT]'])
@@ -200,17 +200,18 @@ if ~isempty(p)
    lat=Vpos(d,1);
    tt='LT';
   else
-   addpath(fullfile(path_GUP,'models','irbem-code','matlab'))
    try
     [Lm,Lstar,Blocal,Bmin,J,MLT]=onera_desp_lib_make_lstar([],[],'rll',vd',1+Vpos(d,3)/6378.135,Vpos(d,1),Vpos(d,2));
-    ilat=acos(sqrt(1../abs(Lm)))/degrad;
-   catch %dirty workaround for old matlabs
-    MLT=onera_desp_lib_get_mlt(vd',gg2gc(Vpos(d,:)));
-    B=geomag(Vpos(d,:)',datevec(mean(vd)));
-    dip=-asin(B(3,:)./sqrt(sum(B(1:3,:).^2)))';
-    warning('GUISDAP:efield','Using modip instead of invariant latitude')
-    ilat=real(asin(dip./sqrt(dip.^2+cos(Vpos(d,1)*degrad))))/degrad; %modip
+   catch
+    magF=IGRF(); Lm=NaN*ones(size(vd))'; MLT=Lm;
+    for i=1:length(d)
+     [secs,iyear]=tosecs(datevec(vd(i)));
+     if i==1, DIMO=magF.FELDCOF(iyear+secs/86400/365); end
+     Lm(i)=magF.SHELLG(Vpos(d(i),1),Vpos(d(i),2),Vpos(d(i),3),DIMO);
+     MLT(i)=magF.CLCMLT(iyear,secs/365.,rem(secs/3600,24),Vpos(d(i),1),Vpos(d(i),2));
+    end
    end
+   ilat=acos(sqrt(1../abs(Lm)))/degrad;
    lt=(MLT/12-.5)*pi;
    lat=ilat;
    tt='MLT';

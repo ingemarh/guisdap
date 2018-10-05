@@ -1,0 +1,172 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>How to use the IGRF class</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-04-01"><meta name="DC.source" content="Example.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>How to use the IGRF class</h1><!--introduction--><p>This example shows various ways to use the IGRF class.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Section 1 Setting Up</a></li><li><a href="#2">Section 2 Running the Tests</a></li><li><a href="#3">Section 3 Calculate Magnetic Field Strength</a></li><li><a href="#4">Section 4 Calculate magnetic field vector</a></li></ul></div><h2>Section 1 Setting Up<a name="1"></a></h2><p>IGRF uses the Matlab class system and must be set up specifically the way Matlab is designed for.  The class must be in the @ folders.</p><p>mypath/OEIS.m</p><p>mypath/@WGS84/WGS84.m</p><p>...</p><p>mypath/@IGRF/IGRF.m</p><p>mypath/@IGRF/IGRF_SUB.m</p><p>...</p><p>Caution, these download links may break in the future but the procedure remains the same.  The files can be downloaded and unzipped manually as well.</p><pre class="codeinput">outputdir = <span class="string">'mypath'</span>;
+fexFiles = {<span class="string">'45603-wgs84-earth-shape'</span>,<span class="string">'45606-igrf-magnetic-field'</span>,<span class="string">'45544-oeis'</span>};
+
+website = <span class="string">'http://www.mathworks.com'</span>;
+<span class="keyword">for</span> i=1:length(fexFiles)
+  url = sprintf(<span class="string">'%s/matlabcentral/fileexchange/%s'</span>,website,fexFiles{i});
+  entry=urlread(url);
+  ptr1=strfind(entry,<span class="string">'"btn download"'</span>);
+  ptr2=strfind(entry,<span class="string">'" itemprop="downloadUrl"'</span>);
+  link = sprintf(<span class="string">'%s%s'</span>,website,entry(ptr1+24:ptr2-1));
+  unzip(link,outputdir);
+<span class="keyword">end</span>
+addpath(outputdir);
+</pre><h2>Section 2 Running the Tests<a name="2"></a></h2><p>This example shows how to run all of the tests.  The tests are as follows:</p><div><ol><li>Test plotting magnitude of field at one location for all available dates</li></ol></div><pre class="codeinput">magF=IGRF();
+magF.run
+</pre><h2>Section 3 Calculate Magnetic Field Strength<a name="3"></a></h2><p>This is a simple example for calculating dip latitude and magnetic field magnitude.</p><pre class="codeinput">magF=IGRF();
+xlat = 40; <span class="comment">% geodetic latitude degrees North</span>
+xlong = -104; <span class="comment">% longitude degrees East</span>
+HEIGHT = 0.0; <span class="comment">% geodetic altitude (km)</span>
+YEAR = 2012.3; <span class="comment">% decimal years</span>
+[ ~,~,dipl,Bmag,magF ] = magF.IGRF_SUB( xlat,xlong,YEAR,HEIGHT );
+dipl <span class="comment">% dip latitude 49.4273 degrees</span>
+Bmag <span class="comment">% 0.5295 Gauss</span>
+</pre><h2>Section 4 Calculate magnetic field vector<a name="4"></a></h2><p>This is a simple example to calculate the magnetic field vector</p><pre class="codeinput">magF=IGRF();
+xlat = 40; <span class="comment">% geodetic latitude degrees North</span>
+xlong = -104; <span class="comment">% longitude degrees East</span>
+HEIGHT = 0.0; <span class="comment">% geodetic altitude (km)</span>
+[X,Y,Z] = IGRF.GEODETIC2CARTESIAN(xlat,xlong,HEIGHT); <span class="comment">% km</span>
+YEAR = 2012.3; <span class="comment">% decimal years</span>
+[~,magF] = magF.FELDCOF(YEAR);
+B = magF.FELDC( [X,Y,Z] / magF.ERA );
+B <span class="comment">% [0.1515    0.4832   -0.1549] Gauss</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% How to use the IGRF class
+% This example shows various ways to use the IGRF class.
+
+%% Section 1 Setting Up
+% IGRF uses the Matlab class system and must be set up specifically the way
+% Matlab is designed for.  The class must be in the @ folders.
+% 
+% mypath/OEIS.m
+%
+% mypath/@WGS84/WGS84.m
+%
+% ...
+%
+% mypath/@IGRF/IGRF.m
+%
+% mypath/@IGRF/IGRF_SUB.m
+%
+% ...
+%
+% Caution, these download links may break in the future but the procedure 
+% remains the same.  The files can be downloaded and unzipped manually as well.
+%
+outputdir = 'mypath';
+fexFiles = {'45603-wgs84-earth-shape','45606-igrf-magnetic-field','45544-oeis'};
+
+website = 'http://www.mathworks.com';
+for i=1:length(fexFiles)
+  url = sprintf('%s/matlabcentral/fileexchange/%s',website,fexFiles{i});
+  entry=urlread(url);
+  ptr1=strfind(entry,'"btn download"');
+  ptr2=strfind(entry,'" itemprop="downloadUrl"');
+  link = sprintf('%s%s',website,entry(ptr1+24:ptr2-1));
+  unzip(link,outputdir);
+end
+addpath(outputdir);
+
+%% Section 2 Running the Tests
+% This example shows how to run all of the tests.  The tests are as follows:
+% 
+% # Test plotting magnitude of field at one location for all available dates
+% 
+
+magF=IGRF();
+magF.run
+
+%% Section 3 Calculate Magnetic Field Strength
+% This is a simple example for calculating dip latitude and magnetic field magnitude.
+magF=IGRF();
+xlat = 40; % geodetic latitude degrees North
+xlong = -104; % longitude degrees East
+HEIGHT = 0.0; % geodetic altitude (km)
+YEAR = 2012.3; % decimal years
+[ ~,~,dipl,Bmag,magF ] = magF.IGRF_SUB( xlat,xlong,YEAR,HEIGHT );
+dipl % dip latitude 49.4273 degrees
+Bmag % 0.5295 Gauss
+
+%% Section 4 Calculate magnetic field vector
+% This is a simple example to calculate the magnetic field vector
+magF=IGRF();
+xlat = 40; % geodetic latitude degrees North
+xlong = -104; % longitude degrees East
+HEIGHT = 0.0; % geodetic altitude (km)
+[X,Y,Z] = IGRF.GEODETIC2CARTESIAN(xlat,xlong,HEIGHT); % km
+YEAR = 2012.3; % decimal years
+[~,magF] = magF.FELDCOF(YEAR);
+B = magF.FELDC( [X,Y,Z] / magF.ERA );
+B % [0.1515    0.4832   -0.1549] Gauss
+
+
+##### SOURCE END #####
+--></body></html>

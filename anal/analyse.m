@@ -58,6 +58,7 @@ text(x+x1+x3,ty(4),'Vs')
 b(11)=uicontrol('Style','popupmenu','string',num2str((0:9)'),'position',[x+2*x1 y(4) x3 yh],'value',expver+1);
  go_on(bg)
 else
+ global a_gfd
  dpath=minput('Data path',data_path,'s');
  if ~strcmp(dpath,data_path)
   data_path=dpath;
@@ -84,5 +85,9 @@ else
   extra=char(extra,ext);
  end
  save_noglobal(gfdfile,name_expr,expver,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
+ a_gfd.name_expr=name_expr; a_gfd.expver=expver; a_gfd.siteid=siteid;
+ a_gfd.data_path=data_path; a_gfd.result_path=result_path; a_gfd.intper=intper;
+ a_gfd.t1=t1; a_gfd.t2=t2; a_gfd.rt=rt; a_gfd.figs=figs; a_gfd.extra=extra;
+ a_gfd.path_exps=path_exps;
  go_on
 end

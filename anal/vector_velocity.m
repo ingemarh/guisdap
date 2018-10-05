@@ -49,32 +49,12 @@ if isempty(odir)
  odir=fullfile(odir,filesep);
 end
 %dirs='/home/ingemar/tmp/2007-02-07_tau2pl_ant@uhf/';
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if exist('geomag')~=3
- addpath(fullfile(path_GUP,'models','geopack'),'-end')
-end
-if isfinite(ld(1))
- ILAT=0;
- if ~isreal(ld) || max(ld)>90
-  ld=abs(ld),
-  addpath(fullfile(path_GUP,'models','irbem-code','matlab'),'-end')
-  try
-   onera_desp_lib_load
-   ILAT=1;
-  catch
-  end
- end
-end
-degrad=pi/180.;  % conversion factor from degrees to radians
-Re=6378.135;
-min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area to cover
-tfile=0;	%make velocity table for testings
 %%%%%%%%%%%%%%%%%
 global r_RECloc name_ant name_expr r_XMITloc
 Data1D=[]; Data2D=[]; dirind=0; loc=[]; name_ants=[]; name_exps=[];
 for d1=1:ndir
  fprintf('Reading %s...\n',dirs{d1})
- [Time,par2D,par1D,dum,err2D]=load_param(dirs{d1});
+ [Time,par2D,par1D,dum,err2D]=load_param(dirs{d1},[1,Inf]);
  ng=size(par2D,1);
  [g,dump]=find(par2D(:,:,2)>alt(1) & par2D(:,:,2)<alt(end) & isfinite(par2D(:,:,6)));
  [d,dum,dd]=unique(dump); dd=dd+size(Data1D,1);
@@ -93,8 +73,27 @@ for d1=1:ndir
  name_exps=strvcat(name_exps,name_expr);
 end
 dirind=cumsum(dirind);
-%%%%%%%%%%%%%%%%%
 r_time=datevec(mean(Data1D(:,1)));
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if isfinite(ld(1))
+ ILAT=0;
+ if ~isreal(ld) || max(ld)>90
+  ld=abs(ld);
+  try
+   onera_desp_lib_load
+   ILAT=1;
+  end
+ end
+ if ~ILAT, %should really check for mex first...
+  [secs,YEAR]=tosecs(r_time);
+  magF=IGRF(); DIMO=magF.FELDCOF(YEAR+secs/86400/365);
+ end
+end
+degrad=pi/180.;  % conversion factor from degrees to radians
+Re=6378.135;
+min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area to cover
+tfile=0;	%make velocity table for testings
+%%%%%%%%%%%%%%%%%
 if all(mean(name_ants,1)==name_ants(1,:))
  name_ant=name_ants(1,:); name_ants=[];
 else
@@ -155,12 +154,16 @@ for tim=timint
      if ILAT
       gcR=gc/Re;
       L=onera_desp_lib_make_lstar([],[],'geo',mean(Date),gcR(:,1),gcR(:,2),gcR(:,3));
-      mlat=acos(sqrt(1../abs(L))); %inv lat
      else
-      B=geomag(gg',r_time);
-      d=-asin(B(3,:)./sqrt(sum(B(1:3,:).^2)));
-      mlat=real(asin(d./sqrt(d.^2+cos(gg(:,1)'*degrad)))); %modip
+      L=zeros(ng,1);
+      for i=1:ng
+       L(i)=magF.SHELLG(gg(i,1),gg(i,2),gg(i,3),DIMO);
+      end
+      %B=geomag(gg',r_time);
+      %d=-asin(B(3,:)./sqrt(sum(B(1:3,:).^2)));
+      %mlat=real(asin(d./sqrt(d.^2+cos(gg(:,1)'*degrad)))); %modip
      end
+     mlat=acos(sqrt(1../abs(L))); %inv lat
     end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for il=1:length(ld)-1
@@ -247,7 +250,9 @@ else
  else
   result_file
  end 
- save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants)
+ Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind);
+ save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,Vinputs)
+ 
  fprintf('Making NCAR file...\n')
  NCAR_output
  NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))
