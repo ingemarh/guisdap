@@ -41,7 +41,7 @@ if isempty(mind), mind=3; end
 if length(mind)==1, mind(2)=10; end
 ndir=length(dirs);
 if isempty(odir)
- if ndir>1 || strfind(dirs{1},'*')
+ if ndir>1 || ~isempty(strfind(dirs{1},'*'))
   odir=path_tmp;
  else
   odir=dirs{1};
