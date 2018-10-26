@@ -21,7 +21,7 @@ if di_spectra<0
  if isempty(r_acf)
   r_acf=acf';
   r_ace=err';
-  r_lag=lag';
+  r_lag=lag'*p_dtau*1e-6;
  else
   lrf=size(r_lag,1); lf=length(lag);
   if lrf<lf
@@ -33,7 +33,7 @@ if di_spectra<0
    acf(end+1:lrf)=NaN;
    err(end+1:lrf)=NaN;
   end
-  r_lag(:,end+1)=lag'; r_acf(:,end+1)=acf'; r_ace(:,end+1)=err';
+  r_lag(:,end+1)=lag'*p_dtau*1e-6; r_acf(:,end+1)=acf'; r_ace(:,end+1)=err';
  end
 else
  dt=median(diff(lag));
