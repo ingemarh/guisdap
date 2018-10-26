@@ -43,8 +43,8 @@ KINDAT=6800;
 if exist('Vdate','var')
  switch name_ant
   case 'esr', KINST=95;
-  %case '32m', KINST=95;
-  %case '42m', KINST=95;
+  case '32m', KINST=95;
+  case '42m', KINST=95;
   case 'uhf', KINST=72;
   case 'vhf', KINST=74;
   case 'kir', KINST=71; if r_time(1)>2012, KINST=75; end
