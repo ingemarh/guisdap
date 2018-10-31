@@ -192,6 +192,9 @@ if ~isempty(a_addr)
       do_NCAR([],a_NCAR)
     end
   end
+  if a_HDF
+    mat2hdf5
+  end
   if di_figures(5)
     vizu('new','rtgup')
     if di_figures(5)>1

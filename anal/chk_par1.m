@@ -165,6 +165,10 @@ if exist('NCAR','var')
  NCAR_output
  a_NCAR=NCAR;
 end
+a_HDF=0;
+if exist('analysis_HDF','var')
+ a_HDF=analysis_HDF;
+end
 if exist('analysis_code','var')
  a_code=analysis_code;
 end
