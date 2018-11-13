@@ -187,9 +187,6 @@ parameters = [parameters_1d parameters_2d parameters_2dpp];
 
 nh = [];
 npprange = [];
-% gupver = [];
-% err = [];
-% spect = [];
 
 for ii = 1:length(parameters)
     h_name = char(parameters(ii));
@@ -200,6 +197,7 @@ for ii = 1:length(parameters)
         for jj = 1:rec
             matfile_tmp = fullfile(dirpath,filesep,sprintf('%08d%s',filelist(jj).file,filelist(jj).ext));
             load(matfile_tmp)
+            [r_pp_merged,r_pperr_merged,r_ppw_merged,r_pprange_merged,r_pprofile_id] = pp_merge(r_pp,r_pperr,r_ppw,r_pprange);
             if strcmp(h_name,'h_time')
                 par = [par; posixtime(datetime(r_time(1,:))) posixtime(datetime(r_time(2,:)))];   % unix time
             elseif strcmp(h_name,'h_Tsys')
@@ -207,9 +205,11 @@ for ii = 1:length(parameters)
             elseif strcmp(h_name,'h_h')
                 nh = [nh; length(r_h)];
                 par = [par; eval(['r_' h_name(3:end)])];
-            elseif strcmp(h_name,'h_pprange')
-                npprange = [npprange; length(r_pprange)];
-                par = [par; eval(['r_' h_name(3:end)])];
+            elseif strcmp(h_name,'h_pprange') || strcmp(h_name,'h_pp') || strcmp(h_name,'h_pperr') || strcmp(h_name,'h_ppw')
+                par = [par; eval(['r_' h_name(3:end) '_merged'])];
+                if strcmp(h_name,'h_pprange')
+                    npprange = [npprange; length(r_pprange_merged)];
+                end
             else
                 par = [par; eval(['r_' h_name(3:end)])];    
             end
@@ -315,7 +315,7 @@ sFields = fieldnames(matfile);
 for sf = sFields.' 
     tFields = fieldnames(matfile.(char(sf)));
     for tf = tFields.'
-        maif ~exist(hdffilename)
+        if ~exist(hdffilename)
             hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         else
             hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
