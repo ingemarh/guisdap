@@ -22,7 +22,8 @@ elseif gates==0
 end
 gate=[];
 if nargin<5, plots=[]; end
-if isempty(plots) | plots~=-1, clf, plots=[]; end
+if isempty(plots), plots=0; end
+if plots~=-1, clf(findobj('type','figure','userdata',7)), plots=0; end
 if isempty(expt)
  [i,expt]=fileparts(pl_dir);
  if isempty(expt), [i,expt]=fileparts(i); end
@@ -182,10 +183,10 @@ end
 if plots
  plot(plfreq(:,:,round(nfl/2)),reshape(plsig(gate,:,:,round(nfl/2)),nfft,nfreq))
  pause
-elseif isempty(plots)
+elseif plots==0
  npanel=dgates*nfreq;
  height(2)=.03; height(1)=(0.85-(npanel-1)*height(2))/npanel;
- set(gcf,'Position',[200 30 587 807],'renderer','painters','PaperPosition',[0.4 0.7 20.65 28.4])
+ set(gcf,'Position',[200 30 587 807],'renderer','painters','PaperPosition',[0.4 0.7 20.65 28.4],'UserData',7)
 
  for g=1:dgates
   mmmsig=mean(max(max(plsig(g,:,:,:))));

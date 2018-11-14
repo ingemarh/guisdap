@@ -22,20 +22,19 @@ if nargin<3
 elseif gate==0
  gates=0;
 end
-if nargin<4, plots=0; end
+if nargin<4, plots=[]; end
+if isempty(plots), plots=0; end
 global Time par1D par2D axs r_Magic_const DATA_PATH local START_TIME END_TIME fpp_plot pl
 
 edge_dist=10; overlap=2;
 
 %Get plasmaline data
-if isempty(plots) | plots
- ogcf=gcf; gupfigure(9)
-end
 disp('Reading plasmaline data')
+pgcf=findobj('type','figure','userdata',7);
+if isempty(pgcf), pgcf=gupfigure; end
+ogcf=gcf;
 [pl,p]=plasma_summary(pl_dir,[],expt,gates,plots);
-if isempty(plots) | plots
- set(0,'currentfigure',ogcf)
-end
+set(0,'currentfigure',ogcf)
 if isempty(gate) | gate==0, gate=p.gate; end
 if isempty(gate), gate=1; end
 
@@ -124,7 +123,7 @@ else
  plf=abs(plpeak_c(:,1+p.updown))/1e6;
 end
 if plots>1
- ogcf=gcf; gupfigure(9)
+ ogcf=gcf; set(0,'currentfigure',pgcf)
  plot([abs(plpeak_c)/1e6 plf]), pause
  set(0,'currentfigure',ogcf)
 end
@@ -154,7 +153,7 @@ while (mr==r0 | abs(mr-1)>.01) & nloop < 16
  mr=mr*r0; r0=mr;
  lf=8.98e-6*sqrt(par2D(:,:,3))/mr.*sqrt(1+3*7.52e5*(p.fradar/3e8)^2*par2D(:,:,4)./par2D(:,:,3)*mr^2);
  if plots>1
-  ogcf=gcf; gupfigure(9)
+  ogcf=gcf; set(0,'currentfigure',pgcf)
   fpp_plot=1:100:s;
  end
  lf=find_plf_peak(s,h,hlim,lf,16,freq_th,1);
