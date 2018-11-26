@@ -197,7 +197,7 @@ for ii = 1:length(parameters)
         for jj = 1:rec
             matfile_tmp = fullfile(dirpath,filesep,sprintf('%08d%s',filelist(jj).file,filelist(jj).ext));
             load(matfile_tmp)
-            [r_pp_merged,r_pperr_merged,r_ppw_merged,r_pprange_merged,r_pprofile_id] = pp_merge(r_pp,r_pperr,r_ppw,r_pprange); %#ok<ASGLU>
+            [r_pp_merged,r_pperr_merged,r_ppw_merged,r_pprange_merged,r_pprofile_id] = pp_merge(r_pp,r_pperr,r_ppw,r_pprange);
             if strcmp(h_name,'h_time')
                 par = [par; posixtime(datetime(r_time(1,:))) posixtime(datetime(r_time(2,:)))];   % unix time
             elseif strcmp(h_name,'h_Tsys')
