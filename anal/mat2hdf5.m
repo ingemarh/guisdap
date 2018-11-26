@@ -10,7 +10,7 @@ function mat2hdf5(dirpath)
 pathparts = strsplit(dirpath,filesep);    
 exprfolder = pathparts{end-1};                          
 
-Hdf5File = sprintf('Hdf5_%s%s',exprfolder,'.hdf5');
+Hdf5File = sprintf('GUISDAP_%s%s',exprfolder,'.hdf5');
 MatFile = sprintf('MAT_%s%s',exprfolder,'.mat');
 hdffilename = fullfile(dirpath,Hdf5File);
 matfilename = fullfile(dirpath,MatFile);
@@ -129,14 +129,14 @@ for ii = 1:length(parameters_2d)
          info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj+1)])) };
          for kk=1:length(r_m0)-1; nn2 = nn2 + 1; 
             if  (length(r_m0)-1)==1
-                if r_m0(kk)==30.5;   info(2)={'ion mix content: [O2+,NO+]/N'};
-                elseif r_m0(kk)==16; info(2)={'O+ content: [O+]/N'};
+                if r_m0(kk)==30.5;   info(2)={'ion mix content: [O2+,NO+]/N'}; info(5)={'dpm'};
+                elseif r_m0(kk)==16; info(2)={'O+ content: [O+]/N'}; info(5)={'dpo+'};
                 end
                 matfile.metadata.par2d(:,nn2) = info';
             else
                 info(1) = {[char(info_tmp(1)) num2str(kk)]};
-                if r_m0(kk)==30.5;   info(2)={'ion mix content: [O2+,NO+]/N'};
-                elseif r_m0(kk)==16; info(2)={'O+ content: [O+]/N'};
+                if r_m0(kk)==30.5;   info(2)={'ion mix content: [O2+,NO+]/N'}; info(5)={'dpm'};
+                elseif r_m0(kk)==16; info(2)={'O+ content: [O+]/N'}; info(5)={'dpo+'};
                 end
                 matfile.metadata.par2d(:,nn2) = info';
             end  
@@ -197,7 +197,7 @@ for ii = 1:length(parameters)
         for jj = 1:rec
             matfile_tmp = fullfile(dirpath,filesep,sprintf('%08d%s',filelist(jj).file,filelist(jj).ext));
             load(matfile_tmp)
-            [r_pp_merged,r_pperr_merged,r_ppw_merged,r_pprange_merged,r_pprofile_id] = pp_merge(r_pp,r_pperr,r_ppw,r_pprange);
+            [r_pp_merged,r_pperr_merged,r_ppw_merged,r_pprange_merged,r_pprofile_id] = pp_merge(r_pp,r_pperr,r_ppw,r_pprange); %#ok<ASGLU>
             if strcmp(h_name,'h_time')
                 par = [par; posixtime(datetime(r_time(1,:))) posixtime(datetime(r_time(2,:)))];   % unix time
             elseif strcmp(h_name,'h_Tsys')
@@ -308,7 +308,7 @@ else
 end
 matfile.metadata.gfd.extra=row([extra ones(size(extra,1))*'#']');
 
-save(matfilename,'matfile')
+%save(matfilename,'matfile')
 
 % Make a .hdf5-file 
 sFields = fieldnames(matfile);

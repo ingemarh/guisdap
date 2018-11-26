@@ -19,9 +19,16 @@ do_rpar=nargout==4;
 do_err=nargout==5;
 
 if isempty(strfind(data_path,'*')) && ~isdir(data_path)
-  [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,[],do_err);
-  return
+  [~,filename,ext] = fileparts(data_path);
+  if strcmp(ext,'.hdf5') && strcmp(filename(1:7),'GUISDAP')
+    [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(data_path);4
+    return
+  else
+    [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,[],do_err);
+    return
+  end
 end
+
 data_path=fullfile(data_path,filesep);
 list=getfilelist(data_path,lastfile);
 n=length(list);
