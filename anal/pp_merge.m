@@ -1,6 +1,4 @@
-
-
-% Test scrip in order to merge power profiles with similar resolution r_w
+% Merge power profiles with similar resolution r_w
 
 function [r_pp_merged,r_pperr_merged,r_ppw_merged,r_pprange_merged,r_pprofile_id] = pp_merge(r_pp,r_pperr,r_ppw,r_pprange)
 

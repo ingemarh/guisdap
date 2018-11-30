@@ -2,15 +2,18 @@
 
 function mat2hdf5(dirpath)
     
-    global path_GUP result_path
+global path_GUP result_path
+if nargin<1, dirpath = []; end
+if isempty(dirpath), dirpath=result_path; end
+
+if ~strcmp(dirpath(end),'/')  % the path must end with '/'
+    dirpath = [dirpath '/'];
+end
     
-    if nargin<1, dirpath = []; end
-    if isempty(dirpath), dirpath=result_path; end
-    
-pathparts = strsplit(dirpath,filesep);    
+pathparts = strsplit(dirpath,filesep);   
 exprfolder = pathparts{end-1};                          
 
-Hdf5File = sprintf('GUISDAP_%s%s',exprfolder,'.hdf5');
+Hdf5File = sprintf('EISCAT_%s%s',exprfolder,'.hdf5');
 MatFile = sprintf('MAT_%s%s',exprfolder,'.mat');
 hdffilename = fullfile(dirpath,Hdf5File);
 matfilename = fullfile(dirpath,MatFile);
@@ -197,7 +200,6 @@ for ii = 1:length(parameters)
         for jj = 1:rec
             matfile_tmp = fullfile(dirpath,filesep,sprintf('%08d%s',filelist(jj).file,filelist(jj).ext));
             load(matfile_tmp)
-            [r_pp_merged,r_pperr_merged,r_ppw_merged,r_pprange_merged,r_pprofile_id] = pp_merge(r_pp,r_pperr,r_ppw,r_pprange);
             if strcmp(h_name,'h_time')
                 par = [par; posixtime(datetime(r_time(1,:))) posixtime(datetime(r_time(2,:)))];   % unix time
             elseif strcmp(h_name,'h_Tsys')
@@ -205,11 +207,9 @@ for ii = 1:length(parameters)
             elseif strcmp(h_name,'h_h')
                 nh = [nh; length(r_h)];
                 par = [par; eval(['r_' h_name(3:end)])];
-            elseif strcmp(h_name,'h_pprange') || strcmp(h_name,'h_pp') || strcmp(h_name,'h_pperr') || strcmp(h_name,'h_ppw')
-                par = [par; eval(['r_' h_name(3:end) '_merged'])];
-                if strcmp(h_name,'h_pprange')
-                    npprange = [npprange; length(r_pprange_merged)];
-                end
+            elseif strcmp(h_name,'h_pprange')
+                npprange = [npprange; length(r_pprange)];
+                par = [par; eval(['r_' h_name(3:end)])];
             else
                 par = [par; eval(['r_' h_name(3:end)])];    
             end
@@ -308,7 +308,7 @@ else
 end
 matfile.metadata.gfd.extra=row([extra ones(size(extra,1))*'#']');
 
-%save(matfilename,'matfile')
+save(matfilename,'matfile')
 
 % Make a .hdf5-file 
 sFields = fieldnames(matfile);
