@@ -42,6 +42,8 @@ parameters_2dpp = {'h_pprange' 'h_pp' 'h_pperr' 'h_ppw'};                       
 [~,text] = xlsread(GuisdapParFile);     
 parameters_list = text(:,1);                                                % list that includes all Guisdap parameters and keep their positions from the excel arc
 
+matfile.metadata.header= text(1,1:7)';
+
 nn1 = 0;
 for ii = 1:length(parameters_1d)
      h_name1 = char(parameters_1d(ii));

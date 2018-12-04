@@ -76,6 +76,7 @@ for ii = par1d_id
         end
     end
     par1D = [par1D par_tmp];
+    par_tmp = [];
 end   
 
 for ii = par2d_id
@@ -99,6 +100,7 @@ for ii = par2d_id
         end
     end
     par2d = [par2d par_tmp];
+    par_tmp = [];
 end   
 
 for ii = err2d_id
@@ -114,6 +116,7 @@ for ii = err2d_id
         par_tmp = matdata.data.par2d(:,columns);
     end
     err2d = [err2d par_tmp];
+    par_tmp = [];
 end   
 
 err2d(:,2) = (par2d(:,5)./err2d(:,3) + par2d(:,4)./err2d(:,2)).*(par2d(:,4).*par2d(:,5)); %dTe = (dTi/Ti+dTr/Tr)*Te
@@ -127,6 +130,7 @@ for ii = rpar2d_id
     columns = find(str2num(char(matdata.metadata.par2d_pp(end,:)))==ii);
     par_tmp = matdata.data.par2d_pp(:,columns);
     rpar2d = [rpar2d par_tmp];
+    par_tmp = [];
 end
 
 pppars = [];
@@ -134,6 +138,7 @@ for ii = rpar2d_for_merging_id
     columns = find(str2num(char(matdata.metadata.par2d_pp(end,:)))==ii);
     par_tmp = matdata.data.par2d_pp(:,columns);
     pppars = [pppars par_tmp];
+    par_tmp = [];
 end
 pprange = pppars(:,1);
 pp      = pppars(:,2);
