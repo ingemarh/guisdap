@@ -20,8 +20,8 @@ do_err=nargout==5;
 
 if isempty(strfind(data_path,'*')) && ~isdir(data_path)
   [~,filename,ext] = fileparts(data_path);
-  if strcmp(ext,'.hdf5') && strcmp(filename(1:7),'GUISDAP')
-    [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(data_path);4
+  if strcmp(ext,'.hdf5') && strcmp(filename(1:6),'EISCAT')
+    [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(data_path);
     return
   else
     [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,[],do_err);
