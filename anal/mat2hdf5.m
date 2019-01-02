@@ -6,6 +6,10 @@ global path_GUP result_path
 if nargin<1, dirpath = []; end
 if isempty(dirpath), dirpath=result_path; end
 
+if isstring(dirpath)
+    dirpath = char(dirpath);    % need to be char class
+end
+
 if ~strcmp(dirpath(end),'/')  % the path must end with '/'
     dirpath = [dirpath '/'];
 end
@@ -310,7 +314,7 @@ else
 end
 matfile.metadata.gfd.extra=row([extra ones(size(extra,1))*'#']');
 
-save(matfilename,'matfile')
+%save(matfilename,'matfile')
 
 % Make a .hdf5-file 
 sFields = fieldnames(matfile);
