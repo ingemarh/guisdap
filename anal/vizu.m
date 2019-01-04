@@ -61,7 +61,7 @@ if strcmp(action(naction,nvargin,varargin),'rtgup')
     if ~isempty(vizufig)
       close(vizufig), vizufig=[]; axs=[]; axc=[];
     end
-    naction=nvargin+1;
+    naction=nvargin+1; OLD_WHICH=[];
   else
     varargin{naction}='update';
   end
