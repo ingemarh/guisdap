@@ -34,12 +34,11 @@ matfile_1 = fullfile(dirpath,filesep,sprintf('%08d%s',filelist(1).file,filelist(
 load(matfile_1);
 
 parameters_1d = {'h_time' 'h_ver' 'h_Magic_const' 'h_az' 'h_el' 'h_Pt' 'h_SCangle'...  % 0d and 1d parameters 
-    'h_XMITloc' 'h_RECloc' 'h_Tsys' 'h_code' 'h_om0' 'h_om' 'h_m0' 'h_phasepush'...
-    'h_Offsetppd' 'h_lag'};
+    'h_XMITloc' 'h_RECloc' 'h_Tsys' 'h_code' 'h_om0' 'h_m0' 'h_phasepush'...
+    'h_Offsetppd'};
 
 parameters_2d = {'h_h' 'h_range' 'h_param' 'h_error' 'h_apriori'...                     % 2d parameters
-    'h_apriorierror' 'h_status' 'h_dp' 'h_res' 'h_w' 'h_spec' 'h_freq'...
-    'h_ace' 'h_acf'};
+    'h_apriorierror' 'h_status' 'h_dp' 'h_res' 'h_w'};
 
 parameters_2dpp = {'h_pprange' 'h_pp' 'h_pperr' 'h_ppw'};                           % 2d pp-parameters
 
@@ -59,6 +58,8 @@ for ii = 1:length(parameters_1d)
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
             info(1) = {[h_name1(3:end) num2str(jj)]};
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
+            if isempty(info{6}), info{6} = 'N/A'; end
+            if isempty(info{7}), info{7} = 'N/A'; end
             matfile.metadata.par1d(:,nn1) = info';
          end
      elseif strcmp(h_name1,'h_XMITloc')
@@ -67,6 +68,8 @@ for ii = 1:length(parameters_1d)
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
             info(1) = {[h_name1(3:end) num2str(jj)]};
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
+            if isempty(info{6}), info{6} = 'N/A'; end
+            if isempty(info{7}), info{7} = 'N/A'; end
             matfile.metadata.par1d(:,nn1) = info';
          end
      elseif strcmp(h_name1,'h_RECloc') 
@@ -75,6 +78,8 @@ for ii = 1:length(parameters_1d)
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
             info(1) = {[h_name1(3:end) num2str(jj)]};
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
+            if isempty(info{6}), info{6} = 'N/A'; end
+            if isempty(info{7}), info{7} = 'N/A'; end
             matfile.metadata.par1d(:,nn1) = info';
          end
      elseif length(eval(['r_' h_name1(3:end)]))==1
@@ -82,16 +87,20 @@ for ii = 1:length(parameters_1d)
          a = find(strcmp(h_name1,parameters_list)==1);             
          [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
          info(1) = {h_name1(3:end)};
-         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))}; 
+         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+         if isempty(info{6}), info{6} = 'N/A'; end
+         if isempty(info{7}), info{7} = 'N/A'; end
          matfile.metadata.par1d(:,nn1) = info';
      else
          num = length(eval(['r_' h_name1(3:end)]));
          a = find(strcmp(h_name1,parameters_list)==1);
          [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
          info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+         if isempty(info{6}), info{6} = 'N/A'; end
+         if isempty(info{7}), info{7} = 'N/A'; end
         for jj = 1:num; nn1 = nn1+1;
              info(1) = {[h_name1(3:end) num2str(jj)]};                                % rename variable (adding a number)
-             if jj>1, info(5) = {''}; end
+            % if jj>1, info(5) = {''}; end
              matfile.metadata.par1d(:,nn1) = info';
          end
      end
@@ -103,12 +112,16 @@ nn1 = nn1 + 1;
 a = find(strcmp('nh',parameters_list)==1);
 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+if isempty(info{6}), info{6} = 'N/A'; end
+if isempty(info{7}), info{7} = 'N/A'; end
 matfile.metadata.par1d(:,nn1) = info';
 
 nn1 = nn1 + 1;
 a = find(strcmp('npprange',parameters_list)==1);
 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+if isempty(info{6}), info{6} = 'N/A'; end
+if isempty(info{7}), info{7} = 'N/A'; end
 matfile.metadata.par1d(:,nn1) = info';
 
 
@@ -125,6 +138,8 @@ for ii = 1:length(parameters_2d)
          [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
          info(1) = {h_name2(3:end)};
          info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+         if isempty(info{6}), info{6} = 'N/A'; end
+         if isempty(info{7}), info{7} = 'N/A'; end
          matfile.metadata.par2d(:,nn2) = info';
      elseif strcmp(h_name2,'h_param') || strcmp(h_name2,'h_error') || strcmp(h_name2,'h_apriori') || strcmp(h_name2,'h_apriorierror' )
          nump = length(r_param(1,:));
@@ -132,10 +147,14 @@ for ii = 1:length(parameters_2d)
          for jj = 1:5; nn2 = nn2 + 1; 
             [~,~,info]  = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
+            if isempty(info{6}), info{6} = 'N/A'; end
+            if isempty(info{7}), info{7} = 'N/A'; end
             matfile.metadata.par2d(:,nn2) = info';
          end
          [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj+1) ':E' num2str(a+jj+1)]); info_tmp = info;
          info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj+1)])) };
+         if isempty(info{6}), info{6} = 'N/A'; end
+         if isempty(info{7}), info{7} = 'N/A'; end
          for kk=1:length(r_m0)-1; nn2 = nn2 + 1; 
             if  (length(r_m0)-1)==1
                 if r_m0(kk)==30.5;   info(2)={'ion mix content: [O2+,NO+]/N'}; info(5)={'dpm'};
@@ -154,11 +173,15 @@ for ii = 1:length(parameters_2d)
          for ll = (jj + 2):nump; nn2 = nn2 + 1;
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+ll) ':E' num2str(a+ll)]); 
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+ll)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+ll)]))};
+            if isempty(info{6}), info{6} = 'N/A'; end
+            if isempty(info{7}), info{7} = 'N/A'; end
             matfile.metadata.par2d(:,nn2) = info';
          end
          if strcmp(h_name2,'h_error')
              [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+nump+1) ':E' num2str(a+nump+1)]);
              info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+nump+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+nump+1)]))};
+             if isempty(info{6}), info{6} = 'N/A'; end
+             if isempty(info{7}), info{7} = 'N/A'; end
              for jj = 1:nump-1
                 for kk = 1:nump-jj; nn2 = nn2 + 1;
                     info(1) = {['crossvar_' num2str(kk) num2str(kk+jj)]};
@@ -171,6 +194,8 @@ for ii = 1:length(parameters_2d)
          a = find(strcmp(parameters_2d(ii),parameters_list)==1); 
          [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
          info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+         if isempty(info{6}), info{6} = 'N/A'; end
+         if isempty(info{7}), info{7} = 'N/A'; end
          for jj = 1:dim(2); nn2 = nn2 + 1;
             info(1) = {[h_name2(3:end) num2str(jj)]};       
             matfile.metadata.par2d(:,nn2) = info';
@@ -189,10 +214,13 @@ for ii = 1:length(parameters_2dpp)
      [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
      info(1) = {h_name2pp(3:end)};
      info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))}; 
+     if isempty(info{6}), info{6} = 'N/A'; end
+     if isempty(info{7}), info{7} = 'N/A'; end
      matfile.metadata.par2d_pp(:,nn3) = info';
 end
 
 parameters = [parameters_1d parameters_2d parameters_2dpp];
+parameters_special = {'h_om' 'h_lag' 'h_spec' 'h_freq' 'h_acf' 'h_ace'};
 
 nh = [];
 npprange = [];
@@ -226,13 +254,33 @@ end
 
 
 matfile.data.par1d    = [h_time h_ver h_Magic_const h_az h_el h_Pt...
-    h_SCangle h_XMITloc h_RECloc h_Tsys h_code h_om0 h_om h_m0...
-    h_phasepush h_Offsetppd h_lag nh npprange];
+    h_SCangle h_XMITloc h_RECloc h_Tsys h_code h_om0   h_m0...
+    h_phasepush h_Offsetppd nh npprange];
 
 matfile.data.par2d    = [h_h h_range h_param h_error h_apriori...
-    h_apriorierror h_status h_dp h_res h_w h_spec h_freq h_ace h_acf];
+    h_apriorierror h_status h_dp h_res h_w];
 
 matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
+
+
+for ii = 1:length(parameters_special)
+    h_name = parameters_special{ii};
+    name = h_name(3:end);
+    if exist(['r_' name],'var') 
+        a = find(strcmp(parameters_special{ii},parameters_list)==1);
+        [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+        info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+        if isempty(info{6}), info{6} = 'N/A'; end
+        if isempty(info{7}), info{7} = 'N/A'; end
+        matfile.metadata.(name) = info';
+        matfile.data.(name) = []; 
+        for jj = 1:rec
+            matfile_tmp = fullfile(dirpath,filesep,sprintf('%08d%s',filelist(jj).file,filelist(jj).ext));
+            load(matfile_tmp)
+            matfile.data.(name) = eval(['r_' name])';
+        end       
+    end
+end
 
 k = length(matfile.data.par2d(1,:));
 n = length(matfile.data.par1d(1,:));
@@ -270,6 +318,8 @@ if exist('name_expr','var'); mm = mm + 1;
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
     info(1) = {name_expr};
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    if isempty(info{6}), info{6} = 'N/A'; end
+    if isempty(info{7}), info{7} = 'N/A'; end
     matfile.metadata.par0d(:,mm) = info';
 end
 if exist('name_site','var'); mm = mm + 1; 
@@ -277,6 +327,8 @@ if exist('name_site','var'); mm = mm + 1;
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
     info(1) = {name_site};
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    if isempty(info{6}), info{6} = 'N/A'; end
+    if isempty(info{7}), info{7} = 'N/A'; end
     matfile.metadata.par0d(:,mm) = info';
 end
 if exist('name_ant','var'); mm = mm + 1; 
@@ -284,6 +336,8 @@ if exist('name_ant','var'); mm = mm + 1;
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
     info(1) = {name_ant};
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    if isempty(info{6}), info{6} = 'N/A'; end
+    if isempty(info{7}), info{7} = 'N/A'; end
     matfile.metadata.par0d(:,mm) = info';
     end
 if exist('name_sig','var'); mm = mm + 1; 
@@ -291,6 +345,8 @@ if exist('name_sig','var'); mm = mm + 1;
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
     info(1) = {name_sig};
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    if isempty(info{6}), info{6} = 'N/A'; end
+    if isempty(info{7}), info{7} = 'N/A'; end
     matfile.metadata.par0d(:,mm) = info';
 end
  
@@ -314,7 +370,7 @@ else
 end
 matfile.metadata.gfd.extra=row([extra ones(size(extra,1))*'#']');
 
-%save(matfilename,'matfile')
+save(matfilename,'matfile')
 
 % Make a .hdf5-file 
 sFields = fieldnames(matfile);
