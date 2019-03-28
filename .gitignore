@@ -1,0 +1,10 @@
+# Compiled files
+mex7/
+lib/*
+**/*.o
+**/*.a
+**/*.so
+# Emacs files
+*~
+\#*\#
+
