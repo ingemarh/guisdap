@@ -291,12 +291,20 @@ if strcmp(nameant,'32m') || strcmp(nameant,'42m') || strcmp(nameant,'esr')
  FIGURE_TITLE='EISCAT SVALBARD RADAR';
  stretchSecs=65;
  fradar=500e6;
-elseif strcmp(nameant,'uhf') || strcmp(nameant,'kir') || strcmp(nameant,'sod')
+elseif strcmp(nameant,'uhf')
  FIGURE_TITLE='EISCAT UHF RADAR';
  fradar=930e6;
 elseif strcmp(nameant,'vhf')
  FIGURE_TITLE='EISCAT VHF RADAR';
  fradar=224e6;
+elseif strcmp(nameant,'kir') || strcmp(nameant,'sod')
+ if START_TIME(1)>2012
+  FIGURE_TITLE='EISCAT VHF RADAR';
+  fradar=224e6;
+ else
+  FIGURE_TITLE='EISCAT UHF RADAR';
+  fradar=930e6;
+ end
 elseif strcmp(nameant,'quj')
  FIGURE_TITLE='QUJING RADAR';
  fradar=500e6;
