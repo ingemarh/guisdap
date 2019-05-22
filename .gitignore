@@ -1,10 +1,7 @@
-# Compiled files
+# Ignore compiled files
 mex7/
 lib/*
 **/*.o
 **/*.a
 **/*.so
-# Emacs files
-*~
-\#*\#
 
