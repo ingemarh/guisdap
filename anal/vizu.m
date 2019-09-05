@@ -123,7 +123,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
         if length(intper)>1
           fig=sprintf('%s_scan',fig);
         elseif intper>0
-          fig=sprintf('%s_%d',fig,intper);
+          fig=sprintf('%s_%g',fig,intper);
         end
       end
     else
