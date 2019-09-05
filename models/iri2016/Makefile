@@ -3,7 +3,7 @@ MLIST=	cira.for igrf.f iridreg.for iriflip.for irifun.f irisub.f iritec.for
 N=	libiri
 ALIB=
 EXF=
-GFORT=	gfortran-5
+GFORT=	gfortran-6
 
 A=	.a
 S=	.so

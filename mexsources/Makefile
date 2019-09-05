@@ -1,7 +1,7 @@
 M=	$(PWD)/../lib
 sys=$(shell uname -s)
-GFORT=gfortran-5
-GC=gcc-5
+GFORT=gfortran-6
+GC=gcc-6
 ifndef MEX
 MEX:=	mex
 endif
