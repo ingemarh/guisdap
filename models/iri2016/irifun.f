@@ -113,35 +113,40 @@ C 2012.01 01/24/12 STORME_AP: change 365 to 366 leap year    [F. Simoes]
 C 2012.01 06/30/12 HMF2ED: hmF2 too low foF2/foE ge 1.7 [I.Zakharenkova]
 C 2012.01 09/14/12 SHAMDB0D,SHAB1D: initializing CONS2      [P. Coisson]
 C 2012.02 12/12/12 STORME_AP: add KONSOL and ERROR ouput STORME_AP=-5.
-C 2014.00 01/22/14 TPCORR: INVDIP --> INVDP                [J.K. Knight]
-C 2014.02 07/24/14 COMMON/iounit/ added 'mess'
-C 2014.03 08/25/14 ELTEIK,INVDPC,SOCO: ACOS: if(abs(x).gt.1) x=sign(1,x)
-C 2014.03 10/02/14 IONLOW,IONHIGH: C1(82) added for SPHARM_IK [J.C. Xue]
-C 2014.05 12/22/14 APFMSIS: changed text if out of range of APF107.DAT
-C 2015.01 04/27/15 TCON: ionoindx(806),indrz(806)
-C 2015.02 07/12/15 add read_ig_rz, readapf107 change TCON,APF* 
-C 2015.02 07/20/15 APFMSIS: remove duplicate iiap(8)         [E. Blanch]
-C 2015.03 08/13/15 DATA in subr: DATA values only used first CALL 
-C 2015.03 08/13/15 COMMON/CONST/UMR,PI 
-C 2015.03 09/30/15 hmF2 new: SHAMDHMF2, SDMF2 and associated subroutines 
-C 2015.03 09/30/15 ELTEIK,CALION,IONLOW,IONHIGH w/o invdip calc; INVDPC
-C 2015.03 10/12/15 READAPF107: F365 -> F107_365             [M. Hausman]
-C 2015.03 10/14/15 LEGFUN: replace print * with write(konsol,..)
-C 2015.03 10/14/15 SHAMDB0D,SHAB1D,SCHNEVPD: COMMON/ATB/
-C 2015.03 10/14/15 CLCMLT,DPMTRX --> IGRF.FOR
-C 2015.04 02/01/16 TAL: if(SHBR.le.0.0) -> RETURN
-C 2015.04 02/01/16 IONLOW,IONHIGH: ALT -> ALTI extrapolation  [S.R. Zhang]
-C 2016.01 02/24/16 SCHNEVPH: COSD(X) -> COS(X*UMR); CONST/UMR   [W. Toler]
-C 2016.01 02/24/16 SCHNEVP,LEGFUN: COMMON/COST/dfarg,PI         [W. Toler]
-C 2016.02 03/23/16 CALION, IONLOW, IONHIGH, INVDPC  revised   [V. Truhlik]
-C 2016.03 07/19/16 XE3_1: change D1F1 to C1                    [I. Galkin]
-C 2016.04 09/08/16 CALION: Version 2.5 C/NOFS correction      [V. Truhlik]
-C 2016.04 09/08/16 NEW: model_hmF2                             [V. Shubin]
-C 2016.05 10/19/16 read_ig_rz: *0.7 for r12_new starting 01/2014
-C 2017.01 02/23/17 SHAB1D: new SCHNEVPDB1 and COMMON/ATB1/ 
-C 2018.01 03/22/18 INVDPC= ... ALFA*SIGN(1.0,DIPL)*INVL       [V. Truhlik]
-C 2018.01 03/22/18 INVDPC_OLD for ELTEIK                      [V. Truhlik]
-C 2018.02 04/06/18 read_data_SD: add web dir. location for mcsat%%.dat
+C 2012.03 01/22/14 TPCORR: INVDIP --> INVDP                [J.K. Knight]
+C 2012.04 07/24/14 COMMON/iounit/ added 'mess'
+C 2012.05 08/25/14 ELTEIK,INVDPC,SOCO: ACOS: if(abs(x).gt.1) x=sign(1,x)
+C 2012.06 10/02/14 IONLOW,IONHIGH: C1(82) added for SPHARM_IK [J.C. Xue]
+C 2012.07 12/22/14 APFMSIS: changed text if out of range of APF107.DAT
+C 2012.08 04/27/15 TCON: ionoindx(806),indrz(806)
+C 2012.09 07/12/15 add read_ig_rz, readapf107 change TCON,APF* 
+C 2012.10 07/20/15 APFMSIS: remove duplicate iiap(8)         [E. Blanch]
+C 2012.11 04/11/18 read_ig_rz: rz=rz_new*0.7 from 01/2014, ig_rz_10_2016
+C 2012.12 04/16/18 Versioning now based on year of major releases
+C
+C 2016.01 08/13/15 DATA in subr: DATA values only used first CALL 
+C 2016.01 08/13/15 COMMON/CONST/UMR,PI 
+C 2016.02 09/30/15 hmF2 new: SHAMDHMF2, SDMF2 and associated subroutines 
+C 2016.02 09/30/15 ELTEIK,CALION,IONLOW,IONHIGH w/o invdip calc; INVDPC
+C 2016.03 10/12/15 READAPF107: F365 -> F107_365             [M. Hausman]
+C 2016.04 10/14/15 LEGFUN: replace print * with write(konsol,..)
+C 2016.04 10/14/15 SHAMDB0D,SHAB1D,SCHNEVPD: COMMON/ATB/
+C 2016.04 10/14/15 CLCMLT,DPMTRX --> IGRF.FOR
+C 2016.05 02/01/16 TAL: if(SHBR.le.0.0) -> RETURN
+C 2016.05 02/01/16 IONLOW,IONHIGH: ALT -> ALTI extrapolation  [S.R. Zhang]
+C 2016.06 02/24/16 SCHNEVPH: COSD(X) -> COS(X*UMR); CONST/UMR   [W. Toler]
+C 2016.06 02/24/16 SCHNEVP,LEGFUN: COMMON/COST/dfarg,PI         [W. Toler]
+C 2016.07 03/23/16 CALION, IONLOW, IONHIGH, INVDPC  revised   [V. Truhlik]
+C 2016.08 07/19/16 XE3_1: change D1F1 to C1                    [I. Galkin]
+C 2016.09 09/08/16 CALION: Version 2.5 C/NOFS correction      [V. Truhlik]
+C 2016.09 09/08/16 NEW: model_hmF2                             [V. Shubin]
+C 2016.10 10/19/16 read_ig_rz: *0.7 for r12_new starting 01/2014
+C 2016.11 02/23/17 SHAB1D: new SCHNEVPDB1 and COMMON/ATB1/ 
+C 2016.12 03/22/18 INVDPC= ... ALFA*SIGN(1.0,DIPL)*INVL       [V. Truhlik]
+C 2016.12 03/22/18 INVDPC_OLD for ELTEIK                      [V. Truhlik]
+C 2016.13 04/06/18 read_data_SD: add web dir. location for mcsat%%.dat
+C 2016.14 04/23/18 Versioning now based on year of major releases
+C 2016.15 05/07/18 StormVd: AE7_12S -> AEd7_12S                [K. Knight]
 C                  
 c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c IRI functions and subroutines:
@@ -5796,7 +5801,7 @@ c
  10   format(a,'/mcsat',i2,'.dat')
 c-web- special for web version
 c10     FORMAT('/var/www/omniweb/cgi/vitmo/IRI/mcsat',I2,'.dat')
-20    format(6(d12.5))
+ 20   format(6(d12.5))
       end
 c
 c      
@@ -8863,7 +8868,7 @@ C
         COMMON		/apfa/aap,af107,n
 
         call getenv('IRIPATH',path)
-        Open(13,FILe=path(1:index(path,' ')-1)//'/apf107.dat',
+        Open(13,FILE=path(1:index(path,' ')-1)//'/apf107.dat',
      ,FORM='FORMATTED',STATUS='OLD',action='read')
 c-web-sepcial vfor web version
 c      OPEN(13,FILE='/var/www/omniweb/cgi/vitmo/IRI/apf107.dat',
@@ -10337,7 +10342,7 @@ C
 
          DO i=-7,-12,-1
             AEd7_12S=AE(iP+i)-130.0D0
-            IF (AEd7_12S.LE.0.0D0) AE7_12S=0.0D0
+            IF (AEd7_12S.LE.0.0D0) AEd7_12S=0.0D0
             AEd7_12=AEd7_12+AEd7_12S
          END DO
 

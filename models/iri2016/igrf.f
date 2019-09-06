@@ -53,18 +53,20 @@ C 2012.00 10/05/11    oval kp model (auroral_boundary), IGRF-11(igrf.for),
 C 2012.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
 C 2012.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
 C 2012.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
-C 2012.02 12/17/12 igrf_dip: Add magnetic declination as output parameter
-C 2014.01 07/20/14 igrf_dip,FTPRNT,RECALC: ASIN(x): abs(x)>1.0 x=sign(1.,x)
-C 2014.02 07/24/14 COMMON/iounit: added 'mess' 
-C 2015.01 02/10/15 Updating to IGRF-12 (2015)
-C 2015.01 07/12/15 use mess,konsol in IGRF and RECALC
-C 2015.02 08/23/15 initialization of Earth constants moved to IRI_SUB
-C 2015.03 10/14/15 CLCMLT,DPMTRX <--- IRIFUN.FOR
-C 2015.03 10/14/15 RECALC: update with IGRF-12 until 2020
-C 2015.03 10/14/15 IGRF_SUB,_DIP: move CALL FELDCOF to IRISUB.FOR
-C 2015.03 10/14/15 FELDCOF,SHELLG: DIMO to COMMON/IGRF1/
-C 2016.01 02/17/16 GEODIP: add PI to CONST
-C 2017.01 07/07/17 IGRF: updated with newest 2010, 2015, 2015s coeff.
+C 2012.01 12/17/12 igrf_dip: Add magnetic declination as output parameter
+C 2012.02 07/20/14 igrf_dip,FTPRNT,RECALC: ASIN(x): abs(x)>1.0 x=sign(1.,x)
+C 2012.03 07/24/14 COMMON/iounit: added 'mess' 
+C 2012.04 02/10/15 Updating to IGRF-12 (2015)
+C 2012.05 07/12/15 use mess,konsol in IGRF and RECALC
+C 2012.06 04/16/18 Versioning now based on year of major releases
+C 2016.01 08/23/15 initialization of Earth constants moved to IRI_SUB
+C 2016.02 10/14/15 CLCMLT,DPMTRX <--- IRIFUN.FOR
+C 2016.02 10/14/15 RECALC: update with IGRF-12 until 2020
+C 2016.02 10/14/15 IGRF_SUB,_DIP: move CALL FELDCOF to IRISUB.FOR
+C 2016.02 10/14/15 FELDCOF,SHELLG: DIMO to COMMON/IGRF1/
+C 2016.03 02/17/16 GEODIP: add PI to CONST
+C 2016.04 07/07/17 IGRF: updated with newest 2010, 2015, 2015s coeff.
+C 2016.05 03/25/19 GEODIP,SPHCAR,GEOMAG: improved COMMENTS
 c-----------------------------------------------------------------------        
 C 
         subroutine igrf_sub(xlat,xlong,year,height,
@@ -703,7 +705,7 @@ C                                 = -2, records out of order
 C                                 = FORTRAN run-time error number    
 C ===============================================================               
                                                                                 
-        CHARACTER  FSPEC*(*), FOUT*80,path*100                                   
+        CHARACTER  FSPEC*(*), FOUT*80,path*100
         DIMENSION       GH(196)
         LOGICAL		mess 
         COMMON/iounit/konsol,mess        
@@ -719,7 +721,7 @@ C ---------------------------------------------------------------
  667    FORMAT(a,'/',A13)
 c-web-for webversion
 c 667    FORMAT('/var/www/omniweb/cgi/vitmo/IRI/',A13)
-       OPEN (IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,action='read')
+       OPEN(IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,action='read')     
         READ (IU, *, IOSTAT=IER, ERR=999)                            
         READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD, XMYEAR 
         nm=nmax*(nmax+2)                
@@ -802,12 +804,9 @@ C ---------------------------------------------------------------
 C
 C
         SUBROUTINE EXTRASHC (DATE, DTE1, NMAX1, GH1, NMAX2,           
-     1                        GH2, NMAX, GH)                           
-                                                                                
-C ===============================================================               
-C                                                                               
-C       Version 1.01                                                   
-C                                                                               
+     1                        GH2, NMAX, GH)                                                                                                           
+C ===============================================================               C                                                                               
+C       Version 1.01                                                   C                                                                               
 C       Extrapolates linearly a spherical harmonic model with a        
 C       rate-of-change model.                                          
 C                                                                               
@@ -869,10 +868,10 @@ C ---------------------------------------------------------------
 C
 C
       SUBROUTINE GEODIP(IYR,SLA,SLO,DLA,DLO,J)
-
-C  Calculates dipole geomagnetic coordinates from geocentric coordinates
-C  or vice versa.
-
+C ===============================================================               
+C  Calculates geomagnetic dipole latitude/longitude (DLA/DLO) from 
+C  geocentric latitude/longitude (SLA/SLO) for J=0 and vice versa  
+C  for J=1.
 C                     J=0           J=1
 C		INPUT:     J,SLA,SLO     J,DLA,DLO
 C		OUTPUT:     DLA,DLO       SLA,SLO
@@ -880,6 +879,7 @@ C		OUTPUT:     DLA,DLO       SLA,SLO
 C  Last revision: November 2005 (Vladimir Papitashvili)
 C  The code is modifed from GEOCOR written by V.Popov and V.Papitashvili
 C  in mid-1980s. 
+C ===============================================================               
 
          COMMON /CONST/UMR,PI 
 
@@ -931,6 +931,9 @@ C
 C
       SUBROUTINE GEOCGM01(ICOR,IYEAR,HI,DAT,PLA,PLO)
 C  *********************************************************************
+C  Converts geocentric latitude/longitude into corrected geomagnetic
+C  (CGM) latitude/longitude using IGRF model.
+C
 C  Version 2011 for GEO-CGM.FOR    (good through 2015)      January 2011
 C  Version 2005 for GEO-CGM.FOR    (good through 2010)     November 2005
 C  Nov 11, 2005  IGRF and RECALC are is modified to the IGRF-10 model 
@@ -3786,16 +3789,17 @@ C  AND  THEREFORE:
 C
 C
       SUBROUTINE SPHCAR(R,TETA,PHI,X,Y,Z,J)
-C  *********************************************************************
-C   CONVERTS SPHERICAL COORDS INTO CARTESIAN ONES AND VICA VERSA
-C    (TETA AND PHI IN RADIANS).
+C ===============================================================               
+C  CONVERTS GEOCENTRIC CARTESIAN COORDINATES OF a LOCATION INTO 
+C  THE TOPOCENTRIC COORDINATES (TETA, PHI, R) At that LOCATION
+C  FOR J<0 AND VICA VERSA FOR J>0 (TETA AND PHI IN RADIANS).
 C                  J>0            J<0
 C-----INPUT:   J,R,TETA,PHI     J,X,Y,Z
 C----OUTPUT:      X,Y,Z        R,TETA,PHI
-C  AUTHOR: NIKOLAI A. TSYGANENKO, INSTITUTE OF PHYSICS, ST.-PETERSBURG
-C      STATE UNIVERSITY, STARY PETERGOF 198904, ST.-PETERSBURG, RUSSIA
-C      (now the NASA Goddard Space Fligth Center, Greenbelt, Maryland)
-C  *********************************************************************
+C  AUTHOR: NIKOLAI A. TSYGANENKO, INSTITUTE OF PHYSICS, ST.-
+C  PETERSBURG STATE UNIVERSITY, STARY PETERGOF 198904, ST.-
+C  PETERSBURG, RUSSIA.
+C ===============================================================               
 
         IMPLICIT NONE
 
@@ -3855,18 +3859,19 @@ C  *********************************************************************
 C
 C
       SUBROUTINE GEOMAG(XGEO,YGEO,ZGEO,XMAG,YMAG,ZMAG,J,IYR)
-C  *********************************************************************
-C CONVERTS GEOCENTRIC (GEO) TO DIPOLE (MAG) COORDINATES OR VICA VERSA.
-C IYR IS YEAR NUMBER (FOUR DIGITS).
-
+C ===============================================================               
+C CONVERTS GEOCENTRIC CARTESIAN COORDINATES (XGEO,YGEO,ZGEO) TO 
+C MAGNETIC DIPOLE CARTESIAN COORDINATES (XMAG,YMAG,ZMAG) FOR J>0
+C OR VICA VERSA FOR J<0. IYR IS YEAR NUMBER (FOUR DIGITS).
+C
 C                           J>0                J<0
 C-----INPUT:  J,XGEO,YGEO,ZGEO,IYR   J,XMAG,YMAG,ZMAG,IYR
 C-----OUTPUT:    XMAG,YMAG,ZMAG        XGEO,YGEO,ZGEO
-
-C  AUTHOR: NIKOLAI A. TSYGANENKO, INSTITUTE OF PHYSICS, ST.-PETERSBURG
-C      STATE UNIVERSITY, STARY PETERGOF 198904, ST.-PETERSBURG, RUSSIA
-C      (now the NASA Goddard Space Fligth Center, Greenbelt, Maryland)
-C  *********************************************************************
+C
+C AUTHOR: NIKOLAI A. TSYGANENKO, INSTITUTE OF PHYSICS, ST.-
+C PETERSBURG STATE UNIVERSITY, STARY PETERGOF 198904, ST.-PETERS-
+C BURG, RUSSIA.
+C ===============================================================               
 
         IMPLICIT NONE
 

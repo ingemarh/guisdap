@@ -1,7 +1,7 @@
 L=	../../lib/
 MLIST=	nrlmsise00.f
 N=	libmsis
-GFORT=	gfortran-5
+GFORT=	gfortran-6
 
 A=	.a
 S=	.so

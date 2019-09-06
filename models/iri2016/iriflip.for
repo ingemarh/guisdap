@@ -8,11 +8,13 @@ C 2012.00 10/05/11    NRLMSIS00 (cira.for), CGM coordinates, F10.7 daily
 C 2012.00 10/05/11    81-day 365-day indices (apf107.dat), ap->kp (ckp),
 C 2012.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
 C 2012.01 12/12/11 Deleted ALT_RATES (not used)
-C 2012.01 01/04/12 Deleted FINDAP,READAP,CONV_DATE,GET_DATA,RATCHK (not used)
-C 2012.01 01/04/12 Deleted BRACE,ACTUAL_DAY,EPHEM SOLDEC,TFILE,RUN_ERROR (not used)
-C 2012.01 01/04/12 COP2D: 99 FOMRAT ',' missing; commented out all WRITEs
-C 2014.01 07/17/14 COP4S: NPLUS=0; PR(13)=0.0 ------------------------- A Shabanloui
+C 2012.02 01/04/12 Deleted FINDAP,READAP,CONV_DATE,GET_DATA,RATCHK (not used)
+C 2012.02 01/04/12 Deleted BRACE,ACTUAL_DAY,EPHEM SOLDEC,TFILE,RUN_ERROR (not used)
+C 2012.02 01/04/12 COP2D: 99 FOMRAT ',' missing; commented out all WRITEs
+C 2012.03 07/17/14 COP4S: NPLUS=0; PR(13)=0.0 ------------------------- A Shabanloui
+C 2012.04 04/16/18 Versioning now based on year of major releases
 C 2016.01 09/08/16 Main: NEWTON replaced by iteration procedure ------- B Gustavsson
+C 2016.02 05/07/18 Added array PRV11 to DATA statement ---------------- K. Knight
 C****************************************************************************************
 C subroutines for IDC model
 C
@@ -670,6 +672,7 @@ C...... Written by P. Richards in February 2004
       DATA PRV8/0,.05,.07,.09,.11,.13,.14,.17,.07,.01,.02,.06,.08,7*0/
       DATA PRV9/0,.05,.07,.09,.11,.13,.14,.17,.07,.01,.02,.06,.08,7*0/
       DATA PRV10/0,.05,.07,.09,.11,.13,.14,.17,.07,.01,.02,.06,.08,7*0/
+      DATA PRV11/0,.05,.07,.09,.11,.13,.14,.17,.07,.01,.02,.06,.08,7*0/
       DATA PRV12/0,.05,.07,.09,.11,.13,.14,.17,.07,.01,.02,.06,.08,7*0/
 
       DATA K_N2_Q/7.0E-12/  !.. Quenching rate coeff. by N2
