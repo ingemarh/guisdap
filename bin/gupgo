@@ -15,7 +15,7 @@ fsiz() {
 }
 mail_it() {
 #	mailx -s "Analysis results" -r "GUISDAP <ingemar@eiscat.se>" $* <<!
-	mutt -s "Analysis results" -e "my_hdr From: GUISDAP <ingemar@eiscat.se>" $* <<!
+	mutt -F /home/eiscat/muttrc.webgup -s "Analysis results" -e "my_hdr From: GUISDAP <ingemar@eiscat.se>" $* <<!
 Enclosed you find the requested analysis.
 EISCAT
 !
@@ -129,12 +129,13 @@ then
   mv $resdir/NCAR* .
   bzip2 -9 NCAR*
  fi
- inhouse="@eiscat.se @eiscatk.eiscat.irf.se @eiscat.irf.se @eiscat.sgo.fi @eiscat.uit.no @esr.eiscat.no"
- goodguys="andkav@bas.ac.uk steve@mail.eiscat.rl.ac.uk cesar.la.hoz@phys.uit.no hans.nilsson@irf.se ritva.kuula@oulu.fi yogawa@nipr.ac.jp mike@eiscat.uit.no bjorn.gustavsson@uit.no"
+ inhouse="@eiscat.se @eiscat.sgo.fi @eiscat.uit.no @esr.eiscat.no"
+ goodsites="@uit.no @ntu.ac.uk @stfc.ac.uk @nipr.ac.jp @bas.ac.uk"
+ goodguys="andkav@bas.ac.uk steve.crothers@stfc.ac.uk yogawa@nipr.ac.jp mike@eiscat.uit.no bjorn.gustavsson@uit.no"
 
  trusted=0
  mh=`expr substr $resultpath $atpos 99`
- for eis in $inhouse
+ for eis in $inhouse $goodsites
  do
   if [ "$eis" = "$mh" ]
   then
