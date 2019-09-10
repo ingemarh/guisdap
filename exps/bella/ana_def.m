@@ -24,6 +24,8 @@ elseif name_site=='T' | name_site=='V'
     if expver==1
       plasma_range=col(ones(5*75,1)*(0:3)*8087+(1:5*75)'*ones(1,4)+40114);
     end
+  elseif name_site=='V'
+    plasma_range=col(ones(5*75,1)*(0:1)*14473+(1:5*75)'*ones(1,2)+14098);
   end
   if local.site=='T', d_saveint.dir='/analysis/integrated/AUTO'; end
 end
