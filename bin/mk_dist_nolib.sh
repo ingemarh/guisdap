@@ -9,4 +9,5 @@ for x in $excludeobj $excludelib $excludeP
 do 
  xclude="$xclude --exclude=$dir/$x"
 done
+echo "tar --exclude-vcs --exclude-backups $xclude -cf - $dir | bzip2 -c9 > $dir.tar.bz2"
 tar --exclude-vcs --exclude-backups $xclude -cf - $dir | bzip2 -c9 > $dir.tar.bz2
