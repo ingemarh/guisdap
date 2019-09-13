@@ -14,7 +14,7 @@ else
  invert=1; freq=-[3.6 5.2 6.8 8.4]*1e6; nup_d=4; fradar=930e6;
  re=regexp(pl_dir,'\d\d\d\d-\d\d-\d\d_bella\d_\d+@Tp');
  if [strfind(expt,'cut') re]
-  startad=(0:1)*5*75+1;
+  startad=(0:3)*5*75+1;
  else
   startad=40114+(0:3)*8087+1;
  end
