@@ -36,4 +36,6 @@ elseif name_site=='P'
  analysis_range=[100:3:400];
  analysis_overlap=1;
  analysis_maxwidth=10;
+ % a_freqband=0 for lowest (UHF) freq (-3.6MHz)pl-line band, 1 for 2nd (-6.0MHz), 2 for  3rd (-8.4MHz)
+ a_freqband=1;   %set 20130228  MTR  
 end
