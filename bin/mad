@@ -1,0 +1,69 @@
+#! /bin/bash
+### Madrigal upload script
+### Translated from csh  Carl-Fredrik Enell 20190917
+
+## Tasks
+# (1) Prepare analyzed data (guisdap result files) for loading to madrigal.
+# (2) Transfer the prepared files to the central "madrigalstage" directory.
+
+
+### Syntax: mad RESULT_DIRECTORY
+if [ $# != 1 ]; then
+   echo "Usage: $0 RESULT_DIRECTORY";
+   exit 1;
+fi   
+
+### Create a temporary work directory
+TMPDIR=$(mktemp)
+
+### Create stage directory
+echo "Reading input from $1"
+GDIR=$(basename $1)
+MDIR="${TMPDIR}/${GDIR}-stage"
+mkdir ${MDIR}
+
+## Copy the results
+echo "Copying $1 to ${MDIR}"
+cp -rp $1 ${MDIR}
+
+### Format for Madrigal: results and tarball of mat files
+echo "Formatting ${MDIR} for Madrigal"
+pushd ${MDIR}
+
+## Move result files up one level
+mv ${GDIR}/*.eps . >& /dev/null
+mv ${GDIR}/*.png . >& /dev/null
+mv ${GDIR}/NCAR_*.asc . >& /dev/null
+mv ${GDIR}/NCAR_*.bin . >& /dev/null
+mv ${GDIR}/NCAR_*.hdf5 . >& /dev/null
+mv ${GDIR}/*.txt . >& /dev/null
+
+## tar $MDIR/$GDIR, now contains only .mat and gfd_setup.m files
+tar cf ${GDIR}.tar ${GDIR}
+rm -rf ${GDIR}
+
+## Replace @ signs in names
+for F in *\@*; do mv ${F} ${F/\@/_}; done
+
+## Compress
+gzip *.eps >& /dev/null
+gzip *.asc >& /dev/null
+gzip *.tar >& /dev/null
+
+echo "${MDIR} now contains: "
+ls -l
+
+### Done formatting
+popd
+
+### Copy to HQ stage area and clean up
+echo "Transferring ${MDIR} to madrigalstage directory"
+# scp -rp $MDIR kstdev@eiscathq.eiscat.se:~/madrigalstage/
+echo "Deleting temporary directory ${MDIR}"
+rm -rf ${MDIR}
+echo "Moving $1 to madrigalstaged"
+[ -d ${HOME}/madrigalstaged ] || mkdir ${HOME}/madrigalstaged
+mv $1 ${HOME}/madrigalstaged
+echo "Done!"
+
+### EOF
