@@ -14,7 +14,7 @@ if [ $# != 1 ]; then
 fi   
 
 ### Create a temporary work directory
-TMPDIR=$(mktemp)
+TMPDIR=$(mktemp -d)
 
 ### Create stage directory
 echo "Reading input from $1"
