@@ -57,8 +57,8 @@ ls -l
 popd
 
 ### Copy to HQ stage area and clean up
-echo "Transferring ${MDIR} to madrigalstage directory"
-# scp -rp $MDIR kstdev@eiscathq.eiscat.se:~/madrigalstage/
+echo "Transferring ${MDIR} to HQ madrigalstage directory"
+scp -rp $MDIR kstdev@eiscathq.eiscat.se:~/madrigalstage/
 echo "Deleting temporary directory ${MDIR}"
 rm -rf ${MDIR}
 echo "Moving $1 to madrigalstaged"
