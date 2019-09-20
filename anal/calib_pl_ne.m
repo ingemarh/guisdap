@@ -175,6 +175,7 @@ while (mr==r0 | abs(mr-1)>.01) & nloop < 16
   plot(mean(pl.t)+eps,plf,'+g',mean(Time),peak_lf,'+b')
   hold off
   %set(gca,'nextplot','replace')
+  set(gca,'color','none')
   set(gcf,'currentaxes',axs(1),'colormap',1-gray)
   plm=plm/max(max(plm))*length(get(gcf,'colormap'));
   delete(get(gca,'children')), delete(get(gca,'ylabel'))
