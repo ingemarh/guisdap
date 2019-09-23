@@ -10,6 +10,6 @@ if l>0 & isunix
     file=[file ' -F file=@' char(webfile(i))];
    end
   end
-  unix(['curl -s' file ' "http://www.eiscat.se/raw/rtg/upload.cgi" >/dev/null &']);
+  unix(['curl -s' file ' "http://portal.eiscat.se/raw/rtg/upload.cgi" >/dev/null &']);
  end
 end

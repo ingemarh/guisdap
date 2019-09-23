@@ -33,8 +33,8 @@ elseif name_site=='T' | name_site=='V'
 elseif name_site=='P'
  display_spectra=1;
  a_satch.do=0;
- analysis_range=[100:3:400];
- analysis_overlap=1;
+ analysis_range=[105.75:3:400];
+ analysis_overlap=.5;
  analysis_maxwidth=10;
  % a_freqband=0 for lowest (UHF) freq (-3.6MHz)pl-line band, 1 for 2nd (-6.0MHz), 2 for  3rd (-8.4MHz)
  a_freqband=1;   %set 20130228  MTR  
