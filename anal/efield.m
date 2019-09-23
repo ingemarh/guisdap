@@ -117,7 +117,7 @@ if ~isempty(p)
   %axis square
   %hds=get(gca,'child'); set(hds,'markersize',1,'userdata','logo')
   %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
-  axes('Position',[xp/10 yp xp/2 1-yp]); eiscatlogo(1,4.2)
+  axes('Position',[xp/10 yp xp/2 1-yp]); eiscatlogo(1)
   set(gca,'userdata','logo')
   set(gcf,'currentaxes',ax);
  end

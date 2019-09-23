@@ -1,8 +1,8 @@
-function eiscatlogo(linewidth,fontsize)
+function eiscatlogo(linewidth)
 % AT
 
 [x,y]=arc(0,0,10,0,360);stroke(x,y,linewidth);
-axis equal
+axis square
 hold on
 [x,y]=arc(0,0,7.3,180,0);stroke(x,y,linewidth);
 [x,y]=arc(0,0,7.5,234.3,305.7);stroke(x,y,linewidth);
@@ -38,7 +38,7 @@ linewidth=0.3527785*linewidth;
 [x,y]=arc(5,-8,0.2,0,360);strokefill(x,y,linewidth);
 [x,y]=arc(0,-6.8,0.2,0,360);strokefill(x,y,linewidth);
 
-outsidecircletext('EISCAT SCIENTIFIC ASSOCIATION',fontsize,90,8.65);
+outsidecircletext('EISCAT SCIENTIFIC ASSOCIATION',14,90,8.65);
 
 axis off
 hold off
@@ -93,9 +93,16 @@ h=fill(x,y,'k','linewidth',linewidth);
 return
 
 function h=outsidecircletext(thetext,fontsize,ang,r)
+un=get(gca,'units');
+set(gca,'units','points')
+tmp=get(gca,'position');
+scalefactor=min(tmp(3:4));
+fsize=scalefactor*fontsize/150;
+set(gca,'units',un)
+
 for j=1:length(thetext)
     h=text(r*cos(ang*pi/180),r*sin(ang*pi/180),thetext(j));
-    set(h,'fontsize',fontsize)
+    set(h,'fontsize',fsize,'fontunits','normalized')
     temp=get(h,'extent');w(j)=temp(3);
     delete(h)
 end
@@ -103,7 +110,7 @@ ww=(w(1:end-1)+w(2:end))/2;
 phi=ang*pi/180+(sum(ww)/2-[0,cumsum(ww)])/r;
 for j=1:length(thetext)
     h=text(r*cos(phi(j)),r*sin(phi(j)),thetext(j));
-    set(h,'fontsize',fontsize,'fontweight','bold')
+    set(h,'fontsize',fsize,'fontweight','bold','fontunits','normalized')
     set(h,'horizontalalignment','center')
     set(h,'verticalalignment','middle')
     set(h,'rotation',phi(j)*180/pi-90)
