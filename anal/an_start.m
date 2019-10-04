@@ -144,7 +144,7 @@ while ~EOF
     if di_figures(1)
       indr=1:length(d_data); indi=indr;
       indi(find(imag(d_data)==0))=NaN; 
-      drawnow, figure(di_figures(1)); %clf;
+      drawnow, gupfigure(di_figures(1)); %clf;
       plot(indr-1,real(d_data),'r',indi-1,imag(d_data),'b')
       indr=get(gca,'ylim'); indr=min([max([indr;-1000 -1000]);10000 10000]);
       set(gca,'ylim',indr)
@@ -172,7 +172,7 @@ while ~EOF
       save_results
       if di_figures(4)
         drawnow, gupfigure(abs(di_figures(4)))
-        if di_figures(4)<0 & a_savespec | (di_spectra~=-1 | di_spectra~=0)
+        if di_figures(4)<0 & a_savespec | (di_spectra~=-1 & di_spectra~=0)
           plot_specs
         elseif di_spectra==0
           plot_fit('panel',[1 1 1 0 1],[-inf inf 10*ceil((max(r_h)-min(r_h))/100)]);

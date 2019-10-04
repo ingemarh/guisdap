@@ -30,7 +30,7 @@ global a_ind a_interval a_year a_start a_integr a_skip a_end
 global a_txlimit a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
 global a_lagprofiling
-persistent a_antold a_max secs a_posold a_nnold fileslist
+persistent a_antold a_max secs a_posold a_nnold a_averold fileslist
 
 OK=0; EOF=0; jj=0; N_averaged=0; M_averaged=0;
 d_ExpInfo=[]; d_raw=[]; txdown=0;
@@ -139,14 +139,22 @@ while i<length(files)
   a_nnold=d_parbl(non_negative);
   a_ant=d_parbl([el az])/180*pi;
   [dx,dy,dz]=sph2cart(a_ant(2),a_ant(1),1); a_ant=[dx dy dz];
+  d=d_parbl(averaged);
+  if isempty(a_antold)
+    a_antold=a_ant;
+    secs=secs1;
+    a_averold=d;
+    N_averaged=0; M_averaged=0;
+  end
   a_tx=d_parbl(a_txpower(1))*a_txpower(2);
+  % At EISCAT we sample some parameters at the end of dump
+  tdiff=(round(secs1/a_inttime)-round(secs/a_inttime))*a_inttime;
+  if tdiff==a_inttime
+    d_parbl(averaged)=(d+a_averold)/2;
+  end
+  a_averold=d;
   if a_integr<=0
-    if isempty(a_antold)
-      a_antold=a_ant;
-      secs=secs1;
-      N_averaged=0; M_averaged=0;
-    end
-    tdiff=secs1-secs>a_max.gap;
+    tdiff=tdiff>a_max.gap;
     if a_integr<0 & exist('starttime','var')
       tdiff=tdiff | starttime-secs1<a_integr;
     end
