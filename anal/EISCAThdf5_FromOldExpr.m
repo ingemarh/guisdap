@@ -1,16 +1,4 @@
-% Generate a .hdf5 file from old madrigal .hdf5-files, called by TheSuperMasterScript
-
-% clear
-% % hdf5file = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/03dec85/overview/12030902.tra.hdf5';
-% % datapath = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/03dec85/ForMadrigal';
-% hdf5file = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/04dec85/overview/12040000.kra.hdf5';
-% datapath = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/04dec85/ForMadrigal';
-% % hdf5file = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/11dec85/overview/12110001.sra.hdf5';
-% % datapath = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/11dec85/ForMadrigal';
-% if exist(datapath)
-%     rmdir(datapath,'s')
-% end
-% mkdir(datapath);
+% Generate a new EISCAT HDF5 file from an old HDF5-file fromated in Madrigal, called by TheSuperMasterScript.m
 
 function storepath = EISCAThdf5_FromOldExpr(hdf5file,datapath)
 
@@ -19,20 +7,15 @@ global path_GUP newhdf5file
 analysis_link = 'https://git.eiscat.se/eiscat/on-an';
 matfile.metadata.analysis_link = analysis_link;
 
-
 if nargin<1
     error('A .hdf5 (or .hdf) file is needed as input.')
 end
-
 
 [path,filename,ext] = fileparts(hdf5file);
 
 if ~strcmp(ext,'.hdf5') && ~strcmp(ext,'.hdf')
     error('The input file is not an .hdf5 or .hdf.')
 end
-
-% dirpath = fullfile(path,filesep);
-% path_GUP = '/home/rikard/matlab/Guisdap/guisdap9';
 
 datapar = h5read(hdf5file,'/Metadata/Data Parameters');
 data    = h5read(hdf5file,'/Data/Table Layout');
@@ -56,8 +39,6 @@ nkindats = length(kindats);
 evenkindat = num2str(max(kindats));
 
 pathparts = strsplit(cedarfile,filesep);
-% [path,filename,ext]=fileparts(cedarfile);   % probably use this path in the final version, in order to store the new mat-files in the same old folder 
-% [path,~,~]=fileparts(file);                 % probaly delete this path in the final version 
 site = char(pathparts(end-2));
 parnames = datapar.mnemonic';
 npar = size(parnames,1);
@@ -73,11 +54,11 @@ if str2num(day)<10, day = ['0' day]; end
 display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
 aa = find(strcmp(exprparnames,'instrument')==1);
-if ~isempty(strfind(char(exprparvalues(aa)),'Kiruna')), name_ant = 'kir'; 
-elseif ~isempty(strfind(char(exprparvalues(aa)),'Sodankyl')), name_ant = 'sod';
-elseif ~isempty(strfind(char(exprparvalues(aa)),'Svalbard')), name_ant = 'esr';
-elseif ~isempty(strfind(char(exprparvalues(aa)),'combined')), name_ant = 'esa'; error('name_ant = esa: Abort!! Abort!!')
-elseif ~isempty(strfind(char(exprparvalues(aa)),'UHF')), name_ant = 'uhf';
+if contains(char(exprparvalues(aa)),'Kiruna'), name_ant = 'kir'; 
+elseif contains(char(exprparvalues(aa)),'Sodankyl'), name_ant = 'sod';
+elseif contains(char(exprparvalues(aa)),'Svalbard'), name_ant = 'esr';
+elseif contains(char(exprparvalues(aa)),'combined'), name_ant = 'esa'; error('name_ant = esa: Abort!! Abort!!')
+elseif contains(char(exprparvalues(aa)),'UHF'), name_ant = 'uhf';
 else name_ant = 'vhf'; end
 
 
@@ -93,26 +74,18 @@ end
 mkdir(storepath);
 
 Hdf5File = [datafolder '.hdf5'];
-%Hdf5File = ['EISCAT_' year '-' month '-' day '_' name_expr '@' name_ant '.hdf5'];
 MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '@' name_ant '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 newhdf5file = hdffilename;
 
-
-% Hdf5File = ['EISCAT_' year '-' month '-' day '_' name_expr '@' lower(instr) '.hdf5'];
-% MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '@' lower(instr) '.mat'];
-
-
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 
 [~,text] = xlsread(GuisdapParFile);     
-parameters_list = text(:,5);                            % list that includes all Guisdap parameters and keep their positions from the excel arc
+parameters_list = text(:,5);   % list that includes all Guisdap parameters and keep their positions from the excel arc
 gupparameters_list = text(:,1);
 
 if exist(hdffilename)==2, delete(hdffilename); end
-
-%gupfile    = fullfile(dirpath,'.gup');
 
 parnames = lower(datapar.mnemonic');
 npar = size(parnames,1);
@@ -126,7 +99,7 @@ if ~isempty(find(strcmp(Parsinfile_list,'sracf0')==1)) && ~isempty(find(strcmp(P
     data.acf0 = data.sracf0.*data.sfacf0;
     aa = find(strcmp(Parsinfile_list,'sracf0')==1);
     bb = find(strcmp(Parsinfile_list,'sfacf0')==1);
-    Parsinfile_list{aa}= 'acf';                                           % rename: sracf0 --> racf0    ( =sracf0.*sfacf0 )
+    Parsinfile_list{aa}= 'acf';  
     data = rmfield(data,'sfacf0');
     for mm = 1:nracf
         evalc(['data.acf' num2str(mm) '= data.acf0.*complex(data.racf' num2str(mm) ',data.iacf' num2str(mm) ')']);
@@ -146,15 +119,12 @@ for ii= 1:newrec
       nrec = [nrec; nrec_tmp];
 end
 
-
-matfile.data.par0d = [];
-matfile.data.par1d = [];
+matfile.data.par0d     = [];
+matfile.data.par1d     = [];
 matfile.metadata.par0d = [];
 matfile.metadata.par1d = [];
-
-matfile.data.par2d = [];
+matfile.data.par2d     = [];
 matfile.metadata.par2d = [];
-
 
 for ii = 1:nkindats
     aa = find(strcmp('nrec',gupparameters_list)==1);
@@ -247,7 +217,7 @@ for ii = 1:npar
             if strcmp('range',char(Parsinfile_list(ii))) && jj == 1 
                 bb = aa; end
             if strcmp('range',char(Parsinfile_list(ii)))
-                aa = bb(jj); end                                     % since there are two 'range' in parameters_list there will be two aa:s. This bit of code requires the 'normal' one to be before the pp in the list.  
+                aa = bb(jj); end  % since there are two 'range' in parameters_list there will be two aa:s. This bit of code requires the 'normal' one to be before the pp in the list.  
             
             if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1); end
             if strcmp('dvobi',char(Parsinfile_list(ii))), aa = find(strcmp('dvo',parameters_list)==1); end
@@ -336,7 +306,6 @@ for sf = sFields.'
     end
 end
 
-
 % Remove the 'Original parameter' (guisdap analysis parameter name) cells from
 % the metadata since they are empty, and put empty values in 'Madrigal Id'
 % and 'Identifier' to 0 instead
@@ -367,7 +336,7 @@ end
 
 save(matfilename,'matfile')
 
-% create a .hdf5
+% cGenerate an HDF5-file
 sFields = fieldnames(matfile);
 for sf = sFields.' 
     tFields = fieldnames(matfile.(char(sf)));

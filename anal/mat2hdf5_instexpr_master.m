@@ -1,4 +1,5 @@
-% Generate a .hdf5 file for a Guisdap analysis
+% Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
+
 function storepath = mat2hdf5_instexpr_master(matpath, datapath)
  
 global newhdf5file
@@ -16,14 +17,7 @@ if isstring(datapath)
     datapath = char(datapath);    % need to be char class
 end
 
-%if ~strcmp(datapath(end),'/')  % the path must end with '/'
-%    datapath = [datapath '/'];
-%end
-%pathparts = strsplit(matpath,filesep);   
-%dirfolder = pathparts{end-1};
-
-
-filelist   = dir(fullfile(matpath,'*.mat')); %filelist   = getfilelist(fullfile(dirpath));
+filelist   = dir(fullfile(matpath,'*.mat')); 
 rec        = length(filelist);
 
 gupfile    = fullfile(matpath,'.gup');
@@ -58,14 +52,11 @@ elseif ~isempty(gupfilecheck)
 else 
     intper_med = 'no gfd or gupfile';
 end
-%matfile.metadata.gfd.extra=row([extra ones(size(extra,1))*'#']');
     
 year = num2str(r_time(1,1));
 month = sprintf('%02d',r_time(1,2));
 day = sprintf('%02d',r_time(1,3));
 
-%[~,dirfolder]=fileparts(untarpath);
-%datafolder = sprintf('EISCAT_%s%s',dirfolder);
 datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' num2str(intper_med) '@' name_ant];
 storepath = fullfile(datapath,datafolder);
 if exist(storepath)
@@ -73,8 +64,6 @@ if exist(storepath)
 end
 mkdir(storepath);
 
-%Hdf5File = sprintf('EISCAT_%s%s',dirfolder,'.hdf5');
-%MatFile = sprintf('MAT_%s%s',dirfolder,'.mat');
 Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
 MatFile = sprintf('%s%s',datafolder,'.mat');
 hdffilename = fullfile(storepath,Hdf5File);
@@ -84,17 +73,18 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 
 if exist(hdffilename)==2, delete(hdffilename); end
 
-parameters_1d = {'h_time' 'h_ver' 'h_Magic_const' 'h_az' 'h_el' 'h_Pt' 'h_SCangle'...  % 0d and 1d parameters 
+% 0d and 1d parameters 
+parameters_1d = {'h_time' 'h_ver' 'h_Magic_const' 'h_az' 'h_el' 'h_Pt' 'h_SCangle'...
     'h_XMITloc' 'h_RECloc' 'h_Tsys' 'h_code' 'h_om0' 'h_m0' 'h_phasepush'...
     'h_Offsetppd'};
-
-parameters_2d = {'h_h' 'h_range' 'h_param' 'h_error' 'h_apriori'...                     % 2d parameters
+% 2d parameters 
+parameters_2d = {'h_h' 'h_range' 'h_param' 'h_error' 'h_apriori'...
     'h_apriorierror' 'h_status' 'h_dp' 'h_res' 'h_w'};
+% 2d_pp parameters 
+parameters_2dpp = {'h_pprange' 'h_pp' 'h_pperr' 'h_ppw'};
 
-parameters_2dpp = {'h_pprange' 'h_pp' 'h_pperr' 'h_ppw'};                           % 2d pp-parameters
-
-[~,text] = xlsread(GuisdapParFile);     
-parameters_list = text(:,1);                                                % list that includes all Guisdap parameters and keep their positions from the excel arc
+[~,text] = xlsread(GuisdapParFile);
+parameters_list = text(:,1);    % list that includes all Guisdap parameters and keep their positions from the excel arc
 
 matfile.metadata.header= text(1,1:7)';
 
@@ -104,7 +94,7 @@ for ii = 1:length(parameters_1d)
      if ~exist(['r_' h_name1(3:end)],'var')
          continue
      elseif strcmp(h_name1,'h_time')
-         a = find(strcmp(h_name1,parameters_list)==1);                         % find the row number in the xlsx-file corresponding to parameter(ii)
+         a = find(strcmp(h_name1,parameters_list)==1);
          for jj = 1:2; nn1 = nn1+1;
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
             info(1) = {[h_name1(3:end) num2str(jj)]};
@@ -140,15 +130,14 @@ for ii = 1:length(parameters_1d)
          [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
          info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
          for jj = 1:num; nn1 = nn1+1;
-             info(1) = {[h_name1(3:end) num2str(jj)]};                                % rename variable (adding a number)
-             %if jj>1, info(5) = {'N/A'}; end
+             info(1) = {[h_name1(3:end) num2str(jj)]};  
              matfile.metadata.par1d(:,nn1) = info';
          end
      end
      
 end
 
-% addition of record lengths 
+% adding record lengths 
 nn1 = nn1 + 1;
 a = find(strcmp('nrec',parameters_list)==1);
 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
@@ -423,7 +412,7 @@ end
 
 save(matfilename,'matfile')
 
-% Make a .hdf5-file 
+% Generate an HDF5-file 
 sFields = fieldnames(matfile);
 for sf = sFields.' 
     tFields = fieldnames(matfile.(char(sf)));
