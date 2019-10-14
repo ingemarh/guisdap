@@ -101,7 +101,7 @@ for ii = 1:length(targz_file)
         untar_filelist = dir(untarpath);
     end
         
-    storepath = mat2hdf5_instexpr_master(untarpath,datapath);    
+    storepath = mat2hdf5(untarpath,datapath);    
     folders = regexp(storepath,filesep,'split');
     storefolder = char(folders(end));
     display(storepath)
