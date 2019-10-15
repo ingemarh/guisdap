@@ -1,6 +1,6 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function storepath = mat2hdf5_instexpr_master(matpath, datapath)
+function storepath = mat2hdf5(matpath, datapath)
  
 global newhdf5file
 global path_GUP result_path
