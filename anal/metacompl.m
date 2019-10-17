@@ -1,10 +1,6 @@
-% test renaming
-% clear
-% datapath = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/11mar97/ForMadrigal/';
-% NewHdf5file = [datapath 'EISCAT_1997-03-11_CP4B_60.hdf5'];
-% OldHdf5file = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/11mar97/overview/03110908.vra.hdf5';
 
-function mat2hdf5_ButMetaFromOld(OldHdf5file)
+
+function metacompl(OldHdf5file)
 
 global newhdf5file
 

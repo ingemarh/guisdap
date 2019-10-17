@@ -1,6 +1,6 @@
-% Generate a new EISCAT HDF5 file from an old HDF5-file fromated in Madrigal, called by TheSuperMasterScript.m
+% Generate a new EISCAT HDF5 file from an old HDF5-file fromated in Madrigal, called by EISCAT_hdf5.m
 
-function storepath = EISCAThdf5_FromOldExpr(hdf5file,datapath)
+function storepath = cedar2hdf5(hdf5file,datapath)
 
 global path_GUP newhdf5file
 
