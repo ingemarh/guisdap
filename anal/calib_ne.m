@@ -12,7 +12,7 @@ function mr2=calib_ne(F,alt,maxe,minel,folim,polen,fpplt,ipar)
 %         fpplt: Indices to display the parabolic fits of plfs
 %         ipar: Ionosonde data type, 1 for asymptotic fit to crit freq (default)
 %               or 2 for fmfe or fmxf (peak pfreq from NeXtYZ)
-% Output: mr2: [Density_ratio Error NewMagic_const]
+% Output: mr2: [Density_ratio Error NoPointsUsed NewMagic_const]
 global fpp_plot plf_polen
 if nargin<8, ipar=[]; epar=[]; fpar=[];  end
 if nargin<7, fpplt=[]; end
@@ -88,12 +88,12 @@ else
  xlabel(sprintf('Dynasonde %s (MHz)',char(FD(F))))
  text(rx(2)*1.05,rx(2)/2,...
    sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%d-%d km\nelev > %g\\circ\ndynasonde window=%g-%g MHz\ngreen circles > %g\\sigma\n\nsuggested Magic const=%.2f',...
-   mr2,sr2,Magic_const,alt,minel,folim,maxe,nmc),'horiz','left')
+   mr2,sr2,Magic_const,alt,minel,folim,maxe,nmc),'horiz','left','UserData','Results')
  axis square
  pos=get(gca,'position'); pos(3)=.5;
  set(gca,'xlim',rx,'ylim',rx,'position',pos)
  if abs(mr2-1)>.005
   fprintf('Try Magic_const=%.2f;\n',nmc)
  end
- mr2=[mr2 sr2 nmc];
+ mr2=[mr2 sr2 length(good) nmc];
 end

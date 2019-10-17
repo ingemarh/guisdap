@@ -164,6 +164,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
 %   unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',...
     unix(sprintf('%s %s -dNOPAUSE -q -sDEVICE=png256 -g%s -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,pngor,file,file,ext));
     fprintf('Created %s.%s and .png\n',file,ext)
+    insert_exif(vizufig,file,{'eps' 'png'})
   end
  elseif strcmpi(act,'print')
   print(vizufig,'-dwinc');
@@ -408,18 +409,18 @@ if isempty(vizufig)
  ti=axes('Position',[0.0 0.87 0.95 0.08]);
  set(ti,'Visible','off');
  text('Position',[0.55,0.80],'VerticalAlignment','top', ...
-      'String',FIGURE_TITLE,'FontSize',16,'FontWeight','bold')
+      'String',FIGURE_TITLE,'FontSize',16,'FontWeight','bold','UserData','Radar')
  hds=text('Position',[0.55,0.4],'VerticalAlignment','top',...
-      'String',t2,'FontSize',12,'Interpreter','none');
+      'String',t2,'FontSize',12,'Interpreter','none','UserData','Experiment');
  text('Position',[0.125,0.12],'HorizontalAlignment','left',...
-      'Color',[.5 .5 .5],'VerticalAlignment','top','String',t1)
+      'Color',[.5 .5 .5],'VerticalAlignment','top','String',t1,'UserData','Computer')
  text('Position',[0.86,0.12],'HorizontalAlignment','right',...
       'Color',[.5 .5 .5],'VerticalAlignment','top','String',MESSAGE2)
  axs=[]; axc=[];
  %logo...
  if ~strcmp(nameant,'quj')
   text('Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
-      'FontWeight','bold','String','EISCAT Scientific Association');
+      'FontWeight','bold','String','EISCAT Scientific Association','UserData','Copyright');
  %load(fullfile(path_GUP,'matfiles','logo'))
   axes('Position',[.07 .9 .1 .075]); eiscatlogo(.8)
  %axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')

@@ -111,7 +111,7 @@ if ~isempty(p)
   axes('Position',[xp yp pos(3) 1-yp],'visible','off');
   text('Position',[0.5 0.5],... %'VerticalAlignment','bottom',...
     'Horizontal','center','FontSize',24,'FontWeight','bold',...
-    'String','EISCAT Scientific Association','userdata','logo');
+    'String','EISCAT Scientific Association','userdata','Copyright');
   %load(fullfile(path_GUP,'matfiles','logo'))
   %axes('Position',[xp/10 yp xp/2 1-yp]); plot(y,x,'.k')
   %axis square

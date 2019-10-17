@@ -219,9 +219,9 @@ elseif plots==0
  axes('Position',[.07 .92 .08 .06]); eiscatlogo(.7)
  text('Position',[11 10],'VerticalAlignment','top','FontSize',16,...
   'HorizontalAlignment','Left','FontWeight','bold',...
-  'String','EISCAT Scientific Association');
+  'String','EISCAT Scientific Association','UserData','Copyright');
  text('Position',[11 -8],'interpreter','none',...
-  'String',sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)))
+  'String',sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)),'UserData','Experiment')
  text('Position',-[15 150],'String','Frequency offset [MHz]','Rotation',90,...
   'VerticalAlignment','middle','HorizontalAlignment','center')
  if ~isempty(printdir)
@@ -237,5 +237,6 @@ elseif plots==0
    print(gcf,'-dpng256',[fname '.png'])
   end
   fprintf('%s.eps and .png saved\n',fname);
+  insert_exif(gcf,fname,{'eps' 'png'})
  end
 end

@@ -37,6 +37,9 @@ if di_spectra==-1
  end
 else
  dt=median(diff(lag));
+ if any(diff(lag)~=dt)
+  keyboard
+ end
  l=find(err>mean(err)+3*abs(di_spectra)*std(err)); acf(l)=[]; lag(l)=[];
  if di_spectra>0
   ml=max(lag); nl=round(ml/dt); l=(0:nl)/nl*ml; fl=fliplr(find(lag));
