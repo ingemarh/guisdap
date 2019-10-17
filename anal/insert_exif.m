@@ -1,43 +1,43 @@
 function insert_exif(fig,file,exts)
 exif='';
 prog='exiftool';
+ud={'Experiment' 'Radar' 'Copyright' 'Computer' 'Results'};
 if unix(['which ' prog ' >/dev/null'])
   warning('GUISDAP:vizu',[prog ' not found, please install'])
   return
 elseif strcmp(prog,'exiv2')
-  exif=cmdline(exif,fig,'Experiment',' -M"set Exif.Image.ImageDescription ');
-  exif=cmdline(exif,fig,'Radar',' -M"set Exif.Image.DocumentName ');
-  exif=cmdline(exif,fig,'Copyright',' -M"set Exif.Image.Copyright ');
-  exif=cmdline(exif,fig,'Computer',' -"set Exif.Image.HostComputer ');
-  exif=cmdline(exif,fig,'Results',' -M"set Exif.Photo.UserComment ');
+  tags={' -M"set Exif.Image.ImageDescription ' ' -M"set Exif.Image.DocumentName ' ' -M"set Exif.Image.Copyright ' ' -"set Exif.Image.HostComputer ' ' -M"set Exif.Photo.UserComment '};
+  exif=cmdline(fig,ud,tags);
   i=get(fig,'Name');
   if ~isempty(i), exif=[exif ' -M"set Exif.Image.ImageID ' i '"']; end
 elseif strcmp(prog,'exiftool')
-  exif=cmdline(exif,fig,'Experiment',' -description="');
-  exif=cmdline(exif,fig,'Radar',' -title="');
-  exif=cmdline(exif,fig,'Copyright',' -copyright="');
-  exif=cmdline(exif,fig,'Computer',' -author="');
-  exif=cmdline(exif,fig,'Results',' -comment="');
+  tags={' -description="' ' -title="' ' -copyright="' ' -author="' ' -comment="'};
+  exif=cmdline(fig,ud,tags);
   i=get(fig,'Name');
   if ~isempty(i), exif=[exif ' -source="' i '"']; end
 end
 if ~isempty(exif)
-	exif
   for ext=exts
      [i,i]=unix(sprintf('%s %s %s.%s',prog,exif,file,char(ext)));
   end
 end
 return
 
-function cmd=cmdline(cmd,fig,ud,tag)
-i=findobj(fig,'type','text','UserData',ud);
-if ~isempty(i), cmd=[cmd tag row(char(get(i,'string'))) '"']; end
-if strcmp(ud,'Results')
-	i
-    keyboard
-
-get(i,'string')
-char(get(i,'string')')
-row(char(get(i,'string')'))
+function cmd=cmdline(fig,ud,tag)
+cmd='';
+for f=1:length(ud)
+ i=findobj(fig,'type','text','UserData',char(ud(f)));
+ if ~isempty(i)
+  s=get(i,'string');
+  if iscell(s)
+   ss='';
+   for l=s'
+    if length(char(l))>2, ss=[ss char(l) newline]; end
+   end
+   cmd=[cmd char(tag(f)) ss(1:end-2) '"'];
+  else
+   cmd=[cmd char(tag(f)) get(i,'string') '"'];
+  end
+ end
 end
 return
