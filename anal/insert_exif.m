@@ -25,7 +25,7 @@ elseif strcmp(prog,'exiftool')
 end
 if ~isempty(exif)
   for ext=exts
-     [i]=unix(sprintf('%s %s %s %s.%s',prog,flags,exif,file,char(ext)));
+     [i,i]=unix(sprintf('%s %s %s %s.%s',prog,flags,exif,file,char(ext)));
   end
 end
 return
