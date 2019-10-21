@@ -1,8 +1,7 @@
 
 
-function metacompl(OldHdf5file)
+function metacompl(OldHdf5file,EISCAThdf5file)
 
-global newhdf5file
 
 inform1 = h5info(OldHdf5file,'/Metadata');
 metavar = {inform1.Datasets.Name}';
@@ -19,10 +18,10 @@ for ii = 1:length(exprparnames)
    experiment.(char(regexprep(exprparnames(ii),' ','_'))) = exprparvalues{ii};
 end
 
-inform2 = h5info(newhdf5file,'/metadata');
+inform2 = h5info(EISCAThdf5file,'/metadata');
 metavar = {inform2.Datasets.Name}';
-if isempty(find(strcmp(metavar,'experiment')))
-    hdf5write(newhdf5file,'/metadata/experiment',experiment,'WriteMode','append');
+if isempty(find(strcmp(metavar,'gfd')))
+    hdf5write(EISCAThdf5file,'/metadata/experiment',experiment,'WriteMode','append');
 else
     display('/metadata/experiment already exists in the new hdf5-file.')
     return

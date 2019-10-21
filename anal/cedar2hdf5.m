@@ -1,8 +1,9 @@
 % Generate a new EISCAT HDF5 file from an old HDF5-file fromated in Madrigal, called by EISCAT_hdf5.m
 
-function storepath = cedar2hdf5(hdf5file,datapath)
+function [storepath,EISCAThdf5file] = cedar2hdf5(hdf5file,datapath)
 
-global path_GUP newhdf5file
+global path_GUP 
+%global newhdf5file
 
 analysis_link = 'https://git.eiscat.se/eiscat/on-an';
 matfile.metadata.analysis_link = analysis_link;
@@ -77,7 +78,9 @@ Hdf5File = [datafolder '.hdf5'];
 MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '@' name_ant '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
-newhdf5file = hdffilename;
+%newhdf5file = hdffilename;
+EISCAThdf5file = hdffilename;
+
 
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 

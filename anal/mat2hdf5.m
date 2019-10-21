@@ -1,8 +1,8 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function storepath = mat2hdf5(matpath, datapath)
+function [storepath,EISCAThdf5file] = mat2hdf5(matpath, datapath)
  
-global newhdf5file
+%global newhdf5file
 global path_GUP result_path
 
 guisdap_link = 'https://git.eiscat.se/cvs/guisdap9';
@@ -25,7 +25,16 @@ gupfilecheck =  dir(gupfile);
 
 matfile_1 = fullfile(matpath,filelist(1).name); 
 load(matfile_1);
-
+if ~exist('name_ant','var')
+   switch name_site
+       case 'L', name_ant = 'esr';
+       case 'K', name_ant = 'kir';
+       case 'T', name_ant = 'uhf';
+       case 'S', name_ant = 'sod';
+       case 'V', name_ant = 'vhf';
+       case 'Q', name_ant = 'quj';
+   end
+end
 % store the gfd content
 if exist('r_gfd','var')
     matfile.metadata.gfd = r_gfd;
@@ -50,7 +59,14 @@ elseif ~isempty(gupfilecheck)
     if exist('extra','var'),        matfile.metadata.gfd.extra       = row([extra ones(size(extra,1))*'#']'); end
     %matfile.metadata.gfd.extra=row([extra ones(size(extra,1))*'#']');
 else 
-    intper_med = 'no gfd or gupfile';
+    intper_vec = zeros(rec,1);
+    for tt = 1:rec
+        matfile_tmp = fullfile(matpath,filelist(tt).name);
+        load(matfile_tmp)
+        intper_vec(tt) = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6)));
+        intper_med = median(intper_vec);
+    end
+   % intper_med = 'no gfd or gupfile';
 end
     
 year = num2str(r_time(1,1));
@@ -58,6 +74,8 @@ month = sprintf('%02d',r_time(1,2));
 day = sprintf('%02d',r_time(1,3));
 
 datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' num2str(intper_med) '@' name_ant];
+%display(datafolder)
+
 storepath = fullfile(datapath,datafolder);
 if exist(storepath)
    rmdir(storepath,'s');
@@ -68,7 +86,8 @@ Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
 MatFile = sprintf('%s%s',datafolder,'.mat');
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
-newhdf5file = hdffilename;
+%newhdf5file = hdffilename;
+EISCAThdf5file = hdffilename;
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 
 if exist(hdffilename)==2, delete(hdffilename); end
