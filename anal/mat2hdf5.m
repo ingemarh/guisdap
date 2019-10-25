@@ -440,9 +440,9 @@ for sf = sFields.'
         if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)) || strcmp('acf',char(tf)) || strcmp('ace',char(tf)) || strcmp('lag',char(tf)) || strcmp('freq',char(tf)) || strcmp('spec',char(tf)) || strcmp('mo',char(tf)))
             npar  = length(matfile.data.(char(tf))(1,:));
             ndata = length(matfile.data.(char(tf))(:,1));
-            if ge(length(ndata),chunklim) && ge(length(npar),chunklim), csize = [chunklim chunklim];
-            elseif ge(length(ndata),chunklim), csize = [chunklim npar];
-            elseif ge(length(npar),chunklim), csize = [ndata chunklim];
+            if ge(ndata,chunklim) && ge(npar,chunklim), csize = [chunklim chunklim];
+            elseif ge(ndata,chunklim), csize = [chunklim npar];
+            elseif ge(npar,chunklim), csize = [ndata chunklim];
             else csize = [ndata npar]; end    
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9);
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);

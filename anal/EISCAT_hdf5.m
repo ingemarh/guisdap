@@ -118,7 +118,7 @@ for ii = 1:length(targz_file)
     folders = regexp(storepath,filesep,'split');
     storefolder = char(folders(end));
     display(EISCAThdf5file)
-    display(image_filelist)
+    
     %%% copying figures to the new data folders
     if length(targz_file)==1
         for jj = 1:length(image_filelist)
