@@ -118,12 +118,16 @@ for ii = 1:length(targz_file)
     folders = regexp(storepath,filesep,'split');
     storefolder = char(folders(end));
     display(EISCAThdf5file)
-    
+    display(image_filelist)
     %%% copying figures to the new data folders
     if length(targz_file)==1
         for jj = 1:length(image_filelist)
             figurefile = fullfile(dirpath,image_filelist(jj).name);
             copyfile(figurefile,storepath)
+            [~,figname,ext] = fileparts(figurefile);
+            if ~strcmp(ext,'.gz')
+                store_image2Hdf5(figurefile,EISCAThdf5file)
+            end
         end
         figure_check(:) = 1;
     else
@@ -134,6 +138,7 @@ for ii = 1:length(targz_file)
         ant = storefolder(cc+1:end);
         
         for jj = 1:length(image_filelist)
+            a = 0;
             figurefile = fullfile(dirpath,image_filelist(jj).name);
             [~,figname,ext] = fileparts(figurefile);
             if strcmp(ext,'.gz')
@@ -178,13 +183,16 @@ for ii = 1:length(targz_file)
             
             if contains(fig_ant,ant) && (str2num(fig_intper)==str2num(intper)) && contains(fig_pulse,pulse)
                 copyfile(figurefile,storepath)
-                figure_check(jj) = figure_check(jj)+1;
+                figure_check(jj) = figure_check(jj)+1; a = 1;
             elseif contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse) 
                 copyfile(figurefile,storepath)
-                figure_check(jj) = figure_check(jj)+1;
+                figure_check(jj) = figure_check(jj)+1; a = 1;
             elseif contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse) 
                 copyfile(figurefile,storepath) 
-                figure_check(jj) = figure_check(jj)+1;
+                figure_check(jj) = figure_check(jj)+1; a = 1;
+            end
+            if ~strcmp(ext,'.gz') && a == 1
+                store_image2Hdf5(figurefile,EISCAThdf5file)
             end
         end
     end
@@ -233,7 +241,7 @@ for ii = 1:length(targz_file)
     copyfile(targz_file{ii},storepath)            
 end
 
-% Check if a figure was not copied and saved at all or copied and saved more than once
+% Check if a figure was not copied and saved at all, or copied and saved more than once
 z1 = find(figure_check==0);
 z2 = find(figure_check>1);
 for z3 = 1:length(z1)

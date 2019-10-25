@@ -432,14 +432,43 @@ end
 save(matfilename,'matfile')
 
 % Generate an HDF5-file 
+chunklim = 10;
 sFields = fieldnames(matfile);
 for sf = sFields.' 
     tFields = fieldnames(matfile.(char(sf)));
     for tf = tFields.'
-        if ~exist(hdffilename)
-            hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+        if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)) || strcmp('acf',char(tf)) || strcmp('ace',char(tf)) || strcmp('lag',char(tf)) || strcmp('freq',char(tf)) || strcmp('spec',char(tf)) || strcmp('mo',char(tf)))
+            npar  = length(matfile.data.(char(tf))(1,:));
+            ndata = length(matfile.data.(char(tf))(:,1));
+            if ge(length(ndata),chunklim) && ge(length(npar),chunklim), csize = [chunklim chunklim];
+            elseif ge(length(ndata),chunklim), csize = [chunklim npar];
+            elseif ge(length(npar),chunklim), csize = [ndata chunklim];
+            else csize = [ndata npar]; end    
+            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+        elseif strcmp('metadata',char(sf)) 
+            if ~exist(hdffilename)
+                hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            else
+                hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
+            end
         else
-            hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
+            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         end
     end
 end
+
+
+
+% sFields = fieldnames(matfile);
+% for sf = sFields.' 
+%     tFields = fieldnames(matfile.(char(sf)));
+%     for tf = tFields.'
+%         if ~exist(hdffilename)
+%             hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+%         else
+%             hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
+%         end
+%     end
+% end
