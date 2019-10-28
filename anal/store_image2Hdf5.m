@@ -2,6 +2,10 @@
 
 function store_image2Hdf5(figurefile,hdf5file)
 
+if nargin<2 
+    error('A figure file and an HDF5 file to save the figure data to are needed as input');
+end
+
 [X,map] = imread(figurefile);
 figinfo = imfinfo(figurefile);
 F = fieldnames(figinfo);

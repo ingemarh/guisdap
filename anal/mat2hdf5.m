@@ -324,12 +324,15 @@ for ii = 1:length(parameters_special)
         if isempty(info{6}), info{6} = '0'; end
         if isempty(info{7}), info{7} = '0'; end
         matfile.metadata.(name) = info';
-        matfile.data.(name) = []; 
+        %matfile.data.(name) = []; 
+        par = []; 
         for jj = 1:rec
             matfile_tmp = fullfile(matpath,filesep,filelist(jj).name);
             load(matfile_tmp)
-            matfile.data.(name) = eval(['r_' name])';
-        end       
+            par = [par;  eval(['r_' name])'];
+            %matfile.data.(name) = eval(['r_' name])';
+        end      
+        matfile.data.(name) = par;
     end
 end
 
@@ -437,7 +440,7 @@ sFields = fieldnames(matfile);
 for sf = sFields.' 
     tFields = fieldnames(matfile.(char(sf)));
     for tf = tFields.'
-        if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)) || strcmp('acf',char(tf)) || strcmp('ace',char(tf)) || strcmp('lag',char(tf)) || strcmp('freq',char(tf)) || strcmp('spec',char(tf)) || strcmp('mo',char(tf)))
+        if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)) || strcmp('acf',char(tf)) || strcmp('ace',char(tf)) || strcmp('lag',char(tf)) || strcmp('freq',char(tf)) || strcmp('spec',char(tf)) || strcmp('om',char(tf)))
             npar  = length(matfile.data.(char(tf))(1,:));
             ndata = length(matfile.data.(char(tf))(:,1));
             if ge(ndata,chunklim) && ge(npar,chunklim), csize = [chunklim chunklim];

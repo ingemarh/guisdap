@@ -193,7 +193,14 @@ if ~isempty(a_addr)
     end
   end
   if a_HDF
-    mat2hdf5
+    [~,EISCAThdf5file] = mat2hdf5;
+    image_filelist = dir(fullfile(result_path,'*.png'));
+    if ~isempty(image_filelist)
+       for ii = 1:length(image_filelist)
+           figurefile = fullfile(result_path,image_filelist(ii).name);
+           store_image2Hdf5(figurefile,EISCAThdf5file)
+       end
+    end
   end
   if di_figures(5)
     vizu('new','rtgup')
