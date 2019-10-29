@@ -336,18 +336,57 @@ if isfield(matfile.metadata,'par2d_pp')
     matfile.metadata.par2d_pp(gupnamesindex,:) = [];
 end
 
-
 save(matfilename,'matfile')
 
-% cGenerate an HDF5-file
+% Generate an HDF5-file 
+chunklim = 10;
 sFields = fieldnames(matfile);
 for sf = sFields.' 
     tFields = fieldnames(matfile.(char(sf)));
     for tf = tFields.'
-        if ~exist(hdffilename)
-            hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+        if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)))
+            npar  = length(matfile.data.(char(tf))(1,:));
+            ndata = length(matfile.data.(char(tf))(:,1));
+            if ge(ndata,chunklim) && ge(npar,chunklim), csize = [chunklim chunklim];
+            elseif ge(ndata,chunklim), csize = [chunklim npar];
+            elseif ge(npar,chunklim), csize = [ndata chunklim];
+            else csize = [ndata npar]; end 
+            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+        elseif strcmp('data',char(sf)) && strcmp('acf',char(tf))
+            acfsize = size(matfile.data.acf); 
+            nrow   = acfsize(1);
+            ncol   = acfsize(2);
+            ndepth = acfsize(3);
+            if ge(ncol,chunklim) && ge(ndepth,chunklim), csize = [nrow chunklim chunklim];
+            elseif ge(ncol,chunklim),   csize = [nrow chunklim ndepth];
+            elseif ge(ndepth,chunklim), csize = [nrow ncol chunklim];
+            else, csize = [nrow nrow ncol]; end
+            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+        elseif strcmp('metadata',char(sf)) 
+            if ~exist(hdffilename)
+                hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            else
+                hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
+            end
         else
-            hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
+            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         end
     end
 end
+
+
+% Generate an HDF5-file
+% sFields = fieldnames(matfile);
+% for sf = sFields.' 
+%     tFields = fieldnames(matfile.(char(sf)));
+%     for tf = tFields.'
+%         if ~exist(hdffilename)
+%             hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+%         else
+%             hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
+%         end
+%     end
+% end
