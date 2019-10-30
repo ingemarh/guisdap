@@ -19,11 +19,11 @@ if nargin<2, expt=[]; end
 gates=[];
 if nargin<3
  gate=[];
-elseif gate==0
+else
  gates=0;
 end
-if nargin<4, plots=[]; end
-if isempty(plots), plots=0; end
+if nargin<4, plots=0; end
+%if isempty(plots), plots=0; end
 global Time par1D par2D axs r_Magic_const DATA_PATH local START_TIME END_TIME fpp_plot pl
 
 edge_dist=10; overlap=2;

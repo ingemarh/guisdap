@@ -21,8 +21,8 @@ elseif gates==0
  gates=[]; verbose=1;
 end
 gate=[];
-if nargin<5, plots=[]; end
-if isempty(plots), plots=0; end
+if nargin<5, plots=0; end
+%if isempty(plots), plots=0; end
 if plots~=-1, clf(findobj('type','figure','userdata',7)), plots=0; end
 if isempty(expt)
  [i,expt]=fileparts(pl_dir);
