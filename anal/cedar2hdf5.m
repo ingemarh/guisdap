@@ -377,16 +377,3 @@ for sf = sFields.'
     end
 end
 
-
-% Generate an HDF5-file
-% sFields = fieldnames(matfile);
-% for sf = sFields.' 
-%     tFields = fieldnames(matfile.(char(sf)));
-%     for tf = tFields.'
-%         if ~exist(hdffilename)
-%             hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
-%         else
-%             hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
-%         end
-%     end
-% end

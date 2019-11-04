@@ -194,13 +194,30 @@ if ~isempty(a_addr)
   end
   if a_HDF
     [~,EISCAThdf5file] = mat2hdf5;
-    image_filelist = dir(fullfile(result_path,'*.png'));
+    image_filelist = [dir(fullfile(result_path,'*.png'));dir(fullfile(result_path,'*.gif'));dir(fullfile(result_path,'*.jpg'));dir(fullfile(result_path,'*.jpeg'))];
     if ~isempty(image_filelist)
        for ii = 1:length(image_filelist)
            figurefile = fullfile(result_path,image_filelist(ii).name);
            store_image2Hdf5(figurefile,EISCAThdf5file)
        end
     end
+%     eps_filelist = dir(fullfile(result_path,'*.eps'));
+%     if ~isempty(eps_filelist)
+%         for ii = 1:length(eps_filelist)
+%             figurefile = fullfile(result_path,eps_filelist(ii).name);
+%             [~,epsfilename,ext] = fileparts(figurefile);
+%             file = [result_path filesep epsfilename];
+%             pngor = '820x580';
+%             gd=fullfile(matlabroot,'sys','ghostscript',filesep);
+%             gsbin=fullfile(gd,'bin',lower(computer),'gs');
+%             gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
+%             if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
+%             unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s%s </dev/null >/dev/null',gsbin,gsinc,pngor,file,file,ext));
+% %             pdffile = [file '.pdf'];
+% %             copyfile(pdffile,storepath)
+% %             delete(pdffile)
+%         end
+%     end
   end
   if di_figures(5)
     vizu('new','rtgup')

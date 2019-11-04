@@ -23,7 +23,7 @@ start_GUP;
 load(fullfile(tempdir,'my_input.mat'));
 delete(fullfile(tempdir,'my_input.mat'));
 
-image_filelist = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*ps.gz'));;dir(fullfile(dirpath,'*ps'))];
+image_filelist = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
 if isempty(image_filelist)
     b = 0; 
 else
@@ -123,10 +123,30 @@ for ii = 1:length(targz_file)
     if length(targz_file)==1
         for jj = 1:length(image_filelist)
             figurefile = fullfile(dirpath,image_filelist(jj).name);
-            copyfile(figurefile,storepath)
             [~,figname,ext] = fileparts(figurefile);
-            if ~strcmp(ext,'.gz')
+            if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps')
                 store_image2Hdf5(figurefile,EISCAThdf5file)
+            else
+                % Make a PDF from EPS and store the PDF
+                if strcmp(ext,'.gz')
+                    epsfile = gunzip(figurefile);
+                    figurefile = epsfile{1};
+                end
+                [~,epsfilename,ext] = fileparts(figurefile);
+                if ~strcmp(ext,'.eps')
+                    continue
+                end
+                file = [dirpath filesep epsfilename];
+                pngor = '820x580';
+                gd=fullfile(matlabroot,'sys','ghostscript',filesep);
+                gsbin=fullfile(gd,'bin',lower(computer),'gs');
+                gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
+                if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
+                unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s%s </dev/null >/dev/null',gsbin,gsinc,pngor,file,file,ext));
+                pdffile = [file '.pdf'];
+                copyfile(pdffile,storepath)
+                delete(pdffile,figurefile)
+                figure_check(jj) = figure_check(jj) + 1;  
             end
         end
         figure_check(:) = 1;
@@ -181,18 +201,33 @@ for ii = 1:length(targz_file)
                 fig_intper = intper;
             end
             
-            if contains(fig_ant,ant) && (str2num(fig_intper)==str2num(intper)) && contains(fig_pulse,pulse)
-                copyfile(figurefile,storepath)
-                figure_check(jj) = figure_check(jj)+1; a = 1;
-            elseif contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse) 
-                copyfile(figurefile,storepath)
-                figure_check(jj) = figure_check(jj)+1; a = 1;
-            elseif contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse) 
-                copyfile(figurefile,storepath) 
-                figure_check(jj) = figure_check(jj)+1; a = 1;
-            end
-            if ~strcmp(ext,'.gz') && a == 1
-                store_image2Hdf5(figurefile,EISCAThdf5file)
+            if (contains(fig_ant,ant) && (str2num(fig_intper)==str2num(intper)) && contains(fig_pulse,pulse)) || ...
+               (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
+               (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) 
+                if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') 
+                    store_image2Hdf5(figurefile,EISCAThdf5file)
+                    figure_check(jj) = figure_check(jj) + 1;
+                else
+                    if strcmp(ext,'.gz')
+                        epsfile = gunzip(figurefile);
+                        figurefile = epsfile{1};
+                    end
+                    [~,epsfilename,ext] = fileparts(figurefile);
+                    if ~strcmp(ext,'.eps')
+                        continue
+                    end
+                    file = [dirpath filesep epsfilename];
+                    pngor = '820x580';
+                    gd=fullfile(matlabroot,'sys','ghostscript',filesep);
+                    gsbin=fullfile(gd,'bin',lower(computer),'gs');
+                    gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
+                    if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
+                    unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s%s </dev/null >/dev/null',gsbin,gsinc,pngor,file,file,ext));
+                    pdffile = [file '.pdf'];
+                    copyfile(pdffile,storepath)
+                    delete(pdffile,figurefile)
+                    figure_check(jj) = figure_check(jj) + 1;
+                end
             end
         end
     end
@@ -245,10 +280,10 @@ end
 z1 = find(figure_check==0);
 z2 = find(figure_check>1);
 for z3 = 1:length(z1)
-    display(['Warning: ' image_filelist(z1(z3)).name ' was not copied to a new data folder'])
+    display(['Warning: ' image_filelist(z1(z3)).name ' was not copied or stored'])
 end
 for z3 = 1:length(z2)
-    display(['Warning: ' image_filelist(z2(z3)).name ' was copied to more than one new data folder'])
+    display(['Warning: ' image_filelist(z2(z3)).name ' was copied or stored more than once'])
 end
 
 

@@ -303,7 +303,6 @@ for ii = 1:length(parameters)
     end
 end
 
-
 matfile.data.par1d    = [h_time h_ver h_Magic_const h_az h_el h_Pt...
     h_SCangle h_XMITloc h_RECloc h_Tsys h_code h_om0 h_m0...
     h_phasepush h_Offsetppd nh npprange];
@@ -312,7 +311,6 @@ matfile.data.par2d    = [h_h h_range h_param h_error h_apriori...
     h_apriorierror h_status h_dp h_res h_w];
 
 matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
-
 
 for ii = 1:length(parameters_special)
     h_name = parameters_special{ii};
@@ -324,14 +322,12 @@ for ii = 1:length(parameters_special)
         if isempty(info{6}), info{6} = '0'; end
         if isempty(info{7}), info{7} = '0'; end
         matfile.metadata.(name) = info';
-        %matfile.data.(name) = []; 
         par = []; 
         for jj = 1:rec
             matfile_tmp = fullfile(matpath,filesep,filelist(jj).name);
             load(matfile_tmp)
             par = [par;  eval(['r_' name])'];
-            %matfile.data.(name) = eval(['r_' name])';
-        end      
+            end      
         matfile.data.(name) = par;
     end
 end
@@ -405,6 +401,19 @@ aa = find(cellfun('isempty',matfile.metadata.par2d(7,:)));    matfile.metadata.p
 aa = find(cellfun('isempty',matfile.metadata.par2d_pp(6,:))); matfile.metadata.par2d_pp(6,aa)= {'0'};
 aa = find(cellfun('isempty',matfile.metadata.par2d_pp(7,:))); matfile.metadata.par2d_pp(7,aa)= {'0'};
 
+%keyboard        
+
+dd = strfind(name_sig,' ');
+publdate = name_sig(dd(1)+1:dd(2)-1);
+publyear = str2num(publdate(end-3:end));
+
+matfile.metadata.schemes.DataCite.Identifier = 'PID';
+matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
+matfile.metadata.schemes.DataCite.Title = datafolder;
+matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';
+matfile.metadata.schemes.DataCite.PublicationYear = publyear';
+matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionopshere';
+
 % Delete any empty fields from the structure
 sFields = fieldnames(matfile);
 for sf = sFields.' 
@@ -461,17 +470,3 @@ for sf = sFields.'
         end
     end
 end
-
-
-
-% sFields = fieldnames(matfile);
-% for sf = sFields.' 
-%     tFields = fieldnames(matfile.(char(sf)));
-%     for tf = tFields.'
-%         if ~exist(hdffilename)
-%             hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
-%         else
-%             hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
-%         end
-%     end
-% end
