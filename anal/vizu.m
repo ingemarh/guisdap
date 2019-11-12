@@ -135,8 +135,8 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   rotate=0; pngor='580x820'; if length(axs)==1, rotate=1; end
   if [strfind(act,'R') strfind(act,'V')], rotate=1-rotate; end
   if rotate
-   ppos=get(vizufig,'PaperPosition');
-   set(vizufig,'PaperOrient','landscape','PaperPosition',[0 3 ppos([4 3])-[0 3]])
+   ppos=get(vizufig,'PaperPosition'); s=3.4;
+   set(vizufig,'PaperOrient','landscape','PaperPosition',ppos([2 1 4 3])+[0 s 0 -s])
    pngor='820x580';
   end
   %[i,j]=unix('which addlogo.sh');
@@ -161,19 +161,21 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
     gsbin=fullfile(gd,'bin',lower(computer),'gs');
     gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
     if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
-%   unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',...
-    unix(sprintf('%s %s -dNOPAUSE -q -sDEVICE=png256 -g%s -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,pngor,file,file,ext));
-    fprintf('Created %s.%s and .png\n',file,ext)
-    insert_exif(vizufig,file,{'eps' 'png'})
+    unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
+    unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
+    delete([file '.' ext])
+    fprintf('Created %s.pdf and .png\n',file)
+    insert_exif(vizufig,file,{'pdf' 'png'})
   end
  elseif strcmpi(act,'print')
   print(vizufig,'-dwinc');
  else
   fig=sprintf('%d-%02d-%02d_%s@%s',START_TIME(1:3),name_expr,name_ant);
-  ext='eps';
   file=fullfile(DATA_PATH,fig);
-  print(vizufig,['-d' ext '2c'],[file '.' ext]);
-  fprintf('Created %s.%s\n',file,ext)
+  print(vizufig,'-dpdf',[file '.pdf']);
+  print(vizufig,'-dpng256',[file '.png']);
+  fprintf('Created %s.pdf and .png\n',file)
+  insert_exif(vizufig,file,{'pdf' 'png'})
  end
  return
 end
@@ -422,7 +424,7 @@ if isempty(vizufig)
   text('Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
       'FontWeight','bold','String','EISCAT Scientific Association','UserData','Copyright');
  %load(fullfile(path_GUP,'matfiles','logo'))
-  axes('Position',[.07 .9 .1 .075]); eiscatlogo(.8)
+  axes('Position',[.07 .89 .1 .075]); eiscatlogo(.8)
  %axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
  %hds(3)=get(gca,'children'); set(hds(3),'markersize',1)
  %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')

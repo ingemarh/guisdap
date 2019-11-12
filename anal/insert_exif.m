@@ -11,7 +11,7 @@ for i=d'
     td=(t-datenum(1970,1,1))*86400;
   end
 end
-if unix(['which ' prog ' >/dev/null'])
+if ~isunix | unix(['which ' prog ' >/dev/null'])
   warning('GUISDAP:vizu',[prog ' not found, please install'])
   prog='imwrite';
   f=imformats; lf=length(f); j=0;

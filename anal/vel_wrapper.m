@@ -105,11 +105,11 @@ if strcmp(ptype,'p') || np>1
   if ~isempty(gl), set(gl,'pos',get(gl,'pos')+[.1 0 0 0]), end
  end
 end
-print('-depsc',r)
+print('-dpdf',r)
 print('-dpng256',r)
 if strcmp(ptype,'p') || np>1
  for i=1:length(gc)
   set(gc(i),'pos',pos{i})
  end
 end
-fprintf('%s.mat .eps .png produced\n',r)
+fprintf('%s.mat .pdf .png produced\n',r)

@@ -228,15 +228,15 @@ elseif plots==0
   if pl_dir(end)==filesep, pl_dir(end)=[]; end
   if pl_dir=='.', pl_dir=pwd; end
   [dum,fname]=fileparts(pl_dir);
-  fname=minput('Print file name (.eps .png)',fullfile(printdir,[fname '_plasmaline']),1);
+  fname=minput('Print file name (.pdf .png)',fullfile(printdir,[fname '_plasmaline']),1);
   if local.x
-   print(gcf,'-opengl','-depsc','-r600',[fname '.eps'])
-   print(gcf,'-dpng',[fname '.png'])
+   print(gcf,'-opengl','-dpdf','-r600',[fname '.pdf'])
+   print(gcf,'-dpng256',[fname '.png'])
   else
-   print(gcf,'-depsc',[fname '.eps'])
+   print(gcf,'-dpdf',[fname '.pdf'])
    print(gcf,'-dpng256',[fname '.png'])
   end
-  fprintf('%s.eps and .png saved\n',fname);
-  insert_exif(gcf,fname,{'eps' 'png'})
+  fprintf('%s.pdf and .png saved\n',fname);
+  insert_exif(gcf,fname,{'pdf' 'png'})
  end
 end
