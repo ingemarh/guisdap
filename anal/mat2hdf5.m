@@ -5,8 +5,8 @@ function [storepath,EISCAThdf5file] = mat2hdf5(matpath, datapath)
 %global newhdf5file
 global path_GUP result_path
 
-guisdap_link = 'https://git.eiscat.se/cvs/guisdap9';
-matfile.metadata.guisdap_link = guisdap_link;
+software = 'https://git.eiscat.se/cvs/guisdap9';
+matfile.metadata.software = software;
 
 if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
 if nargin<1
@@ -402,17 +402,20 @@ aa = find(cellfun('isempty',matfile.metadata.par2d_pp(6,:))); matfile.metadata.p
 aa = find(cellfun('isempty',matfile.metadata.par2d_pp(7,:))); matfile.metadata.par2d_pp(7,aa)= {'0'};
 
 %keyboard        
-
-dd = strfind(name_sig,' ');
-publdate = name_sig(dd(1)+1:dd(2)-1);
-publyear = str2num(publdate(end-3:end));
-
 matfile.metadata.schemes.DataCite.Identifier = 'PID';
 matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
 matfile.metadata.schemes.DataCite.Title = datafolder;
 matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';
-matfile.metadata.schemes.DataCite.PublicationYear = publyear';
 matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionopshere';
+
+if exist('name_sig')
+    dd = strfind(name_sig,' ');
+    publdate = name_sig(dd(1)+1:dd(2)-1);
+    publdate = datestr(datenum(publdate,'dd-mmm-yyyy'),'yyyy-mm-dd'); % date on the form YYYY-MM-DD
+    publyear = publdate(1:4);
+    matfile.metadata.schemes.DataCite.Date = ['Created/' publdate];
+    matfile.metadata.schemes.DataCite.PublicationYear = publyear'; 
+end
 
 % Delete any empty fields from the structure
 sFields = fieldnames(matfile);

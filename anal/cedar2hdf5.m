@@ -5,8 +5,8 @@ function [storepath,EISCAThdf5file] = cedar2hdf5(hdf5file,datapath)
 global path_GUP 
 %global newhdf5file
 
-analysis_link = 'https://git.eiscat.se/eiscat/on-an';
-matfile.metadata.analysis_link = analysis_link;
+software = 'https://git.eiscat.se/eiscat/on-an';
+matfile.metadata.software = software;
 
 if nargin<1
     error('A .hdf5 (or .hdf) file is needed as input.')
@@ -273,6 +273,28 @@ for ii = 1:npar
 end
 
 
+% special treatment for cp6 experiments (kindat = '66xx')
+kindatstr = num2str(kindats(1));
+if strcmp(kindatstr(1:2),'66')
+    cp6_faultpars   = {'te','dte','ti','dti','pm','dpm','po+','dpo+','ph+','dph+','co','dco'};
+    cp6_correctpars = {'Ne_lag0+','dNe_lag0+','Ne_tp','dNe_tp','hw_lor','dhw_lor','hw_expfit','dhw_expfit','ampl','dampl','blev','dblev'};
+    for ii = 1:length(cp6_faultpars)
+        vv = find(strcmp(matfile.metadata.par2d(5,:),cp6_faultpars(ii)));
+        if vv
+            ww = find(strcmp(gupparameters_list,cp6_correctpars(ii))==1);
+            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(ww) ':E' num2str(ww)]);
+            info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(ww)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(ww)]))};
+            matfile.metadata.par2d(:,vv) = info';
+            if strcmp(cp6_faultpars(ii),'te') || strcmp(cp6_faultpars(ii),'dte') || strcmp(cp6_faultpars(ii),'ti') || strcmp(cp6_faultpars(ii),'dti')
+                matfile.data.par2d(:,vv) = 10.^(matfile.data.par2d(:,vv)/1000);
+            elseif strcmp(cp6_faultpars(ii),'pm') || strcmp(cp6_faultpars(ii),'dpm') || strcmp(cp6_faultpars(ii),'po+') || strcmp(cp6_faultpars(ii),'dpo+')
+                matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)/10;
+            end
+        end
+    end
+end
+%keyboard
+
 % add the RECloc data
 cc1 = find(strcmp(exprparnames,'instrument latitude')==1);
 cc2 = find(strcmp(exprparnames,'instrument longitude')==1);
@@ -297,6 +319,13 @@ if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})];
     info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
     matfile.metadata.par0d = [matfile.metadata.par0d info'];
 end
+
+matfile.metadata.schemes.DataCite.Identifier = 'PID';
+matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
+matfile.metadata.schemes.DataCite.Title = datafolder;
+matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';
+matfile.metadata.schemes.DataCite.PublicationYear = year';
+matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionopshere';
 
 % Delete any empty fields from the structure
 sFields = fieldnames(matfile);
