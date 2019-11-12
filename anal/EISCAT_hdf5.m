@@ -276,15 +276,15 @@ for ii = 1:length(targz_file)
     copyfile(targz_file{ii},storepath)            
 end
 
-% Check if a figure was not copied and saved at all, or copied and saved more than once
-z1 = find(figure_check==0);
-z2 = find(figure_check>1);
-for z3 = 1:length(z1)
-    display(['Warning: ' image_filelist(z1(z3)).name ' was not copied or stored'])
-end
-for z3 = 1:length(z2)
-    display(['Warning: ' image_filelist(z2(z3)).name ' was copied or stored more than once'])
-end
+% % Check if a figure was not copied and saved at all, or copied and saved more than once
+% z1 = find(figure_check==0);
+% z2 = find(figure_check>1);
+% for z3 = 1:length(z1)
+%     display(['Warning: ' image_filelist(z1(z3)).name ' was not copied or stored'])
+% end
+% for z3 = 1:length(z2)
+%     display(['Warning: ' image_filelist(z2(z3)).name ' was copied or stored more than once'])
+% end
 
 
 
