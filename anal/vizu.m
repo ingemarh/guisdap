@@ -361,6 +361,7 @@ if findstr(WHICH_PARAM,'P1'), option(16)=option(16)+2; end
 if findstr(WHICH_PARAM,'TC'), option(16)=option(16)+4; end
 if findstr(WHICH_PARAM,'Co'), option(7)=1; end
 if findstr(WHICH_PARAM,'Nr') & ~isempty(rpar2D), option(15)=1; end
+text(0,0,WHICH_PARAM,'Visible','off','UserData','Results')
 n_tot=sum(rem(option,2)+fix(option/2)-fix(option/4));
 if n_tot>6, FS=8; height(2)=.02; TL=TL/2; end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

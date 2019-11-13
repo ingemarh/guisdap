@@ -229,12 +229,20 @@ elseif plots==0
   if pl_dir=='.', pl_dir=pwd; end
   [dum,fname]=fileparts(pl_dir);
   fname=minput('Print file name (.pdf .png)',fullfile(printdir,[fname '_plasmaline']),1);
-  if local.x
-   print(gcf,'-opengl','-dpdf','-r600',[fname '.pdf'])
-   print(gcf,'-dpng256',[fname '.png'])
+  if isunix & local.x
+    gd=fullfile(matlabroot,'sys','ghostscript',filesep);
+    gsbin=fullfile(gd,'bin',lower(computer),'gs');
+    gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
+    if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
+    print(gcf,'-opengl','-depsc2','-r600',[fname '.eps'])
+    unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
+    unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
+    delete([fname '.eps'])
+   %print(gcf,'-opengl','-dpdf','-r600',[fname '.pdf'])
+   %print(gcf,'-dpng256',[fname '.png'])
   else
    print(gcf,'-dpdf',[fname '.pdf'])
-   print(gcf,'-dpng256',[fname '.png'])
+   print(gcf,'-dpng',[fname '.png'])
   end
   fprintf('%s.pdf and .png saved\n',fname);
   insert_exif(gcf,fname,{'pdf' 'png'})

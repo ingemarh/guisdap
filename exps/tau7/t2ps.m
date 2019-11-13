@@ -17,6 +17,11 @@ if site=='V'
  ch_filter={'b30d180.fir' 'b30d180.fir'};
  ch_f=[6 9];
  p_rep=999936;
+elseif site=='v'
+ ch_adcint=[15 15];
+ ch_filter={'b25d225.fir' 'b25d225.fir'};
+ ch_f=[6 5.8];
+ p_rep=514080;
 elseif site=='l'
  ch_adcint=[5 5];
  ch_filter={'b75d75.fir' 'b75d75.fir'};
