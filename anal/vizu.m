@@ -27,7 +27,7 @@ function [varargout]=vizu(varargin)
 
 global Time par2D par1D rpar2D name_expr name_ant axs axc maxdy rres
 persistent hds OLD_WHICH
-global height n_tot add_plot manylim plf_polen max_ppw
+global height n_tot add_plot manylim plf_polen max_ppw vizufig
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
 global r_RECloc path_tmp path_GUP result_path webfile local owner
 nvargin=length(varargin);
@@ -361,7 +361,6 @@ if findstr(WHICH_PARAM,'P1'), option(16)=option(16)+2; end
 if findstr(WHICH_PARAM,'TC'), option(16)=option(16)+4; end
 if findstr(WHICH_PARAM,'Co'), option(7)=1; end
 if findstr(WHICH_PARAM,'Nr') & ~isempty(rpar2D), option(15)=1; end
-text(0,0,WHICH_PARAM,'Visible','off','UserData','Results')
 n_tot=sum(rem(option,2)+fix(option/2)-fix(option/4));
 if n_tot>6, FS=8; height(2)=.02; TL=TL/2; end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -389,11 +388,11 @@ t1=['Produced@' LOCATION ', ' date];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 drawnow
 if isempty(vizufig)
- gupfigure
+ vizufig=gupfigure;
  if ~local.x && round(10*local.matlabversion)==65
-  close(gcf),gupfigure; % Matlab R13 bug
+  close(vizufig),vizufig=gupfigure; % Matlab R13 bug
  end
- set(gcf,'Position',[400 30 587 807],'DefaultAxesFontSize',FS,...
+ set(vizufig,'Position',[400 30 587 807],'DefaultAxesFontSize',FS,...
    'DefaultAxesTickDir','out','DefaultTextFontSize',FS,'UserData',6,...
    'DefaultAxesXMinorTick','on','defaultaxesbox','on',...
    'DefaultAxesTickLength',TL,...
@@ -409,31 +408,31 @@ if isempty(vizufig)
   uimenu('label','Print','callback','vizu(''print'')');
  end
 
- ti=axes('Position',[0.0 0.87 0.95 0.08]);
- set(ti,'Visible','off');
- text('Position',[0.55,0.80],'VerticalAlignment','top', ...
+ ti=axes(vizufig,'Position',[0.0 0.87 0.95 0.08],'Visible','off');
+ text(ti,'Position',[0.55,0.80],'VerticalAlignment','top', ...
       'String',FIGURE_TITLE,'FontSize',16,'FontWeight','bold','UserData','Radar')
- hds=text('Position',[0.55,0.4],'VerticalAlignment','top',...
+ hds=text(ti,'Position',[0.55,0.4],'VerticalAlignment','top',...
       'String',t2,'FontSize',12,'Interpreter','none','UserData','Experiment');
- text('Position',[0.125,0.12],'HorizontalAlignment','left',...
+ text(ti,'Position',[0.125,0.12],'HorizontalAlignment','left',...
       'Color',[.5 .5 .5],'VerticalAlignment','top','String',t1,'UserData','Computer')
- text('Position',[0.86,0.12],'HorizontalAlignment','right',...
+ text(ti,'Position',[0.86,0.12],'HorizontalAlignment','right',...
       'Color',[.5 .5 .5],'VerticalAlignment','top','String',MESSAGE2)
  axs=[]; axc=[];
  %logo...
  if ~strcmp(nameant,'quj')
-  text('Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
+  text(ti,'Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
       'FontWeight','bold','String','EISCAT Scientific Association','UserData','Copyright');
  %load(fullfile(path_GUP,'matfiles','logo'))
-  axes('Position',[.07 .89 .1 .075]); eiscatlogo(.8)
+  eiscatlogo(axes(vizufig,'Position',[.07 .89 .1 .075]),.8)
  %axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
  %hds(3)=get(gca,'children'); set(hds(3),'markersize',1)
  %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
  end
- vizufig=gcf;
 else
  set(hds,'string',t2)
+ ti=get(hds,'Parent');
 end
+text(ti,0,0,WHICH_PARAM,'Visible','off','UserData','Results')
 add_plot=0;
 height(1)=(0.80-(n_tot-1)*height(2))/n_tot;
 colormap(myb(78,1));
@@ -580,11 +579,12 @@ end
 global Time axs axc add_plot maxdy Y_TYPE
 add_plot=add_plot+1;
 if length(axs)<add_plot
- setup_axes(yscale,YTitle)
- set(gca,'UserData',zscale)
+ ax=setup_axes(yscale,YTitle);
+ set(ax,'UserData',zscale)
 else
- set(gcf,'currentaxes',axs(add_plot))
- zscale=get(gca,'UserData');
+ ax=axs(add_plot);
+ %set(gcf,'currentaxes',ax)
+ zscale=get(ax,'UserData');
 end
   
 if strcmp(lg,'log')
@@ -609,26 +609,26 @@ for i=s
   for j=[d' length(zp)+1]
    jj=(jp+1):(j-1); jp=j; ljj=length(jj);
    if ljj
-    surface(ones(ljj+1,1)*Time(:,i)',yp([jj jp])*o2,zp([jj jp-1])*o2)
+    surface(ax,ones(ljj+1,1)*Time(:,i)',yp([jj jp])*o2,zp([jj jp-1])*o2)
    end
   end
  end
 end
 if strcmp(Y_TYPE,'log')
- ny=length(get(gca,'ytick'));
- set(gca,'yscale',Y_TYPE)
- if length(get(gca,'ytick'))<ny
-  yl=log10(get(gca,'ylim'));
+ ny=length(get(ax,'ytick'));
+ set(ax,'yscale',Y_TYPE)
+ if length(get(ax,'ytick'))<ny
+  yl=log10(get(ax,'ylim'));
   yl=logspace(yl(1),yl(2),round(ny*1.3));
   yll=10.^floor(log10(yl));
   yl=round(yl./yll).*yll;
-  set(gca,'ytick',unique(yl))
+  set(ax,'ytick',unique(yl))
  end
 end
 
 if length(axc)<add_plot
  if ~isempty(zscale)
-  set(gca,'CLim',zscale+5*eps*abs(zscale).*[-1 1]);
+  set(ax,'CLim',zscale+5*eps*abs(zscale).*[-1 1]);
  end
  axc=[axc my_colorbar(Barlabel,lg)];
 end
@@ -639,22 +639,23 @@ function line_plot(s,yparam,yscale,YTitle,Clabel,lg)
 global Time axs add_plot
 add_plot=add_plot+1;
 if length(axs)<add_plot
- setup_axes(yscale,YTitle)
- set(gca,'UserData',yscale)
+ ax=setup_axes(yscale,YTitle);
+ set(ax,'UserData',yscale)
  if strcmp(lg,'log')
-  set(gca,'Yscale','log')
+  set(ax,'Yscale','log')
  end
  jj=0;
  for j=1:size(yparam,2)
   if ~isempty(Clabel) && any(isfinite(yparam(:,j)))
-   color=get(gca,'ColorOrder'); jj=jj+1;
-   text('String',char(Clabel(j)),'Units','Normalized',...
+   color=get(ax,'ColorOrder'); jj=jj+1;
+   text(ax,'String',char(Clabel(j)),'Units','Normalized',...
         'Position',[1+.025*jj 0.5],'Rotation',-90,'Color',color(j,:))
   end
  end
 else
- set(gcf,'currentaxes',axs(add_plot))
- yscale=get(gca,'UserData');
+ ax=axs(add_plot);
+ %set(gcf,'currentaxes',axs(add_plot))
+ yscale=get(ax,'UserData');
 end
 
 o2=ones(2,1);
@@ -663,32 +664,34 @@ if length(s)>1
  d=[find(Time(1,s(2:end))-Time(2,s(1:end-1))>0) length(s)];
  nc=size(yparam,2);
  for i=1:length(d)
-  line(col(Time(:,s(d1:d(i)))),reshape(o2*row(yparam(s(d1:d(i)),:)),2*(d(i)-d1+1),nc))
+  line(ax,col(Time(:,s(d1:d(i)))),reshape(o2*row(yparam(s(d1:d(i)),:)),2*(d(i)-d1+1),nc))
   d1=d(i)+1;
  end
 else
- line(Time(:,s),o2*yparam(s,:))
+ line(ax,Time(:,s),o2*yparam(s,:))
 end
 return
 
-function setup_axes(yscale,YTitle)
-global axs height n_tot START_TIME END_TIME add_plot
-axs=[axs axes('Position',[.12 .06+(n_tot-add_plot)*sum(height) .7 height(1)])];
-set(gca,'xgrid','on','ygrid','on')
+function ax=setup_axes(yscale,YTitle)
+global axs height n_tot START_TIME END_TIME add_plot vizufig
+ax=axes(vizufig,'Position',[.12 .06+(n_tot-add_plot)*sum(height) .7 height(1)]);
+axs=[axs ax];
+set(ax,'xgrid','on','ygrid','on')
 mydatetick([datenum(START_TIME) datenum(END_TIME)],length(axs)==1)
 if ~isempty(yscale)
- set(gca,'YLim',yscale+5*eps*abs(yscale).*[-1 1])
+ set(ax,'YLim',yscale+5*eps*abs(yscale).*[-1 1])
 end
-ylabel(YTitle)
+ylabel(ax,YTitle)
 return
 
 function f=myb(nl,cut)
+global vizufig
 % create palette with nl levels
 if nargin<2, cut=[]; end
 if nargin==0, nl=[]; end
 if isempty(cut), cut=0; end
 if isempty(nl)
- nl=size(get(gcf,'colormap'),1);
+ nl=size(get(vizufig,'colormap'),1);
 end
 f=[0 0 0 0 0 1 2 2 2 2 2 2 2
    0 0 0 1 2 2 2 1 0 0 0 1 2
