@@ -33,7 +33,7 @@ global r_RECloc path_tmp path_GUP result_path webfile local owner
 nvargin=length(varargin);
 naction=1;
 if strcmp(action(naction,nvargin,varargin),'myb')
-  varargout(1)={myb(action(naction+1,nvargin,varargin),action(naction+2,nvargin,varargin))};
+  varargout(1)={myb(gcf,action(naction+1,nvargin,varargin),action(naction+2,nvargin,varargin))};
   return
 end
 vizufig=findobj('type','figure','userdata',6);
@@ -435,7 +435,7 @@ end
 text(ti,0,0,WHICH_PARAM,'Visible','off','UserData','Results')
 add_plot=0;
 height(1)=(0.80-(n_tot-1)*height(2))/n_tot;
-colormap(myb(78,1));
+colormap(vizufig,myb(vizufig,78,1));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Determine the Y-Axis parameter
 if Y_PARAM<3
@@ -684,8 +684,7 @@ end
 ylabel(ax,YTitle)
 return
 
-function f=myb(nl,cut)
-global vizufig
+function f=myb(vizufig,nl,cut)
 % create palette with nl levels
 if nargin<2, cut=[]; end
 if nargin==0, nl=[]; end

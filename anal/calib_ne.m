@@ -86,6 +86,7 @@ else
  end
  ylabel(sprintf('EISCAT %s (MHz)',char(FO(F))))
  xlabel(sprintf('Dynasonde %s (MHz)',char(FD(F))))
+ delete(findobj(gcf,'UserData','Results'))
  text(rx(2)*1.05,rx(2)/2,...
    sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%d-%d km\nelev > %g\\circ\ndynasonde window=%g-%g MHz\ngreen circles > %g\\sigma\n\nsuggested Magic const=%.2f',...
    mr2,sr2,Magic_const,alt,minel,folim,maxe,nmc),'horiz','left','UserData','Results')

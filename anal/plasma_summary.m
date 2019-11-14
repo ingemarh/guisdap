@@ -235,8 +235,8 @@ elseif plots==0
     gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
     if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
     print(gcf,'-opengl','-depsc2','-r600',[fname '.eps'])
-    unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
-    unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
+    unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
+    unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
     delete([fname '.eps'])
    %print(gcf,'-opengl','-dpdf','-r600',[fname '.pdf'])
    %print(gcf,'-dpng256',[fname '.png'])
