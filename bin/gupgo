@@ -152,7 +152,7 @@ then
  nextfile=`ls $resdir/*.png 2>/dev/null`
  if [ $nextfile ]
  then
-  mv $resdir/*.png $resdir/*.eps .
+  mv $resdir/*.png $resdir/*.pdf .
   filelist="`ls *.png` $filelist"
  elif [ $trusted -eq 0 ]
  then
@@ -160,15 +160,15 @@ then
  fi
  if [ $trusted -eq 1 ]
  then
-  if [ $nextfile ]
-  then
-   bzip2 -9 *.eps
-  fi
+  #if [ $nextfile ]
+  #then
+  # bzip2 -9 *.eps
+  #fi
   tar cf - $resdir | bzip2 -9c > $resdir.tar.bz2
- elif [ $trusted -eq 0 ] && [ $nextfile ]
- then
-  ps2pdf -sPAPERSIZE=a4 *.eps
-  filelist="$filelist `ls *.pdf`"
+ #elif [ $trusted -eq 0 ] && [ $nextfile ]
+ #then
+ # ps2pdf -sPAPERSIZE=a4 *.eps
+ # filelist="$filelist `ls *.pdf`"
  fi
  filelist="$filelist `ls *.bz2`"
  rm -rf $resdir
