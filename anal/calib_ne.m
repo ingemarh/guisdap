@@ -37,17 +37,16 @@ end
 fpp_plot=fpplt;
 plf_polen=polen;
 a=vizu('verbose',alt,'P1 AE');
-global Time axs par1D DATA_PATH START_TIME END_TIME r_Magic_const name_ant
+global Time axs par1D DATA_PATH START_TIME END_TIME r_Magic_const name_ant vizufig
 d=datevec(Time(1));
 [dd,fo]=get_fo(Time(1),Time(end),name_ant,epar,fpar);
 t=[]; f=[];
 d=find(dd>datenum(START_TIME) & dd<datenum(END_TIME) & fo(:,F)>folim(1) & fo(:,F)<folim(2));
 dd=dd(d); fo=fo(d,:);
 if ~isempty(dd)
- set(gcf,'currentaxes',axs(1))
- hold on
- plot(dd,fo(:,F),'*g')
- hold off
+ hold(axs(1),'on')
+ plot(axs(1),dd,fo(:,F),'*g')
+ hold(axs(1),'off')
 
  %find guisdap data for sounding time
  for i=find(isfinite(fo(:,F)))'
@@ -69,7 +68,6 @@ else
   load(fgup,'-mat')
   for i=1:size(extra,1),eval(extra(i,:));end
  end
- set(gcf,'currentaxes',axs(2))
 %ne=(f*1e6/8.98).^2;
  r=f(:,2)./f(:,1); r2=r.^2;
  mr2=median(r2); sr2=std(r2);
@@ -78,21 +76,21 @@ else
  mr2=mean(r2(good)); sr2=std(r2(good));
  nmc=Magic_const/mr2;
  rx=[0 ceil(max(col(f)))]; %rrx=((rx(1):.1:rx(2)));
- plot(f(good,1),f(good,2),'o',f(bad,1),f(bad,2),'o',rx,rx*sqrt(mr2),'-',rx,rx,'-');
+ plot(axs(2),f(good,1),f(good,2),'o',f(bad,1),f(bad,2),'o',rx,rx*sqrt(mr2),'-',rx,rx,'-');
  FO={'foE','foF2'};
  FD=FO;
  if ipar ~=1
    FD={'fmxE','fmxF'};
  end
- ylabel(sprintf('EISCAT %s (MHz)',char(FO(F))))
- xlabel(sprintf('Dynasonde %s (MHz)',char(FD(F))))
- delete(findobj(gcf,'UserData','Results'))
- text(rx(2)*1.05,rx(2)/2,...
+ ylabel(axs(2),sprintf('EISCAT %s (MHz)',char(FO(F))))
+ xlabel(axs(2),sprintf('Dynasonde %s (MHz)',char(FD(F))))
+ delete(findobj(vizufig,'UserData','Results'))
+ text(axs(2),rx(2)*1.05,rx(2)/2,...
    sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%d-%d km\nelev > %g\\circ\ndynasonde window=%g-%g MHz\ngreen circles > %g\\sigma\n\nsuggested Magic const=%.2f',...
    mr2,sr2,Magic_const,alt,minel,folim,maxe,nmc),'horiz','left','UserData','Results')
- axis square
- pos=get(gca,'position'); pos(3)=.5;
- set(gca,'xlim',rx,'ylim',rx,'position',pos)
+ axis(axs(2),'square')
+ pos=get(axs(2),'position'); pos(3)=.5;
+ set(axs(2),'xlim',rx,'ylim',rx,'position',pos)
  if abs(mr2-1)>.005
   fprintf('Try Magic_const=%.2f;\n',nmc)
  end

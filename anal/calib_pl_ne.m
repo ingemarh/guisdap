@@ -24,7 +24,7 @@ else
 end
 if nargin<4, plots=0; end
 %if isempty(plots), plots=0; end
-global Time par1D par2D axs r_Magic_const DATA_PATH local START_TIME END_TIME fpp_plot pl
+global Time par1D par2D axs r_Magic_const DATA_PATH local START_TIME END_TIME fpp_plot pl vizufig
 
 edge_dist=10; overlap=2;
 
@@ -168,31 +168,27 @@ while (mr==r0 | abs(mr-1)>.01) & nloop < 16
  bad=find(abs(r2-mr2)>p.maxe*sr2);
  mr=median(r(good)); sr2=std(r2(good));
  if r0==1
-  axs(3)=copyobj(axs(1),gcf);
-  set(gcf,'currentaxes',axs(3))
-  %set(gca,'nextplot','add')
-  hold on
-  plot(mean(pl.t)+eps,plf,'+g',mean(Time),peak_lf,'+b')
-  hold off
-  %set(gca,'nextplot','replace')
-  set(gca,'color','none')
-  set(gcf,'currentaxes',axs(1),'colormap',1-gray)
-  plm=plm/max(max(plm))*length(get(gcf,'colormap'));
-  delete(get(gca,'children')), delete(get(gca,'ylabel'))
+  axs(3)=copyobj(axs(1),vizufig);
+  hold(axs(3),'on')
+  plot(axs(3),mean(pl.t)+eps,plf,'+g',mean(Time),peak_lf,'+b')
+  hold(axs(3),'off')
+  set(axs(3),'color','none')
+  set(vizufig,'colormap',1-gray)
+  plm=plm/max(max(plm))*length(get(vizufig,'colormap'));
+  delete(get(axs(1),'children')), delete(get(axs(1),'ylabel'))
   for i=1:nfl
-   surface(pl.t(:,i),[sf 2*sf(end)-sf(end-1)]'-fres/2,[plm(:,i);plm(end,i)]*ones(1,2))
+   surface(axs(1),pl.t(:,i),[sf 2*sf(end)-sf(end-1)]'-fres/2,[plm(:,i);plm(end,i)]*ones(1,2))
   end
-  set(gca,'xtick',[],'ytick',[],'ticklength',[0 0])
+  set(axs(1),'xtick',[],'ytick',[],'ticklength',[0 0])
   if local.matlabversion>=7, linkaxes(axs([1 3])), end
-  set(gcf,'currentaxes',axs(2))
   pmax=ceil(max([plf;peak_lf(il(good))]));
   rx=[0 pmax];
-  plot(plf(ip(good)),peak_lf(il(good)),'o',plf(ip(bad)),peak_lf(il(bad)),'o',rx,rx*mr,'-',rx,rx,'-')
-  hy=ylabel('Calculated plasmaline peak (MHz)');
-  hx=xlabel('Measured plasmaline peak (MHz)');
+  plot(axs(2),plf(ip(good)),peak_lf(il(good)),'o',plf(ip(bad)),peak_lf(il(bad)),'o',rx,rx*mr,'-',rx,rx,'-')
+  hy=ylabel(axs(2),'Calculated plasmaline peak (MHz)');
+  hx=xlabel(axs(2),'Measured plasmaline peak (MHz)');
   set(hx,'color','green'), set(hy,'color','blue')
-  pos=get(gca,'position'); pos(3)=.5;
-  set(gca,'xlim',[0 pmax],'ylim',[0 pmax],'position',pos), axis square
+  pos=get(axs(2),'position'); pos(3)=.5;
+  set(axs(2),'xlim',[0 pmax],'ylim',[0 pmax],'position',pos), axis(axs(2),'square')
   freq_th=freq_meas;
  end
 end
@@ -200,8 +196,8 @@ mr2=(mr*r0)^2; sr2=sr2*mr2;
 newMagic=Magic_const/mr2;
 %Need some overshoot for Te changes
 better_guess=newMagic*exp(-log(mr2)/15); % 15 OK for 22May04 ESR
-delete(findobj(gcf,'UserData','Results'))
-text(pmax*1.04,pmax/2,sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%.0f-%.0f km\ngreen circles > %g\\sigma\n\nsuggested Magic const=%.2f',mr2,sr2,Magic_const,mean(hlim),p.maxe,better_guess),'horiz','left','UserData','Results')
+delete(findobj(vizufig,'UserData','Results'))
+text(axs(2),pmax*1.04,pmax/2,sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%.0f-%.0f km\ngreen circles > %g\\sigma\n\nsuggested Magic const=%.2f',mr2,sr2,Magic_const,mean(hlim),p.maxe,better_guess),'horiz','left','UserData','Results')
 if abs(mr2-1)>.01
  fprintf('Try Magic_const=%.2f; (%.2f)\n',better_guess,newMagic)
 end
