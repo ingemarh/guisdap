@@ -44,7 +44,7 @@ dTe_id = 75;
 recloc_id = 9;
 
 matdata.metadata.par0d    = deblank(h5read(filename,'/metadata/par0d'));
-matdata.data.par0d        = h5read(filename,'/data/par0d')';
+matdata.data.par0d        = h5read(filename,'/data/par0d');
 matdata.metadata.par1d    = deblank(h5read(filename,'/metadata/par1d'));
 matdata.data.par1d        = h5read(filename,'/data/par1d');
 
@@ -53,7 +53,7 @@ Time = datenum(datetime(matdata.data.par1d(:,columns),'ConvertFrom','posixtime')
 rec = length(Time(:,1));
 
 columns = find(str2num(char(matdata.metadata.par0d(end,:)))==recloc_id);
-r_RECloc = matdata.data.par0d(:,columns);
+r_RECloc = matdata.data.par0d(columns);
 
 [ii2d,ii2d_pp] = deal(0,0);
 if ~isempty(find(strcmp(metavar,'par2d')));
@@ -73,7 +73,7 @@ nh_id = 70;
 column = find(str2num(char(matdata.metadata.par1d(end,:)))==nh_id);
 if isempty(column) 
     column = find(str2num(char(matdata.metadata.par0d(end,:)))==nh_id);
-    nh = matdata.data.par0d(:,column);
+    nh = matdata.data.par0d(column);
     nh = nh*ones(size(Time,1),1);
 else
     nh = matdata.data.par1d(:,column);
@@ -266,7 +266,7 @@ if ii2d_pp == 1
     column = find(str2num(char(matdata.metadata.par1d(end,:)))==npprange_id);
     if isempty(column) 
         column = find(str2num(char(matdata.metadata.par0d(end,:)))==npprange_id);
-        npprange = matdata.data.par0d(:,column);
+        npprange = matdata.data.par0d(column);
         npprange = npprange*ones(size(Time,1),1);
     else
         npprange = matdata.data.par1d(:,column);

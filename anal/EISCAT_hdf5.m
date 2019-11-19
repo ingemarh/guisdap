@@ -2,8 +2,6 @@
 
 function EISCAT_hdf5(dirpath, datapath, showfigs)
 
-%global newhdf5file
-
 % Show figures?
 % No:  showfigs = []
 % Yes: showfigs = 1
@@ -24,11 +22,6 @@ load(fullfile(tempdir,'my_input.mat'));
 delete(fullfile(tempdir,'my_input.mat'));
 
 image_filelist = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
-if isempty(image_filelist)
-    b = 0; 
-else
-    b = 1;
-end
 
 logs_file = [];
 logs_filename = [];
@@ -99,7 +92,7 @@ figure_check = zeros(length(image_filelist),1);
 
 for ii = 1:length(targz_file)
         
-    untarpath = fullfile(tempdir, 'UntaredContent');
+    untarpath = fullfile(tempdir,'UntaredContent');
     if exist(untarpath)
         rmdir(untarpath,'s')
     end
@@ -120,117 +113,79 @@ for ii = 1:length(targz_file)
     display(EISCAThdf5file)
     
     %%% copying figures to the new data folders
-    if length(targz_file)==1
-        for jj = 1:length(image_filelist)
-            figurefile = fullfile(dirpath,image_filelist(jj).name);
-            [~,figname,ext] = fileparts(figurefile);
-            if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps')
-                store_image2Hdf5(figurefile,EISCAThdf5file)
+    bb = strfind(storefolder,'_');
+    cc = strfind(storefolder,'@');
+    pulse = storefolder(bb(2)+1:bb(3)-1);
+    intper = storefolder(bb(3)+1:cc-1);
+    ant = storefolder(cc+1:end);
+       
+    nfigs_expr = 0;
+    
+    for jj = 1:length(image_filelist)
+        figurefile = fullfile(dirpath,image_filelist(jj).name);
+        [~,figname,ext] = fileparts(figurefile);
+        if strcmp(ext,'.gz')
+            [~,figname,~] = fileparts(figname);
+        end
+            
+        fig_pulse  = '';
+        fig_intper = '';
+        fig_ant    = '';
+            
+        dd_  = strfind(figname,'_');
+        ddat = strfind(figname,'@');
+        dd = sort([dd_ ddat]);
+            
+        fig_intper_set = 0;
+        for oo = 1:length(dd)
+            if oo == length(dd)
+                figpart = figname(dd(oo)+1:end);
             else
-                % Make a PDF from EPS and store the PDF
+                figpart = figname(dd(oo)+1:dd(oo+1)-1);
+            end
+                
+            if ~isempty(str2num(figpart)) && isempty(fig_intper)
+                fig_intper = figpart;
+                fig_intper_set = 1;
+            end
+            for pp = 1:length(pulses)
+                if contains(figpart,pulses(pp))
+                    fig_pulse = figpart;
+                end
+            end
+            for qq = 1:length(ants)
+                if contains(figpart,ants(qq))
+                    fig_ant = figpart;
+                end
+            end
+        end
+            
+        if fig_intper_set == 0 && ~isempty(intper)
+            fig_intper = intper;
+        end
+            
+        if (contains(fig_ant,ant) && (str2num(fig_intper)==str2num(intper)) && contains(fig_pulse,pulse)) || ...
+           (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
+           (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...
+           ((contains(figname,'BoreSight') || contains(figname,'WestBeam')) && contains(fig_pulse,pulse))
+            if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
+                store_image2Hdf5(figurefile,EISCAThdf5file)
+                figure_check(jj) = figure_check(jj) + 1;
+                nfigs_expr =  nfigs_expr +1;
+            else
                 if strcmp(ext,'.gz')
                     epsfile = gunzip(figurefile);
                     figurefile = epsfile{1};
                 end
-                [~,epsfilename,ext] = fileparts(figurefile);
-                if ~strcmp(ext,'.eps')
-                    continue
-                end
-                file = [dirpath filesep epsfilename];
-                pngor = '820x580';
-                gd=fullfile(matlabroot,'sys','ghostscript',filesep);
-                gsbin=fullfile(gd,'bin',lower(computer),'gs');
-                gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
-                if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
-                unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s%s </dev/null >/dev/null',gsbin,gsinc,pngor,file,file,ext));
-                pdffile = [file '.pdf'];
+                pdffile = eps2pdf(figurefile);
                 copyfile(pdffile,storepath)
                 delete(pdffile,figurefile)
-                figure_check(jj) = figure_check(jj) + 1;  
-            end
-        end
-        figure_check(:) = 1;
-    else
-        bb = strfind(storefolder,'_');
-        cc = strfind(storefolder,'@');
-        pulse = storefolder(bb(2)+1:bb(3)-1);
-        intper = storefolder(bb(3)+1:cc-1);
-        ant = storefolder(cc+1:end);
-        
-        for jj = 1:length(image_filelist)
-            a = 0;
-            figurefile = fullfile(dirpath,image_filelist(jj).name);
-            [~,figname,ext] = fileparts(figurefile);
-            if strcmp(ext,'.gz')
-                [~,figname,~] = fileparts(figname);
-            end
-            
-            fig_pulse  = '';
-            fig_intper = '';
-            fig_ant    = '';
-            
-            dd_  = strfind(figname,'_');
-            ddat = strfind(figname,'@');
-            dd = sort([dd_ ddat]);
-            
-            fig_intper_set = 0;
-            for oo = 1:length(dd)
-                if oo == length(dd)
-                    figpart = figname(dd(oo)+1:end);
-                else
-                    figpart = figname(dd(oo)+1:dd(oo+1)-1);
-                end
-                
-                if ~isempty(str2num(figpart)) && isempty(fig_intper)
-                    fig_intper = figpart;
-                    fig_intper_set = 1;
-                end
-                for pp = 1:length(pulses)
-                    if contains(figpart,pulses(pp))
-                        fig_pulse = figpart;
-                    end
-                end
-                for qq = 1:length(ants)
-                    if contains(figpart,ants(qq))
-                        fig_ant = figpart;
-                    end
-                end
-            end
-            
-            if fig_intper_set == 0 && ~isempty(intper)
-                fig_intper = intper;
-            end
-            
-            if (contains(fig_ant,ant) && (str2num(fig_intper)==str2num(intper)) && contains(fig_pulse,pulse)) || ...
-               (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
-               (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) 
-                if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') 
-                    store_image2Hdf5(figurefile,EISCAThdf5file)
-                    figure_check(jj) = figure_check(jj) + 1;
-                else
-                    if strcmp(ext,'.gz')
-                        epsfile = gunzip(figurefile);
-                        figurefile = epsfile{1};
-                    end
-                    [~,epsfilename,ext] = fileparts(figurefile);
-                    if ~strcmp(ext,'.eps')
-                        continue
-                    end
-                    file = [dirpath filesep epsfilename];
-                    pngor = '820x580';
-                    gd=fullfile(matlabroot,'sys','ghostscript',filesep);
-                    gsbin=fullfile(gd,'bin',lower(computer),'gs');
-                    gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
-                    if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
-                    unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s%s </dev/null >/dev/null',gsbin,gsinc,pngor,file,file,ext));
-                    pdffile = [file '.pdf'];
-                    copyfile(pdffile,storepath)
-                    delete(pdffile,figurefile)
-                    figure_check(jj) = figure_check(jj) + 1;
-                end
+                figure_check(jj) = figure_check(jj) + 1;
+                nfigs_expr =  nfigs_expr +1;
             end
         end
     end
+
         
         
     notesfile = fullfile(dirpath,'notes.txt');
@@ -238,60 +193,61 @@ for ii = 1:length(targz_file)
         copyfile(notesfile,storepath)
     end
     
-    % Check if 
-    info = h5info(EISCAThdf5file,'/metadata');
-    metavar = {info.Datasets.Name}';
-    hdf5fileformeta = [];
-    if isempty(find(strcmp(metavar,'gfd')))
-        [~,tarfilename1,~] = fileparts(targz_file{ii});
-        [~,tarfilename,~]  = fileparts(tarfilename1);
-        if ~isempty(hdf5ncar_files)
-            ff = contains(hdf5ncar_files,tarfilename);
-            gg = find(ff == 1);
-            if ~isempty(gg)
-                hdf5fileformeta = hdf5ncar_files{gg};
-            end
-        %elseif     
-        end
-        display(hdf5fileformeta)
-        metacompl(hdf5fileformeta,EISCAThdf5file)  
-    else
-    end
+%     % Check if 
+%     info = h5info(EISCAThdf5file,'/metadata');
+%     metavar = {info.Datasets.Name}';
+%     hdf5fileformeta = [];
+%     if isempty(find(strcmp(metavar,'gfd')))
+%         [~,tarfilename1,~] = fileparts(targz_file{ii});
+%         [~,tarfilename,~]  = fileparts(tarfilename1);
+%         if ~isempty(hdf5ncar_files)
+%             ff = contains(hdf5ncar_files,tarfilename);
+%             gg = find(ff == 1);
+%             if ~isempty(gg)
+%                 hdf5fileformeta = hdf5ncar_files{gg};
+%             end
+%         %elseif     
+%         end
+%         display(hdf5fileformeta)
+%         metacompl(hdf5fileformeta,EISCAThdf5file)  
+%     else
+%     end
     
-        
-    if b == 0
+    if nfigs_expr == 0
         vizu('new',untarpath,'HQ')
         vizu('save','24hrplt')
-        newimages_list = [dir(fullfile(untarpath,'*.png'));dir(fullfile(untarpath,'*.eps'))];
-        for jj = 1:length(newimages_list)
-            newimage = fullfile(untarpath,newimages_list(jj).name);
-            [~,~,ext] = fileparts(newimage);
-            if strcmp(ext,'.eps')
-                gzip(newimage,untarpath)
-                newimage = [newimage '.gz'];
-            end
-            copyfile(newimage,storepath)
+        at = strfind(untarfolder,'@');
+        if strfind(untarfolder(at-3:at-1),'ant')
+            newpng = [untarpath '/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.png'];
+            neweps = [untarpath '/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.eps'];
+        else
+            newpng = [untarpath '/' storefolder(8:cc-1) '_24hrplt' storefolder(cc:end) '.png'];
+            neweps = [untarpath '/' storefolder(8:cc-1) '_24hrplt' storefolder(cc:end) '.eps'];
         end
+        keyboard
+        if exist(newpng)
+            store_image2Hdf5(newpng,EISCAThdf5file);
+        else
+            display([newpng ' does not exist. Was it stored somewhere else?'])    
+        end
+        if exist(neweps)
+            pdffile = eps2pdf(neweps);
+            copyfile(pdffile,storepath)
+        else
+            display([neweps ' does not exist. Was it stored somewhere else?'])    
+        end   
     end
     copyfile(targz_file{ii},storepath)            
 end
 
-% % Check if a figure was not copied and saved at all, or copied and saved more than once
-% z1 = find(figure_check==0);
-% z2 = find(figure_check>1);
-% for z3 = 1:length(z1)
-%     display(['Warning: ' image_filelist(z1(z3)).name ' was not copied or stored'])
-% end
-% for z3 = 1:length(z2)
-%     display(['Warning: ' image_filelist(z2(z3)).name ' was copied or stored more than once'])
-% end
-
 
 
 for ii = 1:length(oldhdf5_files)
-    
+      
     OldHdf5File = oldhdf5_files{ii};
     [storepath,EISCAThdf5file] = cedar2hdf5(OldHdf5File,datapath);
+    folders = regexp(storepath,filesep,'split');
+    storefolder = char(folders(end));
     display(EISCAThdf5file)
     
     notesfile = fullfile(dirpath,'notes.txt');
@@ -305,25 +261,114 @@ for ii = 1:length(oldhdf5_files)
     if c
         copyfile(logs_file{c},storepath)
     end
+
+    bb = strfind(storefolder,'_');
+    cc = strfind(storefolder,'@');
+    pulse = storefolder(bb(2)+1:bb(3)-1);
+    intper = storefolder(bb(3)+1:cc-1);
+    ant = storefolder(cc+1:end);
     
+    nfigs_expr = 0;                    % for counting the number of figures of the considered experiment
     
-    if b == 0
-%        vizu('new',newhdf5file,'HQ')       % newhdf5file is generated in cedar2hdf5.m
-        vizu('new',EISCAThdf5file,'HQ')       % EISCAThdf5file is generated in cedar2hdf5.m
-        vizu('save','24hrplt')
-        newimages_list = [dir(fullfile(datapath,'*.png'));dir(fullfile(datapath,'*.eps'))];
-        for jj = 1:length(newimages_list)
-            newimage = fullfile(datapath,newimages_list(jj).name);
-            [~,~,ext] = fileparts(newimage);
-            if strcmp(ext,'.eps')
-                gzip(newimage,datapath)
-                newimage = [newimage '.gz'];
+    for jj = 1:length(image_filelist)
+        figurefile = fullfile(dirpath,image_filelist(jj).name);
+        [~,figname,ext] = fileparts(figurefile);
+        if strcmp(ext,'.gz')
+            [~,figname,~] = fileparts(figname);
+        end
+            
+        fig_pulse  = '';
+        fig_intper = '';
+        fig_ant    = '';
+            
+        dd_  = strfind(figname,'_');
+        ddat = strfind(figname,'@');
+        dd = sort([dd_ ddat]);
+            
+        fig_intper_set = 0;
+        for oo = 1:length(dd)
+            if oo == length(dd)
+                figpart = figname(dd(oo)+1:end);
+            else
+                figpart = figname(dd(oo)+1:dd(oo+1)-1);
             end
-            copyfile(newimage,storepath)
+                
+            if ~isempty(str2num(figpart)) && isempty(fig_intper)
+                fig_intper = figpart;
+                fig_intper_set = 1;
+            end
+            for pp = 1:length(pulses)
+                if contains(figpart,pulses(pp))
+                    fig_pulse = figpart;
+                end
+            end
+            for qq = 1:length(ants)
+                if contains(figpart,ants(qq))
+                    fig_ant = figpart;
+                end
+            end
+        end
+            
+        if fig_intper_set == 0 && ~isempty(intper)
+            fig_intper = intper;
+        end
+            
+        if (contains(fig_ant,ant) && (str2num(fig_intper)==str2num(intper)) && contains(fig_pulse,pulse)) || ...
+           (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
+           (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) 
+           if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
+                store_image2Hdf5(figurefile,EISCAThdf5file)
+                figure_check(jj) = figure_check(jj) + 1;
+                nfigs_expr =  nfigs_expr +1;
+           else
+                if strcmp(ext,'.gz')
+                    epsfile = gunzip(figurefile);
+                    figurefile = epsfile{1};
+                end
+                pdffile = eps2pdf(figurefile);
+                copyfile(pdffile,storepath)
+                delete(pdffile,figurefile)
+                figure_check(jj) = figure_check(jj) + 1;
+                nfigs_expr =  nfigs_expr +1;
+            end
         end
     end
+
+    
+    if nfigs_expr == 0 
+        display(['No figures coupled to' EISCAThdf5file 'exist. Now generating new figures via vizu...'])
+        vizu('new',EISCAThdf5file,'HQ')       % EISCAThdf5file is generated in cedar2hdf5.m
+        vizu('save','24hrplt')
+        newpng = ['/tmp/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.png'];
+        neweps = ['/tmp/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.eps'];
+        keyboard
+        if exist(newpng)
+            store_image2Hdf5(newpng,EISCAThdf5file);
+        else
+            display([newpng ' does not exist. Was it stored somewhere else?'])
+        end
+        if exist(neweps)
+            pdffile = eps2pdf(neweps);
+            copyfile(pdffile,storepath)
+        else
+            display([neweps ' does not exist. Was it stored somewhere else?'])
+       end   
+    end
+    
     copyfile(OldHdf5File,storepath);
-end  
+end 
+
+figure_check
+% Check if a figure was not copied and saved at all, or copied and saved more than once
+z1 = find(figure_check==0);
+z2 = find(figure_check>1);
+for z3 = 1:length(z1)
+    display(['Warning: ' image_filelist(z1(z3)).name ' was not copied or stored'])
+end
+for z3 = 1:length(z2)
+    display(['Warning: ' image_filelist(z2(z3)).name ' was copied or stored more than once'])
+end
+
 
 if ~isempty(showfigs)
     for ii = 1:length(image_filelist)
