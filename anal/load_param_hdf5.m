@@ -4,7 +4,7 @@
 % data_path = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/04dec85/ForMadrigal/EISCAT_1985-12-04_cp1f@kir.hdf5';
 % % data_path = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/11dec85/ForMadrigal/EISCAT_1985-12-11_cp3c@sod.hdf5';
 
-function [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(data_path)%,fileno,do_err)
+function [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(hdf5file)%,fileno,do_err)
 
 % [Time,par2D,par1D,rpar2D]=load_param_hdf5(data_path,status)
 % par2D [Ran,Alt,Ne,Te,Ti,Vi,Coll,Comp,Res]
@@ -18,7 +18,7 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(data_path)%,fileno,do_e
 global name_ant name_expr r_RECloc
 Time=[]; par2d=[]; par1D=[]; rpar2d=[]; err2d=[];
 
-filename = data_path;
+filename = hdf5file;
 [~,b] = fileparts(filename);
 a = strfind(b,'@');
 name_ant = b(a+1:end);
@@ -148,7 +148,7 @@ if ii2d == 1
         if isempty(columns) && ii == 30
             columns = find(str2num(char(matdata.metadata.par2d(end,:)))==dTe_id);
             if isempty(columns)
-                par_tmp = NaN(rec,1);
+                par_tmp = NaN(ndata2d,1);
             else 
                 par_tmp = matdata.data.par2d(:,columns);    
             end
