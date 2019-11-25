@@ -89,14 +89,25 @@ for ii = par1d_id
         if isempty(columns)
             par_tmp = NaN(rec,1);
         else
-            par_tmp = matdata.data.par0d(columns)*ones(rec,1);
+            for jj = 1:length(columns)
+                par_tmp = matdata.data.par0d(columns)*ones(rec,1);
+            end
+            if jj>1   % Tsys 
+                par_tmp = median(par_tmp')';
+            end
+            if ii == 6 % Pt
+                par_tmp = par_tmp/10000; % 10 kW
+            end
         end
     else
         for jj = 1:length(columns)
-        par_tmp(:,jj) = matdata.data.par1d(:,columns(jj));
+            par_tmp(:,jj) = matdata.data.par1d(:,columns(jj));
         end
         if jj>1   % Tsys 
             par_tmp = median(par_tmp')';
+        end
+        if ii == 6 % Pt
+            par_tmp = par_tmp/10000; % 10 kW
         end
     end
     par1D = [par1D par_tmp];

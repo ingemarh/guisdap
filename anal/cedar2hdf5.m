@@ -186,6 +186,9 @@ for ii = 1:npar
             continue
         else
             parameterdata = data.(char(Parsinfile_list(ii)));
+            if strcmp(Parsinfile_list(ii),'power')
+                parameterdata = parameterdata*1000;   % kW --> W
+            end
         end
         
         if length(unique(parameterdata))==1

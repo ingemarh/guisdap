@@ -10,6 +10,11 @@ end
 if nargin<2
     error('Experiment and output path needed.')
 end
+
+if ~exist(dirpath)
+    error(['The directory ' dirpath ' does not exist. Why not choose a folder that actually does exist?'])
+end
+
 if ~exist(datapath)
     mkdir(datapath);
 end
