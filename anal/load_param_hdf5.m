@@ -39,8 +39,8 @@ par2d_id  = [19 18 20 22 21 24 23 54 55];  % [range, alt, ne, tr, ti, vi, collf,
 rpar2d_id = [61 61 62];                    % [range alt ne]
 err2d_id  = [28 30 29 32 31];              % [dne dtr dti dvi dco]
 rpar2d_for_merging_id  = [61 62 63 64];    % [pprange pp(ne) pperror ppw]
-Te_id  = 74;
-dTe_id = 75;
+Te_id  = 84;
+dTe_id = 85;
 recloc_id = 9;
 
 matdata.metadata.par0d    = deblank(h5read(filename,'/metadata/par0d'));

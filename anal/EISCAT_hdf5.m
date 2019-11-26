@@ -249,46 +249,65 @@ for ii = 1:length(data_files)
         
         if contains(data_files{ii},'.tar.gz')
             input = untarpath;
+            vizugo = 1;
         else
             input = EISCAThdf5file;
-        end
-        vizu('new',input,'HQ')
-        vizu('save','24hrplt')
-        if contains(data_files{ii},'.tar.gz')
-            at = strfind(untarfolder,'@');
-            %keyboard
-            if ~isempty(strfind(untarfolder(at-3:at-1),'ant'))
-                newpng = [untarpath '/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.png'];
-                newpdf = [untarpath '/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.pdf'];
-            elseif ~isempty(strfind(untarfolder(at-4:at-1),'scan'))
-                newpng = [untarpath '/' storefolder(8:bb(3)-1) '_scan_24hrplt' storefolder(cc:end) '.png'];
-                newpdf = [untarpath '/' storefolder(8:bb(3)-1) '_scan_24hrplt' storefolder(cc:end) '.pdf'];
+            metadata0d = h5read(EISCAThdf5file,'/metadata/par0d');
+            aa = find(strcmp(deblank(metadata0d(1,:)),'nrec'));
+            if aa
+                data0d = h5read(EISCAThdf5file,'/data/par0d');
+                nrec = data0d(aa);
             else
-                newpng = [untarpath '/' storefolder(8:cc-1) '_24hrplt' storefolder(cc:end) '.png'];
-                newpdf = [untarpath '/' storefolder(8:cc-1) '_24hrplt' storefolder(cc:end) '.pdf'];
+                vizugo = 1;
+            end
+            if nrec == 1 || nrec > 5
+                vizugo = 1;
+            else
+                vizugo = [];
+            end
+        end
+        
+        if vizugo
+            vizu('new',input,'HQ')
+            vizu('save','24hrplt')
+            if contains(data_files{ii},'.tar.gz')
+                at = strfind(untarfolder,'@');
+                %keyboard
+                if ~isempty(strfind(untarfolder(at-3:at-1),'ant'))
+                    newpng = [untarpath '/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.png'];
+                    newpdf = [untarpath '/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.pdf'];
+                elseif ~isempty(strfind(untarfolder(at-4:at-1),'scan'))
+                    newpng = [untarpath '/' storefolder(8:bb(3)-1) '_scan_24hrplt' storefolder(cc:end) '.png'];
+                    newpdf = [untarpath '/' storefolder(8:bb(3)-1) '_scan_24hrplt' storefolder(cc:end) '.pdf'];
+                else
+                    newpng = [untarpath '/' storefolder(8:cc-1) '_24hrplt' storefolder(cc:end) '.png'];
+                    newpdf = [untarpath '/' storefolder(8:cc-1) '_24hrplt' storefolder(cc:end) '.pdf'];
+                end
+            else
+                newpng = ['/tmp/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.png'];
+                newpdf = ['/tmp/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.pdf'];
+            end
+       
+            if exist(newpng)
+                store_image2Hdf5(newpng,EISCAThdf5file);
+            else
+                display([newpng ' does not exist. Was it stored somewhere else?'])    
+            end
+            if exist(newpdf)
+                %pdffile = eps2pdf(neweps);
+                copyfile(newpdf,storepath)
+            else
+                display([newpdf ' does not exist. Was it stored somewhere else?'])    
             end
         else
-            newpng = ['/tmp/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.png'];
-            newpdf = ['/tmp/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.pdf'];
+           display('No figures available and no new figures generated.') 
         end
-       
-        if exist(newpng)
-            store_image2Hdf5(newpng,EISCAThdf5file);
-        else
-            display([newpng ' does not exist. Was it stored somewhere else?'])    
-        end
-        if exist(newpdf)
-            %pdffile = eps2pdf(neweps);
-            copyfile(newpdf,storepath)
-        else
-            display([newpdf ' does not exist. Was it stored somewhere else?'])    
-        end   
     end
   
     copyfile(data_files{ii},storepath)
 end
 
-figure_check
+figure_check;
 % Check if a figure was not copied and saved at all, or copied and saved more than once
 z1 = find(figure_check==0);
 z2 = find(figure_check>1);
