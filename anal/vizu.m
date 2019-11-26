@@ -242,10 +242,13 @@ if strcmp(name_expr,'arcd')
  if any(par1D(:,2)<90), SCALE(2,1)=50; end
 elseif strfind('dlayer cp6',name_expr)
  SCALE(2:3,:)=[59 121;10.^[9 12]]; WHICH_PARAM='Ne AE';
+elseif strfind('cp6b',name_expr)
+ SCALE(2:3,:)=[59 121;10.^[9 12]]; WHICH_PARAM='Ne AE'; 
 elseif strcmp(name_expr,'manda')
  SCALE(2:3,:)=[50 500;10.^[9 12]]; WHICH_PARAM='Ne AE'; Y_TYPE1='log';
  if isempty(rres), maxdy=60; end
 end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~isempty(a2)
  SCALE(2,:)=a2;
@@ -467,6 +470,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plot the parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 for i=[3 7 9]
  if option(i)
  surf_plot(s,y_param(GATES,:),par2D(GATES,:,i),SCALE(i,:),Yscale,YTitle,TITLE(i),'log')
@@ -504,6 +508,7 @@ if option(14)
   end
  end
 end
+
 if option(16)
  pf=8.98e-6*sqrt(par2D(GATES,:,3));
  if rem(option(16),2)
@@ -542,6 +547,7 @@ if option(13)
  d=many(ll,[0 300])+[-10 10];
  line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {'Latitude (\circN)','Longitude (\circE)'} TITLE(2) TITLE1(4) {'Offset (\mus)'}],[])
 end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 xlabel('UNIVERSAL TIME')
 drawnow
@@ -566,6 +572,7 @@ if nargout
   varargout(i)={eval(argout(j,:))};
  end
 end
+
 return
 
 %%%%% surf_plot function %%%%%%%%%%
