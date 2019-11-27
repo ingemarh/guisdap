@@ -13,24 +13,24 @@ F = fieldnames(figinfo);
 figurename = [figurename ext];
 
 for ii = 1:length(F)
-    if ~strcmp(F{ii},'Filename') && ~strcmp(F{ii},'Description') && ~strcmp(F{ii},'Title') && ~strcmp(F{ii},'Copyright') && ~strcmp(F{ii},'Author') && ~strcmp(F{ii},'Comment') && ~strcmp(F{ii},'Source') 
+    if ~contains('Filename Description Title Copyright Author Comment Source',F{ii}) || isempty(figinfo.(F{ii}))
         figinfo = rmfield(figinfo,F{ii});
-    elseif isempty(figinfo.(char(F{ii})))
-        figinfo.(char(F{ii})) = '';   
     end
 end
 
-if isfield(figinfo,'Filename'),    figinfo = renameStructField(figinfo,'Filename','Figurename');    
-    figinfo.Figurename = figurename;
+if isfield(figinfo,'Filename'),    figinfo = renameStructField(figinfo,'Filename','Figurename'); end
+figinfo.Figurename = figurename;
+
+% Renaming some of the figure metadata fields
+FieldnamesToChange = {'Description','Title','Author','Comment'};
+FieldnamesChangeTo = {'Experiment','Radar','Computer','Results'};
+for fn = 1: length(FieldnamesToChange)
+    if isfield(figinfo,FieldnamesToChange{fn})
+        figinfo = renameStructField(figinfo,FieldnamesToChange{fn},FieldnamesChangeTo{fn});
+    end
 end
 
-if isfield(figinfo,'Description'), figinfo = renameStructField(figinfo,'Description','Experiment'); end
-if isfield(figinfo,'Title'),       figinfo = renameStructField(figinfo,'Title','Radar');            end
-if isfield(figinfo,'Author'),      figinfo = renameStructField(figinfo,'Author','Computer');        end
-if isfield(figinfo,'Comment'),     figinfo = renameStructField(figinfo,'Comment','Results');        end
-
 chunklim = 100;
-%keyboard
 if ~isempty(X)
     Xsize = size(X); 
     nrow = Xsize(1);

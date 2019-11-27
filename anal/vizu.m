@@ -240,9 +240,7 @@ end
 if strcmp(name_expr,'arcd')
  SCALE(2,:)=[59 139]; WHICH_PARAM='Nr AE';
  if any(par1D(:,2)<90), SCALE(2,1)=50; end
-elseif strfind('dlayer cp6',name_expr)
- SCALE(2:3,:)=[59 121;10.^[9 12]]; WHICH_PARAM='Ne AE';
-elseif strfind('cp6b',name_expr)
+elseif strfind('dlayer cp6b',name_expr)
  SCALE(2:3,:)=[59 121;10.^[9 12]]; WHICH_PARAM='Ne AE'; 
 elseif strcmp(name_expr,'manda')
  SCALE(2:3,:)=[50 500;10.^[9 12]]; WHICH_PARAM='Ne AE'; Y_TYPE1='log';
