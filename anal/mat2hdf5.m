@@ -400,8 +400,7 @@ aa = find(cellfun('isempty',matfile.metadata.par2d(6,:)));    matfile.metadata.p
 aa = find(cellfun('isempty',matfile.metadata.par2d(7,:)));    matfile.metadata.par2d(7,aa)= {'0'};
 aa = find(cellfun('isempty',matfile.metadata.par2d_pp(6,:))); matfile.metadata.par2d_pp(6,aa)= {'0'};
 aa = find(cellfun('isempty',matfile.metadata.par2d_pp(7,:))); matfile.metadata.par2d_pp(7,aa)= {'0'};
-
-%keyboard        
+       
 matfile.metadata.schemes.DataCite.Identifier = 'PID';
 matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
 matfile.metadata.schemes.DataCite.Title = datafolder;

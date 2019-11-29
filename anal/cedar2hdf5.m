@@ -115,11 +115,11 @@ newrec = (data.recno(end)+1)/nkindats;
 
 nrec = [];
 for ii= 1:newrec    
-      nrec_tmp = [];
-      for jj = 1:nkindats
-          nrec_tmp = [nrec_tmp length(find(data.recno+1==(ii-1)*nkindats+jj))];
-      end
-      nrec = [nrec; nrec_tmp];
+    nrec_tmp = [];
+    for jj = 1:nkindats
+        nrec_tmp = [nrec_tmp length(find(data.recno+1==(ii-1)*nkindats+jj))];
+    end
+    nrec = [nrec; nrec_tmp];
 end
 
 matfile.data.par0d     = [];
@@ -146,7 +146,6 @@ for ii = 1:nkindats
         matfile.data.par1d = [matfile.data.par1d nrec(:,ii)];
         matfile.metadata.par1d = [matfile.metadata.par1d info'];
     end
-
 end
 
 if nkindats>1
