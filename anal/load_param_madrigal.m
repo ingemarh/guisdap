@@ -47,7 +47,7 @@ else
  else
   cmd1='curl'; cmd2=' -o '; cmd3=' -f '; cmd4=' -d ';
  end
- website='http://www.eiscat.se/madrigal/';
+ website='http://portal.eiscat.se/madrigal/';
  ws=['''' website 'experiments/' data_path '/expTab.txt'''];
  [mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
  if mad

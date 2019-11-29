@@ -31,7 +31,7 @@ edge_dist=10; overlap=2;
 %Get plasmaline data
 disp('Reading plasmaline data')
 pgcf=findobj('type','figure','userdata',7);
-if isempty(pgcf), pgcf=gupfigure; end
+if ~isempty(plots) & isempty(pgcf), pgcf=gupfigure; end
 ogcf=gcf;
 [pl,p]=plasma_summary(pl_dir,[],expt,gates,plots);
 set(0,'currentfigure',ogcf)
