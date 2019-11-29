@@ -34,6 +34,7 @@ elseif site=='r'
  ch_filter={'b25d225.fir' 'b25d225.fir'};
  ch_f=[14 14.2];
  p_rep=720000;
+ p_offsetppd=-3000;
  if rc==2
   ch_adcint=[45];
   ch_filter={'b11d675.fir'};

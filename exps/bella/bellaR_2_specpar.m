@@ -1,2 +1,2 @@
 % The scale parameters
-p_R0=1600;
+p_R0=5000;
