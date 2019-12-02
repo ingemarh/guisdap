@@ -3,6 +3,7 @@
 %
 % See also: GUISPERT GUIZARD
 %
+ld=length(d_data);
 if name_site=='P'
  lpg_ra=lpg_ra+a_freqband*82232;
 elseif name_site=='T'
@@ -45,4 +46,6 @@ elseif name_site=='L'
    a_code=[a_code a_code+17];
   end
  end
+elseif (name_site=='K' | name_site=='S') & ld==3046
+ lpg_rep(2)
 end

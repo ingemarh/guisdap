@@ -40,4 +40,5 @@ elseif name_site=='P'
  a_freqband=1;   %set 20130228  MTR  
 elseif (name_site=='K' | name_site=='S') & analysis_start(1)>2010
   Magic_const=2; % single polarisation
+  analysis_code=1;
 end
