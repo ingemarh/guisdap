@@ -35,15 +35,25 @@ if ~exist('name_ant','var')
        case 'Q', name_ant = 'quj';
    end
 end
+
+keyboard
 % store the gfd content
+s = [];
 if exist('r_gfd','var')
     matfile.metadata.gfd = r_gfd;
     extra=r_gfd.extra;
+    for r = 1:size(extra,1)
+        if contains(extra(r,:),'%')
+            s = [s r];
+        end
+    end
+    extra(s,:)=[];
     matfile.metadata.gfd.extra = row([extra ones(size(extra,1))*'#']');
     intper_med = median(r_gfd.intper);
     matfile.metadata.gfd.intper_med = intper_med;
 elseif ~isempty(gupfilecheck)
     load('-mat',gupfile);
+    keyboard
     if exist('name_expr','var'),    matfile.metadata.gfd.name_expr   = name_expr;   end
     if exist('expver','var'),       matfile.metadata.gfd.expver      = expver;      end
     if exist('siteid','var'),       matfile.metadata.gfd.siteid      = siteid;      end
@@ -56,8 +66,15 @@ elseif ~isempty(gupfilecheck)
     if exist('rt','var'),           matfile.metadata.gfd.rt          = rt;          end
     if exist('figs','var'),         matfile.metadata.gfd.figs        = figs;        end
     if exist('path_exps','var'),    matfile.metadata.gfd.path_exps   = path_exps;   end
-    if exist('extra','var'),        matfile.metadata.gfd.extra       = row([extra ones(size(extra,1))*'#']'); end
-    %matfile.metadata.gfd.extra=row([extra ones(size(extra,1))*'#']');
+    if exist('extra','var')
+        for r = 1:size(extra,1)
+            if contains(extra(r,:),'%')
+                s = [s r];
+            end
+        end
+        extra(s,:)=[];
+        matfile.metadata.gfd.extra       = row([extra ones(size(extra,1))*'#']'); 
+    end
 else 
     intper_vec = zeros(rec,1);
     for tt = 1:rec
@@ -66,7 +83,6 @@ else
         intper_vec(tt) = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6)));
         intper_med = median(intper_vec);
     end
-   % intper_med = 'no gfd or gupfile';
 end
     
 year = num2str(r_time(1,1));
@@ -86,7 +102,6 @@ Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
 MatFile = sprintf('%s%s',datafolder,'.mat');
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
-%newhdf5file = hdffilename;
 EISCAThdf5file = hdffilename;
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 
