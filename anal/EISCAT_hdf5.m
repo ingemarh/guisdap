@@ -72,14 +72,6 @@ if ~isempty(hdf5oldfiles)
     end
 end
 
-
-% display(targz_files')
-% display(hdf5_allfiles')
-% display(hdf5_files')
-% display(hdf5ncar_files')
-% display(hdf5rest_files')
-% display(logs_file')
-
 oldhdf5_files = [];
 if isempty(targz_files) && isempty(hdf5oldfiles) 
     error('No "old" hdf5-files nor any tar.gz-files with mat-files exist.')
@@ -106,7 +98,7 @@ for ii = 1:length(data_files)
         end
         mkdir(untarpath);
         
-        untar(targz_files{ii},untarpath)
+        untar(data_files{ii},untarpath)
         untar_filelist = dir(untarpath);
     
         while length(untar_filelist(3:end)) == 1 && ~contains(untar_filelist(3).name,'.mat')
@@ -224,26 +216,26 @@ for ii = 1:length(data_files)
     if exist(notesfile)
         copyfile(notesfile,storepath)
     end
-    
-%     % Check if 
-%     info = h5info(EISCAThdf5file,'/metadata');
-%     metavar = {info.Datasets.Name}';
-%     hdf5fileformeta = [];
-%     if isempty(find(strcmp(metavar,'gfd')))
-%         [~,tarfilename1,~] = fileparts(targz_file{ii});
-%         [~,tarfilename,~]  = fileparts(tarfilename1);
-%         if ~isempty(hdf5ncar_files)
-%             ff = contains(hdf5ncar_files,tarfilename);
-%             gg = find(ff == 1);
-%             if ~isempty(gg)
-%                 hdf5fileformeta = hdf5ncar_files{gg};
-%             end
-%         %elseif     
-%         end
-%         display(hdf5fileformeta)
-%         metacompl(hdf5fileformeta,EISCAThdf5file)  
-%     else
-%     end
+   
+    % Check if 
+    %keyboard
+    info = h5info(EISCAThdf5file,'/metadata');
+    metavar = {info.Datasets.Name}';
+    hdf5fileformeta = [];
+    if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metavar,'gfd')))
+        [~,tarfilename1,~] = fileparts(data_files{ii});
+        [~,tarfilename,~]  = fileparts(tarfilename1);
+        if ~isempty(hdf5ncar_files)
+            gg = find(contains(hdf5ncar_files,tarfilename));
+            if ~isempty(gg)
+                hdf5fileformeta = hdf5ncar_files{gg};
+            end
+        %elseif     
+        end
+        disp(hdf5fileformeta)
+        metacompl(hdf5fileformeta,EISCAThdf5file)  
+    else
+    end
     
     if nfigs_expr == 0
         
