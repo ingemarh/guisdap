@@ -30,4 +30,5 @@ elseif name_site=='T' | name_site=='V'
   if local.site=='T', d_saveint.dir='/analysis/integrated/AUTO'; end
 elseif (name_site=='K' | name_site=='S') & analysis_start(1)>2010
   Magic_const=2; % single polarisation
+  analysis_code=1;
 end
