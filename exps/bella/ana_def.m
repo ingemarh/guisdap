@@ -28,4 +28,6 @@ elseif name_site=='T' | name_site=='V'
     plasma_range=col(ones(5*75,1)*(0:1)*14473+(1:5*75)'*ones(1,2)+14098);
   end
   if local.site=='T', d_saveint.dir='/analysis/integrated/AUTO'; end
+elseif (name_site=='K' | name_site=='S') & analysis_start(1)>2010
+  Magic_const=2; % single polarisation
 end

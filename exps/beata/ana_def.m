@@ -38,4 +38,6 @@ elseif name_site=='P'
  analysis_maxwidth=10;
  % a_freqband=0 for lowest (UHF) freq (-3.6MHz)pl-line band, 1 for 2nd (-6.0MHz), 2 for  3rd (-8.4MHz)
  a_freqband=1;   %set 20130228  MTR  
+elseif (name_site=='K' | name_site=='S') & analysis_start(1)>2010
+  Magic_const=2; % single polarisation
 end

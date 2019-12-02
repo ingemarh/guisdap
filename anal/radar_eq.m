@@ -71,7 +71,7 @@ else
   opening_angle=0.6*pi/180*(1+sin(sc_angle)^2);
   if ch_fradar(1)<300e6
    opening_angle=2.7*pi/180*(1+sin(sc_angle)^2);
-   ch_gain0=10^4.31; %VHF tx
+   ch_gain0=10^4.31/2.; %VHF tx half antenna
   end
   %rx beam width   opening_angle*range*sc_angle_factor/pulse_speed
   range_cover=round(opening_angle*sc_R1/sin(sc_angle)/scale);
