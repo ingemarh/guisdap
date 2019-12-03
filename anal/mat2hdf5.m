@@ -5,9 +5,6 @@ function [storepath,EISCAThdf5file] = mat2hdf5(matpath, datapath)
 %global newhdf5file
 global path_GUP result_path
 
-software = 'https://git.eiscat.se/cvs/guisdap9';
-matfile.metadata.software = software;
-
 if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
 if nargin<1
     matpath = result_path;
@@ -36,7 +33,6 @@ if ~exist('name_ant','var')
    end
 end
 
-keyboard
 % store the gfd content
 s = [];
 if exist('r_gfd','var')
@@ -50,22 +46,21 @@ if exist('r_gfd','var')
     extra(s,:)=[];
     matfile.metadata.gfd.extra = row([extra ones(size(extra,1))*'#']');
     intper_med = median(r_gfd.intper);
-    matfile.metadata.gfd.intper_med = intper_med;
+    matfile.metadata.gfd.intper_median = intper_med;
 elseif ~isempty(gupfilecheck)
     load('-mat',gupfile);
-    keyboard
-    if exist('name_expr','var'),    matfile.metadata.gfd.name_expr   = name_expr;   end
-    if exist('expver','var'),       matfile.metadata.gfd.expver      = expver;      end
-    if exist('siteid','var'),       matfile.metadata.gfd.siteid      = siteid;      end
-    if exist('data_path','var'),    matfile.metadata.gfd.data_path   = data_path;   end
-    if exist('result_path','var'),  matfile.metadata.gfd.result_path = result_path; end 
-    if exist('intper','var'),       matfile.metadata.gfd.intper      = intper;  
-       intper_med = median(intper); matfile.metadata.gfd.intper_med  = intper_med;  end
-    if exist('t1','var'),           matfile.metadata.gfd.t1          = t1;          end
-    if exist('t2','var'),           matfile.metadata.gfd.t2          = t2;          end
-    if exist('rt','var'),           matfile.metadata.gfd.rt          = rt;          end
-    if exist('figs','var'),         matfile.metadata.gfd.figs        = figs;        end
-    if exist('path_exps','var'),    matfile.metadata.gfd.path_exps   = path_exps;   end
+    if exist('name_expr','var'),    matfile.metadata.gfd.name_expr      = name_expr;   end
+    if exist('expver','var'),       matfile.metadata.gfd.expver         = expver;      end
+    if exist('siteid','var'),       matfile.metadata.gfd.siteid         = siteid;      end
+    if exist('data_path','var'),    matfile.metadata.gfd.data_path      = data_path;   end
+    if exist('result_path','var'),  matfile.metadata.gfd.result_path    = result_path; end 
+    if exist('intper','var'),       matfile.metadata.gfd.intper         = intper;  
+       intper_med = median(intper); matfile.metadata.gfd.intper_median  = intper_med;  end
+    if exist('t1','var'),           matfile.metadata.gfd.t1             = t1;          end
+    if exist('t2','var'),           matfile.metadata.gfd.t2             = t2;          end
+    if exist('rt','var'),           matfile.metadata.gfd.rt             = rt;          end
+    if exist('figs','var'),         matfile.metadata.gfd.figs           = figs;        end
+    if exist('path_exps','var'),    matfile.metadata.gfd.path_exps      = path_exps;   end
     if exist('extra','var')
         for r = 1:size(extra,1)
             if contains(extra(r,:),'%')
@@ -84,7 +79,11 @@ else
         intper_med = median(intper_vec);
     end
 end
-    
+software = 'https://git.eiscat.se/cvs/guisdap9';
+level2_link = [];
+matfile.metadata.software_links = software;
+matfile.metadata.level2_links = level2_link;
+
 year = num2str(r_time(1,1));
 month = sprintf('%02d',r_time(1,2));
 day = sprintf('%02d',r_time(1,3));
@@ -420,7 +419,7 @@ matfile.metadata.schemes.DataCite.Identifier = 'PID';
 matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
 matfile.metadata.schemes.DataCite.Title = datafolder;
 matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';
-matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionopshere';
+matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionosphere';
 
 if exist('name_sig')
     dd = strfind(name_sig,' ');

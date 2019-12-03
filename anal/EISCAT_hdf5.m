@@ -26,8 +26,9 @@ load(fullfile(tempdir,'my_input.mat'));
 delete(fullfile(tempdir,'my_input.mat'));
 
 image_filelist = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
+notesfiles = dir(fullfile(dirpath,'notes*txt'));
 
-logs_file = [];
+logs_files = [];
 logs_filename = [];
 targz_filecheck = dir(fullfile(dirpath,'*tar.gz'));
 targz_files = [];
@@ -40,8 +41,8 @@ if ~isempty(targz_filecheck)
             targz_files{n} = fullfile(dirpath,targz_filename);
             n = n+1;
         else
-            logs_file{m} = fullfile(dirpath,targz_filename);
-            [~,name,ext] = fileparts(logs_file{m}); 
+            logs_files{m} = fullfile(dirpath,targz_filename);
+            [~,name,ext] = fileparts(logs_files{m}); 
             logs_filename{m} = [name ext];
             m = m+1;
         end
@@ -128,6 +129,7 @@ for ii = 1:length(data_files)
     ant = storefolder(cc+1:end);
        
     nfigs_expr = 0;
+    pdf_forHDF5 = [];
     
     for jj = 1:length(image_filelist)
         figurefile = fullfile(dirpath,image_filelist(jj).name);
@@ -188,6 +190,12 @@ for ii = 1:length(data_files)
                     end
                     pdffile = eps2pdf(figurefile);
                     copyfile(pdffile,storepath)
+                    [~,pdfname,ext]=fileparts(pdffile);
+                    if isempty(pdf_forHDF5)
+                        pdf_forHDF5 = [pdfname ext];
+                    else
+                        pdf_forHDF5 = [pdf_forHDF5 ', ' pdfname ext];
+                    end
                     delete(pdffile,figurefile)
                     figure_check(jj) = figure_check(jj) + 1;
                     nfigs_expr =  nfigs_expr +1;
@@ -205,20 +213,43 @@ for ii = 1:length(data_files)
                 end
                 pdffile = eps2pdf(figurefile);
                 copyfile(pdffile,storepath)
+                [~,pdfname,ext]=fileparts(pdffile);
+                if isempty(pdf_forHDF5)
+                    pdf_forHDF5 = [pdfname ext];
+                else
+                    pdf_forHDF5 = [pdf_forHDF5 ', ' pdfname ext];
+                end
                 delete(pdffile,figurefile)
                 figure_check(jj) = figure_check(jj) + 1;
                 nfigs_expr =  nfigs_expr +1;
             end
         end
     end 
-        
-    notesfile = fullfile(dirpath,'notes.txt');
-    if exist(notesfile)
+    hdf5write(EISCAThdf5file,'/metadata/figure_links',pdf_forHDF5,'WriteMode','append');
+                    
+    notes_forHDF5 = [];
+    for nn = 1:length(notesfiles)
+        notesfile = fullfile(dirpath,notesfiles(nn).name);
         copyfile(notesfile,storepath)
+        if nn == 1
+            notes_forHDF5 = notesfiles(nn).name;
+        else
+            notes_forHDF5 = [notes_forHDF5 ', ' notesfiles(nn).name];
+        end
     end
-   
+    hdf5write(EISCAThdf5file,'/metadata/comment_links',notes_forHDF5,'WriteMode','append');
+  
+    for ll = 1:length(logs_filename)
+        [~,data_filename,~] = fileparts(data_files{ii});
+        if strcmp(data_filename(1:8),logs_filename{ll}(1:8))
+            copyfile(logs_files{ll},storepath)
+            hdf5write(EISCAThdf5file,'/metadata/logs_links',logs_filename{ll},'WriteMode','append');
+        end
+    end
+    
+    
+    
     % Check if 
-    %keyboard
     info = h5info(EISCAThdf5file,'/metadata');
     metavar = {info.Datasets.Name}';
     hdf5fileformeta = [];
@@ -278,7 +309,7 @@ for ii = 1:length(data_files)
                 newpng = ['/tmp/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.png'];
                 newpdf = ['/tmp/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.pdf'];
             end
-       
+      
             if exist(newpng)
                 store_image2Hdf5(newpng,EISCAThdf5file);
             else
@@ -286,6 +317,8 @@ for ii = 1:length(data_files)
             end
             if exist(newpdf)
                 copyfile(newpdf,storepath)
+                [~,pdfname,ext]=fileparts(newpdf);
+                hdf5write(EISCAThdf5file,'/metadata/figure_links',[pdfname ext],'WriteMode','append');
             else
                 disp([newpdf ' does not exist. Was it stored somewhere else?'])    
             end
