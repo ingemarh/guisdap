@@ -3,6 +3,6 @@
 %
 % See also: GUISPERT GUIZARD
 %
-if name_site=='L' & length(d_data)>290942
+if name_site=='L' & length(d_data)>290942 | name_site='V' & expver>1
   lpg_rep(2)
 end
