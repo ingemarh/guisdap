@@ -3,10 +3,6 @@
 function [storepath,EISCAThdf5file] = cedar2hdf5(hdf5file,datapath)
 
 global path_GUP 
-%global newhdf5file
-
-software = 'https://git.eiscat.se/eiscat/on-an';
-matfile.metadata.software = software;
 
 if nargin<1
     error('A .hdf5 (or .hdf) file is needed as input.')
@@ -62,10 +58,9 @@ elseif contains(char(exprparvalues(aa)),'combined'), name_ant = 'esa'; error('na
 elseif contains(char(exprparvalues(aa)),'UHF'), name_ant = 'uhf';
 else name_ant = 'vhf'; end
 
-
 name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
 matfile.metadata.experiment.name_expr = name_expr; 
-matfile.metadata.experiment.intper_med = intper_med;
+matfile.metadata.experiment.intper_median = intper_med;
 
 datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' num2str(intper_med) '@' name_ant];
 storepath = fullfile(datapath,datafolder);
@@ -78,9 +73,7 @@ Hdf5File = [datafolder '.hdf5'];
 MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '@' name_ant '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
-%newhdf5file = hdffilename;
 EISCAThdf5file = hdffilename;
-
 
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 
@@ -327,7 +320,12 @@ matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
 matfile.metadata.schemes.DataCite.Title = datafolder;
 matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';
 matfile.metadata.schemes.DataCite.PublicationYear = year';
-matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionopshere';
+matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionosphere';
+
+software = 'https://git.eiscat.se/eiscat/on-an';
+level2_link = [];
+matfile.metadata.software_links = software;
+matfile.metadata.level2_links = level2_link;
 
 % Delete any empty fields from the structure
 sFields = fieldnames(matfile);

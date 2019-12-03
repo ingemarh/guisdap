@@ -202,11 +202,16 @@ if ~isempty(a_addr)
   end
   if a_HDF
     [~,EISCAThdf5file] = mat2hdf5;
-    image_filelist = [dir(fullfile(result_path,'*.png'));dir(fullfile(result_path,'*.gif'));dir(fullfile(result_path,'*.jpg'));dir(fullfile(result_path,'*.jpeg'))];
+    image_filelist = [dir(fullfile(result_path,'*.png'));dir(fullfile(result_path,'*.pdf'))];
     if ~isempty(image_filelist)
        for ii = 1:length(image_filelist)
            figurefile = fullfile(result_path,image_filelist(ii).name);
-           store_image2Hdf5(figurefile,EISCAThdf5file)
+           [~,filename,ext] = fileparts(figurefile);
+           if strcmp(ext,'.png')
+               store_image2Hdf5(figurefile,EISCAThdf5file)
+           elseif strcmp(ext,'.pdf')
+               hdf5write(EISCAThdf5file,'/metadata/figure_links',[filename ext],'WriteMode','append');
+           end
        end
     end
   end
