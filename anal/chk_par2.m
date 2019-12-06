@@ -26,7 +26,9 @@ elseif a_classic
   minrange=min(a_range);
   maxrange=max(a_range);
   a_range=[];
-  for code=diff_val(lpg_code)
+  ancodes=diff_val(lpg_code);
+  if ~isempty(a_code), ancodes=intersect(ancodes,a_code); end
+  for code=ancodes
     lags=lpg_lag(find(lpg_code==code & lpg_bcs=='s'));
     if max(lags)>0,  % ACF data, analyze these
       lpg=find(lpg_code==code & lpg_bcs=='s' & lpg_lag==max(lags));

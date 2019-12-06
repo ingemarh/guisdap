@@ -3,7 +3,7 @@
 %
 % See also: an_start integr_data
 function  [parbl,lpb]=nd2eros4(d_parbl)
-global d_data
+global d_data vhf_tx
 
 lpb=64;
 parbl=-1*ones(lpb,1);
@@ -26,7 +26,8 @@ if d_parbl(1)==2 & rem(d_parbl(127),2)==1
 end
 parbl([21 41])=ant(:,d_parbl(1));
 if d_parbl(1)==3
-  parbl(8)=max(d_parbl([99 101]))*1000;
+  vhf_tx=d_parbl([99 101])*1000;
+  parbl(8)=sum(vhf_tx);
 elseif d_parbl(1)~=2
   parbl(42)=d_parbl(11)*100;
 end

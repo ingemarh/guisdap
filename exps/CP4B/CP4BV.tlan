@@ -1,0 +1,139 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                              %
+%%     *** T A R L A N  P R O G R A M M E   T R O M S \ ***     %
+%%                                                              %
+%%     FILE: (EXP)SP-EI-SPLITB-V:TLAN                           %
+%%                                                              %
+%%                                                              %
+%%     VHF SPLIT BEAM EXPERIMENT (CP-4 EMULATION ON VHF SYSTEM) %
+%%                                                              %
+%%                                                              %
+%%     SEPT 1991   Gudmund Wannberg, EISCAT HQ                  %
+%%                                                              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%     NOTE: It is assumed that the receiver has channels 3-8
+%%           available. Channels 3,4 should be tuned to F5
+%%                      Channels 5,6 should be tuned to F4
+%%                      Channels 7,8 should be tuned to F3
+%%
+%%                      Channels 3,5,7 are connected to the X port of the
+%%                      receiver backend,
+%%
+%%                      Channels 4,6,8 are connected to the Y port
+%%
+%%
+%%     R/C PROGRAM NO. 1
+%%
+%%     PHASE 1 - TRANSMIT LP ON F5, PP ON F4, CALIBRATE F3
+%%
+AT      1   TRANS,CHQPULS
+AT     10   RXPROT,LOPROT
+AT     50   BEAMON,F5
+AT    100   RFON
+AT   1000   RFOFF,F4
+AT   1002   RFON
+AT   1047   RFOFF,BEAMOFF
+%
+AT   1050   B7
+AT   1051   B7OFF            % RESET BUFFER MAP TO ZERO
+AT   1052   B9
+AT   1053   B9OFF            % DECREMENT IT TO 3
+AT   1200   RXPOFF
+AT   1300   LOPOFF
+%%
+%%
+%%
+AT   1360   RECEV
+AT   2132   CH5,CH6          % PP SIGNAL SAMPLING STARTING AT 170 KM RANGE
+AT   3455   CH3,CH4          % LP SIGNAL SAMPLING
+AT   4615   CH5OFF,CH6OFF    % 166 SIG SAMPLES EACH ON CH5, CH6
+AT   9110   CH7,CH8          %                    + BG SAMPLING 20+3 GATES
+AT   13020   ALLOFF,CALON     % 20 SIGNAL GATES  ON CH4, 3 BG GATES ON CH7/8
+%                            % 20 SIGNAL GATES  ON CH3
+%
+AT   13100   CH7,CH8          % CAL. SAMPLING ON CH7/8
+AT   13910   STC              % STC IN EVERY PHASE WHEN USING MULTIPLE B.M.M.
+AT   13963   ALLOFF,CAL0      % 2 * 29 CAL. SAMPLES ON EACH OF CH7, CH8
+AT   13995   BUFLIP           %
+%%
+%%-------------------------------------------------
+%%
+SETTCR        14000           % START OF PHASE 2
+%%
+%%-------------------------------------------------
+%%
+%%     PHASE 2 - TRANSMIT LP ON F3, PP ON F5, CALIBRATE F4
+%%
+AT      1   TRANS,CHQPULS
+AT     10   RXPROT,LOPROT
+AT     50   BEAMON,F3
+AT    100   RFON
+AT   1000   RFOFF,F5
+AT   1002   RFON
+AT   1047   RFOFF,BEAMOFF
+AT   1050   B9               % DECREMENT BUFFER MAP TO 2
+AT   1051   B9OFF
+AT   1200   RXPOFF
+AT   1300   LOPOFF
+%%
+%%
+%%
+AT   1360   RECEV
+AT   2132   CH3,CH4          % PP SIGNAL SAMPLING
+AT   3455   CH7,CH8          % LP SIGNAL SAMPLING
+AT   4615   CH3OFF,CH4OFF    % 166 SIG SAMPLES EACH ON CH3, CH4
+AT   9110   CH5,CH6          %                    + BG SAMPLING 20+3 GATES
+AT   13020   ALLOFF,CALON     % 20 SIGNAL GATES  ON CH8, 3 BG GATES ON CH5/6
+%                            % 20 SIGNAL GATES  ON CH7
+%
+AT   13100   CH5,CH6          % CAL. SAMPLING ON CH5/6
+AT   13910   STC              % STC IN EVERY PHASE WHEN USING MULTIPLE B.M.M.
+AT   13963   ALLOFF,CAL0      % 2 * 29 CAL. SAMPLES ON EACH OF CH5, CH6
+AT   13995   BUFLIP
+%%
+%%-------------------------------------------------
+%%
+SETTCR       28000           % START OF PHASE 3
+%%
+%%-------------------------------------------------
+%%
+%%     PHASE 3 - TRANSMIT LP ON F4, PP ON F3, CALIBRATE F5
+%%
+AT      1   TRANS
+AT     10   RXPROT,LOPROT
+AT     50   BEAMON,F4
+AT    100   RFON
+AT   1000   RFOFF,F3
+AT   1002   RFON
+AT   1047   RFOFF,BEAMOFF
+AT   1050   B9               % DECREMENT BUFFER MAP TO 1
+AT   1051   B9OFF
+AT   1200   RXPOFF
+AT   1300   LOPOFF
+%%
+%%
+%%
+AT   1360   RECEV
+AT   2132   CH7,CH8          % PP SIGNAL SAMPLING
+AT   3455   CH5,CH6          % LP SIGNAL SAMPLING
+AT   4615   CH7OFF,CH8OFF    % 166 SIG SAMPLES EACH ON CH7, CH8
+AT   9110   CH3,CH4          %                    + BG SAMPLING 20+3 GATES
+AT   13020   ALLOFF,CALON    % 20 SIGNAL GATES  ON CH6, 3 BG GATES ON CH3/4
+%                            % 20 SIGNAL GATES  ON CH5
+%
+AT   13100   CH3,CH4          % CAL. SAMPLING ON CH3/4
+AT   13910   STC
+AT   13963   ALLOFF,CAL0      % 2 * 29 CAL SAMPLES ON EACH OF CH3, CH4
+AT   13995   BUFLIP
+%
+%----------------------------------------------------
+%
+SETTCR       0               % RESET BEFORE REPEAT
+%
+%----------------------------------------------------
+%
+AT     42000 REP             % BEAM DUTY CYCLE  7.12 %
+%                            % RF   DUTY CYCLE  6.75 %
+%%
+%%

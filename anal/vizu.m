@@ -177,6 +177,9 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   fprintf('Created %s.pdf and .png\n',file)
   insert_exif(vizufig,file,{'pdf' 'png'})
  end
+ if strcmp(act,'save') && nargout==1
+  varargout(1)=file;
+ end
  return
 end
 if isempty(Time)

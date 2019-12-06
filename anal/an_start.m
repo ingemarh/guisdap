@@ -89,7 +89,6 @@ while ~EOF
       % Removing uncessary variables
       clear lpg_wom vc_Aenv vc_Apenv vc_penvabs ad_coeff_no_Pt
     end
-    ch_Pt=ch_Pt(1)*ones(size(ch_fradar));
     if exist('N_averaged')
       if a_control(4)==1 & M_averaged(2)<6
         var_prof(N_averaged,M_averaged,6)
@@ -109,6 +108,7 @@ while ~EOF
         end
       end
     end
+    ch_Pt=ch_Pt(1)*ones(size(ch_fradar));
     if exist([path_expr 'guispert.m'])==2
       run([path_expr 'guispert'])
     end

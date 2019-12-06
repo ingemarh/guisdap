@@ -87,8 +87,8 @@ else
  else
   name_expr=nameexpr;
   if set_b, set(b(1),'string',name_expr), end
-  expver=str2num(strtok(comment,'.'));
-  if isempty(expver) 
+  if ~isempty(comment), expver=str2num(strtok(comment,'.')); end
+  if isempty(comment) | isempty(expver) 
    warning('GUISDAP:parse','Unable to set the experiment version, please specify')
    expver=1;
   else
