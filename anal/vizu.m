@@ -178,7 +178,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   insert_exif(vizufig,file,{'pdf' 'png'})
  end
  if strcmp(act,'save') && nargout==1
-  varargout(1)=file;
+  varargout(1)={file};
  end
  return
 end
