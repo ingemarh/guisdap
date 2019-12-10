@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/bash -e
 ### Madrigal upload script
 ### Translated from csh  Carl-Fredrik Enell 20190917
 
@@ -36,11 +36,9 @@ mv ${GDIR}/*.txt . >& /dev/null
 tar cf ${GDIR}.tar ${GDIR}
 rm -rf ${GDIR}
 # Replace @ signs in names
-for F in *\@*; do mv ${F} ${F/\@/_}; done
+##for F in *\@*; do mv ${F} ${F/\@/_}; done
 # Compress big files
-gzip *.eps >& /dev/null
-gzip *.asc >& /dev/null
-gzip *.tar >& /dev/null
+gzip -9 *.eps *.asc *.tar >& /dev/null
 
 ### Done formatting
 echo "${MDIR} now contains: "

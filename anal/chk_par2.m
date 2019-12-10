@@ -70,32 +70,32 @@ else
       a_maxwidth(1:lenr)=analysis_maxwidth*fac;
     end
   end
+end
 
-  acode=[];
-  gates=[];
-  codes=[];
-  if ~isempty(a_code)
-    if length(a_code)==length(a_range)
-      temp=a_code;
-      while any(temp>0)
-        code=rem(temp,10);
-        temp=floor(temp/10);
-        ind=find(code>0);
-        gates=[gates,ind];
-        codes=[codes,code(ind)];
-      end
-      for i=1:max(codes)
-        ind=find(codes==i);
-        len=length(ind);
-        if len>0; acode(i,gates(ind))=ones(1,len); end
-      end
-      clear code temp ind gates codes i
-    elseif max(a_code)>max(lpg_code)
-      warning('GUISDAP:chkpar','Analysis_code variable not well defined and neglected')
-      a_code=[];
-    elseif length(name_ant)==3 & ~all(ismember(lpg_code,a_code))
-      name_ant=[name_ant 96+a_code(1)];
+acode=[];
+gates=[];
+codes=[];
+if ~isempty(a_code)
+  if length(a_code)==length(a_range)
+    temp=a_code;
+    while any(temp>0)
+      code=rem(temp,10);
+      temp=floor(temp/10);
+      ind=find(code>0);
+      gates=[gates,ind];
+      codes=[codes,code(ind)];
     end
+    for i=1:max(codes)
+      ind=find(codes==i);
+      len=length(ind);
+      if len>0; acode(i,gates(ind))=ones(1,len); end
+    end
+    clear code temp ind gates codes i
+  elseif max(a_code)>max(lpg_code)
+    warning('GUISDAP:chkpar','Analysis_code variable not well defined and neglected')
+    a_code=[];
+  elseif length(name_ant)==3 & ~all(ismember(lpg_code,a_code))
+    name_ant=[name_ant 96+a_code(1)];
   end
 end
 
