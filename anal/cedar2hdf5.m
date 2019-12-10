@@ -54,11 +54,15 @@ aa = find(strcmp(exprparnames,'instrument')==1);
 if contains(char(exprparvalues(aa)),'Kiruna'), name_ant = 'kir'; 
 elseif contains(char(exprparvalues(aa)),'Sodankyl'), name_ant = 'sod';
 elseif contains(char(exprparvalues(aa)),'Svalbard'), name_ant = 'esr';
-elseif contains(char(exprparvalues(aa)),'combined'), name_ant = 'esa'; error('name_ant = esa: Abort!! Abort!!')
+elseif contains(char(exprparvalues(aa)),'combined'), name_ant = 'esa'; %error('name_ant = esa: Abort!! Abort!!')
 elseif contains(char(exprparvalues(aa)),'UHF'), name_ant = 'uhf';
 else name_ant = 'vhf'; end
 
-name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
+if kindats(1) >= 6800
+    name_expr = 'gup';
+else
+    name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
+end
 matfile.metadata.experiment.name_expr = name_expr; 
 matfile.metadata.experiment.intper_median = intper_med;
 
@@ -283,7 +287,11 @@ if strcmp(kindatstr(1:2),'66')
             if strcmp(cp6_faultpars(ii),'te') || strcmp(cp6_faultpars(ii),'dte') || strcmp(cp6_faultpars(ii),'ti') || strcmp(cp6_faultpars(ii),'dti')
                 matfile.data.par2d(:,vv) = 10.^(matfile.data.par2d(:,vv)/1000);
             elseif strcmp(cp6_faultpars(ii),'pm') || strcmp(cp6_faultpars(ii),'dpm') || strcmp(cp6_faultpars(ii),'po+') || strcmp(cp6_faultpars(ii),'dpo+')
-                matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)/10;
+                matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)*1000/10;
+            elseif strcmp(cp6_faultpars(ii),'ph+') || strcmp(cp6_faultpars(ii),'dph+')
+                matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)*1000*1e6;
+            elseif strcmp(cp6_faultpars(ii),'co') || strcmp(cp6_faultpars(ii),'dco')
+                matfile.data.par2d(:,vv) = log10(matfile.data.par2d(:,vv))*1000*1e6;
             end
         end
     end
@@ -324,7 +332,7 @@ matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionosphere';
 
 software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = [];
-matfile.metadata.software_links = software;
+matfile.metadata.software_link = software;
 matfile.metadata.level2_links = level2_link;
 
 % Delete any empty fields from the structure

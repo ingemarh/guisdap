@@ -3,8 +3,8 @@
 function [storepath,EISCAThdf5file] = mat2hdf5(matpath, datapath)
  
 %global newhdf5file
-global path_GUP result_path
-
+global path_GUP result_path name_ant
+name_ant = [];
 if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
 if nargin<1
     matpath = result_path;
@@ -22,16 +22,6 @@ gupfilecheck =  dir(gupfile);
 
 matfile_1 = fullfile(matpath,filelist(1).name); 
 load(matfile_1);
-if ~exist('name_ant','var')
-   switch name_site
-       case 'L', name_ant = 'esr';
-       case 'K', name_ant = 'kir';
-       case 'T', name_ant = 'uhf';
-       case 'S', name_ant = 'sod';
-       case 'V', name_ant = 'vhf';
-       case 'Q', name_ant = 'quj';
-   end
-end
 
 % store the gfd content
 s = [];
@@ -81,14 +71,35 @@ else
 end
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = [];
-matfile.metadata.software_links = software;
+matfile.metadata.software_link = software;
 matfile.metadata.level2_links = level2_link;
 
 year = num2str(r_time(1,1));
 month = sprintf('%02d',r_time(1,2));
 day = sprintf('%02d',r_time(1,3));
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' num2str(intper_med) '@' name_ant];
+[~,matfolder] = fileparts(matpath);
+dd_  = strfind(matfolder,'_');
+ddat = strfind(matfolder,'@');
+dd = sort([dd_ ddat]);
+if length(dd)==4
+    name_expr_more = [matfolder(dd(2)+1:dd(3)-1) '_'];
+else
+    name_expr_more = [];
+end
+ant = matfolder(dd(end)+1:end);
+if isempty(name_ant) 
+   switch name_site
+       case 'L', if isempty(str2num(ant)), name_ant = ant; else name_ant = 'esr'; end
+       case 'K', name_ant = 'kir';
+       case 'T', name_ant = 'uhf';
+       case 'S', name_ant = 'sod';
+       case 'V', name_ant = 'vhf';
+       case 'Q', name_ant = 'quj';
+   end
+end
+
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more num2str(intper_med) '@' name_ant];
 %display(datafolder)
 
 storepath = fullfile(datapath,datafolder);
@@ -377,35 +388,39 @@ end
 matfile.data.par1d(:,index)     = [];
 matfile.metadata.par1d(:,index) = [];
 
-if exist('name_expr','var'); mm = mm + 1; 
+nn = 0;
+if exist('name_expr','var'); nn = nn + 1; 
+    infoname(1) = {'name_expr'};
+    infoname(2) = {name_expr};
     a = find(strcmp('name_expr',parameters_list)==1);                
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-    info(1) = {name_expr};
-    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-    matfile.metadata.par0d(:,mm) = info';
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
 end
-if exist('name_site','var'); mm = mm + 1; 
+if exist('name_site','var'); nn = nn + 1; 
+    infoname(1) = {'name_site'};
+    infoname(2) = {name_site};
     a = find(strcmp('name_site',parameters_list)==1);                
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-    info(1) = {name_site};
-    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-    matfile.metadata.par0d(:,mm) = info';
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
 end
-if exist('name_ant','var'); mm = mm + 1; 
-    a = find(strcmp('name_ant',parameters_list)==1);                
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-    info(1) = {name_ant};
-    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-    matfile.metadata.par0d(:,mm) = info';
+if exist('name_ant','var'); nn = nn + 1; 
+    infoname(1) = {'name_ant'};
+    infoname(2) = {name_ant};
+    a = find(strcmp('name_ant',parameters_list)==1); 
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
 end
-if exist('name_sig','var'); mm = mm + 1; 
+if exist('name_sig','var'); nn = nn + 1; 
+    infoname(1) = {'name_sig'};
+    infoname(2) = {name_sig};
     a = find(strcmp('name_sig',parameters_list)==1);                
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-    info(1) = {name_sig};
-    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-    matfile.metadata.par0d(:,mm) = info';
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
 end
- 
 aa = find(cellfun('isempty',matfile.metadata.par0d(6,:)));    matfile.metadata.par0d(6,aa)= {'0'};
 aa = find(cellfun('isempty',matfile.metadata.par0d(7,:)));    matfile.metadata.par0d(7,aa)= {'0'};
 aa = find(cellfun('isempty',matfile.metadata.par1d(6,:)));    matfile.metadata.par1d(6,aa)= {'0'};

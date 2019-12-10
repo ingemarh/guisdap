@@ -1,6 +1,8 @@
 
 function EISCAT_hdf5(dirpath, datapath, showfigs)
 
+global name_ant
+
 % Show figures?
 % No:  showfigs = []
 % Yes: showfigs = 1
@@ -27,6 +29,7 @@ delete(fullfile(tempdir,'my_input.mat'));
 
 image_filelist = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
 notesfiles = dir(fullfile(dirpath,'notes*txt'));
+logfiles = dir(fullfile(dirpath,'*log')); 
 
 logs_files = [];
 logs_filename = [];
@@ -85,7 +88,7 @@ end
 data_files = [targz_files,oldhdf5_files];
 display(data_files')
 
-pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','tyco'};
+pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','tyco','gup0','gup3'};
 ants   = {'32m','42m','uhf','vhf','esa','esr','eis','kir','sod','tro','lyr'};
 
 figure_check = zeros(length(image_filelist),1);
@@ -99,7 +102,13 @@ for ii = 1:length(data_files)
         end
         mkdir(untarpath);
         
-        untar(data_files{ii},untarpath)
+        try
+            untar(data_files{ii},untarpath)
+        catch
+            warning(['Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.'])
+            continue
+        end
+        
         untar_filelist = dir(untarpath);
     
         while length(untar_filelist(3:end)) == 1 && ~contains(untar_filelist(3).name,'.mat')
@@ -111,9 +120,10 @@ for ii = 1:length(data_files)
         [storepath,EISCAThdf5file] = mat2hdf5(untarpath,datapath); 
         
     else
-        %OldHdf5File = oldhdf5_files{ii};
         [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
     end
+    
+    
     
     folders = regexp(storepath,filesep,'split');
     storefolder = char(folders(end));
@@ -124,13 +134,19 @@ for ii = 1:length(data_files)
     
     bb = strfind(storefolder,'_');
     cc = strfind(storefolder,'@');
-    pulse = storefolder(bb(2)+1:bb(3)-1);
-    intper = storefolder(bb(3)+1:cc-1);
+    bbcc = sort([bb cc]);
+    if length(bb) == 4
+        pulse = storefolder(bb(2)+1:bb(4)-1);
+        intper = storefolder(bb(4)+1:cc-1);
+    else
+        pulse = storefolder(bb(2)+1:bb(3)-1);
+        intper = storefolder(bb(3)+1:cc-1);
+    end
     ant = storefolder(cc+1:end);
-       
+    
     nfigs_expr = 0;
     pdf_forHDF5 = [];
-    
+   % keyboard
     for jj = 1:length(image_filelist)
         figurefile = fullfile(dirpath,image_filelist(jj).name);
         [~,figname,ext] = fileparts(figurefile);
@@ -146,11 +162,21 @@ for ii = 1:length(data_files)
             dd_  = strfind(figname,'_');
             ddat = strfind(figname,'@');
             dd = sort([dd_ ddat]);
-            
+           
             fig_intper_set = 0;
+            c = 0;
+            
             for oo = 1:length(dd)
+                
                 if oo == length(dd)
                     figpart = figname(dd(oo)+1:end);
+                elseif length(bbcc) == 5 && oo == 1
+                    figpart = figname(dd(oo)+1:dd(oo+2)-1);
+                    if strcmp(pulse,figpart)
+                        c = 1;
+                    end
+                elseif length(bbcc) == 5 && oo == 2 && c == 1
+                    continue
                 else
                     figpart = figname(dd(oo)+1:dd(oo+1)-1);
                 end
@@ -170,15 +196,16 @@ for ii = 1:length(data_files)
                     end
                 end
             end
-            
+
             if fig_intper_set == 0 && ~isempty(intper)
                 fig_intper = intper;
             end
-            
-            if (contains(fig_ant,ant) && (str2num(fig_intper)==str2num(intper)) && contains(fig_pulse,pulse)) || ...
+
+            if (contains(fig_intper,intper) && contains(fig_ant,ant) && strcmp(fig_pulse,pulse)) && c == 1 || ...
+               (contains(fig_intper,intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...     
                 (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
-                (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...
-                ((contains(figname,'BoreSight') || contains(figname,'WestBeam')) && contains(fig_pulse,pulse))
+               (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...
+               ((contains(figname,'BoreSight') || contains(figname,'WestBeam')) && contains(fig_pulse,pulse))
                 if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
                     store_image2Hdf5(figurefile,EISCAThdf5file)
                     figure_check(jj) = figure_check(jj) + 1;
@@ -247,9 +274,12 @@ for ii = 1:length(data_files)
         end
     end
     
-    
-    
-    % Check if 
+    for nn = 1:length(logfiles)
+        logfile = fullfile(dirpath,logfiles(nn).name);
+        copyfile(logfile,storepath)
+    end
+    %keyboard
+    % Check if metadata exist
     info = h5info(EISCAThdf5file,'/metadata');
     metavar = {info.Datasets.Name}';
     hdf5fileformeta = [];
@@ -263,8 +293,13 @@ for ii = 1:length(data_files)
             end
         %elseif     
         end
+        if isempty(hdf5fileformeta) && length(data_files) == 1
+            hdf5fileformeta = hdf5rest_files{1};
+        end
         disp(hdf5fileformeta)
-        metacompl(hdf5fileformeta,EISCAThdf5file)  
+        if hdf5fileformeta
+            metacompl(hdf5fileformeta,EISCAThdf5file)  
+        end
     else
     end
     
@@ -289,44 +324,18 @@ for ii = 1:length(data_files)
                 vizugo = [];
             end
         end
-        
+        %keyboard
         if vizugo
             vizu('new',input,'HQ')
-            vizu('save','24hrplt')
-            if contains(data_files{ii},'.tar.gz')
-                at = strfind(untarfolder,'@');
-                if contains(untarfolder(at-3:at-1),'ant')
-                    newpng = [untarpath '/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.png'];
-                    newpdf = [untarpath '/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.pdf'];
-                elseif contains(untarfolder(at-4:at-1),'scan')
-                    newpng = [untarpath '/' storefolder(8:bb(3)-1) '_scan_24hrplt' storefolder(cc:end) '.png'];
-                    newpdf = [untarpath '/' storefolder(8:bb(3)-1) '_scan_24hrplt' storefolder(cc:end) '.pdf'];
-                else
-                    newpng = [untarpath '/' storefolder(8:cc-1) '_24hrplt' storefolder(cc:end) '.png'];
-                    newpdf = [untarpath '/' storefolder(8:cc-1) '_24hrplt' storefolder(cc:end) '.pdf'];
-                end
-            else
-                newpng = ['/tmp/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.png'];
-                newpdf = ['/tmp/' storefolder(8:bb(3)-1) '_24hrplt' storefolder(cc:end) '.pdf'];
-            end
-      
-            if exist(newpng)
-                store_image2Hdf5(newpng,EISCAThdf5file);
-            else
-                disp([newpng ' does not exist. Was it stored somewhere else?'])    
-            end
-            if exist(newpdf)
-                copyfile(newpdf,storepath)
-                [~,pdfname,ext]=fileparts(newpdf);
-                hdf5write(EISCAThdf5file,'/metadata/figure_links',[pdfname ext],'WriteMode','append');
-            else
-                disp([newpdf ' does not exist. Was it stored somewhere else?'])    
-            end
-        else
-           disp('No figures available and no new figures generated.') 
+            file = vizu('save','24hrplt');
+            newpng = [file '.png'];
+            newpdf = [file '.pdf'];
+            store_image2Hdf5(newpng,EISCAThdf5file);
+            copyfile(newpdf,storepath)
+            [~,pdfname,ext]=fileparts(newpdf);
+            hdf5write(EISCAThdf5file,'/metadata/figure_links',[pdfname ext],'WriteMode','append');
         end
-    end
-  
+    end  
     copyfile(data_files{ii},storepath)
 end
 
