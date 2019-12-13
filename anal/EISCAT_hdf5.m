@@ -302,7 +302,6 @@ for ii = 1:length(data_files)
         end
     else
     end
-    
     if nfigs_expr == 0
         
         if contains(data_files{ii},'.tar.gz')
@@ -322,6 +321,7 @@ for ii = 1:length(data_files)
                 vizugo = 1;
             else
                 vizugo = [];
+                warning(['No figures, and nrec = ' num2str(nrec) ' so no new figures generated.'])
             end
         end
         %keyboard
