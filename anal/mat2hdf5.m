@@ -487,7 +487,7 @@ for sf = sFields.'
             elseif ge(ndata,chunklim), csize = [chunklim npar];
             elseif ge(npar,chunklim), csize = [ndata chunklim];
             else csize = [ndata npar]; end    
-            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9);
+            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         elseif strcmp('metadata',char(sf)) 
             if ~exist(hdffilename)
