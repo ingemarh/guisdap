@@ -6,7 +6,7 @@ function save_results
 
 global result_path name_expr name_site name_ant
 global p_XMITloc p_RECloc sc_angle p_om0
-global d_time GUP_ver ch_az ch_el ch_Pt p_m0 p_N0 p_dtau v_lightspeed
+global d_time GUP_ver ch_az ch_el ch_Pt p_m0 p_N0 p_dtau v_lightspeed ch_fradar ch_gain
 global r_h r_spec r_om r_freq r_phasepush r_lag r_acf r_ace
 global r_range r_param r_error r_res r_status r_dp r_Offsetppd r_w
 global r_apriori r_apriorierror
@@ -94,6 +94,8 @@ r_om0=p_om0;
 r_w=r_w*s2km;
 r_code=a_code;
 r_gfd=a_gfd;
+r_fradar=ch_fradar;
+r_gain=ch_gain;
 
 if ~di_results
  fprintf('Status: '); fprintf('%d',r_status);
@@ -107,7 +109,7 @@ save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,r_Pt,...
      r_m0,r_range,r_h,r_param,r_error,r_res,r_status,r_dp,r_w,r_apriori,...
      r_apriorierror,r_pp,r_pprange,r_pperr,r_ppw,r_XMITloc,r_RECloc,...
      r_SCangle,r_Tsys,r_Offsetppd,r_Magic_const,r_spec,r_om,r_om0,r_freq,...
-     r_phasepush,name_sig,r_lag,r_acf,r_ace,r_code,r_gfd)
+     r_phasepush,name_sig,r_lag,r_acf,r_ace,r_code,r_gfd,r_fradar,r_gain)
 if a_NCAR
  file0=sprintf('%sNCAR_%d-%02d-%02d_%s',result_path,d_time(2,1:3),name_expr);
  if isstruct(a_autodir)
