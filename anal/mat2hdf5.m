@@ -78,6 +78,10 @@ year = num2str(r_time(1,1));
 month = sprintf('%02d',r_time(1,2));
 day = sprintf('%02d',r_time(1,3));
 
+hour   = sprintf('%02d',r_time(1,4));
+minute = sprintf('%02d',r_time(1,5));
+second = sprintf('%02.f',r_time(1,6));
+
 [~,matfolder] = fileparts(matpath);
 dd_  = strfind(matfolder,'_');
 ddat = strfind(matfolder,'@');
@@ -430,7 +434,12 @@ aa = find(cellfun('isempty',matfile.metadata.par2d(7,:)));    matfile.metadata.p
 aa = find(cellfun('isempty',matfile.metadata.par2d_pp(6,:))); matfile.metadata.par2d_pp(6,aa)= {'0'};
 aa = find(cellfun('isempty',matfile.metadata.par2d_pp(7,:))); matfile.metadata.par2d_pp(7,aa)= {'0'};
        
-matfile.metadata.schemes.DataCite.Identifier = 'PID';
+symbols = ['a':'z' 'A':'Z' '0':'9'];
+strLength = 10;
+nums = randi(numel(symbols),[1 strLength]);
+randstr = symbols(nums);
+PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
+matfile.metadata.schemes.DataCite.Identifier = PID;
 matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
 matfile.metadata.schemes.DataCite.Title = datafolder;
 matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';

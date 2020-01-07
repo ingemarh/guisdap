@@ -8,6 +8,8 @@ end
 [X,map] = imread(figurefile);
 if ~isempty(map)
     x = round(uint8(255*ind2rgb(X,map)));
+else
+    x = X;
 end
 figinfo = imfinfo(figurefile);
 F = fieldnames(figinfo);

@@ -40,14 +40,16 @@ site = char(pathparts(end-2));
 parnames = datapar.mnemonic';
 npar = size(parnames,1);
 
-year  = num2str(data.year(1));
-month = num2str(data.month(1));
-day   = num2str(data.day(1));
+year   = num2str(data.year(1));
+month  = sprintf('%02d',data.month(1));
+day    = sprintf('%02d',data.day(1));
+hour   = sprintf('%02d',data.hour(1));
+minute = sprintf('%02d',data.min(1));
+second = sprintf('%02d',data.sec(1));
+
 recs = length(data.ut1_unix);                            % # of records
 intper_med = median(data.ut2_unix-data.ut1_unix);        % median integration time
 
-if str2num(month)<10, month = ['0' month]; end
-if str2num(day)<10, day = ['0' day]; end
 display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
 aa = find(strcmp(exprparnames,'instrument')==1);
@@ -323,7 +325,30 @@ if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})];
     matfile.metadata.par0d = [matfile.metadata.par0d info'];
 end
 
-matfile.metadata.schemes.DataCite.Identifier = 'PID';
+nn = 0;
+if exist('name_expr','var'); nn = nn + 1; 
+    infoname(1) = {'name_expr'};
+    infoname(2) = {name_expr};
+    a = find(strcmp('name_expr',gupparameters_list)==1);                
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
+end
+if exist('name_ant','var'); nn = nn + 1; 
+    infoname(1) = {'name_ant'};
+    infoname(2) = {name_ant};
+    a = find(strcmp('name_ant',gupparameters_list)==1); 
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
+end
+
+symbols = ['a':'z' 'A':'Z' '0':'9'];
+strLength = 10;
+nums = randi(numel(symbols),[1 strLength]);
+randstr = symbols(nums);
+PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
+matfile.metadata.schemes.DataCite.Identifier = PID;
 matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
 matfile.metadata.schemes.DataCite.Title = datafolder;
 matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';
