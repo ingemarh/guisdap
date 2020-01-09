@@ -221,9 +221,11 @@ for ii = 1:npar
             if strcmp('range',char(Parsinfile_list(ii))) && jj == 1 
                 bb = aa; end
             if strcmp('range',char(Parsinfile_list(ii)))
-                aa = bb(jj); end  % since there are two 'range' in parameters_list there will be two aa:s. This bit of code requires the 'normal' one to be before the pp in the list.  
+                aa = bb(jj); end      % since there are two 'range' in parameters_list there will be two values in aa. This bit of code requires the 'normal range' (range) to be before 'pprange' in the Guisdap parameter list.  
+            if strcmp(char(Parsinfile_list(17)),'tfreq')
+                aa = aa(1); end       % since there are two 'tfreq' in parameters_list there will be two values in aa. This bit of code requires 'ftrans' to be before 'fradar' in the Guisdap parameter list.           
             
-            if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1); end
+            if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1);  end
             if strcmp('dvobi',char(Parsinfile_list(ii))), aa = find(strcmp('dvo',parameters_list)==1); end
             if strcmp('nel',char(Parsinfile_list(ii))),   aa = find(strcmp('ne',parameters_list)==1);  parameterdata_kindat = 10.^parameterdata_kindat; end
             if strcmp('dnel',char(Parsinfile_list(ii))),  aa = find(strcmp('dne',parameters_list)==1); parameterdata_kindat = 10.^parameterdata_kindat; end
@@ -243,6 +245,7 @@ for ii = 1:npar
                 end
                 start = start + nrec(kk,jj);
             end
+            
             
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
             
