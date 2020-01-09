@@ -82,6 +82,9 @@ hour   = sprintf('%02d',r_time(1,4));
 minute = sprintf('%02d',r_time(1,5));
 second = sprintf('%02.f',r_time(1,6));
 
+if strcmp(matpath(end),'/')
+    matpath = matpath(1:end-1);
+end
 [~,matfolder] = fileparts(matpath);
 dd_  = strfind(matfolder,'_');
 ddat = strfind(matfolder,'@');
@@ -91,6 +94,7 @@ if length(dd)==4
 else
     name_expr_more = [];
 end
+
 ant = matfolder(dd(end)+1:end);
 if isempty(name_ant) 
    switch name_site
@@ -124,7 +128,7 @@ if exist(hdffilename)==2, delete(hdffilename); end
 % 0d and 1d parameters 
 parameters_1d = {'h_time' 'h_ver' 'h_Magic_const' 'h_az' 'h_el' 'h_Pt' 'h_SCangle'...
     'h_XMITloc' 'h_RECloc' 'h_Tsys' 'h_code' 'h_om0' 'h_m0' 'h_phasepush'...
-    'h_Offsetppd'};
+    'h_Offsetppd' 'h_gain' 'h_fradar'};
 % 2d parameters 
 parameters_2d = {'h_h' 'h_range' 'h_param' 'h_error' 'h_apriori'...
     'h_apriorierror' 'h_status' 'h_dp' 'h_res' 'h_w'};
@@ -137,6 +141,7 @@ parameters_list = text(:,1);    % list that includes all Guisdap parameters and 
 matfile.metadata.header= text(1,1:7)';
 
 nn1 = 0;
+[uniom0,unigain,unifradar] = deal(0);
 for ii = 1:length(parameters_1d)
      h_name1 = char(parameters_1d(ii));
      if ~exist(['r_' h_name1(3:end)],'var')
@@ -165,6 +170,30 @@ for ii = 1:length(parameters_1d)
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
             matfile.metadata.par1d(:,nn1) = info';
          end
+     elseif strcmp(h_name1,'h_om0') && length(unique(eval(['r_om0']))) == 1
+         nn1 = nn1+1;
+         uniom0 = 1;
+         a = find(strcmp(h_name1,parameters_list)==1);
+         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+         info(1) = {[h_name1(3:end)]};
+         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+         matfile.metadata.par1d(:,nn1) = info';
+     elseif strcmp(h_name1,'h_gain') && length(unique(eval(['r_gain']))) == 1
+         nn1 = nn1+1;
+         unigain = 1;
+         a = find(strcmp(h_name1,parameters_list)==1);
+         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+         info(1) = {[h_name1(3:end)]};
+         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+         matfile.metadata.par1d(:,nn1) = info';   
+     elseif strcmp(h_name1,'h_fradar') && length(unique(eval(['r_fradar']))) == 1
+         nn1 = nn1+1;
+         unifradar = 1;
+         a = find(strcmp(h_name1,parameters_list)==1);
+         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+         info(1) = {[h_name1(3:end)]};
+         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+         matfile.metadata.par1d(:,nn1) = info';    
      elseif length(eval(['r_' h_name1(3:end)]))==1
          nn1 = nn1+1;
          a = find(strcmp(h_name1,parameters_list)==1);             
@@ -300,7 +329,6 @@ for ii = 1:length(parameters_2dpp)
 end
 
 parameters = [parameters_1d parameters_2d parameters_2dpp];
-parameters_special = {'h_om' 'h_lag' 'h_spec' 'h_freq' 'h_acf' 'h_ace'};
 
 nh = [];
 npprange = [];
@@ -324,6 +352,15 @@ for ii = 1:length(parameters)
             elseif strcmp(h_name,'h_pprange')
                 npprange = [npprange; length(r_pprange)];
                 par = [par; eval(['r_' h_name(3:end)])];
+            elseif strcmp(h_name,'h_om0') && uniom0 == 1
+                r_om0 = r_om0(1);  
+                par = [par; eval(['r_' h_name(3:end)])]; 
+            elseif strcmp(h_name,'h_gain') && unigain == 1
+                r_gain = r_gain(1);
+                par = [par; eval(['r_' h_name(3:end)])]; 
+            elseif strcmp(h_name,'h_fradar') && unifradar == 1
+                r_fradar = r_fradar(1);
+                par = [par; eval(['r_' h_name(3:end)])];    
             else
                 par = [par; eval(['r_' h_name(3:end)])];    
             end
@@ -334,12 +371,15 @@ end
 
 matfile.data.par1d    = [h_time h_ver h_Magic_const h_az h_el h_Pt...
     h_SCangle h_XMITloc h_RECloc h_Tsys h_code h_om0 h_m0...
-    h_phasepush h_Offsetppd nh npprange];
+    h_phasepush h_Offsetppd h_gain h_fradar nh npprange];
 
 matfile.data.par2d    = [h_h h_range h_param h_error h_apriori...
     h_apriorierror h_status h_dp h_res h_w];
 
 matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
+
+
+parameters_special = {'h_om' 'h_lag' 'h_spec' 'h_freq' 'h_acf' 'h_ace'};
 
 for ii = 1:length(parameters_special)
     h_name = parameters_special{ii};
@@ -380,6 +420,7 @@ matfile.metadata.par2d(:,index) = [];
 n = length(matfile.data.par1d(1,:));    % now possibly a new length
 mm=0;
 index = [];
+
 for ii = 1:n
     if length(unique(round(matfile.data.par1d(:,ii),4)))==1 || sum(isfinite(matfile.data.par1d(:,ii))) == 0
         mm = mm + 1;
@@ -440,7 +481,7 @@ nums = randi(numel(symbols),[1 strLength]);
 randstr = symbols(nums);
 PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
 matfile.metadata.schemes.DataCite.Identifier = PID;
-matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
+matfile.metadata.schemes.DataCite.Creator = 'Ingemar H??ggstr??m';
 matfile.metadata.schemes.DataCite.Title = datafolder;
 matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';
 matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionosphere';
