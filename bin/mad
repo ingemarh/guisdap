@@ -28,6 +28,7 @@ pushd ${MDIR} >& /dev/null
 # Move result files up one level
 mv ${GDIR}/*.eps . >& /dev/null
 mv ${GDIR}/*.png . >& /dev/null
+mv ${GDIR}/*.pdf . >& /dev/null
 mv ${GDIR}/NCAR_*.asc . >& /dev/null
 mv ${GDIR}/NCAR_*.bin . >& /dev/null
 mv ${GDIR}/NCAR_*.hdf5 . >& /dev/null
