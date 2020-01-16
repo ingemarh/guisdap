@@ -86,8 +86,8 @@ else
  xlabel(axs(2),sprintf('Dynasonde %s (MHz)',char(FD(F))))
  delete(findobj(vizufig,'UserData','Results'))
  text(axs(2),rx(2)*1.05,rx(2)/2,...
-   sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%d-%d km\nelev > %g\\circ\ndynasonde window=%g-%g MHz\ngreen circles > %g\\sigma\n\nsuggested Magic const=%.2f',...
-   mr2,sr2,Magic_const,alt,minel,folim,maxe,nmc),'horiz','left','UserData','Results')
+   sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%d-%d km\nelev > %g%s\ndynasonde window=%g-%g MHz\ngreen circles > %g\\sigma\n\nsuggested Magic const=%.2f',...
+   mr2,sr2,Magic_const,alt,minel,char(176),folim,maxe,nmc),'horiz','left','UserData','Results')
  axis(axs(2),'square')
  pos=get(axs(2),'position'); pos(3)=.5;
  set(axs(2),'xlim',rx,'ylim',rx,'position',pos)

@@ -178,7 +178,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   insert_exif(vizufig,file,{'pdf' 'png'})
  end
  if strcmp(act,'save') && nargout==1
-  varargout(1)=file;
+  varargout(1)={file};
  end
  return
 end
@@ -195,7 +195,7 @@ TITLE={'Range (km)','Altitude (km)','Electron Density (m^{-3})',...
 	'Electron Temperature (K)','Ion Temperature (K)',...
 	'Ion Drift Velocity (ms^{-1})','Collision frequency (Hz)',...
 	'Ion Composition (O^+/N_e)','Residual'};
-TITLE1={'Azimuth(\circ)','Elevation(\circ)','Power (10kW)',...
+TITLE1={['Azimuth(' char(176) ')'],['Elevation(' char(176) ')'],'Power (10kW)',...
 	'System Temperature (K)' 'Phasepushing (Hz)'};
 SCALE =[50 900		% Range km
 	80 600		% Altitude km
@@ -448,7 +448,7 @@ if Y_PARAM<3
  Yscale=SCALE(Y_PARAM,:);
  if isinf(maxdy) && ~isempty(rres), maxdy=rres; end
 elseif Y_PARAM==3
- YTitle='Latitude (\circN)';
+ YTitle=['Latitude (' char(176) ')'];
  y_param=par2D(:,:,1);
  ll=par1D(:,[2 1]);
  for i=1:size(par2D,2),for j=1:size(y_param,1)
@@ -546,7 +546,7 @@ if option(13)
  for i=1:size(par2D,2), ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
  if size(par1D,2)>3, ll=[ll par1D(:,4:end)]; end
  d=many(ll,[0 300])+[-10 10];
- line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {'Latitude (\circN)','Longitude (\circE)'} TITLE(2) TITLE1(4) {'Offset (\mus)'}],[])
+ line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {['Latitude (' char(176) 'N)'],['Longitude (' char(176) 'E)']} TITLE(2) TITLE1(4) {'Offset (\mus)'}],[])
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
