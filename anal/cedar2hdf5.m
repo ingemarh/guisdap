@@ -22,7 +22,7 @@ exprparnames = cellstr(exprpar.name');
 exprparvalues = cellstr(exprpar.value');
 
 for ii = 1:length(exprparnames)
-    matfile.metadata.experiment.(char(regexprep(exprparnames(ii),' ','_'))) = exprparvalues{ii};
+    matfile.metadata.experiment.(char(regexprep(exprparnames(ii),' ','_'))) = {exprparvalues{ii}};
 end
 
 aa = find(strcmp(exprparnames,'Cedar file name')==1);
@@ -65,8 +65,8 @@ if kindats(1) >= 6800
 else
     name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
 end
-matfile.metadata.experiment.name_expr = name_expr; 
-matfile.metadata.experiment.intper_median = intper_med;
+matfile.metadata.experiment.name_expr = {name_expr}; 
+matfile.metadata.experiment.intper_median = {num2str( intper_med)};
 
 datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' num2str(intper_med) '@' name_ant];
 storepath = fullfile(datapath,datafolder);
@@ -218,12 +218,12 @@ for ii = 1:npar
                 continue                                                        % if so, skip to next iteration
             end
             
-            if strcmp('range',char(Parsinfile_list(ii))) && jj == 1 
+            if (strcmp('range',char(Parsinfile_list(ii))) || strcmp('tfreq',char(Parsinfile_list(ii))))  && jj == 1 
                 bb = aa; end
-            if strcmp('range',char(Parsinfile_list(ii)))
+            if strcmp('range',char(Parsinfile_list(ii)))  || strcmp('tfreq',char(Parsinfile_list(ii)))
                 aa = bb(jj); end      % since there are two 'range' in parameters_list there will be two values in aa. This bit of code requires the 'normal range' (range) to be before 'pprange' in the Guisdap parameter list.  
-            if strcmp(char(Parsinfile_list(17)),'tfreq')
-                aa = aa(1); end       % since there are two 'tfreq' in parameters_list there will be two values in aa. This bit of code requires 'ftrans' to be before 'fradar' in the Guisdap parameter list.           
+%             if strcmp(char(Parsinfile_list(17)),'tfreq')
+%                 aa = aa(1); end       % since there are two 'tfreq' in parameters_list there will be two values in aa. This bit of code requires 'ftrans' to be before 'fradar' in the Guisdap parameter list.           
             
             if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1);  end
             if strcmp('dvobi',char(Parsinfile_list(ii))), aa = find(strcmp('dvo',parameters_list)==1); end
@@ -301,7 +301,6 @@ if strcmp(kindatstr(1:2),'66')
         end
     end
 end
-%keyboard
 
 % add the RECloc data
 cc1 = find(strcmp(exprparnames,'instrument latitude')==1);
@@ -351,16 +350,16 @@ strLength = 10;
 nums = randi(numel(symbols),[1 strLength]);
 randstr = symbols(nums);
 PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
-matfile.metadata.schemes.DataCite.Identifier = PID;
-matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
-matfile.metadata.schemes.DataCite.Title = datafolder;
-matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';
-matfile.metadata.schemes.DataCite.PublicationYear = year';
-matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionosphere';
+matfile.metadata.schemes.DataCite.Identifier = {PID};
+matfile.metadata.schemes.DataCite.Creator = {'Ingemar Häggström'};
+matfile.metadata.schemes.DataCite.Title = {datafolder};
+matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
+matfile.metadata.schemes.DataCite.PublicationYear = {year};
+matfile.metadata.schemes.DataCite.ResourceType = {'dataset/Level 3 Ionosphere'};
 
 software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = [];
-matfile.metadata.software_link = software;
+matfile.metadata.software_link = {software};
 matfile.metadata.level2_links = level2_link;
 
 % Delete any empty fields from the structure
@@ -404,9 +403,22 @@ end
 save(matfilename,'matfile')
 
 % Generate an HDF5-file 
+
 chunklim = 10;
 sFields = fieldnames(matfile);
-for sf = sFields.' 
+for sf = sFields.'
+    
+    if strcmp('metadata',char(sf))
+        if ~exist(hdffilename)
+            fid = H5F.create(hdffilename);
+        else
+            fid = H5F.open(hdffilename,'H5F_ACC_RDWR','H5P_DEFAULT');
+        end
+        type_id = H5T.copy('H5T_C_S1');
+        plist = 'H5P_DEFAULT';
+        gid = H5G.create(fid,char(sf),plist,plist,plist);
+    end
+    
     tFields = fieldnames(matfile.(char(sf)));
     for tf = tFields.'
         if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)))
@@ -430,15 +442,68 @@ for sf = sFields.'
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         elseif strcmp('metadata',char(sf)) 
-            if ~exist(hdffilename)
-                hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            if isstruct(matfile.(char(sf)).(char(tf)))
+                g2id = H5G.create(gid,char(tf),plist,plist,plist);
+                uFields = fieldnames(matfile.(char(sf)).(char(tf)));
+%                 keyboard
+                for uf = uFields.'
+                    if isstruct(matfile.(char(sf)).(char(tf)).(char(uf)))
+                        g3id = H5G.create(g2id,char(uf),plist,plist,plist);
+                        vFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)));
+                        for vf = vFields.'
+                            lchar = max(max(strlength(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)))));
+                            H5T.set_size(type_id,lchar);
+                            dims = size(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)));
+                            h5_dims = fliplr(dims);
+                            h5_maxdims = h5_dims;
+                            space_id = H5S.create_simple(2,h5_dims,h5_maxdims);
+                            dcpl = 'H5P_DEFAULT';
+                            dset_id = H5D.create(g3id,char(vf),type_id,space_id,dcpl);
+                            plist = 'H5P_DEFAULT';
+                            H5D.write(dset_id,'H5ML_DEFAULT','H5S_ALL','H5S_ALL',plist,char(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf))) .'); 
+                            H5S.close(space_id);
+                            H5D.close(dset_id);     
+                        end
+                        H5G.close(g3id);
+                    else
+                        lchar = max(max(strlength(matfile.(char(sf)).(char(tf)).(char(uf)))));
+                        H5T.set_size(type_id,lchar);
+                        dims = size(matfile.(char(sf)).(char(tf)).(char(uf)));
+                        h5_dims = fliplr(dims);
+                        h5_maxdims = h5_dims;
+                        space_id = H5S.create_simple(2,h5_dims,h5_maxdims);
+                        dcpl = 'H5P_DEFAULT';
+                        dset_id = H5D.create(fid,['/' char(sf) '/' char(tf) '/' char(uf)],type_id,space_id,dcpl);
+                        plist = 'H5P_DEFAULT';
+                        H5D.write(dset_id,'H5ML_DEFAULT','H5S_ALL','H5S_ALL',plist,char(matfile.(char(sf)).(char(tf)).(char(uf))) .');  
+                        H5S.close(space_id);
+                        H5D.close(dset_id);
+                    end
+                end
+                H5G.close(g2id);
             else
-                hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
+                lchar = max(max(strlength(matfile.(char(sf)).(char(tf)))));
+                H5T.set_size(type_id,lchar);
+                dims = size(matfile.(char(sf)).(char(tf)));
+                h5_dims = fliplr(dims);
+                h5_maxdims = h5_dims;
+                space_id = H5S.create_simple(2,h5_dims,h5_maxdims);
+                dcpl = 'H5P_DEFAULT';
+                dset_id = H5D.create(fid,['/' char(sf) '/' char(tf)],type_id,space_id,dcpl);
+                plist = 'H5P_DEFAULT';
+                H5D.write(dset_id,'H5ML_DEFAULT','H5S_ALL','H5S_ALL',plist,char(matfile.(char(sf)).(char(tf))) .');  
+                H5S.close(space_id);
+                H5D.close(dset_id);
             end
         else
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
-        end
+        end   
+    end
+    if strcmp('metadata',char(sf))
+        H5G.close(gid);
+        H5T.close(type_id);
+        H5F.close(fid);
     end
 end
 
