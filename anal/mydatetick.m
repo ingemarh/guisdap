@@ -1,19 +1,19 @@
-function mydatetick(xlim,first)
+function mydatetick(ax,xlim,first)
 global local
 persistent xticks
-set(gca,'XLim',xlim)
+set(ax,'XLim',xlim)
 tickform='HH:MM'; td=diff(xlim);
 if td>7, tickform='dd/mm';
 elseif td<.003, tickform='HH:MM:SS'; end
 if first
  if td>7
-  set(gca,'xlim',[ceil(xlim(1)) floor(xlim(2))])
+  set(ax,'xlim',[ceil(xlim(1)) floor(xlim(2))])
  elseif td>.003
-  set(gca,'xlim',[ceil(xlim(1)*1440) floor(xlim(2)*1440)]/1440)
+  set(ax,'xlim',[ceil(xlim(1)*1440) floor(xlim(2)*1440)]/1440)
  end 
- fs=get(gca,'fontsize'); set(gca,'fontsize',fs/1.0) % To encourage more ticks
- datetick(gca,'x',tickform,'keeplimits')
- xticks=get(gca,'xtick'); lt=sum((xlim(1)<xticks) & (xticks<xlim(2)));
+ fs=get(ax,'fontsize'); set(ax,'fontsize',fs/1.0) % To encourage more ticks
+ datetick(ax,'x',tickform,'keeplimits')
+ xticks=get(ax,'xtick'); lt=sum((xlim(1)<xticks) & (xticks<xlim(2)));
  if ~local.x && (isempty(xticks) || lt==0 || (lt<4 && td>.003))
    freduce=12.429; %Matlab bug...
  elseif lt<4
@@ -22,17 +22,17 @@ if first
    freduce=0;
  end
  if freduce
-  set(gca,'fontsize',fs/freduce)
-  datetick(gca,'x',tickform,'keeplimits')
-  xticks=get(gca,'xtick');
+  set(ax,'fontsize',fs/freduce)
+  datetick(ax,'x',tickform,'keeplimits')
+  xticks=get(ax,'xtick');
  end
- set(gca,'fontsize',fs,'xlim',xlim)
+ set(ax,'fontsize',fs,'xlim',xlim)
 else
- set(gca,'xtick',xticks)
- datetick(gca,'x',tickform,'keeplimits','keepticks')
+ set(ax,'xtick',xticks)
+ datetick(ax,'x',tickform,'keeplimits','keepticks')
 end
+fs=get(ax,'fontsize');
 try
- ax=gca;
  if strcmp(ax.XAxis.MinorTick,'on')
   ax.XAxis.MinorTickValuesMode='auto'; drawnow
   mt=ax.XAxis.MinorTickValues; dmt=round(1./median(diff(mt)));
@@ -56,4 +56,4 @@ try
   ax.XAxis.MinorTickValues=mt;
  end
 end
-
+set(ax,'fontsize',fs)
