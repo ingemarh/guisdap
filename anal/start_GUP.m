@@ -104,3 +104,4 @@ else
  addpath(fullfile(path_GUP,'models','irbem-code','matlab'))
 end
 warning('off','MATLAB:connector:connector:ConnectorNotRunning')
+feature('DefaultCharacterSet','UTF-8');
