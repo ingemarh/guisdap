@@ -414,7 +414,6 @@ for sf = sFields.'
         else
             fid = H5F.open(hdffilename,'H5F_ACC_RDWR','H5P_DEFAULT');
         end
-%         type_id = H5T.copy('H5T_C_S1');
         plist = 'H5P_DEFAULT';
         gid = H5G.create(fid,char(sf),plist,plist,plist);
     end

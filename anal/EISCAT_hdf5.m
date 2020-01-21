@@ -116,20 +116,15 @@ for ii = 1:length(data_files)
             untarpath = fullfile(untarpath,untarfolder);
             untar_filelist = dir(untarpath);
         end
-        
         [storepath,EISCAThdf5file] = mat2hdf5(untarpath,datapath); 
-        
     else
         [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
     end
-    
-    
-    
+        
     folders = regexp(storepath,filesep,'split');
     storefolder = char(folders(end));
     display(EISCAThdf5file)
-    
-    
+      
     %%% copying figures to the new data folders
     
     bb = strfind(storefolder,'_');
@@ -146,7 +141,7 @@ for ii = 1:length(data_files)
     
     nfigs_expr = 0;
     pdf_forHDF5 = [];
-   % keyboard
+   
     for jj = 1:length(image_filelist)
         figurefile = fullfile(dirpath,image_filelist(jj).name);
         [~,figname,ext] = fileparts(figurefile);
@@ -278,12 +273,13 @@ for ii = 1:length(data_files)
         logfile = fullfile(dirpath,logfiles(nn).name);
         copyfile(logfile,storepath)
     end
-    %keyboard
+    
     % Check if metadata exist
     info = h5info(EISCAThdf5file,'/metadata');
-    metavar = {info.Datasets.Name}';
+    metagroups = {info.Groups.Name}';
     hdf5fileformeta = [];
-    if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metavar,'gfd')))
+    
+    if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metagroups,'/metadata/gfd')))
         [~,tarfilename1,~] = fileparts(data_files{ii});
         [~,tarfilename,~]  = fileparts(tarfilename1);
         if ~isempty(hdf5ncar_files)
@@ -324,7 +320,7 @@ for ii = 1:length(data_files)
                 warning(['No figures, and nrec = ' num2str(nrec) ' so no new figures generated.'])
             end
         end
-        %keyboard
+        
         if vizugo
             vizu('new',input,'HQ')
             file = vizu('save','24hrplt');

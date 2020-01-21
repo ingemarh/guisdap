@@ -26,31 +26,44 @@ load(matfile_1);
 % store the gfd content
 s = [];
 if exist('r_gfd','var')
-    matfile.metadata.gfd = r_gfd;
-    extra=r_gfd.extra;
-    for r = 1:size(extra,1)
-        if contains(extra(r,:),'%')
-            s = [s r];
+    %matfile.metadata.gfd = r_gfd;
+    gfd_Fields = fieldnames(r_gfd);
+    for gf = gfd_Fields.'   
+        if strcmp(gf,'extra')
+            extra=r_gfd.extra;
+            for r = 1:size(extra,1)
+                if contains(extra(r,:),'%')
+                    s = [s r];
+                end
+            end
+            extra(s,:)=[];
+            if ~isempty(extra)
+                matfile.metadata.gfd.extra = row([extra ones(size(extra,1))*'#']');
+            else
+                matfile.metadata.gfd.extra = {'None'};
+            end
+        elseif ~ischar(r_gfd.(char(gf)))
+            matfile.metadata.gfd.(char(gf)) = {num2str(r_gfd.(char(gf)))};
+        else
+            matfile.metadata.gfd.(char(gf)) = {r_gfd.(char(gf))};
         end
     end
-    extra(s,:)=[];
-    matfile.metadata.gfd.extra = row([extra ones(size(extra,1))*'#']');
     intper_med = median(r_gfd.intper);
-    matfile.metadata.gfd.intper_median = intper_med;
+    matfile.metadata.gfd.intper_median = {num2str(intper_med)};
 elseif ~isempty(gupfilecheck)
     load('-mat',gupfile);
-    if exist('name_expr','var'),    matfile.metadata.gfd.name_expr      = name_expr;   end
-    if exist('expver','var'),       matfile.metadata.gfd.expver         = expver;      end
-    if exist('siteid','var'),       matfile.metadata.gfd.siteid         = siteid;      end
-    if exist('data_path','var'),    matfile.metadata.gfd.data_path      = data_path;   end
-    if exist('result_path','var'),  matfile.metadata.gfd.result_path    = result_path; end 
-    if exist('intper','var'),       matfile.metadata.gfd.intper         = intper;  
-       intper_med = median(intper); matfile.metadata.gfd.intper_median  = intper_med;  end
-    if exist('t1','var'),           matfile.metadata.gfd.t1             = t1;          end
-    if exist('t2','var'),           matfile.metadata.gfd.t2             = t2;          end
-    if exist('rt','var'),           matfile.metadata.gfd.rt             = rt;          end
-    if exist('figs','var'),         matfile.metadata.gfd.figs           = figs;        end
-    if exist('path_exps','var'),    matfile.metadata.gfd.path_exps      = path_exps;   end
+    if exist('name_expr','var'),    matfile.metadata.gfd.name_expr      = {name_expr};           end
+    if exist('expver','var'),       matfile.metadata.gfd.expver         = {num2str(expver)};     end
+    if exist('siteid','var'),       matfile.metadata.gfd.siteid         = {num2str(siteid)};     end
+    if exist('data_path','var'),    matfile.metadata.gfd.data_path      = {data_path};           end
+    if exist('result_path','var'),  matfile.metadata.gfd.result_path    = {result_path};         end 
+    if exist('intper','var'),       matfile.metadata.gfd.intper         = {num2str(intper)};  
+       intper_med = median(intper); matfile.metadata.gfd.intper_median  = {num2str(intper_med)}; end
+    if exist('t1','var'),           matfile.metadata.gfd.t1             = {num2str(t1)};         end
+    if exist('t2','var'),           matfile.metadata.gfd.t2             = {num2str(t2)};         end
+    if exist('rt','var'),           matfile.metadata.gfd.rt             = {num2str(rt)};         end
+    if exist('figs','var'),         matfile.metadata.gfd.figs           = {num2str(figs)};       end
+    if exist('path_exps','var'),    matfile.metadata.gfd.path_exps      = {path_exps};           end
     if exist('extra','var')
         for r = 1:size(extra,1)
             if contains(extra(r,:),'%')
@@ -58,7 +71,12 @@ elseif ~isempty(gupfilecheck)
             end
         end
         extra(s,:)=[];
-        matfile.metadata.gfd.extra       = row([extra ones(size(extra,1))*'#']'); 
+        if ~isempty(extra)
+            matfile.metadata.gfd.extra = {row([extra ones(size(extra,1))*'#']')};
+        else
+            matfile.metadata.gfd.extra = 'None';    
+        end
+        
     end
 else 
     intper_vec = zeros(rec,1);
@@ -69,10 +87,13 @@ else
         intper_med = median(intper_vec);
     end
 end
+
 software = 'https://git.eiscat.se/cvs/guisdap9';
-level2_link = [];
-matfile.metadata.software_link = software;
-matfile.metadata.level2_links = level2_link;
+level2_link = '';
+matfile.metadata.software_link = {software};
+if ~isempty(level2_link)
+    matfile.metadata.level2_links = {level2_link};
+end
 
 year = num2str(r_time(1,1));
 month = sprintf('%02d',r_time(1,2));
@@ -480,19 +501,19 @@ strLength = 10;
 nums = randi(numel(symbols),[1 strLength]);
 randstr = symbols(nums);
 PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
-matfile.metadata.schemes.DataCite.Identifier = PID;
-matfile.metadata.schemes.DataCite.Creator = 'Ingemar H??ggstr??m';
-matfile.metadata.schemes.DataCite.Title = datafolder;
-matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';
-matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionosphere';
+matfile.metadata.schemes.DataCite.Identifier = {PID};
+matfile.metadata.schemes.DataCite.Creator = {'Ingemar Häggström'};
+matfile.metadata.schemes.DataCite.Title = {datafolder};
+matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
+matfile.metadata.schemes.DataCite.ResourceType = {'dataset/Level 3 Ionosphere'};
 
 if exist('name_sig')
     dd = strfind(name_sig,' ');
     publdate = name_sig(dd(1)+1:dd(2)-1);
     publdate = datestr(datenum(publdate,'dd-mmm-yyyy'),'yyyy-mm-dd'); % date on the form YYYY-MM-DD
     publyear = publdate(1:4);
-    matfile.metadata.schemes.DataCite.Date = ['Created/' publdate];
-    matfile.metadata.schemes.DataCite.PublicationYear = publyear'; 
+    matfile.metadata.schemes.DataCite.Date = {['Created/' publdate]};
+    matfile.metadata.schemes.DataCite.PublicationYear = {publyear}; 
 end
 
 % Delete any empty fields from the structure
@@ -528,8 +549,20 @@ save(matfilename,'matfile')
 chunklim = 10;
 sFields = fieldnames(matfile);
 for sf = sFields.' 
+    
+    if strcmp('metadata',char(sf))
+        if ~exist(hdffilename)
+            fid = H5F.create(hdffilename);
+        else
+            fid = H5F.open(hdffilename,'H5F_ACC_RDWR','H5P_DEFAULT');
+        end
+        plist = 'H5P_DEFAULT';
+        gid = H5G.create(fid,char(sf),plist,plist,plist);
+    end
+    
     tFields = fieldnames(matfile.(char(sf)));
     for tf = tFields.'
+        tf
         if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)) || strcmp('acf',char(tf)) || strcmp('ace',char(tf)) || strcmp('lag',char(tf)) || strcmp('freq',char(tf)) || strcmp('spec',char(tf)) || strcmp('om',char(tf)))
             npar  = length(matfile.data.(char(tf))(1,:));
             ndata = length(matfile.data.(char(tf))(:,1));
@@ -540,14 +573,40 @@ for sf = sFields.'
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         elseif strcmp('metadata',char(sf)) 
-            if ~exist(hdffilename)
-                hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            if isstruct(matfile.(char(sf)).(char(tf)))
+                g2id = H5G.create(gid,char(tf),plist,plist,plist);
+                uFields = fieldnames(matfile.(char(sf)).(char(tf)));
+                for uf = uFields.'
+                    uf
+                    if isstruct(matfile.(char(sf)).(char(tf)).(char(uf)))
+                        g3id = H5G.create(g2id,char(uf),plist,plist,plist);
+                        vFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)));
+                        for vf = vFields.'
+                            vf
+                            strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
+                            dsname = char(vf);
+                            strds2hdf5(g3id,dsname,strdata)
+                        end
+                        H5G.close(g3id);
+                    else
+                        strdata = matfile.(char(sf)).(char(tf)).(char(uf));
+                        dsname = char(uf);
+                        strds2hdf5(g2id,dsname,strdata)
+                    end
+                end
+                H5G.close(g2id);
             else
-                hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
+                strdata = matfile.(char(sf)).(char(tf));
+                dsname = char(tf);
+                strds2hdf5(gid,dsname,strdata)
             end
         else
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         end
+    end
+    if strcmp('metadata',char(sf))
+        H5G.close(gid);
+        H5F.close(fid);
     end
 end
