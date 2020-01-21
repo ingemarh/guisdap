@@ -414,7 +414,7 @@ for sf = sFields.'
         else
             fid = H5F.open(hdffilename,'H5F_ACC_RDWR','H5P_DEFAULT');
         end
-        type_id = H5T.copy('H5T_C_S1');
+%         type_id = H5T.copy('H5T_C_S1');
         plist = 'H5P_DEFAULT';
         gid = H5G.create(fid,char(sf),plist,plist,plist);
     end
@@ -445,55 +445,27 @@ for sf = sFields.'
             if isstruct(matfile.(char(sf)).(char(tf)))
                 g2id = H5G.create(gid,char(tf),plist,plist,plist);
                 uFields = fieldnames(matfile.(char(sf)).(char(tf)));
-%                 keyboard
                 for uf = uFields.'
                     if isstruct(matfile.(char(sf)).(char(tf)).(char(uf)))
                         g3id = H5G.create(g2id,char(uf),plist,plist,plist);
                         vFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)));
                         for vf = vFields.'
-                            lchar = max(max(strlength(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)))));
-                            H5T.set_size(type_id,lchar);
-                            dims = size(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)));
-                            h5_dims = fliplr(dims);
-                            h5_maxdims = h5_dims;
-                            space_id = H5S.create_simple(2,h5_dims,h5_maxdims);
-                            dcpl = 'H5P_DEFAULT';
-                            dset_id = H5D.create(g3id,char(vf),type_id,space_id,dcpl);
-                            plist = 'H5P_DEFAULT';
-                            H5D.write(dset_id,'H5ML_DEFAULT','H5S_ALL','H5S_ALL',plist,char(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf))) .'); 
-                            H5S.close(space_id);
-                            H5D.close(dset_id);     
+                              strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
+                              dsname = char(vf);
+                              strds2hdf5(g3id,dsname,strdata)
                         end
                         H5G.close(g3id);
                     else
-                        lchar = max(max(strlength(matfile.(char(sf)).(char(tf)).(char(uf)))));
-                        H5T.set_size(type_id,lchar);
-                        dims = size(matfile.(char(sf)).(char(tf)).(char(uf)));
-                        h5_dims = fliplr(dims);
-                        h5_maxdims = h5_dims;
-                        space_id = H5S.create_simple(2,h5_dims,h5_maxdims);
-                        dcpl = 'H5P_DEFAULT';
-                        dset_id = H5D.create(fid,['/' char(sf) '/' char(tf) '/' char(uf)],type_id,space_id,dcpl);
-                        plist = 'H5P_DEFAULT';
-                        H5D.write(dset_id,'H5ML_DEFAULT','H5S_ALL','H5S_ALL',plist,char(matfile.(char(sf)).(char(tf)).(char(uf))) .');  
-                        H5S.close(space_id);
-                        H5D.close(dset_id);
+                        strdata = matfile.(char(sf)).(char(tf)).(char(uf));
+                        dsname = char(uf);
+                        strds2hdf5(g2id,dsname,strdata)
                     end
                 end
                 H5G.close(g2id);
             else
-                lchar = max(max(strlength(matfile.(char(sf)).(char(tf)))));
-                H5T.set_size(type_id,lchar);
-                dims = size(matfile.(char(sf)).(char(tf)));
-                h5_dims = fliplr(dims);
-                h5_maxdims = h5_dims;
-                space_id = H5S.create_simple(2,h5_dims,h5_maxdims);
-                dcpl = 'H5P_DEFAULT';
-                dset_id = H5D.create(fid,['/' char(sf) '/' char(tf)],type_id,space_id,dcpl);
-                plist = 'H5P_DEFAULT';
-                H5D.write(dset_id,'H5ML_DEFAULT','H5S_ALL','H5S_ALL',plist,char(matfile.(char(sf)).(char(tf))) .');  
-                H5S.close(space_id);
-                H5D.close(dset_id);
+                strdata = matfile.(char(sf)).(char(tf));
+                dsname = char(tf);
+                strds2hdf5(gid,dsname,strdata)
             end
         else
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
@@ -502,7 +474,6 @@ for sf = sFields.'
     end
     if strcmp('metadata',char(sf))
         H5G.close(gid);
-        H5T.close(type_id);
         H5F.close(fid);
     end
 end
