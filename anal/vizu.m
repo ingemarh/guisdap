@@ -192,7 +192,8 @@ WHICH_PARAM='Ne Te Ti Vi AE';  % Select parameters to plot (AE=Az,El,Power)
 Y_PARAM=2;	% Y-Axis parameter
 %%%%%%%%%%%%%%%% Plot options %%%%%
 minus=char(5160);plus=char(5161);three=char(179);one=char(185);two=char(178);degree=char(176);esub=char(8337);mu=char(181);
-%minus=char(8315);plus=char(8314);
+minus=char(175);plus=^+;esub='_e'; %keep it to 8bit chars
+%minus=char(175);
 %minus='^-'; plus=^+;three='^3';one='^1';two='^2';degree='\circ';esub='_e';mu='\mu';
 TITLE={'Range (km)','Altitude (km)',['Electron Density (m' minus three ')'],...
 	'Electron Temperature (K)','Ion Temperature (K)',...
