@@ -1,6 +1,7 @@
 
-
 function store_image2Hdf5(figurefile,hdf5file)
+% function store_image2Hdf5(figurefile,hdf5file)
+% store data from an image (figurefile) to and HDF5-file (hdf5file)
 
 if nargin<2 
     error('A figure file and an HDF5 file to save the figure data to are needed as input');
@@ -50,6 +51,8 @@ if ~isempty(x)
     h5write(hdf5file, ['/figures' '/' figurename '/imagedata'],x); 
 end
 
-hdf5write(hdf5file,['/figures' '/' figurename '/imagemeta'],figinfo','WriteMode','append');
-hdf5write(hdf5file,['/figures' '/' figurename '/DataDescription'],Desc','WriteMode','append');
-
+figfields = fieldnames(figinfo);
+for ii = 1:length(figfields)
+    strds2hdf5(hdf5file,['/figures' '/' figurename '/imagemeta'],figfields{ii},{figinfo.(figfields{ii})})
+end
+strds2hdf5(hdf5file,['/figures' '/' figurename],'DataDescription',Desc)
