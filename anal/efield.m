@@ -166,7 +166,7 @@ if ~isempty(p)
     set(gca,'XLim',xlim)
     ylabel([yfor1 ' ' dir{i} ' [' yfor2 ']'])
     set(gca,'xgrid','on','ygrid','on')
-    mydatetick(xlim,1)
+    mydatetick(gca,xlim,1)
     text('String',hgt,'Units','Normalized','Position',[1.025 0.5],'Rotation',-90,'Color','k')
    end
   else
@@ -174,7 +174,7 @@ if ~isempty(p)
    set(gca,'XLim',xlim)
    ylabel([yfor1 ' [' yfor2 '] ' hgt])
    set(gca,'xgrid','on','ygrid','on')
-   mydatetick(xlim,1)
+   mydatetick(gca,xlim,1)
    color=get(gca,'ColorOrder');
    for i=1:np
     text('String',dir{i},'Units','Normalized','Position',[1.13-i*.035 0.5],'Rotation',-90,'Color',color(i,:))

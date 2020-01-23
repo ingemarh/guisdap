@@ -197,7 +197,8 @@ newMagic=Magic_const/mr2;
 %Need some overshoot for Te changes
 better_guess=newMagic*exp(-log(mr2)/15); % 15 OK for 22May04 ESR
 delete(findobj(vizufig,'UserData','Results'))
-text(axs(2),pmax*1.04,pmax/2,sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%.0f-%.0f km\ngreen circles > %g\\sigma\n\nsuggested Magic const=%.2f',mr2,sr2,Magic_const,mean(hlim),p.maxe,better_guess),'horiz','left','UserData','Results')
+sigma='\sigma'; % 16bit char(963)§
+text(axs(2),pmax*1.04,pmax/2,sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%.0f-%.0f km\ngreen circles > %g%s\n\nsuggested Magic const=%.2f',mr2,sr2,Magic_const,mean(hlim),p.maxe,sigma,better_guess),'horiz','left','UserData','Results')
 if abs(mr2-1)>.01
  fprintf('Try Magic_const=%.2f; (%.2f)\n',better_guess,newMagic)
 end

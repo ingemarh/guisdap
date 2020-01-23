@@ -191,11 +191,15 @@ WHICH_PARAM='Ne Te Ti Vi AE';  % Select parameters to plot (AE=Az,El,Power)
 %%%%%%%%%% Y-Axis scales %%%%%%%%%%
 Y_PARAM=2;	% Y-Axis parameter
 %%%%%%%%%%%%%%%% Plot options %%%%%
-TITLE={'Range (km)','Altitude (km)','Electron Density (m^{-3})',...
+minus=char(5160);plus=char(5161);three=char(179);one=char(185);two=char(178);degree=char(176);esub=char(8337);mu=char(181);
+minus=char(175);plus='^+';esub='_e'; %keep it to 8bit chars
+%minus=char(175);
+%minus='^-'; plus=^+;three='^3';one='^1';two='^2';degree='\circ';esub='_e';mu='\mu';
+TITLE={'Range (km)','Altitude (km)',['Electron Density (m' minus three ')'],...
 	'Electron Temperature (K)','Ion Temperature (K)',...
-	'Ion Drift Velocity (ms^{-1})','Collision frequency (Hz)',...
-	'Ion Composition (O^+/N_e)','Residual'};
-TITLE1={'Azimuth(\circ)','Elevation(\circ)','Power (10kW)',...
+	['Ion Drift Velocity (ms' minus one ')'],'Collision frequency (Hz)',...
+	['Ion Composition (O' plus '/N' esub ')'],'Residual'};
+TITLE1={['Azimuth(' degree ')'],['Elevation(' degree ')'],'Power (10kW)',...
 	'System Temperature (K)' 'Phasepushing (Hz)'};
 SCALE =[50 900		% Range km
 	80 600		% Altitude km
@@ -448,7 +452,7 @@ if Y_PARAM<3
  Yscale=SCALE(Y_PARAM,:);
  if isinf(maxdy) && ~isempty(rres), maxdy=rres; end
 elseif Y_PARAM==3
- YTitle='Latitude (\circN)';
+ YTitle=['Latitude (' degree 'N)'];
  y_param=par2D(:,:,1);
  ll=par1D(:,[2 1]);
  for i=1:size(par2D,2),for j=1:size(y_param,1)
@@ -524,12 +528,12 @@ if option(16)
   end
   if option(16)>4
    d=many(TC,TEC_SCALE);
-   line_plot(s,TC,d,'Total electron content (m-2)',[],[])
+   line_plot(s,TC,d,['Total electron content (m' minus two ')'],[],[])
   end
  end
 end
 if option(15)
- surf_plot(s,rpar2D(:,:,Y_PARAM),rpar2D(:,:,3),RAWNE_SCALE,Yscale,YTitle,'Raw electron density (m^{-3})','log')
+ surf_plot(s,rpar2D(:,:,Y_PARAM),rpar2D(:,:,3),RAWNE_SCALE,Yscale,YTitle,['Raw electron density (m' minus three ')'],'log')
 end
 if option(11)
  if size(par1D,2)>4
@@ -546,7 +550,7 @@ if option(13)
  for i=1:size(par2D,2), ll(i,2:4)=loc2gg(r_RECloc,ll(i,2:4)); end
  if size(par1D,2)>3, ll=[ll par1D(:,4:end)]; end
  d=many(ll,[0 300])+[-10 10];
- line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {'Latitude (\circN)','Longitude (\circE)'} TITLE(2) TITLE1(4) {'Offset (\mus)'}],[])
+ line_plot(s,ll,d,'Radar parameters',[TITLE1(3) {['Latitude (' degree 'N)'],['Longitude (' degree 'E)']} TITLE(2) TITLE1(4) {['Offset (' mu 's)']}],[])
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -685,7 +689,7 @@ global axs height n_tot START_TIME END_TIME add_plot vizufig
 ax=axes(vizufig,'Position',[.12 .06+(n_tot-add_plot)*sum(height) .7 height(1)]);
 axs=[axs ax];
 set(ax,'xgrid','on','ygrid','on')
-mydatetick([datenum(START_TIME) datenum(END_TIME)],length(axs)==1)
+mydatetick(ax,[datenum(START_TIME) datenum(END_TIME)],length(axs)==1)
 if ~isempty(yscale)
  set(ax,'YLim',yscale+5*eps*abs(yscale).*[-1 1])
 end

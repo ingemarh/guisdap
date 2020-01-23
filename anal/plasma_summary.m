@@ -200,7 +200,7 @@ elseif plots==0
    shading flat, caxis([0 mmmsig])
    ymax=max(max(plfreqj));
    if pn==0, xlabel('Time [UT]'), end
-   mydatetick(p_time([1 end]),pn==0)
+   mydatetick(gca,p_time([1 end]),pn==0)
    set(gca,'ylim',[min(min(plfreqj)) ymax],'box','on','tickdir','out','xgrid','on','ygrid','on')
    if j==1
     text('Position',[p_time(end) ymax],'VerticalAlignment','bottom','FontSize',12,...
@@ -216,7 +216,7 @@ elseif plots==0
  %axes('Position',[.07 .92 .08 .06]); plot(y,x,'.k')
  %set(get(gca,'child'),'markersize',1)
  %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
- axes('Position',[.07 .92 .08 .06]); eiscatlogo(.7)
+ axes('Position',[.07 .92 .08 .06]); eiscatlogo(.5)
  text('Position',[11 10],'VerticalAlignment','top','FontSize',16,...
   'HorizontalAlignment','Left','FontWeight','bold',...
   'String','EISCAT Scientific Association','UserData','Copyright');

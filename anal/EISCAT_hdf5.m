@@ -116,20 +116,15 @@ for ii = 1:length(data_files)
             untarpath = fullfile(untarpath,untarfolder);
             untar_filelist = dir(untarpath);
         end
-        
         [storepath,EISCAThdf5file] = mat2hdf5(untarpath,datapath); 
-        
     else
         [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
     end
-    
-    
-    
+        
     folders = regexp(storepath,filesep,'split');
     storefolder = char(folders(end));
     display(EISCAThdf5file)
-    
-    
+      
     %%% copying figures to the new data folders
     
     bb = strfind(storefolder,'_');
@@ -146,7 +141,7 @@ for ii = 1:length(data_files)
     
     nfigs_expr = 0;
     pdf_forHDF5 = [];
-   % keyboard
+   
     for jj = 1:length(image_filelist)
         figurefile = fullfile(dirpath,image_filelist(jj).name);
         [~,figname,ext] = fileparts(figurefile);
@@ -252,8 +247,11 @@ for ii = 1:length(data_files)
             end
         end
     end 
-    hdf5write(EISCAThdf5file,'/metadata/figure_links',pdf_forHDF5,'WriteMode','append');
-                    
+    
+    if ~isempty(pdf_forHDF5)
+        strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{pdf_forHDF5})
+    end
+                     
     notes_forHDF5 = [];
     for nn = 1:length(notesfiles)
         notesfile = fullfile(dirpath,notesfiles(nn).name);
@@ -264,13 +262,16 @@ for ii = 1:length(data_files)
             notes_forHDF5 = [notes_forHDF5 ', ' notesfiles(nn).name];
         end
     end
-    hdf5write(EISCAThdf5file,'/metadata/comment_links',notes_forHDF5,'WriteMode','append');
-  
+    
+    if ~isempty(notes_forHDF5)
+        strds2hdf5(EISCAThdf5file,'/metadata','comment_links',{notes_forHDF5})
+    end
+    
     for ll = 1:length(logs_filename)
         [~,data_filename,~] = fileparts(data_files{ii});
         if strcmp(data_filename(1:8),logs_filename{ll}(1:8))
             copyfile(logs_files{ll},storepath)
-            hdf5write(EISCAThdf5file,'/metadata/logs_links',logs_filename{ll},'WriteMode','append');
+            strds2hdf5(EISCAThdf5file,'/metadata','logs_links',{logs_filename{ll}})
         end
     end
     
@@ -278,12 +279,13 @@ for ii = 1:length(data_files)
         logfile = fullfile(dirpath,logfiles(nn).name);
         copyfile(logfile,storepath)
     end
-    %keyboard
+    
     % Check if metadata exist
     info = h5info(EISCAThdf5file,'/metadata');
-    metavar = {info.Datasets.Name}';
+    metagroups = {info.Groups.Name}';
     hdf5fileformeta = [];
-    if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metavar,'gfd')))
+    
+    if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metagroups,'/metadata/gfd')))
         [~,tarfilename1,~] = fileparts(data_files{ii});
         [~,tarfilename,~]  = fileparts(tarfilename1);
         if ~isempty(hdf5ncar_files)
@@ -291,7 +293,6 @@ for ii = 1:length(data_files)
             if ~isempty(gg)
                 hdf5fileformeta = hdf5ncar_files{gg};
             end
-        %elseif     
         end
         if isempty(hdf5fileformeta) && length(data_files) == 1
             hdf5fileformeta = hdf5rest_files{1};
@@ -302,7 +303,6 @@ for ii = 1:length(data_files)
         end
     else
     end
-    
     if nfigs_expr == 0
         
         if contains(data_files{ii},'.tar.gz')
@@ -322,9 +322,10 @@ for ii = 1:length(data_files)
                 vizugo = 1;
             else
                 vizugo = [];
+                warning(['No figures, and nrec = ' num2str(nrec) ' so no new figures generated.'])
             end
         end
-        %keyboard
+        
         if vizugo
             vizu('new',input,'HQ')
             file = vizu('save','24hrplt');
@@ -333,7 +334,7 @@ for ii = 1:length(data_files)
             store_image2Hdf5(newpng,EISCAThdf5file);
             copyfile(newpdf,storepath)
             [~,pdfname,ext]=fileparts(newpdf);
-            hdf5write(EISCAThdf5file,'/metadata/figure_links',[pdfname ext],'WriteMode','append');
+            strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{[pdfname ext]})
         end
     end  
     copyfile(data_files{ii},storepath)

@@ -1,3 +1,4 @@
+if 0
 if name_site=='T'
  analysis_lagprofiling.par=load([path_expr 'lace_ua.par']);
  analysis_lagprofiling.data=48;
@@ -11,3 +12,4 @@ analysis_lagprofiling.nwin=analysis_lagprofiling.par(5);
 analysis_lagprofiling.wlen=analysis_lagprofiling.par(8);
 analysis_lagprofiling.p=[0 analysis_lagprofiling.nrep-1]; %start/stop profiles to analyse
 analysis_lagprofiling.par(18:20)=0; %no d_gates
+end

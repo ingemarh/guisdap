@@ -71,7 +71,10 @@ else
 end
 
 set(ax,'userdata',h,'YaxisLocation','right','xtick',[])
-ylabel(label,'Rotation',-90,'VerticalAlignment','baseline')
+fs=get(ax,'fontsize');
+yt=get(ax,'ytick');
+ylabel(label,'Rotation',-90,'VerticalAlignment','baseline','fontsize',fs)
+set(ax,'fontsize',fs,'ytick',yt)
 set(gcf,'CurrentAxes',h)
 set(gcf,'Nextplot','Replace')
 

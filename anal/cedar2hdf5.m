@@ -22,7 +22,7 @@ exprparnames = cellstr(exprpar.name');
 exprparvalues = cellstr(exprpar.value');
 
 for ii = 1:length(exprparnames)
-    matfile.metadata.experiment.(char(regexprep(exprparnames(ii),' ','_'))) = exprparvalues{ii};
+    matfile.metadata.experiment.(char(regexprep(exprparnames(ii),' ','_'))) = {exprparvalues{ii}};
 end
 
 aa = find(strcmp(exprparnames,'Cedar file name')==1);
@@ -40,14 +40,16 @@ site = char(pathparts(end-2));
 parnames = datapar.mnemonic';
 npar = size(parnames,1);
 
-year  = num2str(data.year(1));
-month = num2str(data.month(1));
-day   = num2str(data.day(1));
+year   = num2str(data.year(1));
+month  = sprintf('%02d',data.month(1));
+day    = sprintf('%02d',data.day(1));
+hour   = sprintf('%02d',data.hour(1));
+minute = sprintf('%02d',data.min(1));
+second = sprintf('%02d',data.sec(1));
+
 recs = length(data.ut1_unix);                            % # of records
 intper_med = median(data.ut2_unix-data.ut1_unix);        % median integration time
 
-if str2num(month)<10, month = ['0' month]; end
-if str2num(day)<10, day = ['0' day]; end
 display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
 aa = find(strcmp(exprparnames,'instrument')==1);
@@ -63,8 +65,8 @@ if kindats(1) >= 6800
 else
     name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
 end
-matfile.metadata.experiment.name_expr = name_expr; 
-matfile.metadata.experiment.intper_median = intper_med;
+matfile.metadata.experiment.name_expr = {name_expr}; 
+matfile.metadata.experiment.intper_median = {num2str( intper_med)};
 
 datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' num2str(intper_med) '@' name_ant];
 storepath = fullfile(datapath,datafolder);
@@ -216,12 +218,12 @@ for ii = 1:npar
                 continue                                                        % if so, skip to next iteration
             end
             
-            if strcmp('range',char(Parsinfile_list(ii))) && jj == 1 
+            if (strcmp('range',char(Parsinfile_list(ii))) || strcmp('tfreq',char(Parsinfile_list(ii))))  && jj == 1 
                 bb = aa; end
-            if strcmp('range',char(Parsinfile_list(ii)))
-                aa = bb(jj); end  % since there are two 'range' in parameters_list there will be two aa:s. This bit of code requires the 'normal' one to be before the pp in the list.  
-            
-            if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1); end
+            if strcmp('range',char(Parsinfile_list(ii)))  || strcmp('tfreq',char(Parsinfile_list(ii)))
+                aa = bb(jj); end      % since there are two 'range' in parameters_list there will be two values in aa. This bit of code requires the 'normal range' (range) to be before 'pprange' in the Guisdap parameter list.  
+           
+            if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1);  end
             if strcmp('dvobi',char(Parsinfile_list(ii))), aa = find(strcmp('dvo',parameters_list)==1); end
             if strcmp('nel',char(Parsinfile_list(ii))),   aa = find(strcmp('ne',parameters_list)==1);  parameterdata_kindat = 10.^parameterdata_kindat; end
             if strcmp('dnel',char(Parsinfile_list(ii))),  aa = find(strcmp('dne',parameters_list)==1); parameterdata_kindat = 10.^parameterdata_kindat; end
@@ -241,6 +243,7 @@ for ii = 1:npar
                 end
                 start = start + nrec(kk,jj);
             end
+            
             
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
             
@@ -296,7 +299,6 @@ if strcmp(kindatstr(1:2),'66')
         end
     end
 end
-%keyboard
 
 % add the RECloc data
 cc1 = find(strcmp(exprparnames,'instrument latitude')==1);
@@ -323,16 +325,39 @@ if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})];
     matfile.metadata.par0d = [matfile.metadata.par0d info'];
 end
 
-matfile.metadata.schemes.DataCite.Identifier = 'PID';
-matfile.metadata.schemes.DataCite.Creator = 'Ingemar Häggström';
-matfile.metadata.schemes.DataCite.Title = datafolder;
-matfile.metadata.schemes.DataCite.Publisher = 'EISCAT Scientific Association';
-matfile.metadata.schemes.DataCite.PublicationYear = year';
-matfile.metadata.schemes.DataCite.ResourceType = 'dataset/Level 3 Ionosphere';
+nn = 0;
+if exist('name_expr','var'); nn = nn + 1; 
+    infoname(1) = {'name_expr'};
+    infoname(2) = {name_expr};
+    a = find(strcmp('name_expr',gupparameters_list)==1);                
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
+end
+if exist('name_ant','var'); nn = nn + 1; 
+    infoname(1) = {'name_ant'};
+    infoname(2) = {name_ant};
+    a = find(strcmp('name_ant',gupparameters_list)==1); 
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
+end
+
+symbols = ['a':'z' 'A':'Z' '0':'9'];
+strLength = 10;
+nums = randi(numel(symbols),[1 strLength]);
+randstr = symbols(nums);
+PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
+matfile.metadata.schemes.DataCite.Identifier = {PID};
+matfile.metadata.schemes.DataCite.Creator = {'Ingemar Häggström'};
+matfile.metadata.schemes.DataCite.Title = {datafolder};
+matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
+matfile.metadata.schemes.DataCite.PublicationYear = {year};
+matfile.metadata.schemes.DataCite.ResourceType = {'dataset/Level 3 Ionosphere'};
 
 software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = [];
-matfile.metadata.software_link = software;
+matfile.metadata.software_link = {software};
 matfile.metadata.level2_links = level2_link;
 
 % Delete any empty fields from the structure
@@ -376,9 +401,11 @@ end
 save(matfilename,'matfile')
 
 % Generate an HDF5-file 
+
 chunklim = 10;
 sFields = fieldnames(matfile);
-for sf = sFields.' 
+for sf = sFields.'
+    group1 = ['/' char(sf)];
     tFields = fieldnames(matfile.(char(sf)));
     for tf = tFields.'
         if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)))
@@ -388,7 +415,7 @@ for sf = sFields.'
             elseif ge(ndata,chunklim), csize = [chunklim npar];
             elseif ge(npar,chunklim), csize = [ndata chunklim];
             else csize = [ndata npar]; end 
-            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9);
+            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         elseif strcmp('data',char(sf)) && strcmp('acf',char(tf))
             acfsize = size(matfile.data.acf); 
@@ -399,18 +426,35 @@ for sf = sFields.'
             elseif ge(ncol,chunklim),   csize = [nrow chunklim ndepth];
             elseif ge(ndepth,chunklim), csize = [nrow ncol chunklim];
             else, csize = [nrow nrow ncol]; end
-            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9);
+            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         elseif strcmp('metadata',char(sf)) 
-            if ~exist(hdffilename)
-                hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            if isstruct(matfile.(char(sf)).(char(tf)))
+                group2 = [group1 '/' char(tf)];
+                uFields = fieldnames(matfile.(char(sf)).(char(tf)));
+                for uf = uFields.'
+                    if isstruct(matfile.(char(sf)).(char(tf)).(char(uf)))
+                        group3 = [group2 '/' char(uf)];
+                        vFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)));
+                        for vf = vFields.'
+                              strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
+                              dsname = char(vf);
+                              strds2hdf5(hdffilename,group3,dsname,strdata)
+                        end
+                    else
+                        strdata = matfile.(char(sf)).(char(tf)).(char(uf));
+                        dsname = char(uf);
+                        strds2hdf5(hdffilename,group2,dsname,strdata)
+                    end
+                end
             else
-                hdf5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))],'WriteMode','append'); 
+                strdata = matfile.(char(sf)).(char(tf));
+                dsname = char(tf);
+                strds2hdf5(hdffilename,group1,dsname,strdata)
             end
         else
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
-        end
+        end   
     end
 end
-
