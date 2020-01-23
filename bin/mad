@@ -26,12 +26,14 @@ cp -rp $1 ${MDIR}
 echo "Formatting ${MDIR} for Madrigal"
 pushd ${MDIR} >& /dev/null
 # Move result files up one level
-mv -f ${GDIR}/*.eps .
-mv -f ${GDIR}/*.png .
-mv -f ${GDIR}/NCAR_*.asc .
-mv -f ${GDIR}/NCAR_*.bin .
-mv -f ${GDIR}/NCAR_*.hdf5 .
-mv -f ${GDIR}/*.txt . >& /dev/null
+[ ! -f ${GDIR}/*.eps ] || mv -f ${GDIR}/*.eps .
+[ ! -f ${GDIR}/*.png ] || mv -f ${GDIR}/*.png .
+[ ! -f ${GDIR}/*.pdf ] || mv -f ${GDIR}/*.pdf .
+[ ! -f ${GDIR}/NCAR_*.asc ] || mv -f ${GDIR}/NCAR_*.asc .
+[ ! -f ${GDIR}/NCAR_*.bin ] || mv -f ${GDIR}/NCAR_*.bin .
+[ ! -f ${GDIR}/NCAR_*.hdf5 ] || mv -f ${GDIR}/NCAR_*.hdf5 .
+[ ! -f ${GDIR}/*.txt ] || mv -f ${GDIR}/*.txt .
+
 # create tarball of $MDIR/$GDIR: now contains only .mat and gfd_setup.m files
 tar cf ${GDIR}.tar ${GDIR}
 rm -rf ${GDIR}
