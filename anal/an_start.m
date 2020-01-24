@@ -210,7 +210,7 @@ if ~isempty(a_addr)
         if strcmp(ext,'.png')
           store_image2Hdf5(figurefile,EISCAThdf5file)
         elseif strcmp(ext,'.pdf')
-          hdf5write(EISCAThdf5file,'/metadata/figure_links',[filename ext],'WriteMode','append');
+          strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{[filename ext]});  
         end
       end
     end

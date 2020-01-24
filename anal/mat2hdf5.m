@@ -38,7 +38,7 @@ if exist('r_gfd','var')
             end
             extra(s,:)=[];
             if ~isempty(extra)
-                matfile.metadata.gfd.extra = row([extra ones(size(extra,1))*'#']');
+                matfile.metadata.gfd.extra = {row([extra ones(size(extra,1))*'#']')};
             else
                 matfile.metadata.gfd.extra = {'None'};
             end
@@ -74,7 +74,7 @@ elseif ~isempty(gupfilecheck)
         if ~isempty(extra)
             matfile.metadata.gfd.extra = {row([extra ones(size(extra,1))*'#']')};
         else
-            matfile.metadata.gfd.extra = 'None';    
+            matfile.metadata.gfd.extra = {'None'};
         end
         
     end
@@ -545,24 +545,13 @@ end
 
 save(matfilename,'matfile')
 
-% Generate an HDF5-file 
+% Generate an HDF5-file from the MAT-file
 chunklim = 10;
 sFields = fieldnames(matfile);
 for sf = sFields.' 
-    
-    if strcmp('metadata',char(sf))
-        if ~exist(hdffilename)
-            fid = H5F.create(hdffilename);
-        else
-            fid = H5F.open(hdffilename,'H5F_ACC_RDWR','H5P_DEFAULT');
-        end
-        plist = 'H5P_DEFAULT';
-        gid = H5G.create(fid,char(sf),plist,plist,plist);
-    end
-    
+    group1 = ['/' char(sf)];
     tFields = fieldnames(matfile.(char(sf)));
     for tf = tFields.'
-        tf
         if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)) || strcmp('acf',char(tf)) || strcmp('ace',char(tf)) || strcmp('lag',char(tf)) || strcmp('freq',char(tf)) || strcmp('spec',char(tf)) || strcmp('om',char(tf)))
             npar  = length(matfile.data.(char(tf))(1,:));
             ndata = length(matfile.data.(char(tf))(:,1));
@@ -574,39 +563,31 @@ for sf = sFields.'
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         elseif strcmp('metadata',char(sf)) 
             if isstruct(matfile.(char(sf)).(char(tf)))
-                g2id = H5G.create(gid,char(tf),plist,plist,plist);
+                group2 = [group1 '/' char(tf)];
                 uFields = fieldnames(matfile.(char(sf)).(char(tf)));
                 for uf = uFields.'
-                    uf
                     if isstruct(matfile.(char(sf)).(char(tf)).(char(uf)))
-                        g3id = H5G.create(g2id,char(uf),plist,plist,plist);
+                        group3 = [group2 '/' char(uf)];
                         vFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)));
                         for vf = vFields.'
-                            vf
                             strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
                             dsname = char(vf);
-                            strds2hdf5(g3id,dsname,strdata)
+                            strds2hdf5(hdffilename,group3,dsname,strdata)
                         end
-                        H5G.close(g3id);
                     else
                         strdata = matfile.(char(sf)).(char(tf)).(char(uf));
                         dsname = char(uf);
-                        strds2hdf5(g2id,dsname,strdata)
+                        strds2hdf5(hdffilename,group2,dsname,strdata)
                     end
                 end
-                H5G.close(g2id);
             else
                 strdata = matfile.(char(sf)).(char(tf));
                 dsname = char(tf);
-                strds2hdf5(gid,dsname,strdata)
+                strds2hdf5(hdffilename,group1,dsname,strdata)
             end
         else
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
             h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
         end
-    end
-    if strcmp('metadata',char(sf))
-        H5G.close(gid);
-        H5F.close(fid);
     end
 end

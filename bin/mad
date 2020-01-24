@@ -26,20 +26,24 @@ cp -rp $1 ${MDIR}
 echo "Formatting ${MDIR} for Madrigal"
 pushd ${MDIR} >& /dev/null
 # Move result files up one level
-mv ${GDIR}/*.eps . >& /dev/null
-mv ${GDIR}/*.png . >& /dev/null
-mv ${GDIR}/*.pdf . >& /dev/null
-mv ${GDIR}/NCAR_*.asc . >& /dev/null
-mv ${GDIR}/NCAR_*.bin . >& /dev/null
-mv ${GDIR}/NCAR_*.hdf5 . >& /dev/null
-mv ${GDIR}/*.txt . >& /dev/null
+[ ! -f ${GDIR}/*.eps ] || mv -f ${GDIR}/*.eps .
+[ ! -f ${GDIR}/*.png ] || mv -f ${GDIR}/*.png .
+[ ! -f ${GDIR}/*.pdf ] || mv -f ${GDIR}/*.pdf .
+[ ! -f ${GDIR}/NCAR_*.asc ] || mv -f ${GDIR}/NCAR_*.asc .
+[ ! -f ${GDIR}/NCAR_*.bin ] || mv -f ${GDIR}/NCAR_*.bin .
+[ ! -f ${GDIR}/NCAR_*.hdf5 ] || mv -f ${GDIR}/NCAR_*.hdf5 .
+[ ! -f ${GDIR}/*.txt ] || mv -f ${GDIR}/*.txt .
+
 # create tarball of $MDIR/$GDIR: now contains only .mat and gfd_setup.m files
 tar cf ${GDIR}.tar ${GDIR}
 rm -rf ${GDIR}
 # Replace @ signs in names
 ##for F in *\@*; do mv ${F} ${F/\@/_}; done
-# Compress big files
-gzip -9 *.eps *.asc *.tar >& /dev/null
+# Compress any big files
+BIGFILES=(eps asc tar)
+for FTYP in ${BIGFILES[@]}; do
+ if [ -f *.${FTYP} ]; then gzip -9 *.${FTYP} ; fi
+done
 
 ### Done formatting
 echo "${MDIR} now contains: "

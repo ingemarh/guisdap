@@ -247,8 +247,11 @@ for ii = 1:length(data_files)
             end
         end
     end 
-    hdf5write(EISCAThdf5file,'/metadata/figure_links',pdf_forHDF5,'WriteMode','append');
-                    
+    
+    if ~isempty(pdf_forHDF5)
+        strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{pdf_forHDF5})
+    end
+                     
     notes_forHDF5 = [];
     for nn = 1:length(notesfiles)
         notesfile = fullfile(dirpath,notesfiles(nn).name);
@@ -259,13 +262,16 @@ for ii = 1:length(data_files)
             notes_forHDF5 = [notes_forHDF5 ', ' notesfiles(nn).name];
         end
     end
-    hdf5write(EISCAThdf5file,'/metadata/comment_links',notes_forHDF5,'WriteMode','append');
-  
+    
+    if ~isempty(notes_forHDF5)
+        strds2hdf5(EISCAThdf5file,'/metadata','comment_links',{notes_forHDF5})
+    end
+    
     for ll = 1:length(logs_filename)
         [~,data_filename,~] = fileparts(data_files{ii});
         if strcmp(data_filename(1:8),logs_filename{ll}(1:8))
             copyfile(logs_files{ll},storepath)
-            hdf5write(EISCAThdf5file,'/metadata/logs_links',logs_filename{ll},'WriteMode','append');
+            strds2hdf5(EISCAThdf5file,'/metadata','logs_links',{logs_filename{ll}})
         end
     end
     
@@ -287,7 +293,6 @@ for ii = 1:length(data_files)
             if ~isempty(gg)
                 hdf5fileformeta = hdf5ncar_files{gg};
             end
-        %elseif     
         end
         if isempty(hdf5fileformeta) && length(data_files) == 1
             hdf5fileformeta = hdf5rest_files{1};
@@ -329,7 +334,7 @@ for ii = 1:length(data_files)
             store_image2Hdf5(newpng,EISCAThdf5file);
             copyfile(newpdf,storepath)
             [~,pdfname,ext]=fileparts(newpdf);
-            hdf5write(EISCAThdf5file,'/metadata/figure_links',[pdfname ext],'WriteMode','append');
+            strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{[pdfname ext]})
         end
     end  
     copyfile(data_files{ii},storepath)
