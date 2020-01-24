@@ -82,9 +82,8 @@ matfilename = fullfile(storepath,MatFile);
 EISCAThdf5file = hdffilename;
 
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
-
 [~,text] = xlsread(GuisdapParFile);     
-parameters_list = text(:,5);   % list that includes all Guisdap parameters and keep their positions from the excel arc
+parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
 gupparameters_list = text(:,1);
 
 if exist(hdffilename)==2, delete(hdffilename); end
@@ -151,8 +150,12 @@ if nkindats>1
     cckind = find(data.kindat == str2num(evenkindat));   % data.kindat does not seem to exist when there is only 1 kindat for the experiment
 else cckind = 1:length(data.recno);
 end
+
+
 for ii = 1:npar
-    
+    if strcmp(char(Parsinfile_list(ii)),'nsampi')
+        continue
+    end
     aa = find(strcmp(char(Parsinfile_list(ii)),parameters_list)==1);
     if aa
         bb = strfind(Parsinfile_list{ii},'+');
@@ -186,6 +189,9 @@ for ii = 1:npar
             parameterdata = data.(char(Parsinfile_list(ii)));
             if strcmp(Parsinfile_list(ii),'power')
                 parameterdata = parameterdata*1000;   % kW --> W
+            end
+            if strcmp(Parsinfile_list(ii),'nsamp') && isfield(data,'nsampi')
+                parameterdata = parameterdata + data.nsampi;   % nsamp = nsamp+nsampi
             end
         end
         
