@@ -38,10 +38,16 @@ else
  freq=-5.0e6; dt=0.4e-6; invert=1; fradar=930e6;
  ele=77.5; updown=0; nlag=50;
  startad=83111+1;
+ if fix(d_date)==datenum(2020,1,23); vs=2.1; end
  if vs==2.0
   uparfreq=NaN; ngates=4; nup_d=3; freq=[-3.6 -6 -8.4]*1e6;
   ran=[47 221;128 302;209 383;290 464];
   startad=(0:2)*82232+108611+1;
+ elseif vs==2.1
+  uparfreq=NaN; ngates=4; nup_d=1; freq=[3.6 -3.6 6]*1e6; updown=0:1;
+  ran=[47 221;128 302;209 383;290 464];
+  startad=(0:2)*82232+108611+1;
+  if length(d_data)==600; startad=(0:2)*200+1; end
  end
 end
 if length(d_data)==nup_d*length(updown)*ngates*nlag
