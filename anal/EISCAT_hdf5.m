@@ -1,11 +1,17 @@
 
 function EISCAT_hdf5(dirpath, datapath, showfigs)
-
-global name_ant
-
+% EISCAT_hdf5(dirpath, datapath, showfigs)
+% The master script for creating EISCAT HDF5-files from old madrigal
+% formated files and handling corresponding figures and additional files
+% dirpath: path to the directory with old files 
+% datapath: path to the folder where the EISCAT HDF5 file and additional
+% files are stored
 % Show figures?
 % No:  showfigs = []
-% Yes: showfigs = 1
+% Yes: showfigs = 1 (non-empty)
+
+global name_ant path_GUP
+
 if nargin<3
     showfigs = []; 
 end
@@ -13,8 +19,12 @@ if nargin<2
     error('Experiment and output path needed.')
 end
 
+if ~exist('path_GUP','var')
+    error('Guisdap needs to be started first.')
+end
+
 if ~exist(dirpath)
-    error(['The directory ' dirpath ' does not exist. Why not choose a folder that actually does exist?'])
+    error(['The directory ' dirpath ' does not exist. Why not choose a directory that actually does exist?'])
 end
 
 if ~exist(datapath)
@@ -22,10 +32,10 @@ if ~exist(datapath)
 end
 
 % ugly hack: start_GUP clears all variables, so store and re-read!!
-save(fullfile(tempdir,'my_input.mat'),'dirpath','datapath','showfigs');
-start_GUP;
-load(fullfile(tempdir,'my_input.mat'));
-delete(fullfile(tempdir,'my_input.mat'));
+% save(fullfile(tempdir,'my_input.mat'),'dirpath','datapath','showfigs');
+% start_GUP;
+% load(fullfile(tempdir,'my_input.mat'));
+% delete(fullfile(tempdir,'my_input.mat'));
 
 image_filelist = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
 notesfiles = dir(fullfile(dirpath,'notes*txt'));
