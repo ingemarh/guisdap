@@ -81,6 +81,7 @@ hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCAThdf5file = hdffilename;
 
+%keyboard
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 [~,text] = xlsread(GuisdapParFile);     
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
@@ -196,6 +197,9 @@ for ii = 1:npar
         end
         
         if length(unique(parameterdata))==1
+            if strcmp('tfreq',char(Parsinfile_list(ii)))
+                aa = aa(1);                                    % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
+            end
             matfile.data.par0d = [matfile.data.par0d single(parameterdata(1))];
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
             if cell2mat(strfind(info(1),'h_'))==1
@@ -224,11 +228,12 @@ for ii = 1:npar
                 continue                                                        % if so, skip to next iteration
             end
             
-            if (strcmp('range',char(Parsinfile_list(ii))) || strcmp('tfreq',char(Parsinfile_list(ii))))  && jj == 1 
+            if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
                 bb = aa; end
-            if strcmp('range',char(Parsinfile_list(ii)))  || strcmp('tfreq',char(Parsinfile_list(ii)))
-                aa = bb(jj); end      % since there are two 'range' in parameters_list there will be two values in aa. This bit of code requires the 'normal range' (range) to be before 'pprange' in the Guisdap parameter list.  
-           
+            if strcmp('range',char(Parsinfile_list(ii)))
+                aa = bb(jj); end                                            % since there are two 'range' in parameters_list there will be two values in aa. This bit of code requires the 'normal range' (range) to be before 'pprange' in the Guisdap parameter list.  
+            if strcmp('tfreq',char(Parsinfile_list(ii))), aa = aa(1); end   % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
+            
             if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1);  end
             if strcmp('dvobi',char(Parsinfile_list(ii))), aa = find(strcmp('dvo',parameters_list)==1); end
             if strcmp('nel',char(Parsinfile_list(ii))),   aa = find(strcmp('ne',parameters_list)==1);  parameterdata_kindat = 10.^parameterdata_kindat; end

@@ -19,8 +19,8 @@ if nargin<2
     error('Experiment and output path needed.')
 end
 
-if ~exist('path_GUP','var')
-    error('Guisdap needs to be started first.')
+if ~exist('path_GUP','var') || isempty(path_GUP)
+   error('Guisdap needs to be started first.')
 end
 
 if ~exist(dirpath)
@@ -314,7 +314,6 @@ for ii = 1:length(data_files)
     else
     end
     if nfigs_expr == 0
-        
         if contains(data_files{ii},'.tar.gz')
             input = untarpath;
             vizugo = 1;
@@ -325,14 +324,14 @@ for ii = 1:length(data_files)
             if aa
                 data0d = h5read(EISCAThdf5file,'/data/par0d');
                 nrec = data0d(aa);
+                if nrec == 1 || nrec > 5
+                    vizugo = 1;
+                else
+                    vizugo = [];
+                    warning(['No figures, and nrec = ' num2str(nrec) ' so no new figures generated.'])
+                end
             else
                 vizugo = 1;
-            end
-            if nrec == 1 || nrec > 5
-                vizugo = 1;
-            else
-                vizugo = [];
-                warning(['No figures, and nrec = ' num2str(nrec) ' so no new figures generated.'])
             end
         end
         
