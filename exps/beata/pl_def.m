@@ -44,7 +44,7 @@ else
   ran=[47 221;128 302;209 383;290 464];
   startad=(0:2)*82232+108611+1;
  elseif vs==2.1
-  uparfreq=NaN; ngates=4; nup_d=1; freq=[3.6 -3.6 6]*1e6; updown=0:1;
+  uparfreq=NaN; ngates=4; nup_d=1; freq=[3.6 -3.6 -6]*1e6; updown=0:1;
   ran=[47 221;128 302;209 383;290 464];
   startad=(0:2)*82232+108611+1;
   if length(d_data)==600; startad=(0:2)*200+1; end
