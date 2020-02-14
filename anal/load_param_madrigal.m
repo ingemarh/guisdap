@@ -13,14 +13,22 @@ if nargin<2, fileno=[]; end
 if nargin<3, do_err=0; end
 if isempty(fileno), ask=1; fileno=1; end
 
-of=local.tfile;
 REClocs=[67.863 20.44 .412;69.583 19.21 .030;67.367 26.65 .180;69.583 19.21 .030;78.153 16.029 .438];
 XMITlocs=[ones(4,1)*[69.583 19.21 .030];78.153 16.029 .438];
+if do_err
+ param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER NEL DNEL TI DTI TE DTE VO DVO VOBI DVOBI CO DCOL PO+';
+else
+ param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER POPL NEL TI TE VO VOBI CO PO+';
+end
+t2=clock;
+arg=sprintf('&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',t2(1),param);
+
 if exist(data_path,'file')
  global path_GUP
+ of=local.tfile;
  cmd2=[' ' path_GUP '/bin/madDataDisplay >'];
  if ~exist(cmd2(2:end-2)), return, end
- ws=''; cmd3=''; cmd1=''; cmd4='QUERY_STRING=';
+ cmd4='QUERY_STRING=''fileName=';
  antennas={'kir' 'uhf' 'sod' 'vhf' 'esr' '32m' '42m'};
  [devnull,filename]=fileparts(data_path); ll=16;
  ldp=length(filename); ll=16;
@@ -40,31 +48,34 @@ if exist(data_path,'file')
  r_RECloc=REClocs(i,:);
  r_XMITloc=XMITlocs(i,:);
  hl=10;
-else
- [wget,devnull]=system('which curl');
- if wget
-  cmd1='wget'; cmd2=' -O '; cmd3=' '; cmd4=' --post-data=';
- else
-  cmd1='curl'; cmd2=' -o '; cmd3=' -f '; cmd4=' -d ';
- end
- website='http://portal.eiscat.se/madrigal/';
- ws=['''' website 'experiments/' data_path '/expTab.txt'''];
- [mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
+ %arg=strrep(arg,'&','\&'); arg=strrep(arg,' ','\ ');
+ [mad,devnull]=system([cmd4 data_path arg '''' cmd2 of]);
  if mad
   return
  end
- [name_expr,kinst]=textread(of,'%*s%*s%s%*s%*s%*s%*s%*s%d%*[^\n]','delimiter',',');
+ data=textread(of,'','headerlines',hl);
  delete(of)
- name_expr=char(name_expr);
+ if isempty(data)
+  return
+ end
+else
+ website='http://portal.eiscat.se/madrigal/';
+ ws=[website 'experiments/' data_path '/expTab.txt'];
+ [of,mad]=urlread(ws);
+ if ~mad
+  return
+ end
+ mad=textscan(of,'%*s%*s%s%*s%*s%*s%*s%*s%d%*[^\n]','delimiter',',');
+ name_expr=char(mad{1}); kinst=mad{2};
  name_expr(strfind(name_expr,'_'))=[];
  name_expr(strfind(name_expr,' '))=[];
- ws=['''' website 'experiments/' data_path '/fileTab.txt'''];
- [mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
- if mad
+ ws=[website 'experiments/' data_path '/fileTab.txt'];
+ [of,mad]=urlread(ws);
+ if ~mad
   return
  end
- filename=textread(of,'%s%*[^\n]','delimiter',',');
- delete(of)
+ filename=textscan(of,'%s%*[^\n]','delimiter',',');
+ filename=filename{1};
  antennas={'kir' 'uhf' 'sod' 'vhf' 'esr'};
  i=min(kinst-70,5);
  if i<1 || i>5
@@ -86,33 +97,16 @@ else
   elseif strfind(filename,'42m'), name_ant='42m'; end
  end
  data_path=['/opt/madrigal/experiments/' data_path '/' filename];
- ws=['''' website 'cgi-bin/madDataDisplay'''];
+ ws=[website 'cgi-bin/madDataDisplay?fileName='];
  hl=8;
-end
-
-if do_err
-%param='UT1 UT2 AZM ELM GDALT GDLAT GLON RANGE CHISQ POWER SYSTMP CO DCOL NEL DNEL TE DTE TI DTI VO DVO VOBI DVOBI PO+';
- param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER NEL DNEL TI DTI TE DTE VO DVO VOBI DVOBI CO DCOL PO+';
-else
-%param='UT1 UT2 AZM ELM GDALT GDLAT GLON RANGE CHISQ POWER SYSTMP CO NEL POPL TE TI VO VOBI PO+';
- param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER POPL NEL TI TE VO VOBI CO PO+';
-end
-t2=clock;
-arg=sprintf('fileName=%s&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',data_path,t2(1),param);
-for i=fliplr(find(arg=='&' | arg==' '))
- arg=[arg(1:i-1) '\' arg(i:end)];
-end
-
-[mad,devnull]=system([cmd1 cmd4 arg cmd2 of cmd3 ws]);
-if mad
- return
-end
-%pwant=strread(param,'%s');
-%pread=textread(of,'%s',length(pwant),'headerlines',hl-1);
-data=textread(of,'','headerlines',hl);
-delete(of)
-if isempty(data)
- return
+ [of,mad]=urlread([ws data_path strrep(arg,' ','%20')]);
+ if ~mad
+  return
+ end
+ data=cell2mat(textscan(of,'','headerlines',hl));
+ if isempty(data)
+  return
+ end
 end
 
 %vec=[3 4 10 11];

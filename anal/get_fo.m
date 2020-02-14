@@ -49,48 +49,43 @@ if strcmp(site3,'quj')
  day=ti(d); fo=[ones(length(d),1)*NaN fof2(d)];
  return
 end
-of=local.tfile;
 day=[]; fo=[];
 
-%get the foF2 file
-%wget=(['wget -O ' of ' %s%s >/dev/null 2>&1']);
-wget=(['LD_LIBRARY_PATH="/usr/lib" wget -O ' of ' %s%s']);
-if t1>datenum(1996,02,02)
- www='http://dynserv.eiscat.uit.no/';
+%get the foF2 data
+if t1>datenum(1995,07,12)
+ www='https://dynserv.eiscat.uit.no/';
  for t=fix(t1):fix(t2)
  tt=datevec(t); 
-  fof2_link=sprintf('DD/myque.php?q=select\\ dDay,%s,%s\\ from\\ %s.resul%d_%02d_%02d\\ where\\ %s\\>0\\ or\\ %s\\>0',epar,fpar,site,tt(1:3),epar,fpar);
-  [i,devnull]=system(sprintf(wget,www,fof2_link));
-  if ~i
+  fof2_link=sprintf('DD/myque.php?q=select dDay,%s,%s from %s.resul%d_%02d_%02d where %s>0 or %s>0',epar,fpar,site,tt(1:3),epar,fpar);
+  [of,i]=urlread([www strrep(fof2_link,' ','%20')]);
+  if i
    form='%f%f%f%*[^\n]';
-   [d,foE,foF2]=textread(of,form,'headerlines',2);
-   fo=[fo;[foE foF2]];
+   d=textscan(of,form,'headerlines',2);
+   fo=[fo;[d{2} d{3}]];
    fo(find(fo==0))=NaN;
-   day=[day;d+datenum(tt(1),1,1)-1];
+   day=[day;d{1}+datenum(tt(1),1,1)-1];
   end
  end
 else
  t1=datevec(t1); y=t1(1); m=t1(2);
- www='http://www.eiscat.uit.no/';
+ www='https://www.eiscat.uit.no/';
  fof2_link=sprintf('DataBases/Dynasonde/dsnd/DSND%02d%02d.FEF',rem(y,100),m);
- [i,devnull]=system(sprintf(wget,www,fof2_link));
- if i && y==t(1)
+ [of,i]=urlread([www fof2_link]);
+ if ~i && y==t(1)
   fof2_link='DataBases/Dynasonde/dsnd/autodsnd.FEF';
-  [i,devnull]=system(sprintf(wget,www,fof2_link));
+  [of,i]=urlread([www fof2_link]);
  end
- if ~i
+ if i
   form='%s%*s%s%*s%*s%s%*[^\n]';
-  [day,foE,foF2]=textread(of,form,1);
-  fprintf('*** Reading %s %s %s ***\n',char(day),char(foE),char(foF2))
+  d=textscan(of,form,1);
+  fprintf('*** Reading %s %s %s ***\n',char(d{1}),char(d{2}),char(d{3}))
   form(strfind(form,'s'))='f';
-  [day,foE,foF2]=textread(of,form,'headerlines',1);
-  fo=[foE foF2];
+  d=textscan(of,form,'headerlines',1);
+  fo=[d{2} d{3}];
   fo(find(fo==0))=NaN;
-  [day,d]=sort(day); fo=fo(d,:);
+  [day,d]=sort(d{1}); fo=fo(d,:);
   d=find(diff(day)==0);
   day(d)=[]; fo(d,:)=[];
   day=day+datenum(y,1,1)-1;
  end
 end
-
-delete(of)

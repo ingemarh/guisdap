@@ -45,7 +45,7 @@ warning off backtrace
 local.printer='color';
 local.site=getenv('EISCATSITE');
 local.host=getenv('HOSTNAME');
-local.browser='netscape';
+local.browser='firefox';
 local.x=prod(get(0,'ScreenSize'))-1;
 local.x=~usejava('jvm') || feature('ShowFigureWindows');
 matver=ver('matlab');
@@ -74,26 +74,20 @@ if ~isfield(local,'tfile'), local.tfile=tempname; end
 switch local.site
  case 'K'
   data_path='/data1/';
-  local.browser='mozilla';
  case 'S'
   data_path='/data1/';
-  local.printer='phaser';
  case 'T'
-  local.printer='hp4550';
+  data_path='/data/';
  case 'L'
   data_path='/data/';
-  local.printer='Hpcolor';
- case 'HQ'
-  local.browser='mozilla';
-  local.printer='hpclj';
  otherwise
   local.site=[]; local.browser=[];
-  if ~isempty(getenv('LPDEST'))
-   local.printer=getenv('LPDEST');
-  end
-  if ~isempty(getenv('BROWSER'))
-   local.browser=getenv('BROWSER');
-  end
+end
+if ~isempty(getenv('LPDEST'))
+ local.printer=getenv('LPDEST');
+end
+if ~isempty(getenv('BROWSER'))
+ local.browser=getenv('BROWSER');
 end
 if ~exist(data_path,'dir'), data_path=path_tmp; end
 if ~exist(result_path,'dir'), result_path=path_tmp; end
