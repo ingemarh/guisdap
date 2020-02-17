@@ -10,14 +10,14 @@ if nargin<3, r_ppw = []; end
 
 if isempty(r_pp), r_pp = NaN(length(r_pprange),1); end
 
-% figure(1)
-% subplot(3,2,1)
-% plot(r_pprange,'.')
-% ylabel('r\_pprange')
-% title('Original profiles')
-% subplot(3,2,3)
-% plot(r_ppw,'.')
-% ylabel('r\_ppw')
+figure(1)
+subplot(3,2,1)
+plot(r_pprange,'.')
+ylabel('r\_pprange')
+title('Original profiles')
+subplot(3,2,3)
+plot(r_ppw,'.')
+ylabel('r\_ppw')
 
 if isempty(find(diff(r_pprange)<0,1)) && isempty(find(abs(diff(r_pprange))>10*mean(abs(diff(r_pprange))),1))  % if there are no negative or large steps in the range, no merging is needed
     r_pp_merged      = r_pp;
@@ -43,7 +43,7 @@ if ~isempty(r_ppw)
     rres   = max(1,min(r_ppw)); %range resolution given by p_dtau or smallest volume
     r_ww   = unique(round(r_ppw/rres));
 
-    if isempty(diff(r_ww))    % if there is one(1) 
+    if isempty(diff(r_ww))    % only one (1) value in r_ww
         rres = 1;
         r_dw = 1;
     else
@@ -56,7 +56,7 @@ if ~isempty(r_ppw)
     r_pperr_merged   = [];
     r_ppw_merged     = [];
     r_pprange_merged = [];
-    r_pprofile_id     = [];
+    r_pprofile_id    = [];
 
     n_profiles = length(unique(rres_x));                 % number of profiles after merging
     merge_pprofiles = sort(unique(rres_x),'descend');    % sort from high to low 'r_ppw widths'
@@ -103,24 +103,25 @@ if ~isempty(r_ppw)
         % Also separate if there is a big jump in the range:
     
         diffrange_tmp = diff(r_pprange_sorted);
-        mean_diff     = mean(abs(diff(r_pprange_sorted)));
+        mean_diff     = mean(abs(diffrange_tmp));
         aa = find(abs(diffrange_tmp)>10*mean_diff);                 % find sudden big steps in the range 
     
         if isempty(aa)
             id = id + 1;
-            r_pprofile_id    = [r_pprofile_id id*ones(1,length(r_ppw_sorted))];
+            r_pprofile_id = [r_pprofile_id id*ones(1,length(r_ppw_sorted))];
         else
+            bb = [0 aa' length(r_ppw_sorted)];
             for gg = 1:(length(aa)+1)
-                bb = [0 aa' length(r_ppw_sorted)];
                 id = id + 1;
-                r_pprofile_id    = [r_pprofile_id id*ones(1,bb(gg+1)-bb(gg))];
+                r_pprofile_id = [r_pprofile_id id*ones(1,bb(gg+1)-bb(gg))];
             end
         end
    
         r_pprange_merged = [r_pprange_merged r_pprange_sorted'];
         r_pp_merged      = [r_pp_merged r_pp_sorted'];
         r_pperr_merged   = [r_pperr_merged r_pperr_sorted'];
-        r_ppw_merged     = [r_ppw_merged r_ppw_sorted(jj)']; 
+        %r_ppw_merged     = [r_ppw_merged r_ppw_sorted(jj)']; 
+        r_ppw_merged     = [r_ppw_merged r_ppw_sorted']; 
    
     end
     r_pp_merged      = r_pp_merged';
@@ -137,15 +138,15 @@ else
     error('At least either r_ppw or name_expr is needed as input')
 end
 
-% figure(1)
-% subplot(3,2,2)
-% plot(r_pprange_merged,'.b')
-% title('Merged profiles')
-% ylabel('merged r\_pprange')
-% subplot(3,2,4)
-% plot(r_ppw_merged,'.b')
-% ylabel('merged r\_ppw')
-% subplot(3,2,6)
-% plot(r_pprofile_id,'.b')
-% ylabel('power profile id')
-% ylim([0 id+1])
+figure(1)
+subplot(3,2,2)
+plot(r_pprange_merged,'.b')
+title('Merged profiles')
+ylabel('merged r\_pprange')
+subplot(3,2,4)
+plot(r_ppw_merged,'.b')
+ylabel('merged r\_ppw')
+subplot(3,2,6)
+plot(r_pprofile_id,'.b')
+ylabel('power profile id')
+ylim([0 id+1])
