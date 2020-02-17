@@ -80,7 +80,7 @@ if isempty(DATA_PATH)
       max_ppw=minput('Maximum pp resolution (km)',Inf);
     end
   elseif ~REALT
-    if isdir(act) | strfind(act,'/')
+    if isdir(act) | strfind(act,filesep)
       DATA_PATH=act; naction=naction+1;
       MESSAGE1=action(naction,nvargin,varargin); naction=naction+1;
     else
