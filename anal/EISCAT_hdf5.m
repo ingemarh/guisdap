@@ -262,19 +262,9 @@ for ii = 1:length(data_files)
         strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{pdf_forHDF5})
     end
                      
-    notes_forHDF5 = [];
     for nn = 1:length(notesfiles)
         notesfile = fullfile(dirpath,notesfiles(nn).name);
-        copyfile(notesfile,storepath)
-        if nn == 1
-            notes_forHDF5 = notesfiles(nn).name;
-        else
-            notes_forHDF5 = [notes_forHDF5 ', ' notesfiles(nn).name];
-        end
-    end
-    
-    if ~isempty(notes_forHDF5)
-        strds2hdf5(EISCAThdf5file,'/metadata','comment_links',{notes_forHDF5})
+        addNote2Hdf5(notesfile,EISCAThdf5file,nn)
     end
     
     for ll = 1:length(logs_filename)
@@ -294,7 +284,7 @@ for ii = 1:length(data_files)
     info = h5info(EISCAThdf5file,'/metadata');
     metagroups = {info.Groups.Name}';
     hdf5fileformeta = [];
-    
+   
     if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metagroups,'/metadata/gfd')))
         [~,tarfilename1,~] = fileparts(data_files{ii});
         [~,tarfilename,~]  = fileparts(tarfilename1);
