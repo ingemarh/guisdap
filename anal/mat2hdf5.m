@@ -496,6 +496,7 @@ if exist('name_sig','var'); nn = nn + 1;
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';
 end
+
 aa = find(cellfun('isempty',matfile.metadata.par0d(6,:)));    matfile.metadata.par0d(6,aa)= {'0'};
 aa = find(cellfun('isempty',matfile.metadata.par0d(7,:)));    matfile.metadata.par0d(7,aa)= {'0'};
 aa = find(cellfun('isempty',matfile.metadata.par1d(6,:)));    matfile.metadata.par1d(6,aa)= {'0'};
@@ -603,6 +604,7 @@ end
 
 if addfigs
     image_filelist = [dir(fullfile(result_path,'*.png'));dir(fullfile(result_path,'*.pdf'))];
+    npdf = 0;
     if ~isempty(image_filelist)
       for ii = 1:length(image_filelist)
         figurefile = fullfile(result_path,image_filelist(ii).name);
@@ -610,8 +612,12 @@ if addfigs
         if strcmp(ext,'.png')
           store_image2Hdf5(figurefile,hdffilename)
         elseif strcmp(ext,'.pdf')
-          strds2hdf5(hdffilename,'/metadata','figure_links',{[filename ext]});  
+          npdf = npdf + 1;
+          pdf_forHDF5(npdf) = {[filename ext]};          
         end
+      end
+      if ~isempty(pdf_forHDF5)
+        strds2hdf5(hdffilename,'/metadata','figure_links',pdf_forHDF5');
       end
     end
 end
