@@ -7,7 +7,7 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,fileno,do
 % rpar2D [Ran,Alt,Ne]
 
 global name_expr r_RECloc name_ant local r_XMITloc
-ask=0; wget=1;
+ask=0;
 Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];
 if nargin<2, fileno=[]; end
 if nargin<3, do_err=0; end
