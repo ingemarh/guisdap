@@ -102,7 +102,7 @@ pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe'
 ants   = {'32m','42m','uhf','vhf','esa','esr','eis','kir','sod','tro','lyr'};
 
 figure_check = zeros(length(image_filelist),1);
-
+npdf = 0;
 for ii = 1:length(data_files)
     
     if contains(data_files{ii},'.tar.gz')
@@ -150,7 +150,7 @@ for ii = 1:length(data_files)
     ant = storefolder(cc+1:end);
     
     nfigs_expr = 0;
-    pdf_forHDF5 = [];
+    %pdf_forHDF5 = [];
    
     for jj = 1:length(image_filelist)
         figurefile = fullfile(dirpath,image_filelist(jj).name);
@@ -221,13 +221,10 @@ for ii = 1:length(data_files)
                         figurefile = epsfile{1};
                     end
                     pdffile = eps2pdf(figurefile);
+                    npdf = npdf + 1;
                     copyfile(pdffile,storepath)
                     [~,pdfname,ext]=fileparts(pdffile);
-                    if isempty(pdf_forHDF5)
-                        pdf_forHDF5 = [pdfname ext];
-                    else
-                        pdf_forHDF5 = [pdf_forHDF5 ', ' pdfname ext];
-                    end
+                    pdf_forHDF5(npdf) = {[pdfname ext]};
                     delete(pdffile,figurefile)
                     figure_check(jj) = figure_check(jj) + 1;
                     nfigs_expr =  nfigs_expr +1;
@@ -244,13 +241,10 @@ for ii = 1:length(data_files)
                     figurefile = epsfile{1};
                 end
                 pdffile = eps2pdf(figurefile);
+                npdf = npdf + 1;
                 copyfile(pdffile,storepath)
                 [~,pdfname,ext]=fileparts(pdffile);
-                if isempty(pdf_forHDF5)
-                    pdf_forHDF5 = [pdfname ext];
-                else
-                    pdf_forHDF5 = [pdf_forHDF5 ', ' pdfname ext];
-                end
+                pdf_forHDF5(npdf) = {[pdfname ext]};
                 delete(pdffile,figurefile)
                 figure_check(jj) = figure_check(jj) + 1;
                 nfigs_expr =  nfigs_expr +1;
@@ -258,23 +252,15 @@ for ii = 1:length(data_files)
         end
     end 
     
-    if ~isempty(pdf_forHDF5)
-        strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{pdf_forHDF5})
+    if npdf
+        strds2hdf5(EISCAThdf5file,'/metadata','figure_links',pdf_forHDF5')
+        npdf = 0;
+        clear pdf_forHDF5
     end
-                     
-    notes_forHDF5 = [];
+                 
     for nn = 1:length(notesfiles)
         notesfile = fullfile(dirpath,notesfiles(nn).name);
-        copyfile(notesfile,storepath)
-        if nn == 1
-            notes_forHDF5 = notesfiles(nn).name;
-        else
-            notes_forHDF5 = [notes_forHDF5 ', ' notesfiles(nn).name];
-        end
-    end
-    
-    if ~isempty(notes_forHDF5)
-        strds2hdf5(EISCAThdf5file,'/metadata','comment_links',{notes_forHDF5})
+        addNote2Hdf5(notesfile,EISCAThdf5file,nn)
     end
     
     for ll = 1:length(logs_filename)
@@ -294,7 +280,7 @@ for ii = 1:length(data_files)
     info = h5info(EISCAThdf5file,'/metadata');
     metagroups = {info.Groups.Name}';
     hdf5fileformeta = [];
-    
+   
     if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metagroups,'/metadata/gfd')))
         [~,tarfilename1,~] = fileparts(data_files{ii});
         [~,tarfilename,~]  = fileparts(tarfilename1);
