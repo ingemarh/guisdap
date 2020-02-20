@@ -24,6 +24,8 @@ if vs>=3.0
 end
 if length(d_data)==2*ngates*nlag
   startad=(0:1)*ngates*nlag+1;
+elseif length(d_data)==4*ngates*nlag
+  startad=(0:3)*ngates*nlag+1;
 elseif vs>=4.1
   startad=(0:3)*86626+67*nlag+66*1152+21;
 elseif vs>=4.0
