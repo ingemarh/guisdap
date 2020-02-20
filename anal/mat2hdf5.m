@@ -1,11 +1,12 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function [storepath,EISCAThdf5file] = mat2hdf5(matpath, datapath,addfigs) 
+function [storepath,EISCAThdf5file] = mat2hdf5(matpath, datapath,addfigs,addnotes) 
 
 global path_GUP result_path name_ant
 
 name_ant = [];
 
+if nargin<4, addnotes = []; else addnotes = 1; end 
 if nargin<3, addfigs = []; else addfigs = 1; end 
 if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
 if nargin<1
@@ -603,11 +604,11 @@ for sf = sFields.'
 end
 
 if addfigs
-    image_filelist = [dir(fullfile(result_path,'*.png'));dir(fullfile(result_path,'*.pdf'))];
+    image_filelist = [dir(fullfile(matpath,'*.png'));dir(fullfile(matpath,'*.pdf'))];
     npdf = 0;
-    if ~isempty(image_filelist)
+    %if ~isempty(image_filelist)
       for ii = 1:length(image_filelist)
-        figurefile = fullfile(result_path,image_filelist(ii).name);
+        figurefile = fullfile(matpath,image_filelist(ii).name);
         [~,filename,ext] = fileparts(figurefile);
         if strcmp(ext,'.png')
           store_image2Hdf5(figurefile,hdffilename)
@@ -616,9 +617,17 @@ if addfigs
           pdf_forHDF5(npdf) = {[filename ext]};          
         end
       end
-      if ~isempty(pdf_forHDF5)
+      if npdf>0
         strds2hdf5(hdffilename,'/metadata','figure_links',pdf_forHDF5');
       end
+    %end
+end
+
+if addnotes
+    notesfiles = dir(fullfile(matpath,'notes*txt'));
+    for nn = 1:length(notesfiles)
+        notesfile = fullfile(matpath,notesfiles(nn).name);
+        addNote2Hdf5(notesfile,EISCAThdf5file,nn)
     end
 end
 

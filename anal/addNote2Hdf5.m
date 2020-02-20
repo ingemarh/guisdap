@@ -23,4 +23,9 @@ end
 
 notes_str = erase(notes_str,["<BR>","<B>","</B>"," <a","</a>","href=",">"]);
 notes_str = regexprep(notes_str,'"','');
-strds2hdf5(hdf5file,'/metadata','comments',{notes_str})
+
+if N == 1
+    strds2hdf5(hdf5file,'/metadata','comments',{notes_str})
+else
+    strds2hdf5(hdf5file,'/metadata',['comments' num2str(N)],{notes_str})
+end
