@@ -33,7 +33,7 @@ if strfind(data_path,'@32p')
   elseif expver==4
    plasma_range=20+col(ones(4*75,1)*(0:1)*87377+(1:4*75)'*ones(1,2)+67*75+66*1152);
    if strfind(data_path,'4.1')
-    plasma_range=20+col(ones(4*75,1)*(0:3)*86626+(1:4*75)'*ones(1,4)+67*75+66*1152);
+    plasma_range=20+col(ones(4*75,1)*(0:3)*86627+(1:4*75)'*ones(1,4)+67*75+66*1152);
    end
   end
  end
