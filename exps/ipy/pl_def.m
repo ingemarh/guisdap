@@ -18,6 +18,9 @@ if vs>=3.0
   if vs>=4.1
    freq=[-4.2 -6.6 4.2 6.6]*1e6; nup_d=2;
    ran=[26 240;105 318;183 397;262 476];
+   if d_date>datenum(2017,1,1) & d_date<datenum(2020,2,15) % from when?
+    freq=fliplr(freq); clear uparfreq
+   end
   elseif vs>=4.0
    ran=[26 251;116 341;206 431;296 521];
   end
