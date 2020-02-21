@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC>
+<HTML>
+<!--Author Ingemar Haggstrom -->
+<HEAD>
+ <TITLE>GUISDAP 1.80</TITLE>
+</HEAD>
+
+<body>
+
+<h2 align="center">GUISDAP 1.80</h2>
+
+<p>The <b>EISCAT GUISDAP vs 1.80</b>, is available for
+<a href=dist180/>download</a>.
+All lagged eros3 experiments should now be
+analysable by GUISDAP, as well as the historic ones in KST and ESR.
+However, there have been numerous changes and upgrades compared the old
+<a href=gup165.html>1.65</a> version, so maybe one might need to
+reinitialise some of the old experiments to get the analysis going.
+The GUISDAP released here should not be confused with other versions
+released at other sites.
+It has succesfully been run on solaris8 (Forte6) and linux2.4 (gcc-2.96)
+systems running matlab6.5.
+The release has not been extensively tested so the found bugs
+and/or shortcomings should be reported to 
+<a href="../people.cgi?Ingemar+Häggström">me</a>. Also, I welcome
+contributions as I do not have time to go through all things.
+ 
+<h3>New Features</h3>
+
+Proper handling of the remote data, so now analysis of ungated lagprofiles are possible.
+There is a global variable <i>a_Offsetppd</i> to fine tune the actual time
+offset between the transmitting and receiving site.
+The old, only usable for Doppler,
+way of doing it is still there, but it is recommended to
+reinitialise the historic experiments to take advantage of the new development.
+<p>
+Firred alternating code experiments (e.g. arc). The <i>COR_arclp</i> routine
+handles these and other types of firred codes.
+<p>
+Pulse-to-pulse code experiments (e.g. dlayer). The <i>COR_pulsetopulse</i>
+routine handles these and the blocked lags.
+<p>
+The mex routines are based on the GULIPS package.
+<p>
+The apriori values are taken from an ionospheric model.
+Included are the model first released in guisdap 1.50
+('gup150') and the guisdap 1.65 GIVEME summer 1996 model ('giveme'). 
+Since these are both static, a more general time-location dependent
+option is now supplied, where
+the IRI-2001 model is used ('iri'). At places where the IRI is not
+available the model is extrapolated exept for temperatures below 120 km where
+the MSIS model is called. The mex routines for these are included, but the
+models are not. Every institute of class should already have these libraries.
+The model used is chosen by the global variable <i>iono_model</i>. 
+A user can easily supply his own model by naming it ionomodel_<i>name</i>.m.
+<p>
+Now mixtures of hydrogen and oxygen ions for the high
+altitudes are allowed. In fact any number of ions species with different masses.
+<p>
+Composition fits is now possible, with any number of ions at selected altitudes.
+This means that the result data vector, <i>r_param</i>, is somewhat different
+from previous versions. The composition results are stored in field 6 and up.
+<p>
+Easy definable height regions for fitting of different parameters. The global
+variable <i>fit_altitude</i> defines the start and stop altitude for fitting
+the parameters (Ne,Ti,Te/Ti,Coll,Vi,p).
+<p>
+Each experiment has a default analysis definition, <i>ana_def.m</i>, defining
+altitudes and parameters to fit.
+<p>
+Several minor changes: cleaning ups, no special ESR/KST, residual improvement,
+speeding up by setting apriori errors=0,...
+
+<h3>Plans for the next release</h3>
+
+The pulse-to-pulse routine can be made much faster and simplier, by doing
+some strategic changes in the deep guisdap routines. Now the initialisation
+for dlayer takes many hours and the file is a few GB. The present routine is
+correct, but is not for practical use except for the old GEN-11 maybe.
+<p>
+A quick-fit routine is on the way, which should speed up the analysis and
+be less sensitive to different models used.
+
+<p>
+<h3>Questions</h3>
+<!--#echo var="LAST_MODIFIED"-->
+Non-system and non-matlab questions to
+<a href="../people.cgi?Ingemar+Häggström">Ingemar H&auml;ggstr&ouml;m</a>.
+</body>
+</html>
+ 

@@ -1,0 +1,213 @@
+<html>
+<head>
+<title>GUISDAP8 for dummies</title>
+</head>
+
+<body>
+<center><h2>Running GUISDAP 8</h2></center>
+
+
+<h3>Conditions</h3>
+
+<ul>
+<li>You have EISCAT data files (.mat) that you should analyse. In this example we analyse tau2pl_r_cp1_1.10_CP@kir.
+
+</li></ul>
+
+<h3>Starting guisdap</h3>
+
+<ul>
+<li>Log on to the analysis machine.
+
+<li>You might check that the data directory exists
+<pre>$ ls /data1/tau2pl_r_cp1_1.10_CP@kir
+20031029_09  20031030_08  20031031_07  20031101_06
+20031029_10  20031030_09  20031031_08  20031101_07
+20031029_11  20031030_10  20031031_09  20031101_08
+20031029_12  20031030_11  20031031_10  20031101_09
+20031029_13  20031030_12  20031031_11  20031101_10
+20031029_14  20031030_13  20031031_12  20031101_11
+20031029_15  20031030_14  20031031_13  20031101_12
+20031029_16  20031030_15  20031031_14  20031101_13
+20031029_17  20031030_16  20031031_15  20031101_14
+20031029_18  20031030_17  20031031_16  20031101_15
+20031029_19  20031030_18  20031031_17  20031101_16
+20031029_20  20031030_19  20031031_18  20031101_17
+20031029_21  20031030_20  20031031_19  20031101_18
+20031029_22  20031030_21  20031031_20  20031101_19
+20031029_23  20031030_22  20031031_21  20031101_20
+20031030_00  20031030_23  20031031_22  20031101_21
+20031030_01  20031031_00  20031031_23  20031101_22
+20031030_02  20031031_01  20031101_00  20031101_23
+20031030_03  20031031_02  20031101_01  20031102_00
+20031030_04  20031031_03  20031101_02  tau2pl_r_cp1_1.10_CP@kir_information
+20031030_05  20031031_04  20031101_03
+20031030_06  20031031_05  20031101_04
+20031030_07  20031031_06  20031101_05
+</pre>
+
+<li>Start up guisdap
+<pre>$ guisdap -a
+
+                              < M A T L A B >
+                  Copyright 1984-2003 The MathWorks, Inc.
+              Version 6.5.1.199709 Release 13 (Service Pack 1)
+                                Aug  4 2003
+
+  Using Toolbox Path Cache.  Type "help toolbox_path_cache" for more info.
+
+  To get started, type one of these: helpwin, helpdesk, or demo.
+  For product information, visit www.mathworks.com.
+
+GUISDAP vs. 8.3 by EISCAT, Lehtinen&Huuskonen
+GUISDAP vs. 8.3 by EISCAT, Lehtinen&Huuskonen
+</pre>
+
+<li>A window named "GUISDAP for dummies" should pop up.<p>
+<img src="gupdum.png">
+
+</li></ul>
+
+<h3>Fill in the parameters</h3>
+
+The window contains the parameters that was used in the last analysis.
+You might need to change some of them.
+<ul>
+First hit the "<b>Reset</b>" button.
+Guisdap will search for the latest data and set up default parameters.
+If this is not what you want you have to go further:
+<ul>
+<li><b>Data path:</b> Where the raw data files is. Click on the button:<p>
+<img src="dpath1.png">
+<img src="dpath2.png"><p>
+To go up in the hierarchy you need to double-click on the ".." file.
+Select the right directory and press "OK". Guisdap will parse the directory
+name and try to set up everything: Experiment, start/stop time, integration time...
+
+<li><b>Dsp expr:</b> The "radar controller" experiment which is in this example tau2pl (already set up by choosing <b>Data path</b> here).
+Click on the button and select the right experiment:<p>
+
+<li><b>Site:</b> Select correct site, from which the data comes.
+
+<li><b>Start time:</b> The start time for analysis, year month day hour minute second.
+Should normally be before the time when the experiment started. A good idea is to
+keep the minutes and seconds to zero. Here: <pre>2003 10 29 9 0 0</pre>
+
+<li><b>Stop time:</b> The stop time for analysis, year month day hour minute second.
+Should normally be after the time when the experiment stop(s). A good idea is to
+keep the minutes and seconds to zero. Here: <pre>2003 11 2 24 0 0</pre>
+
+<li><b>Result path:</b> The directory where the results should go. If the last part of it is "AUTO",
+it is rewritten using the date, dsp expr, integration time and site.
+Here: <pre>/analysis/results/2003-10-29_tau2pl_60@kir</pre>.
+Normally this is what you want, othervise click on it and select/create a specific one.
+
+<li><b>Real time:</b> If running the analysis in realtime, this button should
+be IN. This is also done automatically if the stop time is in the future.
+
+<li><b>Integration time:</b> Number of seconds to integrate, before attempting analysis.
+For stationary experiments enter a nice number. Here: 120 (=2 minutes). If it is a
+scanning experiment, you probably want to integrate for as long as the antenna stands still,
+enter 0.
+
+<li><b>Disp figures:</b> Guisdap produces some plots during the analysis:
+the data dump, a power profile, the actual fit(s), height profiles, vizu (the parameters vs time).
+The display is turned on with "1" and off with "0".<p>
+For remote sites I recommend: "0 0 1 0 1" (fits+vizu)<p>
+For transmitting sites I recommend: "0 1 0 0 1" (powerprofile+vizu)
+
+<li><b>Special:</b> Here you can enter almost any matlab command you want
+to give before starting analysis. There are hundreds of parameters, but here
+follows a list of the most common ones<p>
+"analysis_txlimit=0; f_ch_Pt=1.2e6" will integrate the data even if the transmitter is recorded as off and
+force the tx power to 1.2 MW. Needed sometimes at remote sites.<p>
+"a_Offsetppd" should be set to the number of microseconds the remote site clock differs from Tromso.<p>
+"f_calTemp" will set the calibration temperature to the correct value, if recorded wrong.<p>
+"Magic_const" is another parameter to set here, if needed.<p>
+"analysis_code" choses which part of the data you want to analyse. Needed
+sometimes for dual-beam or sliced experiments.<p>
+<img src="gupdum2.png"><p>
+Remember that "%" will comment out the rest of the line, so one can keep the command there for
+later reference if you don't want it this time.
+
+<li>When ready, press <b>GO</b>
+
+</li></ul>
+
+<h3>Analysis</h3>
+
+<ul>
+<li>The output might look something like this:
+<pre>29-Oct-2003 09:10:55-09:11:00 integrated
+canon: /opt/guisdap8/exps/tau2pl/tau2plRinit
+canon: /opt/guisdap8/matfiles/pldfvv
+Intersection: [Width Rise]=[52 48] us Veff=7.967e+08
+Warning: 3 points may not be enough for reliable variance determination
+
+** The model uses the IRI-2001 model at the tx position**
+ alt   Ne/1e11     Ti      Te/Ti    coll/1e3    vel   [O+] resid status
+292.5 2.19:0.21 1614:176 1.97:0.31  0.0: 0.0   39: 59 0.95  0.49  OK
+Offset: NaN us  canon: /analysis/results/2003-10-29_tau2pl_60@kir/26039459
+
+29-Oct-2003 09:11:00-09:12:00 integrated
+ alt   Ne/1e11     Ti      Te/Ti    coll/1e3    vel   [O+] resid status
+292.5 1.37:0.05 2356:114 0.98:0.07  0.0: 0.0 -163: 25 0.95  1.31  OK
+Offset: 0 us  canon: /analysis/results/2003-10-29_tau2pl_60@kir/26039519
+
+29-Oct-2003 09:12:00-09:13:00 integrated
+ alt   Ne/1e11     Ti      Te/Ti    coll/1e3    vel   [O+] resid status
+292.5 2.89:0.05 2099: 51 1.42:0.05  0.0: 0.0  -41: 13 0.95  1.48  OK
+Offset: 0 us  canon: /analysis/results/2003-10-29_tau2pl_60@kir/26039579
+
+29-Oct-2003 09:13:00-09:14:00 integrated
+ alt   Ne/1e11     Ti      Te/Ti    coll/1e3    vel   [O+] resid status
+292.5 2.81:0.06 2134: 52 1.45:0.05  0.0: 0.0  -41: 13 0.95  1.35  OK
+Offset: 0 us  canon: /analysis/results/2003-10-29_tau2pl_60@kir/26039639
+
+29-Oct-2003 09:14:00-09:15:00 integrated
+ alt   Ne/1e11     Ti      Te/Ti    coll/1e3    vel   [O+] resid status
+292.5 3.60:0.07 1872: 39 1.70:0.05  0.0: 0.0  -19: 10 0.95  1.19  OK
+Offset: 0 us  canon: /analysis/results/2003-10-29_tau2pl_60@kir/26039699
+
+</pre>
+<img src="fits.png"><p>
+Here also the plot of the fit was chosen. Check that the green line (theory) are in phase
+with the data. A measured offset is displayed, but can be 
+Othervise, you need to change the "a_Offsetppd" parameter: restart the analysis and
+do it.
+
+<li>If you are running in realtime, the analysis will pause when reaching the end of the data.
+Here the vizu window will show up, and the program gets each new dump as it arrives. The timeout
+for waiting for new data is presently set to 5 minutes.
+If you don't want to wait when reaching the end of the experiment,
+you can relase the <b>RT</b> button, and the analysis will finnish.
+
+<li>When the analysis is finished the vizu plot is saved together with the data.
+<pre>Created /analysis/results/2003-11-01_tau2pl_60@kir/2003-11-01_tau2pl_60@kir.eps and .png</pre>
+<img src="vizu.png" width=147 height=215>
+
+<li>If you are running realtime, and don't want to wait for the integration timeout after
+the experiment stopped, you can
+release the "RT" button and the analysis will finish.
+
+<li>When you are finished, hit the <b>Quit</b> button.
+
+</li></ul>
+
+<h3>Problems</h3>
+
+<ul>
+<li>GUSDAP might accidentaly stop, due to unforseeable errors. Sometimes,
+such interrupted analysis can be continued with the command "anacont".
+<li>Report any problems or shortcomings of this manual to <A HREF="/people.cgi?ingemar">Ingemar</A>.
+
+</li></ul>
+
+<!NoPrint>
+<hr>
+<center>
+<i>Last updated by <A HREF="/people.cgi?ingemar">Ingemar</A>, 6 November 2003.</i>
+</center>
+</!NoPrint>
+</body>
+</html>

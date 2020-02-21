@@ -1,0 +1,26 @@
+<h1>Guisdap 8.8</h1>
+This release of guisdap contains a few new features and bugfixes, but everything is made compatible with older versions (hopefully). The package should be compatible with relatively recent Matlab versions, but there may (or may not) be some problems on specific platforms.<a name="section-1"></a>
+<h2>Install</h2>
+Guisdap-8.8 has been succesfully installed on linux. Other architectures may have to change the makefiles, if speed is desired, othervise it should run without the compiled routines. On Windows systems it is recommended to run under the cygwin environment for best compabilitiy. Please report any changes needed for other systems.
+<pre><code>unpack the <a href="https://www.eiscat.se/raw/GUISDAP/dist88/">distribution</a> at your favourite place
+cd into the guisdap directory
+if you want the speed improvements the mex utility provides:
+ make "lib" and "mex7" directories
+ cd models/iri2012
+ "make" (should be gnu-make)
+ cd ../nrlmsise00
+ "make"
+ cd ../irbem
+ make OS=... ENV=... all
+ cd ../../mexsources
+ "make"
+make a link of bin/guisdap to a place on your path (ex /usr/local/bin)</code></pre>
+Provided is a searchpath to ~/gup/mygup where your personal and edited distribution files should go.<a name="section-2"></a>
+<h2>Running</h2>
+At the prompt, type "guisdap --help" to see all the switches available. Normal analysis is done running "guisdap -a" which will bring up a window with some entries to fill in. (Hopefully selfexplained) This is the same as "guisdap" and then "analyse". When finished hit "GO". A more detailed instruction can be found at <a href="https://www.eiscat.se/document/user-documentation/guisdap8-for-dummies/">here</a>.There is also a course <a href="https://www.eiscat.se/wp-content/uploads/2016/08/GUISDAP.pdf">presentation</a> describing how to initialise new experiments and some useful tips on more specialised analysis. The initialisation scripts are avaiable with "guisdap -i".
+<h2>New features</h2>
+This is mainly an update release without major new features.
+
+<hr />
+
+Contact: <a href="mailto: ingemar@eiscat.se">Ingemar Häggström</a>

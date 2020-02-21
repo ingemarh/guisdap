@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<!--Author Ingemar Haggstrom -->
+
+  
+  <title>GUISDAP 8.7</title>
+</head>
+
+
+<body>
+
+<h2 align="center">GUISDAP 8.7</h2>
+
+This release of guisdap contains a few new features and bugfixes,
+but everything is made compatible with older versions (hopefully).
+The package should be compatible with Matlab versions higher then 6.5,
+but there may (or may not) be some problems on specific platforms.
+
+<h3>Install</h3>
+
+Guisdap-8.7 has been succesfully installed on linux. Other architectures may
+have to change the makefiles, if speed is desired, othervise it should run
+without the compiled routines.  On Windows
+systems it is recommended to run under the cygwin environment for
+best compabilitiy.
+Please report any changes needed for other systems.
+<pre>untar the <a href="http://www.eiscat.se:8080/raw/GUISDAP/dist86/">distribution</a> at your favourite place<br>cd into the guisdap directory<br>if you want the speed improvements the mex utility provides:<br> make "lib" and "mex7" (or "mex6") directories<br> cd models/iri2007<br> "make" (should be gnu-make)<br> cd ../nrlmsise00<br> "make"<br> cd ../onera<br> make OS=... ENV=... all<br> cd ../../mexsources<br> "make"<br>
+make a link of bin/guisdap to a place on your path (ex /usr/local/bin)<br></pre>
+
+Provided is a searchpath to ~/gup/mygup where your personal
+and edited distribution files should go.
+
+<h3>Running</h3>
+
+At the prompt, type "guisdap --help" to see all the switches available.
+Normal analysis is done running "guisdap -a" which will bring up a
+window with some entries to fill in. (Hopefully selfexplained)
+This is the same as "guisdap" and then "analyse". When finished hit "GO".
+A more detailed instruction can be found at <a href="http://www.eiscat.se:8080/raw/GUISDAP/doc/howto.html">here</a>.
+<p>
+There is also a course <a href="http://www.eiscat.se/groups/Documentation/CourseMaterials/Tromso04/GUISDAP.pdf">presentation</a>
+describing how to initialise new
+experiments and some useful tips on more specialised analysis.
+The initialisation scripts are avaiable with "guisdap -i".
+
+</p>
+
+<h3>New features</h3>
+
+<ul>
+	<li>To get raw density values also using nonzero lag profiles a parameter
+
+	<i>analysis_ppshortlags</i> have been added. The value is default set to 1 on some
+  experiments, but can be adjusted. The value sets how far out in the lag to go.
+  To separate the different power profiles in the result file, the parameter
+  <i>r_ppw</i>, specifying the range resolution, can be used.</li>
+  <li> For experiments with transmitter samples on UHF and ESR, the phasepushing of
+  the klystrons is calculated and taken into account of. For remote sites and
+  experiments without defined transmitter samples after 1 January 2009 a default
+  value of -21 Hz is used. One can adjust the value manually with the
+  <i>a_phasepush</i> parameter.</li>
+  <li>A summary plot for the plasmalines is added. First one need to integrate the
+  data with guisdap, either via the <i>d_saveint.dir</i> parameter specifying the
+  directory where to save it or 'AUTO', or set the <i>analysis_plasmaline</i> flag for
+  faster handling of the data. The plot is then issued with
+  <i>plasma_summary directory</i> command in the matlab window.</li>
+  <li>There are of course numerous hidden improvements and refinements
+  <ul>
+  <li> new magic constants</li>
+  <li>option to save forward acfs</li>
+  <li>intro to plasmaline analysis</li>
+  <li>got back simulation (not fully)</li>
+  <li>make dirty variances for single dumps</li>
+  <li>fixes for new vs of matlab and madrigal</li>
+  <li>fixes for non integer samplings</li>
+  <li>specifying 32bit ints in library interfaces</li>
+  <li>updates from IRI</li>
+  <li>...</li>
+  </ul></li>
+</ul>
+
+<p></p>
+
+<hr>
+Further information is will be available here in due course.
+Not up-to-date users might find something useful in the
+<a href="http://www.eiscat.se/groups/Documentation/UserGuides/GUISDAP/gup86.html">vs 8.6 release info</a>.
+<p></p>
+
+<p>
+<a href="mailto: ingemar@eiscat.se">Ingemar H&auml;ggstr&ouml;m</a>.
+
+</p>
+
+</body>
+</html>

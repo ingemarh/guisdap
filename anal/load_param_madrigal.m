@@ -6,7 +6,7 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,fileno,do
 % par1D [Az,El,Pt,Tsys]
 % rpar2D [Ran,Alt,Ne]
 
-global name_expr r_RECloc name_ant local r_XMITloc
+global name_expr r_RECloc name_ant r_XMITloc
 ask=0;
 Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];
 if nargin<2, fileno=[]; end
@@ -25,8 +25,7 @@ arg=sprintf('&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endD
 
 if exist(data_path,'file')
  global path_GUP
- of=local.tfile;
- cmd2=[' ' path_GUP '/bin/madDataDisplay >'];
+ cmd2=[' ' path_GUP '/bin/madDataDisplay 2>/dev/null'];
  if ~exist(cmd2(2:end-2)), return, end
  cmd4='QUERY_STRING=''fileName=';
  antennas={'kir' 'uhf' 'sod' 'vhf' 'esr' '32m' '42m'};
@@ -49,12 +48,11 @@ if exist(data_path,'file')
  r_XMITloc=XMITlocs(i,:);
  hl=10;
  %arg=strrep(arg,'&','\&'); arg=strrep(arg,' ','\ ');
- [mad,devnull]=system([cmd4 data_path arg '''' cmd2 of]);
+ [mad,of]=system([cmd4 data_path arg '''' cmd2]);
  if mad
   return
  end
- data=textread(of,'','headerlines',hl);
- delete(of)
+ data=textscan(of,'','headerlines',hl);
  if isempty(data)
   return
  end

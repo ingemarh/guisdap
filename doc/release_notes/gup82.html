@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC>
+<HTML>
+<!--Author Ingemar Haggstrom -->
+<HEAD>
+ <TITLE>GUISDAP 8.2</TITLE>
+</HEAD>
+
+<body>
+
+<h2 align="center">GUISDAP 8.2</h2>
+
+This release of guisdap contains several new features and bugfixes,
+but everything is made compatible with older versions (hopefully).
+It has been developed and tested using Matlab 6.5, so there may (or may
+not) be some problems with older Matlab versions.
+
+<h3>Install</h3>
+Guisdap-8.2 is somewhat easier to install than the previous version.
+It has been succesfully installed on Solaris (Forte 7) and linux (gcc 3).
+Other architectures may have to change the makefiles, if you want speed,
+othervise it should run without the compiled routines.
+Please report any changes needed for other systems.
+<pre>
+untar the <a href="dist82/">distribution</a> at your favourite place
+cd into the guisdap directory
+if you want the speed improvements the mex utility provides:
+ make "lib" and "mex6" directories
+ cd models/iri2001
+ "make" (should be gnu-make)
+ cd ../nrlmsise00
+ "make"
+ cd ../../mexsources
+ "make"
+make a link of bin/guisdap to a place on your path (ex /usr/local/bin)
+</pre>
+Integration of historic KST data is done using the
+<a href="ftp://ion.le.ac.uk/eiscat/integration/integrate-2.0.5.tar.gz">Nigel Wade integration package</a>
+which you have to install separately. Provided are paths to
+NW/mex6 for the mex files and NW/lib for the libraries.
+
+Provided is also a searchpath to ~/gup/mygup where your personal
+files should go.
+
+<h3>Running</h3>
+
+Running analysis is simplier than before.
+At the prompt, type "guisdap --help" to see all the switches available.
+Normal analysis is done running "guisdap -a" which will bring up a
+window with some entries to fill in. (Hopefully selfexplained)
+This is the same as "guisdap" and then "analyse". When finished hit "GO".
+A more detailed instruction can be found <a href="doc/howto.html">here</a>.
+<p>
+As usual, you are on your own initialising experiments. If someone writes
+or have a manual for this, I gladly debug and include it. In any case,
+the initialisation scripts are avaiable with "guisdap -i".
+
+<h3>New features</h3>
+
+<li>The built-in integration have been improved with a satellite
+ checking routine (normally disabled) ignoring dumps flagged to contain
+ point targets. See anal/satch.m for controlling parameters.
+<li>An alternate way of measuring variances on the data has been developed,
+ making it possible to analyse a few or single integrated dumps, without
+ the need of slow theoretical variance calculations. (Only for the built-in
+ integration)
+<li>The use of the parameter "analysis_code" has been extended to control
+ what parts of the data to be analysed, which is useful in splitted and
+ sliced experiments. Can also be used for experiments run with several
+ modes, for example cp1.
+<li>Numerous hidden improvements and refinements
+
+<h3>Default parameters</h3>
+
+In the analysis there are a number of parameters extracted from the data.
+Which parameters depends on the experiment, altitude and radar. The default
+settings given below can be overridden by the "fit_altitude" parameter.
+
+<TABLE border="1"><TR>
+<TH>Parameter</TH><TH>UHF (930 MHz)</TH><TH>VHF (224 MHz)</TH><TH>ESR (500 MHz)</TH>
+</TR><TR>
+<TD></TD><TD></TD><TD></TD><TD></TD>
+</TR><TR>
+<td>Electron density</td><td>All heights</td><td>All heights</td><td>All heights</td>
+</TR><TR>
+<td>Ion temperature</td><td>Above 80 km</td><td>Above 100 km</td><td>Above 90 km</td>
+</TR><TR>
+<td>Temperature ratio</td><td>107-1500 km</td><td>120-1500 km</td><td>113-1500 km</td>
+</TR><TR>
+<td>Collision frequency</td><td>90-107 km</td><td>Never</td><td>Never</td>
+</TR><TR>
+<td>Ion drift velocity</td><td>All heights</td><td>All heights</td><td>All heights</td>
+</TR><TR>
+<td>Ion composition</td><td>Never</td><td>Never</td><td>Never</td>
+</TR></TABLE>
+
+<p><hr>
+Further information is will be available here in due course.
+Not up-to-date users might find something useful in the
+<a href="gup81.html">vs 8.1 release info</a>.
+<p><p>
+<a href="../people.cgi?Ingemar+H\344ggstr\366m">Ingemar H&auml;ggstr&ouml;m</a>.
+</body>
+</html>
