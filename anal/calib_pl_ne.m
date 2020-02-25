@@ -162,7 +162,7 @@ while (mr==r0 | abs(mr-1)>.01) & nloop < 16
   set(0,'currentfigure',ogcf)
  end
  peak_lf=lf{1}(:,2);
- r=peak_lf(il)./plf(ip); r2=r.*2;
+ r=peak_lf(il)./plf(ip); r2=r.^2;
  mr2=median(r2); sr2=std(r2);
  good=find(abs(r2-mr2)<=p.maxe*sr2);
  bad=find(abs(r2-mr2)>p.maxe*sr2);
