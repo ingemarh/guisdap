@@ -19,7 +19,7 @@
 % See also EFIELD VEL_WRAPPER
 %
 function [varargout]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
-global result_path path_tmp path_GUP
+global result_path path_tmp path_GUP GUP_ver
 if nargin<1, dirs=[]; end
 if nargin<2, alt=[]; end
 if nargin<3, td=[]; end
@@ -251,7 +251,7 @@ else
   result_file
  end 
  Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind);
- save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,Vinputs)
+ save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,GUP_ver,Vinputs)
  
  fprintf('Making NCAR file...\n')
  NCAR_output

@@ -23,7 +23,7 @@ if isunix
  [d,GUP_ver]=system(sprintf('echo -n `git -C %s describe --tags --long`-`git -C %s log --oneline | wc -l` 2>/dev/null',path_GUP,path_GUP));
 end
 if d
- GUP_ver='9.1';
+ GUP_ver=char(textread(fullfile(path_GUP,'.version'),'%s'));
 end
 
 fprintf('GUISDAP vs. %s by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
