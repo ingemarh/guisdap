@@ -10,8 +10,6 @@ clear all, clear global, clear functions
 
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local
 finish
-GUP_ver=9.1;
-fprintf('GUISDAP vs. %g by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
 
 path_GUP=which('start_GUP','-all');
 if iscell(path_GUP), path_GUP=char(path_GUP(end)); end
@@ -20,6 +18,15 @@ path_tmp=tempdir;
 path_exps=fullfile(path_GUP,'exps',filesep);
 result_path=fullfile(filesep,'analysis','results',filesep);
 data_path=fullfile(filesep,'data',filesep);
+d=1;
+if isunix
+ [d,GUP_ver]=system(sprintf('echo -n `git -C %s describe --tags --long`-`git -C %s log --oneline | wc -l` 2>/dev/null',path_GUP,path_GUP));
+end
+if d
+ GUP_ver='9.1';
+end
+
+fprintf('GUISDAP vs. %s by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
 
 format compact
 format short g

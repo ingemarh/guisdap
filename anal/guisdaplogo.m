@@ -16,7 +16,7 @@ f=[f(1) f f(end)];
 if ~isempty(name)
  p=fill(1.5-.1*[-1 -1 1 1],[0 1 1 0],[.5 .5 .5],tlx,tly,bcol,f/190+1.5,sp+1.4,'k');
  set(gca,'defaulttextunit','data')
- m=text(1.5,.5,sprintf('GUISDAP %g',GUP_ver));
+ m=text(1.5,.5,sprintf('GUISDAP %s',strtok(GUP_ver)));
  set(m,'horiz','center','fontunits','norm','fontsize',.1,'fontweight','bold','edgecolor',[1 0 0],'backgroundcolor',bcol,'linewidth',linew/4)
 else
  p=fill(tlx,tly,bcol,f/190+1.5,sp+1.4,'k');
