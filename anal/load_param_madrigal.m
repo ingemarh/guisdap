@@ -16,9 +16,9 @@ if isempty(fileno), ask=1; fileno=1; end
 REClocs=[67.863 20.44 .412;69.583 19.21 .030;67.367 26.65 .180;69.583 19.21 .030;78.153 16.029 .438];
 XMITlocs=[ones(4,1)*[69.583 19.21 .030];78.153 16.029 .438];
 if do_err
- param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER NEL DNEL TI DTI TE DTE VO DVO VOBI DVOBI CO DCOL PO+';
+ param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER NEL DNEL TI DTI TE DTE VO DVO VOBI DVOBI PO%2B CO DCOL';
 else
- param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER POPL NEL TI TE VO VOBI CO PO+';
+ param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER POPL NEL TI TE VO VOBI PO%2B CO';
 end
 t2=clock;
 arg=sprintf('&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',t2(1),param);
@@ -101,6 +101,7 @@ else
  if ~mad
   return
  end
+ of=strrep(of,'assumed','0'); %mad bug
  data=cell2mat(textscan(of,'','headerlines',hl));
  if isempty(data)
   return
@@ -110,14 +111,14 @@ end
 %vec=[3 4 10 11];
 rvec=[5 6 11 10];
 %vec=[8 5 13 15 16 17 12 19 9];
-avec=[4 3 13 15 14 16 18 19 9];
+avec=[4 3 13 15 14 16 19 18 9];
 pp=[];
 if do_err
   data(:,12:13)=10.^data(:,12:13);
 % avec=[8 5 14 16 18 20 12 24 9];
-  avec=[4 3 12 16 14 18 22 24 9];
+  avec=[4 3 12 16 14 18 23 22 9];
 % evec=[15 17 19 21 13];
-  evec=[13 17 15 23 23];
+  evec=[13 17 15 19 23];
 else
   %vec=[8 5 14];
   pvec=[4 3 12];
@@ -161,7 +162,7 @@ end
 if ~sum(isfinite(data(:,avec(6))))
  avec(6)=avec(6)+1;
  if do_err
-  avec(6)=avec(6)+1; evec(4)=evec(4)+2;
+  avec(6)=avec(6)+1, evec(4)=evec(4)+2,
  end
 end
 for i=1:n_tot
