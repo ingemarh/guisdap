@@ -27,6 +27,8 @@ end
 
 aa = find(strcmp(exprparnames,'Cedar file name')==1);
 bb = find(strcmp(exprparnames,'kindat')==1);
+cc = find(strcmp(exprparnames,'start time')==1);
+dd = find(strcmp(exprparnames,'end time')==1);
 
 cedarfile = char(exprparvalues(aa,:));
 
@@ -34,6 +36,11 @@ kindat_values = char(exprparvalues(bb,:));
 kindats = str2num(char(strsplit(kindat_values,', ')'));
 nkindats = length(kindats);
 evenkindat = num2str(max(kindats));
+
+starttime = char(exprparvalues(cc,:));
+endtime   = char(exprparvalues(dd,:));
+starttime(11) = 'T'; starttime(20:22) = '';
+endtime(11)   = 'T'; endtime(20:22)   = '';
 
 pathparts = strsplit(cedarfile,filesep);
 site = char(pathparts(end-2));
@@ -66,7 +73,7 @@ else
     name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
 end
 matfile.metadata.experiment.name_expr = {name_expr}; 
-matfile.metadata.experiment.intper_median = {num2str( intper_med)};
+matfile.metadata.experiment.intper_median = {num2str(intper_med)};
 
 datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' num2str(intper_med) '@' name_ant];
 storepath = fullfile(datapath,datafolder);
@@ -121,12 +128,34 @@ for ii= 1:newrec
     nrec = [nrec; nrec_tmp];
 end
 
+% Spatial description of datapoints for DataCite
+loc = [data.elm data.azm data.range];
+rr_lon = find(strcmp(exprparnames,'instrument longitude')==1);
+rr_lat = find(strcmp(exprparnames,'instrument latitude')==1);
+rr_alt = find(strcmp(exprparnames,'instrument altitude')==1);
+RECloc = [str2num(exprparvalues{rr_lon}) str2num(exprparvalues{rr_lat}) str2num(exprparvalues{rr_alt})];
+gg = zeros(length(data.elm),3);
+for ss = 1:length(data.elm)
+    gg(ss,:) = loc2gg(RECloc,loc(ss,:));
+end
+  
+if nkindats>1
+    cc       = find(data.kindat == str2num(evenkindat));
+    cc_pp    = find(data.kindat == str2num(evenkindat)-1);
+    gg_sp    = gg(cc,:);
+    gg_sp_pp = gg(cc_pp,:);
+else
+    gg_sp = gg;
+end
+
 matfile.data.par0d     = [];
-matfile.data.par1d     = [];
 matfile.metadata.par0d = [];
+matfile.data.par1d     = [];
 matfile.metadata.par1d = [];
 matfile.data.par2d     = [];
 matfile.metadata.par2d = [];
+matfile.data.utime     = [];
+matfile.metadata.utime = [];
 
 for ii = 1:nkindats
     aa = find(strcmp('nrec',gupparameters_list)==1);
@@ -147,16 +176,16 @@ for ii = 1:nkindats
     end
 end
 
-if nkindats>1
-    cckind = find(data.kindat == str2num(evenkindat));   % data.kindat does not seem to exist when there is only 1 kindat for the experiment
-else cckind = 1:length(data.recno);
-end
-
+% if nkindats>1
+%     cckind = find(data.kindat == str2num(evenkindat));   % data.kindat does not seem to exist when there is only 1 kindat for the experiment
+% else cckind = 1:length(data.recno);
+% end
 
 for ii = 1:npar
     if strcmp(char(Parsinfile_list(ii)),'nsampi')
         continue
     end
+    
     aa = find(strcmp(char(Parsinfile_list(ii)),parameters_list)==1);
     if aa
         bb = strfind(Parsinfile_list{ii},'+');
@@ -197,17 +226,23 @@ for ii = 1:npar
         end
         
         if length(unique(parameterdata))==1
-            if strcmp('tfreq',char(Parsinfile_list(ii)))
-                aa = aa(1);                                    % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
-            end
-            matfile.data.par0d = [matfile.data.par0d single(parameterdata(1))];
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
             if cell2mat(strfind(info(1),'h_'))==1
                 info{1} = info{1}(3:end);
             end
             info(4) = {'-'};
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-            matfile.metadata.par0d = [matfile.metadata.par0d info'];
+                
+            if strcmp('tfreq',char(Parsinfile_list(ii)))
+                aa = aa(1);                                    % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
+            end
+            if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
+                matfile.data.utime = [matfile.data.utime parameterdata(1)]; 
+                matfile.metadata.utime = [matfile.metadata.utime info'];
+            else
+                matfile.data.par0d = [matfile.data.par0d single(parameterdata(1))];
+                matfile.metadata.par0d = [matfile.metadata.par0d info'];
+            end
             continue
         end
        
@@ -216,7 +251,6 @@ for ii = 1:npar
         end
         
         for jj = 1:nkindats
-            
             if nkindats>1
                 cc = find(data.kindat == kindats(jj));
                 parameterdata_kindat = parameterdata(cc);
@@ -227,7 +261,7 @@ for ii = 1:npar
             if sum(isnan(parameterdata_kindat))==length(parameterdata_kindat)   % check if all data (for a certain kindat) are NaN
                 continue                                                        % if so, skip to next iteration
             end
-            
+                      
             if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
                 bb = aa; end
             if strcmp('range',char(Parsinfile_list(ii)))
@@ -269,8 +303,13 @@ for ii = 1:npar
             end
             
             if length(par_1d)==newrec 
-                matfile.data.par1d = [matfile.data.par1d double(par_1d)]; 
-                matfile.metadata.par1d = [matfile.metadata.par1d info'];
+                if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
+                    matfile.data.utime = [matfile.data.utime par_1d]; 
+                    matfile.metadata.utime = [matfile.metadata.utime info'];
+                else
+                    matfile.data.par1d = [matfile.data.par1d double(par_1d)]; 
+                    matfile.metadata.par1d = [matfile.metadata.par1d info'];
+                end
                 break
             else
                 if jj == 2
@@ -354,17 +393,104 @@ if exist('name_ant','var'); nn = nn + 1;
     matfile.metadata.names(:,nn) = infoname';
 end
 
+% DataCite
 symbols = ['a':'z' 'A':'Z' '0':'9'];
 strLength = 10;
 nums = randi(numel(symbols),[1 strLength]);
 randstr = symbols(nums);
 PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
 matfile.metadata.schemes.DataCite.Identifier = {PID};
-matfile.metadata.schemes.DataCite.Creator = {'Ingemar Häggström'};
+matfile.metadata.schemes.DataCite.Creator = {name_ant};
 matfile.metadata.schemes.DataCite.Title = {datafolder};
 matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
+matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3 Ionosphere'};
+matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 matfile.metadata.schemes.DataCite.PublicationYear = {year};
-matfile.metadata.schemes.DataCite.ResourceType = {'dataset/Level 3 Ionosphere'};
+
+% Find the smallest box (4 corners and mid-point) to enclose the data.
+% If area of convhull < 10-4 deg^2, define alla points as one (average)
+% imag = 1 to plot the data and the corresponding box
+gg_sp_unique = unique([gg_sp(:,2),gg_sp(:,1)],'rows');
+nunique = length(gg_sp_unique(:,1));
+
+if nunique == 1
+    convarea = 0;
+elseif nunique == 2
+    convarea = sqrt(diff(gg_sp_unique(:,2))^2 + diff(gg_sp_unique(:,1))^2);   % distance!!!
+else
+    conv = convhull([gg_sp(:,2),gg_sp(:,1)]);
+    convarea = polyarea(gg_sp(conv,2),gg_sp(conv,1));
+end
+
+if convarea < 10e-4
+    [point_lon, point_lat] = deal(mean(gg_sp(:,2)),mean(gg_sp(:,1)));
+    plot(gg_sp(:,2),gg_sp(:,1),'ob',point_lon, point_lat,'or')
+    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = {num2str(point_lon)};
+    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = {num2str(point_lat)};
+elseif nunique == 2
+    for iii = 1:nunique
+        ploncell(iii) = {num2str(gg_sp_unique(iii,2))};
+        platcell(iii) = {num2str(gg_sp_unique(iii,1))};
+    end
+    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = ploncell';
+    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = platcell';    
+else
+    image = 1;
+    [tlon,tlat,c] = orientedPolygon([gg_sp(:,2) gg_sp(:,1)],image);
+    for iii = 1:length(tlon)
+        tloncell(iii) = {num2str(tlon(iii))};
+        tlatcell(iii) = {num2str(tlat(iii))};
+    end
+    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = tloncell';
+    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = tlatcell';
+    if diff([max(tlon) min(tlon)])>180
+        matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = {num2str(c(1))};
+        matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = {num2str(c(2))};
+    end
+end
+
+gg_sp_pp_unique = unique([gg_sp_pp(:,2),gg_sp_pp(:,1)],'rows');
+nunique = length(gg_sp_pp_unique(:,1));
+
+if nunique == 1
+    convarea = 0;
+elseif nunique == 2
+    convarea = sqrt(diff(gg_sp_pp_unique(:,2))^2 + diff(gg_sp_pp_unique(:,1))^2);   % distance!!!
+else
+    conv = convhull([gg_sp_pp(:,2),gg_sp_pp(:,1)]);
+    convarea = polyarea(gg_sp_pp(conv,2),gg_sp_pp(conv,1));
+end
+
+if convarea < 10e-4
+    [point_lon, point_lat] = deal(mean(gg_sp_pp(:,2)),mean(gg_sp_pp(:,1)));
+    plot(gg_sp_pp(:,2),gg_sp_pp(:,1),'ob',point_lon, point_lat,'or')
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = {num2str(point_lon)};
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = {num2str(point_lat)};
+elseif nunique == 2
+    for iii = 1:nunique
+        ploncell(iii) = {num2str(gg_sp_pp_unique(iii,2))};
+        platcell(iii) = {num2str(gg_sp_pp_unique(iii,1))};
+    end
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = ploncell';
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = platcell';
+else
+    image = 1;
+    [tlon,tlat,c] = orientedPolygon([gg_sp_pp(:,2) gg_sp_pp(:,1)],image);
+    for iii = 1:length(tlon)
+        tloncell(iii) = {num2str(tlon(iii))};
+        tlatcell(iii) = {num2strkeyboard(tlat(iii))};
+    end
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = tloncell';
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = tlatcell';
+    if diff([max(tlon) min(tlon)])>180
+        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = {num2str(c(1))};
+        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = {num2str(c(2))};
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = [];
@@ -408,6 +534,24 @@ if isfield(matfile.metadata,'par2d_pp')
     aa = find(cellfun('isempty',matfile.metadata.par2d_pp(7,:))); matfile.metadata.par2d_pp(7,aa)= {'0'};
     matfile.metadata.par2d_pp(gupnamesindex,:) = [];
 end
+keyboard
+% Remove alt, lon and lat from par2d_pp
+a = find(strcmp('h',matfile.metadata.par2d_pp(1,:)));
+if a
+    matfile.data.par2d_pp(:,a)     = [];
+    matfile.metadata.par2d_pp(:,a) = [];
+end
+a = find(strcmp('lon',matfile.metadata.par2d_pp(1,:)));
+if a
+    matfile.data.par2d_pp(:,a)    = [];
+    matfile.metadata.par2d_pp(:,a) = [];
+end   
+a = find(strcmp('lat',matfile.metadata.par2d_pp(1,:)));
+if a
+    matfile.data.par2d_pp(:,a)    = [];
+    matfile.metadata.par2d_pp(:,a) = [];
+end 
+
 
 save(matfilename,'matfile')
 
@@ -448,9 +592,19 @@ for sf = sFields.'
                         group3 = [group2 '/' char(uf)];
                         vFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)));
                         for vf = vFields.'
-                              strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
-                              dsname = char(vf);
-                              strds2hdf5(hdffilename,group3,dsname,strdata)
+                            if isstruct(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)))
+                                group4 = [group3 '/' char(vf)];
+                                wFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)));
+                                for wf = wFields.'
+                                    strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)).(char(wf));
+                                    dsname = char(wf);
+                                    strds2hdf5(hdffilename,group4,dsname,strdata)
+                                end
+                            else                            
+                                strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
+                                dsname = char(vf);
+                                strds2hdf5(hdffilename,group3,dsname,strdata)
+                            end
                         end
                     else
                         strdata = matfile.(char(sf)).(char(tf)).(char(uf));

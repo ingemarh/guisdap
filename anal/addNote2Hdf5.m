@@ -11,14 +11,20 @@ end
 
 fid = fopen(notefile);
 notes = textscan(fid,'%s','delimiter','');
+
+
 notes_lines = notes{1};
-notes_str = [];
+notes_str = '';
 for nc = 1:length(notes_lines)
      if nc == length(notes_lines)
          notes_str = [notes_str char(notes_lines(nc))];
      else
          notes_str = [notes_str char(notes_lines(nc)) newline];
      end
+end
+
+if isempty(notes_str)
+    return
 end
 
 notes_str = erase(notes_str,["<BR>","<B>","</B>"," <a","</a>","href=",">"]);
