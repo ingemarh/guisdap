@@ -1,4 +1,4 @@
-% function [Vdate,Vpos,Vg,Vgv]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
+% function [Vdate,Vpos,Vg,Vgv]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir,dynavel)
 % function [result_file]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
 % To calculate 3D velocities from EISCAT data
 % Copyright EISCAT 2008-02-28
@@ -11,6 +11,7 @@
 %	uperr	[Inf 160] Constraint the vertical [from 160km parallel] comp
 %	mind	[3 10] Minimum no of directions and angle difference
 %	odir	[dirs|path_tmp] Output directory
+%       dynavel [0|1|2|3] Use Tromso dynasonde vectors, bitpattern for F,E values
 % Outputs:Vdate	(2,:) Datenum span for the estimate
 %	Vpos	(:,3) Mean lat,lon,alt
 %	Vg	(:,3) Geographic velocity (E,N,U)
@@ -27,6 +28,7 @@ if nargin<4, ld=[]; end
 if nargin<5, uperr=[]; end
 if nargin<6, mind=[]; end
 if nargin<7, odir=[]; end
+if nargin<8, dynavel=[]; end
 if isempty(dirs), dirs={result_path}; end
 if ~iscell(dirs), dirs={dirs}; end
 if isempty(alt), alt=[170 500]; end
@@ -48,6 +50,7 @@ if isempty(odir)
  end
  odir=fullfile(odir,filesep);
 end
+if isempty(dynavel), dynavel=0; end
 %dirs='/home/ingemar/tmp/2007-02-07_tau2pl_ant@uhf/';
 %%%%%%%%%%%%%%%%%
 global r_RECloc name_ant name_expr r_XMITloc
@@ -74,6 +77,12 @@ for d1=1:ndir
 end
 dirind=cumsum(dirind);
 r_time=datevec(mean(Data1D(:,1)));
+%%%%%%%%%%%%%%%%%
+if dynavel
+ t1=min(Data1D(:,1)); t2=max(Data1D(:,1));
+ if dynavel>1, [dydE,dyvE]=get_v(t1,t2,'tromso','E'); end
+ if rem(dynavel,2), [dydF,dyvF]=get_v(t1,t2,'tromso','F'); end
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if isfinite(ld(1))
  ILAT=0;
@@ -191,6 +200,26 @@ for tim=timint
         A=[A;[0 0 1]];
         Vll=[Vll;0];
         Vlle=[Vlle;uperr(1)];
+       end
+      end
+      if dynavel & (~isfinite(ld(il)) | ld(il)<69.6 & ld(il+1)>69.6)
+       d=[];
+       if alti>uperr(2) & rem(dynavel,2)
+	d=find(dydF>tim & dydF+225/86400<tim+td(1));
+        dyv=dyvF(d,:);
+       elseif dynavel>1
+	d=find(dydE>tim & dydE+225/86400<tim+td(1));
+        dyv=dyvE(d,:);
+       end
+       ldy=length(d);
+       if ldy
+        err=sqrt(sum(dyv(:,1:3).^2).*dyv(:,4))/100;
+        for comp=1:3
+	 oo=zeros(ldy,3); oo(:,comp)=1;
+         A=[A;oo];
+         Vll=[Vll;dyv(:,comp)];
+         Vlle=[Vlle;err];
+	end
        end
       end
       ang_area=angarea(A);
