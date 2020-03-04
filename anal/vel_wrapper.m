@@ -19,7 +19,7 @@ if nargin<1, scan=[]; end
 if nargin<2, dirs=[]; end
 if nargin<3, override=[]; end
 global result_path
-ld=[]; uperr=[]; plots={'Vm'}; ptype='t'; ylim=[2000 2000];
+ld=[]; uperr=[]; plots={'Vm'}; ptype='t'; ylim=[2000 2000]; dynavel=0;
 e=[90 100 107.5 112.5 117.5 122.5 130]; %from old cp1
 %e=90:10:130;
 f=[160 500];
@@ -64,7 +64,7 @@ end
 if ~isempty(override)
  eval(override)
 end
-r=vector_velocity(dirs,alt,td,ld,uperr,[],fullfile(result_path,'vectors'));
+r=vector_velocity(dirs,alt,td,ld,uperr,[],fullfile(result_path,'vectors'),dynavel);
 np=length(plots);
 ntp=[];
 for i=1:np, if ~isempty(plots{i}), ntp=[ntp i]; end, end

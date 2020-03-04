@@ -19,7 +19,7 @@
 %	: or result file name
 % See also EFIELD VEL_WRAPPER
 %
-function [varargout]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
+function [varargout]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir,dynavel)
 global result_path path_tmp path_GUP GUP_ver
 if nargin<1, dirs=[]; end
 if nargin<2, alt=[]; end
@@ -80,8 +80,15 @@ r_time=datevec(mean(Data1D(:,1)));
 %%%%%%%%%%%%%%%%%
 if dynavel
  t1=min(Data1D(:,1)); t2=max(Data1D(:,1));
- if dynavel>1, [dydE,dyvE]=get_v(t1,t2,'tromso','E'); end
- if rem(dynavel,2), [dydF,dyvF]=get_v(t1,t2,'tromso','F'); end
+ tsound=225/86400;
+ if dynavel>1
+  [dydE,dyvE]=get_v(t1,t2,'tromso','E');
+  if min(diff(dydE))<tsound, tsound=min(diff(dydE)), end
+ end
+ if rem(dynavel,2)
+  [dydF,dyvF]=get_v(t1,t2,'tromso','F');
+  if min(diff(dydF))<tsound, tsound=min(diff(dydF)), end
+ end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if isfinite(ld(1))
@@ -204,16 +211,16 @@ for tim=timint
       end
       if dynavel & (~isfinite(ld(il)) | ld(il)<69.6 & ld(il+1)>69.6)
        d=[];
-       if alti>uperr(2) & rem(dynavel,2)
-	d=find(dydF>tim & dydF+225/86400<tim+td(1));
+       if alti>=uperr(2) & rem(dynavel,2)
+	d=find(dydF+tsound/2>tim & dydF+tsound/2<tim+td(1));
         dyv=dyvF(d,:);
-       elseif dynavel>1
-	d=find(dydE>tim & dydE+225/86400<tim+td(1));
+       elseif alti<uperr(2) & dynavel>1
+	d=find(dydE+tsound/2>tim & dydE+tsound/2<tim+td(1));
         dyv=dyvE(d,:);
        end
        ldy=length(d);
        if ldy
-        err=sqrt(sum(dyv(:,1:3).^2).*dyv(:,4))/100;
+        err=sqrt(sum(dyv(:,1:3).^2,2).*dyv(:,4))/100;
         for comp=1:3
 	 oo=zeros(ldy,3); oo(:,comp)=1;
          A=[A;oo];
@@ -279,7 +286,7 @@ else
  else
   result_file
  end 
- Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind);
+ Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind,'DynasondeVelocity',dynavel);
  save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,GUP_ver,Vinputs)
  
  fprintf('Making NCAR file...\n')
