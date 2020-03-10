@@ -88,7 +88,6 @@ hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCATvelhdf5file = hdffilename;
 
-%keyboard
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 [~,text] = xlsread(GuisdapParFile);     
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
@@ -311,55 +310,55 @@ for ii = 1:npar
 end
 
 
-% special treatment for cp6 experiments (kindat = '66xx')
-kindatstr = num2str(kindats(1));
-if strcmp(kindatstr(1:2),'66')
-    cp6_faultpars   = {'te','dte','ti','dti','pm','dpm','po+','dpo+','ph+','dph+','co','dco'};
-    cp6_correctpars = {'Ne_lag0+','dNe_lag0+','Ne_tp','dNe_tp','hw_lor','dhw_lor','hw_expfit','dhw_expfit','ampl','dampl','blev','dblev'};
-    for ii = 1:length(cp6_faultpars)
-        vv = find(strcmp(matfile.metadata.par2d(5,:),cp6_faultpars(ii)));
-        if vv
-            ww = find(strcmp(gupparameters_list,cp6_correctpars(ii))==1);
-            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(ww) ':E' num2str(ww)]);
-            info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(ww)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(ww)]))};
-            matfile.metadata.par2d(:,vv) = info';
-            if strcmp(cp6_faultpars(ii),'te') || strcmp(cp6_faultpars(ii),'dte') || strcmp(cp6_faultpars(ii),'ti') || strcmp(cp6_faultpars(ii),'dti')
-                matfile.data.par2d(:,vv) = 10.^(matfile.data.par2d(:,vv)/1000);
-            elseif strcmp(cp6_faultpars(ii),'pm') || strcmp(cp6_faultpars(ii),'dpm') || strcmp(cp6_faultpars(ii),'po+') || strcmp(cp6_faultpars(ii),'dpo+')
-                matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)*1000/10;
-            elseif strcmp(cp6_faultpars(ii),'ph+') || strcmp(cp6_faultpars(ii),'dph+')
-                matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)*1000*1e6;
-            elseif strcmp(cp6_faultpars(ii),'co') || strcmp(cp6_faultpars(ii),'dco')
-                matfile.data.par2d(:,vv) = log10(matfile.data.par2d(:,vv))*1000*1e6;
-            end
-        end
-    end
-end
+% % special treatment for cp6 experiments (kindat = '66xx')
+% kindatstr = num2str(kindats(1));
+% if strcmp(kindatstr(1:2),'66')
+%     cp6_faultpars   = {'te','dte','ti','dti','pm','dpm','po+','dpo+','ph+','dph+','co','dco'};
+%     cp6_correctpars = {'Ne_lag0+','dNe_lag0+','Ne_tp','dNe_tp','hw_lor','dhw_lor','hw_expfit','dhw_expfit','ampl','dampl','blev','dblev'};
+%     for ii = 1:length(cp6_faultpars)
+%         vv = find(strcmp(matfile.metadata.par2d(5,:),cp6_faultpars(ii)));
+%         if vv
+%             ww = find(strcmp(gupparameters_list,cp6_correctpars(ii))==1);
+%             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(ww) ':E' num2str(ww)]);
+%             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(ww)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(ww)]))};
+%             matfile.metadata.par2d(:,vv) = info';
+%             if strcmp(cp6_faultpars(ii),'te') || strcmp(cp6_faultpars(ii),'dte') || strcmp(cp6_faultpars(ii),'ti') || strcmp(cp6_faultpars(ii),'dti')
+%                 matfile.data.par2d(:,vv) = 10.^(matfile.data.par2d(:,vv)/1000);
+%             elseif strcmp(cp6_faultpars(ii),'pm') || strcmp(cp6_faultpars(ii),'dpm') || strcmp(cp6_faultpars(ii),'po+') || strcmp(cp6_faultpars(ii),'dpo+')
+%                 matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)*1000/10;
+%             elseif strcmp(cp6_faultpars(ii),'ph+') || strcmp(cp6_faultpars(ii),'dph+')
+%                 matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)*1000*1e6;
+%             elseif strcmp(cp6_faultpars(ii),'co') || strcmp(cp6_faultpars(ii),'dco')
+%                 matfile.data.par2d(:,vv) = log10(matfile.data.par2d(:,vv))*1000*1e6;
+%             end
+%         end
+%     end
+% end
 
-% add the RECloc data
-cc1 = find(strcmp(exprparnames,'instrument latitude')==1);
-cc2 = find(strcmp(exprparnames,'instrument longitude')==1);
-cc3 = find(strcmp(exprparnames,'instrument altitude')==1);
-
-%gupparameters_list = text(:,1);
-if cc1, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc1})];
-    aa = find(strcmp('RECloc1',gupparameters_list)==1);
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
-    info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-    matfile.metadata.par0d = [matfile.metadata.par0d info'];
-end
-if cc2, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc2})];
-    aa = find(strcmp('RECloc2',gupparameters_list)==1);
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
-    info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-    matfile.metadata.par0d = [matfile.metadata.par0d info'];
-end
-if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})];
-    aa = find(strcmp('RECloc3',gupparameters_list)==1);
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
-    info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-    matfile.metadata.par0d = [matfile.metadata.par0d info'];
-end
+% % add the RECloc data
+% cc1 = find(strcmp(exprparnames,'instrument latitude')==1);
+% cc2 = find(strcmp(exprparnames,'instrument longitude')==1);
+% cc3 = find(strcmp(exprparnames,'instrument altitude')==1);
+% 
+% %gupparameters_list = text(:,1);
+% if cc1, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc1})];
+%     aa = find(strcmp('RECloc1',gupparameters_list)==1);
+%     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
+%     info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
+%     matfile.metadata.par0d = [matfile.metadata.par0d info'];
+% end
+% if cc2, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc2})];
+%     aa = find(strcmp('RECloc2',gupparameters_list)==1);
+%     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
+%     info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
+%     matfile.metadata.par0d = [matfile.metadata.par0d info'];
+% end
+% if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})];
+%     aa = find(strcmp('RECloc3',gupparameters_list)==1);
+%     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
+%     info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
+%     matfile.metadata.par0d = [matfile.metadata.par0d info'];
+% end
 
 nn = 0;
 if exist('name_expr','var'); nn = nn + 1; 
@@ -389,93 +388,25 @@ matfile.metadata.schemes.DataCite.Identifier = {PID};
 matfile.metadata.schemes.DataCite.Creator = {name_ant};
 matfile.metadata.schemes.DataCite.Title = {datafolder};
 matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
-matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3 Ionosphere'};
+matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3 Ionosphere velocity vectors'};
 matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 matfile.metadata.schemes.DataCite.PublicationYear = {year};
 
 % Find the smallest box (4 corners and mid-point) to enclose the data.
 % If area of convhull < 10-4 deg^2, define alla points as one (average)
 % imag = 1 to plot the data and the corresponding box
-% gg_sp_unique = unique([gg_sp(:,2),gg_sp(:,1)],'rows');
-% nunique = length(gg_sp_unique(:,1));
-% 
-% if nunique == 1
-%     convarea = 0;
-% elseif nunique == 2
-%     convarea = sqrt(diff(gg_sp_unique(:,2))^2 + diff(gg_sp_unique(:,1))^2);   % distance!!!
-% else
-%     conv = convhull([gg_sp(:,2),gg_sp(:,1)]);
-%     convarea = polyarea(gg_sp(conv,2),gg_sp(conv,1));
-% end
-% 
-% if convarea < 10e-4
-%     [point_lon, point_lat] = deal(mean(gg_sp(:,2)),mean(gg_sp(:,1)));
-%     plot(gg_sp(:,2),gg_sp(:,1),'ob',point_lon, point_lat,'or')
-%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = {num2str(point_lon)};
-%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = {num2str(point_lat)};
-% elseif nunique == 2
-%     for iii = 1:nunique
-%         ploncell(iii) = {num2str(gg_sp_unique(iii,2))};
-%         platcell(iii) = {num2str(gg_sp_unique(iii,1))};
-%     end
-%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = ploncell';
-%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = platcell';    
-% else
-%     image = 1;
-%     [tlon,tlat,c] = orientedPolygon([gg_sp(:,2) gg_sp(:,1)],image);
-%     for iii = 1:length(tlon)
-%         tloncell(iii) = {num2str(tlon(iii))};
-%         tlatcell(iii) = {num2str(tlat(iii))};
-%     end
-%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = tloncell';
-%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = tlatcell';
-%     if diff([max(tlon) min(tlon)])>180
-%         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = {num2str(c(1))};
-%         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = {num2str(c(2))};
-%     end
-% end
-% 
-% gg_sp_pp_unique = unique([gg_sp_pp(:,2),gg_sp_pp(:,1)],'rows');
-% nunique = length(gg_sp_pp_unique(:,1));
-% 
-% if nunique == 1
-%     convarea = 0;
-% elseif nunique == 2
-%     convarea = sqrt(diff(gg_sp_pp_unique(:,2))^2 + diff(gg_sp_pp_unique(:,1))^2);   % distance!!!
-% else
-%     conv = convhull([gg_sp_pp(:,2),gg_sp_pp(:,1)]);
-%     convarea = polyarea(gg_sp_pp(conv,2),gg_sp_pp(conv,1));
-% end
-% 
-% if convarea < 10e-4
-%     [point_lon, point_lat] = deal(mean(gg_sp_pp(:,2)),mean(gg_sp_pp(:,1)));
-%     plot(gg_sp_pp(:,2),gg_sp_pp(:,1),'ob',point_lon, point_lat,'or')
-%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = {num2str(point_lon)};
-%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = {num2str(point_lat)};
-% elseif nunique == 2
-%     for iii = 1:nunique
-%         ploncell(iii) = {num2str(gg_sp_pp_unique(iii,2))};
-%         platcell(iii) = {num2str(gg_sp_pp_unique(iii,1))};
-%     end
-%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = ploncell';
-%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = platcell';
-% else
-%     image = 1;
-%     [tlon,tlat,c] = orientedPolygon([gg_sp_pp(:,2) gg_sp_pp(:,1)],image);
-%     for iii = 1:length(tlon)
-%         tloncell(iii) = {num2str(tlon(iii))};
-%         tlatcell(iii) = {num2str(tlat(iii))};
-%     end
-%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = tloncell';
-%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = tlatcell';
-%     if diff([max(tlon) min(tlon)])>180
-%         matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = {num2str(c(1))};
-%         matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = {num2str(c(2))};
-%     end
-% end
+gg_sp = [data.glon data.gdlat];
+imag = 1;
+[plonlat,PointInPol] = polygonpoints([data.glon data.gdlat],imag);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);
+matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = plonlat(:,2);
+
+if ~isempty(PointInPol)
+    matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = PointInPol(1);
+    matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
+end
+
 
 
 software = 'https://git.eiscat.se/eiscat/guisdap';

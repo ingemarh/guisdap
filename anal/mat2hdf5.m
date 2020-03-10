@@ -587,86 +587,25 @@ matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 % Find the smallest box (4 corners and mid-point) to enclose the data, 
 % or 1 or unique 2 points that describes the data.
 % If area of convhull (or distance between 2 points) < 10-4 deg^2, 
-% define alla points as one (average)
-% imag = 1 to plot the data and the corresponding box
-
-gg_sp_unique = unique([gg_sp(:,2),gg_sp(:,1)],'rows');
-nunique = length(gg_sp_unique(:,1));
-
-if nunique == 1
-    convarea = 0;
-elseif nunique == 2
-    convarea = sqrt(diff(gg_sp_unique(:,2))^2 + diff(gg_sp_unique(:,1))^2);   % distance!!!
-else
-    conv = convhull([gg_sp(:,2),gg_sp(:,1)]);
-    convarea = polyarea(gg_sp(conv,2),gg_sp(conv,1));
+% define all points as one (average)
+% imag = 1 to plot the data and the corresponding box if there is a box
+imag = 1;
+[plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],imag);
+matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);
+matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = plonlat(:,2);
+if ~isempty(PointInPol)
+    matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = PointInPol(1);
+    matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
 end
 
-if convarea < 10e-4
-    [point_lon, point_lat] = deal(mean(gg_sp(:,2)),mean(gg_sp(:,1)));
-    plot(gg_sp(:,2),gg_sp(:,1),'ob',point_lon, point_lat,'or')
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = {num2str(point_lon)};
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = {num2str(point_lat)};
-elseif nunique == 2
-    for iii = 1:nunique
-        ploncell(iii) = {num2str(gg_sp_unique(iii,2))};
-        platcell(iii) = {num2str(gg_sp_unique(iii,1))};
-    end
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = ploncell';
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = platcell';
-else
-    image = 1;
-    [tlon,tlat,c] = orientedPolygon([gg_sp(:,2) gg_sp(:,1)],image);
-    for iii = 1:length(tlon)
-        tloncell(iii) = {num2str(tlon(iii))};
-        tlatcell(iii) = {num2str(tlat(iii))};
-    end
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = tloncell';
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = tlatcell';
-    if diff([max(tlon) min(tlon)])>180
-        matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = {num2str(c(1))};
-        matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = {num2str(c(2))};
-    end
+[plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],imag);
+matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1);
+matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
+if ~isempty(PointInPol)
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = PointInPol(1);
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = PointInPol(2);
 end
 
-gg_sp_pp_unique = unique([gg_sp_pp(:,2),gg_sp_pp(:,1)],'rows');
-nunique = length(gg_sp_pp_unique(:,1));
-
-if nunique == 1
-    convarea = 0;
-elseif nunique == 2
-    convarea = sqrt(diff(gg_sp_pp_unique(:,2))^2 + diff(gg_sp_pp_unique(:,1))^2);   % distance!!!
-else
-    conv = convhull([gg_sp_pp(:,2),gg_sp_pp(:,1)]);
-    convarea = polyarea(gg_sp_pp(conv,2),gg_sp_pp(conv,1));
-end
-
-if convarea < 10e-4
-    [point_lon, point_lat] = deal(mean(gg_sp_pp(:,2)),mean(gg_sp_pp(:,1)));
-    plot(gg_sp_pp(:,2),gg_sp_pp(:,1),'ob',point_lon, point_lat,'or')
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = {num2str(point_lon)};
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = {num2str(point_lat)};
-elseif nunique == 2
-    for iii = 1:nunique
-        ploncell(iii) = {num2str(gg_sp_pp_unique(iii,2))};
-        platcell(iii) = {num2str(gg_sp_pp_unique(iii,1))};
-    end
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = ploncell';
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = platcell';
-else
-    image = 1;
-    [tlon,tlat,c] = orientedPolygon([gg_sp_pp(:,2) gg_sp_pp(:,1)],image);
-    for iii = 1:length(tlon)
-        tloncell(iii) = {num2str(tlon(iii))};
-        tlatcell(iii) = {num2str(tlat(iii))};
-    end
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = tloncell';
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = tlatcell';
-    if diff([max(tlon) min(tlon)])>180
-        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = {num2str(c(1))};
-        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = {num2str(c(2))};
-    end
-end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

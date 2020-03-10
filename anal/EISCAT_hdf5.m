@@ -90,8 +90,9 @@ end
 
 if ~isempty(hdf5vel_files)
     for ii = 1:length(hdf5vel_files)
-        display(EISCAT_vel_hdf5file)
+       
         [storepath,EISCAT_vel_hdf5file] = cedarvel2hdf5(hdf5vel_files{ii},datapath);
+        display(EISCAT_vel_hdf5file)
     end
 end
 
