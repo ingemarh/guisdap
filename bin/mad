@@ -29,9 +29,9 @@ pushd ${MDIR} >& /dev/null
 [ ! -f ${GDIR}/*.eps ] || mv -f ${GDIR}/*.eps .
 [ ! -f ${GDIR}/*.png ] || mv -f ${GDIR}/*.png .
 [ ! -f ${GDIR}/*.pdf ] || mv -f ${GDIR}/*.pdf .
-[ ! -f ${GDIR}/NCAR_*.asc ] || mv -f ${GDIR}/NCAR_*.asc .
-[ ! -f ${GDIR}/NCAR_*.bin ] || mv -f ${GDIR}/NCAR_*.bin .
-[ ! -f ${GDIR}/NCAR_*.hdf5 ] || mv -f ${GDIR}/NCAR_*.hdf5 .
+[ ! -f ${GDIR}/NCAR*.asc ] || mv -f ${GDIR}/NCAR*.asc .
+[ ! -f ${GDIR}/NCAR*.bin ] || mv -f ${GDIR}/NCAR*.bin .
+[ ! -f ${GDIR}/NCAR*.hdf5 ] || mv -f ${GDIR}/NCAR*.hdf5 .
 [ ! -f ${GDIR}/*.txt ] || mv -f ${GDIR}/*.txt .
 
 # create tarball of $MDIR/$GDIR: now contains only .mat and gfd_setup.m files
