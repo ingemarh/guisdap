@@ -1,6 +1,6 @@
 % Generate a new EISCAT HDF5 file from an old HDF5-file fromated in Madrigal, called by EISCAT_hdf5.m
 
-function [storepath,EISCAThdf5file] = cedar2hdf5(hdf5file,datapath)
+function [storepath,EISCATvelhdf5file] = cedarvel2hdf5(hdf5file,datapath)
 
 global path_GUP 
 
@@ -75,7 +75,7 @@ end
 matfile.metadata.experiment.name_expr = {name_expr}; 
 matfile.metadata.experiment.intper_median = {num2str(intper_med)};
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' num2str(intper_med) '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_velvec_' num2str(intper_med) '@' name_ant];
 storepath = fullfile(datapath,datafolder);
 if exist(storepath)
    rmdir(storepath,'s');
@@ -86,7 +86,7 @@ Hdf5File = [datafolder '.hdf5'];
 MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '@' name_ant '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
-EISCAThdf5file = hdffilename;
+EISCATvelhdf5file = hdffilename;
 
 %keyboard
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
@@ -103,20 +103,6 @@ for ii = 1:npar
     Parsinfile_list{ii} = deblank(parnames(ii,:));
 end
 
-if ~isempty(find(strcmp(Parsinfile_list,'sracf0')==1)) && ~isempty(find(strcmp(Parsinfile_list,'sfacf0')==1))
-    nracf = length(find(cell2mat(strfind(Parsinfile_list,'racf'))==1));    % # of racf (racf1, racf2, ... , racfnracf)
-    data.acf0 = data.sracf0.*data.sfacf0;
-    aa = find(strcmp(Parsinfile_list,'sracf0')==1);
-    bb = find(strcmp(Parsinfile_list,'sfacf0')==1);
-    Parsinfile_list{aa}= 'acf';  
-    data = rmfield(data,'sfacf0');
-    for mm = 1:nracf
-        evalc(['data.acf' num2str(mm) '= data.acf0.*complex(data.racf' num2str(mm) ',data.iacf' num2str(mm) ')']);
-    end
-    real_acf = [];
-    imag_acf = [];
-end
-
 newrec = (data.recno(end)+1)/nkindats;
 
 nrec = [];
@@ -128,25 +114,25 @@ for ii= 1:newrec
     nrec = [nrec; nrec_tmp];
 end
 
-% Spatial description of datapoints for DataCite
-loc = [data.elm data.azm data.range];
-rr_lon = find(strcmp(exprparnames,'instrument longitude')==1);
-rr_lat = find(strcmp(exprparnames,'instrument latitude')==1);
-rr_alt = find(strcmp(exprparnames,'instrument altitude')==1);
-RECloc = [str2num(exprparvalues{rr_lon}) str2num(exprparvalues{rr_lat}) str2num(exprparvalues{rr_alt})];
-gg = zeros(length(data.elm),3);
-for ss = 1:length(data.elm)
-    gg(ss,:) = loc2gg(RECloc,loc(ss,:));
-end
-  
-if nkindats>1
-    cc       = find(data.kindat == str2num(evenkindat));
-    cc_pp    = find(data.kindat == str2num(evenkindat)-1);
-    gg_sp    = gg(cc,:);
-    gg_sp_pp = gg(cc_pp,:);
-else
-    gg_sp = gg;
-end
+% % Spatial description of datapoints for DataCite
+% loc = [data.elm data.azm data.range];
+% rr_lon = find(strcmp(exprparnames,'instrument longitude')==1);
+% rr_lat = find(strcmp(exprparnames,'instrument latitude')==1);
+% rr_alt = find(strcmp(exprparnames,'instrument altitude')==1);
+% RECloc = [str2num(exprparvalues{rr_lon}) str2num(exprparvalues{rr_lat}) str2num(exprparvalues{rr_alt})];
+% gg = zeros(length(data.elm),3);
+% for ss = 1:length(data.elm)
+%     gg(ss,:) = loc2gg(RECloc,loc(ss,:));
+% end
+%  
+% if nkindats>1
+%     cc       = find(data.kindat == str2num(evenkindat));
+%     cc_pp    = find(data.kindat == str2num(evenkindat)-1);
+%     gg_sp    = gg(cc,:);
+%     gg_sp_pp = gg(cc_pp,:);
+% else
+%     gg_sp = gg;
+% end
 
 matfile.data.par0d     = [];
 matfile.metadata.par0d = [];
@@ -410,89 +396,89 @@ matfile.metadata.schemes.DataCite.PublicationYear = {year};
 % Find the smallest box (4 corners and mid-point) to enclose the data.
 % If area of convhull < 10-4 deg^2, define alla points as one (average)
 % imag = 1 to plot the data and the corresponding box
-gg_sp_unique = unique([gg_sp(:,2),gg_sp(:,1)],'rows');
-nunique = length(gg_sp_unique(:,1));
-
-if nunique == 1
-    convarea = 0;
-elseif nunique == 2
-    convarea = sqrt(diff(gg_sp_unique(:,2))^2 + diff(gg_sp_unique(:,1))^2);   % distance!!!
-else
-    conv = convhull([gg_sp(:,2),gg_sp(:,1)]);
-    convarea = polyarea(gg_sp(conv,2),gg_sp(conv,1));
-end
-
-if convarea < 10e-4
-    [point_lon, point_lat] = deal(mean(gg_sp(:,2)),mean(gg_sp(:,1)));
-    plot(gg_sp(:,2),gg_sp(:,1),'ob',point_lon, point_lat,'or')
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = {num2str(point_lon)};
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = {num2str(point_lat)};
-elseif nunique == 2
-    for iii = 1:nunique
-        ploncell(iii) = {num2str(gg_sp_unique(iii,2))};
-        platcell(iii) = {num2str(gg_sp_unique(iii,1))};
-    end
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = ploncell';
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = platcell';    
-else
-    image = 1;
-    [tlon,tlat,c] = orientedPolygon([gg_sp(:,2) gg_sp(:,1)],image);
-    for iii = 1:length(tlon)
-        tloncell(iii) = {num2str(tlon(iii))};
-        tlatcell(iii) = {num2str(tlat(iii))};
-    end
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = tloncell';
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = tlatcell';
-    if diff([max(tlon) min(tlon)])>180
-        matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = {num2str(c(1))};
-        matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = {num2str(c(2))};
-    end
-end
-
-gg_sp_pp_unique = unique([gg_sp_pp(:,2),gg_sp_pp(:,1)],'rows');
-nunique = length(gg_sp_pp_unique(:,1));
-
-if nunique == 1
-    convarea = 0;
-elseif nunique == 2
-    convarea = sqrt(diff(gg_sp_pp_unique(:,2))^2 + diff(gg_sp_pp_unique(:,1))^2);   % distance!!!
-else
-    conv = convhull([gg_sp_pp(:,2),gg_sp_pp(:,1)]);
-    convarea = polyarea(gg_sp_pp(conv,2),gg_sp_pp(conv,1));
-end
-
-if convarea < 10e-4
-    [point_lon, point_lat] = deal(mean(gg_sp_pp(:,2)),mean(gg_sp_pp(:,1)));
-    plot(gg_sp_pp(:,2),gg_sp_pp(:,1),'ob',point_lon, point_lat,'or')
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = {num2str(point_lon)};
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = {num2str(point_lat)};
-elseif nunique == 2
-    for iii = 1:nunique
-        ploncell(iii) = {num2str(gg_sp_pp_unique(iii,2))};
-        platcell(iii) = {num2str(gg_sp_pp_unique(iii,1))};
-    end
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = ploncell';
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = platcell';
-else
-    image = 1;
-    [tlon,tlat,c] = orientedPolygon([gg_sp_pp(:,2) gg_sp_pp(:,1)],image);
-    for iii = 1:length(tlon)
-        tloncell(iii) = {num2str(tlon(iii))};
-        tlatcell(iii) = {num2str(tlat(iii))};
-    end
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = tloncell';
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = tlatcell';
-    if diff([max(tlon) min(tlon)])>180
-        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = {num2str(c(1))};
-        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = {num2str(c(2))};
-    end
-end
+% gg_sp_unique = unique([gg_sp(:,2),gg_sp(:,1)],'rows');
+% nunique = length(gg_sp_unique(:,1));
+% 
+% if nunique == 1
+%     convarea = 0;
+% elseif nunique == 2
+%     convarea = sqrt(diff(gg_sp_unique(:,2))^2 + diff(gg_sp_unique(:,1))^2);   % distance!!!
+% else
+%     conv = convhull([gg_sp(:,2),gg_sp(:,1)]);
+%     convarea = polyarea(gg_sp(conv,2),gg_sp(conv,1));
+% end
+% 
+% if convarea < 10e-4
+%     [point_lon, point_lat] = deal(mean(gg_sp(:,2)),mean(gg_sp(:,1)));
+%     plot(gg_sp(:,2),gg_sp(:,1),'ob',point_lon, point_lat,'or')
+%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = {num2str(point_lon)};
+%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = {num2str(point_lat)};
+% elseif nunique == 2
+%     for iii = 1:nunique
+%         ploncell(iii) = {num2str(gg_sp_unique(iii,2))};
+%         platcell(iii) = {num2str(gg_sp_unique(iii,1))};
+%     end
+%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = ploncell';
+%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = platcell';    
+% else
+%     image = 1;
+%     [tlon,tlat,c] = orientedPolygon([gg_sp(:,2) gg_sp(:,1)],image);
+%     for iii = 1:length(tlon)
+%         tloncell(iii) = {num2str(tlon(iii))};
+%         tlatcell(iii) = {num2str(tlat(iii))};
+%     end
+%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = tloncell';
+%     matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = tlatcell';
+%     if diff([max(tlon) min(tlon)])>180
+%         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = {num2str(c(1))};
+%         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = {num2str(c(2))};
+%     end
+% end
+% 
+% gg_sp_pp_unique = unique([gg_sp_pp(:,2),gg_sp_pp(:,1)],'rows');
+% nunique = length(gg_sp_pp_unique(:,1));
+% 
+% if nunique == 1
+%     convarea = 0;
+% elseif nunique == 2
+%     convarea = sqrt(diff(gg_sp_pp_unique(:,2))^2 + diff(gg_sp_pp_unique(:,1))^2);   % distance!!!
+% else
+%     conv = convhull([gg_sp_pp(:,2),gg_sp_pp(:,1)]);
+%     convarea = polyarea(gg_sp_pp(conv,2),gg_sp_pp(conv,1));
+% end
+% 
+% if convarea < 10e-4
+%     [point_lon, point_lat] = deal(mean(gg_sp_pp(:,2)),mean(gg_sp_pp(:,1)));
+%     plot(gg_sp_pp(:,2),gg_sp_pp(:,1),'ob',point_lon, point_lat,'or')
+%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = {num2str(point_lon)};
+%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = {num2str(point_lat)};
+% elseif nunique == 2
+%     for iii = 1:nunique
+%         ploncell(iii) = {num2str(gg_sp_pp_unique(iii,2))};
+%         platcell(iii) = {num2str(gg_sp_pp_unique(iii,1))};
+%     end
+%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = ploncell';
+%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = platcell';
+% else
+%     image = 1;
+%     [tlon,tlat,c] = orientedPolygon([gg_sp_pp(:,2) gg_sp_pp(:,1)],image);
+%     for iii = 1:length(tlon)
+%         tloncell(iii) = {num2str(tlon(iii))};
+%         tlatcell(iii) = {num2str(tlat(iii))};
+%     end
+%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = tloncell';
+%     matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = tlatcell';
+%     if diff([max(tlon) min(tlon)])>180
+%         matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = {num2str(c(1))};
+%         matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = {num2str(c(2))};
+%     end
+% end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-software = 'https://git.eiscat.se/eiscat/on-an';
+software = 'https://git.eiscat.se/eiscat/guisdap';
 level2_link = [];
 matfile.metadata.software_link = {software};
 matfile.metadata.level2_links = level2_link;
@@ -536,21 +522,21 @@ if isfield(matfile.metadata,'par2d_pp')
 end
 
 % Remove alt, lon and lat from par2d_pp
-a = find(strcmp('h',matfile.metadata.par2d_pp(1,:)));
-if a
-    matfile.data.par2d_pp(:,a)     = [];
-    matfile.metadata.par2d_pp(:,a) = [];
-end
-a = find(strcmp('lon',matfile.metadata.par2d_pp(1,:)));
-if a
-    matfile.data.par2d_pp(:,a)     = [];
-    matfile.metadata.par2d_pp(:,a) = [];
-end   
-a = find(strcmp('lat',matfile.metadata.par2d_pp(1,:)));
-if a
-    matfile.data.par2d_pp(:,a)     = [];
-    matfile.metadata.par2d_pp(:,a) = [];
-end 
+% a = find(strcmp('h',matfile.metadata.par2d_pp(1,:)));
+% if a
+%     matfile.data.par2d_pp(:,a)     = [];
+%     matfile.metadata.par2d_pp(:,a) = [];
+% end
+% a = find(strcmp('lon',matfile.metadata.par2d_pp(1,:)));
+% if a
+%     matfile.data.par2d_pp(:,a)     = [];
+%     matfile.metadata.par2d_pp(:,a) = [];
+% end   
+% a = find(strcmp('lat',matfile.metadata.par2d_pp(1,:)));
+% if a
+%     matfile.data.par2d_pp(:,a)     = [];
+%     matfile.metadata.par2d_pp(:,a) = [];
+% end 
 
 
 save(matfilename,'matfile')

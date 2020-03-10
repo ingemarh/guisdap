@@ -65,27 +65,37 @@ end
 hdf5oldfiles     = dir(fullfile(dirpath,'overview','*hdf5')); 
 hdf5_allfiles  = [];
 hdf5_files     = [];
+hdf5vel_files  = [];
 hdf5ncar_files = [];
 hdf5rest_files = [];
 
 if ~isempty(hdf5oldfiles)
-    l = 1; n = 1; m = 1;
+    k = 1; l = 1; n = 1; m = 1; o = 1;
     for ii = 1:length(hdf5oldfiles)
         hdf5_filename = hdf5oldfiles(ii).name;
-        hdf5_allfiles{ii} = fullfile(dirpath,'overview',hdf5_filename);
-        if contains(hdf5_filename,'.vr') || contains(hdf5_filename,'.tr') || contains(hdf5_filename,'.kr') || contains(hdf5_filename,'.sr') 
-            hdf5_files{l} = fullfile(dirpath,'overview',hdf5_filename);
-            l = l+1;
-        elseif contains(hdf5_filename,'NCAR')
-            hdf5ncar_files{m} = fullfile(dirpath,'overview',hdf5_filename);
-            m = m+1;
+        if contains(hdf5_filename,'vecvel')
+            hdf5vel_files{k} = fullfile(dirpath,'overview',hdf5_filename); k = k+1;    
+        elseif contains(hdf5_filename,'.vr') || contains(hdf5_filename,'.tr') || contains(hdf5_filename,'.kr') || contains(hdf5_filename,'.sr') 
+            hdf5_files{l} = fullfile(dirpath,'overview',hdf5_filename); l = l+1;
+            hdf5_allfiles{o} = fullfile(dirpath,'overview',hdf5_filename); o = o + 1;
+        elseif contains(hdf5_filename,'NCAR_')
+            hdf5ncar_files{m} = fullfile(dirpath,'overview',hdf5_filename); m = m+1;
+            hdf5_allfiles{o} = fullfile(dirpath,'overview',hdf5_filename); o = o + 1;
         else
-            hdf5rest_files{n} = fullfile(dirpath,'overview',hdf5_filename);
-            n = n+1;
+            hdf5rest_files{n} = fullfile(dirpath,'overview',hdf5_filename); n = n+1;
+            hdf5_allfiles{o} = fullfile(dirpath,'overview',hdf5_filename); o = o + 1;
         end
     end
 end
 
+if ~isempty(hdf5vel_files)
+    for ii = 1:length(hdf5vel_files)
+        display(EISCAT_vel_hdf5file)
+        [storepath,EISCAT_vel_hdf5file] = cedarvel2hdf5(hdf5vel_files{ii},datapath);
+    end
+end
+
+keyboard
 oldhdf5_files = [];
 if isempty(targz_files) && isempty(hdf5oldfiles) 
     error('No "old" hdf5-files nor any tar.gz-files with mat-files exist.')
