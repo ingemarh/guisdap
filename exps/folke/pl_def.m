@@ -23,11 +23,11 @@ else
  if strcmp(ant,'42m')
   nlag=nlag42; ele=81.6;
   ran=ones(ngates,1)*[41 222]+61*(0:ngates-1)'*ones(1,2);
-  startad=(0:nfreq-1)*addjump+20+nlag32*ngates+20;
+  startad=(0:nfreq-1)*addjump+20+nlag32*ngates+20+1;
  else
   nlag=nlag32; ele=30;
   ran=ones(ngates,1)*[41 404]+123*(0:ngates-1)'*ones(1,2);
-  startad=(0:nfreq-1)*addjump+20;
+  startad=(0:nfreq-1)*addjump+20+1;
  end
  if vs>=3.0
    uparfreq=NaN;
