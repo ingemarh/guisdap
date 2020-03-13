@@ -2,17 +2,25 @@ function r=minput(Q,D,s)
 persistent in
 if nargin>2
  a=input([Q '? [' row(D') '] '],'s');
+ anan=[];
 else
  if isempty(in) && length(D)>1
   disp('Enter NaN to shortern the vector')
   in=1;
  end 
- a=str2num(input([Q '? [ ' sprintf('%g ',D) ']'],'s'));
+ if iscell(D)
+  a=strsplit(input([Q '? [ ' sprintf('%s ',strjoin(D)) ']'],'s'));
+  anan=contains(a,{'NaN'});
+ else
+  a=str2num(input([Q '? [ ' sprintf('%g ',D) ']'],'s'));
+  anan=find(isnan(a));
+ end
 end
-if isempty(a)
+if isempty(a) | iscell(D) & isempty(a{1})
  r=D;
-elseif nargin>2 || any(isnan(a))
- r=a(~isnan(a));
+elseif nargin>2 || ~isempty(anan)
+ r=a;
+ r(anan)=[];
 else
  r=D;
  r(1:length(a))=a;

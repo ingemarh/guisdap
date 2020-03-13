@@ -59,7 +59,14 @@ switch scan
  case 'cluster'
   alt=f; td=120; uperr=1; ld=50:.5:90; ptype='p';
  otherwise
-  error('GUISDAP:default','No such scan defined: %s',scan)
+  alt=minput('Altitude ranges',[e f]);
+  td=minput('Time interval',180);
+  ld=minput('Latitude intervals',ld);
+  uperr=minput('Uperr',uperr);
+  dynavel=minput('Dynasonde velocities',dynavel);
+  plots(1:length(alt)-3)={'Vg'}; plots([end+[1 2]])={'' 'Vm'};
+  plots=minput('Plots',plots);
+  ptype=minput('Plot type',ptype,1);
 end
 if ~isempty(override)
  eval(override)
