@@ -13,7 +13,7 @@
 
 function [apriori,apriorierror]=ionomodel(heights,ne_from_pp)
 
-global ionomodel_control iono_model p_m0 fit_altitude name_site
+global ionomodel_control iono_model p_m0 fit_altitude ch_fradar
 persistent modinfo ff
 
 len=length(heights);
@@ -40,10 +40,10 @@ if isempty(ff)
 repmat([0 0 0   1 0 0 -.01 1.01],nion-1,1)
      0    0 0 1e5 0 2 -100 1e4
      0    0 0 9e9 0 2 -1e20 1e20];
- if name_site=='L' | name_site=='Q'
-  ff(2:4,1:2)=[90 Inf;113 1500;0 0];
- elseif name_site=='V'
+ if ch_fradar(1)<400e6
   ff(2:4,1:2)=[100 Inf;120 1500;0 0];
+ elseif ch_fradar(1)<600e6
+  ff(2:4,1:2)=[90 Inf;113 1500;0 0];
  end
  i=size(ff); j=size(fit_altitude);
  if i(1)>j(1), fit_altitude(j(1)+1:i(1),:)=NaN;
