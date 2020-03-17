@@ -23,7 +23,6 @@ if name_site=='L'
   glp=glp+5333; grps(:,1:2)=grps(:,1:2)+5333;
  end
 elseif name_site=='V'
- [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
  if expver==1
   ch_gain=ch_gain*sqrt(2); % Receiving on full face
  end
