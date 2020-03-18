@@ -410,8 +410,8 @@ matfile.metadata.schemes.DataCite.PublicationYear = {year};
 % Find the smallest box (4 corners and mid-point) to enclose the data.
 % If area of convhull < 10-4 deg^2, define alla points as one (average)
 % imag = 1 to plot the data and the corresponding box
-imag = 1;
-[plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],imag);
+im = 1;
+[plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],im);
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = plonlat(:,2);
 if ~isempty(PointInPol)
@@ -419,7 +419,7 @@ if ~isempty(PointInPol)
     matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
 end
 
-[plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],imag);
+[plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
 matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1);
 matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
 if ~isempty(PointInPol)

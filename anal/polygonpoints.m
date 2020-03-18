@@ -18,11 +18,13 @@ end
 
 if convarea < 10e-4
     [plon, plat] = deal(mean(lonlat(:,1)),mean(lonlat(:,2)));
-    plonlat = [plon plat];
+    plonlat = [{num2str(plon)} {num2str(plat)}];
+    PointInPol = [];
 else
     if nunique == 2
         plon = lonlat_unique(:,1);
         plat = lonlat_unique(:,2);
+        PointInPol = [];
     else
         [plon,plat,c] = orientedPolygon([lonlat(:,1) lonlat(:,2)],image);
         if diff([max(plon) min(plon)])>180

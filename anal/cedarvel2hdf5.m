@@ -396,8 +396,8 @@ matfile.metadata.schemes.DataCite.PublicationYear = {year};
 % If area of convhull < 10-4 deg^2, define alla points as one (average)
 % imag = 1 to plot the data and the corresponding box
 gg_sp = [data.glon data.gdlat];
-imag = 1;
-[plonlat,PointInPol] = polygonpoints([data.glon data.gdlat],imag);
+im = 1;
+[plonlat,PointInPol] = polygonpoints([data.glon data.gdlat],im);
 
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = plonlat(:,2);

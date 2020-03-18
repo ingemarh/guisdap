@@ -589,8 +589,9 @@ matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 % If area of convhull (or distance between 2 points) < 10-4 deg^2, 
 % define all points as one (average)
 % imag = 1 to plot the data and the corresponding box if there is a box
-imag = 1;
-[plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],imag);
+im = 1;
+
+[plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],im);
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = plonlat(:,2);
 if ~isempty(PointInPol)
@@ -598,7 +599,7 @@ if ~isempty(PointInPol)
     matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
 end
 
-[plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],imag);
+[plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
 matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1);
 matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
 if ~isempty(PointInPol)
@@ -679,8 +680,8 @@ for sf = sFields.'
                                 group4 = [group3 '/' char(vf)];
                                 wFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)));
                                 for wf = wFields.'
-                                    strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)).(char(wf));
-                                    dsname = char(wf);
+                                    strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)).(char(wf))
+                                    dsname = char(wf)
                                     strds2hdf5(hdffilename,group4,dsname,strdata)
                                 end
                             else
