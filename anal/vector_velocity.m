@@ -91,12 +91,12 @@ if isfinite(ld(1))
  ILAT=0;
  if ~isreal(ld) || max(ld)>90
   ld=abs(ld);
-  try
-   onera_desp_lib_load
-   ILAT=1;
-  end
+  ILAT=1;
  end
- if ~ILAT, %should really check for mex first...
+ try
+  onera_desp_lib_load
+  ILAT=1;
+ catch
   [secs,YEAR]=tosecs(r_time);
   magF=IGRF(); DIMO=magF.FELDCOF(YEAR+secs/86400/365);
  end
