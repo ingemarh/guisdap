@@ -6,7 +6,7 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,fileno,do
 % par1D [Az,El,Pt,Tsys]
 % rpar2D [Ran,Alt,Ne]
 
-global name_expr r_RECloc name_ant r_XMITloc
+global name_expr r_RECloc name_ant r_XMITloc allnames
 ask=0;
 Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];
 if nargin<2, fileno=[]; end
@@ -200,4 +200,10 @@ if naalt<n_alt
 end
 if nralt<n_ralt
   rpar2D=rpar2D(1:nralt,:,:);
+end
+if isempty(allnames)
+  allnames.ant=name_ant(1:3); allnames.expr=name_expr;
+else
+  if ~contains(allnames.ant,name_ant(1:3)), allnames.ant=char(allnames.ant,name_ant(1:3)); end
+  if ~contains(allnames.expr,name_expr), allnames.expr=char(allnames.expr,x name_expr); end
 end

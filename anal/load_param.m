@@ -8,6 +8,7 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,status,update)
 %  or err2D[Ne,Te,Ti,Vi,Coll]
 %
 global name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres ppres max_ppw r_XMITloc
+global allnames
 persistent lastfile
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
@@ -81,6 +82,14 @@ for i=1:n_tot
     if exist('r_w','var')
       rres=ones(n_tot,1)*Inf;
     end
+  end
+  nsig=split(name_sig); nsig=char(join(nsig(1:end-1)));
+  if isempty(allnames)
+    allnames.ant=name_ant(1:3); allnames.expr=name_expr; allnames.sig=nsig;
+  else
+    if ~contains(row(allnames.ant'),name_ant(1:3)), allnames.ant=char(allnames.ant,name_ant(1:3)); end
+    if ~contains(row(allnames.expr'),name_expr), allnames.expr=char(allnames.expr,name_expr); end
+    if ~contains(row(allnames.sig'),nsig), allnames.sig=char(allnames.sig,nsig); end
   end
   nalt=size(r_param,1);
   if nalt>n_alt

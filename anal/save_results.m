@@ -104,7 +104,8 @@ end
 
 file=[result_path filename];
 disp(file)
-name_sig=[local.site local.host ' ' datestr(now)];
+name_sig=[local.host ' ' local.user ' ' datestr(now)];
+if ~isempty(local.site), name_sig=[local.site ' ' name_sig)]; end
 save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,r_Pt,...
      r_m0,r_range,r_h,r_param,r_error,r_res,r_status,r_dp,r_w,r_apriori,...
      r_apriorierror,r_pp,r_pprange,r_pperr,r_ppw,r_XMITloc,r_RECloc,...

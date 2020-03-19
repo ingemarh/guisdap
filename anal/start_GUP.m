@@ -51,7 +51,8 @@ warning off backtrace
 %localities
 local.printer='color';
 local.site=getenv('EISCATSITE');
-local.host=getenv('HOSTNAME');
+local.host=getenv('HOSTNAME'); if isempty(local.host), local.host=getenv('COMPUTERNAME'); end
+local.user=getenv('USER'); if isempty(local.user), local.user=getenv('USERNAME'); end
 local.browser='firefox';
 local.x=prod(get(0,'ScreenSize'))-1;
 local.x=~usejava('jvm') || feature('ShowFigureWindows');

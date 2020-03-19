@@ -20,7 +20,7 @@
 % See also EFIELD VEL_WRAPPER
 %
 function [varargout]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir,dynavel)
-global result_path path_tmp path_GUP GUP_ver
+global result_path path_tmp path_GUP GUP_ver local
 if nargin<1, dirs=[]; end
 if nargin<2, alt=[]; end
 if nargin<3, td=[]; end
@@ -53,9 +53,10 @@ end
 if isempty(dynavel), dynavel=0; end
 %dirs='/home/ingemar/tmp/2007-02-07_tau2pl_ant@uhf/';
 %%%%%%%%%%%%%%%%%
-global r_RECloc name_ant name_expr r_XMITloc
-Data1D=[]; Data2D=[]; dirind=0; loc=[]; name_ants=[]; name_exps=[];
+global r_RECloc allnames r_XMITloc
+Data1D=[]; Data2D=[]; dirind=0; loc=[]; allnames=[];
 for d1=1:ndir
+ if dirs{d1}=='.'; dirs{d1}=pwd; end
  fprintf('Reading %s...\n',dirs{d1})
  [Time,par2D,par1D,dum,err2D]=load_param(dirs{d1},[1,Inf]);
  ng=size(par2D,1);
@@ -69,11 +70,6 @@ for d1=1:ndir
  if td(1)==d1
   timint=mean(Time)-median(diff(Time));
  end
- if any(strfind(dirs{1},'*')) && strcmp(name_ant(2:3),'2m')
-  name_ant='esr';
- end
- name_ants=[name_ants;name_ant(1:3)];
- name_exps=strvcat(name_exps,name_expr);
 end
 dirind=cumsum(dirind);
 r_time=datevec(mean(Data1D(:,1)));
@@ -110,13 +106,19 @@ Re=6378.135;
 min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area to cover
 tfile=0;	%make velocity table for testings
 %%%%%%%%%%%%%%%%%
-if all(mean(name_ants,1)==name_ants(1,:))
- name_ant=name_ants(1,:); name_ants=[];
+name_ants=allnames.ant;
+name_exps=allnames.expr;
+name_sigs=[];
+if isfield(allnames,'sig'), name_sigs=allnames.sig; end
+if size(allnames.ant,1)==1
+ name_ant=allnames.ant; name_ants=[];
+elseif all(allnames.ant(:,2:3)=='2m')
+ name_ant='esr';
 else
  name_ant='esa';
 end
-if all(mean(name_exps,1)==name_exps(1,:))
- nexp=['_' name_exps(1,:)]; name_exps=[];
+if size(allnames.expr,1)==1
+ nexp=['_' name_exps]; name_expr=name_exps; name_exps=[];
 else
  nexp=[]; name_expr=[];
 end
@@ -266,7 +268,7 @@ for tim=timint
         Vpos=[Vpos;gg_sp];
         Vg=[Vg;V_real];
         Vgv=[Vgv;Vvar_real];
-        V_area=[V_area ang_area];
+        V_area=[V_area;ang_area];
         Gid=[Gid gid];
        else
 	warning('Shortcuts did not help, --skipping')
@@ -287,7 +289,8 @@ else
   result_file
  end 
  Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind,'DynasondeVelocity',dynavel);
- save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,GUP_ver,Vinputs)
+ name_sig=[local.host ' ' local.user ' ' datestr(now)];
+ save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,name_sig,name_sigs,GUP_ver,Vinputs)
  
  fprintf('Making NCAR file...\n')
  NCAR_output
