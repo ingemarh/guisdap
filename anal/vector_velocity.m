@@ -97,6 +97,7 @@ if isfinite(ld(1))
   onera_desp_lib_load
   ILAT=1;
  catch
+  addpath(fullfile(path_GUP,'models_m'),'-end')
   [secs,YEAR]=tosecs(r_time);
   magF=IGRF(); DIMO=magF.FELDCOF(YEAR+secs/86400/365);
  end
