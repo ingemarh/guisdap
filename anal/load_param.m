@@ -83,9 +83,10 @@ for i=1:n_tot
       rres=ones(n_tot,1)*Inf;
     end
   end
+  
   if exist('name_sig','var'), nsig=split(name_sig); nsig=char(join(nsig(1:end-1))); end
   if isempty(allnames)
-    allnames.ant=name_ant(1:3); allnames.expr=name_expr; if exist(nsig), allnames.sig=nsig; end
+    allnames.ant=name_ant(1:3); allnames.expr=name_expr; if exist('nsig'), allnames.sig=nsig; end
   else
     if ~contains(row(allnames.ant'),name_ant(1:3)), allnames.ant=char(allnames.ant,name_ant(1:3)); end
     if ~contains(row(allnames.expr'),name_expr), allnames.expr=char(allnames.expr,name_expr); end

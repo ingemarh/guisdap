@@ -291,12 +291,15 @@ else
  end 
  Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind,'DynasondeVelocity',dynavel);
  name_sig=[local.host ' ' local.user ' ' datestr(now)];
+
  save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,name_sig,name_sigs,GUP_ver,Vinputs)
- 
+
  fprintf('Making NCAR file...\n')
  NCAR_output
  NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))
  NCAR_output
+
+ matvecvel2hdf5(odir,odir,1,1);
 end
 if tfile, fclose(tfile); end
 return
