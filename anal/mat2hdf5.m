@@ -611,10 +611,13 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 if exist('name_sig')
     dd = strfind(name_sig,' ');
-    publdate = name_sig(dd(1)+1:dd(2)-1);
+    if ~isempty(str2num(name_sig(dd(1)+1:dd(1)+2)))
+        publdate = name_sig(dd(1)+1:dd(2)-1);
+    else
+        publdate = name_sig(dd(2)+1:dd(3)-1);
+    end
     publdate = datestr(datenum(publdate,'dd-mmm-yyyy'),'yyyy-mm-dd'); % date on the form YYYY-MM-DD
     publyear = publdate(1:4);
     matfile.metadata.schemes.DataCite.PublicationYear = {publyear}; 
@@ -680,8 +683,8 @@ for sf = sFields.'
                                 group4 = [group3 '/' char(vf)];
                                 wFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)));
                                 for wf = wFields.'
-                                    strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)).(char(wf))
-                                    dsname = char(wf)
+                                    strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)).(char(wf));
+                                    dsname = char(wf);
                                     strds2hdf5(hdffilename,group4,dsname,strdata)
                                 end
                             else
