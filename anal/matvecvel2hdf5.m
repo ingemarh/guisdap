@@ -233,7 +233,14 @@ if exist('name_ants','var'); nn = nn + 1;
 end
 if exist('name_sigs','var'); nn = nn + 1; 
     infoname(1) = {'name_sigs'};
-    infoname(2) = {name_sigs};
+    for i = 1:length(name_sigs(:,1))
+        if i == 1
+            namesigs = name_sigs(1,:);
+        else
+            namesigs = [namesigs ', ' name_sigs(i,:)];
+        end
+    end
+    infoname(2) = {namesigs};
     a = find(strcmp('name_sig',parameters_list)==1); 
     [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
     infoname(3) = infodesc;
