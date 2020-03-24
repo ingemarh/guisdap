@@ -152,6 +152,8 @@ second = sprintf('%02.f',r_time(6));
 e_time = datevec(Vdate(2,end));
 endtime = datestr(e_time);
 
+if ~exist('name_expr','var'), name_expr=''; end
+
 datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_velvec_' '@' name_ant];
 %display(datafolder)
 
@@ -178,7 +180,6 @@ matfile.metadata.header= text(1,1:7)';
 
 nn = 0;
 if exist('name_expr','var'); nn = nn + 1;
-    if isempty(name_expr), name_expr='', end %Ensure that the potentially empty variable is a string and not a double
     infoname(1) = {'name_expr'};
     infoname(2) = {name_expr};
     a = find(strcmp('name_expr',parameters_list)==1);                
