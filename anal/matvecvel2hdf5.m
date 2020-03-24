@@ -177,7 +177,8 @@ matfile.metadata.header= text(1,1:7)';
 
 
 nn = 0;
-if exist('name_expr','var'); nn = nn + 1; 
+if exist('name_expr','var'); nn = nn + 1;
+    if isempty(name_expr), name_expr='', end %Ensure that the potentially empty variable is a string and not a double
     infoname(1) = {'name_expr'};
     infoname(2) = {name_expr};
     a = find(strcmp('name_expr',parameters_list)==1);                
@@ -203,11 +204,11 @@ if exist('name_sig','var'); nn = nn + 1;
 end
 if exist('name_exps','var'); nn = nn + 1; 
     infoname(1) = {'name_exps'};
-    for i = 1:length(nameexps(:,1))
+    for i = 1:length(name_exps(:,1))
         if i == 1
-            nameexps = nameeexps(1,:);
+            nameexps = name_exps(1,:);
         else
-            nameexps = [nameexps ', ' nameexps(i,:)];
+            nameexps = [nameexps ', ' name_exps(i,:)];
         end
     end
     infoname(2) = {nameexps};
