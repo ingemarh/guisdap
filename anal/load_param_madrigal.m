@@ -205,5 +205,5 @@ if isempty(allnames)
   allnames.ant=name_ant(1:3); allnames.expr=name_expr;
 else
   if ~contains(allnames.ant,name_ant(1:3)), allnames.ant=char(allnames.ant,name_ant(1:3)); end
-  if ~contains(allnames.expr,name_expr), allnames.expr=char(allnames.expr,x name_expr); end
+  if ~contains(allnames.expr,name_expr), allnames.expr=char(allnames.expr,name_expr); end
 end
