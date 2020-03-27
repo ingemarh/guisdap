@@ -36,7 +36,7 @@ n=length(list);
 
 Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];
 if n==0, return; end
-r_Tsys=[]; r_pp=[]; rres=[];
+r_Tsys=[]; r_pp=[]; rres=[]; name_sig='';
 n_tot=n;
 memwarn=0;
 lastfile=list(n);
@@ -83,14 +83,14 @@ for i=1:n_tot
       rres=ones(n_tot,1)*Inf;
     end
   end
-  
-  if exist('name_sig','var'), nsig=split(name_sig); nsig=char(join(nsig(1:end-1))); end
+  nsig=regexprep(name_sig,'(\s[012][0-9]:[0-5][0-9]:[0-5][0-9])$',''); %remove tod
+  if exist(name_sig,'var'), nsig=split(name_sig); nsig=char(join(nsig(1:end-1))); end
   if isempty(allnames)
-    allnames.ant=name_ant(1:3); allnames.expr=name_expr; if exist('nsig'), allnames.sig=nsig; end
+    allnames.ant=name_ant(1:3); allnames.expr=name_expr; allnames.sig=nsig;
   else
     if ~contains(row(allnames.ant'),name_ant(1:3)), allnames.ant=char(allnames.ant,name_ant(1:3)); end
     if ~contains(row(allnames.expr'),name_expr), allnames.expr=char(allnames.expr,name_expr); end
-    if exist('nsig') & ~contains(row(allnames.sig'),nsig), allnames.sig=char(allnames.sig,nsig); end
+    if ~contains(row(allnames.sig'),nsig), allnames.sig=char(allnames.sig,nsig); end
   end
   nalt=size(r_param,1);
   if nalt>n_alt

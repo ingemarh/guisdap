@@ -116,7 +116,7 @@ static void __user__filter (DSPCMPLX * yy0, float *h0, DSPCMPLX * x0,
 			    long *ny, long nh, long nx, int accum, int decim);
 
 int
-alter_dec (unsigned long dbits,
+decoder_6 (unsigned long dbits,
 	   int *dpar, unsigned long fbits, float *fpar, DSPCMPLXSHORT * in,
 	   DSPCMPLX * out,double *upar)
 {
@@ -1189,9 +1189,10 @@ __user__decoder_int_thread (DECO * calc)
   return ((void *) &success);
 }
 
-void matface(int *nbits,int *par,int *fbits,float *fpar,int *nin,double *in_r,double *in_i,
+void matface(int *par,int *nin,double *in_r,double *in_i,
 	int *nout, double *out_r, double *out_i, double *upar) {
-	ulong nb=*nbits,fb=*fbits;
+	ulong nb=7+par[0]*par[6];
+	float *fpar=NULL;
 	int i;
 	DSPCMPLXSHORT *in;
 	DSPCMPLX *out;
@@ -1201,7 +1202,7 @@ void matface(int *nbits,int *par,int *fbits,float *fpar,int *nin,double *in_r,do
 		in[i].im=in_i[i];
 	}
 	out=(DSPCMPLX *)malloc(*nout*sizeof(DSPCMPLX));
-	alter_dec(nb,par,fb,fpar,in,out,upar);
+	decoder_6(nb,par,0,fpar,in,out,upar);
 	for(i=0;i<*nout;i++) {
 		out_r[i]=out[i].re;
 		out_i[i]=out[i].im;

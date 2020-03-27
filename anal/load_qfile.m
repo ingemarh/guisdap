@@ -63,7 +63,7 @@ return
 
 function [d_parbl,d_data]=load_qraw(file,d_date)
 
-global a_lagprofiling qmeta
+global a_lpf qmeta
 %setup
 Fs=6.25e6;	% sampling freq
 %Pulsewidth=480e-6;	% 16*30us
@@ -112,7 +112,7 @@ d_parbl(7)=dump2;
 d_parbl(9:10)=qmeta(d,[4 3])';
 
 %resample
-tt=Fs*qmeta(d,7)/a_lagprofiling.par(9);
+tt=Fs*qmeta(d,7)/a_lpf.par(9);
 ns=floor(Pperprof/tt);
 d_parbl(41)=9;
 d_parbl(43)=ns;
@@ -125,6 +125,6 @@ for i=1:tt:Pperprof-tt+1
 end
 
 %correlate
-[d_data,upar]=plwin(a_lagprofiling.par,d_parbl,d_raw_rs(:));
-a_lagprofiling.par(16)=0;
+[d_data,upar]=plwin(a_lpf.par,d_parbl,d_raw_rs(:));
+a_lpf.par(16)=0;
 return

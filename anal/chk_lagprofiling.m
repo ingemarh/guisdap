@@ -1,20 +1,59 @@
 function chk_lagprofiling()
-global a_lagprofiling
+global a_lpf
 i=0;
-for lpf=a_lagprofiling'
+if ~isfield(a_lpf,'nrep'), a_lpf(1).nrep=[]; end
+if ~isfield(a_lpf,'p'), a_lpf(1).p=[]; end
+for lpf=a_lpf
  i=i+1;
- if strcmp(lpf.lib,'plwin')
-  if lpf.p(1)~=0 || lpf.p(2)~=lpf.nrep-1
-   if fix(lpf.p(1)/lpf.nwin)~=fix(lpf.p(2)/lpf.nwin)
-    error('Lagprofiling has to be within one loop (for now)')
-   end
-   lpf.nwin=diff(lpf.p)+1;
-   lpf.par(5)=lpf.nwin;
-   lpf.par(6)=lpf.nwin;
-   lpf.par=lpf.par([1:24 24+(lpf.p(1)*lpf.wlen+1:(lpf.p(2)+1)*lpf.wlen)]);
+ switch lpf.lib
+ case 'plwin'
+  lpf.nrep=lpf.par(6);
+  nsamp=lpf.par(7);
+  if isempty(lpf.p)
+   lpf.p=[0 lpf.nrep-1];
+  end
+  nwin=lpf.par(5);
+  np=diff(lpf.p)+1;
+  if rem(lpf.p(1),nwin)==0 && rem(lpf.p(2)+1,nwin)==0
+   lpf.par(6)=np;
+  elseif fix(lpf.p(1)/nwin)==fix(lpf.p(2)/nwin)
+   nwin=diff(lpf.p)+1;
+   lpf.par(5)=nwin;
+   lpf.par(6)=nwin;
+  else
+   error('Lagprofiling cannot go freely over loop borders (for now)')
+  end
+  plen=lpf.par(1);
+  wlen=lpf.par(8);
+  lpf.par=lpf.par([1:plen plen+(lpf.p(1)*wlen+1:(lpf.p(1)+nwin)*wlen)]);
+ case 'alt_decoder'
+  lpf.nrep=lpf.par(2);
+  nsamp=lpf.par(3);
+  if isempty(lpf.p)
+   lpf.p=[0 lpf.nrep-1];
+  end
+  nwin=lpf.par(7);
+  np=diff(lpf.p)+1;
+  if rem(lpf.p(1),nwin)==0 && rem(lpf.p(2)+1,nwin)==0
+   lpf.par(2)=np;
+  elseif fix(lpf.p(1)/nwin)==fix(lpf.p(2)/nwin)
+   nwin=diff(lpf.p)+1;
+   lpf.par(2)=nwin;
+   lpf.par(7)=nwin;
+  else
+   error('Lagprofiling cannot go freely over loop borders (for now)')
+  end
+  plen=7;
+  wlen=lpf.par(1);
+  lpf.par=lpf.par([1:plen plen+(lpf.p(1)*wlen+1:(lpf.p(1)+nwin)*wlen)]);
+ case 'clutter'
+  lpf.nrep=lpf.par(2);
+  nsamp=lpf.par(3);
+  if isempty(lpf.p)
+   lpf.p=[0 lpf.nrep-1];
   end
  end
- lpf.raw=lpf.raw+(lpf.p(1)*lpf.nsamp+1:(lpf.p(2)+1)*lpf.nsamp);
- a_lagprofiling(i)=lpf;
+ lpf.raw=lpf.raw+(lpf.p(1)*nsamp+1:(lpf.p(2)+1)*nsamp);
+ a_lpf(i)=lpf;
 end
 return

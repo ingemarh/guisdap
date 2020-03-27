@@ -29,7 +29,7 @@ global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlimit a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
-global a_lagprofiling
+global a_lpf
 persistent a_antold a_max secs a_posold a_nnold a_averold fileslist
 
 OK=0; EOF=0; jj=0; N_averaged=0; M_averaged=0;
@@ -94,7 +94,7 @@ while i<length(files)
       d_raw=complex(d_raw.r(:),d_raw.i(:));
     catch,end
   end
-  if ~isempty(d_raw) && a_lagprofiling.do
+  if ~isempty(d_raw) && a_lpf(1).do
    lagprofiler()
   end
 
