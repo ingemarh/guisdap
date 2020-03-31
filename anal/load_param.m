@@ -44,7 +44,7 @@ re=6370;
 npar2D=9; nrpar2D=3; nerr2D=npar2D-4;
 Time=zeros(2,n_tot);
 fileslist=cell2mat({list.file}); fileform='%08d%s'; 
-if any(rem(fileslist,1)), fileform='%012.3f%s', end
+if any(rem(fileslist,1)), fileform='%012.3f%s'; end
 
 for i=1:n_tot
 % clear('r_*','name_*')

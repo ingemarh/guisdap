@@ -204,7 +204,8 @@ for tim=timint
        if alti>uperr(2)
         B=geomag(gg_sp',r_time)';
         A=[A;-B(1:3)/norm(B(1:3))];
-        Vll=[Vll;0];
+        up=15.*cos((rem(datenum(r_time),1)-21.5/24.)*2*pi);
+        Vll=[Vll;up];
         Vlle=[Vlle;uperr(1)];
        else
         A=[A;[0 0 1]];
