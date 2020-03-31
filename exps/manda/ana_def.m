@@ -7,12 +7,12 @@ if name_site=='V'
   if fix(expver)==4
     a_satch.clutter=250;
     h1=200; d1=.36; first=20; n1=250;
-    analysis_lpf.par=load([path_expr 'manda_clutter.par']);
+    analysis_lpf.par=load([path_expr 'manda_clutter.par4']);
     analysis_lpf.lib='clutter';
     analysis_lpf.raw=256*128;
     analysis_lpf.data=0;
     analysis_lpf.do=0;
-    analysis_lpf(2).par=load([path_expr 'manda_va.par']);
+    analysis_lpf(2).par=load([path_expr 'manda_va.par4']);
     analysis_lpf(2).par(24)=0; %clutter done separately
     analysis_lpf(2).lib='plwin';
     analysis_lpf(2).raw=256*128;
@@ -30,8 +30,10 @@ elseif name_site=='T'
   if fix(expver)==4
     a_satch.clutter=250;
     h1=200; d1=.36; first=20; n1=250;
-    analysis_lpf.par=load([path_expr 'manda_va.par']);
+    analysis_lpf.par=load([path_expr 'manda_va.par4']);
     analysis_lpf.lib='plwin';
+    analysis_lpf.raw=256*128;
+    analysis_lpf.data=20;
     analysis_lpf.do=0;
   elseif expver>2
    h1=310; h2=500;

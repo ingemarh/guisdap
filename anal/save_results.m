@@ -13,7 +13,7 @@ global r_apriori r_apriorierror
 global pp_range pp_sigma pp_err pp_w
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
 global webfile a_save local a_gfd
-global a_autodir di_figures START_TIME a_Magic_const a_code a_lpf
+global a_autodir di_figures START_TIME a_Magic_const a_code
 
 if length(d_time)>0 & a_save
   filename=sprintf('%08d.mat',fix(tosecs(d_time(2,:))));
@@ -21,21 +21,24 @@ else
   filename='00000000.mat';
 end
 [i1,i2]=fileparts(result_path(1:end-1));
+integr=diff(datenum(d_time))*86400;
+if integr<1
+ filename=sprintf('%012.3f.mat',tosecs(d_time(2,:)));
+end
 if strcmp(i2,'AUTO')
+ if integr>1
+  intstr=num2str(abs(a_integr(1)));
+ else
+  intstr=sprintf('%.3g',integr);
+ end
  if length(a_integr)>1
   a_autodir.int='scan';
  elseif a_integr==0
   a_autodir.int='ant';
  elseif a_integr<0
-  a_autodir.int=['ant' num2str(-a_integr)];
+  a_autodir.int=['ant' intstr];
  else
-  a_autodir.int=num2str(a_integr);
- end
- if a_lpf(1).do
-  np=diff(a_lpf(end).p)+1;
-  if np~=a_lpf(end).nrep
-   a_autodir.int=[a_autodir.int sprintf('_p%02.0f',a_lpf(end).p(1)/np)];
-  end
+  a_autodir.int=intstr;
  end
 elseif isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
  if a_NCAR

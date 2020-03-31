@@ -54,9 +54,14 @@ else
     end
     l=repmat(struct('dir',fullfile(dp,dirs(j).name),'file',0,'ext',''),[dirlen 1]);
     for i=dirlen:-1:1
-      l(i).file=sscanf(dirlist(i).name,'%08d%*s');
-      l(i).ext=sscanf(dirlist(i).name,'%*8s%s');
-      if ~isnumeric(l(i).file) | ~strcmp(l(i).ext(1),'.'), l(i)=[]; end
+      f=textscan(dirlist(i).name,'%f%s');
+      l(i).file=f{1};
+      f=char(f{2}); if ~strcmp(f(1),'.'), f=['.' f]; end
+      l(i).ext=f;
+      if isempty(l(i).file), l(i)=[]; end
+      %l(i).file=sscanf(dirlist(i).name,'%08d%*s');
+      %l(i).ext=sscanf(dirlist(i).name,'%*8s%s');
+      %if ~isnumeric(l(i).file) | ~strcmp(l(i).ext(1),'.'), l(i)=[]; end
     end
     list=[list;l];
   end

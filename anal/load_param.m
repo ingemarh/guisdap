@@ -43,10 +43,12 @@ lastfile=list(n);
 re=6370;
 npar2D=9; nrpar2D=3; nerr2D=npar2D-4;
 Time=zeros(2,n_tot);
+fileslist=cell2mat({list.file}); fileform='%08d%s'; 
+if any(rem(fileslist,1)), fileform='%012.3f%s', end
 
 for i=1:n_tot
 % clear('r_*','name_*')
-  load(canon(fullfile(list(i).dir,sprintf('%08d%s',list(i).file,list(i).ext)),0))
+  load(canon(fullfile(list(i).dir,sprintf(fileform,list(i).file,list(i).ext)),0))
   if exist('r_Offsetppd')
     rOff=r_Offsetppd;
   elseif exist('r_phasepush')
