@@ -23,10 +23,19 @@ rec        = length(filelist);
 gupfile    = fullfile(matpath,'.gup');
 gupfilecheck =  dir(gupfile);
 
-matfile_1 = fullfile(matpath,filelist(1).name); 
-load(matfile_1);
-keyboard
+intper_vec = zeros(rec,1);
+for tt = 1:rec
+    %matfile_tmp = fullfile(matpath,filelist(tt).name);
+    load(fullfile(matpath,filelist(tt).name))
+    intper_vec(tt) = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6))); 
+end
+if median(intper_vec) < 10
+    intper_med = median(intper_vec);
+    intper_med_str = sprintf('%.2f',intper_med);
+end
+
 % store the gfd content
+load( fullfile(matpath,filelist(1).name));
 s = [];
 if exist('r_gfd','var')
     %matfile.metadata.gfd = r_gfd;
@@ -53,7 +62,10 @@ if exist('r_gfd','var')
     end
     starttime = datestr(r_gfd.t1,'yyyy-mm-ddTHH:MM:SS');
     endtime   = datestr(r_gfd.t2,'yyyy-mm-ddTHH:MM:SS');
-    intper_med = median(r_gfd.intper);
+    if ~exist('intper_med','var')
+        intper_med = median(r_gfd.intper);
+        intper_med_str = num2str(intper_med);
+    end
     matfile.metadata.gfd.intper_median = {num2str(intper_med)};
 elseif ~isempty(gupfilecheck)
     load('-mat',gupfile);
@@ -63,7 +75,8 @@ elseif ~isempty(gupfilecheck)
     if exist('data_path','var'),    matfile.metadata.gfd.data_path      = {data_path};           end
     if exist('result_path','var'),  matfile.metadata.gfd.result_path    = {result_path};         end 
     if exist('intper','var'),       matfile.metadata.gfd.intper         = {num2str(intper)};  
-       intper_med = median(intper); matfile.metadata.gfd.intper_median  = {num2str(intper_med)}; end
+        if ~exist('intper_med','var'), intper_med = median(intper); intper_med_str = num2str(intper_med); end
+                                    matfile.metadata.gfd.intper_median  = {num2str(intper_med)}; end
     if exist('t1','var'),           matfile.metadata.gfd.t1             = {num2str(t1)};         end
     if exist('t2','var'),           matfile.metadata.gfd.t2             = {num2str(t2)};         end
     if exist('rt','var'),           matfile.metadata.gfd.rt             = {num2str(rt)};         end
@@ -85,14 +98,6 @@ elseif ~isempty(gupfilecheck)
     end
     starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
     endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
-else 
-    intper_vec = zeros(rec,1);
-    for tt = 1:rec
-        matfile_tmp = fullfile(matpath,filelist(tt).name);
-        load(matfile_tmp)
-        intper_vec(tt) = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6)));
-        intper_med = median(intper_vec);
-    end
 end
 
 if ~exist('starttime','var')
@@ -168,7 +173,7 @@ if isempty(name_ant)
    end
 end
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more num2str(intper_med) '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more intper_med_str '@' name_ant];
 %display(datafolder)
 
 storepath = fullfile(datapath,datafolder);
