@@ -2,9 +2,9 @@
 
 %start_GUP
 %vecveldir = '/home/rikard/matlab/AnalysedData/2020-02-27_beata_60@vhf/vectors/';
-function [storepath,EISCAThdf5file] = matvecvel2hdf5(matpath,datapath,addfigs,addnotes) 
+function [storepath,EISCAThdf5file] = matvecvel2hdf5(matfile_vel,datapath)%,addfigs,addnotes) 
 
-global path_GUP result_path 
+global path_GUP %result_path 
 % if nargin<4, addnotes = []; else addnotes = 1; end 
 % if nargin<3, addfigs = []; else addfigs = 1; end 
 % if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
@@ -16,9 +16,9 @@ global path_GUP result_path
 %     datapath = char(datapath);    % need to be char class
 % end
 
-matstruct = dir(fullfile(matpath,'*.mat'));
-mat = fullfile(matstruct.folder,matstruct.name); 
-load(mat)
+% matstruct = dir(fullfile(matpath,'*.mat'));
+% mat = fullfile(matstruct.folder,matstruct.name); 
+load(matfile_vel)
 
 %datapath = vecveldir;
 %matfile.data.utime = [posixtime(datetime(datestr(Vdate(1,:)'))) posixtime(datetime(datestr(Vdate(1,:)')))];
@@ -61,7 +61,7 @@ end
     
 if exist('Vdate','var')
     parameters_vdate = {'time1' 'time2'};
-    matfile.data.utime = [posixtime(datetime(datestr(vdate(1,:)))) posixtime(datetime(datestr(vdate(1,:))))];
+    matfile.data.utime = [posixtime(datetime(datestr(vdate(:,1)))) posixtime(datetime(datestr(vdate(:,1))))];
     for ii = 1:2
         a = find(strcmp(char(parameters_vdate(ii)),parameters_list)==1);
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
@@ -369,33 +369,33 @@ for sf = sFields.'
     end   
 end
 
-if addfigs
-    image_filelist = [dir(fullfile(matpath,'*.png'));dir(fullfile(matpath,'*.pdf'))];
-    npdf = 0;
-    %if ~isempty(image_filelist)
-      for ii = 1:length(image_filelist)
-        figurefile = fullfile(matpath,image_filelist(ii).name);
-        [~,filename,ext] = fileparts(figurefile);
-        if strcmp(ext,'.png')
-          store_image2Hdf5(figurefile,hdffilename)
-        elseif strcmp(ext,'.pdf')
-          npdf = npdf + 1;
-          pdf_forHDF5(npdf) = {[filename ext]};          
-        end
-      end
-      if npdf>0
-        strds2hdf5(hdffilename,'/metadata','figure_links',pdf_forHDF5');
-      end
-    %end
-end
+% if addfigs
+%     image_filelist = [dir(fullfile(matpath,'*.png'));dir(fullfile(matpath,'*.pdf'))];
+%     npdf = 0;
+%     %if ~isempty(image_filelist)
+%       for ii = 1:length(image_filelist)
+%         figurefile = fullfile(matpath,image_filelist(ii).name);
+%         [~,filename,ext] = fileparts(figurefile);
+%         if strcmp(ext,'.png')
+%           store_image2Hdf5(figurefile,hdffilename)
+%         elseif strcmp(ext,'.pdf')
+%           npdf = npdf + 1;
+%           pdf_forHDF5(npdf) = {[filename ext]};          
+%         end
+%       end
+%       if npdf>0
+%         strds2hdf5(hdffilename,'/metadata','figure_links',pdf_forHDF5');
+%       end
+%     %end
+% end
 
-if addnotes
-    notesfiles = dir(fullfile(matpath,'notes*txt'));
-    for nn = 1:length(notesfiles)
-        notesfile = fullfile(matpath,notesfiles(nn).name);
-        addNote2Hdf5(notesfile,EISCAThdf5file,nn)
-    end
-end
+% if addnotes
+%     notesfiles = dir(fullfile(matpath,'notes*txt'));
+%     for nn = 1:length(notesfiles)
+%         notesfile = fullfile(matpath,notesfiles(nn).name);
+%         addNote2Hdf5(notesfile,EISCAThdf5file,nn)
+%     end
+% end
 
 %end
 

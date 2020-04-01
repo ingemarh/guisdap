@@ -25,7 +25,7 @@ gupfilecheck =  dir(gupfile);
 
 matfile_1 = fullfile(matpath,filelist(1).name); 
 load(matfile_1);
-
+keyboard
 % store the gfd content
 s = [];
 if exist('r_gfd','var')
