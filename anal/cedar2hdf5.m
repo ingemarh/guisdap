@@ -54,8 +54,15 @@ hour   = sprintf('%02d',data.hour(1));
 minute = sprintf('%02d',data.min(1));
 second = sprintf('%02d',data.sec(1));
 
-recs = length(data.ut1_unix);                            % # of records
-intper_med = median(data.ut2_unix-data.ut1_unix);        % median integration time
+recs = length(data.ut1_unix);    % # of records
+intper_med = median(data.ut2_unix-data.ut1_unix);
+if intper_med < 10
+    intper_med_str = 'ant';
+else
+    intper_med_str = num2str(intper_med);
+end
+matfile.metadata.experiment.intper_median = {num2str(intper_med)};
+matfile.metadata.experiment.integration_strategy = {intper_med_str};
 
 display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
@@ -73,9 +80,8 @@ else
     name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
 end
 matfile.metadata.experiment.name_expr = {name_expr}; 
-matfile.metadata.experiment.intper_median = {num2str(intper_med)};
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' num2str(intper_med) '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' intper_med_str '@' name_ant];
 storepath = fullfile(datapath,datafolder);
 if exist(storepath)
    rmdir(storepath,'s');

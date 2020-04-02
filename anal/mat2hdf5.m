@@ -10,12 +10,14 @@ if nargin<4, addnotes = []; else addnotes = 1; end
 if nargin<3, addfigs = []; else addfigs = 1; end 
 if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
 if nargin<1
-    matpath = result_path;
+    matpath  = result_path;
     datapath = result_path;
 end
 if isstring(datapath)
     datapath = char(datapath);    % need to be char class
 end
+
+[~,matfolder] = fileparts(matpath);
 
 filelist   = dir(fullfile(matpath,'*.mat')); 
 rec        = length(filelist);
@@ -25,13 +27,12 @@ gupfilecheck =  dir(gupfile);
 
 intper_vec = zeros(rec,1);
 for tt = 1:rec
-    %matfile_tmp = fullfile(matpath,filelist(tt).name);
     load(fullfile(matpath,filelist(tt).name))
     intper_vec(tt) = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6))); 
-end
+end    
 if median(intper_vec) < 10
     intper_med = median(intper_vec);
-    intper_med_str = sprintf('%.2f',intper_med);
+    intper_med_str = sprintf('%g',round(intper_med,3));
 end
 
 % store the gfd content
@@ -66,7 +67,7 @@ if exist('r_gfd','var')
         intper_med = median(r_gfd.intper);
         intper_med_str = num2str(intper_med);
     end
-    matfile.metadata.gfd.intper_median = {num2str(intper_med)};
+    
 elseif ~isempty(gupfilecheck)
     load('-mat',gupfile);
     if exist('name_expr','var'),    matfile.metadata.gfd.name_expr      = {name_expr};           end
@@ -99,6 +100,22 @@ elseif ~isempty(gupfilecheck)
     starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
     endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
 end
+
+matfile.metadata.gfd.intper_median = {intper_med_str};
+if contains(matfolder,'scan')
+    integration_strategy = 'scan';
+    matfile.metadata.gfd.integration_strategy = {'scan'};
+elseif intper_med == 0
+    integration_strategy = 'ant';
+    matfile.metadata.gfd.integration_strategy = {'ant'};
+elseif intper_med < 0
+    integration_strategy = ['ant' num2str(-intper_med)];
+    matfile.metadata.gfd.integration_strategy = {['ant' num2str(-intper_med)]};
+else 
+    integration_strategy = intper_med_str;
+    matfile.metadata.gfd.integration_strategy = {intper_med_str};
+end
+
 
 if ~exist('starttime','var')
     matfile_tmp = fullfile(matpath,filelist(1).name);
@@ -151,6 +168,7 @@ second = sprintf('%02.f',r_time(1,6));
 if strcmp(matpath(end),'/')
     matpath = matpath(1:end-1);
 end
+keyboard
 [~,matfolder] = fileparts(matpath);
 dd_  = strfind(matfolder,'_');
 ddat = strfind(matfolder,'@');
@@ -160,7 +178,7 @@ if length(dd)==4
 else
     name_expr_more = [];
 end
-
+keyboard
 ant = matfolder(dd(end)+1:end);
 if isempty(name_ant) 
    switch name_site
@@ -173,7 +191,7 @@ if isempty(name_ant)
    end
 end
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more intper_med_str '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more integration_strategy '@' name_ant];
 %display(datafolder)
 
 storepath = fullfile(datapath,datafolder);
