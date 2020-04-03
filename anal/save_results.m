@@ -4,7 +4,7 @@
 % function save_results
 function save_results
 
-global result_path name_expr name_site name_ant
+global result_path name_expr name_site name_ant name_strategy
 global p_XMITloc p_RECloc sc_angle p_om0
 global d_time GUP_ver ch_az ch_el ch_Pt p_m0 p_N0 p_dtau v_lightspeed ch_fradar ch_gain
 global r_h r_spec r_om r_freq r_phasepush r_lag r_acf r_ace
@@ -60,6 +60,15 @@ else
  name_strategy=intstr;
 end
 if isempty(r_h)
+ if length(a_integr)>1
+  name_strategy='scan';
+ elseif a_integr==0
+  name_strategy='ant';
+ elseif a_integr<0
+  name_strategy=['ant' intstr];
+ else
+  name_strategy=intstr;
+ end
  if strcmp(i2,'AUTO') | isstruct(a_autodir)
   a_autodir.date=d_time(2,1:3);
   result_dir=sprintf('%d-%02d-%02d_%s_%s@%s%s',a_autodir.date,name_expr,name_strategy,name_ant,filesep);

@@ -111,6 +111,8 @@ name_ants=allnames.ant;
 name_exps=allnames.expr;
 name_sigs=[];
 if isfield(allnames,'sig'), name_sigs=allnames.sig; end
+name_strategies=[];
+if isfield(allnames,'strategy'), name_strategies=allnames.strategy; end
 if size(allnames.ant,1)==1
  name_ant=allnames.ant; name_ants=[];
 elseif all(allnames.ant(:,2:3)=='2m')
@@ -121,7 +123,7 @@ end
 if size(allnames.expr,1)==1
  nexp=['_' name_exps]; name_expr=name_exps; name_exps=[];
 else
- nexp=[]; name_expr=[];
+ nexp=[]; name_expr=[]
 end
 oname=sprintf('%d-%02d-%02d%s_vecvel@%s',r_time(1:3),nexp,name_ant);
 result_file=fullfile(odir,oname);
