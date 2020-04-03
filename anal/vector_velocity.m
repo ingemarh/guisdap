@@ -125,7 +125,13 @@ if size(allnames.expr,1)==1
 else
  nexp=[]; name_expr=[]
 end
-oname=sprintf('%d-%02d-%02d%s_vecvel@%s',r_time(1:3),nexp,name_ant);
+name_strategy='Altitude';
+if isfinite(ld(1)), name_strategy=[name_strategy ' Latitude']; end
+if isfinite(uperr(1)), name_strategy=[name_strategy ' Model']; end
+if dynavel, name_strategy=[name_strategy ' Dynasond']; end
+name_strategy=[name_strategy sprintf(' %g',td(1))];
+nstrat=regexp(name_strategy,'[A-Z0-9]');
+oname=sprintf('%d-%02d-%02d%s_V%s@%s',r_time(1:3),nexp,lower(name_strategy(nstrat)),name_ant);
 result_file=fullfile(odir,oname);
 if tfile
  tfile=fopen([result_file '.txt'],'w');
@@ -294,8 +300,7 @@ else
  end 
  Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind,'DynasondeVelocity',dynavel);
  name_sig=[local.host ' ' local.user ' ' datestr(now)];
-
- save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,name_sig,name_sigs,GUP_ver,Vinputs)
+ save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,name_sig,name_sigs,name_strategy,name_strategies,GUP_ver,Vinputs)
 
  fprintf('Making NCAR file...\n')
  NCAR_output
