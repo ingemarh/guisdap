@@ -45,21 +45,21 @@ if isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
  end
  r_h=[];
 end
+if integr>1
+ intstr=num2str(abs(a_integr(1)));
+else
+ intstr=sprintf('%.3g',integr);
+end
+if length(a_integr)>1
+ name_strategy='scan';
+elseif a_integr==0
+ name_strategy='ant';
+elseif a_integr<0
+ name_strategy=['ant' intstr];
+else
+ name_strategy=intstr;
+end
 if isempty(r_h)
- if integr>1
-  intstr=num2str(abs(a_integr(1)));
- else
-  intstr=sprintf('%.3g',integr);
- end
- if length(a_integr)>1
-  name_strategy='scan';
- elseif a_integr==0
-  name_strategy='ant';
- elseif a_integr<0
-  name_strategy=['ant' intstr];
- else
-  name_strategy=intstr;
- end
  if strcmp(i2,'AUTO') | isstruct(a_autodir)
   a_autodir.date=d_time(2,1:3);
   result_dir=sprintf('%d-%02d-%02d_%s_%s@%s%s',a_autodir.date,name_expr,name_strategy,name_ant,filesep);
