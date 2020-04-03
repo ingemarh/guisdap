@@ -71,7 +71,7 @@ if ~isempty(find(strcmp(metavar,'par2d_pp')));
     matdata.data.par2d_pp     = h5read(filename,'/data/par2d_pp');
 end
 
-nh_id = 70;
+nh_id = 71;
 column = find(str2num(char(matdata.metadata.par1d(end,:)))==nh_id);
 if isempty(column) 
     column = find(str2num(char(matdata.metadata.par0d(end,:)))==nh_id);
