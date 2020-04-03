@@ -53,18 +53,16 @@ day    = sprintf('%02d',data.day(1));
 hour   = sprintf('%02d',data.hour(1));
 minute = sprintf('%02d',data.min(1));
 second = sprintf('%02d',data.sec(1));
+display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
 recs = length(data.ut1_unix);    % # of records
 intper_med = median(data.ut2_unix-data.ut1_unix);
 if intper_med < 10
-    intper_med_str = 'ant';
+    name_strategy = 'ant';
 else
-    intper_med_str = num2str(intper_med);
+    name_strategy = num2str(intper_med);
 end
 matfile.metadata.experiment.intper_median = {num2str(intper_med)};
-matfile.metadata.experiment.integration_strategy = {intper_med_str};
-
-display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
 aa = find(strcmp(exprparnames,'instrument')==1);
 if contains(char(exprparvalues(aa)),'Kiruna'), name_ant = 'kir'; 
@@ -81,15 +79,17 @@ else
 end
 matfile.metadata.experiment.name_expr = {name_expr}; 
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' intper_med_str '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant];
 storepath = fullfile(datapath,datafolder);
 if exist(storepath)
    rmdir(storepath,'s');
 end
 mkdir(storepath);
 
-Hdf5File = [datafolder '.hdf5'];
-MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '@' name_ant '.mat'];
+Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
+MatFile = sprintf('%s%s',datafolder,'.mat');
+% Hdf5File = [datafolder '.hdf5'];
+% MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCAThdf5file = hdffilename;
@@ -396,6 +396,14 @@ if exist('name_ant','var'); nn = nn + 1;
     a = find(strcmp('name_ant',gupparameters_list)==1); 
     [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
     infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
+end
+if exist('name_strategy'); nn = nn + 1;
+    infoname(1) = {'name_strategy'};
+    infoname(2) = {name_strategy};
+    a = find(strcmp('name_strategy',gupparameters_list)==1);                
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;    
     matfile.metadata.names(:,nn) = infoname';
 end
 

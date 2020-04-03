@@ -100,22 +100,19 @@ elseif ~isempty(gupfilecheck)
     starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
     endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
 end
-
 matfile.metadata.gfd.intper_median = {intper_med_str};
-if contains(matfolder,'scan')
-    integration_strategy = 'scan';
-    matfile.metadata.gfd.integration_strategy = {'scan'};
-elseif intper_med == 0
-    integration_strategy = 'ant';
-    matfile.metadata.gfd.integration_strategy = {'ant'};
-elseif intper_med < 0
-    integration_strategy = ['ant' num2str(-intper_med)];
-    matfile.metadata.gfd.integration_strategy = {['ant' num2str(-intper_med)]};
-else 
-    integration_strategy = intper_med_str;
-    matfile.metadata.gfd.integration_strategy = {intper_med_str};
-end
 
+if ~exist('name_strategy','var')
+    if contains(matfolder,'scan')
+        name_strategy = 'scan';
+    elseif intper_med == 0
+        name_strategy = 'ant';
+    elseif intper_med < 0
+        name_strategy = ['ant' num2str(-intper_med)];
+    else 
+        name_strategy = intper_med_str;
+    end
+end
 
 if ~exist('starttime','var')
     matfile_tmp = fullfile(matpath,filelist(1).name);
@@ -168,7 +165,7 @@ second = sprintf('%02.f',r_time(1,6));
 if strcmp(matpath(end),'/')
     matpath = matpath(1:end-1);
 end
-keyboard
+
 [~,matfolder] = fileparts(matpath);
 dd_  = strfind(matfolder,'_');
 ddat = strfind(matfolder,'@');
@@ -178,7 +175,7 @@ if length(dd)==4
 else
     name_expr_more = [];
 end
-keyboard
+
 ant = matfolder(dd(end)+1:end);
 if isempty(name_ant) 
    switch name_site
@@ -191,7 +188,7 @@ if isempty(name_ant)
    end
 end
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more integration_strategy '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more name_strategy '@' name_ant];
 %display(datafolder)
 
 storepath = fullfile(datapath,datafolder);
@@ -575,7 +572,14 @@ if exist('name_sig','var'); nn = nn + 1;
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';
 end
-
+if exist('name_strategy'); nn = nn + 1;
+    infoname(1) = {'name_strategy'};
+    infoname(2) = {name_strategy};
+    a = find(strcmp('name_strategy',parameters_list)==1);                
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;    
+    matfile.metadata.names(:,nn) = infoname';
+end
 if exist('r_ver','var'); nn = nn + 1; 
     infoname(1) = {'gupver'};
     infoname(2) = {num2str(r_ver)};
