@@ -107,13 +107,13 @@ Re=6378.135;
 min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area to cover
 tfile=0;	%make velocity table for testings
 %%%%%%%%%%%%%%%%%
-name_ants=allnames.ant;
+name_ants=allnames.ant; nant=size(allanmes.ant,1);
 name_exps=allnames.expr;
 name_sigs=[];
 if isfield(allnames,'sig'), name_sigs=allnames.sig; end
 name_strategies=[];
 if isfield(allnames,'strategy'), name_strategies=allnames.strategy; end
-if size(allnames.ant,1)==1
+if nant==1
  name_ant=allnames.ant; name_ants=[];
 elseif all(allnames.ant(:,2:3)=='2m')
  name_ant='esr';
@@ -131,7 +131,7 @@ if isfinite(uperr(1)), name_strategy=[name_strategy ' Model']; end
 if dynavel, name_strategy=[name_strategy ' Dynasond']; end
 name_strategy=[name_strategy sprintf(' %g',td(1))];
 nstrat=regexp(name_strategy,'[A-Z0-9]');
-oname=sprintf('%d-%02d-%02d%s_V%s@%s',r_time(1:3),nexp,lower(name_strategy(nstrat)),name_ant);
+oname=sprintf('%d-%02d-%02d%s_V%d%s@%s',r_time(1:3),nexp,nant,lower(name_strategy(nstrat)),name_ant);
 result_file=fullfile(odir,oname);
 if tfile
  tfile=fopen([result_file '.txt'],'w');
