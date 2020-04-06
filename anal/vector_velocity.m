@@ -107,7 +107,7 @@ Re=6378.135;
 min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area to cover
 tfile=0;	%make velocity table for testings
 %%%%%%%%%%%%%%%%%
-name_ants=allnames.ant; nant=size(allanmes.ant,1);
+name_ants=allnames.ant; nant=size(allnames.ant,1);
 name_exps=allnames.expr;
 name_sigs=[];
 if isfield(allnames,'sig'), name_sigs=allnames.sig; end
