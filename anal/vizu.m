@@ -25,7 +25,7 @@ function [varargout]=vizu(varargin)
 % To reset and start over:
 % >> vizu new [action]
 
-global Time par2D par1D rpar2D name_expr name_ant axs axc maxdy rres
+global Time par2D par1D rpar2D name_expr name_ant name_strategy axs axc maxdy rres
 persistent hds OLD_WHICH
 global height n_tot add_plot manylim plf_polen max_ppw vizufig
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
@@ -80,7 +80,7 @@ if isempty(DATA_PATH)
       max_ppw=minput('Maximum pp resolution (km)',Inf);
     end
   elseif ~REALT
-    if isdir(act) | strfind(act,'/')
+    if isdir(act) | strfind(act,filesep)
       DATA_PATH=act; naction=naction+1;
       MESSAGE1=action(naction,nvargin,varargin); naction=naction+1;
     else
@@ -116,19 +116,8 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   else
     fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
     ext='eps';
-    if isdir(DATA_PATH)
-      dirs=DATA_PATH;
-      if exist(fullfile(DATA_PATH,'.gup'),'file')
-        load('-mat',fullfile(DATA_PATH,'.gup'),'intper')
-        if length(intper)>1
-          fig=sprintf('%s_scan',fig);
-        elseif intper>0
-          fig=sprintf('%s_%g',fig,intper);
-        end
-      end
-    else
-      dirs=path_tmp(1:end-1);
-    end
+    if ~isempty(name_strategy), fig=sprintf('%s_%s',fig,name_strategy); end
+    if ~isdir(DATA_PATH), dirs=path_tmp(1:end-1); else, dirs=DATA_PATH; end
     if ~isempty(a2), fig=sprintf('%s_%s',fig,a2); end
     fig=sprintf('%s@%s',fig,name_ant);
   end
@@ -400,6 +389,7 @@ if isempty(vizufig)
  if ~local.x && round(10*local.matlabversion)==65
   close(vizufig),vizufig=gupfigure; % Matlab R13 bug
  end
+ sdir=DATA_PATH; if strcmp(sdir,'.'), sdir=pwd; end
  set(vizufig,'Position',[400 30 587 807],'DefaultAxesFontSize',FS,...
    'DefaultAxesTickDir','out','DefaultTextFontSize',FS,'UserData',6,...
    'DefaultAxesXMinorTick','on','defaultaxesbox','on',...
@@ -407,7 +397,7 @@ if isempty(vizufig)
    'renderer','painters','PaperPosition',[0.4 0.7 20.65 28.4],...
    'DefaultAxeslayer','top','DefaultsurfaceEdgeColor','none',...
    'DefaultTextHorizontalAlignment','center',...
-   'Name',['GUISDAP results from ',DATA_PATH])
+   'Name',['GUISDAP results from ',sdir])
 % set(gcf,'PaperType','A4','PaperUnits','centimeters','NumberTitle','off',...
 %  'defaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
  uimenu('label','Update','callback','vizu(''update'')');

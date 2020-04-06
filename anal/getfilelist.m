@@ -2,7 +2,7 @@ function [list,msg]=getfilelist(dirpath,newer)
 
 % [list,msg]= getfilelist(dirpath,newer)
 
-global a_realtime local
+global a_realtime
 
 list=[]; msg=''; dirlist=[];
 if nargin<2
@@ -17,26 +17,25 @@ elseif isunix & a_realtime | strfind(dirpath,'?')
     i=sprintf(' -newer %s/%08d%s ',newer.dir,newer.file,newer.ext);
   end
   template=[row(col('\[0-9]')*ones(1,8)) '.mat\*'];
-  d=[local.tfile '.txt'];
   dirpath(strfind(dirpath,'\'))=[]; % remove escapes
-  cmd=sprintf('find %s -name %s%s-print >%s 2>/dev/null',dirpath(1:end-1),template,i,d);
-  if unix(cmd)
+  cmd=sprintf('find %s -name %s%s -print 2>/dev/null',dirpath(1:end-1),template,i);
+  [status,d]=unix(cmd);
+  if status
     msg=['Error listing mat files in ' dirpath ' ' cmd];
-  elseif exist(d)
+  elseif length(d)
     try
-      [dirs,file,ext]=textread(d,['%' num2str(length(dirpath)-1) 's/%d%s']);
-      dirlen=length(file);
+      d=textscan(d,['%' num2str(length(dirpath)-1) 's/%08d%s']);
+      dirlen=length(d{1});
       list=repmat(struct('dir','','file',0,'ext',''),[dirlen 1]);
       for i=1:dirlen
-        list(i).dir=char(dirs(i));
-        list(i).file=file(i);
-        list(i).ext=char(ext(i));
+        list(i).dir=char(d{1}{i});
+        list(i).file=double(d{2}(i));
+        list(i).ext=char(d{3}{i});
       end
-      %ist=cell2struct({char(dir) list char(ext)},{'dir' 'file' 'ext'},2)
+      %ist=cell2struct(d,{'dir' 'file' 'ext'},2);
     catch, disp(lasterr)
     end
   end
-  if exist(d), delete(d), end
 else
   dirpath=dirpath(1:end-1);
   if strfind(dirpath,'*')
@@ -55,9 +54,14 @@ else
     end
     l=repmat(struct('dir',fullfile(dp,dirs(j).name),'file',0,'ext',''),[dirlen 1]);
     for i=dirlen:-1:1
-      l(i).file=sscanf(dirlist(i).name,'%08d%*s');
-      l(i).ext=sscanf(dirlist(i).name,'%*8s%s');
-      if ~isnumeric(l(i).file) | ~strcmp(l(i).ext(1),'.'), l(i)=[]; end
+      f=textscan(dirlist(i).name,'%f%s');
+      l(i).file=f{1};
+      f=char(f{2}); if ~strcmp(f(1),'.'), f=['.' f]; end
+      l(i).ext=f;
+      if isempty(l(i).file), l(i)=[]; end
+      %l(i).file=sscanf(dirlist(i).name,'%08d%*s');
+      %l(i).ext=sscanf(dirlist(i).name,'%*8s%s');
+      %if ~isnumeric(l(i).file) | ~strcmp(l(i).ext(1),'.'), l(i)=[]; end
     end
     list=[list;l];
   end

@@ -7,9 +7,21 @@ if name_site=='V'
   if fix(expver)==4
     a_satch.clutter=250;
     h1=200; d1=.36; first=20; n1=250;
-    analysis_lagprofiling.par=load([path_expr 'manda_va.par']);
-    analysis_lagprofiling.lib='plwin';
-    analysis_lagprofiling.do=0;
+    analysis_lpf.par=load([path_expr 'manda_clutter.par4']);
+    analysis_lpf.lib='clutter';
+    analysis_lpf.raw=256*128;
+    analysis_lpf.data=0;
+    analysis_lpf.do=0;
+    analysis_lpf(2).par=load([path_expr 'manda_va.par4']);
+    analysis_lpf(2).par(24)=0; %clutter done separately
+    analysis_lpf(2).lib='plwin';
+    analysis_lpf(2).raw=256*128;
+    analysis_lpf(2).data=20;
+    analysis_lpf(3)=analysis_lpf(1);
+    analysis_lpf(3).raw=256*128*2+942*3200;
+    analysis_lpf(4)=analysis_lpf(2);
+    analysis_lpf(4).raw=256*128*2+942*3200;
+    analysis_lpf(4).data=20+101252;
   end
 elseif name_site=='T'
   fit_altitude(2:5,1)=[100;130;107;90];
@@ -18,9 +30,11 @@ elseif name_site=='T'
   if fix(expver)==4
     a_satch.clutter=250;
     h1=200; d1=.36; first=20; n1=250;
-    analysis_lagprofiling.par=load([path_expr 'manda_va.par']);
-    analysis_lagprofiling.lib='plwin';
-    analysis_lagprofiling.do=0;
+    analysis_lpf.par=load([path_expr 'manda_va.par4']);
+    analysis_lpf.lib='plwin';
+    analysis_lpf.raw=256*128;
+    analysis_lpf.data=20;
+    analysis_lpf.do=0;
   elseif expver>2
    h1=310; h2=500;
   end

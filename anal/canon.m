@@ -31,7 +31,9 @@ end
 if strfind(fn,'.bz2')
    if isunix
        % should work on posix-compliant systems: linux, OSX, and even Cygwin
-        system(['bunzip2 -c ' fn ' >' local.tfile ext]);
+       prog='lbunzip2'; %faster
+       if unix(['which ' prog ' >/dev/null 2>&1']), prog='bunzip2'; end
+        system([prog ' -ck ' fn ' >' local.tfile ext]);
         %system(['pbzip2 -cd ' fn ' >' local.tfile ext]);
    elseif ispc
          %We run on Windows. adapt this path as needed

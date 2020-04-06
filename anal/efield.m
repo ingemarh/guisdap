@@ -27,7 +27,7 @@ if isempty(lat), lat=[0 Inf]; end
 if isempty(verbose)
  verbose=0;
 elseif verbose(1)==2
- minlat=60; scale=500; maxv=5000; maxverr=500; St=600;
+ minlat=60; scale=500; maxv=5000; maxverr=500; St=600/86400;
 elseif verbose(1)~=1
  minlat=verbose(1); scale=verbose(4); maxv=verbose(2); maxverr=verbose(3); St=verbose(5);
 end

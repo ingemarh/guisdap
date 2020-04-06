@@ -7,7 +7,8 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,status,update)
 % rpar2D[Ran,Alt,RawNe]
 %  or err2D[Ne,Te,Ti,Vi,Coll]
 %
-global name_expr r_RECloc name_ant r_Magic_const myparams load_apriori rres ppres max_ppw r_XMITloc
+global name_expr r_RECloc name_ant name_strategy r_Magic_const myparams load_apriori rres ppres max_ppw r_XMITloc
+global allnames
 persistent lastfile
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
@@ -25,6 +26,8 @@ if isempty(strfind(data_path,'*')) && ~isdir(data_path)
     return
   else
     [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,[],do_err);
+    dt=diff(Time)*86400; name_strategy=sprintf('%.0f',median(dt));
+    if std(dt)>10, name_strategy='ant'; end
     return
   end
 end
@@ -35,17 +38,19 @@ n=length(list);
 
 Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];
 if n==0, return; end
-r_Tsys=[]; r_pp=[]; rres=[];
+r_Tsys=[]; r_pp=[]; rres=[]; name_sig=''; name_strategy='';
 n_tot=n;
 memwarn=0;
 lastfile=list(n);
 re=6370;
 npar2D=9; nrpar2D=3; nerr2D=npar2D-4;
 Time=zeros(2,n_tot);
+fileslist=cell2mat({list.file}); fileform='%08d%s'; 
+if any(rem(fileslist,1)), fileform='%012.3f%s'; end
 
 for i=1:n_tot
 % clear('r_*','name_*')
-  load(canon(fullfile(list(i).dir,sprintf('%08d%s',list(i).file,list(i).ext)),0))
+  load(canon(fullfile(list(i).dir,sprintf(fileform,list(i).file,list(i).ext)),0))
   if exist('r_Offsetppd')
     rOff=r_Offsetppd;
   elseif exist('r_phasepush')
@@ -81,6 +86,19 @@ for i=1:n_tot
     if exist('r_w','var')
       rres=ones(n_tot,1)*Inf;
     end
+  end
+  nsig=regexprep(name_sig,'(\s[012][0-9]:[0-5][0-9]:[0-5][0-9])$',''); %remove tod
+  if exist(name_sig,'var'), nsig=split(name_sig); nsig=char(join(nsig(1:end-1))); end
+  if isempty(name_strategy)
+    name_strategy=char(regexp(list(i).dir,'[^_]+(?=@)','match')); if strcmp(name_strategy,name_expr), name_strategy=''; end
+  end
+  if isempty(allnames)
+    allnames.ant=name_ant(1:3); allnames.expr=name_expr; allnames.sig=nsig; allnames.strategy=name_strategy;
+  else
+    if ~contains(row(allnames.ant'),name_ant(1:3)), allnames.ant=char(allnames.ant,name_ant(1:3)); end
+    if ~contains(row(allnames.expr'),name_expr), allnames.expr=char(allnames.expr,name_expr); end
+    if ~contains(row(allnames.strategy'),name_strategy), allnames.strategy=char(allnames.strategy,name_strategy); end
+    if ~contains(row(allnames.sig'),nsig), allnames.sig=char(allnames.sig,nsig); end
   end
   nalt=size(r_param,1);
   if nalt>n_alt
@@ -164,3 +182,15 @@ par1D(:,1)=mod(par1D(:,1)+360,360);
 Time=Time(:,s); par2D=par2D(:,s,:); par1D=par1D(s,:);
 if ~isempty(rpar2D), rpar2D=rpar2D(:,s,:); end
 if ~isempty(err2D), err2D=err2D(:,s,:); end
+if isempty(name_strategy)
+  dt=diff(Time)*86400; name_strategy=sprintf('%.0f',median(dt));
+  if std(dt)>10, name_strategy='ant'; end
+  if exist(fullfile(list(1).dir,'.gup'),'file')
+    load('-mat',fullfile(DATA_PATH,'.gup'),'intper')
+    if length(intper)>1
+      name_strategy='scan';
+    elseif intper>0
+      name_strategy=sprintf('%g',intper);
+    end
+  end
+end

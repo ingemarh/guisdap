@@ -1,9 +1,9 @@
-analysis_lagprofiling.par=load([path_expr 'q16x20.par']);
-analysis_lagprofiling.lib='plwin';
-analysis_lagprofiling.do=1;
-analysis_lagprofiling.raw=0;
-analysis_lagprofiling.nsamp=analysis_lagprofiling.par(7);
-analysis_lagprofiling.nrep=analysis_lagprofiling.par(6);
-analysis_lagprofiling.p=[0 analysis_lagprofiling.nrep-1]; %start/stop profiles to analyse
+analysis_lpf.par=load([path_expr 'q16x20.par']);
+analysis_lpf.lib='plwin';
+analysis_lpf.do=1;
+analysis_lpf.raw=0;
+analysis_lpf.nsamp=analysis_lpf.par(7);
+analysis_lpf.nrep=analysis_lpf.par(6);
+analysis_lpf.p=[0 analysis_lpf.nrep-1]; %start/stop profiles to analyse
 r0_setup=2667e-6;
 analysis_timestamp=[3.6 4.5];

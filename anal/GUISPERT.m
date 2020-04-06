@@ -77,6 +77,10 @@ end
 %  Pt=Pt*2
 %end
 
+if name_site=='V' & d_date>datenum(2003,1,1)
+ [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
+end
+
 if strcmp(name_ant(1:3),'uhf')
  if (d_date>=datenum(2000,10,01) & d_date<=datenum(2001,02,08)) | ...
     (d_date>=datenum(2001,06,28) & d_date<=datenum(2001,10,15,13,31,00)) 

@@ -27,6 +27,8 @@ end
 
 aa = find(strcmp(exprparnames,'Cedar file name')==1);
 bb = find(strcmp(exprparnames,'kindat')==1);
+cc = find(strcmp(exprparnames,'start time')==1);
+dd = find(strcmp(exprparnames,'end time')==1);
 
 cedarfile = char(exprparvalues(aa,:));
 
@@ -34,6 +36,11 @@ kindat_values = char(exprparvalues(bb,:));
 kindats = str2num(char(strsplit(kindat_values,', ')'));
 nkindats = length(kindats);
 evenkindat = num2str(max(kindats));
+
+starttime = char(exprparvalues(cc,:));
+endtime   = char(exprparvalues(dd,:));
+starttime(11) = 'T'; starttime(20:22) = '';
+endtime(11)   = 'T'; endtime(20:22)   = '';
 
 pathparts = strsplit(cedarfile,filesep);
 site = char(pathparts(end-2));
@@ -46,11 +53,16 @@ day    = sprintf('%02d',data.day(1));
 hour   = sprintf('%02d',data.hour(1));
 minute = sprintf('%02d',data.min(1));
 second = sprintf('%02d',data.sec(1));
-
-recs = length(data.ut1_unix);                            % # of records
-intper_med = median(data.ut2_unix-data.ut1_unix);        % median integration time
-
 display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
+
+recs = length(data.ut1_unix);    % # of records
+intper_med = median(data.ut2_unix-data.ut1_unix);
+if intper_med < 10
+    name_strategy = 'ant';
+else
+    name_strategy = num2str(intper_med);
+end
+matfile.metadata.experiment.intper_median = {num2str(intper_med)};
 
 aa = find(strcmp(exprparnames,'instrument')==1);
 if contains(char(exprparvalues(aa)),'Kiruna'), name_ant = 'kir'; 
@@ -66,25 +78,26 @@ else
     name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
 end
 matfile.metadata.experiment.name_expr = {name_expr}; 
-matfile.metadata.experiment.intper_median = {num2str( intper_med)};
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' num2str(intper_med) '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant];
 storepath = fullfile(datapath,datafolder);
 if exist(storepath)
    rmdir(storepath,'s');
 end
 mkdir(storepath);
 
-Hdf5File = [datafolder '.hdf5'];
-MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '@' name_ant '.mat'];
+Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
+MatFile = sprintf('%s%s',datafolder,'.mat');
+% Hdf5File = [datafolder '.hdf5'];
+% MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCAThdf5file = hdffilename;
 
+%keyboard
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
-
 [~,text] = xlsread(GuisdapParFile);     
-parameters_list = text(:,5);   % list that includes all Guisdap parameters and keep their positions from the excel arc
+parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
 gupparameters_list = text(:,1);
 
 if exist(hdffilename)==2, delete(hdffilename); end
@@ -121,12 +134,34 @@ for ii= 1:newrec
     nrec = [nrec; nrec_tmp];
 end
 
+% Spatial description of datapoints for DataCite
+loc = [data.elm data.azm data.range];
+rr_lon = find(strcmp(exprparnames,'instrument longitude')==1);
+rr_lat = find(strcmp(exprparnames,'instrument latitude')==1);
+rr_alt = find(strcmp(exprparnames,'instrument altitude')==1);
+RECloc = [str2num(exprparvalues{rr_lon}) str2num(exprparvalues{rr_lat}) str2num(exprparvalues{rr_alt})];
+gg = zeros(length(data.elm),3);
+for ss = 1:length(data.elm)
+    gg(ss,:) = loc2gg(RECloc,loc(ss,:));
+end
+  
+if nkindats>1
+    cc       = find(data.kindat == str2num(evenkindat));
+    cc_pp    = find(data.kindat == str2num(evenkindat)-1);
+    gg_sp    = gg(cc,:);
+    gg_sp_pp = gg(cc_pp,:);
+else
+    gg_sp = gg;
+end
+
 matfile.data.par0d     = [];
-matfile.data.par1d     = [];
 matfile.metadata.par0d = [];
+matfile.data.par1d     = [];
 matfile.metadata.par1d = [];
 matfile.data.par2d     = [];
 matfile.metadata.par2d = [];
+matfile.data.utime     = [];
+matfile.metadata.utime = [];
 
 for ii = 1:nkindats
     aa = find(strcmp('nrec',gupparameters_list)==1);
@@ -147,11 +182,15 @@ for ii = 1:nkindats
     end
 end
 
-if nkindats>1
-    cckind = find(data.kindat == str2num(evenkindat));   % data.kindat does not seem to exist when there is only 1 kindat for the experiment
-else cckind = 1:length(data.recno);
-end
+% if nkindats>1
+%     cckind = find(data.kindat == str2num(evenkindat));   % data.kindat does not seem to exist when there is only 1 kindat for the experiment
+% else cckind = 1:length(data.recno);
+% end
+
 for ii = 1:npar
+    if strcmp(char(Parsinfile_list(ii)),'nsampi')
+        continue
+    end
     
     aa = find(strcmp(char(Parsinfile_list(ii)),parameters_list)==1);
     if aa
@@ -187,17 +226,29 @@ for ii = 1:npar
             if strcmp(Parsinfile_list(ii),'power')
                 parameterdata = parameterdata*1000;   % kW --> W
             end
+            if strcmp(Parsinfile_list(ii),'nsamp') && isfield(data,'nsampi')
+                parameterdata = parameterdata + data.nsampi;   % nsamp = nsamp+nsampi
+            end
         end
         
         if length(unique(parameterdata))==1
-            matfile.data.par0d = [matfile.data.par0d single(parameterdata(1))];
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
             if cell2mat(strfind(info(1),'h_'))==1
                 info{1} = info{1}(3:end);
             end
             info(4) = {'-'};
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-            matfile.metadata.par0d = [matfile.metadata.par0d info'];
+                
+            if strcmp('tfreq',char(Parsinfile_list(ii)))
+                aa = aa(1);                                    % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
+            end
+            if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
+                matfile.data.utime = [matfile.data.utime parameterdata(1)]; 
+                matfile.metadata.utime = [matfile.metadata.utime info'];
+            else
+                matfile.data.par0d = [matfile.data.par0d single(parameterdata(1))];
+                matfile.metadata.par0d = [matfile.metadata.par0d info'];
+            end
             continue
         end
        
@@ -206,7 +257,6 @@ for ii = 1:npar
         end
         
         for jj = 1:nkindats
-            
             if nkindats>1
                 cc = find(data.kindat == kindats(jj));
                 parameterdata_kindat = parameterdata(cc);
@@ -217,12 +267,13 @@ for ii = 1:npar
             if sum(isnan(parameterdata_kindat))==length(parameterdata_kindat)   % check if all data (for a certain kindat) are NaN
                 continue                                                        % if so, skip to next iteration
             end
-            
-            if (strcmp('range',char(Parsinfile_list(ii))) || strcmp('tfreq',char(Parsinfile_list(ii))))  && jj == 1 
+                      
+            if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
                 bb = aa; end
-            if strcmp('range',char(Parsinfile_list(ii)))  || strcmp('tfreq',char(Parsinfile_list(ii)))
-                aa = bb(jj); end      % since there are two 'range' in parameters_list there will be two values in aa. This bit of code requires the 'normal range' (range) to be before 'pprange' in the Guisdap parameter list.  
-           
+            if strcmp('range',char(Parsinfile_list(ii)))
+                aa = bb(jj); end                                            % since there are two 'range' in parameters_list there will be two values in aa. This bit of code requires the 'normal range' (range) to be before 'pprange' in the Guisdap parameter list.  
+            if strcmp('tfreq',char(Parsinfile_list(ii))), aa = aa(1); end   % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
+            
             if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1);  end
             if strcmp('dvobi',char(Parsinfile_list(ii))), aa = find(strcmp('dvo',parameters_list)==1); end
             if strcmp('nel',char(Parsinfile_list(ii))),   aa = find(strcmp('ne',parameters_list)==1);  parameterdata_kindat = 10.^parameterdata_kindat; end
@@ -258,8 +309,13 @@ for ii = 1:npar
             end
             
             if length(par_1d)==newrec 
-                matfile.data.par1d = [matfile.data.par1d double(par_1d)]; 
-                matfile.metadata.par1d = [matfile.metadata.par1d info'];
+                if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
+                    matfile.data.utime = [matfile.data.utime par_1d]; 
+                    matfile.metadata.utime = [matfile.metadata.utime info'];
+                else
+                    matfile.data.par1d = [matfile.data.par1d double(par_1d)]; 
+                    matfile.metadata.par1d = [matfile.metadata.par1d info'];
+                end
                 break
             else
                 if jj == 2
@@ -342,18 +398,51 @@ if exist('name_ant','var'); nn = nn + 1;
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';
 end
+if exist('name_strategy'); nn = nn + 1;
+    infoname(1) = {'name_strategy'};
+    infoname(2) = {name_strategy};
+    a = find(strcmp('name_strategy',gupparameters_list)==1);                
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;    
+    matfile.metadata.names(:,nn) = infoname';
+end
 
+% DataCite
 symbols = ['a':'z' 'A':'Z' '0':'9'];
 strLength = 10;
 nums = randi(numel(symbols),[1 strLength]);
 randstr = symbols(nums);
 PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
 matfile.metadata.schemes.DataCite.Identifier = {PID};
-matfile.metadata.schemes.DataCite.Creator = {'Ingemar Häggström'};
+matfile.metadata.schemes.DataCite.Creator = {name_ant};
 matfile.metadata.schemes.DataCite.Title = {datafolder};
 matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
+matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3 Velocity'};
+matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 matfile.metadata.schemes.DataCite.PublicationYear = {year};
-matfile.metadata.schemes.DataCite.ResourceType = {'dataset/Level 3 Ionosphere'};
+
+% Find the smallest box (4 corners and mid-point) to enclose the data.
+% If area of convhull < 10-4 deg^2, define alla points as one (average)
+% imag = 1 to plot the data and the corresponding box
+im = 1;
+[plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],im);
+matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);
+matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = plonlat(:,2);
+if ~isempty(PointInPol)
+    matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = PointInPol(1);
+    matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
+end
+
+[plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
+matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1);
+matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
+if ~isempty(PointInPol)
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = PointInPol(1);
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = PointInPol(2);
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = [];
@@ -398,6 +487,24 @@ if isfield(matfile.metadata,'par2d_pp')
     matfile.metadata.par2d_pp(gupnamesindex,:) = [];
 end
 
+% Remove alt, lon and lat from par2d_pp
+a = find(strcmp('h',matfile.metadata.par2d_pp(1,:)));
+if a
+    matfile.data.par2d_pp(:,a)     = [];
+    matfile.metadata.par2d_pp(:,a) = [];
+end
+a = find(strcmp('lon',matfile.metadata.par2d_pp(1,:)));
+if a
+    matfile.data.par2d_pp(:,a)     = [];
+    matfile.metadata.par2d_pp(:,a) = [];
+end   
+a = find(strcmp('lat',matfile.metadata.par2d_pp(1,:)));
+if a
+    matfile.data.par2d_pp(:,a)     = [];
+    matfile.metadata.par2d_pp(:,a) = [];
+end 
+
+
 save(matfilename,'matfile')
 
 % Generate an HDF5-file 
@@ -437,9 +544,19 @@ for sf = sFields.'
                         group3 = [group2 '/' char(uf)];
                         vFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)));
                         for vf = vFields.'
-                              strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
-                              dsname = char(vf);
-                              strds2hdf5(hdffilename,group3,dsname,strdata)
+                            if isstruct(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)))
+                                group4 = [group3 '/' char(vf)];
+                                wFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)));
+                                for wf = wFields.'
+                                    strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)).(char(wf));
+                                    dsname = char(wf);
+                                    strds2hdf5(hdffilename,group4,dsname,strdata)
+                                end
+                            else                            
+                                strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
+                                dsname = char(vf);
+                                strds2hdf5(hdffilename,group3,dsname,strdata)
+                            end
                         end
                     else
                         strdata = matfile.(char(sf)).(char(tf)).(char(uf));

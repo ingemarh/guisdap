@@ -46,7 +46,7 @@ if ~isempty(x)
     elseif ge(ncol,chunklim), csize = [nrow chunklim 3];
     else, csize = [nrow ncol 3]; 
     end   
-    Desc(1) = {['imagedata: truecolor image data, an ' num2str(nrow) '-by-' num2str(ncol) '-by-3 array.']};
+    Desc(1) = {['imagedata: RGB truecolor image data, an ' num2str(nrow) '-by-' num2str(ncol) '-by-3 array.']};
     h5create(hdf5file,['/figures' '/' figurename '/imagedata'],size(x),'ChunkSize',csize,'Deflate',9,'Datatype','uint8');
     h5write(hdf5file, ['/figures' '/' figurename '/imagedata'],x); 
 end

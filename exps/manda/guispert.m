@@ -4,7 +4,6 @@
 % See also: GUISPERT GUIZARD
 %
 if strcmp(name_ant(1:3),'vhf')
- [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
   if (d_date>=datenum(2012,06,12,06,00,0) & d_date<=datenum(2012,07,12,23,00,0))| fix(d_date)==fix(datenum(2012,09,04,0,0,0)) | fix(d_date)==fix(datenum(2012,09,06,0,0,0)) | fix(d_date)==fix(datenum(2012,09,07,0,0,0))
      ch_Pt=d_parbl(75)*9.59*1e3;
    fprintf('GUISPERT: fixing vhf tx power estimate using average WG power/9.59 kW')

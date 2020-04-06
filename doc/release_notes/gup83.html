@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC>
+<HTML>
+<!--Author Ingemar Haggstrom -->
+<HEAD>
+ <TITLE>GUISDAP 8.3</TITLE>
+</HEAD>
+
+<body>
+
+<h2 align="center">GUISDAP 8.3</h2>
+
+This release of guisdap contains several new features and bugfixes,
+but everything is made compatible with older versions (hopefully).
+It has been developed and tested using Matlab 6.5, so there may (or may
+not) be some problems with older Matlab versions.
+
+<h3>Install</h3>
+Guisdap-8.3 has been succesfully installed on Solaris (Forte 7) and
+linux (gcc 3), and the makefiles are written for those systems.
+Other architectures may have to change the makefiles, if you want speed,
+othervise it should run without the compiled routines.
+Please report any changes needed for other systems.
+<pre>
+untar the <a href="dist83/">distribution</a> at your favourite place
+cd into the guisdap directory
+if you want the speed improvements the mex utility provides:
+ make "lib" and "mex6" directories
+ cd models/iri2001
+ "make" (should be gnu-make)
+ cd ../nrlmsise00
+ "make"
+ cd ../../mexsources
+ "make"
+make a link of bin/guisdap to a place on your path (ex /usr/local/bin)
+</pre>
+Integration of historic KST data is done using the
+<a href="ftp://ion.le.ac.uk/eiscat/integration/integrate-2.0.5.tar.gz">Nigel Wade integration package</a>
+which you have to install separately. Provided are paths to
+NW/mex6 for the mex files and NW/lib for the libraries.
+
+Provided is also a searchpath to ~/gup/mygup where your personal
+and edited distribution files should go.
+
+<h3>Running</h3>
+
+At the prompt, type "guisdap --help" to see all the switches available.
+Normal analysis is done running "guisdap -a" which will bring up a
+window with some entries to fill in. (Hopefully selfexplained)
+This is the same as "guisdap" and then "analyse". When finished hit "GO".
+A more detailed instruction can be found <a href="doc/howto.html">here</a>.
+<p>
+There is also a course <a href="../course_2004/GUISDAP.pdf">presentation</a>
+describing how to initialise new
+experiments and some useful tips on more specialised analysis.
+The initialisation scripts are avaiable with "guisdap -i".
+
+<h3>New features</h3>
+
+<li>The speed of the analysis have been improved on multiprocessor systems
+by using threads.
+<li>The integrated data can now be saved at specified place, by
+<i>d_saveintdir</i>. If analysis is not wanted, the parameter
+<i>analysis_do</i> should be unset. 
+<li>Numerous hidden improvements and refinements
+
+<p><hr>
+Further information is will be available here in due course.
+Not up-to-date users might find something useful in the
+<a href="gup82.html">vs 8.2 release info</a>.
+<p><p>
+<a href="../people.cgi?Ingemar+H\344ggstr\366m">Ingemar H&auml;ggstr&ouml;m</a>.
+</body>
+</html>

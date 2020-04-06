@@ -10,8 +10,6 @@ clear all, clear global, clear functions
 
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local
 finish
-GUP_ver=9.1;
-fprintf('GUISDAP vs. %g by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
 
 path_GUP=which('start_GUP','-all');
 if iscell(path_GUP), path_GUP=char(path_GUP(end)); end
@@ -20,6 +18,15 @@ path_tmp=tempdir;
 path_exps=fullfile(path_GUP,'exps',filesep);
 result_path=fullfile(filesep,'analysis','results',filesep);
 data_path=fullfile(filesep,'data',filesep);
+d=1;
+if isunix
+ [d,GUP_ver]=system(sprintf('echo -n `git -C %s describe --tags --long`-`git -C %s log --oneline | wc -l` 2>/dev/null',path_GUP,path_GUP));
+end
+if d
+ GUP_ver=char(textread(fullfile(path_GUP,'.version'),'%s'));
+end
+
+fprintf('GUISDAP vs. %s by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
 
 format compact
 format short g
@@ -44,8 +51,9 @@ warning off backtrace
 %localities
 local.printer='color';
 local.site=getenv('EISCATSITE');
-local.host=getenv('HOSTNAME');
-local.browser='netscape';
+local.host=getenv('HOSTNAME'); if isempty(local.host), local.host=getenv('COMPUTERNAME'); end
+local.user=getenv('USER'); if isempty(local.user), local.user=getenv('USERNAME'); end
+local.browser='firefox';
 local.x=prod(get(0,'ScreenSize'))-1;
 local.x=~usejava('jvm') || feature('ShowFigureWindows');
 matver=ver('matlab');
@@ -74,26 +82,20 @@ if ~isfield(local,'tfile'), local.tfile=tempname; end
 switch local.site
  case 'K'
   data_path='/data1/';
-  local.browser='mozilla';
  case 'S'
   data_path='/data1/';
-  local.printer='phaser';
  case 'T'
-  local.printer='hp4550';
+  data_path='/data/';
  case 'L'
   data_path='/data/';
-  local.printer='Hpcolor';
- case 'HQ'
-  local.browser='mozilla';
-  local.printer='hpclj';
  otherwise
   local.site=[]; local.browser=[];
-  if ~isempty(getenv('LPDEST'))
-   local.printer=getenv('LPDEST');
-  end
-  if ~isempty(getenv('BROWSER'))
-   local.browser=getenv('BROWSER');
-  end
+end
+if ~isempty(getenv('LPDEST'))
+ local.printer=getenv('LPDEST');
+end
+if ~isempty(getenv('BROWSER'))
+ local.browser=getenv('BROWSER');
 end
 if ~exist(data_path,'dir'), data_path=path_tmp; end
 if ~exist(result_path,'dir'), result_path=path_tmp; end

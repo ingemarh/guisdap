@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<!--Author Ingemar Haggstrom -->
+
+  
+  <title>GUISDAP 8.5</title>
+</head>
+
+
+<body>
+
+
+
+<h2 align="center">GUISDAP 8.5</h2>
+
+
+
+This release of guisdap contains several new features and bugfixes,
+but everything is made compatible with older versions (hopefully).
+The package should be compatible with Matlab versions higher then 6.5,
+but there may (or may not) be some problems on specific platforms.
+
+<h3>Install</h3>
+
+
+Guisdap-8.5 has been succesfully installed on Solaris and
+linux, and the makefiles are written for those systems.
+Other architectures may have to change the makefiles, if you want speed,
+othervise it should run without the compiled routines. On Windows
+systems it is recommended to run under the cygwin environment for
+best compabilitiy.
+Please report any changes needed for other systems.
+<pre>untar the <a href="http://www.eiscat.se:8080/raw/GUISDAP/dist85/">distribution</a> at your favourite place<br>cd into the guisdap directory<br>if you want the speed improvements the mex utility provides:<br> make "lib" and "mex7" (or "mex6") directories<br> cd models/iri2001<br> "make" (should be gnu-make)<br> cd ../nrlmsise00<br> "make"<br> cd ../../mexsources<br> "make"<br>make a link of bin/guisdap to a place on your path (ex /usr/local/bin)<br></pre>
+
+
+Integration of historic KST data (not .mat format) is done using the
+<a href="ftp://ion.le.ac.uk/eiscat/integration/integrate-2.0.5.tar.gz">Nigel Wade integration package</a>
+which you have to install separately. Provided are paths to
+NW/mex6 for the mex files and NW/lib for the libraries.
+
+Provided is also a searchpath to ~/gup/mygup where your personal
+and edited distribution files should go.
+
+<h3>Running</h3>
+
+
+
+At the prompt, type "guisdap --help" to see all the switches available.
+Normal analysis is done running "guisdap -a" which will bring up a
+window with some entries to fill in. (Hopefully selfexplained)
+This is the same as "guisdap" and then "analyse". When finished hit "GO".
+A more detailed instruction can be found at <a href="http://www.eiscat.se:8080/raw/GUISDAP/doc/howto.html">here</a>.
+<p>
+There is also a course <a href="http://www.eiscat.se:8080/raw/course_2004/GUISDAP.pdf">presentation</a>
+describing how to initialise new
+experiments and some useful tips on more specialised analysis.
+The initialisation scripts are avaiable with "guisdap -i".
+
+</p>
+
+<h3>New features</h3>
+
+
+
+<ul>
+
+  <li>For experiments with multiple versions, such as manda and steffe, GUISDAP now
+accepts them with the same name. If the automatic version selection fails the
+initialisation to choose can be controlled by the analysis_rcprog parameter.
+
+  </li>
+
+  <li>Analysis on the web directly from our data base follows more or less the
+gfd setup. With that one does not need to download massive amounts of raw data
+and a matlab license or a guisdap installation. Also the running version of
+GUISDAP is used with the latest enhancements. The result files, plots and
+outputs are sent to the given email.
+  </li>
+
+  <li>Satellite checking has been improved to cut out the affected ranges instead of
+skipping the whole preintegrated dump. This feature is the default on some
+experiments and can be controlled by the boolean <i>a_satch.cut</i>.
+  </li>
+
+  <li>Short lags can be used for the raw density estimates via the tuning parameter
+    <i>analysis_ppshortlags</i>.
+  </li>
+
+  <li>The matlab result files also includes range resolution, <i>r_w</i>. Added to the power
+profiles are range and statistical resolutions, <i>r_ppw</i> and <i>r_pperr</i>. A signature,
+    <i>name_sig</i>, shows on what machine and when the analysis were made.
+in GUISDAP behaves for provided plasma parameters is added.
+  </li>
+
+  <li>The <i>fit_altitude</i> parameter have been extended to also control the physical
+limits for the parameters and how each parameter are fitted, linearly or
+logaritmic or hyperbolic.
+  </li>
+
+  <li>More (new and old) experiments have been inititalised and numerous hidden improvements and refinements
+  </li>
+
+  
+</ul>
+<ul style="margin-left: 40px;">
+  <li>Back to individual freq/channel properties
+  </li>
+  <li> Redone <span style="font-style: italic;">gaincurve</span>
+  </li>
+  <li><span style="font-style: italic;"> d_saveint</span> is now a struct: <span style="font-style: italic;">.dir</span> as before, <span style="font-style: italic;">.va</span>r for saving variances or not
+  </li>
+  <li> Display also satellite position, longer timeout in RT
+  </li>
+  <li> Introduce <span style="font-style: italic;">a_intfixforce</span>
+  </li>
+  <li> Get max <span style="font-style: italic;">viz</span>u dy from resolutions
+  </li>
+  <li> Landscape <span style="font-style: italic;">vizu</span> plot
+  </li>
+  <li> New renderer for <span style="font-style: italic;">calib_pl_ne</span>
+  </li>
+  <li> Show plasma line spec in calibration
+  </li>
+  <li> Use waveguide power for VHF from 2007 default
+  </li>
+  <li> Better control of pp handling
+  </li>
+  <li> Added taro beataT, enabling vc's without transmission
+  </li>
+  <li> Adding site=P + steffe_P
+  </li>
+  <li> Display the used analysis parameters with <span style="font-style: italic;">display_analysis_pars</span>
+  </li>
+  <li> ...
+  </li>
+</ul>
+<ul>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</ul>
+
+
+
+
+<p></p>
+
+<hr>
+Further information is will be available here in due course.
+Not up-to-date users might find something useful in the
+<a href="http://www.eiscat.se:8080/raw/GUISDAP/gup84.html">vs 8.4 release info</a>.
+<p></p>
+
+<p>
+<a href="http://www.eiscat.se:8080/raw/people.cgi">Ingemar H&auml;ggstr&ouml;m</a>.
+
+</p>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 %
 % See also: design path_expr
 
-GUP_iniver=GUP_ver;
+GUP_iniver=str2num(strtok(GUP_ver));
 
 if max(lp_nfir)==1 | isa(lp_fir,'int8')
   lp_firsto=lp_fir;

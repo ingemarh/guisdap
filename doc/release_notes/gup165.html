@@ -1,0 +1,103 @@
+<HTML>
+<HEAD>
+ <TITLE>GUISDAP 1.65</TITLE>
+</HEAD>
+
+<body>
+
+<h2 align="center">GUISDAP 1.65</h2>
+
+<p><i>GUISDAP 1.65 is available to process data from both the new, 
+upgraded, systems and the previous ND-based systems.  However, the mechanisms are
+ not yet too stable and are likely to change as the upgraded systems come fully 
+into operation.  This document represents the state of the art on 
+.</i></p>
+
+<p>The current versions of GUISDAP 1.65 are installed and maintained on the main 
+process computer, puny.  This is a multi-processor machine and can run multiple 
+copies of the analysis without loss of performance.</p>
+<p>The best available analysis for the current systems can be found in /opt/guisdap/TonyTromso,
+and for the pre-2000 systems can be found in /opt/guisdap/TonyOldTromso.
+In each case, cd to the specified directory, start MATLAB and execute the scipt 'analysis.m'.
+</p>
+
+<h3>New Systems</h3>
+
+<p>Data from the new systems is integrated with an earlier version of Nigel Wade's integration
+program (as it is on Svalbard) and this requires that /opt/guisdap/uk/lib be available in the 
+load path (use LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/guisdap/uk/lib in the k-shell for example)
+before starting MATLAB.</p>
+
+<p>analysis.m has now been replaced by newNamesAnalysis.m which implements 
+the new experiment naming convention
+and can process the following codes:
+<table border cellpadding=3>
+<tr><td><b>Programe</b></td><td><b>Comments</b></td></tr>
+<tr><td>cp1lt</td><td>Processes both ac and lp data, but does not combine them</td></tr>
+<tr><td>cp4bv</td><td>Allows selection of which beam to process</td></tr>
+<tr><td>tau1_singel_v</td><td>Normally select whole antenna</td></tr>
+</table></p>
+
+<p>newNamesAnalysis.m will ask a series of questions to determine the program to be processed, 
+the beam selected (where appropriate), the start and end times required, the integration period
+and whether the analysis is to check for new real-time data (this carries some overhead and
+should not be used when processing completed datasets - and anyway doesn't work correctly at 
+the moment).  Note that some responses are required in quotes or square brackets.</p>
+
+<p>Two graphics windows will be created, one displaying the real part of the data dump and the
+second the fitted results.  If not required (for example to speed up the processing once it has been
+determined that the analysis is proceeding correctly), these can be closed using the window
+controls (top left button) and each will disappear when the window is next addressed.</p>  
+
+
+<h3>Pre-2000 data</h3>
+
+<p>analysis.m can process the following codes:
+<table border=true cellpadding=3>
+<tr><td><b>Programe</b></td><td><b>Comments</b></td></tr>
+<tr><td>CP1K</td><td><br></td></tr>
+<tr><td>CP2E</td><td><br></td></tr>
+<tr><td>CP3F</td><td><br></td></tr>
+<tr><td>CP4B</td><td>Processes both beams sequentially</td></tr>
+</table></p>
+
+<p>analysis.m will ask a series of questions to determine the program to be processed, 
+(both the program and the pulse scheme) the start and end times required, the integration period
+and whether the analysis is to check for new real-time data (this carries some overhead and
+should not be used when processing completed datasets - and anyway doesn't work correctly 
+at the moment).  Note that some responses are required in quotes or square brackets.</p>
+
+<p>Two graphics windows will be created, one displaying the real part of the data dump and the
+second the fitted results.  If not required (for example to speed up the processing once it has been
+determined that the analysis is proceeding correctly), these can be closed using the window
+controls (top left button) and each will disappear when the window is next addressed.</p>  
+
+<h3>Results</h3>
+
+<p>The analysed results will be written to the analysed data area /data0/analysis.  MATLAB files
+will be written to a directory whose name is constructed as &lt;YYYY&gt;-&lt;MM&gt;-&lt;DD&gt;_&lt;program&gt;_&lt;code&gt;_&lt;integration
+time&gt;_&lt;antenna&gt;. For example, 2001-04-03_cp1lt_aclp_240_uhf contains Troms&oslash; UHF data form 3 April 2001
+taken with the cp1lt program, both alternating code and long pulse data with four minutes 
+integration, 2001-03-21_tau1_singel_v_ac_60_vhf0 contains Troms&oslash; VHF data from the whole
+antenna taken with the tau1_singel_v program (altenating code only) with 60 seconds integration and 
+1993-04-20_CP1K_aclp_60_tro contains Troms&oslash; UHF data form 20 April 1993
+taken with the cp1k program, both alternating code and long pulse data with 60 seconds integration.</p>
+
+<p>Additional files are constructed in /data0/analysis containing the same data in NCAR format and  special velocity
+data (also in NCAR format) as used by the SuperDARN radars (though there is some problem with these data at present).
+The latest NCAR records of both types are also posted to the web server and can be checked via the links on the 
+<a href="../present.html">monitors page</a> (disabled at present).</p>
+
+<p>The progress of the analysis can be checked using the vizu program.  cd to /opt/guisdap/TonyTromso/vizu, 
+start MATLAB and run 'vizu.m'.  The available analysed data directories in /data0/analysis will be listed, select
+the appropriate directory and add a comment if appropriate.  The plot can be updated using the 'update' button;
+the update/edit button gives access to some further options; always select whole hour boundaries for the start and end
+points of the plot. Typing vizu('save') at the prompt will cause a PostScript file to be created in /data0/analysis 
+with the same name as the data directory and of type '.ps'.</p>
+
+<p>Quality-checked analysed data sets can be loaded into the <a href="http://www.eiscat.uit.no/madrigal/">MADRIGAL</a> database where appropriate. 
+Please contact <A HREF="../people.cgi?tony">Tony</A> if you would like to make your data available in this way.</p>
+
+</body>
+</html>
+ 

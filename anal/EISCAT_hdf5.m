@@ -1,11 +1,17 @@
 
 function EISCAT_hdf5(dirpath, datapath, showfigs)
-
-global name_ant
-
+% EISCAT_hdf5(dirpath, datapath, showfigs)
+% The master script for creating EISCAT HDF5-files from old madrigal
+% formated files and handling corresponding figures and additional files
+% dirpath: path to the directory with old files 
+% datapath: path to the folder where the EISCAT HDF5 file and additional
+% files are stored
 % Show figures?
 % No:  showfigs = []
-% Yes: showfigs = 1
+% Yes: showfigs = 1 (non-empty)
+
+global name_ant path_GUP
+
 if nargin<3
     showfigs = []; 
 end
@@ -13,8 +19,12 @@ if nargin<2
     error('Experiment and output path needed.')
 end
 
+if ~exist('path_GUP','var') || isempty(path_GUP)
+   error('Guisdap needs to be started first.')
+end
+
 if ~exist(dirpath)
-    error(['The directory ' dirpath ' does not exist. Why not choose a folder that actually does exist?'])
+    error(['The directory ' dirpath ' does not exist. Why not choose a directory that actually does exist?'])
 end
 
 if ~exist(datapath)
@@ -22,12 +32,13 @@ if ~exist(datapath)
 end
 
 % ugly hack: start_GUP clears all variables, so store and re-read!!
-save(fullfile(tempdir,'my_input.mat'),'dirpath','datapath','showfigs');
-start_GUP;
-load(fullfile(tempdir,'my_input.mat'));
-delete(fullfile(tempdir,'my_input.mat'));
+% save(fullfile(tempdir,'my_input.mat'),'dirpath','datapath','showfigs');
+% start_GUP;
+% load(fullfile(tempdir,'my_input.mat'));
+% delete(fullfile(tempdir,'my_input.mat'));
 
-image_filelist = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
+image_filelist        = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*.pdf'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
+image_filelist_vecvel = [dir(fullfile(dirpath,'*vecvel*.png'));dir(fullfile(dirpath,'*vecvel*.gif'));dir(fullfile(dirpath,'*vecvel*.jpg'));dir(fullfile(dirpath,'*vecvel*.jpeg'));dir(fullfile(dirpath,'*vecvel*.pdf'));dir(fullfile(dirpath,'*vecvel*ps.gz'));dir(fullfile(dirpath,'*vecvel*ps'))];
 notesfiles = dir(fullfile(dirpath,'notes*txt'));
 logfiles = dir(fullfile(dirpath,'*log')); 
 
@@ -55,26 +66,29 @@ end
 hdf5oldfiles     = dir(fullfile(dirpath,'overview','*hdf5')); 
 hdf5_allfiles  = [];
 hdf5_files     = [];
+hdf5vel_file   = [];
 hdf5ncar_files = [];
 hdf5rest_files = [];
 
 if ~isempty(hdf5oldfiles)
-    l = 1; n = 1; m = 1;
+    k = 1; l = 1; n = 1; m = 1; o = 1;
     for ii = 1:length(hdf5oldfiles)
         hdf5_filename = hdf5oldfiles(ii).name;
-        hdf5_allfiles{ii} = fullfile(dirpath,'overview',hdf5_filename);
-        if contains(hdf5_filename,'.vr') || contains(hdf5_filename,'.tr') || contains(hdf5_filename,'.kr') || contains(hdf5_filename,'.sr') 
-            hdf5_files{l} = fullfile(dirpath,'overview',hdf5_filename);
-            l = l+1;
-        elseif contains(hdf5_filename,'NCAR')
-            hdf5ncar_files{m} = fullfile(dirpath,'overview',hdf5_filename);
-            m = m+1;
+        if contains(hdf5_filename,'vecvel')
+            hdf5vel_file {k} = fullfile(dirpath,'overview',hdf5_filename); k = k+1;    
+        elseif contains(hdf5_filename,'.vr') || contains(hdf5_filename,'.tr') || contains(hdf5_filename,'.kr') || contains(hdf5_filename,'.sr') 
+            hdf5_files{l} = fullfile(dirpath,'overview',hdf5_filename); l = l+1;
+            hdf5_allfiles{o} = fullfile(dirpath,'overview',hdf5_filename); o = o + 1;
+        elseif contains(hdf5_filename,'NCAR_')
+            hdf5ncar_files{m} = fullfile(dirpath,'overview',hdf5_filename); m = m+1;
+            hdf5_allfiles{o} = fullfile(dirpath,'overview',hdf5_filename); o = o + 1;
         else
-            hdf5rest_files{n} = fullfile(dirpath,'overview',hdf5_filename);
-            n = n+1;
+            hdf5rest_files{n} = fullfile(dirpath,'overview',hdf5_filename); n = n+1;
+            hdf5_allfiles{o} = fullfile(dirpath,'overview',hdf5_filename); o = o + 1;
         end
     end
 end
+
 
 oldhdf5_files = [];
 if isempty(targz_files) && isempty(hdf5oldfiles) 
@@ -91,7 +105,64 @@ display(data_files')
 pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','tyco','gup0','gup3'};
 ants   = {'32m','42m','uhf','vhf','esa','esr','eis','kir','sod','tro','lyr'};
 
+antcheck = 0;
+for df = 1:length(data_files)
+    if contains(data_files{df},'ant')
+        antcheck = 1;
+    end
+end
+
 figure_check = zeros(length(image_filelist),1);
+npdf = 0;
+pdf_forHDF5 = {};
+
+if ~isempty(hdf5vel_file)
+    if length(hdf5vel_file)>1
+        Warning('Oj, more than one NCAR vecvel file ... No file was handled!')
+    else
+        [storepath,EISCATvecvel_hdf5file] = cedarvel2hdf5(hdf5vel_file{1},datapath);
+        display(EISCATvecvel_hdf5file)
+        keyboard
+        for im = 1:length(image_filelist_vecvel)
+            figurefile = fullfile(dirpath,image_filelist_vecvel(im).name);
+            [~,figname,ext] = fileparts(figurefile);
+            if strcmp(ext,'.gz')
+                [~,figname,ext] = fileparts(figname);
+            end
+            if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
+                if strcmp(ext,'.pdf')
+                    npdf = npdf + 1;
+                    copyfile(figurefile,storepath)
+                    pdf_forHDF5(npdf) = {[figname ext]};
+                else
+                    store_image2Hdf5(figurefile,EISCATvecvel_hdf5file)
+                end
+                %figure_check(im) = figure_check(im) + 1;
+                %nfigs_expr =  nfigs_expr +1;
+            else
+                if strcmp(ext,'.gz')
+                    epsfile = gunzip(figurefile);
+                    figurefile = epsfile{1};
+                end
+                pdffile = eps2pdf(figurefile);
+                npdf = npdf + 1;
+                copyfile(pdffile,storepath)
+                [~,pdfname,ext] = fileparts(pdffile);
+                pdf_forHDF5(npdf) = {[pdfname ext]};
+                delete(pdffile,figurefile)
+                %figure_check(im) = figure_check(im) + 1;
+                %nfigs_expr =  nfigs_expr +1;
+            end
+        end
+    end
+end
+
+if npdf
+     strds2hdf5(EISCATvecvel_hdf5file,'/metadata','figure_links',pdf_forHDF5')
+     npdf = 0;
+     pdf_forHDF5 = {};
+end
+
 
 for ii = 1:length(data_files)
     
@@ -140,8 +211,7 @@ for ii = 1:length(data_files)
     ant = storefolder(cc+1:end);
     
     nfigs_expr = 0;
-    pdf_forHDF5 = [];
-   
+    
     for jj = 1:length(image_filelist)
         figurefile = fullfile(dirpath,image_filelist(jj).name);
         [~,figname,ext] = fileparts(figurefile);
@@ -160,6 +230,9 @@ for ii = 1:length(data_files)
            
             fig_intper_set = 0;
             c = 0;
+            
+%             [figname ext]
+%             keyboard
             
             for oo = 1:length(dd)
                 
@@ -192,17 +265,31 @@ for ii = 1:length(data_files)
                 end
             end
 
-            if fig_intper_set == 0 && ~isempty(intper)
-                fig_intper = intper;
+            if fig_intper_set == 0
+                if antcheck == 1
+                    fig_intper = '0';
+                elseif  ~isempty(intper)
+                    fig_intper = intper;
+                end
             end
-
-            if (contains(fig_intper,intper) && contains(fig_ant,ant) && strcmp(fig_pulse,pulse)) && c == 1 || ...
-               (contains(fig_intper,intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...     
-                (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
+            
+%             [[{fig_intper};{fig_ant};{fig_pulse}],[{intper};{ant};{pulse}]]
+%             keyboard
+%             
+            if (strcmp(fig_intper,intper) && contains(fig_ant,ant) && strcmp(fig_pulse,pulse)) && c == 1 || ...
+               (strcmp(fig_intper,intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...     
+               (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
                (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...
                ((contains(figname,'BoreSight') || contains(figname,'WestBeam')) && contains(fig_pulse,pulse))
                 if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
-                    store_image2Hdf5(figurefile,EISCAThdf5file)
+                    if strcmp(ext,'.pdf')
+                        npdf = npdf + 1;
+                        copyfile(figurefile,storepath)
+                        [~,pdfname,ext] = fileparts(figurefile);
+                        pdf_forHDF5(npdf) = {[pdfname ext]};
+                    else    
+                        store_image2Hdf5(figurefile,EISCAThdf5file)
+                    end
                     figure_check(jj) = figure_check(jj) + 1;
                     nfigs_expr =  nfigs_expr +1;
                 else
@@ -211,13 +298,10 @@ for ii = 1:length(data_files)
                         figurefile = epsfile{1};
                     end
                     pdffile = eps2pdf(figurefile);
+                    npdf = npdf + 1;
                     copyfile(pdffile,storepath)
-                    [~,pdfname,ext]=fileparts(pdffile);
-                    if isempty(pdf_forHDF5)
-                        pdf_forHDF5 = [pdfname ext];
-                    else
-                        pdf_forHDF5 = [pdf_forHDF5 ', ' pdfname ext];
-                    end
+                    [~,pdfname,ext] = fileparts(pdffile);
+                    pdf_forHDF5(npdf) = {[pdfname ext]};
                     delete(pdffile,figurefile)
                     figure_check(jj) = figure_check(jj) + 1;
                     nfigs_expr =  nfigs_expr +1;
@@ -225,7 +309,14 @@ for ii = 1:length(data_files)
             end
         elseif length(data_files) == 1
             if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
-                store_image2Hdf5(figurefile,EISCAThdf5file)
+                if strcmp(ext,'.pdf')
+                    npdf = npdf + 1;
+                    copyfile(figurefile,storepath)
+                    [~,pdfname,ext] = fileparts(figurefile);
+                    pdf_forHDF5(npdf) = {[pdfname ext]};
+                else
+                    store_image2Hdf5(figurefile,EISCAThdf5file)
+                end
                 figure_check(jj) = figure_check(jj) + 1;
                 nfigs_expr =  nfigs_expr +1;
             else
@@ -234,13 +325,10 @@ for ii = 1:length(data_files)
                     figurefile = epsfile{1};
                 end
                 pdffile = eps2pdf(figurefile);
+                npdf = npdf + 1;
                 copyfile(pdffile,storepath)
-                [~,pdfname,ext]=fileparts(pdffile);
-                if isempty(pdf_forHDF5)
-                    pdf_forHDF5 = [pdfname ext];
-                else
-                    pdf_forHDF5 = [pdf_forHDF5 ', ' pdfname ext];
-                end
+                [~,pdfname,ext] = fileparts(pdffile);
+                pdf_forHDF5(npdf) = {[pdfname ext]};
                 delete(pdffile,figurefile)
                 figure_check(jj) = figure_check(jj) + 1;
                 nfigs_expr =  nfigs_expr +1;
@@ -248,23 +336,15 @@ for ii = 1:length(data_files)
         end
     end 
     
-    if ~isempty(pdf_forHDF5)
-        strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{pdf_forHDF5})
+    if npdf
+        strds2hdf5(EISCAThdf5file,'/metadata','figure_links',pdf_forHDF5')
+        npdf = 0;
+        clear pdf_forHDF5
     end
-                     
-    notes_forHDF5 = [];
+                 
     for nn = 1:length(notesfiles)
         notesfile = fullfile(dirpath,notesfiles(nn).name);
-        copyfile(notesfile,storepath)
-        if nn == 1
-            notes_forHDF5 = notesfiles(nn).name;
-        else
-            notes_forHDF5 = [notes_forHDF5 ', ' notesfiles(nn).name];
-        end
-    end
-    
-    if ~isempty(notes_forHDF5)
-        strds2hdf5(EISCAThdf5file,'/metadata','comment_links',{notes_forHDF5})
+        addNote2Hdf5(notesfile,EISCAThdf5file,nn)
     end
     
     for ll = 1:length(logs_filename)
@@ -284,7 +364,7 @@ for ii = 1:length(data_files)
     info = h5info(EISCAThdf5file,'/metadata');
     metagroups = {info.Groups.Name}';
     hdf5fileformeta = [];
-    
+   
     if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metagroups,'/metadata/gfd')))
         [~,tarfilename1,~] = fileparts(data_files{ii});
         [~,tarfilename,~]  = fileparts(tarfilename1);
@@ -304,7 +384,6 @@ for ii = 1:length(data_files)
     else
     end
     if nfigs_expr == 0
-        
         if contains(data_files{ii},'.tar.gz')
             input = untarpath;
             vizugo = 1;
@@ -315,14 +394,14 @@ for ii = 1:length(data_files)
             if aa
                 data0d = h5read(EISCAThdf5file,'/data/par0d');
                 nrec = data0d(aa);
+                if nrec == 1 || nrec > 5
+                    vizugo = 1;
+                else
+                    vizugo = [];
+                    warning(['No figures, and nrec = ' num2str(nrec) ' so no new figures generated.'])
+                end
             else
                 vizugo = 1;
-            end
-            if nrec == 1 || nrec > 5
-                vizugo = 1;
-            else
-                vizugo = [];
-                warning(['No figures, and nrec = ' num2str(nrec) ' so no new figures generated.'])
             end
         end
         

@@ -1,13 +1,23 @@
-function [dd_data,upar,d_raw]=clutter(par,d_parbl,d_raw)
+function [dd_data,upar,dd_raw]=clutter(par,d_parbl,d_raw)
 global path_GUP
 if ~libisloaded('clutter')
  libdir=fullfile(path_GUP,'lib');
  loadlibrary(fullfile(libdir,'clutter.so'),fullfile(libdir,'plwin.h'))
 end
-nout=length(d_raw);
-oz=zeros(nout,1);
+no=par(3);
+if par(8)==0, no=1; end
+oz=zeros(no,1);
 or=libpointer('doublePtr',oz); oi=libpointer('doublePtr',oz);
-up=libpointer('doublePtr',zeros(20,1)); up.value=d_parbl((1:20)+42);
-calllib('clutter','matface',length(par),par,0,[],length(d_raw),real(d_raw),imag(d_raw),nout,or,oi,up);
-dd_data=complex(or.value,oi.value);
+%up=libpointer('doublePtr',zeros(20,1)); up.value=d_parbl((1:20)+42);
+up=libpointer('doublePtr',d_parbl((1:20)+42));
+nr=length(d_raw);
+ir=libpointer('doublePtr',real(d_raw)); ii=libpointer('doublePtr',imag(d_raw));
+calllib('clutter','matface',par,nr,ir,ii,no,or,oi,up);
+if no>1
+ dd_data=complex(or.value,oi.value);
+else
+ dd_data=[];
+end
+dd_raw=complex(ir.value,ii.value);
+upar=up.value;
 return

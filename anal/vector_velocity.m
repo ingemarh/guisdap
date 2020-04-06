@@ -1,4 +1,4 @@
-% function [Vdate,Vpos,Vg,Vgv]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
+% function [Vdate,Vpos,Vg,Vgv]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir,dynavel)
 % function [result_file]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
 % To calculate 3D velocities from EISCAT data
 % Copyright EISCAT 2008-02-28
@@ -11,6 +11,7 @@
 %	uperr	[Inf 160] Constraint the vertical [from 160km parallel] comp
 %	mind	[3 10] Minimum no of directions and angle difference
 %	odir	[dirs|path_tmp] Output directory
+%       dynavel [0|1|2|3] Use Tromso dynasonde vectors, bitpattern for F,E values
 % Outputs:Vdate	(2,:) Datenum span for the estimate
 %	Vpos	(:,3) Mean lat,lon,alt
 %	Vg	(:,3) Geographic velocity (E,N,U)
@@ -18,8 +19,8 @@
 %	: or result file name
 % See also EFIELD VEL_WRAPPER
 %
-function [varargout]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir)
-global result_path path_tmp path_GUP
+function [varargout]=vector_velocity(dirs,alt,td,ld,uperr,mind,odir,dynavel)
+global result_path path_tmp path_GUP GUP_ver local
 if nargin<1, dirs=[]; end
 if nargin<2, alt=[]; end
 if nargin<3, td=[]; end
@@ -27,6 +28,7 @@ if nargin<4, ld=[]; end
 if nargin<5, uperr=[]; end
 if nargin<6, mind=[]; end
 if nargin<7, odir=[]; end
+if nargin<8, dynavel=[]; end
 if isempty(dirs), dirs={result_path}; end
 if ~iscell(dirs), dirs={dirs}; end
 if isempty(alt), alt=[170 500]; end
@@ -48,11 +50,13 @@ if isempty(odir)
  end
  odir=fullfile(odir,filesep);
 end
+if isempty(dynavel), dynavel=0; end
 %dirs='/home/ingemar/tmp/2007-02-07_tau2pl_ant@uhf/';
 %%%%%%%%%%%%%%%%%
-global r_RECloc name_ant name_expr r_XMITloc
-Data1D=[]; Data2D=[]; dirind=0; loc=[]; name_ants=[]; name_exps=[];
+global r_RECloc allnames r_XMITloc
+Data1D=[]; Data2D=[]; dirind=0; loc=[]; allnames=[];
 for d1=1:ndir
+ if dirs{d1}=='.'; dirs{d1}=pwd; end
  fprintf('Reading %s...\n',dirs{d1})
  [Time,par2D,par1D,dum,err2D]=load_param(dirs{d1},[1,Inf]);
  ng=size(par2D,1);
@@ -66,25 +70,34 @@ for d1=1:ndir
  if td(1)==d1
   timint=mean(Time)-median(diff(Time));
  end
- if any(strfind(dirs{1},'*')) && strcmp(name_ant(2:3),'2m')
-  name_ant='esr';
- end
- name_ants=[name_ants;name_ant(1:3)];
- name_exps=strvcat(name_exps,name_expr);
 end
 dirind=cumsum(dirind);
 r_time=datevec(mean(Data1D(:,1)));
+%%%%%%%%%%%%%%%%%
+if dynavel
+ t1=min(Data1D(:,1)); t2=max(Data1D(:,1));
+ tsound=225/86400;
+ if dynavel>1
+  [dydE,dyvE]=get_v(t1,t2,'tromso','E');
+  if min(diff(dydE))<tsound, tsound=min(diff(dydE)), end
+ end
+ if rem(dynavel,2)
+  [dydF,dyvF]=get_v(t1,t2,'tromso','F');
+  if min(diff(dydF))<tsound, tsound=min(diff(dydF)), end
+ end
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if isfinite(ld(1))
  ILAT=0;
  if ~isreal(ld) || max(ld)>90
   ld=abs(ld);
-  try
-   onera_desp_lib_load
-   ILAT=1;
-  end
+  ILAT=1;
  end
- if ~ILAT, %should really check for mex first...
+ try
+  onera_desp_lib_load
+  ILAT=1;
+ catch
+  addpath(fullfile(path_GUP,'models_m'),'-end')
   [secs,YEAR]=tosecs(r_time);
   magF=IGRF(); DIMO=magF.FELDCOF(YEAR+secs/86400/365);
  end
@@ -94,17 +107,31 @@ Re=6378.135;
 min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area to cover
 tfile=0;	%make velocity table for testings
 %%%%%%%%%%%%%%%%%
-if all(mean(name_ants,1)==name_ants(1,:))
- name_ant=name_ants(1,:); name_ants=[];
+name_ants=allnames.ant; nant=size(allnames.ant,1);
+name_exps=allnames.expr;
+name_sigs=[];
+if isfield(allnames,'sig'), name_sigs=allnames.sig; end
+name_strategies=[];
+if isfield(allnames,'strategy'), name_strategies=allnames.strategy; end
+if nant==1
+ name_ant=allnames.ant; name_ants=[];
+elseif all(allnames.ant(:,2:3)=='2m')
+ name_ant='esr';
 else
  name_ant='esa';
 end
-if all(mean(name_exps,1)==name_exps(1,:))
- nexp=['_' name_exps(1,:)]; name_exps=[];
+if size(allnames.expr,1)==1
+ nexp=['_' name_exps]; name_expr=name_exps; name_exps=[];
 else
- nexp=[]; name_expr=[];
+ nexp=[]; name_expr=[]
 end
-oname=sprintf('%d-%02d-%02d%s_vecvel@%s',r_time(1:3),nexp,name_ant);
+name_strategy='Altitude';
+if isfinite(ld(1)), name_strategy=[name_strategy ' Latitude']; end
+if isfinite(uperr(1)), name_strategy=[name_strategy ' Model']; end
+if dynavel, name_strategy=[name_strategy ' Dynasond']; end
+name_strategy=[name_strategy sprintf(' %g',td(1))];
+nstrat=regexp(name_strategy,'[A-Z0-9]');
+oname=sprintf('%d-%02d-%02d%s_V%d%s@%s',r_time(1:3),nexp,nant,lower(name_strategy(nstrat)),name_ant);
 result_file=fullfile(odir,oname);
 if tfile
  tfile=fopen([result_file '.txt'],'w');
@@ -185,12 +212,33 @@ for tim=timint
        if alti>uperr(2)
         B=geomag(gg_sp',r_time)';
         A=[A;-B(1:3)/norm(B(1:3))];
-        Vll=[Vll;0];
+        up=15.*cos((rem(datenum(r_time),1)-21.5/24.)*2*pi);
+        Vll=[Vll;up];
         Vlle=[Vlle;uperr(1)];
        else
         A=[A;[0 0 1]];
         Vll=[Vll;0];
         Vlle=[Vlle;uperr(1)];
+       end
+      end
+      if dynavel & (~isfinite(ld(il)) | ld(il)<69.6 & ld(il+1)>69.6)
+       d=[];
+       if alti>=uperr(2) & rem(dynavel,2)
+	d=find(dydF+tsound/2>tim & dydF+tsound/2<tim+td(1));
+        dyv=dyvF(d,:);
+       elseif alti<uperr(2) & dynavel>1
+	d=find(dydE+tsound/2>tim & dydE+tsound/2<tim+td(1));
+        dyv=dyvE(d,:);
+       end
+       ldy=length(d);
+       if ldy
+        err=sqrt(sum(dyv(:,1:3).^2,2).*dyv(:,4))/100;
+        for comp=1:3
+	 oo=zeros(ldy,3); oo(:,comp)=1;
+         A=[A;oo];
+         Vll=[Vll;dyv(:,comp)];
+         Vlle=[Vlle;err];
+	end
        end
       end
       ang_area=angarea(A);
@@ -230,7 +278,7 @@ for tim=timint
         Vpos=[Vpos;gg_sp];
         Vg=[Vg;V_real];
         Vgv=[Vgv;Vvar_real];
-        V_area=[V_area ang_area];
+        V_area=[V_area;ang_area];
         Gid=[Gid gid];
        else
 	warning('Shortcuts did not help, --skipping')
@@ -250,13 +298,16 @@ else
  else
   result_file
  end 
- Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind);
- save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,Vinputs)
- 
+ Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstriant',uperr,'MinDir',mind,'DynasondeVelocity',dynavel);
+ name_sig=[local.host ' ' local.user ' ' datestr(now)];
+ save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,name_sig,name_sigs,name_strategy,name_strategies,GUP_ver,Vinputs)
+
  fprintf('Making NCAR file...\n')
  NCAR_output
  NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))
  NCAR_output
+
+ matvecvel2hdf5([result_file '.mat'],odir);
 end
 if tfile, fclose(tfile); end
 return

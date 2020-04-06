@@ -4,7 +4,7 @@
 % function save_results
 function save_results
 
-global result_path name_expr name_site name_ant
+global result_path name_expr name_site name_ant name_strategy
 global p_XMITloc p_RECloc sc_angle p_om0
 global d_time GUP_ver ch_az ch_el ch_Pt p_m0 p_N0 p_dtau v_lightspeed ch_fradar ch_gain
 global r_h r_spec r_om r_freq r_phasepush r_lag r_acf r_ace
@@ -21,17 +21,11 @@ else
   filename='00000000.mat';
 end
 [i1,i2]=fileparts(result_path(1:end-1));
-if strcmp(i2,'AUTO')
- if length(a_integr)>1
-  a_autodir.int='scan';
- elseif a_integr==0
-  a_autodir.int='ant';
- elseif a_integr<0
-  a_autodir.int=['ant' num2str(-a_integr)];
- else
-  a_autodir.int=num2str(a_integr);
- end
-elseif isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
+integr=diff(datenum(d_time))*86400;
+if integr<1
+ filename=sprintf('%012.3f.mat',tosecs(d_time(2,:)));
+end
+if isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
  if a_NCAR
   NCAR_output
   if a_realtime & isunix & ~isempty(local.site)
@@ -51,10 +45,33 @@ elseif isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
  end
  r_h=[];
 end
+if integr>1
+ intstr=num2str(abs(a_integr(1)));
+else
+ intstr=sprintf('%.3g',integr);
+end
+if length(a_integr)>1
+ name_strategy='scan';
+elseif a_integr==0
+ name_strategy='ant';
+elseif a_integr<0
+ name_strategy=['ant' intstr];
+else
+ name_strategy=intstr;
+end
 if isempty(r_h)
- if isstruct(a_autodir)
+ if length(a_integr)>1
+  name_strategy='scan';
+ elseif a_integr==0
+  name_strategy='ant';
+ elseif a_integr<0
+  name_strategy=['ant' intstr];
+ else
+  name_strategy=intstr;
+ end
+ if strcmp(i2,'AUTO') | isstruct(a_autodir)
   a_autodir.date=d_time(2,1:3);
-  result_dir=sprintf('%d-%02d-%02d_%s_%s@%s%s',a_autodir.date,name_expr,a_autodir.int,name_ant,filesep);
+  result_dir=sprintf('%d-%02d-%02d_%s_%s@%s%s',a_autodir.date,name_expr,name_strategy,name_ant,filesep);
   result_path=fullfile(i1,result_dir,filesep);
  end
  if ~exist(result_path,'dir')
@@ -104,18 +121,15 @@ end
 
 file=[result_path filename];
 disp(file)
-name_sig=[local.site local.host ' ' datestr(now)];
-save_noglobal(file,r_ver,name_expr,name_site,name_ant,r_time,r_az,r_el,r_Pt,...
+name_sig=[local.host ' ' local.user ' ' datestr(now)];
+if ~isempty(local.site), name_sig=[local.site ' ' name_sig]; end
+save_noglobal(file,r_ver,name_expr,name_site,name_ant,name_strategy,r_time,r_az,r_el,r_Pt,...
      r_m0,r_range,r_h,r_param,r_error,r_res,r_status,r_dp,r_w,r_apriori,...
      r_apriorierror,r_pp,r_pprange,r_pperr,r_ppw,r_XMITloc,r_RECloc,...
      r_SCangle,r_Tsys,r_Offsetppd,r_Magic_const,r_spec,r_om,r_om0,r_freq,...
      r_phasepush,name_sig,r_lag,r_acf,r_ace,r_code,r_gfd,r_fradar,r_gain)
 if a_NCAR
- file0=sprintf('%sNCAR_%d-%02d-%02d_%s',result_path,d_time(2,1:3),name_expr);
- if isstruct(a_autodir)
-  file0=[file0 '_' a_autodir.int];
- end
- file0=[file0 '@' name_ant];
+ file0=sprintf('%sNCAR_%d-%02d-%02d_%s_%s@%s',result_path,d_time(2,1:3),name_expr,name_strategy,name_ant);
  i1=[]; i2=[];
  if rem(a_NCAR,2)
   i1=[file0 '.asc'];

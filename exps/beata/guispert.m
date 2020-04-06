@@ -3,9 +3,7 @@
 %
 % See also: GUISPERT GUIZARD
 %
-if name_site=='V'
- [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
-elseif name_site=='L'
+if name_site=='L'
  if length(d_data)>11370
   calTemp=[163*ones(1,17) 228*ones(1,17)];
   if all(ch_gain==ch_gain(1))

@@ -162,7 +162,7 @@ while (mr==r0 | abs(mr-1)>.01) & nloop < 16
   set(0,'currentfigure',ogcf)
  end
  peak_lf=lf{1}(:,2);
- r=peak_lf(il)./plf(ip); r2=r.*2;
+ r=peak_lf(il)./plf(ip); r2=r.^2;
  mr2=median(r2); sr2=std(r2);
  good=find(abs(r2-mr2)<=p.maxe*sr2);
  bad=find(abs(r2-mr2)>p.maxe*sr2);
@@ -183,7 +183,7 @@ while (mr==r0 | abs(mr-1)>.01) & nloop < 16
   if local.matlabversion>=7, linkaxes(axs([1 3])), end
   pmax=ceil(max([plf;peak_lf(il(good))]));
   rx=[0 pmax];
-  plot(axs(2),plf(ip(good)),peak_lf(il(good)),'o',plf(ip(bad)),peak_lf(il(bad)),'o',rx,rx*mr,'-',rx,rx,'-')
+  plot(axs(2),plf(ip(good)),peak_lf(il(good)),'or',plf(ip(bad)),peak_lf(il(bad)),'og')
   hy=ylabel(axs(2),'Calculated plasmaline peak (MHz)');
   hx=xlabel(axs(2),'Measured plasmaline peak (MHz)');
   set(hx,'color','green'), set(hy,'color','blue')
@@ -193,12 +193,15 @@ while (mr==r0 | abs(mr-1)>.01) & nloop < 16
  end
 end
 mr2=(mr*r0)^2; sr2=sr2*mr2;
+hold(axs(2),'on')
+plot(axs(2),rx,rx*sqrt(mr2),'-b',rx,rx,'-k')
+hold(axs(2),'off')
 newMagic=Magic_const/mr2;
 %Need some overshoot for Te changes
 better_guess=newMagic*exp(-log(mr2)/15); % 15 OK for 22May04 ESR
 delete(findobj(vizufig,'UserData','Results'))
-sigma='\sigma'; % 16bit char(963)§
-text(axs(2),pmax*1.04,pmax/2,sprintf('Density ratio=%.2f\\pm%.2f\nMagic const used=%g\n\nheight=%.0f-%.0f km\ngreen circles > %g%s\n\nsuggested Magic const=%.2f',mr2,sr2,Magic_const,mean(hlim),p.maxe,sigma,better_guess),'horiz','left','UserData','Results')
+sigma='\sigma'; % char(963) char(177)=\pm
+text(axs(2),pmax*1.04,pmax/2,sprintf('Density ratio=%.2f%s%.2f\nMagic const used=%g\n\nheight=%.0f-%.0f km\ngreen circles > %g%s\n\nsuggested Magic const=%.2f',mr2,char(177),sr2,Magic_const,mean(hlim),p.maxe,sigma,better_guess),'horiz','left','UserData','Results')
 if abs(mr2-1)>.01
  fprintf('Try Magic_const=%.2f; (%.2f)\n',better_guess,newMagic)
 end

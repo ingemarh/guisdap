@@ -29,7 +29,7 @@ global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlimit a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
-global a_lagprofiling
+global a_lpf
 persistent a_antold a_max secs a_posold a_nnold a_averold fileslist
 
 OK=0; EOF=0; jj=0; N_averaged=0; M_averaged=0;
@@ -69,6 +69,8 @@ end
 if length(fileslist)~=length(d_filelist)
  fileslist=cell2mat({d_filelist.file});
 end
+fileform='%08d%s';
+if any(rem(fileslist,1)), fileform='%012.3f%s'; end
 files=d_filelist(find(fileslist>a_interval(1) & fileslist<=a_interval(2)));
 if isempty(files) & a_integr<=0, EOF=1; return, end
 i=0;
@@ -76,7 +78,7 @@ while i<length(files)
   i=i+1; file=files(i);
   i_averaged=1; i_var1=[]; i_var2=[];
   if isfield(file,'ext') %.mat files
-    filename=fullfile(file.dir,sprintf('%08d%s',file.file,file.ext));
+    filename=fullfile(file.dir,sprintf(fileform,file.file,file.ext));
     q_dir=dir(canon(filename,0));
     if a_realtime & now-datenum(q_dir.date)<1e-4
 %     Check that the data file is old enough as it might still be being written to!
@@ -94,7 +96,7 @@ while i<length(files)
       d_raw=complex(d_raw.r(:),d_raw.i(:));
     catch,end
   end
-  if ~isempty(d_raw) && a_lagprofiling.do
+  if ~isempty(d_raw) && a_lpf(1).do
    lagprofiler()
   end
 

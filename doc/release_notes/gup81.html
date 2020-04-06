@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC>
+<HTML>
+<!--Author Ingemar Haggstrom -->
+<HEAD>
+ <TITLE>GUISDAP 8.1</TITLE>
+</HEAD>
+
+<body>
+
+<h2 align="center">GUISDAP 8.1</h2>
+
+This release is essentially version 1.81, but since the layout have changed
+by going to anal and init directories, we have chosen to remove the "1"
+from the version number. Also there are already a couple of "vs 2."
+releases which are side branches of the tree, so by making a jump like this
+these should easier be kept apart.
+
+<h3>Install</h3>
+Guisdap-8.1 should be a lot more easy to install than previous versions.
+It has been succesfully installed on solaris (Forte 6.2) and linux (gcc 3).
+For solaris there are some problems with Matlab older than vs 6.5 and Forte7,
+so try to
+avoid those. Other architectures may have to change the makefiles.
+Guisdap itself have been made as little unix-dependent as possible and
+might run even on PC-windows. Please report any changes needed for other
+systems.
+<pre>
+untar the <a href="dist81/">distribution</a> at your favourite place
+cd into the guisdap directory
+if you want the speed improvements the mex utility provides:
+ make "lib" and "mex6" directories
+ cd models/iri2001
+ "make" (should be gnu-make) and "make install"
+ cd ../nrlmsise00
+ "make" and "make install"
+ cd ../../mexsources
+ "make"
+othervise things are almost the same (but slower)
+make a link of /.../guisdap8/bin/guisdap into a place on
+   your path (ex /usr/local/bin)
+</pre>
+Provided are also a searchpath to $HOME/gup/mygup/ into which your personal
+files should go.
+
+<h3>Running</h3>
+
+Running analysis is also a lot simplier.
+At the prompt, type "guisdap --help" to see all the switches available.
+Normal analysis is done running "guisdap -a" which will bring up a
+window with some entries to fill in, hopefully selfexplained.
+This is the same as "guisdap" and then "analyse". When finished hit "GO".
+<p>
+As usual, you are on your own initialising experiments. If someone writes
+or have a manual for this, I gladly debug and include it. In any case,
+the initialisation scripts are avaiable with "guisdap -i".
+
+<h3>New features</h3>
+
+<li>Fitting is done on the logs of the parameters instead of the parameters
+ themselves to aviod any normalisation factors (d(log(N))=dN/N).
+<li>The famous "vizu" plotting are included.
+<li>Integration is done best using the Nigel Wade integration package, but
+ the built-in integration have been improved to screen on antenna and
+ transmitter status.
+<li>The latest changes on the parameter block is taken into account.
+<li>"Forcing" parameters is made easier by the "f_" switch (ex. f_ch_Pt=1e6;
+ forces the tx power to 1MW)
+<li>NCAR results files are switched on by NCAR=1,2,3 (bitpattern: 1=ascii,
+ 2=binary)
+<li>The IRI and MSIS models are included, as the interfaces depends on the
+ model versions
+<li>Numerous hidden improvements and refinements
+<p>
+Further information is will be available here in due course.
+Not up-to-date users might find something useful in the
+<a href="gup180.html">vs 1.80 release info</a>.
+<p>
+<h3>Contact</h3>
+<p>
+<!--#echo var="LAST_MODIFIED"-->
+<a href="../people.cgi?Ingemar+H\344ggstr\366m">Ingemar H&auml;ggstr&ouml;m</a>.
+</body>
+</html>

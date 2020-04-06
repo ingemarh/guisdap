@@ -41,7 +41,7 @@ if max(abs(gg2gc(p_XMITloc)-gg2gc(p_RECloc)))<.1
   %    Multiplication by scale is included here so that
   %    is is not needed in functions dirthe and power_prof
 elseif GUP_iniver<1.71
-  fprintf('GUP init version %g obsolete, workaround activated\n',GUP_iniver);
+  warning('GUISDAP:radar_eq',sprintf('GUP init version %g obsolete, workaround activated',GUP_iniver))
   [gg_sp,angle,ranges]=loc2gg(p_RECloc,[ch_el(1),ch_az(1),ch_range(1)],p_XMITloc);
   sc_angle=angle; sc_R0=ranges(2)*1E3; sc_R1=ranges(1)*1E3;
 % Effective scattering volume in m^3 for the remotes

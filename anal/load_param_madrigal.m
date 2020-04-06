@@ -6,21 +6,28 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,fileno,do
 % par1D [Az,El,Pt,Tsys]
 % rpar2D [Ran,Alt,Ne]
 
-global name_expr r_RECloc name_ant local r_XMITloc
-ask=0; wget=1;
+global name_expr r_RECloc name_ant r_XMITloc allnames
+ask=0;
 Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];
 if nargin<2, fileno=[]; end
 if nargin<3, do_err=0; end
 if isempty(fileno), ask=1; fileno=1; end
 
-of=local.tfile;
 REClocs=[67.863 20.44 .412;69.583 19.21 .030;67.367 26.65 .180;69.583 19.21 .030;78.153 16.029 .438];
 XMITlocs=[ones(4,1)*[69.583 19.21 .030];78.153 16.029 .438];
+if do_err
+ param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER NEL DNEL TI DTI TE DTE VO DVO VOBI DVOBI PO%2B CO DCOL';
+else
+ param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER POPL NEL TI TE VO VOBI PO%2B CO';
+end
+t2=clock;
+arg=sprintf('&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',t2(1),param);
+
 if exist(data_path,'file')
  global path_GUP
- cmd2=[' ' path_GUP '/bin/madDataDisplay >'];
+ cmd2=[' ' path_GUP '/bin/madDataDisplay 2>/dev/null'];
  if ~exist(cmd2(2:end-2)), return, end
- ws=''; cmd3=''; cmd1=''; cmd4='QUERY_STRING=';
+ cmd4='QUERY_STRING=''fileName=';
  antennas={'kir' 'uhf' 'sod' 'vhf' 'esr' '32m' '42m'};
  [devnull,filename]=fileparts(data_path); ll=16;
  ldp=length(filename); ll=16;
@@ -40,31 +47,33 @@ if exist(data_path,'file')
  r_RECloc=REClocs(i,:);
  r_XMITloc=XMITlocs(i,:);
  hl=10;
-else
- [wget,devnull]=system('which curl');
- if wget
-  cmd1='wget'; cmd2=' -O '; cmd3=' '; cmd4=' --post-data=';
- else
-  cmd1='curl'; cmd2=' -o '; cmd3=' -f '; cmd4=' -d ';
- end
- website='http://portal.eiscat.se/madrigal/';
- ws=['''' website 'experiments/' data_path '/expTab.txt'''];
- [mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
+ %arg=strrep(arg,'&','\&'); arg=strrep(arg,' ','\ ');
+ [mad,of]=system([cmd4 data_path arg '''' cmd2]);
  if mad
   return
  end
- [name_expr,kinst]=textread(of,'%*s%*s%s%*s%*s%*s%*s%*s%d%*[^\n]','delimiter',',');
- delete(of)
- name_expr=char(name_expr);
+ data=textscan(of,'','headerlines',hl);
+ if isempty(data)
+  return
+ end
+else
+ website='http://portal.eiscat.se/madrigal/';
+ ws=[website 'experiments/' data_path '/expTab.txt'];
+ [of,mad]=urlread(ws);
+ if ~mad
+  return
+ end
+ mad=textscan(of,'%*s%*s%s%*s%*s%*s%*s%*s%d%*[^\n]','delimiter',',');
+ name_expr=char(mad{1}); kinst=mad{2};
  name_expr(strfind(name_expr,'_'))=[];
  name_expr(strfind(name_expr,' '))=[];
- ws=['''' website 'experiments/' data_path '/fileTab.txt'''];
- [mad,devnull]=system([cmd1 cmd2 of cmd3 ws]);
- if mad
+ ws=[website 'experiments/' data_path '/fileTab.txt'];
+ [of,mad]=urlread(ws);
+ if ~mad
   return
  end
- filename=textread(of,'%s%*[^\n]','delimiter',',');
- delete(of)
+ filename=textscan(of,'%s%*[^\n]','delimiter',',');
+ filename=filename{1};
  antennas={'kir' 'uhf' 'sod' 'vhf' 'esr'};
  i=min(kinst-70,5);
  if i<1 || i>5
@@ -86,46 +95,30 @@ else
   elseif strfind(filename,'42m'), name_ant='42m'; end
  end
  data_path=['/opt/madrigal/experiments/' data_path '/' filename];
- ws=['''' website 'cgi-bin/madDataDisplay'''];
+ ws=[website 'cgi-bin/madDataDisplay?fileName='];
  hl=8;
-end
-
-if do_err
-%param='UT1 UT2 AZM ELM GDALT GDLAT GLON RANGE CHISQ POWER SYSTMP CO DCOL NEL DNEL TE DTE TI DTI VO DVO VOBI DVOBI PO+';
- param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER NEL DNEL TI DTI TE DTE VO DVO VOBI DVOBI CO DCOL PO+';
-else
-%param='UT1 UT2 AZM ELM GDALT GDLAT GLON RANGE CHISQ POWER SYSTMP CO NEL POPL TE TI VO VOBI PO+';
- param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER POPL NEL TI TE VO VOBI CO PO+';
-end
-t2=clock;
-arg=sprintf('fileName=%s&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',data_path,t2(1),param);
-for i=fliplr(find(arg=='&' | arg==' '))
- arg=[arg(1:i-1) '\' arg(i:end)];
-end
-
-[mad,devnull]=system([cmd1 cmd4 arg cmd2 of cmd3 ws]);
-if mad
- return
-end
-%pwant=strread(param,'%s');
-%pread=textread(of,'%s',length(pwant),'headerlines',hl-1);
-data=textread(of,'','headerlines',hl);
-delete(of)
-if isempty(data)
- return
+ [of,mad]=urlread([ws data_path strrep(arg,' ','%20')]);
+ if ~mad
+  return
+ end
+ of=strrep(of,'assumed','0'); %mad bug
+ data=cell2mat(textscan(of,'','headerlines',hl));
+ if isempty(data)
+  return
+ end
 end
 
 %vec=[3 4 10 11];
 rvec=[5 6 11 10];
 %vec=[8 5 13 15 16 17 12 19 9];
-avec=[4 3 13 15 14 16 18 19 9];
+avec=[4 3 13 15 14 16 19 18 9];
 pp=[];
 if do_err
   data(:,12:13)=10.^data(:,12:13);
 % avec=[8 5 14 16 18 20 12 24 9];
-  avec=[4 3 12 16 14 18 22 24 9];
+  avec=[4 3 12 16 14 18 23 22 9];
 % evec=[15 17 19 21 13];
-  evec=[13 17 15 23 23];
+  evec=[13 17 15 19 23];
 else
   %vec=[8 5 14];
   pvec=[4 3 12];
@@ -169,7 +162,7 @@ end
 if ~sum(isfinite(data(:,avec(6))))
  avec(6)=avec(6)+1;
  if do_err
-  avec(6)=avec(6)+1; evec(4)=evec(4)+2;
+  avec(6)=avec(6)+1, evec(4)=evec(4)+2,
  end
 end
 for i=1:n_tot
@@ -207,4 +200,10 @@ if naalt<n_alt
 end
 if nralt<n_ralt
   rpar2D=rpar2D(1:nralt,:,:);
+end
+if isempty(allnames)
+  allnames.ant=name_ant(1:3); allnames.expr=name_expr;
+else
+  if ~contains(allnames.ant,name_ant(1:3)), allnames.ant=char(allnames.ant,name_ant(1:3)); end
+  if ~contains(allnames.expr,name_expr), allnames.expr=char(allnames.expr,name_expr); end
 end

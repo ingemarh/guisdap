@@ -1,0 +1,175 @@
+<html>
+<head>
+<title>GUISDAP8 for dummies</title>
+</head>
+
+<body>
+<center><h2>Running GUISDAP 8</h2></center>
+
+
+<h3>Conditions</h3>
+
+<ul>
+<li>You have EISCAT data files (.mat) that you should analyse. In this example we analyse tau2ak_cp1.
+
+</li></ul>
+
+<h3>Starting guisdap</h3>
+
+<ul>
+<li>Log on to the analysis machine.
+
+<li>Check that the data directory exists
+<pre>[kstdev@eisdev ~]$ ls /data1/tau2ak_cp1@kir/
+20030307_16  20030307_18  20030307_20  20030307_22
+20030307_17  20030307_19  20030307_21  tau2ak_cp1@kir_information
+</pre>
+
+<li>Start up guisdap
+<pre>[kstdev@eisdev ~]$ guisdap -a
+
+			      < M A T L A B >
+                  Copyright 1984-2002 The MathWorks, Inc.
+                      Version 6.5.0.180913a Release 13
+                                Jun 18 2002
+
+  Using Toolbox Path Cache.  Type "help toolbox_path_cache" for more info.
+
+  To get started, type one of these: helpwin, helpdesk, or demo.
+  For product information, visit www.mathworks.com.
+
+GUISDAP vs. 8.10 by EISCAT, Lehtinen&Huuskonen
+GUISDAP vs. 8.10 by EISCAT, Lehtinen&Huuskonen
+>>
+</pre>
+
+<li>A window named "GUISDAP for dummies" should pop up.<p>
+<img src="gupdum.png">
+
+</li></ul>
+
+<h3>Fill in the parameters</h3>
+
+The window contains the parameters that was used in the last analysis.
+You probably need to change some of them
+<ul>
+<li><b>Dsp expr:</b> The "radar controller" experiment which is in this example tau2.
+Click on the button and select the right experiment:<p>
+<img src="dspexpr.png"><p>
+Press "OK".
+
+<li><b>Site:</b> Select correct site, from which the data comes.
+
+<li><b>Data path:</b> Where the raw data files is. Click on the button:<p>
+<img src="dpath1.png">
+<img src="dpath2.png"><p>
+To go up in the hierarchy you need to double-click on the ".." file.
+Select the right directory and press "OK"
+
+<li><b>Start time:</b> The start time for analysis, year month day hour minute second.
+Should normally be before the time when the experiment started. A good idea is to
+keep the minutes and seconds to zero. Here: <pre>2003 3 7 16 0 0</pre>
+
+<li><b>Stop time:</b> The stop time for analysis, year month day hour minute second.
+Should normally be after the time when the experiment stop(s). A good idea is to
+keep the minutes and seconds to zero. Here: <pre>2003 3 7 23 0 0</pre>
+
+<li><b>Result path:</b> The directory where the results should go. If the last part of it is "AUTO",
+it is rewritten using the start date, dsp expr and site.
+Here: <pre>/analysis/results/2003-03-07_tau2@Kir</pre>
+Normally this is what you want, othervise click on it and select/create a specific one.
+
+<li><b>Real time:</b> If running the analysis in realtime, this button should be IN.
+
+<li><b>Integration time:</b> Number of seconds to integrate, before attempting analysis.
+For stationary experiments enter a nice number. Here: 120 (=2 minutes). If it is a
+scanning experiment, you probably want to integrate for as long as the antenna stands still,
+enter 0.
+
+<li><b>Disp figures:</b> Guisdap produces some plots during the analysis:
+the data dump, a power profile, the actual fit(s), height profiles, vizu (the parameters vs time).
+The display is turned on with "1" and off with "0".<p>
+For remote sites I recommend: "0 0 1 0 1" (fits+vizu)<p>
+For transmitting sites I recommend: "0 1 0 0 1" (powerprofile+vizu)
+
+<li><b>Special:</b> Here you can enter almost any matlab command you want to give before starting analysis.<p>
+A good thing to include is the "NCAR" parameter, which tells if NCAR results file(s) should be produced:
+0 for no NCAR files, 1 for ASCII NCAR, 2 for binary NCAR, 3 for both ASCII and binary.<p>
+For a transmitting site the output to the screen can be minimised with "display_results=0", which may
+speed up the process.<p>
+For dual-beam VHF experiment this is normally the place to enter which beam to
+analyse.<p>
+"analysis_txlimit=0; f_ch_Pt=1.2e6" will integrate the data even if the transmitter is recorded as off and
+force the tx power to 1.2 MW. Needed sometimes at remote sites.<p>
+"a_Offsetppd" should be set to the number of microseconds the remote site clock differs from Tromso.<p>
+"f_calTemp" will set the calibration temperature to the correct value, if recorded wrong.<p>
+"Magic_const" is another parameter to set here, if needed.<p>
+<img src="gupdum2.png"><p>
+Remember that "%" will comment out the rest of the line, so one can keep the command there for
+later reference if you don't want it this time. Here, only the NCAR parameter is active.
+
+<li>When ready, press <b>GO</b>
+
+</li></ul>
+
+<h3>Analysis</h3>
+
+<ul>
+<li>The output might look something like this:
+<pre>Warning: 3 dumps may not be enough for reliable variance determination
+
+2003/03/07  16:43:45-16:43:60 integrated
+canon: /opt/guisdap-1.81/exps/tau2/tau2Rinit
+canon: /opt/guisdap-1.81/matfiles/pldfvv
+Intersection: [Width Rise]=[44 39] us Veff=5.804e+08
+
+** The model uses the IRI-2001 model for this position**
+ alt   Ne/1e11      Ti     Te/Ti    coll/1e3   velocity [O+]/Ne resid status
+249.5 1.32:0.05 1518: 57 1.63:0.09  0.0: 0.0  126.8:11.2  0.70 11.45  OK
+canon: /analysis/results/2003-03-07_tau2@Kir/05676239
+
+2003/03/07  16:43:60-16:46: 0 integrated
+canon: /opt/guisdap-1.81/exps/tau2/tau2Rinit
+canon: /opt/guisdap-1.81/matfiles/pldfvv
+Intersection: [Width Rise]=[44 39] us Veff=5.804e+08
+ alt   Ne/1e11      Ti     Te/Ti    coll/1e3   velocity [O+]/Ne resid status
+249.5 1.59:0.04 1215: 38 1.97:0.08  0.0: 0.0   26.2:15.6  0.70  1.16  OK
+canon: /analysis/results/2003-03-07_tau2@Kir/05676360
+</pre>
+Check that the results go where you expected it to go. Here:/analysis/results/2003-03-07_tau2@Kir<p>
+<img src="fits.png"><p>
+Here also the plot of the fit was chosen. Check that the green line (theory) are in phase
+with the data. Othervise, you need to change the "a_Offsetppd" parameter: restart the analysis and
+do it.
+
+<li>If you are running in realtime, the analysis will pause when reaching the end of the data.
+Here the vizu window will show up, and the program gets each new dump as it arrives. The timeout
+for waiting for new data is presently set to 5 minutes.
+
+<li>When the analysis is finished the vizu plot is saved together with the data.
+<pre>Created /analysis/results/2003-03-07_tau2@Kir/2003-03-07_tau2@Kir.eps and .png</pre>
+<img src="vizu.png" width=147 height=215>
+
+<li>If you are running realtime, and don't want to wait for the integration timeout after
+the experiment stopped, you can
+release the "RT" button and the analysis will finish.
+
+<li>When you are finished, hit the <b>Quit</b> button.
+
+</li></ul>
+
+<h3>Problems</h3>
+
+<ul>
+<li>Report any problems or shortcomings of this manual to <A HREF="/people.cgi?ingemar">Ingemar</A>.
+
+</li></ul>
+
+<!NoPrint>
+<hr>
+<center>
+<i>Last updated by <A HREF="/people.cgi?ingemar">Ingemar</A>, 12 March 2003.</i>
+</center>
+</!NoPrint>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<!--Author Ingemar Haggstrom -->
+
+  
+  <title>GUISDAP 8.6</title>
+</head>
+
+
+<body>
+
+
+
+<h2 align="center">GUISDAP 8.6</h2>
+
+
+
+This release of guisdap contains several new features and bugfixes,
+but everything is made compatible with older versions (hopefully).
+The package should be compatible with Matlab versions higher then 6.5,
+but there may (or may not) be some problems on specific platforms.
+
+<h3>Install</h3>
+
+
+Guisdap-8.6 has been succesfully installed on Solaris and
+linux, and the makefiles are written for those systems.
+Other architectures may have to change the makefiles, if you want speed,
+othervise it should run without the compiled routines. On Windows
+systems it is recommended to run under the cygwin environment for
+best compabilitiy.
+Please report any changes needed for other systems.
+<pre>untar the <a href="http://www.eiscat.se:8080/raw/GUISDAP/dist86/">distribution</a> at your favourite place<br>cd into the guisdap directory<br>if you want the speed improvements the mex utility provides:<br> make "lib" and "mex7" (or "mex6") directories<br> cd models/iri2007<br> "make" (should be gnu-make)<br> cd ../nrlmsise00<br> "make"<br> cd ../onera<br> make OS=... ENV=... all<br> cd ../../mexsources<br> "make"<br>
+make a link of bin/guisdap to a place on your path (ex /usr/local/bin)<br></pre>
+
+Provided is a searchpath to ~/gup/mygup where your personal
+and edited distribution files should go.
+
+<h3>Running</h3>
+
+
+
+At the prompt, type "guisdap --help" to see all the switches available.
+Normal analysis is done running "guisdap -a" which will bring up a
+window with some entries to fill in. (Hopefully selfexplained)
+This is the same as "guisdap" and then "analyse". When finished hit "GO".
+A more detailed instruction can be found at <a href="http://www.eiscat.se:8080/raw/GUISDAP/doc/howto.html">here</a>.
+<p>
+There is also a course <a href="http://www.eiscat.se:8080/raw/course_2004/GUISDAP.pdf">presentation</a>
+describing how to initialise new
+experiments and some useful tips on more specialised analysis.
+The initialisation scripts are avaiable with "guisdap -i".
+
+</p>
+
+<h3>New features</h3>
+
+
+
+<ul>
+
+	<li>Vector velocity extractions have been added. One specifies 'volumes' in
+	UT time, invariant latitude and altitude, for the supplied data. The data
+	can be mono-, bi-, or multistatic. All
+	individual ion velocity measurements within this volume together with
+	possible constraints on vertical or field aligned velocities are used to
+	derive full vectors. The vector is in geographic orientation, but since
+	the full covariance matrix is calculated, it can be easily be correctly
+	rotated into geomagnetic coordinates.
+	A wrapper, <it>velocity_wrapper.m</it>, contains velocity setups for
+	different CP combinations.
+  </li>
+
+  <li>There has been a need for getting spectra from the lag profiles
+  most experiments contain. Previosly there have been the inversion
+  possiblity from lagprofiles to spectra taking care of the receiver
+  and transmitter effects. However, the inversion needs careful adjustment
+  at the desired height to produce a good spectrum. Now, also a forward
+  method have been added, like the RTG displays, but more accurate. This can be
+  enabled by the boolean <it>display_spectra</it>.
+  </li>
+
+  <li>A number of new experiments have been added, different site versions
+  of beata and folke. Some of the beata experiments contain time slices of short
+  lags to be used as high resolution profiles. To analyse profiles like this,
+  a parameter have been added, <it>analyse_pponly</it>, to separate spectra
+  and power analysis.
+  </li>
+
+  <li>For demanding experiments like tau7 and tau8, with relatively
+  high sampling rates, and producing many lags, the analysis can be
+  speeded up by gating the lagprofiles before fitting. This is controlled
+  with <it>analyse_gating</it>, to be set to either 1 or 2 for different
+  gating strategy. The normal case would be 2.
+  </li>
+
+  <li>Numerous hidden improvements and refinements
+  </li>
+
+</ul>
+<ul style="margin-left: 40px;">
+	<li>Allow adjustment of polynomial length in calib_ne
+	</li><li>Move plasma defs to exps dir
+	</li><li>added analysis_sweep wrapper
+	</li><li>Enable other plfreqs
+	</li><li>Give NaN to shorten arrays in minput
+	</li><li>Read errors also from madrigal for vel calcs
+	</li><li>Spear gate
+	</li><li>Added a genereric lpg_rep to repete several blocks
+	</li><li>Updates for eiscat3d tau8
+	</li><li>Added max_ppw parameter
+	</li><li>Decimated offppd estimate
+	</li><li>Allow for amp mod codes in radar_eq
+	</li><li>Make zoomed web plots more default
+	</li><li>2008b needs jvm, allow overrides in scan setups
+  </li> <li> ...  </li>
+</ul>
+<ul>
+</ul>
+
+
+
+<p></p>
+
+<hr>
+Further information is will be available here in due course.
+Not up-to-date users might find something useful in the
+<a href="http://www.eiscat.se:8080/raw/GUISDAP/gup85.html">vs 8.5 release info</a>.
+<p></p>
+
+<p>
+<a href="mailto: ingemar@eiscat.se">Ingemar H&auml;ggstr&ouml;m</a>.
+
+</p>
+
+</body>
+</html>

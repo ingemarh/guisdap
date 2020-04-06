@@ -15,7 +15,6 @@ if name_site=='V' | name_site=='T'
   elseif d_date>=datenum(2003,10,30,4,5,0) & d_date<=datenum(2003,10,30,17,21,0)
    ch_el=60;
   end
-  [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
  end
 end
 ngat=npp-63;

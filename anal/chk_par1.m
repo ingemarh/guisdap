@@ -269,11 +269,11 @@ a_ppcombine=0;
 if exist('analysis_ppcombine','var')
  a_ppcombine=analysis_ppcombine;
 end
-a_lagprofiling.do=0;
-if exist('analysis_lagprofiling','var')
- a_lagprofiling=analysis_lagprofiling;
+a_lpf(1).do=0;
+if exist('analysis_lpf','var')
+ a_lpf=analysis_lpf;
 end
-if a_lagprofiling.do
+if a_lpf(1).do
  chk_lagprofiling()
 end
 

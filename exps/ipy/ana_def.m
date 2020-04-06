@@ -33,12 +33,33 @@ if strfind(data_path,'@32p')
   elseif expver==4
    plasma_range=20+col(ones(4*75,1)*(0:1)*87377+(1:4*75)'*ones(1,2)+67*75+66*1152);
    if strfind(data_path,'4.1')
-    plasma_range=20+col(ones(4*75,1)*(0:3)*86626+(1:4*75)'*ones(1,4)+67*75+66*1152);
+    plasma_range=20+col(ones(4*75,1)*(0:3)*86627+(1:4*75)'*ones(1,4)+67*75+66*1152);
    end
   end
  end
-elseif analysis_end(1)<2009
- analysis_intfix(5)=67;
- analysis_intfixforce=[NaN NaN NaN NaN 0];
- analysis_intallow=[.11 .11 1000 0 1];
+else
+ if analysis_end(1)<2009
+  analysis_intfix(5)=67;
+  analysis_intfixforce=[NaN NaN NaN NaN 0];
+  analysis_intallow=[.11 .11 1000 0 1];
+ end
+ if contains(data_path,'fixed42p')
+  if expver==4
+   analysis_lpf.par=load([path_expr 'ipy_lc.par4']);
+   analysis_lpf.lib='clutter';
+   analysis_lpf.raw=64*61;
+   analysis_lpf.data=30;
+   analysis_lpf.do=0;
+   analysis_lpf(2).par=load([path_expr 'ipy_lac.par4']);
+   analysis_lpf(2).lib='alt_decoder';
+   analysis_lpf(2).raw=64*61;
+   analysis_lpf(2).data=190;
+   analysis_lpf(3)=analysis_lpf(1);
+   analysis_lpf(3).raw=64*61*2+160*1600;
+   analysis_lpf(3).data=30+10567;
+   analysis_lpf(4)=analysis_lpf(2);
+   analysis_lpf(4).raw=64*61*2+160*1600;
+   analysis_lpf(4).data=190+10567;
+  end
+ end
 end
