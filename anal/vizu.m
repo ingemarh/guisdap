@@ -116,8 +116,8 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   else
     fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
     ext='eps';
-    if ~isempty(name_strategy), fig=sprintf('%s_%s',name_strategy); end
-    if ~isdir(DATA_PATH), dirs=path_tmp(1:end-1); end
+    if ~isempty(name_strategy), fig=sprintf('%s_%s',fig,name_strategy); end
+    if ~isdir(DATA_PATH), dirs=path_tmp(1:end-1); else, dirs=DATA_PATH; end
     if ~isempty(a2), fig=sprintf('%s_%s',fig,a2); end
     fig=sprintf('%s@%s',fig,name_ant);
   end
