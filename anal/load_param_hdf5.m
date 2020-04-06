@@ -39,8 +39,8 @@ par2d_id  = [19 18 20 22 21 24 23 54 55];  % [range, alt, ne, tr, ti, vi, collf,
 rpar2d_id = [61 61 62];                    % [range alt ne]
 err2d_id  = [28 30 29 32 31];              % [dne dtr dti dvi dco]
 rpar2d_for_merging_id  = [61 62 63 64];    % [pprange pp(ne) pperror ppw]
-Te_id  = 84;
-dTe_id = 85;
+Te_id  = 94;
+dTe_id = 95;
 recloc_id = 9;
 
 matdata.metadata.par0d    = deblank(h5read(filename,'/metadata/par0d'));
@@ -71,7 +71,7 @@ if ~isempty(find(strcmp(metavar,'par2d_pp')));
     matdata.data.par2d_pp     = h5read(filename,'/data/par2d_pp');
 end
 
-nh_id = 71;
+nh_id = 76;
 column = find(str2num(char(matdata.metadata.par1d(end,:)))==nh_id);
 if isempty(column) 
     column = find(str2num(char(matdata.metadata.par0d(end,:)))==nh_id);
@@ -275,7 +275,7 @@ if ii2d_pp == 1
         end
     end
     
-    npprange_id = 71;
+    npprange_id = 77;
     column = find(str2num(char(matdata.metadata.par1d(end,:)))==npprange_id);
     if isempty(column) 
         column = find(str2num(char(matdata.metadata.par0d(end,:)))==npprange_id);
