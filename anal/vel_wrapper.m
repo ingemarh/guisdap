@@ -24,7 +24,7 @@ e=[90 100 107.5 112.5 117.5 122.5 130]; %from old cp1
 %e=90:10:130;
 f=[160 500];
 if isempty(scan)
- fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst cp3kstl ip3 cp1 cp1kst cp2 cluster\n')
+ fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst cp3kstl ip3 cp1 cp1kst lowel cp2 cluster\n')
  scan=minput('Choose',[],1);
 end
 if isempty(dirs)
@@ -51,7 +51,8 @@ switch scan
  case {'ip3'}
   alt=[e f]; td=1440./[1 2]; uperr=50; ld=60:.5:90; ptype='p';
   plots(2:length(alt)-3)={'Vg'}; plots([1 end+2])={[] 'Vm'};
- case {'cp1' 'cp1kst'}
+  case {'cp1' 'cp1kst' 'lowel'}
+    % all tristatic cases should work with these settings
   alt=f; td=1;
  case {'cp2' 'cp2t' 'cp2e'}
   alt=[e f]; td=360;
@@ -113,3 +114,5 @@ if strcmp(ptype,'p') || np>1
  end
 end
 fprintf('%s.mat .pdf .png produced\n',r)
+end
+
