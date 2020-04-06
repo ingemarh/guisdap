@@ -5,3 +5,12 @@ lib/*
 **/*.a
 **/*.so
 
+# Backups etc
+*bak
+*old
+
+# Ignore emacs stuff /CFE
+*~
+\#*\#
+
+
