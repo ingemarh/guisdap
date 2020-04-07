@@ -115,8 +115,12 @@ name_strategies=[];
 if isfield(allnames,'strategy'), name_strategies=allnames.strategy; end
 if nant==1
  name_ant=allnames.ant; name_ants=[];
-elseif all(allnames.ant(:,2:3)=='2m')
+elseif all(contains({'32m' '42m'},allnames.ant(1:3)))
  name_ant='esr';
+elseif all(contains({'uhf' 'vhf'},allnames.ant(1:3)))
+ name_ant='tro';
+elseif all(contains({'uhf' 'vhf' 'kir' 'sod'},allnames.ant(1:3)))
+ name_ant='kst';
 else
  name_ant='esa';
 end
