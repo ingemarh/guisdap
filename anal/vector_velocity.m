@@ -113,13 +113,14 @@ name_sigs=[];
 if isfield(allnames,'sig'), name_sigs=allnames.sig; end
 name_strategies=[];
 if isfield(allnames,'strategy'), name_strategies=allnames.strategy; end
+keyboard
 if nant==1
  name_ant=allnames.ant; name_ants=[];
-elseif all(contains({'32m' '42m'},allnames.ant(1:3)))
+elseif all(contains({'32m' '42m'},cellstr(allnames.ant(:,1:3))))
  name_ant='esr';
-elseif all(contains({'uhf' 'vhf'},allnames.ant(1:3)))
+elseif all(contains({'uhf' 'vhf'},cellstr(allnames.ant(:,1:3))))
  name_ant='tro';
-elseif all(contains({'uhf' 'vhf' 'kir' 'sod'},allnames.ant(1:3)))
+elseif all(contains({'uhf' 'vhf' 'kir' 'sod'},cellstr(allnames.ant(:,1:3))))
  name_ant='kst';
 else
  name_ant='esa';

@@ -153,8 +153,10 @@ e_time = datevec(Vdate(2,end));
 endtime = datestr(e_time);
 
 if ~exist('name_expr','var'), name_expr=''; end
-
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_velvec_' '@' name_ant];
+ 
+[~,folderpart,~] = fileparts(matfile_vel); 
+datafolder = ['EISCAT_' folderpart];
+%datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_velvec_' '@' name_ant];
 %display(datafolder)
 
 storepath = fullfile(datapath,datafolder);
@@ -203,6 +205,14 @@ if exist('name_sig','var'); nn = nn + 1;
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';   
 end
+if exist('name_strategy','var'); nn = nn + 1;
+    infoname(1) = {'name_strategy'};
+    infoname(2) = {name_strategy};
+    a = find(strcmp('name_strategy',parameters_list)==1);                
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
+end
 if exist('name_exps','var'); nn = nn + 1; 
     infoname(1) = {'name_exps'};
     for i = 1:length(name_exps(:,1))
@@ -247,6 +257,14 @@ if exist('name_sigs','var'); nn = nn + 1;
     [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';   
+end
+if exist('name_strategies','var'); nn = nn + 1;
+    infoname(1) = {'name_strategies'};
+    infoname(2) = {name_strategies};
+    a = find(strcmp('name_strategy',parameters_list)==1);                
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
 end
 if exist('GUP_ver','var'); nn = nn + 1; 
     infoname(1) = {'gupver'};
