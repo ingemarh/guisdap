@@ -113,14 +113,14 @@ name_sigs=[];
 if isfield(allnames,'sig'), name_sigs=allnames.sig; end
 name_strategies=[];
 if isfield(allnames,'strategy'), name_strategies=allnames.strategy; end
-keyboard
+
 if nant==1
  name_ant=allnames.ant; name_ants=[];
-elseif all(contains({'32m' '42m'},cellstr(allnames.ant(:,1:3))))
+elseif all(contains(cellstr(allnames.ant(:,1:3)),{'32m' '42m'}))
  name_ant='esr';
-elseif all(contains({'uhf' 'vhf'},cellstr(allnames.ant(:,1:3))))
+elseif all(contains(cellstr(allnames.ant(:,1:3)),{'uhf' 'vhf'}))
  name_ant='tro';
-elseif all(contains({'uhf' 'vhf' 'kir' 'sod'},cellstr(allnames.ant(:,1:3))))
+elseif all(contains(cellstr(allnames.ant(:,1:3)),{'uhf' 'vhf' 'kir' 'sod'}))
  name_ant='kst';
 else
  name_ant='esa';
@@ -128,7 +128,7 @@ end
 if size(allnames.expr,1)==1
  nexp=['_' name_exps]; name_expr=name_exps; name_exps=[];
 else
- nexp=[]; name_expr=[]
+ nexp=[]; name_expr=[];
 end
 name_strategy='Altitude';
 if isfinite(ld(1)), name_strategy=[name_strategy ' Latitude']; end
