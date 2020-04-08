@@ -154,19 +154,11 @@ endtime = datestr(e_time);
 
 if ~exist('name_expr','var'), name_expr=''; end
  
-[~,folderpart,~] = fileparts(matfile_vel); 
-datafolder = ['EISCAT_' folderpart];
-%datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_velvec_' '@' name_ant];
-%display(datafolder)
+[~,filename,~] = fileparts(matfile_vel); 
+storepath = datapath;
 
-storepath = fullfile(datapath,datafolder);
-if exist(storepath)
-   rmdir(storepath,'s');
-end
-mkdir(storepath);
-
-Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
-MatFile = sprintf('%s%s',datafolder,'.mat');
+Hdf5File = sprintf('%s%s%s','EISCAT_',filename,'.hdf5');
+MatFile = sprintf('%s%s%s','EISCAT_',filename,'.mat');
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCAThdf5file = hdffilename;
@@ -192,9 +184,7 @@ end
 if exist('name_ant','var'); nn = nn + 1; 
     infoname(1) = {'name_ant'};
     infoname(2) = {name_ant};
-    a = find(strcmp('name_ant',parameters_list)==1); 
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;
+    infoname(3) = {'name of receiving antenna, or alternative code name for multistatic analyses (tro: Tromso, kst: combination of Kiruna, Sodankyla, Tromso, esr: Svalbard, esa: combination of mainland and Svalbard'};
     matfile.metadata.names(:,nn) = infoname';
 end
 if exist('name_sig','var'); nn = nn + 1; 
@@ -208,9 +198,7 @@ end
 if exist('name_strategy','var'); nn = nn + 1;
     infoname(1) = {'name_strategy'};
     infoname(2) = {name_strategy};
-    a = find(strcmp('name_strategy',parameters_list)==1);                
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;
+    infoname(3) = {'Limitations applied and used in the velocity-vector calculations'};
     matfile.metadata.names(:,nn) = infoname';
 end
 if exist('name_exps','var'); nn = nn + 1; 
@@ -242,21 +230,6 @@ if exist('name_ants','var'); nn = nn + 1;
     [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';
-end
-if exist('name_sigs','var'); nn = nn + 1; 
-    infoname(1) = {'name_sigs'};
-    for i = 1:length(name_sigs(:,1))
-        if i == 1
-            namesigs = name_sigs(1,:);
-        else
-            namesigs = [namesigs ', ' name_sigs(i,:)];
-        end
-    end
-    infoname(2) = {namesigs};
-    a = find(strcmp('name_sig',parameters_list)==1); 
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;
-    matfile.metadata.names(:,nn) = infoname';   
 end
 if exist('name_strategies','var'); nn = nn + 1;
     infoname(1) = {'name_strategies'};
@@ -296,7 +269,7 @@ PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
 
 matfile.metadata.schemes.DataCite.Identifier = {PID};
 matfile.metadata.schemes.DataCite.Creator = {name_ant};
-matfile.metadata.schemes.DataCite.Title = {datafolder};
+matfile.metadata.schemes.DataCite.Title = {['EISCAT_' filename]};
 matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
 matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3 Ionosphere'};
 matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
