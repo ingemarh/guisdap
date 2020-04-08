@@ -127,7 +127,7 @@ fprintf('%s.mat .pdf .png produced\n',r)
 
 EISCAThdf5file = fullfile(namepath,['EISCAT_' namefile '.hdf5']);
 store_image2Hdf5([r '.png'],EISCAThdf5file);
-delete([r '.png'])
+%delete([r '.png'])
 strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{[namefile '.pdf']})
 
 filelist = dir(fullfile(namepath,['*' namefile '*']));
