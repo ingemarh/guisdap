@@ -123,7 +123,7 @@ void DirtheCalc(ns,aaN,aaPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,acf
 	double *pPr,b;
 
 	/* Copy matrix AA_IN into p and then use p */
-	
+
 	nin0Pr=scr1;
 	tit0Pr=nin0Pr+ns*(nion+1);
 	mim0Pr=tit0Pr+ns*(nion+1);

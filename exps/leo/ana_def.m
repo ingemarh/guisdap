@@ -1,0 +1,9 @@
+analysis_lpf.par=load([path_expr 'q16x30.par']);
+analysis_lpf.lib='plwin';
+analysis_lpf.do=1;
+analysis_lpf.raw=0;
+analysis_lpf.nsamp=analysis_lpf.par(7);
+analysis_lpf.nrep=analysis_lpf.par(6);
+analysis_lpf.p=[0 analysis_lpf.nrep-1]; %start/stop profiles to analyse
+r0_setup=800e-6;
+analysis_timestamp=[5.8 6.5];

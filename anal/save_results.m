@@ -17,9 +17,6 @@ global a_autodir di_figures START_TIME a_Magic_const a_code
 
 if length(d_time)>0 & a_save
   filename=sprintf('%08d.mat',fix(tosecs(d_time(2,:))));
-else
-  filename='00000000.mat';
-end
 [i1,i2]=fileparts(result_path(1:end-1));
 integr=diff(datenum(d_time))*86400;
 if integr<1
@@ -50,15 +47,15 @@ if integr>1
 else
  intstr=sprintf('%.3g',integr);
 end
-if length(a_integr)>1
- name_strategy='scan';
-elseif a_integr==0
- name_strategy='ant';
-elseif a_integr<0
- name_strategy=['ant' intstr];
-else
- name_strategy=intstr;
-end
+%if length(a_integr)>1
+% name_strategy='scan';
+%elseif a_integr==0
+% name_strategy='ant';
+%elseif a_integr<0
+% name_strategy=['ant' intstr];
+%else
+% name_strategy=intstr;
+%end
 if isempty(r_h)
  if length(a_integr)>1
   name_strategy='scan';
@@ -85,6 +82,9 @@ if isempty(r_h)
   save_setup([result_path '.gup']);
   save_setup([result_path 'gfd_setup.m']);
  end
+end
+else
+  filename='00000000.mat';
 end
 s2km=p_dtau*1e-6*v_lightspeed/2/1000;
 

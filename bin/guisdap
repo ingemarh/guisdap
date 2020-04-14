@@ -15,12 +15,7 @@ then
 else
 	matver="2012a"
 fi
-if [ $matver = "R13" ]
-then
-	MEXD=mex6
-else
-	MEXD=mex7
-fi
+MEXD=mex
 mex=
 str=${matver%%[A-Za-z]} ; str=${str##[A-Za-z]} ; str=${str%%.[0-9]}
 if [ $matver = "R2008b" ] | [ $str -gt 2008 ]
@@ -56,13 +51,6 @@ GUP=`dirname $GUP`
 if [ $GUP = . ];then GUP=$PWD; fi
 #echo $GUP
 
-if [ -d $GUP/$MEXD ]; then
-	mex=$GUP/$MEXD:
-	if [ -d $GUP/NW/$MEXD ]; then
-		mex=$mex$GUP/NW/$MEXD:
-	fi
-fi
-
 while getopts aibB:xtm:g: flag
 do
 	case $flag in
@@ -79,7 +67,7 @@ do
 		g) tail="-r go_on('$OPTARG')";;
 		m) my="$OPTARG";;
 		t) mflags=;;
-		x) mex=;;
+		x) mex=$GUP/$MEXD:;;
 		?) echo $usage
 		   exit 2;;
 	esac
@@ -104,7 +92,6 @@ fi
 MATLABPATH=$my$mex$GUP/anal$init
 IRIPATH=$GUP/models/iri2016
 TS07_DATA_PATH=$GUP/models/irbem-code/TS07D
-IRBEM_LIB_DLL=$GUP/lib/matlab/onera_desp_lib.so
 
 sys=`uname -s`
 case $sys in

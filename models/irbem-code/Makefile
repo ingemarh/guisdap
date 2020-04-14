@@ -34,7 +34,7 @@ IRBEM_NTIME_MAX=100000
 
 SOURCEDIR=./source
 HELPDIR=./compile
-INSTALLDIR=../../lib
+INSTALLDIR=.
 EXAMPLE=./example
 
 #------------------------------------------------------------------------------
@@ -399,6 +399,8 @@ install.lib:
 
 	@echo Installing $(SOURCEDIR)/onera_desp_lib_$(LIBNAME_$(OS)_$(ENV)).$(SHAREDEXT_$(OS)) to $(INSTALLDIR)/matlab/onera_desp_lib.$(SHAREDEXT_$(OS))
 	cp $(SOURCEDIR)/onera_desp_lib_$(LIBNAME_$(OS)_$(ENV)).$(SHAREDEXT_$(OS)) $(INSTALLDIR)/matlab/onera_desp_lib.$(SHAREDEXT_$(OS))
+	cp $(SOURCEDIR)/onera_desp_lib_$(LIBNAME_$(OS)_$(ENV)).$(SHAREDEXT_$(OS)) ../../lib/onera_desp_lib.$(SHAREDEXT_$(OS))
+	cp matlab/onera_desp_lib.h ../../lib/
 
 	@echo Installing done
 

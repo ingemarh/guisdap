@@ -67,6 +67,7 @@ C 2016.02 10/14/15 FELDCOF,SHELLG: DIMO to COMMON/IGRF1/
 C 2016.03 02/17/16 GEODIP: add PI to CONST
 C 2016.04 07/07/17 IGRF: updated with newest 2010, 2015, 2015s coeff.
 C 2016.05 03/25/19 GEODIP,SPHCAR,GEOMAG: improved COMMENTS
+C 2016.06 03/05/20 Updating to IGRF-13 (2020)
 c-----------------------------------------------------------------------        
 C 
         subroutine igrf_sub(xlat,xlong,year,height,
@@ -599,11 +600,12 @@ C 07/22/2009 NMAX=13 for DGRF00 and IGRF05; H/G-arrays(195)
 C 02/26/2010 update to IGRF-11 (2010) (###)  
 C 10/05/2011 added COMMON/DIPOL/ for MLT computation in DPMTRX (IRIFUN)
 C 02/10/2015 update to IGRF-12 (2015) (###)
+C 03/05/2020 update to IGRF-13 (2020) (###)
 c-----------------------------------------------------------------------        
         CHARACTER*13    FILMOD, FIL1, FIL2           
 C ### FILMOD, DTEMOD array-size is number of IGRF maps
-        DIMENSION       GH1(196),GH2(196),GHA(196),FILMOD(16)
-        DIMENSION		DTEMOD(16)
+        DIMENSION       GH1(196),GH2(196),GHA(196),FILMOD(17)
+        DIMENSION		DTEMOD(17)
         DOUBLE PRECISION X,F0,F 
         COMMON/MODEL/   NMAX,TIME,GH1,FIL1
         COMMON/IGRF1/   ERAD,AQUAD,BQUAD,DIMO /CONST/UMR,PI
@@ -612,15 +614,15 @@ C ### updated coefficient file names and corresponding years
         DATA  FILMOD   / 'dgrf1945.dat','dgrf1950.dat','dgrf1955.dat',           
      1    'dgrf1960.dat','dgrf1965.dat','dgrf1970.dat','dgrf1975.dat',
      2    'dgrf1980.dat','dgrf1985.dat','dgrf1990.dat','dgrf1995.dat',
-     3    'dgrf2000.dat','dgrf2005.dat','dgrf2010.dat','igrf2015.dat',
-     4    'igrf2015s.dat'/
+     3    'dgrf2000.dat','dgrf2005.dat','dgrf2010.dat','dgrf2015.dat',
+     4    'igrf2020.dat','igrf2020s.dat'/
         DATA  DTEMOD / 1945., 1950., 1955., 1960., 1965.,           
      1   1970., 1975., 1980., 1985., 1990., 1995., 2000.,2005.,
-     2   2010., 2015., 2020./      
+     2   2010., 2015., 2020., 2025./      
 C
 C ### numye is number of IGRF coefficient files minus 1
 C
-        NUMYE=15
+        NUMYE=16
 C
 C  IS=0 FOR SCHMIDT NORMALIZATION   IS=1 GAUSS NORMALIZATION
 C  IU  IS INPUT UNIT NUMBER FOR IGRF COEFFICIENT SETS
@@ -721,7 +723,7 @@ C ---------------------------------------------------------------
  667    FORMAT(a,'/',A13)
 c-web-for webversion
 c 667    FORMAT('/var/www/omniweb/cgi/vitmo/IRI/',A13)
-       OPEN(IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,action='read')     
+        OPEN(IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,action='read')
         READ (IU, *, IOSTAT=IER, ERR=999)                            
         READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD, XMYEAR 
         nm=nmax*(nmax+2)                
@@ -1975,7 +1977,6 @@ C  magnetic field line (could happen at very near geomagnetic equator)
 C  Computation of the magnetically conjugate point at low latitudes
 
    54      continue
-c   			print*,ihem
            if(ihem.eq.3) then
               RBM = RBM1
               RM = RBM
@@ -1983,7 +1984,6 @@ c   			print*,ihem
    55         continue
               CALL SHAG(XBM1,YBM1,ZBM1,DS)
               RR = SQRT(XBM1**2 + YBM1**2 + ZBM1**2)
-c              print*,rr,rh
               IF (RR.GT.RH) THEN
                  R1 = RR
                  X1 = XBM1
@@ -1999,9 +1999,7 @@ c              print*,rr,rh
                     RM = R1
                     CALL SHAG(X1,Y1,Z1,DS)
                     ENDIF
-c                    print*,rr,slac,sloc,x1,y1,z1
                  CALL SPHCAR(RR,SLAC,SLOC,X1,Y1,Z1,-1)
-c                    print*,rr,slac,sloc,x1,y1,z1
                  SLAC = 90. - SLAC*57.2957751
                  SLOC = SLOC*57.2957751
               ENDIF
@@ -3480,7 +3478,8 @@ C  IYE AND IDE ARE THE CURRENT VALUES OF YEAR AND DAY NUMBER
       IDE=IDAY
       IF(IY.LT.1900) IY=1900
 c      IF(IY.GT.2015) IY=2015
-      IF(IY.GT.2020) IY=2020
+c      IF(IY.GT.2020) IY=2020
+      IF(IY.GT.2025) IY=2025
 
 C  WE ARE RESTRICTED BY THE INTERVAL 1900-2015, FOR WHICH THE DGRF & IGRF-11
 C  COEFFICIENTS ARE KNOWN; IF IYR IS OUTSIDE THIS INTERVAL, THE
@@ -3627,14 +3626,20 @@ C  VALUES FOR THE NEAREST EPOCHS:
         ELSEIF (IY.LT.2015) THEN                        !2010-2015
            F2=(FLOAT(IY)+FLOAT(IDAY)/365.-2010.)/5.
            F1=1.D0-F2
-           G10=29496.57*F1+29442.0*F2
-           G11=-1586.42*F1-1501.0*F2
-           H11= 4944.26*F1+4797.1*F2
+           G10=29496.57*F1+29441.46*F2
+           G11=-1586.42*F1-1501.77*F2
+           H11= 4944.26*F1+4795.99*F2
+        ELSEIF (IY.LT.2020) THEN                        !2015-2020
+           F2=(FLOAT(IY)+FLOAT(IDAY)/365.-2010.)/5.
+           F1=1.D0-F2
+           G10=29441.46*F1+29404.8*F2
+           G11=-1501.77*F1-1450.9*F2
+           H11= 4795.99*F1+4652.5*F2
         ELSE                                            !2015-2020
            DT=FLOAT(IY)+FLOAT(IDAY)/365.-2015.
-           G10=29442.0-10.3*DT
-           G11=-1501.0+18.1*DT
-           H11= 4797.1-26.6*DT
+           G10=29404.8-5.7*DT
+           G11=-1450.9+7.4*DT
+           H11= 4652.5-25.9*DT
         ENDIF
 
 C  NOW CALCULATE THE COMPONENTS OF THE UNIT VECTOR EzMAG IN GEO COORD

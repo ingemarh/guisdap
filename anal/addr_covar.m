@@ -17,16 +17,49 @@
 %         lp_ri,lp_nt,lp_t1,lp_t2,lp_dec,lp_nfir,lp_fir)
 function [covarRe,covarIm]=addr_covar(addr1,addr2,vc_signal,lp_vc,lp_dt,lp_ra,...
          lp_ri,lp_nt,lp_t1,lp_t2,lp_dec,lp_nfir,lp_fir)
+global local path_GUP
+naddr=1;
+if addr2(1)<0
+ naddr=length(addr1); addr2=-naddr;
+end
+
+if libisloaded('libguisdap')
+
+[signallength,signalvcs]=size(vc_signal);
+nlp=prod(size(lp_vc));
+maxfir=size(lp_fir,1);
+vc_signalPr=libpointer('doublePtr',vc_signal);
+lp_firPr=libpointer('doublePtr',lp_fir);
+
+covarRePr=libpointer('doublePtr',zeros(1,naddr));
+covarImPr=libpointer('doublePtr',zeros(1,naddr));
+
+calllib('libguisdap','covar33Calc',addr1,addr2,signallength,signalvcs,vc_signalPr, ...
+				 nlp,lp_vc,lp_dt,lp_ra,lp_ri,lp_nt,lp_t1,lp_t2,lp_dec, ...
+				 lp_nfir,maxfir,lp_firPr,covarRePr,covarImPr);
+
+covarRe=covarRePr.value;
+covarIm=covarImPr.value;
+
+else
 
 [len,Nvc]=size(vc_signal);
 
+covarRe=zeros(1,naddr); covarIm=zeros(1,naddr);
+if naddr>1, addr2=addr1; end
+for i=1:naddr
+
 % Find the lag profiles which contribute to address addr1
-lps1=find( lp_ra<=addr1 & addr1<=lp_ra+((lp_nt-1).*lp_ri) ...
-            & round((addr1-lp_ra)./lp_ri)==(addr1-lp_ra)./lp_ri );
+lps1=find( lp_ra<=addr1(i) & addr1(i)<=lp_ra+((lp_nt-1).*lp_ri) ...
+            & round((addr1(i)-lp_ra)./lp_ri)==(addr1(i)-lp_ra)./lp_ri );
 
 % Find the lag profiles which contribute to address addr2
-lps2=find( lp_ra<=addr2 & addr2<=lp_ra+((lp_nt-1).*lp_ri) ...
-            & round((addr2-lp_ra)./lp_ri)==(addr2-lp_ra)./lp_ri );
+if naddr>1
+ lps2=lps1;
+else
+ lps2=find( lp_ra<=addr2(i) & addr2(i)<=lp_ra+((lp_nt-1).*lp_ri) ...
+            & round((addr2(i)-lp_ra)./lp_ri)==(addr2(i)-lp_ra)./lp_ri );
+end
 
 cov1=0; cov2=0;
 for lp1=lps1  % This is a loop over all the lag profiles in lps1
@@ -36,10 +69,10 @@ for lp1=lps1  % This is a loop over all the lag profiles in lps1
     if lp_vc(lp1)==lp_vc(lp2) % Products correlate only if virtual channels are equal
       vc=lp_vc(lp1); 
 
-      apu=lp_dec(lp1)*dt1*(addr1-lp_ra(lp1))./lp_ri(lp1);  
+      apu=lp_dec(lp1)*dt1*(addr1(i)-lp_ra(lp1))./lp_ri(lp1);  
       time1=lp_t1(lp1)+apu; % sampling time for the first product in lp1
       time2=lp_t2(lp1)+apu; % sampling time for the second product in lp1
-      apu=lp_dec(lp2)*dt2*(addr2-lp_ra(lp2))./lp_ri(lp2);
+      apu=lp_dec(lp2)*dt2*(addr2(i)-lp_ra(lp2))./lp_ri(lp2);
       tau1=lp_t1(lp2)+apu; % sampling time for the first product in lp2
       tau2=lp_t2(lp2)+apu; % sampling time for the second product in lp2
                                       
@@ -63,7 +96,10 @@ for lp1=lps1  % This is a loop over all the lag profiles in lps1
 
     end % End-if of virtual channels
   end  % End-loop over lps2
-end  % End-loop over lps2
+end  % End-loop over lps1
 
-covarRe=(cov1+cov2)/2;
-covarIm=(cov1-cov2)/2;
+covarRe(i)=(cov1+cov2)/2;
+covarIm(i)=(cov1-cov2)/2;
+end
+
+end

@@ -17,8 +17,40 @@
 % See also: dirthe
 %  function [aa,chi2,its,alpha]=mrqmn(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_womega,p_om,pldfvv,p_m0)
 function [aa,chi2,its,alpha]=mrqmn(a,ym,variance,ftol,itmax,kd2,p_coeffg,f_womega,p_om,pldfvv,p_m0,physlim,fb_womega,fitprop)
- 
+global local path_GUP
 diagonal=min(size(variance))==1;
+
+if diagonal & libisloaded('libguisdap')
+
+[ns,aaN]=size(a);
+[varianceM,varianceN]=size(variance);
+[coefM,coefN]=size(p_coeffg);
+[womM,womN]=size(f_womega);
+nom=prod(size(p_om));
+nion=prod(size(p_m0));
+ymPr=libpointer('doublePtr',ym);
+variancePr=libpointer('doublePtr',variance);
+p_coeffgPr=libpointer('doublePtr',p_coeffg);
+f_womegaPr=libpointer('doublePtr',f_womega);
+fb_womegaPr=libpointer('doublePtr',fb_womega);
+p_omPr=libpointer('doublePtr',p_om);
+
+aaOutPr=libpointer('doublePtr',zeros(ns,aaN));
+chi2Pr=libpointer('doublePtr',1);
+itsPr=libpointer('doublePtr',1);
+alphaPr=libpointer('doublePtr',zeros(aaN,aaN));
+
+calllib('libguisdap','MrqmndiagCalc',ns,aaN,a,ymPr,variancePr,varianceM,varianceN,ftol,itmax, ...
+		p_coeffgPr,coefM,coefN,womM,f_womegaPr,kd2,nom,p_omPr,aaOutPr,chi2Pr,itsPr, ...
+		alphaPr,real(pldfvv),imag(pldfvv),physlim,p_m0,nion,fb_womegaPr,fitprop);
+
+aa=aaOutPr.value;
+chi2=chi2Pr.value;
+its=itsPr.value;
+alpha=alphaPr.value;
+
+else
+
 if diagonal
   vv=find(variance~=0);
   va=find(variance((end-length(a)+1):end)~=0);
@@ -97,3 +129,5 @@ alpha=zeros(length(aa)); alpha(va,va)=al;
 aa(ag)=exp(aa(ag)); aa(as)=2*sinh(aa(as)); %log
 aa2=ones(length(aa),1); aa2(ag)=aa(ag); aa2(as)=sqrt(4+aa(as).^2); %log
 alpha=alpha.*(aa2*aa2');
+
+end

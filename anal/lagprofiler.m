@@ -11,6 +11,14 @@ for lpf=a_lpf
   [dd_data,upar,dd_raw]=clutter(lpf.par,d_parbl,d_raw(lpf.raw));
   d_parbl(42+(1:20))=upar;
   d_raw(lpf.raw)=dd_raw;
+ case 'resampler' % par(1-5)=[decimation ntx calstart calmode]
+  d_raw=sum(reshape(d_raw,lpf.par(1),[],lpf.nrep)); %resample everything
+  dd_data=[];
+  for i=1:lpf.par(4)
+   dd_data=[dd_data;sum(abs(d_raw(lpf.par(3):end,i:lpf.par(4):lpf.nrep)).^2,2)]; % do the cal
+  end
+  dd_data=sum(abs(d_raw(lpf.par(4)+1:end,1:2:lpf.nrep)).^2);
+  d_raw=[col(d_raw(1:lpf.par(2),1:lpf.par(3));col(d_raw(lpf.par(2)+1:lpf.par(3)-1,:))]; %separate the txsamples
  end
  fac=(diff(lpf.p)+1)/lpf.nrep;
  d_data(lpf.data+(1:length(dd_data)))=dd_data/fac;

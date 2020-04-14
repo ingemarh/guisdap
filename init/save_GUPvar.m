@@ -23,6 +23,11 @@ elseif local.matlabversion>=7
  saveflag='-v6';
 end
 
+%lp_vc=int32(lp_vc); lp_dt=int32(lp_dt); lp_ra=int32(lp_ra); lp_ri=int32(lp_ri);
+%lp_nt=int32(lp_nt); lp_t1=int32(lp_t1); lp_t2=int32(lp_t1); lp_dec=int32(lp_dec);
+%lp_nfir=int32(lp_nfir); lpb_bcs=int32(lp_bcs); lp_code=int32(lp_code);
+%vc_ch=int32(vc_ch);
+
 save(GUPvarfile,'GUP_iniver','ch_fradar','ch_gain','p_dtau','p_rep','p_ND',...
  'p_XMITloc','p_RECloc','vc_ch','vc_env','vc_envo','vc_p','vc_adcint',...
  'vc_sampling','lp_dec','lp_firsto','lp_nfir','lp_T','lp_bcs','lp_code',...

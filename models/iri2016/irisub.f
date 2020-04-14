@@ -185,8 +185,14 @@ C 2016.23 08/27/18 Moved FIRI option under ELDE calc ..... P. Sultan
 C 2016.23 08/27/18 3-h ap,kp available even if storm models are off
 C 2016.23 08/27/18 daily ap avail. even if F10.7din or F10.7_81in
 C 2016.24 08/29/18 user input for HNEA and HNEE if jf(45) jf(46)
-C       
-
+C 2016.25 06/11/19 comments for OARR and output incl HNEA and HNEE
+C 2020.01 07/03/19 changed argmax to 87.3 (consistent with IDL)
+C 2020.01 07/03/19 itopn=1 now with PF10.7 correction
+C 2020.02 07/19/19 itopn=1 cor option, itopn=3 cor2 option
+C 2020.03 07/29/19 added 'endif' itopn=3 and declared a01(2,2)        
+C 2020.04 08/05/19 itopn=3 requires itopn=1, BLO11 change        
+C 2020.05 01/16/20 ion composition topside if h.ge.300km
+C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
 C*****************************************************************
@@ -243,7 +249,7 @@ C   27    IG12 from file         IG12 - user                         t
 C   28    spread-F probability 	 not computed                    false
 C   29    IRI01-topside          new options as def. by JF(30)   false
 C   30    IRI01-topside corr.    NeQuick topside model   	     false 
-C (29,30) = (t,t) IRIold, (f,t) IRIcor, (f,f) NeQuick
+C (29,30) = (t,t) IRIold, (f,t) IRIcor, (f,f) NeQuick, (t,f) IRIcor2
 C   31    B0,B1 ABT-2009	     B0 Gulyaeva-1987 h0.5               t   
 C (4,31) = (t,t) Bil-00, (f,t) ABT-09, (f,f) Gul-87, (t,f) not used
 C   32    F10.7_81 from file     F10.7_81 - user input (oarr(46))    t
@@ -255,6 +261,7 @@ C   37    topside w/out foF2-storm  with foF2-storm                  t
 C   38    turn WRITEs off in IRIFLIP   turn WRITEs on                t
 C   39    hmF2 (M3000F2)         new models                      false
 C   40    hmF2 AMTB-model        Shubin-COSMIC model                 t
+C (39,40) = (t,t) hmF2-old, (f,t) AMTB, (f,f) Shubin, (t,f) not used
 C   41    Use COV=F10.7_365      COV=f(IG12) (IRI before Oct 2015)   t
 C   42    Te with PF10.7 dep.	 w/o PF10.7 dependance               t
 C   43    B0 from model          B0 user input in OARR(10)           t
@@ -363,6 +370,7 @@ C       OARR(87) = SAX300             OARR(88) = SUX300
 C      #OARR(89) = HNEA              #OARR(90) = HNEE 
 C                # INPUT as well as OUTPUT parameter
 C                $ special for IRIWeb (only place-holders)
+C		for more details got to end of subroutine
 c-----------------------------------------------------------------------        
 C*****************************************************************
 C*** THE ALTITUDE LIMITS ARE:  LOWER (DAY/NIGHT)  UPPER        ***
@@ -394,7 +402,8 @@ c      CHARACTER FILNAM*53
      &  INDAP(13),AMP(4),HXL(4),SCL(4),XSM(4),MM(5),DTI(4),AHH(7),
      &  STTE(6),DTE(5),ATE(7),TEA(6),XNAR(2),param(2),OARR(100),
      &  OUTF(20,1000),DION(7),osfbr(25),D_MSIS(9),T_MSIS(2),
-     &  IAPO(7),SWMI(25),ab_mlat(48),DAT(11,4), PLA(4), PLO(4)
+     &  IAPO(7),SWMI(25),ab_mlat(48),DAT(11,4),PLA(4),PLO(4),
+     &  a01(2,2)
 
       LOGICAL  EXT,SCHALT,TECON(2),sam_mon,sam_yea,sam_ut,sam_date,
      &  F1REG,FOF2IN,HMF2IN,URSIF2,LAYVER,RBTT,DREG,rzino,FOF1IN,
@@ -412,7 +421,8 @@ c      CHARACTER FILNAM*53
      &   /BLOCK8/HS,TNHS,XSM,MM,DTI,MXSM       
      &   /BLOTE/AHH,ATE1,STTE,DTE
      &   /BLO10/BETA,ETA,DELTA,ZETA    /findRLAT/FLON,RYEAR   
-     &   /BLO11/B2TOP,TC3,itopn,alg10,hcor1       
+c     &   /BLO11/B2TOP,TC3,itopn,alg10,hcor1,tcor2       
+     &   /BLO11/B2TOP,itopn,tcor       
      &   /iounit/konsol,mess     /CSW/SW(25),ISW,SWC(25)
      &   /QTOP/Y05,H05TOP,QF,XNETOP,XM3000,HHALF,TAU
 
@@ -456,7 +466,7 @@ C
 C PROGRAM CONSTANTS AND INITIALIZATION
 C
         if(icalls.lt.1) then
-        	ARGMAX=88.0
+        	ARGMAX=87.3
         	pi=ATAN(1.0)*4.
         	UMR=pi/180.
         	humr=pi/12.
@@ -599,16 +609,16 @@ c
 c Topside density ....................................................
 c
         if(jf(29)) then
-c             if (jf(30)) then    
-                 itopn=0
-c             else
-c                 itopn=3        ! Gulyaeva topside option
-c             endif
+             if (jf(30)) then    
+                 itopn=0		! IRI2001 topside option
+             else
+                 itopn=3       ! IRI-cor2 topside option
+             endif
         else 
              if (jf(30)) then
-                 itopn=1
+                 itopn=1		! IRI-cor topside option
              else
-                 itopn=2
+                 itopn=2		! NeQuick topside option
              endif
         endif
 c
@@ -725,7 +735,7 @@ c
           if (itopn.eq.0) write(konsol,9207)
           if (itopn.eq.1) write(konsol,9204)
           if (itopn.eq.2) write(konsol,9205)
-c          if (itopn.eq.3) write(konsol,9206)
+          if (itopn.eq.3) write(konsol,9206)
           if(FOF2IN) then
                 write(konsol,9015) 
                 goto 2889
@@ -800,9 +810,9 @@ c          if (itopn.eq.3) write(konsol,9206)
      &          ' Erroneous profile features can occur.')
 9014    format('Ne: No upper limit for F10.7 in',
      &          ' topside formula.')
-9204    format('Ne: Corrected Topside Formula')
+9204    format('Ne: IRI-cor for Topside')
 9205    format('Ne: NeQuick for Topside')
-9206    format('Ne: Gul-h0.5 for Topside')
+9206    format('Ne: IRI-cor2 for Topside')
 9207    format('Ne: IRI-2001 for Topside')
 9214    format('Ne: B0,B1 Bil-2000')
 9215    format('Ne: B0 Gul-1987')
@@ -1424,7 +1434,7 @@ c
 c Correction term for topside (Bilitza) depends on modip, hour,
 c sax300, sux300, and hmF2
 c
-      if(itopn.eq.1) then
+      if(itopn.eq.1.or.itopn.eq.3) then
           zmp1 = exp(modip / 10.)
           zmp11 = 1. + zmp1
           zmp111 = zmp1 / (zmp11 * zmp11)
@@ -1987,8 +1997,25 @@ c
           goto 330
           endif
 
-      ELEDE=XE_1(HEIGHT)
+      tcor1=0.0
+      IF(height.lt.hcor1) goto 2319
+      IF(itopn.eq.1.or.itopn.eq.3) then             
+          xred = height - hcor1
+          rco = tc3 * xred
+          TCOR1 = rco * alg10
+          endif
 
+2319  tcor2=0.0
+      if(itopn.eq.3.and.height.gt.hmf2) then
+      	  call tops_cor2(height,modip,a01)
+      	  tcor2=a01(1,1)+a01(2,1)*pf107
+          if (fnight) tcor2=a01(1,2)+a01(2,2)*pf107
+      	  endif	
+      	  				
+      tcor=tcor1+tcor2 
+         
+      ELEDE=XE_1(HEIGHT)
+      
 c
 c FIRI D region 
 c
@@ -2038,7 +2065,7 @@ c
             RO2X=-1.
             RCLUST=-1.
       if(RBTT) then
-        if (height.gt.300.) then
+        if (height.ge.300.) then
 c Triskova-Truhlik-Smilauer-2003 model
 			call CALION(invdip,xmlt,height,daynr,pf107obs,
      &  	   xic_O,xic_H,xic_He,xic_N)
@@ -2163,34 +2190,34 @@ c
  			if(ispf.gt.0.and.ispf.lt.26) spreadf=osfbr(ispf)
 1937   continue
 C
-C ADDITIONAL PARAMETER FIELD OARR
+C ADDITIONAL PARAMETER FIELD OARR: angles are given in degrees,
+C times in decimal hours, altitudes in km, densities in m-3, and
+C temperatures in K      
 C
 
         IF(NODEN) GOTO 6192
-      OARR(1)=NMF2S
-      OARR(2)=HMF2
+      OARR(1)=NMF2S		! F2-peak density in m-3
+      OARR(2)=HMF2		! F2-peak height in km
       if(f1reg) OARR(3)=NMF1
       if(f1reg) OARR(4)=XHMF1
-      OARR(5)=NMES
-      OARR(6)=HME
-      OARR(7)=NMD
-      OARR(8)=HMD
-      OARR(9)=HHALF
-      OARR(10)=B0
-      OARR(11)=VNER
-      OARR(12)=HEF
+      OARR(5)=NMES		! E-peak density in m-3
+      OARR(6)=HME		! E-peak height in km
+      OARR(7)=NMD		! density in m-3 of D-region inflection point 
+      OARR(8)=HMD		! height in km of D-region inflection point
+      OARR(9)=HHALF		! height used by Gulyaeva B0 model
+      OARR(10)=B0		! bottomside thickness parameter in km
+      OARR(11)=VNER		! density in m-3 at E-valley bottom 
+      OARR(12)=HEF		! height in km of E-valley top (Ne(HEF)=NmE)
 6192    IF(NOTEM) GOTO 6092
-      OARR(13)=ATE(2)
-      OARR(14)=AHH(2)
-      OARR(15)=ATE(3)
-      OARR(16)=ATE(4)
-      OARR(17)=ATE(5)
-      OARR(18)=ATE(6)
-      OARR(19)=ATE(7)
-      OARR(20)=ATE(1)
-      OARR(21)=TI1
-C angles are given in degrees and times in decimal hours
-C altitudes in km      
+      OARR(13)=ATE(2)	! electron temperature Te in K at AHH(2)
+      OARR(14)=AHH(2)	! intermediate height between 120km and 300/350km
+      OARR(15)=ATE(3)	! Te at 300km/350km for BIL-1995/TBT2012+SA model
+      OARR(16)=ATE(4)	! Te at 400km/550km for BIL-1995/TBT2012+SA model
+      OARR(17)=ATE(5)	! Te at 600km/850km for BIL-1995/TBT2012+SA model
+      OARR(18)=ATE(6)	! Te at 1400km/1400km for BIL-1995/TBT2012+SA model
+      OARR(19)=ATE(7)	! Te at 3000km/2000km for BIL-1995/TBT2012+SA model
+      OARR(20)=ATE(1)	! Te at 120km = neutral temperature from CIRA
+      OARR(21)=TI1		! ion temperature in K at 430km
       OARR(22)=XTETI	! altitude where Te=Ti
 6092  OARR(23)=XHI3		! solar zenith angle at 200 km
       OARR(24)=SUNDEC	! sun declination 
@@ -2230,21 +2257,24 @@ C information on the Corrected Geomagnetic (CGM) coordinates.
 C CGM coordinates are only calculated if you select
 C AURORAL BOUNDARIES <on>      
       OARR(55)=cgm_lat	! Corrected Geomagnetic (CGM) latitude
-      OARR(56)=cgm_lon	! Corrected Geomagnetic longitude
+      OARR(56)=cgm_lon	! Corrected Geomagnetic (CGM) longitude
       OARR(57)=cgm_mlt	! Magnetic Local Time for CGM coord.
       OARR(58)=cgmlat   ! CGM latitude of equatorward boundary
 c include only every second auroral boundary point (MLT=0,1,2..23)
       jjj=58
-      do iii=1,47,2
+      do iii=1,47,2		! CGM latitude at MLT=0,1,2 ...23
          jjj=jjj+1 
          oarr(jjj)=ab_mlat(iii)
          enddo
-      OARR(83)=xkp
-      OARR(84)=dec
-      OARR(85)=fl
-      OARR(86)=dimo
-      OARR(87)=SAX300
-      OARR(88)=SUX300
+      OARR(83)=xkp		! Kp at the time specified by the user
+      OARR(84)=dec		! magnetic declination in degrees
+      OARR(85)=fl		! L-value
+      OARR(86)=dimo		! Earth's dipole moment
+      OARR(87)=SAX300	! sunrise at 300km in decimal hours
+      OARR(88)=SUX300	! sunset at 300km in decimal hours		
+      OARR(89)=HNEA		! lower boundary in km of IRI profile		
+      OARR(90)=HNEE		! upper boundary in km of IRI profile		
+
 3330  CONTINUE
 
 c output of solar indices used

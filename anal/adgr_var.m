@@ -16,12 +16,5 @@ function [varRe,varIm]=adgr_var(addr,T_noise,param)
 
 global vc_signal lp_vc lp_dt lp_ra lp_ri lp_nt lp_t1 lp_t2 lp_dec lp_nfir lp_fir
 calc_vcsignal(addr(1),T_noise,param)
-
-varRe=zeros(1,length(addr));
-varIm=zeros(1,length(addr));
-
-for i=1:length(addr)
-  [varRe(i),varIm(i)]=addr_covar(addr(i),addr(i),vc_signal,lp_vc,lp_dt,lp_ra,...
+[varRe,varIm]=addr_covar(addr,-1,vc_signal,lp_vc,lp_dt,lp_ra,...
          lp_ri,lp_nt,lp_t1,lp_t2,lp_dec,lp_nfir,lp_fir);
-
-end

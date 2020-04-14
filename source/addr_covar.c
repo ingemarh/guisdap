@@ -33,7 +33,7 @@ mexFunction(nlhs, plhs, nrhs, prhs)
 	const mxArray *prhs[];
 #endif
 {
-		double *vc_signalPr, 
+		double *add1Pr,*vc_signalPr, 
 			*lp_vcPr, *lp_dtPr, *lp_raPr, *lp_riPr,
 			*lp_ntPr, *lp_t1Pr, *lp_t2Pr, *lp_decPr,
 			*lp_nfirPr, *lp_firPr,
@@ -41,7 +41,7 @@ mexFunction(nlhs, plhs, nrhs, prhs)
 
 		long signallength, signalvcs, nlp, maxfir, i;
 		
-		long addr1, addr2,
+		long *addr1, addr2,
 			*lp_vc, *lp_dt, *lp_ra, *lp_ri,
 			*lp_nt, *lp_t1, *lp_t2, *lp_dec,
 			*lp_nfir;
@@ -57,8 +57,8 @@ mexFunction(nlhs, plhs, nrhs, prhs)
 		
 		/* Assign pointers to the various parameters */
 	
-		addr1=(int)(*mxGetPr(ADDR1_IN)+0.5);
-		addr2=(int)(*mxGetPr(ADDR2_IN)+0.5);
+		add1Pr=mxGetPr(ADDR1_IN);
+		addr2=(int)(*mxGetPr(ADDR2_IN+0.5));
 		vc_signalPr=mxGetPr(VC_SIGNAL_IN);
 		lp_vcPr=mxGetPr(LP_VC_IN);
 		lp_dtPr=mxGetPr(LP_DT_IN);
@@ -99,21 +99,19 @@ mexFunction(nlhs, plhs, nrhs, prhs)
 		lp_nfir[i]=(int)(0.5+lp_nfirPr[i]);  		
 			}
 
+int naddr=1; if(addr2<=0) { naddr=mxGetM(ADDR1_IN)*mxGetN(ADDR1_IN); addr2=-naddr; }
+		addr1 = (long *)mxCalloc(naddr,sizeof(long));
+		for(i=0;i<naddr;i++) addr1[i]=(int)(0.5+add1Pr[i]);
 
 		/* Create a matrix for the return argument */
-		COVAR_RE_OUT = mxCreateDoubleMatrix(1, 1, mxREAL);
-		COVAR_IM_OUT = mxCreateDoubleMatrix(1, 1, mxREAL);
+		COVAR_RE_OUT = mxCreateDoubleMatrix(1,naddr,mxREAL);
+		COVAR_IM_OUT = mxCreateDoubleMatrix(1,naddr,mxREAL);
 
 		covarRe = mxGetPr(COVAR_RE_OUT);
 		covarIm = mxGetPr(COVAR_IM_OUT);
-	
 
-		covar33Calc(addr1,addr2, 
-                 signallength,signalvcs,vc_signalPr,
+		covar33Calc(addr1,addr2,signallength,signalvcs,vc_signalPr,
 				 nlp,lp_vc,lp_dt,lp_ra,lp_ri,
-				 lp_nt,lp_t1,lp_t2,lp_dec,
-				 lp_nfir,
-				 maxfir,lp_firPr,
-				 covarRe,covarIm);
-			
+				 lp_nt,lp_t1,lp_t2,lp_dec,lp_nfir,
+				 maxfir,lp_firPr,covarRe,covarIm);
 }

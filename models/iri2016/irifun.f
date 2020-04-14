@@ -147,6 +147,9 @@ C 2016.12 03/22/18 INVDPC_OLD for ELTEIK                      [V. Truhlik]
 C 2016.13 04/06/18 read_data_SD: add web dir. location for mcsat%%.dat
 C 2016.14 04/23/18 Versioning now based on year of major releases
 C 2016.15 05/07/18 StormVd: AE7_12S -> AEd7_12S                [K. Knight]
+C 2020.01 07/02/19 Added subroutines BOOKER and tops_cor2 (COMMON/BLO11) 
+C 2020.02 07/19/19 XE1:itopn=3 is topside cor2 option (solar activity term)
+C 2020.03 08/05/19 XE1: corrections and BLO11 change 
 C                  
 c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c IRI functions and subroutines:
@@ -203,7 +206,8 @@ C           =3 Gulyaeva-0.5 is not yet implemented.
 c----------------------------------------------------------------
         COMMON  /BLOCK1/HMF2,XNMF2,HMF1,F1REG
      &          /BLO10/BETA,ETA,DELTA,ZETA
-     &          /BLO11/B2TOP,TC3,itopn,alg10,hcor1
+c     &          /BLO11/B2TOP,TC3,itopn,alg10,hcor1,tcor2
+     &          /BLO11/B2TOP,itopn,tcor
      &          /QTOP/Y05,H05TOP,QF,XNETOP,xm3000,hhalf,tau
      &          /ARGEXP/ARGMAX
 
@@ -224,23 +228,85 @@ c----------------------------------------------------------------
         Y = y * dxdh
         if(abs(Y).gt.argmax) Y = sign(argmax,Y)
 
-        IF(itopn.eq.3) then
-	         IF((QF.EQ.1.).AND.(ABS(H-H05TOP).LT.1.)) QF=Y05/Y
-             XE1 = XNMF2 * EXP(-Y*QF)                             
-             RETURN          
-             endif
-        TCOR = 0.
-        IF(itopn.eq.1.and.h.gt.hcor1) then
-             xred = h - hcor1
-             rco = tc3 * xred
-             TCOR = rco * alg10
-             endif
+c        IF(itopn.eq.3) then
+c	         IF((QF.EQ.1.).AND.(ABS(H-H05TOP).LT.1.)) QF=Y05/Y
+c             XE1 = XNMF2 * EXP(-Y*QF)                             
+c             RETURN          
+c             endif
+c        TCORS = 0.0
+c        IF(itopn.eq.1.or.itopn.eq.3) then             
+c             xred = h - hcor1
+c             rco = tc3 * xred
+c             TCOR = rco * alg10
+c             endif
+c        IF(h.gt.hcor1) TCORS=TCORS+TCOR
+c        TCOR=TCOR+TCOR2
         XE1 = XNMF2 * EXP(-Y+TCOR)                             
         RETURN          
         END             
 C
 C
+      subroutine tops_cor2(xh,vmod,a01)
+C-------------------------------------------------------------------------
+C Determines solar activity correction factor for topside cor option:
+C		xh	height in km
+C		vmod	modified dip latitude in degree
+C		ap01(1:2,1)		A0 and A1 for daytime
+C		ap01(1:2,2)		A0 and A1 for nighttime
+C	        IRI-new = IRI-old * exp(A0+A1*PF10.7)
+C-------------------------------------------------------------------------
+      REAL	pa(6,3,2,2),ha(6,3,2,2),sh(5),thh(4)
+      REAL	ah(6),av(6),ap01(3,2,2),a01(2,2)
+      REAL  xmod(7),thhb(5),pb(7,2,2),bv(7)
 
+      DATA pa/0,0,-2.4,-2.4,0,0,
+     &	0,0,-1.6,-1.6,0,0,0,0,-2.2,-2.2,0,0,
+     &	0,0,0.0185,0.0185,0,0,0,0,0.018,0.018,0,0,
+     &	0,0,0.0175,0.0175,0,0,0,0,-1.1,-1.1,0,0,
+     &	0,0,-0.7,-0.7,0,0,0,0,-1.4,-1.4,0,0,
+     &	0,0,0.007,0.007,0,0,0,0,0.005,0.005,0,0,
+     &	0,0,0.01,0.01,0,0/
+      DATA ha/0,200,600,900,1400,1700,
+     &	0,550,700,1100,1400,1700,
+     &	0,200,600,950,1600,1700,
+     &	0,300,650,750,1300,1700,
+     &	0,450,750,850,1400,1700,
+     &	0,300,650,750,1500,1700,
+     &	0,400,500,900,1200,1700,
+     &	0,400,500,900,1200,1700,
+     &	0,350,550,800,1200,1700,
+     &	0,400,500,750,900,1700,
+     &	0,400,550,750,900,1700,
+     &	0,400,550,750,900,1700/
+      DATA xmod/-90.,-60.,-25.,0.,25.,60.,90./
+      DATA thh/4*30.0/thhb/5*0.1/
+
+      do 11 j2=1,3 
+        do 11 k=1,2 
+          do 11 l3=1,2 
+            do 12 i=1,6
+              AH(I)=HA(I,J2,K,L3)
+12            AV(I)=PA(I,J2,K,L3)
+11          AP01(J2,K,L3)=BOOKER(XH,6,AH,AV,THH)	
+
+      do 20 i=1,2
+        do 20 k=1,2
+          do 21 l=1,2
+            pb(l,i,k)=0
+            pb(l+5,i,k)=0
+21          pb(l+2,i,k)=ap01(l,i,k)                                                                             8i,*,*)
+20        pb(5,i,k)=ap01(3,i,k)
+
+      do 14 k=1,2 
+        do 14 l4=1,2
+          do 15 i=1,7 
+15          BV(I)=PB(I,K,L4)
+14        A01(K,L4)=BOOKER(VMOD,7,XMOD,BV,THHB)
+
+      return
+      end
+C
+C
         REAL FUNCTION TOPQ(h,No,hmax,Ho)
 c----------------------------------------------------------------
 c  NeQuick formula
@@ -5776,7 +5842,7 @@ c     .. local arrays ..
 	data coeff_month_read /12*0/
 c
       if (coeff_month_read(month) .eq. 0) then
-        call getenv('IRIPATH',path)
+              call getenv('IRIPATH',path)
         write(filedata, 10) path(1:index(path,' ')-1),month+10
         open(10, File=filedata, status='old')
 	  do j=0,47
@@ -8305,6 +8371,30 @@ C ------------------------------------------------------------ PEAK
         END
 c
 c
+      REAL FUNCTION BOOKER(H,N,AH,AV,D)
+c----------------------------------------------------------------
+C PROFILE BASED ON BOOKER APPROACH 
+C 	H		HEIGHT IN KM 
+C 	N		NUMBER OF PROFILE SECTIONS WITH CONSTANT GRADIENT
+C 	AH(N)	HEIGHTS MARKING BEGINNING AND END OF SECTIONS
+C 	AV(N) 	PARAMETER VALUES AT AH
+C	D(N-2)	THICKNESS OF TRANSITION REGION BETWEEN SECTIONS
+C	ST(N-1)	SECTION GRADIENTS
+c----------------------------------------------------------------
+      REAL AH(N),AV(N),ST(N-1),D(N-2)
+C
+      ST(1)=(AV(2)-AV(1))/(AH(2)-AH(1))
+      SUM=AV(1)+ST(1)*(H-AH(1))
+      DO 1 I=1,N-2
+        aa = eptr(h    ,d(i),ah(i+1))
+        bb = eptr(ah(i),d(i),ah(i+1))
+        ST(I+1)=(AV(I+2)-AV(I+1))/(AH(I+2)-AH(I+1))
+1        SUM=SUM+(ST(I+1)-ST(I))*(AA-BB)*D(I)                
+      BOOKER=SUM        
+      RETURN          
+      END             
+C
+C
         FUNCTION XE2TO5(H,HMF2,NL,HX,SC,AMP)
 C----------------------------------------------------------------------
 C NORMALIZED ELECTRON DENSITY (N/NMF2) FOR THE MIDDLE IONOSPHERE FROM 
@@ -8863,8 +8953,8 @@ c If date is outside the range of the Ap indices file then IAP(1)=-5
 C-------------------------------------------------------------------------
 C
         INTEGER		aap(23000,9),iiap(8)
-        DIMENSION 	af107(23000,3)
         character path*100
+        DIMENSION 	af107(23000,3)
         COMMON		/apfa/aap,af107,n
 
         call getenv('IRIPATH',path)

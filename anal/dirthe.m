@@ -13,6 +13,31 @@
 % theo: theoretical values for the measurements
 % See also: spec, transf
 function theo=dirthe(param,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega)
+global local path_GUP
+
+if libisloaded('libguisdap')
+
+if ~isreal(f_womega)
+ f_womega=real(f_womega);
+end
+
+nom=prod(size(p_om));
+[womM,womN]=size(f_womega);
+[ns,aaN]=size(param);
+[coefM,coefN]=size(p_coeffg);
+nion=prod(size(p_m0));
+
+acfPr=libpointer('doublePtr',zeros(coefM+aaN,coefN));
+scr=libpointer('doublePtr',zeros(nion+2,3+4*nom));
+scr1=libpointer('doublePtr',zeros((nion+1)*5+nom+aaN,ns));
+womPr=libpointer('doublePtr',f_womega);
+
+calllib('libguisdap','DirtheCalc',ns,aaN,param,p_coeffg,womM,womPr,kd2,nom,p_om, ...
+	real(pldfvv),imag(pldfvv),acfPr,0,p_m0,nion,fb_womega,scr,scr1);
+
+theo=acfPr.value;
+
+else
 
 param=real(param); % hyi hyi
 
@@ -28,3 +53,5 @@ if ~isempty(f0)
 end
 
 theo=[p_coeffg.*(f_womega*s)+fb_womega*b;col(param)];
+
+end

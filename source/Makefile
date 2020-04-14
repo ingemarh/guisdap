@@ -47,7 +47,7 @@ GUPLIB:=	$(GUPLIB) -lpthread
 endif
 
 
-all: iri msis geomag lib mex install
+all: lib install
 
 iri:
 	$(MEX) $(MEXOPTS) iri.F $(IRILIB)
@@ -62,7 +62,6 @@ lib:
 	$(CC) plwin.c -o $M/plwin.so $(PLFLAGS) -lfftw3f
 	$(CC) alt_decoder.c -o $M/alt_decoder.so $(PLFLAGS)
 	$(CC) clutter.c -o $M/clutter.so $(PLFLAGS) -lfftw3f
-	cp plwin.h $M
 	$(COMPILE.c) mrqmndiag_worker.c dirthe_worker.c GULIPS_addm_worker.c GULIPS_cov_worker.c GULIPS_invR_worker.c GULIPS_mul_worker.c spec_worker.c transf_worker.c addr_covar_worker.c
 	$(LD) -o $M/libguisdap.so $(LDFLAGS) *.o
 	$(AR) cr $M/libguisdap.a *.o
@@ -76,5 +75,5 @@ mex:
 	$(MEX) $(MEXOPTS) -DANSI_C addr_covar.c $(GUPLIB)
 
 install:
+	cp plwin.h iri.h msis.h libgup.h $M
 	mv *.mex* ../${MEXD}
-	cp plwin.h ../${MEXD}

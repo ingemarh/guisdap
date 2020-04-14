@@ -3,15 +3,15 @@
 
 #ifdef ANSI_C
 void
-covar33Calc (long addr1, long addr2, unsigned long signallength, unsigned long signalvcs, double *vc_signal, unsigned long nlp,	/* common length of following variables */
+covar33Calc (long *addr1P, long addr2, unsigned long signallength, unsigned long signalvcs, double *vc_signal, unsigned long nlp,	/* common length of following variables */
 	     long *lp_vc, long *lp_dt, long *lp_ra, long *lp_ri, long *lp_nt, long *lp_t1, long *lp_t2, long *lp_dec, long *lp_nfir, unsigned long maxfir,	/* size of longest filter */
 	     double *lp_fir, double *covarRe, double *covarIm)
 #else
 void
-covar33Calc (addr1, addr2, signallength, signalvcs, vc_signal,
+covar33Calc (addr1P, addr2, signallength, signalvcs, vc_signal,
 	     nlp, lp_vc, lp_dt, lp_ra, lp_ri, lp_nt, lp_t1, lp_t2, lp_dec,
 	     lp_nfir, maxfir, lp_fir, covarRe, covarIm)
-     long addr1, addr2;
+     long *addr1P, addr2;
      unsigned long signallength, signalvcs;
      double *vc_signal;
      unsigned long nlp;		/* common length of following variables */
@@ -37,6 +37,12 @@ covar33Calc (addr1, addr2, signallength, signalvcs, vc_signal,
   long *lps2;
   lps1 = (long *) mxCalloc (nlp, sizeof (long));
   lps2 = (long *) mxCalloc (nlp, sizeof (long));
+
+  long addr1, naddr=1, a;
+  if(addr2<0) naddr=-addr2;
+  for (a=0;a<naddr;a++) {
+  addr1=addr1P[a]; if(naddr>1) addr2=addr1;
+
   lps1len = 0;
   lps2len = 0;
 
@@ -66,7 +72,7 @@ covar33Calc (addr1, addr2, signallength, signalvcs, vc_signal,
 
 /*	printf("%ld %ld\n",lps1len,lps2len);*/
 
-
+ 
   co1 = 0;
   co2 = 0;
   for (ilp1 = 0; ilp1 < lps1len; ilp1++)
@@ -185,6 +191,7 @@ covar33Calc (addr1, addr2, signallength, signalvcs, vc_signal,
 	    }
 	}
     }
-  *covarRe = (co1 + co2) / 2;
-  *covarIm = (co1 - co2) / 2;
+  covarRe[a] = (co1 + co2) / 2;
+  covarIm[a] = (co1 - co2) / 2;
+  }
 }
