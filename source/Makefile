@@ -6,7 +6,7 @@ ifndef MEX
 MEX:=	mex
 endif
 ifndef MEXD
-MEXD:=	mex7
+MEXD:=	mex
 endif
 ifndef MATLAB
 MATLAB=$(subst MATLAB=,,$(shell matlab -e | grep MATLAB= ))
