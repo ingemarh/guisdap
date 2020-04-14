@@ -58,7 +58,7 @@ mexFunction(nlhs, plhs, nrhs, prhs)
 		/* Assign pointers to the various parameters */
 	
 		add1Pr=mxGetPr(ADDR1_IN);
-		addr2=(int)(*mxGetPr(ADDR2_IN+0.5));
+		addr2=(int)(*mxGetPr(ADDR2_IN)+0.5);
 		vc_signalPr=mxGetPr(VC_SIGNAL_IN);
 		lp_vcPr=mxGetPr(LP_VC_IN);
 		lp_dtPr=mxGetPr(LP_DT_IN);
