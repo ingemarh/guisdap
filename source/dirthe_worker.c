@@ -2,7 +2,6 @@
 # include <stdio.h>
 # include <string.h>
 # include <math.h>
-# include "mex.h"
 
 #ifdef ESSL
 #include "/usr/include/essl.h"
@@ -20,8 +19,10 @@ void mymul(char transa,double *mat1,long mat1m,long mat1n,char transb,double *ma
   
   if((transa=='N') && (transb=='N'))
     {
-      if(mat1n != mat2m)
-	mexErrMsgTxt("field: matrix sizes incompatible in matrix product!");
+      if(mat1n != mat2m) {
+	fprintf(stderr,"field: matrix sizes incompatible in matrix product!");
+	exit(-1);
+      }
       resM=mat1m;resN=mat2n;
       for(i=0;i<resN;i++)
 	{
@@ -42,8 +43,10 @@ void mymul(char transa,double *mat1,long mat1m,long mat1n,char transb,double *ma
     }
   else if ((transa=='T') && (transb=='N'))
     {
-     if(mat1m != mat2m)
-	mexErrMsgTxt("field: matrix sizes incompatible in matrix product!");
+     if(mat1m != mat2m) {
+	fprintf(stderr,"field: matrix sizes incompatible in matrix product!");
+	exit(-1);
+     }
       resM=mat1n;resN=mat2n;
       for(i=0;i<resN;i++)
 	{
@@ -64,8 +67,10 @@ void mymul(char transa,double *mat1,long mat1m,long mat1n,char transb,double *ma
    }
   else if ((transa=='N') && (transb=='T'))
     {
-      if(mat1n != mat2n)
-	mexErrMsgTxt("field: matrix sizes incompatible in matrix product!");
+      if(mat1n != mat2n) {
+	fprintf(stderr,"field: matrix sizes incompatible in matrix product!");
+	exit(-1);
+      }
       resM=mat1m;resN=mat2m;
       for(i=0;i<resN;i++)
 	{
@@ -86,8 +91,10 @@ void mymul(char transa,double *mat1,long mat1m,long mat1n,char transb,double *ma
     }
   else
     {
-      if(mat1m != mat2n)
-	mexErrMsgTxt("field:mn matrix sizes incompatible in matrix product!");
+      if(mat1m != mat2n) {
+	fprintf(stderr,"field:mn matrix sizes incompatible in matrix product!");
+	exit(-1);
+      }
       resM=mat1n;resN=mat2m;
       for(i=0;i<resN;i++)
 	{

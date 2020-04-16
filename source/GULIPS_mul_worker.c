@@ -12,7 +12,6 @@
 */
 
 /*#include <math.h>*/
-#include "mex.h"
 #include "GULIPS.h"
 
 extern 	void GULIPS_mulCalc(DFLOAT *R,double *y,double *sol,unsigned long yn,unsigned long ym);

@@ -5,7 +5,6 @@ Markku Lehtinen 07/1995
 */
 #include <stdlib.h>
 #include <math.h>
-#include "mex.h"
 #include <time.h>
 
 void pldfas(double *retR,double *retI,double zR,double zI);

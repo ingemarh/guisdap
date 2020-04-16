@@ -3,17 +3,22 @@ version='2';
 ac=44-char(textread('ac64.txt','%s'));
 [nsc,nb]=size(ac);
 rep=20000; tb=30; frac=2;
-ch_filter=tb/frac;
+ch_filter=tb/frac; %boxcar
 ch_adcint=1*ch_filter;
 ch_f=12;
 offset=0;
+lowtail=48;
 if name_site=='T'
- t=82+[0 tb*nb]; s=[ceil(t(2)/ch_filter) floor((19997-100)/ch_filter)]; c=19997+[ceil(-100/ch_filter) 0];
- par=[[24 nb*frac diff(s)/frac-nb+1 0 nsc nsc*5 diff(s) nb frac 1 ...
-	0 32 0 0 0 1 64 0 0 0 ...
-       	0 1 100 0] row(ac)];
+ t=82+[0 tb*nb]; s=[1+ceil(t(2)/ch_filter) floor((19997-100)/ch_filter)], c=[(s(2)+1)*ch_filter 19997],
+ ns=diff(s)+1;
+ par=[[24 nb*frac ns/frac-nb+1+lowtail 0 nsc nsc*5 ns nb frac 1 ...
+	0 lowtail 0 0 0 1 64 0 0 0 ...
+	0 1 145 1]';col(ac')];
+ find(rem(par,1))
  fid=fopen('leo_u.par','w'); fprintf(fid,'%d\n',par); fclose(fid);
+ fprintf('Samps s1=%.0f ntx=%d ns=%d nc=%d\n',s(1)*ch_filter+2,s(1)-1,diff(s)+1,diff(c)+1)
  j=1;
+ s=s*ch_filter;
  for i=1:nsc
   i1=i-1;
   p=ac(i,1); tt=i1*rep;
@@ -36,5 +41,4 @@ if name_site=='T'
 end
 p_rep=nsc*rep;
 p_offsetppd=0;
-fprintf('Samps s1=%.0f ns=%d nc=%d\n',s(1)*ch_filter+2,diff(s),diff(c))
 eval(['save leo' name_site 'pat_PS ch_* p_* td_*'])

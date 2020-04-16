@@ -11,14 +11,17 @@ for lpf=a_lpf
   [dd_data,upar,dd_raw]=clutter(lpf.par,d_parbl,d_raw(lpf.raw));
   d_parbl(42+(1:20))=upar;
   d_raw(lpf.raw)=dd_raw;
- case 'resampler' % par(1-5)=[decimation ntx calstart calmode]
-  d_raw=sum(reshape(d_raw,lpf.par(1),[],lpf.nrep)); %resample everything
+ case 'resampler' % par(1-5)=[decimation ntx nsig ncal calmode ncodes]
+  draw=reshape(d_raw,lpf.nsamp,[]); %reshape
+  draw=sum(reshape(draw(1:sum(lpf.par(2:4))*lpf.par(1),:),lpf.par(1),[],lpf.nrep)); %resample everything
+  tx=draw(1,1:lpf.par(2),1:lpf.par(6));
+  sig=draw(1,lpf.par(2)+(1:lpf.par(3)),:);
+  cal=reshape(draw(1,lpf.par(2)+lpf.par(3)+(1:lpf.par(4)),:),[],lpf.nrep);
   dd_data=[];
-  for i=1:lpf.par(4)
-   dd_data=[dd_data;sum(abs(d_raw(lpf.par(3):end,i:lpf.par(4):lpf.nrep)).^2,2)]; % do the cal
+  for i=1:lpf.par(5)
+   dd_data=[dd_data;sum(abs(cal(:,i:lpf.par(5):lpf.nrep)).^2,2)]; % do the cal
   end
-  dd_data=sum(abs(d_raw(lpf.par(4)+1:end,1:2:lpf.nrep)).^2);
-  d_raw=[col(d_raw(1:lpf.par(2),1:lpf.par(3));col(d_raw(lpf.par(2)+1:lpf.par(3)-1,:))]; %separate the txsamples
+  d_raw=[tx(:);sig(:)]; %separate the txsamples
  end
  fac=(diff(lpf.p)+1)/lpf.nrep;
  d_data(lpf.data+(1:length(dd_data)))=dd_data/fac;

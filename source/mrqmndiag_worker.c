@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "mex.h"
 
 #include <time.h>
 #ifdef UNIX
@@ -80,7 +79,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	double *tempDyda,*errorBar,*scr,*scr1,*RowStorage;
 	double lambda=0.001,maxDeviation,chi2Old;
 	long validDer=0,its=0,itMax,*indicesVector;
-	mxArray *storage;
+	long *storage=NULL;
 
 	unsigned long *varOK,nvarOK,*afree,nafree,nth=1;
 	double *tempAlpha,*plim;
@@ -104,10 +103,8 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 
 	itMax=(long)itMaxPr[0];
 
-	storage=mxCreateDoubleMatrix(0, 0, mxREAL);	/* Do not save the angles in GULIPS_addm*/				
-
 /* Check for free pars IH*/
-	afree=(unsigned long *)mxCalloc(aaN+varianceM*varianceN,sizeof(long));
+	afree=(unsigned long *)calloc(aaN+varianceM*varianceN,sizeof(long));
 	for(i=0,nafree=0;i<aaN;i++)
 		if(variancePr[i+coefM]!=0) afree[nafree++]=i;
 	varOK=afree+aaN;
@@ -119,7 +116,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	for(i=0;i<aaN;i++)
 		aaOutPr[i]=aPr[i];
 
-	aaOld=(double *)mxCalloc(3*aaN+nafree*nafree+(coefM+aaN)*coefN*2,sizeof(double));
+	aaOld=(double *)calloc(3*aaN+nafree*nafree+(coefM+aaN)*coefN*2,sizeof(double));
 	plim=aaOld+aaN;
 	for(i=0;i<2*aaN;i++)
 		plim[i]=physlimPr[i];
@@ -138,25 +135,25 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 		pthread_attr_init(&sched_glob);
 		pthread_mutex_init(&pth.val_lock,NULL);
 		pthread_attr_setscope(&sched_glob,PTHREAD_SCOPE_SYSTEM);
-		thread=(pthread_t *)mxCalloc(nth,sizeof(pthread_t));
+		thread=(pthread_t *)calloc(nth,sizeof(pthread_t));
 	}
 #endif
 	nscr=(nion+2)*(3+4*nom); nscr1=((nion+1)*5+nom+aaN)*ns;
-	scr=(double *)mxCalloc((nscr+nscr1)*nth,sizeof(double));
+	scr=(double *)calloc((nscr+nscr1)*nth,sizeof(double));
 	scr1=scr+nscr*nth;
-	aa2=(double *)mxCalloc((aaN+(coefM+aaN)*coefN)*nth,sizeof(double));
+	aa2=(double *)calloc((aaN+(coefM+aaN)*coefN)*nth,sizeof(double));
 	tempYa=aa2+aaN*nth;
 
 	DirtheCalc(ns,aaN,aaOutPr,coefPr,womM,womPr,kd2Pr,nom,omPr,pldfvPr,pldfvPi,ya,1,p_m0,nion,bwomPr,scr,scr1);
 
 /* Create dyda and the temporaty copy of dyda matrix for the spectrum derivatives */
 
-	dyda=(double *)mxCalloc(nvarOK*nafree*2,sizeof(double));
+	dyda=(double *)calloc(nvarOK*nafree*2,sizeof(double));
 	tempDyda=dyda+nvarOK*nafree;
 
 	/* Copy the sqrt(variance) to the errorbar (for the GULIPS) */ 
 	nR=(nafree*(nafree+1))/2;
-	errorBar=(double *)mxCalloc(nvarOK+nR+nafree+1+nafree+1+nafree,sizeof(double));
+	errorBar=(double *)calloc(nvarOK+nR+nafree+1+nafree+1+nafree,sizeof(double));
 	chi2Pr[0]=0;
 	for (i=0;i<nvarOK;i++) {
 		j=varOK[i];
@@ -170,7 +167,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	dA=KhiSqr+1;	/* Matrix for the solution of the inverse problem */
 	RowStorage=dA+nafree; /*For GULIPS internal use*/
 
-	indicesVector=(long *)mxCalloc(nafree,sizeof(long));
+	indicesVector=(long *)calloc(nafree,sizeof(long));
 	for(i=0;i<nafree;i++)
 		indicesVector[i]=i;
 
@@ -232,8 +229,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 				if(nth>1) {
 					pthread_mutex_lock(&pth.val_lock);
 					pth.i=i;
-					if(pthread_create(&thread[i],&sched_glob,(void *(*)(void *)) dirthe_loop,(void *)(&pth)))
-						mexErrMsgTxt("mrqmndiag: cannot thread");
+					pthread_create(&thread[i],&sched_glob,(void *(*)(void *)) dirthe_loop,(void *)(&pth));
 				} else {
 					pth.i=i;
 					dirthe_loop(&pth);
@@ -246,8 +242,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 #ifdef GUPTHREAD
 			if(nth>1)
 				for(i=0;i<nafree;i++)
-					if(pthread_join(thread[i],&retval))
-						mexErrMsgTxt("mrqmndiag: cannot join thread");
+					pthread_join(thread[i],&retval);
 #endif
 #ifdef THTIME
 			start1=gethrtime(); end2+=(start1-start2);
@@ -278,7 +273,7 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 
 		/* Calculate the solution using GULIPS */
  
-		GULIPS_addmCalc(R,Y,tempDyda,tempYa,KhiSqr,nvarOK,nafree,1,storage,errorBar,RowStorage);
+		GULIPS_addmCalc(R,Y,tempDyda,tempYa,KhiSqr,nvarOK,nafree,1,storage,0,errorBar,RowStorage);
 		GULIPS_invRCalc(R,nafree);
 		GULIPS_mulCalc(R,Y,dA,1,nafree);
 		GULIPS_covCalc(R,indicesVector,nafree,1,nafree,tempAlpha);
@@ -349,6 +344,8 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	start2=gethrtime(); end1+=(start2-start1+end2);
 	printf("Spec loop:%.3f %.1f\n",((float)end2)/((float)end1),end1/1e6);
 #endif
+	free(dyda); free(afree); free(aaOld); free(thread); free(scr); free(aa2); free(errorBar);
+	free(indicesVector);
 }
 
 void *dirthe_loop(struct pth *pth)
@@ -384,5 +381,6 @@ void *dirthe_loop(struct pth *pth)
 
 	for(j=0;j<pth->nvarOK;j++)
 		pth->dyda[IND2(j,i,pth->nvarOK)]=((pth->ya[pth->varOK[j]]-acf[pth->varOK[j]])/0.0001);
+
 	return NULL;
 }

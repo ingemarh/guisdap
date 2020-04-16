@@ -87,8 +87,8 @@ else
  delete(findobj(vizufig,'UserData','Results'))
  sigma='\sigma'; % char(963)
  text(axs(2),rx(2)*1.05,rx(2)/2,...
-   sprintf('Density ratio=%.2f%s%.2f\nMagic const used=%g\n\nheight=%d-%d km\nelev > %g%s\ndynasonde window=%g-%g MHz\ngreen circles > %g%s\n\nsuggested Magic const=%.2f',...
-   mr2,char(177),sr2,Magic_const,alt,minel,char(176),folim,maxe,sigma,nmc),'horiz','left','UserData','Results')
+   sprintf('Density ratio=%.2f%s%.2f\nMagic const used=%g\n\nheight=%d-%d km\nelev > %g°\ndynasonde window=%g-%g MHz\ngreen circles > %g%s\n\nsuggested Magic const=%.2f',...
+   mr2,char(177),sr2,Magic_const,alt,minel,folim,maxe,sigma,nmc),'horiz','left','UserData','Results')
  axis(axs(2),'square')
  pos=get(axs(2),'position'); pos(3)=.5;
  set(axs(2),'xlim',rx,'ylim',rx,'position',pos)

@@ -20,7 +20,8 @@ CC=	cc -m64 -xarch=sparcvis
 M=	$(PWD)/../lib/sparcv9
 MEXOPTS= CC="cc -m64 -xarch=sparcvis" FC="f90  -m64 -xarch=sparcvis" -f $(MATLAB)/bin/f90opts.sh
 else
-CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include
+#CFLAGS=-fast -mt -KPIC -DANSI_C -I$(MATLAB)/extern/include
+CFLAGS=-fast -mt -KPIC -DANSI_C
 MEXOPTS=-f $(MATLAB)/bin/f90opts.sh
 endif
 LDFLAGS= -dy -G -h libguisdap.so -z text

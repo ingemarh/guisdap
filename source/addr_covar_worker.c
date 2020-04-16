@@ -1,5 +1,5 @@
+#include <stdlib.h>
 #include <math.h>
-#include "mex.h"
 
 #ifdef ANSI_C
 void
@@ -35,8 +35,8 @@ covar33Calc (addr1P, addr2, signallength, signalvcs, vc_signal,
 
   long *lps1;
   long *lps2;
-  lps1 = (long *) mxCalloc (nlp, sizeof (long));
-  lps2 = (long *) mxCalloc (nlp, sizeof (long));
+  lps1 = (long *) calloc (nlp, sizeof (long));
+  lps2 = (long *) calloc (nlp, sizeof (long));
 
   long addr1, naddr=1, a;
   if(addr2<0) naddr=-addr2;
@@ -194,4 +194,5 @@ covar33Calc (addr1P, addr2, signallength, signalvcs, vc_signal,
   covarRe[a] = (co1 + co2) / 2;
   covarIm[a] = (co1 - co2) / 2;
   }
+  free(lps1);free(lps2);
 }

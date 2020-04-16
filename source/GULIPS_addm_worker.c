@@ -36,18 +36,18 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
-#include "mex.h"
 #include "GULIPS.h"
 
 #ifdef ANSI_C
-	void GULIPS_addmCalc(DFLOAT *R,double *y,double *A,double *m,double *KhiSqr,unsigned long nnew,unsigned long npar,unsigned long nmeas,mxArray* storage,double *errorBarPr,double *RowStorage)
+	void GULIPS_addmCalc(DFLOAT *R,double *y,double *A,double *m,double *KhiSqr,unsigned long nnew,unsigned long npar,unsigned long nmeas,long* storage, long flen, double *errorBarPr,double *RowStorage)
 #else
-	void GULIPS_addmCalc(R,y,A,m,KhiSqr,nnew,npar,nmeas,storage,errorBarPr)
+	void GULIPS_addmCalc(R,y,A,m,KhiSqr,nnew,npar,nmeas,storage,flen,errorBarPr)
 	DFLOAT *R;
 	double *y,*A,*m,*KhiSqr,*errorBarPr;
 	unsigned long nnew,npar,nmeas;
-	mxArray *storage;
+	long *storage,flen;
 	double *RowStorage;
 #endif
 {
@@ -64,26 +64,24 @@
     DFLOAT *v0;
     double *v1,*v2,*v3,*v4,*v5;
     double *ARowStorage, *mRowStorage;					/* Temporary work array that contains one row of the matrices */
-    char fileName[50];
+    char *fileName=NULL;
     FILE *angleFile=NULL;	
 
     N = npar;
 
-    fileName[0] = 0;									/* Make sure the fileName is initially empty */
-
-    if ((mxGetM(storage)*mxGetN(storage))!=0)
+    if (storage!=NULL)
 	    storageAvailable = 1;
 	
-    if (mxIsChar(storage))
-	    err = mxGetString(storage,fileName,(mxGetN(storage)+1));
+    if (flen>0)
+	    fileName=(char *)storage;
     else
-	    angle = (long *)mxGetPr(storage);				/* Take the storage from storage marix */	
+	    angle = storage;				/* Take the storage from storage marix */
 
 		
-if(fileName[0] != 0)								/* Open file storage if requested by the user */
+if(fileName != NULL)								/* Open file storage if requested by the user */
 	{
 	angleFile = fopen(fileName,"a");
-	angle = (long *)mxCalloc(npar,sizeof(long));
+	angle = (long *)calloc(npar,sizeof(long));
 	}
 
 ARowStorage = RowStorage;	/* Use the temporary work array: npar values */
@@ -114,13 +112,13 @@ for (inew=0; inew<nnew; inew++)						/* Loop that goes through number of new mea
 			r=sqrt(*v0 * *v0 + *v2 * *v2);
 			c=*v0/r; s=*v2/r;								
 
-/* Angle is stored as 32 bit integer where 2¹ is 2^32.
+/* Angle is stored as 32 bit integer where 2^1 is 2^32.
  * Atan returns the angle as radians and it is then conveted to be between 0..2.
  * The last multiplication converts the angle to 0..2^32 range.
  */
 			if(storageAvailable)						
 				{
-				if(fileName[0] != 0)			/* the storage is file */
+				if(fileName != NULL)			/* the storage is file */
 					{
 #ifdef MAC
   					angle[irow] = ffloor((atan2(s,c)/3.1415926535897932385)*2147483648+0.5);
@@ -162,9 +160,11 @@ for (inew=0; inew<nnew; inew++)						/* Loop that goes through number of new mea
 		for (icol=0; icol<nmeas; icol++) 
 			KhiSqr[icol] += mRowStorage[icol] * mRowStorage[icol];
 	
-		if(fileName[0] != 0)
+		if(fileName != NULL)
 				fwrite((void*)angle,sizeof(long),npar,angleFile);
 	}
-if(fileName[0] != 0)
+if(fileName != NULL) {
 	fclose(angleFile);
+	free(angle);
+}
 }

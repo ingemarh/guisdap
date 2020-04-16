@@ -10,8 +10,8 @@
   		cov = npar*1 vector for the diagonal values of the covariance
 */
 
+#include <stdlib.h>
 #include <math.h>
-#include "mex.h"
 #include "GULIPS.h"
 
 extern void GULIPS_covCalc(DFLOAT *R,long *indices,unsigned long indiceslength,unsigned long code,unsigned long npar,double *cov);

@@ -12,7 +12,6 @@
 */
 
 #include <math.h>
-#include "mex.h"
 #include "GULIPS.h"
 
 extern 	void GULIPS_invRCalc(DFLOAT *R,unsigned long npar);

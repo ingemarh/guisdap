@@ -56,6 +56,8 @@ for lpf=a_lpf
   if isempty(lpf.p)
    lpf.p=[0 lpf.nrep-1];
   end
+ case 'resampler'
+  nsamp=[];
  end
  lpf.raw=lpf.raw+(lpf.p(1)*nsamp+1:(lpf.p(2)+1)*nsamp);
  a_lpf(i)=lpf;
