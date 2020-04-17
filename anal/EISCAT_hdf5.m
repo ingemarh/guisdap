@@ -38,27 +38,33 @@ end
 % delete(fullfile(tempdir,'my_input.mat'));
 
 image_filelist        = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*.pdf'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
-image_filelist_vecvel = [dir(fullfile(dirpath,'*vecvel*.png'));dir(fullfile(dirpath,'*vecvel*.gif'));dir(fullfile(dirpath,'*vecvel*.jpg'));dir(fullfile(dirpath,'*vecvel*.jpeg'));dir(fullfile(dirpath,'*vecvel*.pdf'));dir(fullfile(dirpath,'*vecvel*ps.gz'));dir(fullfile(dirpath,'*vecvel*ps'))];
+image_filelist_vecvel = [dir(fullfile(dirpath,'*vecvel*.png'));dir(fullfile(dirpath,'*vecvel*.pdf'))];
 notesfiles = dir(fullfile(dirpath,'notes*txt'));
 logfiles = dir(fullfile(dirpath,'*log')); 
 
 logs_files = [];
 logs_filename = [];
+vecvel_tarfiles = [];
+vecvel_tarfilename = [];
 targz_filecheck = dir(fullfile(dirpath,'*tar.gz'));
 targz_files = [];
 if ~isempty(targz_filecheck)
-    n = 1; m = 1;
+    n = 1; m = 1; o = 1;
     for ii = 1:length(targz_filecheck)
         targz_filename = targz_filecheck(ii).name;
-        q = strfind(targz_filename,'logs.tar.gz');
-        if isempty(q)
-            targz_files{n} = fullfile(dirpath,targz_filename);
-            n = n+1;
-        else
+        if contains(targz_filename,'logs.tar.gz')
             logs_files{m} = fullfile(dirpath,targz_filename);
             [~,name,ext] = fileparts(logs_files{m}); 
             logs_filename{m} = [name ext];
-            m = m+1;
+            m = m + 1;
+        elseif contains(targz_filename,'vecvel')
+            vecvel_tarfiles{o} = fullfile(dirpath,targz_filename);
+            [~,name,ext] = fileparts(vecvel_tarfiles{o}); 
+            vecvel_tarfilename{o} = [name ext];
+            o = o + 1;
+        else
+            targz_files{n} = fullfile(dirpath,targz_filename);
+            n = n + 1;
         end
     end
 end
@@ -66,7 +72,7 @@ end
 hdf5oldfiles     = dir(fullfile(dirpath,'overview','*hdf5')); 
 hdf5_allfiles  = [];
 hdf5_files     = [];
-hdf5vel_file   = [];
+hdf5vel_files   = [];
 hdf5ncar_files = [];
 hdf5rest_files = [];
 
@@ -74,8 +80,10 @@ if ~isempty(hdf5oldfiles)
     k = 1; l = 1; n = 1; m = 1; o = 1;
     for ii = 1:length(hdf5oldfiles)
         hdf5_filename = hdf5oldfiles(ii).name;
-        if contains(hdf5_filename,'vecvel')
-            hdf5vel_file {k} = fullfile(dirpath,'overview',hdf5_filename); k = k+1;    
+        %if contains(hdf5_filename,'vecvel') || contains(hdf5_filename,'.ar')
+            %hdf5vel_files{k} = fullfile(dirpath,'overview',hdf5_filename); k = k+1;    
+        if contains(hdf5_filename,'.ar')    
+            hdf5vel_files{k} = fullfile(dirpath,'overview',hdf5_filename); k = k+1;    
         elseif contains(hdf5_filename,'.vr') || contains(hdf5_filename,'.tr') || contains(hdf5_filename,'.kr') || contains(hdf5_filename,'.sr') 
             hdf5_files{l} = fullfile(dirpath,'overview',hdf5_filename); l = l+1;
             hdf5_allfiles{o} = fullfile(dirpath,'overview',hdf5_filename); o = o + 1;
@@ -89,7 +97,6 @@ if ~isempty(hdf5oldfiles)
     end
 end
 
-
 oldhdf5_files = [];
 if isempty(targz_files) && isempty(hdf5oldfiles) 
     error('No "old" hdf5-files nor any tar.gz-files with mat-files exist.')
@@ -100,8 +107,7 @@ elseif ~isempty(targz_files) && ~isempty(hdf5_files)
 end
 
 data_files = [targz_files,oldhdf5_files];
-display(data_files')
-
+vecvel_files = [vecvel_tarfiles,hdf5vel_files];
 pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','tyco','gup0','gup3'};
 ants   = {'32m','42m','uhf','vhf','esa','esr','eis','kir','sod','tro','lyr'};
 
@@ -116,20 +122,35 @@ figure_check = zeros(length(image_filelist),1);
 npdf = 0;
 pdf_forHDF5 = {};
 
-if ~isempty(hdf5vel_file)
-    if length(hdf5vel_file)>1
-        Warning('Oj, more than one NCAR vecvel file ... No file was handled!')
-    else
-        [storepath,EISCATvecvel_hdf5file] = cedarvel2hdf5(hdf5vel_file{1},datapath);
-        display(EISCATvecvel_hdf5file)
-        keyboard
-        for im = 1:length(image_filelist_vecvel)
-            figurefile = fullfile(dirpath,image_filelist_vecvel(im).name);
-            [~,figname,ext] = fileparts(figurefile);
-            if strcmp(ext,'.gz')
-                [~,figname,ext] = fileparts(figname);
+if ~isempty(vecvel_files)
+    for i = 1:length(vecvel_files)
+        if contains(vecvel_files,'tar.gz')
+            untarpath = fullfile(tempdir,'UntaredContent');
+            if exist(untarpath)
+                rmdir(untarpath,'s')
             end
-            if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
+            mkdir(untarpath);
+        
+            try
+                untar(vecvel_files{i},untarpath)
+            catch
+                warning(['Ooops ... ' vecvel_files{i} ' could not be untared, and is therefore ignored.'])
+                continue
+            end
+        
+            untar_filelist = dir(untarpath);
+    
+            %while length(untar_filelist(3:end)) == 1 && ~contains(untar_filelist(3).name,'.mat')
+            while ~contains(untar_filelist(3).name,'.mat')
+                untarfolder = untar_filelist(3).name;
+                untarpath = fullfile(untarpath,untarfolder);
+                untar_filelist = dir(untarpath);
+            end
+            matvecfile = fullfile(untar_filelist(3).folder,untar_filelist(3).name);
+            [storepath,EISCATvecvel_hdf5file] = matvecvel2hdf5(matvecfile,datapath);
+            for im = 1:length(image_filelist_vecvel)
+                figurefile = fullfile(dirpath,image_filelist_vecvel(im).name);
+                [~,figname,ext] = fileparts(figurefile);
                 if strcmp(ext,'.pdf')
                     npdf = npdf + 1;
                     copyfile(figurefile,storepath)
@@ -137,24 +158,13 @@ if ~isempty(hdf5vel_file)
                 else
                     store_image2Hdf5(figurefile,EISCATvecvel_hdf5file)
                 end
-                %figure_check(im) = figure_check(im) + 1;
-                %nfigs_expr =  nfigs_expr +1;
-            else
-                if strcmp(ext,'.gz')
-                    epsfile = gunzip(figurefile);
-                    figurefile = epsfile{1};
-                end
-                pdffile = eps2pdf(figurefile);
-                npdf = npdf + 1;
-                copyfile(pdffile,storepath)
-                [~,pdfname,ext] = fileparts(pdffile);
-                pdf_forHDF5(npdf) = {[pdfname ext]};
-                delete(pdffile,figurefile)
-                %figure_check(im) = figure_check(im) + 1;
-                %nfigs_expr =  nfigs_expr +1;
             end
-        end
-    end
+        else
+            [storepath,EISCATvecvel_hdf5file] = cedarvel2hdf5(vecvel_files{i},datapath);
+        end    
+        display(EISCATvecvel_hdf5file)  
+        copyfile(vecvel_files{i},storepath)
+    end    
 end
 
 if npdf
@@ -215,6 +225,9 @@ for ii = 1:length(data_files)
     for jj = 1:length(image_filelist)
         figurefile = fullfile(dirpath,image_filelist(jj).name);
         [~,figname,ext] = fileparts(figurefile);
+        if contains(figname,'vecvel')
+            continue
+        end
         if strcmp(ext,'.gz')
             [~,figname,~] = fileparts(figname);
         end
@@ -230,9 +243,6 @@ for ii = 1:length(data_files)
            
             fig_intper_set = 0;
             c = 0;
-            
-%             [figname ext]
-%             keyboard
             
             for oo = 1:length(dd)
                 
@@ -272,10 +282,7 @@ for ii = 1:length(data_files)
                     fig_intper = intper;
                 end
             end
-            
-%             [[{fig_intper};{fig_ant};{fig_pulse}],[{intper};{ant};{pulse}]]
-%             keyboard
-%             
+
             if (strcmp(fig_intper,intper) && contains(fig_ant,ant) && strcmp(fig_pulse,pulse)) && c == 1 || ...
                (strcmp(fig_intper,intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...     
                (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...

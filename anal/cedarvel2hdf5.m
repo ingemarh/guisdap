@@ -13,7 +13,6 @@ end
 if ~strcmp(ext,'.hdf5') && ~strcmp(ext,'.hdf')
     error('The input file is not an .hdf5 or .hdf.')
 end
-
 datapar = h5read(hdf5file,'/Metadata/Data Parameters');
 data    = h5read(hdf5file,'/Data/Table Layout');
 exprpar = h5read(hdf5file,'/Metadata/Experiment Parameters');
@@ -59,14 +58,16 @@ intper_med = median(data.ut2_unix-data.ut1_unix);        % median integration ti
 
 display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
-aa = find(strcmp(exprparnames,'instrument')==1);
-if contains(char(exprparvalues(aa)),'Kiruna'), name_ant = 'kir'; 
-elseif contains(char(exprparvalues(aa)),'Sodankyl'), name_ant = 'sod';
-elseif contains(char(exprparvalues(aa)),'Svalbard'), name_ant = 'esr';
-elseif contains(char(exprparvalues(aa)),'combined'), name_ant = 'esa'; %error('name_ant = esa: Abort!! Abort!!')
-elseif contains(char(exprparvalues(aa)),'UHF'), name_ant = 'uhf';
-else name_ant = 'vhf'; end
-
+if contains(hdf5file,'.ar'), name_ant = 'kst';
+else
+    aa = find(strcmp(exprparnames,'instrument')==1);
+    if contains(char(exprparvalues(aa)),'Kiruna'), name_ant = 'kir'; 
+    elseif contains(char(exprparvalues(aa)),'Sodankyl'), name_ant = 'sod';
+    elseif contains(char(exprparvalues(aa)),'Svalbard'), name_ant = 'esr';
+    elseif contains(char(exprparvalues(aa)),'combined'), name_ant = 'esa';
+    elseif contains(char(exprparvalues(aa)),'UHF'), name_ant = 'uhf';
+    else name_ant = 'vhf'; end
+end
 if kindats(1) >= 6800
     name_expr = 'gup';
 else
@@ -75,7 +76,7 @@ end
 matfile.metadata.experiment.name_expr = {name_expr}; 
 matfile.metadata.experiment.intper_median = {num2str(intper_med)};
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_velvec_' num2str(intper_med) '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' num2str(intper_med) '@' name_ant];
 storepath = fullfile(datapath,datafolder);
 if exist(storepath)
    rmdir(storepath,'s');
@@ -310,31 +311,6 @@ for ii = 1:npar
 end
 
 
-% % special treatment for cp6 experiments (kindat = '66xx')
-% kindatstr = num2str(kindats(1));
-% if strcmp(kindatstr(1:2),'66')
-%     cp6_faultpars   = {'te','dte','ti','dti','pm','dpm','po+','dpo+','ph+','dph+','co','dco'};
-%     cp6_correctpars = {'Ne_lag0+','dNe_lag0+','Ne_tp','dNe_tp','hw_lor','dhw_lor','hw_expfit','dhw_expfit','ampl','dampl','blev','dblev'};
-%     for ii = 1:length(cp6_faultpars)
-%         vv = find(strcmp(matfile.metadata.par2d(5,:),cp6_faultpars(ii)));
-%         if vv
-%             ww = find(strcmp(gupparameters_list,cp6_correctpars(ii))==1);
-%             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(ww) ':E' num2str(ww)]);
-%             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(ww)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(ww)]))};
-%             matfile.metadata.par2d(:,vv) = info';
-%             if strcmp(cp6_faultpars(ii),'te') || strcmp(cp6_faultpars(ii),'dte') || strcmp(cp6_faultpars(ii),'ti') || strcmp(cp6_faultpars(ii),'dti')
-%                 matfile.data.par2d(:,vv) = 10.^(matfile.data.par2d(:,vv)/1000);
-%             elseif strcmp(cp6_faultpars(ii),'pm') || strcmp(cp6_faultpars(ii),'dpm') || strcmp(cp6_faultpars(ii),'po+') || strcmp(cp6_faultpars(ii),'dpo+')
-%                 matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)*1000/10;
-%             elseif strcmp(cp6_faultpars(ii),'ph+') || strcmp(cp6_faultpars(ii),'dph+')
-%                 matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)*1000*1e6;
-%             elseif strcmp(cp6_faultpars(ii),'co') || strcmp(cp6_faultpars(ii),'dco')
-%                 matfile.data.par2d(:,vv) = log10(matfile.data.par2d(:,vv))*1000*1e6;
-%             end
-%         end
-%     end
-% end
-
 % % add the RECloc data
 % cc1 = find(strcmp(exprparnames,'instrument latitude')==1);
 % cc2 = find(strcmp(exprparnames,'instrument longitude')==1);
@@ -396,7 +372,7 @@ matfile.metadata.schemes.DataCite.PublicationYear = {year};
 % If area of convhull < 10-4 deg^2, define alla points as one (average)
 % imag = 1 to plot the data and the corresponding box
 gg_sp = [data.glon data.gdlat];
-im = 1;
+im = [];
 [plonlat,PointInPol] = polygonpoints([data.glon data.gdlat],im);
 
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);

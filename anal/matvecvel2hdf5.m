@@ -1,7 +1,5 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-%start_GUP
-%vecveldir = '/home/rikard/matlab/AnalysedData/2020-02-27_beata_60@vhf/vectors/';
 function [storepath,EISCAThdf5file] = matvecvel2hdf5(matfile_vel,datapath)%,addfigs,addnotes) 
 
 global path_GUP %result_path 
@@ -16,12 +14,7 @@ global path_GUP %result_path
 %     datapath = char(datapath);    % need to be char class
 % end
 
-% matstruct = dir(fullfile(matpath,'*.mat'));
-% mat = fullfile(matstruct.folder,matstruct.name); 
 load(matfile_vel)
-
-%datapath = vecveldir;
-%matfile.data.utime = [posixtime(datetime(datestr(Vdate(1,:)'))) posixtime(datetime(datestr(Vdate(1,:)')))];
 
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 [~,text] = xlsread(GuisdapParFile);
@@ -155,7 +148,11 @@ endtime = datestr(e_time);
 if ~exist('name_expr','var'), name_expr=''; end
  
 [~,filename,~] = fileparts(matfile_vel); 
-storepath = datapath;
+storepath = fullfile(datapath,['EISCAT_' filename]);
+if exist(storepath)
+   rmdir(storepath,'s');
+end
+mkdir(storepath);
 
 Hdf5File = sprintf('%s%s%s','EISCAT_',filename,'.hdf5');
 MatFile = sprintf('%s%s%s','EISCAT_',filename,'.mat');
