@@ -9,7 +9,7 @@ ch_f=12;
 offset=0;
 lowtail=48;
 if name_site=='T'
- t=82+[0 tb*nb]; s=[1+ceil(t(2)/ch_filter) floor((19997-100)/ch_filter)]; c=[(s(2)+1)*ch_filter 19997];
+ t=82+[0 tb*nb]; s=[3+ceil(t(2)/ch_filter) floor((19997-100)/ch_filter)]; c=[(s(2)+1)*ch_filter 19997];
  ns=diff(s)+1;
  par=[[24 128 ns/frac-nb+1+lowtail 0 nsc nsc*5 ns nb frac 1 ...
 	0 lowtail 0 0 0 1 64 0 0 0 ...

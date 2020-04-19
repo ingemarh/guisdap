@@ -29,7 +29,7 @@ if a_control(4)>1
  Var_scale=p_ND/min(1,p_rep*p_dtau*1e-6/diff(tosecs(d_time)));
  Tback=min(sysTemp);
  aa=[ones(1,4) zeros(1,length(p_m0)+2)];; % scaling of parameters should be close
- [covRe,covIm]=adgr_var(addr,Tback,aa);
+ covRe=adgr_var(addr,Tback,aa);
  ND2=Var_scale*lpg_ND(ad_lpg(addr)).^2;
  dvar=zeros(size(d_var1));
  dvar(addr)=covRe./ND2;

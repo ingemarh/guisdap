@@ -12,7 +12,6 @@
 % function impresp=box_filt(width);
 function impresp=box_filt(width);
 global p_dtau
-
 wp=round(width/p_dtau);
 for i=1:length(wp)
  impresp(:,i)=ones(wp,1)/wp;
