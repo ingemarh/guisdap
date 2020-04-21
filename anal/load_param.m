@@ -186,7 +186,7 @@ if isempty(name_strategy)
   dt=diff(Time)*86400; name_strategy=sprintf('%.0f',median(dt));
   if std(dt)>10, name_strategy='ant'; end
   if exist(fullfile(list(1).dir,'.gup'),'file')
-    load('-mat',fullfile(DATA_PATH,'.gup'),'intper')
+    load('-mat',fullfile(data_path,'.gup'),'intper')
     if length(intper)>1
       name_strategy='scan';
     elseif intper>0
