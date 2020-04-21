@@ -1,5 +1,6 @@
 function r=minput(Q,D,s)
 persistent in
+if ispc & (isstr(D) | iscellstr(D)),D=strrep(D,'\','\\');end
 if nargin>2
  a=input([Q '? [' row(D') '] '],'s');
  anan=[];
@@ -16,6 +17,7 @@ else
   anan=find(isnan(a));
  end
 end
+if ispc & (isstr(D) | iscellstr(D)),D=strrep(D,'\\','\');end
 if isempty(a) | iscell(D) & isempty(a{1})
  r=D;
 elseif nargin>2 || ~isempty(anan)

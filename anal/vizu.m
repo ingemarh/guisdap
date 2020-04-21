@@ -108,18 +108,19 @@ elseif strcmp(act,'update')
  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
  set(0,'currentfig',vizufig)
 elseif strcmpi(act,'print') || strcmpi(act,'save')
+ fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
+ if ~isempty(name_strategy), fig=sprintf('%s_%s',fig,name_strategy); end
+ if ~isdir(DATA_PATH), dirs=path_tmp(1:end-1); else, dirs=DATA_PATH; end
+ if ~isempty(a2), fig=sprintf('%s_%s',fig,a2); end
+ fig=sprintf('%s@%s',fig,name_ant);
+ file=fullfile(dirs,fig);
  if isempty(axs)
   disp('Nothing to print!')
  elseif isunix
   if strcmpi(act,'print')
     [dirs,fig]=fileparts(local.tfile); ext='ps';
   else
-    fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
     ext='eps';
-    if ~isempty(name_strategy), fig=sprintf('%s_%s',fig,name_strategy); end
-    if ~isdir(DATA_PATH), dirs=path_tmp(1:end-1); else, dirs=DATA_PATH; end
-    if ~isempty(a2), fig=sprintf('%s_%s',fig,a2); end
-    fig=sprintf('%s@%s',fig,name_ant);
   end
   rotate=0; pngor='580x820'; if length(axs)==1, rotate=1; end
   if [strfind(act,'R') strfind(act,'V')], rotate=1-rotate; end
@@ -159,8 +160,6 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
  elseif strcmpi(act,'print')
   print(vizufig,'-dwinc');
  else
-  fig=sprintf('%d-%02d-%02d_%s@%s',START_TIME(1:3),name_expr,name_ant);
-  file=fullfile(DATA_PATH,fig);
   print(vizufig,'-dpdf',[file '.pdf']);
   print(vizufig,'-dpng256',[file '.png']);
   fprintf('Created %s.pdf and .png\n',file)
