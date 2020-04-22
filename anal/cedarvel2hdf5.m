@@ -385,7 +385,7 @@ end
 
 
 
-software = 'https://git.eiscat.se/eiscat/guisdap';
+software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = [];
 matfile.metadata.software_link = {software};
 matfile.metadata.level2_links = level2_link;

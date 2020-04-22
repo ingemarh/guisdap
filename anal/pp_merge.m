@@ -10,14 +10,14 @@ if nargin<3, r_ppw = []; end
 
 if isempty(r_pp), r_pp = NaN(length(r_pprange),1); end
 
-figure(1)
-subplot(3,2,1)
-plot(r_pprange,'.')
-ylabel('r\_pprange')
-title('Original profiles')
-subplot(3,2,3)
-plot(r_ppw,'.')
-ylabel('r\_ppw')
+% figure(1)
+% subplot(3,2,1)
+% plot(r_pprange,'.')
+% ylabel('r\_pprange')
+% title('Original profiles')
+% subplot(3,2,3)
+% plot(r_ppw,'.')
+% ylabel('r\_ppw')
 
 if isempty(find(diff(r_pprange)<0,1)) && isempty(find(abs(diff(r_pprange))>10*mean(abs(diff(r_pprange))),1))  % if there are no negative or large steps in the range, no merging is needed
     r_pp_merged      = r_pp;
@@ -138,15 +138,15 @@ else
     error('At least either r_ppw or name_expr is needed as input')
 end
 
-figure(1)
-subplot(3,2,2)
-plot(r_pprange_merged,'.b')
-title('Merged profiles')
-ylabel('merged r\_pprange')
-subplot(3,2,4)
-plot(r_ppw_merged,'.b')
-ylabel('merged r\_ppw')
-subplot(3,2,6)
-plot(r_pprofile_id,'.b')
-ylabel('power profile id')
-ylim([0 id+1])
+% figure(1)
+% subplot(3,2,2)
+% plot(r_pprange_merged,'.b')
+% title('Merged profiles')
+% ylabel('merged r\_pprange')
+% subplot(3,2,4)
+% plot(r_ppw_merged,'.b')
+% ylabel('merged r\_ppw')
+% subplot(3,2,6)
+% plot(r_pprofile_id,'.b')
+% ylabel('power profile id')
+% ylim([0 id+1])

@@ -25,10 +25,10 @@ name_ant = b(a+1:end);
 
 inform = h5info(filename,'/metadata');
 metavar = {inform.Datasets.Name}';
-if ~isempty(find(strcmp(metavar,'experiment')));
+if ~isempty(find(strcmp(metavar,'experiment')))
     experimentdata = h5read(filename,'/metadata/experiment');
     fields = fieldnames(experimentdata);
-    if ~isempty(find(strcmp(fields,'name_expr')));
+    if ~isempty(find(strcmp(fields,'name_expr')))
         name_expr = deblank(experimentdata.name_expr');
     end
 end
@@ -58,14 +58,14 @@ columns = find(str2num(char(matdata.metadata.par0d(end,:)))==recloc_id);
 r_RECloc = matdata.data.par0d(columns);
 
 [ii2d,ii2d_pp] = deal(0,0);
-if ~isempty(find(strcmp(metavar,'par2d')));
+if ~isempty(find(strcmp(metavar,'par2d')))
     ii2d = 1;
     matdata.metadata.par2d    = deblank(h5read(filename,'/metadata/par2d'));
     matdata.data.par2d        = h5read(filename,'/data/par2d');
     columns = find(str2num(char(matdata.metadata.par2d(end,:)))==20);
     ndata2d =  length(matdata.data.par2d(:,columns));
 end
-if ~isempty(find(strcmp(metavar,'par2d_pp')));
+if ~isempty(find(strcmp(metavar,'par2d_pp')))
     ii2d_pp = 1;
     matdata.metadata.par2d_pp = deblank(h5read(filename,'/metadata/par2d_pp'));
     matdata.data.par2d_pp     = h5read(filename,'/data/par2d_pp');
@@ -113,9 +113,7 @@ for ii = par1d_id
         end
     end
     par1D = [par1D par_tmp];
-    par_tmp = [];
-    
-    
+    par_tmp = [];   
 end   
 
 d=find(par1D(:,2)>90); % Cast azimuth and elevation into range 0-360, 0-90 degrees
@@ -235,9 +233,6 @@ for ii = 1:n_tot
     err2D(1:nh(ii),ii,:) = err2d(altrange,:); 
     nhalt_tmp = nhalt_tmp + nh(ii);
 end
-
-
-
 
 if ii2d_pp == 1
     for ii = rpar2d_id

@@ -433,12 +433,14 @@ if ~isempty(PointInPol)
     matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
 end
 
-[plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
-matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1);
-matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
-if ~isempty(PointInPol)
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = PointInPol(1);
-    matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = PointInPol(2);
+if nkindats>1
+    [plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1); 
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
+    if ~isempty(PointInPol)
+        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = PointInPol(1);
+        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = PointInPol(2);
+    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -488,21 +490,24 @@ if isfield(matfile.metadata,'par2d_pp')
 end
 
 % Remove alt, lon and lat from par2d_pp
-a = find(strcmp('h',matfile.metadata.par2d_pp(1,:)));
-if a
-    matfile.data.par2d_pp(:,a)     = [];
-    matfile.metadata.par2d_pp(:,a) = [];
+
+if isfield(matfile.metadata,'par2d_pp')
+    a = find(strcmp('h',matfile.metadata.par2d_pp(1,:)));
+    if a
+        matfile.data.par2d_pp(:,a)     = [];
+        matfile.metadata.par2d_pp(:,a) = [];
+    end
+    a = find(strcmp('lon',matfile.metadata.par2d_pp(1,:)));
+    if a
+        matfile.data.par2d_pp(:,a)     = [];
+        matfile.metadata.par2d_pp(:,a) = [];
+    end   
+    a = find(strcmp('lat',matfile.metadata.par2d_pp(1,:)));
+    if a
+        matfile.data.par2d_pp(:,a)     = [];
+        matfile.metadata.par2d_pp(:,a) = [];
+    end
 end
-a = find(strcmp('lon',matfile.metadata.par2d_pp(1,:)));
-if a
-    matfile.data.par2d_pp(:,a)     = [];
-    matfile.metadata.par2d_pp(:,a) = [];
-end   
-a = find(strcmp('lat',matfile.metadata.par2d_pp(1,:)));
-if a
-    matfile.data.par2d_pp(:,a)     = [];
-    matfile.metadata.par2d_pp(:,a) = [];
-end 
 
 
 save(matfilename,'matfile')
