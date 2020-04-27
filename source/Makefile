@@ -78,3 +78,4 @@ mex:
 
 install:
 	cp plwin.h iri.h msis.h libgup.h $M
+	#mv *.mex ../mex/
