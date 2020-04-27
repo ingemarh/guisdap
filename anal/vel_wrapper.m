@@ -123,17 +123,21 @@ end
 
 fprintf('%s.mat .pdf .png produced\n',r)
 
-[namepath,namefile] = fileparts(r);
+if exist(r)
+ rmdir(r,'s')
+end
+mkdir(r)
 
-EISCAThdf5file = fullfile(namepath,['EISCAT_' namefile '.hdf5']);
+[namepath,namefile] = fileparts(r);
+EISCAThdf5file = fullfile(namepath,['EISCAT_' namefile],['EISCAT_' namefile '.hdf5']);
 store_image2Hdf5([r '.png'],EISCAThdf5file);
-%delete([r '.png'])
 strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{[namefile '.pdf']})
 
 filelist = dir(fullfile(namepath,['*' namefile '*']));
-mkdir(r)
 for i =1:length(filelist)
-    movefile(fullfile(filelist(i).folder,filelist(i).name),r) 
+ if ~strcmp(fullfile(filelist(i).folder,filelist(i).name),r) 
+  movefile(fullfile(filelist(i).folder,filelist(i).name),r) 
+ end
 end
 
 end
