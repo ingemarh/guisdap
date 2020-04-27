@@ -77,4 +77,4 @@ mex:
 
 install:
 	cp plwin.h iri.h msis.h libgup.h $M
-	mv *.mex* ../${MEXD}
+	# 	mv *.mex* ../${MEXD}
