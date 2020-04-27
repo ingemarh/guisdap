@@ -106,6 +106,17 @@ Re=6378.135;
 min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area to cover
 tfile=0;	%make velocity table for testings
 %%%%%%%%%%%%%%%%%
+dates=mean(Data1D(:,[1 2]),2); td=td/86400; ld=ld*degrad;
+mindumps=mind(1)-isfinite(uperr(1));
+loc0=reshape([gg2gc(loc(:,1:3)) gg2gc(loc(:,4:6))]',3,2,[]);
+loc0=reshape(mean(loc0,2),3,[])'; %Effective position for bistatic
+if td(1)>ndir/86400
+ if length(td)==2, td(3)=floor(min(Data1D(:,1))); end
+ timint=td(3):td(2):max(Data1D(:,2))+td(2);
+else
+ td(1)=median(diff(timint));
+end
+%%%%%%%%%%%%%%%%%
 name_ants=allnames.ant; nant=size(allnames.ant,1);
 name_exps=allnames.expr;
 name_sigs=[];
@@ -147,17 +158,6 @@ if tfile
  fprintf(tfile,'\n');
 end
 Vdate=[]; Vpos=[]; Vg=[]; Vgv=[]; V_area=[]; Gid=[];
-%%%%%%%%%%%%%%%%%
-dates=mean(Data1D(:,[1 2]),2); td=td/86400; ld=ld*degrad;
-mindumps=mind(1)-isfinite(uperr(1));
-loc0=reshape([gg2gc(loc(:,1:3)) gg2gc(loc(:,4:6))]',3,2,[]);
-loc0=reshape(mean(loc0,2),3,[])'; %Effective position for bistatic
-if td(1)>ndir/86400
- if length(td)==2, td(3)=floor(min(Data1D(:,1))); end
- timint=td(3):td(2):max(Data1D(:,2))+td(2);
-else
- td(1)=median(diff(timint));
-end
 %%%%%%%%%%%%%%%%%
 fprintf('Combining...\n')
 for tim=timint
