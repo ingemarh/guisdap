@@ -65,7 +65,7 @@ lib:
 	$(CC) clutter.c -o $M/clutter.so $(PLFLAGS) -lfftw3f
 	$(COMPILE.c) mrqmndiag_worker.c dirthe_worker.c GULIPS_addm_worker.c GULIPS_cov_worker.c GULIPS_invR_worker.c GULIPS_mul_worker.c spec_worker.c transf_worker.c addr_covar_worker.c
 	$(LD) -o $M/libguisdap.so $(LDFLAGS) *.o
-	$(AR) cr $M/libguisdap.a *.o
+	#$(AR) cr $M/libguisdap.a *.o
 	$(RM) *.o
 
 mex:
@@ -74,7 +74,7 @@ mex:
 	$(MEX) $(MEXOPTS) -DANSI_C spec.c $(GUPLIB)
 	$(MEX) $(MEXOPTS) -DANSI_C transf.c $(GUPLIB)
 	$(MEX) $(MEXOPTS) -DANSI_C addr_covar.c $(GUPLIB)
+	mv *.mex* ../${MEXD}
 
 install:
 	cp plwin.h iri.h msis.h libgup.h $M
-	mv *.mex* ../${MEXD}

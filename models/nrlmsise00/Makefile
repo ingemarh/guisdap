@@ -34,7 +34,7 @@ libmsis:
 	$(COMPILE.f) $(MLIST)
 	$(RM) $(ML)$A $(ML)$S
 	$(LD) -o $(ML)$S $(LDFLAGS) *.o
-	$(AR) cr $(ML)$A *.o
+	#$(AR) cr $(ML)$A *.o
 	@$(MAKE) clean
 
 clean:

@@ -38,7 +38,7 @@ libiri:
 	$(COMPILE.f) $(MLIST)
 	$(RM) $(ML)$A $(ML)$S
 	$(LD) -o $(ML)$S $(LDFLAGS) *.o $(ALIB)
-	$(AR) cr $(ML)$A *.o $(ALIB)
+	#$(AR) cr $(ML)$A *.o $(ALIB)
 	@$(MAKE) clean
 
 clean:
