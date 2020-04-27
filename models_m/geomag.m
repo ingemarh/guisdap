@@ -10,5 +10,5 @@ for i=1:np
  xlat=pos(1,i); xlong=pos(2,i); HEIGHT=pos(3,i);
  [ ~,~,B(4,i),Bmag,magF ] = magF.IGRF_SUB( xlat,xlong,YEAR,HEIGHT );
  [ B(2,i),B(1,i),B(3,i),BABS ] = magF.FELDG( xlat,xlong,HEIGHT );
- B(:,i)=[B(1:3,i).*[1e-4;1e-4;-1e-4];B(4,i)*degrad];
 end
+B=[B(1:3,:).*1e-4;B(4,:)*degrad];
