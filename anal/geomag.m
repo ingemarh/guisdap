@@ -33,6 +33,6 @@ calllib('libiri','readapf107_');
 
 for i=1:nh
  calllib('libiri','iri_sub_',jf,0,loc(1,i),loc(2,i),iy,id,ut+25,loc(3,i),loc(3,i),1.,outf,oarr);
- calllib('libiri','feldg_',loc(1,i),loc(3,i),loc(3,i),bn,be,bd,ba);
+ calllib('libiri','feldg_',loc(1,i),loc(2,i),loc(3,i),bn,be,bd,ba);
  B(:,i)=[[be.value;bn.value;-bd.value]*1e-4;atan2(bd.value,2*sqrt(bn.value^2+be.value^2))];
 end
