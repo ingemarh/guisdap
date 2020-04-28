@@ -29,7 +29,7 @@ global Time par2D par1D rpar2D name_expr name_ant name_strategy axs axc maxdy rr
 persistent hds OLD_WHICH
 global height n_tot add_plot manylim plf_polen max_ppw vizufig
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
-global r_RECloc path_tmp path_GUP result_path webfile local owner
+global r_RECloc path_tmp path_GUP result_path webfile local owner allnames
 nvargin=length(varargin);
 naction=1;
 if strcmp(action(naction,nvargin,varargin),'myb')
@@ -45,7 +45,7 @@ if strcmp(action(naction,nvargin,varargin),'new')
 end
 if isempty(vizufig)
   axs=[]; axc=[];
-  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[]; OLD_WHICH=[];
+  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[]; OLD_WHICH=[]; allnames=[];
 end
 REALT=0; manylim=1;
 Loc=local.site;

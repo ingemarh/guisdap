@@ -12,7 +12,7 @@ Line	Name		Notes
 6	nr_code_sets	Number of different subsets in the code
 If negative:		Calculate slices. One slice contains nr_code_sets
 			subcycles
-≥7			The code, number of lines = nbits*nr_code_sets
+>6			The code, number of lines = nbits*nr_code_sets
 
 Number of lines: 7+nbits*nr_code_sets
 
