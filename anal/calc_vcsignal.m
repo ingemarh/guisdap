@@ -17,7 +17,7 @@ global vc_signal vc_group vc_Apenv vc_Ap ad_coeff ADDR_SHIFT
 
 % Faster calculation possible if results calculated for virtual channel groups
 % One group contains all virtual channels with identical transmission and filters
-[a,ind]=wind(diff_val(vc_group),vc_group);
+[a,ind]=windex(diff_val(vc_group),vc_group);
 vcg_Apenv=vc_Apenv(:,ind);
 vcg_Ap=vc_Ap(:,ind);
 [M,N]=size(vcg_Apenv);

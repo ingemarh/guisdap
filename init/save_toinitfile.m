@@ -9,7 +9,7 @@ GUP_iniver=GUP_ver;
 nameexpr=[name_expr name_site];
 
 % We produce groupwise variables to save disk space
-[a,ind]=wind(diff_val(vc_group),vc_group);
+[a,ind]=windex(diff_val(vc_group),vc_group);
 vcg_Aenv=vc_Aenv(:,ind);
 vcg_Ap=vc_Ap(:,ind);
 vcg_Apenv=vc_Apenv(:,ind);
