@@ -134,6 +134,9 @@ for ii= 1:newrec
     nrec = [nrec; nrec_tmp];
 end
 
+if ~isfield(data,'range')
+    data.range = height_to_range(data.gdalt,data.elm,1e3);
+end
 % Spatial description of datapoints for DataCite
 loc = [data.elm data.azm data.range];
 rr_lon = find(strcmp(exprparnames,'instrument longitude')==1);
@@ -182,11 +185,6 @@ for ii = 1:nkindats
     end
 end
 
-% if nkindats>1
-%     cckind = find(data.kindat == str2num(evenkindat));   % data.kindat does not seem to exist when there is only 1 kindat for the experiment
-% else cckind = 1:length(data.recno);
-% end
-
 for ii = 1:npar
     if strcmp(char(Parsinfile_list(ii)),'nsampi')
         continue
@@ -232,16 +230,18 @@ for ii = 1:npar
         end
         
         if length(unique(parameterdata))==1
+            
+            if strcmp('tfreq',char(Parsinfile_list(ii)))
+                aa = aa(1);                                    % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
+            end
+            
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
             if cell2mat(strfind(info(1),'h_'))==1
                 info{1} = info{1}(3:end);
             end
             info(4) = {'-'};
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-                
-            if strcmp('tfreq',char(Parsinfile_list(ii)))
-                aa = aa(1);                                    % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
-            end
+             
             if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
                 matfile.data.utime = [matfile.data.utime parameterdata(1)]; 
                 matfile.metadata.utime = [matfile.metadata.utime info'];
@@ -509,11 +509,9 @@ if isfield(matfile.metadata,'par2d_pp')
     end
 end
 
-
 save(matfilename,'matfile')
 
 % Generate an HDF5-file 
-
 chunklim = 10;
 sFields = fieldnames(matfile);
 for sf = sFields.'

@@ -195,7 +195,7 @@ end
 if exist('name_strategy','var'); nn = nn + 1;
     infoname(1) = {'name_strategy'};
     infoname(2) = {name_strategy};
-    infoname(3) = {'Limitations applied and used in the velocity-vector calculations'};
+    infoname(3) = {'limitations applied and used in the velocity-vector calculations'};
     matfile.metadata.names(:,nn) = infoname';
 end
 if exist('name_exps','var'); nn = nn + 1; 
