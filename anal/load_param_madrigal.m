@@ -65,6 +65,12 @@ else
  end
  mad=textscan(of,'%*s%*s%s%*s%*s%*s%*s%*s%d%*[^\n]','delimiter',',');
  name_expr=char(mad{1}); kinst=mad{2};
+ if str2num(data_path(1:4))>1999
+  at=strfind(name_expr,'_');
+  if at
+    name_expr=name_expr(1:at(end)-1);
+  end
+ end
  name_expr(strfind(name_expr,'_'))=[];
  name_expr(strfind(name_expr,' '))=[];
  ws=[website 'experiments/' data_path '/fileTab.txt'];
