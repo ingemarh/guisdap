@@ -448,7 +448,7 @@ nh = [];
 npprange = [];
 
 for ii = 1:length(parameters)
-    if strcmp(parameters(ii),'h_w'), keyboard, end
+    %if strcmp(parameters(ii),'h_w'), keyboard, end
     h_name = char(parameters(ii));
     if ~exist(['r_' h_name(3:end)],'var') 
         evalc([h_name '=[]']); continue
@@ -465,8 +465,6 @@ for ii = 1:length(parameters)
             elseif strcmp(h_name,'h_pprange')
                 npprange = [npprange; length(r_pprange)];
                 par = [par; eval(['r_' h_name(3:end)])];
-            elseif strcmp(h_name,'h_w')
-                par = [par; real(r_w)];
             elseif strcmp(h_name,'h_om0') && uniom0 == 1
                 r_om0 = r_om0(1);  
                 par = [par; eval(['r_' h_name(3:end)])]; 
@@ -479,7 +477,7 @@ for ii = 1:length(parameters)
             else
                 par = [par; eval(['r_' h_name(3:end)])];    
             end
-        end       
+        end   
         evalc([char(parameters(ii)) '=par']);
     end
 end
@@ -492,7 +490,40 @@ matfile.data.par2d    = [h_h h_range h_param h_error h_apriori...
     h_apriorierror h_status h_dp h_res h_w];
 
 matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
-keyboard
+
+imcol = find(any(imag(matfile.data.par1d) ~= 0) == 1);
+for kk = imcol
+    ccc = find((imag(matfile.data.par1d(:,kk)) ~= 0) == 1);      % find indices where the value is complex
+    if length(ccc) == 1
+        matfile.data.par1d(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
+        warning(['One (1) value in ' matfile.metadata.par1d{1,kk} ' was complex and replaced by NaN, at position ' ...
+                num2str(ccc) '. ([' num2str(ccc) ',' num2str(kk) '] in data.par1d)'])
+    else
+        error(['error: More than one (1) complex value in ' matfile.metadata.par1d{1,kk} ' (at positions ' num2str(ccc') '.)'])
+    end
+end
+imcol = find(any(imag(matfile.data.par2d) ~= 0) == 1);
+for kk = imcol
+    ccc = find((imag(matfile.data.par2d(:,kk)) ~= 0) == 1);      % find indices where the value is complex
+    if length(ccc) == 1
+        matfile.data.par2d(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
+        warning(['One (1) value in ' matfile.metadata.par2d{1,kk} ' was complex and replaced by NaN, at position ' ...
+                num2str(ccc) '. ([' num2str(ccc) ',' num2str(kk) '] in data.par2d)'])
+    else
+        error(['error: More than one (1) complex value in ' matfile.metadata.par2d{1,kk} ' (at positions ' num2str(ccc') '.)'])
+    end
+end
+imcol = find(any(imag(matfile.data.par2d_pp) ~= 0) == 1);
+for kk = imcol
+    ccc = find((imag(matfile.data.par2d_pp(:,kk)) ~= 0) == 1);      % find indices where the value is complex
+    if length(ccc) == 1
+        matfile.data.par2d_pp(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
+        warning(['One (1) value in ' matfile.metadata.par2d_pp{1,kk} ' was complex and replaced by NaN, at position ' ...
+                num2str(ccc) '. ([' num2str(ccc) ',' num2str(kk) '] in data.par2d_pp)'])
+    else
+        error(['error: More than one (1) complex value in ' matfile.metadata.par2d_pp{1,kk} ' (at positions ' num2str(ccc') '.)'])
+    end
+end
 
 parameters_special = {'h_om' 'h_lag' 'h_spec' 'h_freq' 'h_acf' 'h_ace'};
 
@@ -511,7 +542,7 @@ for ii = 1:length(parameters_special)
             matfile_tmp = fullfile(matpath,filesep,filelist(jj).name);
             load(matfile_tmp)
             par = [par;  eval(['r_' name])'];
-            end      
+        end      
         matfile.data.(name) = par;
     end
 end
