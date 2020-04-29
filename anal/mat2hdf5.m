@@ -526,7 +526,6 @@ for kk = imcol
 end
 
 parameters_special = {'h_om' 'h_lag' 'h_spec' 'h_freq' 'h_acf' 'h_ace'};
-
 for ii = 1:length(parameters_special)
     h_name = parameters_special{ii};
     name = h_name(3:end);
@@ -543,10 +542,20 @@ for ii = 1:length(parameters_special)
             load(matfile_tmp)
             par = [par;  eval(['r_' name])'];
         end      
+        imcol = find(any(imag(par) ~= 0) == 1);
+        for kk = imcol
+            ccc = find((imag(par(:,kk)) ~= 0) == 1);      % find indices where the value is complex
+            if length(ccc) == 1
+                par(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
+                warning(['One (1) value in ' matfile.metadata.(name){1} ' was complex and replaced by NaN, at position (' num2str(ccc) ',' num2str(kk) ').'])
+            else
+                error(['error: More than one (1) complex value in ' matfile.metadata.(name){1} '(' num2str(kk) ') at positions ' num2str(ccc') '.'])
+            end
+        end
         matfile.data.(name) = par;
     end
 end
-
+keyboard
 k = length(matfile.data.par2d(1,:));
 n = length(matfile.data.par1d(1,:));
 
