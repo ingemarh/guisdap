@@ -81,6 +81,8 @@ else
  filename=textscan(of,'%s%*[^\n]','delimiter',',');
  filename=filename{1};
  antennas={'kir' 'uhf' 'sod' 'vhf' 'esr'};
+ if kinst==75; kinst=71; end % Turn krv into kir
+ if kinst==76; kinst=73; end % Turn sdv into sod
  i=min(kinst-70,5);
  if i<1 || i>5
   r_RECloc=REClocs(1,:);
@@ -168,7 +170,7 @@ end
 if ~sum(isfinite(data(:,avec(6))))
  avec(6)=avec(6)+1;
  if do_err
-  avec(6)=avec(6)+1, evec(4)=evec(4)+2,
+  avec(6)=avec(6)+1; evec(4)=evec(4)+2;
  end
 end
 for i=1:n_tot
@@ -210,6 +212,6 @@ end
 if isempty(allnames)
   allnames.ant=name_ant(1:3); allnames.expr=name_expr;
 else
-  if ~contains(allnames.ant,name_ant(1:3)), allnames.ant=char(allnames.ant,name_ant(1:3)); end
-  if ~contains(allnames.expr,name_expr), allnames.expr=char(allnames.expr,name_expr); end
+  if ~contains(row(allnames.ant'),name_ant(1:3)), allnames.ant=char(allnames.ant,name_ant(1:3)); end
+  if ~contains(row(allnames.expr'),name_expr), allnames.expr=char(allnames.expr,name_expr); end
 end
