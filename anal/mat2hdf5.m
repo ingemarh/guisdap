@@ -1,6 +1,6 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function [storepath,EISCAThdf5file] = mat2hdf5(matpath, datapath,addfigs,addnotes) 
+function [storepath,EISCAThdf5file] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
 
 global path_GUP result_path name_ant
 
@@ -36,7 +36,7 @@ if median(intper_vec) < 10
 end
 
 % store the gfd content
-load( fullfile(matpath,filelist(1).name));
+load(fullfile(matpath,filelist(1).name));
 s = [];
 if exist('r_gfd','var')
     %matfile.metadata.gfd = r_gfd;
@@ -100,7 +100,15 @@ elseif ~isempty(gupfilecheck)
     starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
     endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
 end
-matfile.metadata.gfd.intper_median = {intper_med_str};
+
+if ~exist('intper_med','var')
+    intper_med = median(intper_vec);
+end
+if exist('intper_med_str','var')
+    matfile.metadata.gfd.intper_median = {intper_med_str};
+else
+    intper_med_str = num2str(intper_med);    % don't save to .gfd.intper_median in this case, since there is no gfd/gupfile
+end
 
 if ~exist('name_strategy','var')
     if contains(matfolder,'scan')
@@ -440,6 +448,7 @@ nh = [];
 npprange = [];
 
 for ii = 1:length(parameters)
+    %if strcmp(parameters(ii),'h_w'), keyboard, end
     h_name = char(parameters(ii));
     if ~exist(['r_' h_name(3:end)],'var') 
         evalc([h_name '=[]']); continue
@@ -448,8 +457,6 @@ for ii = 1:length(parameters)
         for jj = 1:rec
             matfile_tmp = fullfile(matpath,filelist(jj).name);
             load(matfile_tmp)
-%             if strcmp(h_name,'h_time')
-%                 par = [par; posixtime(datetime(r_time(1,:))) posixtime(datetime(r_time(2,:)))];   % unix time
             if strcmp(h_name,'h_Tsys')
                 par = [par; eval(['r_' h_name(3:end)])'];                                                
             elseif strcmp(h_name,'h_h')
@@ -470,7 +477,7 @@ for ii = 1:length(parameters)
             else
                 par = [par; eval(['r_' h_name(3:end)])];    
             end
-        end       
+        end   
         evalc([char(parameters(ii)) '=par']);
     end
 end
@@ -484,9 +491,41 @@ matfile.data.par2d    = [h_h h_range h_param h_error h_apriori...
 
 matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
 
+imcol = find(any(imag(matfile.data.par1d) ~= 0) == 1);
+for kk = imcol
+    ccc = find((imag(matfile.data.par1d(:,kk)) ~= 0) == 1);      % find indices where the value is complex
+    if length(ccc) == 1
+        matfile.data.par1d(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
+        warning(['One (1) value in ' matfile.metadata.par1d{1,kk} ' was complex and replaced by NaN, at position ' ...
+                num2str(ccc) '. ([' num2str(ccc) ',' num2str(kk) '] in data.par1d)'])
+    else
+        error(['error: More than one (1) complex value in ' matfile.metadata.par1d{1,kk} ' (at positions ' num2str(ccc') '.)'])
+    end
+end
+imcol = find(any(imag(matfile.data.par2d) ~= 0) == 1);
+for kk = imcol
+    ccc = find((imag(matfile.data.par2d(:,kk)) ~= 0) == 1);      % find indices where the value is complex
+    if length(ccc) == 1
+        matfile.data.par2d(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
+        warning(['One (1) value in ' matfile.metadata.par2d{1,kk} ' was complex and replaced by NaN, at position ' ...
+                num2str(ccc) '. ([' num2str(ccc) ',' num2str(kk) '] in data.par2d)'])
+    else
+        error(['error: More than one (1) complex value in ' matfile.metadata.par2d{1,kk} ' (at positions ' num2str(ccc') '.)'])
+    end
+end
+imcol = find(any(imag(matfile.data.par2d_pp) ~= 0) == 1);
+for kk = imcol
+    ccc = find((imag(matfile.data.par2d_pp(:,kk)) ~= 0) == 1);      % find indices where the value is complex
+    if length(ccc) == 1
+        matfile.data.par2d_pp(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
+        warning(['One (1) value in ' matfile.metadata.par2d_pp{1,kk} ' was complex and replaced by NaN, at position ' ...
+                num2str(ccc) '. ([' num2str(ccc) ',' num2str(kk) '] in data.par2d_pp)'])
+    else
+        error(['error: More than one (1) complex value in ' matfile.metadata.par2d_pp{1,kk} ' (at positions ' num2str(ccc') '.)'])
+    end
+end
 
 parameters_special = {'h_om' 'h_lag' 'h_spec' 'h_freq' 'h_acf' 'h_ace'};
-
 for ii = 1:length(parameters_special)
     h_name = parameters_special{ii};
     name = h_name(3:end);
@@ -502,11 +541,21 @@ for ii = 1:length(parameters_special)
             matfile_tmp = fullfile(matpath,filesep,filelist(jj).name);
             load(matfile_tmp)
             par = [par;  eval(['r_' name])'];
-            end      
+        end      
+        imcol = find(any(imag(par) ~= 0) == 1);
+        for kk = imcol
+            ccc = find((imag(par(:,kk)) ~= 0) == 1);      % find indices where the value is complex
+            if length(ccc) == 1
+                par(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
+                warning(['One (1) value in ' matfile.metadata.(name){1} ' was complex and replaced by NaN, at position (' num2str(ccc) ',' num2str(kk) ').'])
+            else
+                error(['error: More than one (1) complex value in ' matfile.metadata.(name){1} '(' num2str(kk) ') at positions ' num2str(ccc') '.'])
+            end
+        end
         matfile.data.(name) = par;
     end
 end
-
+keyboard
 k = length(matfile.data.par2d(1,:));
 n = length(matfile.data.par1d(1,:));
 
@@ -626,9 +675,11 @@ if ~isempty(PointInPol)
     matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
 end
 
-[plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
-matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1);
-matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
+if ~isempty(gg_sp_pp)
+    [plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1);
+    matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
+end
 if ~isempty(PointInPol)
     matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = PointInPol(1);
     matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = PointInPol(2);
@@ -741,21 +792,19 @@ end
 if addfigs
     image_filelist = [dir(fullfile(matpath,'*.png'));dir(fullfile(matpath,'*.pdf'))];
     npdf = 0;
-    %if ~isempty(image_filelist)
-      for ii = 1:length(image_filelist)
+    for ii = 1:length(image_filelist)
         figurefile = fullfile(matpath,image_filelist(ii).name);
         [~,filename,ext] = fileparts(figurefile);
         if strcmp(ext,'.png')
-          store_image2Hdf5(figurefile,hdffilename)
+            store_image2Hdf5(figurefile,hdffilename)
         elseif strcmp(ext,'.pdf')
-          npdf = npdf + 1;
-          pdf_forHDF5(npdf) = {[filename ext]};          
+            npdf = npdf + 1;
+            pdf_forHDF5(npdf) = {[filename ext]};          
         end
-      end
-      if npdf>0
+    end
+    if npdf>0
         strds2hdf5(hdffilename,'/metadata','figure_links',pdf_forHDF5');
-      end
-    %end
+    end
 end
 
 if addnotes

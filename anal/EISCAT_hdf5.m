@@ -175,7 +175,7 @@ end
 
 
 for ii = 1:length(data_files)
-    
+    display(['Handling ' data_files{ii} ' at the moment ...'])
     if contains(data_files{ii},'.tar.gz')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
