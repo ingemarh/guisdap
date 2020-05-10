@@ -1,6 +1,9 @@
 
-function dateout = utc2taigps_test(datein,direction)
-    % date = utc2taigps(date0,direction)
+function [dateout,leaps] = utc2taigps_test(datein,direction)
+    % [date,leaps] = utc2taigps(date0,direction)
+    %
+    % date: date output in new format
+    % leaps: leap seconds between the output and input time formats
     %
     % Convert between different time formats (utc --> tai or gps), or vice
     % versa (tai or gps --> utc)
@@ -23,11 +26,13 @@ if ~contains('utc2tai utc2gps gps2utc tai2utc',direction)
 end
 
 if contains('utc2tai utc2gps',direction)
-    date_gps = utc2gps(datein,'utc2gps');
+    [date_gps, leaps_gps] = utc2gps(datein,'utc2gps');
     if strcmp(direction,'utc2tai')
         dateout = (date_gps*86400 + 19)/86400;    % tai is always 19 seconds ahead of gps
+        leaps = leaps_gps + 19;
     else
         dateout = date_gps;
+        leaps = leaps_gps;
     end
 else
     if strcmp(direction,'tai2utc')
@@ -35,13 +40,18 @@ else
     else
         date_gps = datein;
     end
-    dateout = utc2gps(date_gps,'gps2utc');
+    [dateout,leaps_gps] = utc2gps(date_gps,'gps2utc');
+    if strcmp(direction,'tai2utc')
+        leaps = -(leaps_gps + 19);
+    else
+        leaps = - leaps_gps;
+    end
 end
 
 end
 
 
-function date1 = utc2gps(date0,convertdirection)
+function [date1,leapsec_insec] = utc2gps(date0,convertdirection)
 %UTC2GPS Convert UTC(GMT) time tags to GPS time accounting for leap seconds
 %   or vice versa
 %   UTC2GPS(date) corrects an array of UTC dates(in any matlab format) for
@@ -86,10 +96,12 @@ date0 = date0(:);
 date0 = repmat(date0,[1 size(stepdates,2)]);
 stepdates = repmat(stepdates,[size(date0,1) 1]);
 %% Conversion
+leapsec_inday = steptime(sum((date0 - stepdates) >= 0,2));
+leapsec_insec = leapsec_inday*86400;
 if strcmp(convertdirection,'utc2gps')
-    date1 = date0(:,1)   + steptime(sum((date0 - stepdates) >= 0,2));
+    date1 = date0(:,1) + leapsec_inday;
 elseif strcmp(convertdirection,'gps2utc')
-    date1 = date0(:,1)   - steptime(sum((date0 - stepdates) >= 0,2));
+    date1 = date0(:,1) - leapsec_inday;
 end
 %% Reshape Output Array
 date1 = reshape(date1,sz);

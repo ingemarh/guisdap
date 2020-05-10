@@ -233,34 +233,26 @@ matfile.metadata.header= text(1,1:7)';
 timepar = [];
 ttt = 0;
 a = find(strcmp('h_time',parameters_list)==1);
-for jj = 1:2; ttt = ttt+1;
+for jj = 1:2; ttt = ttt + 1;
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
-    info(1) = {['time' num2str(jj)]};
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
     matfile.metadata.utime(:,ttt) = info';
 end
+
+% UTC time
 for jj = 1:rec
      matfile_tmp = fullfile(matpath,filelist(jj).name);
      load(matfile_tmp)
      timepar = [timepar; posixtime(datetime(r_time(1,:))) posixtime(datetime(r_time(2,:)))];   % unix time
 end
-matfile.data.utime = timepar;
-            
-
+matfile.data.time = timepar;
+  
 nn1 = 0;
 [uniom0,unigain,unifradar] = deal(0);
 for ii = 1:length(parameters_1d)
      h_name1 = char(parameters_1d(ii));
      if ~exist(['r_' h_name1(3:end)],'var')
          continue
-%      elseif strcmp(h_name1,'h_time')
-%          a = find(strcmp(h_name1,parameters_list)==1);
-%          for jj = 1:2; nn1 = nn1+1;
-%             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
-%             info(1) = {[h_name1(3:end) num2str(jj)]};
-%             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
-%             matfile.metadata.par1d(:,nn1) = info';
-%          end
      elseif strcmp(h_name1,'h_XMITloc')
          a = find(strcmp(h_name1,parameters_list)==1);
          for jj = 1:3; nn1 = nn1+1; 
@@ -555,7 +547,7 @@ for ii = 1:length(parameters_special)
         matfile.data.(name) = par;
     end
 end
-keyboard
+
 k = length(matfile.data.par2d(1,:));
 n = length(matfile.data.par1d(1,:));
 
@@ -573,9 +565,8 @@ matfile.data.par2d(:,index)     = [];
 matfile.metadata.par2d(:,index) = [];
 
 n = length(matfile.data.par1d(1,:));    % now possibly a new length
-mm=0;
 index = [];
-
+mm = 0;
 for ii = 1:n
     if length(unique(round(matfile.data.par1d(:,ii),4)))==1 || sum(isfinite(matfile.data.par1d(:,ii))) == 0
         mm = mm + 1;
@@ -587,6 +578,31 @@ for ii = 1:n
 end
 matfile.data.par1d(:,index)     = [];
 matfile.metadata.par1d(:,index) = [];
+
+% TAI time (leapseconds)
+[~,leaps1] = utc2taigps(datestr(datetime(timepar(:,1),'ConvertFrom','posixtime')),'utc2tai');      % leap seconds between utc --> tai format
+[~,leaps2] = utc2taigps(datestr(datetime(timepar(:,2),'ConvertFrom','posixtime')),'utc2tai');
+leaps = [leaps1 leaps2];
+
+if length(unique(leaps)) == 1
+    mm =  mm + 1; 
+    matfile.data.par0d(mm) = leaps1(1);  
+    a = find(strcmp('leaps',parameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    matfile.metadata.par0d(:,mm) = info';
+else
+    ll1 = length(matfile.metadata.par1d(1,:));
+    matfile.data.par1d(:,ll1+1:ll1+2) = leaps;
+    a = find(strcmp('leaps1',parameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    matfile.metadata.par1d(:,ll1+1) = info';
+    a = find(strcmp('leaps2',parameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    matfile.metadata.par1d(:,ll1+2) = info';
+end
 
 nn = 0;
 if exist('name_expr','var'); nn = nn + 1; 
@@ -731,7 +747,7 @@ if isfield(matfile.metadata,'par1d')
 end
 
 save(matfilename,'matfile')
-
+keyboard
 % Generate an HDF5-file from the MAT-file
 chunklim = 10;
 sFields = fieldnames(matfile);
