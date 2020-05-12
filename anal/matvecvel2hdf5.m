@@ -168,6 +168,29 @@ parameters_list = text(:,1);    % list that includes all Guisdap parameters and 
 
 matfile.metadata.header= text(1,1:7)';
 
+% TAI time (leapseconds)
+[~,leaps1] = utc2tai(datestr(datetime(matfile.data.utime(:,1),'ConvertFrom','posixtime')),'utc2tai');      % leap seconds between utc --> tai format
+[~,leaps2] = utc2tai(datestr(datetime(matfile.data.utime(:,2),'ConvertFrom','posixtime')),'utc2tai');
+leaps = [leaps1 leaps2];
+if length(unique(leaps)) == 1
+    ll0 = length(matfile.metadata.par0d);
+    matfile.data.par0d(ll0+1) = leaps1(1);  
+    a = find(strcmp('leaps',parameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    matfile.metadata.par0d(:,ll0+1) = info';
+else
+    ll1 = length(matfile.metadata.par1d(1,:));
+    matfile.data.par1d(:,ll1+1:ll1+2) = leaps;
+    a = find(strcmp('leaps1',parameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    matfile.metadata.par1d(:,ll1+1) = info';
+    a = find(strcmp('leaps2',parameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    matfile.metadata.par1d(:,ll1+2) = info';
+end
 
 nn = 0;
 if exist('name_expr','var'); nn = nn + 1;
@@ -356,34 +379,3 @@ for sf = sFields.'
         end
     end   
 end
-
-% if addfigs
-%     image_filelist = [dir(fullfile(matpath,'*.png'));dir(fullfile(matpath,'*.pdf'))];
-%     npdf = 0;
-%     %if ~isempty(image_filelist)
-%       for ii = 1:length(image_filelist)
-%         figurefile = fullfile(matpath,image_filelist(ii).name);
-%         [~,filename,ext] = fileparts(figurefile);
-%         if strcmp(ext,'.png')
-%           store_image2Hdf5(figurefile,hdffilename)
-%         elseif strcmp(ext,'.pdf')
-%           npdf = npdf + 1;
-%           pdf_forHDF5(npdf) = {[filename ext]};          
-%         end
-%       end
-%       if npdf>0
-%         strds2hdf5(hdffilename,'/metadata','figure_links',pdf_forHDF5');
-%       end
-%     %end
-% end
-
-% if addnotes
-%     notesfiles = dir(fullfile(matpath,'notes*txt'));
-%     for nn = 1:length(notesfiles)
-%         notesfile = fullfile(matpath,notesfiles(nn).name);
-%         addNote2Hdf5(notesfile,EISCAThdf5file,nn)
-%     end
-% end
-
-%end
-
