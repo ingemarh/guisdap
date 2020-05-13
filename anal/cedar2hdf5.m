@@ -381,6 +381,36 @@ if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})];
     matfile.metadata.par0d = [matfile.metadata.par0d info'];
 end
 
+% TAI time (leapseconds)
+[~,leaps1] = utc2tai(datestr(datetime(matfile.data.utime(:,1),'ConvertFrom','posixtime')),'utc2tai');      % leap seconds between utc --> tai format
+[~,leaps2] = utc2tai(datestr(datetime(matfile.data.utime(:,2),'ConvertFrom','posixtime')),'utc2tai');
+leaps = [leaps1 leaps2];
+
+if length(unique(leaps)) == 1
+    if isfield(matfile.data,'par0d')
+    	ll0 = length(matfile.data.par0d);
+    else	
+    	ll0 = 0;
+    end
+    matfile.data.par0d(ll0+1) = leaps1(1);  
+    a = find(strcmp('leaps',gupparameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    matfile.metadata.par0d(:,ll0+1) = info';
+else
+    ll1 = length(matfile.data.par1d(1,:));
+    matfile.data.par1d(:,ll1+1:ll1+2) = leaps;
+    a = find(strcmp('leaps1',gupparameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    matfile.metadata.par1d(:,ll1+1) = info';
+    a = find(strcmp('leaps2',gupparameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    matfile.metadata.par1d(:,ll1+2) = info';
+end
+
+
 nn = 0;
 if exist('name_expr','var'); nn = nn + 1; 
     infoname(1) = {'name_expr'};
@@ -450,6 +480,8 @@ software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = [];
 matfile.metadata.software_link = {software};
 matfile.metadata.level2_links = level2_link;
+
+
 
 % Delete any empty fields from the structure
 sFields = fieldnames(matfile);

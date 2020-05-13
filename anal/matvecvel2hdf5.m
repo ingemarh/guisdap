@@ -174,7 +174,7 @@ matfile.metadata.header= text(1,1:7)';
 leaps = [leaps1 leaps2];
 if length(unique(leaps)) == 1
     if isfield(matfile.data,'par0d')
-    	ll0 = length(matfile.metadata.par0d);
+    	ll0 = length(matfile.data.par0d);
     else	
     	ll0 = 0;
     end
@@ -184,7 +184,7 @@ if length(unique(leaps)) == 1
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
     matfile.metadata.par0d(:,ll0+1) = info';
 else
-    ll1 = length(matfile.metadata.par1d(1,:));
+    ll1 = length(matfile.data.par1d(1,:));
     matfile.data.par1d(:,ll1+1:ll1+2) = leaps;
     a = find(strcmp('leaps1',parameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
