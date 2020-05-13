@@ -57,7 +57,7 @@ stepdates = [...
     'Jan 1 2017'];
 %% Convert Steps to datenums and make step offsets
 stepdates = datenum(stepdates)'; %step date conversion
-step=[10;ones(length(stepdates)-1,1)]'/86400;
+step=[10,ones(1,length(stepdates)-1)]/86400;
 steptime=cumsum(step);
 ns=length(stepdates);
 %% Arg Checking
@@ -78,7 +78,7 @@ ld=length(d);
 date0=repmat(date0(d),1,ns);
 stepdates=repmat(stepdates,ld,1);
 %% Conversion
-leapsec_inday=steptime(sum((date0-stepdates)>=0,2));
+leapsec_inday=steptime(sum((date0-stepdates)>=0,2))';
 leaps(d)=leapsec_inday*86400;
 if strcmp(dir{2},'tai')
   date(d)=date0(:,1)+leapsec_inday;
