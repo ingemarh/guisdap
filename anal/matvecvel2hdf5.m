@@ -173,7 +173,11 @@ matfile.metadata.header= text(1,1:7)';
 [~,leaps2] = utc2tai(datestr(datetime(matfile.data.utime(:,2),'ConvertFrom','posixtime')),'utc2tai');
 leaps = [leaps1 leaps2];
 if length(unique(leaps)) == 1
-    ll0 = length(matfile.metadata.par0d);
+    if isfield(matfile.data,'par0d')
+    	ll0 = length(matfile.metadata.par0d);
+    else	
+    	ll0 = 0;
+    end
     matfile.data.par0d(ll0+1) = leaps1(1);  
     a = find(strcmp('leaps',parameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
