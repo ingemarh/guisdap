@@ -64,7 +64,7 @@ ns=length(stepdates);
 if contains('unxtai',dir{1})
   date0=date0/86400+unx0;
 elseif contains('gup',dir{1})
-  date0=date0(:,1)/86400+datenum(date0(:,2),1,1);
+  date0=date0(:,2)/86400+datenum(date0(:,1),1,1);
 else
   date0=datenum(date0); %will error if not a proper format
 end
