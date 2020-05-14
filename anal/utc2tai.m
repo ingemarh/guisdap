@@ -75,7 +75,7 @@ date=date0;
 leaps=zeros(nt,1);
 d=find(date0>stepdates(1));
 ld=length(d);
-date0=repmat(date0(d),1,ns);
+date0=repmat(date0(d(:)),1,ns);
 stepdates=repmat(stepdates,ld,1);
 %% Conversion
 leapsec_inday=steptime(sum((date0-stepdates)>=0,2))';
