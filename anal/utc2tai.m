@@ -90,7 +90,7 @@ if contains('unxtai',dir{2})
   date=(date-unx0)*86400;
 elseif contains('gup',dir{2})
   dated=datevec(date);
-  date=[dated(:,1) (date-datenum(dated,1,1))*86400];
+  date=[dated(:,1) (date-datenum(dated(:,1),1,1))*86400];
 elseif contains('utc',dir{2})
   if strcmp(dir{1},'tai')
     step0=repmat(step,ld,1);
