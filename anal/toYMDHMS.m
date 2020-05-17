@@ -8,7 +8,7 @@
 % string, with separator 'sep' if specified
 % Leap second information
 %
-% See also: tosecs utc2tai
+% See also: tosecs timeconv
 % function YMD=toYMDHMS(years,secs,mask,sep)
 function [YMD,leap]=toYMDHMS(years,secs,mask,sep)
 
@@ -18,7 +18,7 @@ if length(years)==1
 else
  years=col(years);
 end
-[YMD,leap]=utc2tai([secs years],'gup2utc');
+[YMD,leap]=timeconv([years secs],'gup2utc');
 
 if nargin==2 return, end
 if nargin==3 sep=':';end

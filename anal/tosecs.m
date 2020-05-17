@@ -2,15 +2,17 @@
 % GUISDAP v.1.60 96-05-27 Copyright Asko Huuskonen and Markku Lehtinen
 %
 % function to convert time in form
-% [Year Month Day Hour Min Sec]
-% or in form [YYMM DDHH MMSS]   (this is the EISCAT style)
+%   [Year Month Day Hour Min Sec]
+%   [yymm ddHH MMSS]  (this is the EISCAT style)
+%   [yyyymmdd HHMMSS]
 % to seconds from the beginning of year
 %
-% See also: toYMDHMS
+% See also: toYMDHMS timeconv
 % function [secs,years]=tosecs(x)
-  function [secs,years]=tosecs(x)
+function [secs,years]=tosecs(x)
 
 [m,n]=size(x);
+
 if n~=2 && n~=3 && n~=6,
   if m==2 || m==3 || m==6,
      x=x'; n=m;
@@ -20,26 +22,16 @@ if n~=2 && n~=3 && n~=6,
     secs=NaN; years=NaN; return
   end
 end
-
 if n==2
-  y=x;
-  x(:,[3,6])=rem(y,100);
-  x(:,[2,5])=rem(floor(y/100),100); 
-  x(:,[1,4])=floor(y/10000);   
+  x=compose('%08d%06d',x);
+  f='yyyymmddHHMMSS';
+  [tt,l]=timeconv(datenum(x,f),'mat2gup');
 elseif n==3
-  x(:,6)=rem(x(:,3),100); x(:,5)=floor(x(:,3)/100);
-  x(:,4)=rem(x(:,2),100); x(:,3)=floor(x(:,2)/100);
-  x(:,2)=rem(x(:,1),100); x(:,1)=floor(x(:,1)/100)+1900;
+  x=compose('%04d%04d%04d',x);
+  f='yymmddHHMMSS';
+  [tt,l]=timeconv(datenum(x,f),'mat2gup');
 elseif n==6
   if x(1,1)<100, x(:,1)=1900+x(:,1); end
-end 
-
-years=x(:,1);
-for year=diff_val(x(:,1))'
-  daym=[0 31 28 31 30 31 30 31 31 30 31 30 31];
-  if rem(year,4)==0, daym(3)=29; end  % works up to 2100
-  days=cumsum(daym(1:12))';
- 
-  ind=find(years==year);
-  secs(ind,1)=(((days(x(ind,2))+(x(ind,3)-1))*24+x(ind,4))*60+x(ind,5))*60+x(ind,6);
+  [tt,l]=timeconv(x,'utc2gup');
 end
+secs=tt(:,2); years=tt(:,1);

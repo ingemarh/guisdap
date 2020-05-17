@@ -382,9 +382,7 @@ if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})];
 end
 
 % TAI time (leapseconds)
-[~,leaps1] = utc2tai(datestr(datetime(matfile.data.utime(:,1),'ConvertFrom','posixtime')),'utc2tai');      % leap seconds between utc --> tai format
-[~,leaps2] = utc2tai(datestr(datetime(matfile.data.utime(:,2),'ConvertFrom','posixtime')),'utc2tai');
-leaps = [leaps1 leaps2];
+[~,leaps] = timeconv(matfile.data.utime,'unx2tai');      % leap seconds between utc --> tai format
 
 if length(unique(leaps)) == 1
     if isfield(matfile.data,'par0d')

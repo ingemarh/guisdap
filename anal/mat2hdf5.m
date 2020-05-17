@@ -580,9 +580,7 @@ matfile.data.par1d(:,index)     = [];
 matfile.metadata.par1d(:,index) = [];
 
 % TAI time (leapseconds)
-[~,leaps1] = utc2tai(datestr(datetime(timepar(:,1),'ConvertFrom','posixtime')),'utc2tai');      % leap seconds between utc --> tai format
-[~,leaps2] = utc2tai(datestr(datetime(timepar(:,2),'ConvertFrom','posixtime')),'utc2tai');
-leaps = [leaps1 leaps2];
+[~,leaps] = timeconv(datetime(timepar),'unx2tai');      % leap seconds between utc --> tai format
 
 if length(unique(leaps)) == 1
     ll0 = length(matfile.data.par0d);
