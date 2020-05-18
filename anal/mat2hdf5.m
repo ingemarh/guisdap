@@ -230,10 +230,11 @@ parameters_list = text(:,1);    % list that includes all Guisdap parameters and 
 matfile.metadata.header= text(1,1:7)';
 
 % unixtime
-timepar = [];
+matfile.data.utime = [];
+leaps = [];
 ttt = 0;
 a = find(strcmp('h_time',parameters_list)==1);
-for jj = 1:2; ttt = ttt + 1;
+for jj = 1:2, ttt = ttt + 1;
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
     matfile.metadata.utime(:,ttt) = info';
@@ -243,10 +244,12 @@ end
 for jj = 1:rec
      matfile_tmp = fullfile(matpath,filelist(jj).name);
      load(matfile_tmp)
-     timepar = [timepar; posixtime(datetime(r_time(1,:))) posixtime(datetime(r_time(2,:)))];   % unix time
+     %timepar = [timepar; posixtime(datetime(r_time(1,:))) posixtime(datetime(r_time(2,:)))];   % unix time
+     [utime_rec,leap] = timeconv([r_time(1,:);r_time(2,:)],'utc2unx');
+     matfile.data.utime = [matfile.data.utime;utime_rec'];
+     leaps = [leaps;leap'];
 end
-matfile.data.time = timepar;
-  
+
 nn1 = 0;
 [uniom0,unigain,unifradar] = deal(0);
 for ii = 1:length(parameters_1d)
@@ -579,12 +582,9 @@ end
 matfile.data.par1d(:,index)     = [];
 matfile.metadata.par1d(:,index) = [];
 
-% TAI time (leapseconds)
-[~,leaps] = timeconv(datetime(timepar),'unx2tai');      % leap seconds between utc --> tai format
-
 if length(unique(leaps)) == 1
     ll0 = length(matfile.data.par0d);
-    matfile.data.par0d(ll0+1) = leaps1(1);  
+    matfile.data.par0d(ll0+1) = leaps(1);  
     a = find(strcmp('leaps',parameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
@@ -745,7 +745,7 @@ if isfield(matfile.metadata,'par1d')
 end
 
 save(matfilename,'matfile')
-keyboard
+
 % Generate an HDF5-file from the MAT-file
 chunklim = 10;
 sFields = fieldnames(matfile);

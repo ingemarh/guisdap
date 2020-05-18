@@ -51,10 +51,11 @@ else
     matfile.data.par1d = nrec;
     matfile.metadata.par1d = info';
 end
-    
+
 if exist('Vdate','var')
     parameters_vdate = {'time1' 'time2'};
-    matfile.data.utime = [posixtime(datetime(datestr(vdate(:,1)))) posixtime(datetime(datestr(vdate(:,1))))];
+    %matfile.data.utime = [posixtime(datetime(datestr(vdate(:,1)))) posixtime(datetime(datestr(vdate(:,1))))];
+    [matfile.data.utime,leaps] = timeconv(vdate,'mat2unx');
     for ii = 1:2
         a = find(strcmp(char(parameters_vdate(ii)),parameters_list)==1);
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
@@ -169,14 +170,13 @@ parameters_list = text(:,1);    % list that includes all Guisdap parameters and 
 matfile.metadata.header= text(1,1:7)';
 
 % TAI time (leapseconds)
-[~,leaps] = timeconv(matfile.data.utime(:,1),'unx2tai');      % leap seconds between utc --> tai format
 if length(unique(leaps)) == 1
     if isfield(matfile.data,'par0d')
     	ll0 = length(matfile.data.par0d);
     else	
     	ll0 = 0;
     end
-    matfile.data.par0d(ll0+1) = leaps1(1);  
+    matfile.data.par0d(ll0+1) = leaps(1);  
     a = find(strcmp('leaps',parameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
