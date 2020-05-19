@@ -37,14 +37,14 @@ d_ExpInfo=[]; d_raw=[]; txdown=0;
 if a_ind==0
   a_ind=1;
   a_cycle=sum(a_integr+a_skip);
-  d=cell2mat({d_filelist.file});
+  d=cell2mat({d_filelist.tai});
   d=find(d<=a_start | d>a_end);
   if length(d)==length(d_filelist)
     d=d(1:end-1);
   end
   d_filelist(d)=[];
   if a_cycle>0
-    i=fix((d_filelist(1).file-a_start)/a_cycle);
+    i=fix((d_filelist(1).tai-a_start)/a_cycle);
     if i>0, a_start=a_start+i*a_cycle; end
   end
   a_interval=a_start+[0 a_integr(1)];
@@ -58,19 +58,19 @@ end
 if a_integr<=0, a_interval(2)=a_end;
 elseif a_interval(2)>=a_end; EOF=1; end
 if a_realtime
-  if d_filelist(end).file<=a_interval(1)
+  if d_filelist(end).tai<=a_interval(1)
     [EOF,jj]=update_filelist(EOF,jj);
     if EOF, return, end
   end
-elseif d_filelist(end).file<a_interval(1)
+elseif d_filelist(end).tai<a_interval(1)
   EOF=1; return
 end
 
 if length(fileslist)~=length(d_filelist)
- fileslist=cell2mat({d_filelist.file});
+ fileslist=cell2mat({d_filelist.tai});
 end
 fileform='%08d%s';
-if any(rem(fileslist,1)), fileform='%012.3f%s'; end
+%if any(rem(fileslist,1)), fileform='%012.3f%s'; end
 files=d_filelist(find(fileslist>a_interval(1) & fileslist<=a_interval(2)));
 if isempty(files) & a_integr<=0, EOF=1; return, end
 i=0;
@@ -127,7 +127,7 @@ while i<length(files)
   positive(find(positive>lpb))=[];
   non_negative(find(non_negative>lpb))=[];
 
-  [secs1,year]=tosecs(d_parbl(tvec));
+  secs1=timeconv(row(d_parbl(tvec)),'utc2tai');
   a_inttime=d_parbl(inttime);
   d=find(d_parbl(positive)<0);
   if ~isempty(d)
@@ -163,9 +163,9 @@ while i<length(files)
     adiff=atan2(norm(cross(a_ant,a_antold)),dot(a_ant,a_antold))/a_inttime;
     a_antold=a_ant;
     if adiff>a_max.adiff | tdiff
-      a_interval(2)=file.file;
+      a_interval(2)=file.tai;
       if tdiff & M_averaged>1
-        a_interval(2)=file.file-.5; a_antold=[];
+        a_interval(2)=file.tai-.5; a_antold=[];
       elseif M_averaged==0
         secs=secs1; return
       else
@@ -179,8 +179,8 @@ while i<length(files)
   end
 
   secs=secs1;
-  if secs<file.file | file.file-secs>=1 | year~=a_year
-    fprintf('Filename %08d conflicts with time inside file: %d %.0f\n',file.file,year,secs)
+  if secs<file.tai | file.tai-secs>=1
+    fprintf('Filename %08d conflicts with time inside file: %.0f %d\n',file.file,timeconv(secs,'tai2gup')')
   end
 
   if isreal(d_data) % change to complex
@@ -255,7 +255,7 @@ while i<length(files)
   if a_realtime & file.file==d_filelist(end).file
     [EOF,jj]=update_filelist(EOF,jj);
     if EOF, break, end
-    d=cell2mat({d_filelist.file});
+    d=cell2mat({d_filelist.tai});
     files=d_filelist(find(d>a_interval(1) & d<=a_interval(2)));
   end
   %catch, disp(lasterr), end
@@ -265,7 +265,7 @@ if OK, % if at least one good data dump was found
   % update parameter block, accept the last parameter block as starting point
   d_parbl(averaged)=aver/M_averaged;
   d_parbl(accumulated)=accum;
-  d_parbl(inttime)=tosecs(d_parbl(tvec))-starttime;
+  d_parbl(inttime)=timeconv(row(d_parbl(tvec)),'utc2tai')-starttime;
   d_data=data;
   M_averaged(1)=max(N_averaged);
   M_averaged(2)=min(N_averaged);
@@ -275,7 +275,8 @@ if OK, % if at least one good data dump was found
    else
     i_averaged=N_averaged; i_var1=real(d_var1); i_var2=d_var2;
    end
-   file=[d_saveint.dir sprintf('%08d.mat',fix(secs))];
+   d=timeconv(secs,'tai2gup');
+   file=[d_saveint.dir sprintf('%08d.mat',fix(d(2)))];
    disp(file)
    if d_saveint.var
     save_noglobal(file,d_ExpInfo,d_parbl,d_data,d_raw,i_var1,i_var2,i_averaged)
@@ -291,10 +292,10 @@ if OK, % if at least one good data dump was found
 end
 
 function [EOF,jj]=update_filelist(EOF,jj)
-global di_figures data_path b d_filelist a_end
+global di_figures data_path b d_filelist a_end a_year
 j=0;
 if ~isempty(b) & ishandle(b(7))
- a_max_rtwait=a_end-d_filelist(end).file; mrw=30;
+ a_max_rtwait=a_end-d_filelist(end).tai; mrw=30;
 else
  a_max_rtwait=300; mrw=round(sqrt(a_max_rtwait));
 end
@@ -326,5 +327,8 @@ while isempty(df)
     EOF=1; break
   end
 end
+d=cell2mat({df.file});
+d=num2cell(timeconv([a_year*ones(size(d)) d],'gup2tai'));
+[df.tai]=d{:};
 d_filelist=[d_filelist;df];
 if j>0, fprintf('\n'); end

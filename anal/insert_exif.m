@@ -8,7 +8,7 @@ d=findobj(fig,'type','axes');
 for i=d'
   t=get(i,'xlim');
   if t(1)>7e5 && t(2)<8e5
-    td=(t-datenum(1970,1,1))*86400;
+    td=timeconv(t','mat2tai')';
   end
 end
 if ~isunix | unix(['which ' prog ' >/dev/null'])

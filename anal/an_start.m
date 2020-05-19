@@ -5,7 +5,6 @@
 % chk_par1       1) transforms the user supplied control parameters to internal parameters
 %                2) checks the data source (matlab files/EISCAT .dtst files)
 % init_graphics  opens a sufficient number of figure windows and defines there sizes etc.
-% integr_NW      calls Nigel Wade's integration package, when EISCAT .dtst files are used
 % integr_data    integrates data from Matlab files
 % decodeparblock transfers the radar parameters (power etc) to internal GUISDAP parameters
 % load_initfile  loads the ambiguity functions etc
@@ -46,8 +45,6 @@ while ~EOF
   else
     if name_site=='Q'
       [OK,EOF,N_averaged,M_averaged]=integr_qujing;
-    elseif a_rawdata
-      [OK,EOF]=integr_NW;
     else
       [OK,EOF,N_averaged,M_averaged]=integr_data;
     end

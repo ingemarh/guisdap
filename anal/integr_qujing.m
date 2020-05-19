@@ -33,7 +33,7 @@ OK=0; EOF=0; jj=0; N_averaged=0; M_averaged=0;
 d_ExpInfo=[]; d_raw=[]; txdown=0;
 if a_ind==0
   a_ind=1;
-  d=cell2mat({d_filelist.time});
+  d=cell2mat({d_filelist.tai});
   d=find(d<=a_start | d>a_end);
   d_filelist(d)=[];
   a_interval=a_start+[0 a_integr(1)];
@@ -43,12 +43,12 @@ else
 end
 if a_integr<=0, a_interval(2)=a_end;
 elseif a_interval(2)>=a_end; EOF=1; end
-if d_filelist(end).time<a_interval(1)
+if d_filelist(end).tai<a_interval(1)
   EOF=1; return
 end
 
 if length(fileslist)~=length(d_filelist)
- fileslist=cell2mat({d_filelist.time});
+ fileslist=cell2mat({d_filelist.tai});
 end
 files=d_filelist(find(fileslist>a_interval(1) & fileslist<=a_interval(2)));
 if isempty(files) & a_integr<=0, EOF=1; return, end
@@ -58,7 +58,7 @@ while i<length(files)
   filename=fullfile(file.dir,file.file);
   i_averaged=1; i_var1=[]; i_var2=[];
   try
-  [d_parbl,d_data]=load_qfile(filename,file.time/86400+8/24);
+  [d_parbl,d_data]=load_qfile(filename,file.tai+8*3600);
 
   lpb=length(d_parbl);
   tvec=1:6;            % parameters holding time
@@ -78,7 +78,7 @@ while i<length(files)
   positive(find(positive>lpb))=[];
   non_negative(find(non_negative>lpb))=[];
 
-  [secs,year]=tosecs(d_parbl(tvec));
+  secs=timeconv(row(d_parbl(tvec)),'utc2tai');
   a_inttime=d_parbl(inttime);
 
   if isreal(d_data) % change to complex
@@ -159,7 +159,7 @@ if OK, % if at least one good data dump was found
   % update parameter block, accept the last parameter block as starting point
   d_parbl(averaged)=aver/M_averaged;
   d_parbl(accumulated)=accum;
-  d_parbl(inttime)=tosecs(d_parbl(tvec))-starttime;
+  d_parbl(inttime)=timeconv(row(d_parbl(tvec)),'utc2tai')-starttime;
   d_data=data;
   M_averaged(1)=max(N_averaged);
   M_averaged(2)=min(N_averaged);
@@ -169,7 +169,8 @@ if OK, % if at least one good data dump was found
    else
     i_averaged=N_averaged; i_var1=real(d_var1); i_var2=d_var2;
    end
-   file=[d_saveint.dir sprintf('%08d.mat',fix(secs))];
+   d=timeconv(secs,'tai2gup');
+   file=[d_saveint.dir sprintf('%08d.mat',fix(d(2)))];
    disp(file)
    if d_saveint.var
     save_noglobal(file,d_ExpInfo,d_parbl,d_data,d_raw,i_var1,i_var2,i_averaged)

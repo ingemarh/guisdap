@@ -4,7 +4,7 @@ if strfind(file,'-000_000000.')
   if nargin<2
     d=dir(file); dat=d.date;
   end
-  [d_parbl,d_data]=load_qraw(file,datevec(dat));
+  [d_parbl,d_data]=load_qraw(file,timeconv(dat,'tai2utc'));
   return
 end
 
@@ -51,8 +51,8 @@ fclose(fid);
 d_parbl(64)=numofsound;
 d_parbl(43:54)=[a(1) mode wavegate range0 range1 numofrange length(ACF)/numofrange size(PSD,1) deltalag begin_time];
 d_parbl(41)=9;
-t2=datenum(a(2:7)')-8/24;
-d_parbl(1:6)=datevec(t2);
+t2=timeconv(a(2:7)','utc2mat')-8/24;
+d_parbl(1:6)=timeconv(t2,'tai2utc');
 [d1,d]=min(abs(col(qmeta(:,1:2)')-t2));
 d=floor((d-1)/2)+1;
 ipp=qmeta(d,6);
@@ -98,7 +98,7 @@ d_parbl(64)=Prtperfile;
 d_parbl(41)=9;
 t1=datenum([ones(Prtperfile,1)*d_date(1:3) t(:,[3 2 1])])-8/24;
 t2=t1(end);
-d_parbl(1:6)=datevec(t2);
+d_parbl(1:6)=timeconv(t2,'mat2utc');
 [d1,d]=min(abs(col(qmeta(:,1:2)')-t2));
 d=floor((d-1)/2)+1;
 IPP=qmeta(d,6);

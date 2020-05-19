@@ -92,14 +92,12 @@ else
  if exist('analysis_rawdata','var')
   a_rawdata=analysis_rawdata;
  end
- if a_rawdata==1 & exist('PI_init')==3, % NW's package is to be used
-  NW2
- elseif a_rawdata==2, % HDF5 format
+ if a_rawdata==1, % HDF5 format
   d_filelist=h5read(data_path,'/Time/MatlabTime');
   i=datevec(d_filelist(1));
   d_filelist=(d_filelist-datenum(i(1),1,1))*86400;
-  a_start=tosecs(analysis_start); % the programs uses internally only seconds,
-  a_end  =tosecs(analysis_end);   % counted from the beginning of year
+  a_start=timeconv(analysis_start,'utc2tai'); % the programs uses internally only seconds,
+  a_end  =timeconv(analysis_end,'utc2tai');   % counted from the beginning of year
   a_year=analysis_start(1);
   a_ind=0;
  elseif name_site=='Q'
@@ -114,8 +112,8 @@ else
   if ~isempty(msg)
    error(msg)
   end
-  a_start=86400*datenum(analysis_start);
-  a_end  =86400*datenum(analysis_end);
+  a_start=timeconv(analysis_start,'utc2tai');
+  a_end  =timeconv(analysis_end,'utc2tai');
   a_year=analysis_start(1);
   a_ind=0;
  else
@@ -134,9 +132,12 @@ else
   if ~isempty(msg)
    error(msg)
   end
-  a_start=tosecs(analysis_start); % the programs uses internally only seconds,
-  a_end  =tosecs(analysis_end);   % counted from the beginning of year
+  a_start=timeconv(analysis_start,'utc2tai'); % the programs uses internally TAI
+  a_end  =timeconv(analysis_end,'utc2tai');
   a_year=analysis_start(1);
+  d=cell2mat({d_filelist.file})';
+  d=num2cell(timeconv([a_year*ones(size(d)) d],'gup2tai'));
+  [d_filelist.tai]=d{:};
   a_ind=0;
  end
 end

@@ -53,12 +53,17 @@ end
 if isempty(dynavel), dynavel=0; end
 %dirs='/home/ingemar/tmp/2007-02-07_tau2pl_ant@uhf/';
 %%%%%%%%%%%%%%%%%
-global r_RECloc allnames r_XMITloc
-Data1D=[]; Data2D=[]; dirind=0; loc=[]; allnames=[];
+global r_RECloc allnames r_XMITloc Leap
+Data1D=[]; Data2D=[]; dirind=0; loc=[]; allnames=[]; Leap=[];
 for d1=1:ndir
  if dirs{d1}=='.'; dirs{d1}=pwd; end
  fprintf('Reading %s...\n',dirs{d1})
  [Time,par2D,par1D,dum,err2D]=load_param(dirs{d1},[1,Inf]);
+ if isempty(Leap)
+  Time=reshape(timeconv(Time(:),'mat2tai'),2,[]);
+ else
+  Time=reshape(timeconv([Time(:) Leap(:)],'mat2tai'),2,[]);
+ end
  ng=size(par2D,1);
  [g,dump]=find(par2D(:,:,2)>alt(1) & par2D(:,:,2)<alt(end) & isfinite(par2D(:,:,6)));
  [d,dum,dd]=unique(dump); dd=dd+size(Data1D,1);
@@ -72,10 +77,10 @@ for d1=1:ndir
  end
 end
 dirind=cumsum(dirind);
-r_time=datevec(mean(Data1D(:,1)));
+r_time=timeconv(mean(Data1D(:,1)),'tai2utc');
 %%%%%%%%%%%%%%%%%
 if dynavel
- t1=min(Data1D(:,1)); t2=max(Data1D(:,1));
+ t1=timeconv(min(Data1D(:,1)),'tai2mat'); t2=timeconv(max(Data1D(:,1)),'tai2mat');
  tsound=225/86400;
  if dynavel>1
   [dydE,dyvE]=get_v(t1,t2,'tromso','E');
@@ -97,8 +102,8 @@ if isfinite(ld(1))
   ILAT=1;
  else
   addpath(fullfile(path_GUP,'models_m'),'-begin')
-  [secs,YEAR]=tosecs(r_time);
-  magF=IGRF(); DIMO=magF.FELDCOF(YEAR+secs/86400/365);
+  secs=timeconv(r_time,'utc2gup');
+  magF=IGRF(); DIMO=magF.FELDCOF(secs(1)+secs(2)/86400/365);
  end
 end
 degrad=pi/180.;  % conversion factor from degrees to radians
@@ -106,11 +111,11 @@ Re=6378.135;
 min_area=sqrt(3)/4*(mind(2)*degrad)^2; % minimum equilateral triange angle area to cover
 tfile=0;	%make velocity table for testings
 %%%%%%%%%%%%%%%%%
-dates=mean(Data1D(:,[1 2]),2); td=td/86400; ld=ld*degrad;
+dates=mean(Data1D(:,[1 2]),2); ld=ld*degrad;
 mindumps=mind(1)-isfinite(uperr(1));
 loc0=reshape([gg2gc(loc(:,1:3)) gg2gc(loc(:,4:6))]',3,2,[]);
 loc0=reshape(mean(loc0,2),3,[])'; %Effective position for bistatic
-if td(1)>ndir/86400
+if td(1)>ndir
  if length(td)==2, td(3)=floor(min(Data1D(:,1))); end
  timint=td(3):td(2):max(Data1D(:,2))+td(2);
 else
@@ -144,7 +149,7 @@ name_strategy='Altitude';
 if isfinite(ld(1)), name_strategy=[name_strategy ' Latitude']; end
 if isfinite(uperr(1)), name_strategy=[name_strategy ' Model']; end
 if dynavel, name_strategy=[name_strategy ' Dynasond']; end
-name_strategy=[name_strategy sprintf(' %d',round(86400*td(1)))];
+name_strategy=[name_strategy sprintf(' %d',round(td(1)))];
 nstrat=regexp(name_strategy,'[A-Z0-9]');
 oname=sprintf('%d-%02d-%02d%s_V%d%s@%s',r_time(1:3),nexp,nant,lower(name_strategy(nstrat)),name_ant);
 result_file=fullfile(odir,oname);
@@ -157,7 +162,7 @@ if tfile
  fprintf(tfile,'%5s',[],'m/s',[],[],'m/s');
  fprintf(tfile,'\n');
 end
-Vdate=[]; Vpos=[]; Vg=[]; Vgv=[]; V_area=[]; Gid=[];
+Vdate=[]; Vleap=[]; Vpos=[]; Vg=[]; Vgv=[]; V_area=[]; Gid=[];
 %%%%%%%%%%%%%%%%%
 fprintf('Combining...\n')
 for tim=timint
@@ -169,7 +174,7 @@ for tim=timint
    dump=Data2D(g,end); d=unique(dump);
    if length(d)>=mindumps
     Date=[min(Data1D(d,1));max(Data1D(d,2))];
-    r_time=datevec(mean(Date));
+    r_time=timeconv(mean(Date),'tai2utc');
     alti=mean(alt(ia:ia+1));
     [dum,site]=histc(g,dirind+.5);
     Vi=Data2D(g,3);
@@ -184,7 +189,7 @@ for tim=timint
     if isfinite(ld(1))
      if ILAT
       gcR=gc/Re;
-      L=onera_desp_lib_make_lstar([],[],'geo',mean(Date),gcR(:,1),gcR(:,2),gcR(:,3));
+      L=onera_desp_lib_make_lstar([],[],'geo',timeconv(mean(Date),'tai2mat'),gcR(:,1),gcR(:,2),gcR(:,3));
      else
       L=zeros(ng,1);
       for i=1:ng
@@ -228,10 +233,10 @@ for tim=timint
       if dynavel & (~isfinite(ld(il)) | ld(il)<69.6 & ld(il+1)>69.6)
        d=[];
        if alti>=uperr(2) & rem(dynavel,2)
-	d=find(dydF+tsound/2>tim & dydF+tsound/2<tim+td(1));
+	d=find(dydF+tsound/2>timeconv(tim,'tai2mat') & dydF+tsound/2<timeconv(tim,'tai2mat')+td(1));
         dyv=dyvF(d,:);
        elseif alti<uperr(2) & dynavel>1
-	d=find(dydE+tsound/2>tim & dydE+tsound/2<tim+td(1));
+	d=find(dydE+tsound/2>timeconv(tim,'tai2mat') & dydE+tsound/2<timeconv(tim,'tai2mat')+td(1));
         dyv=dyvE(d,:);
        end
        ldy=length(d);
@@ -258,7 +263,7 @@ for tim=timint
         Vvar_real=T([1 5 9 2 6 3]); %lower triangle only
         Verr=sqrt(Vvar_real(1:3));
        else
-	warning('Covariance matrix not positive definite (%s)',datestr(mean(Date),13))
+	warning('Covariance matrix not positive definite (%s)',datestr(timeconv(mean(Date),'tai2mat'),13))
 	% trying direct route, but errors handled in a clumsy way
         [V_real,Verr]=lscov(A,Vll,1../Vlle.^2);
         if size(A,1)==3
@@ -269,7 +274,7 @@ for tim=timint
        end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        if all(real(Verr)>=0)
-        selDate=[min(Data1D(seldumps,1));max(Data1D(seldumps,2))];
+        [selDate,selLeap]=timeconv([min(Data1D(seldumps,1));max(Data1D(seldumps,2))],'tai2mat');
         if tfile
          fprintf(tfile,'%s',datestr(mean(selDate)));
          fprintf(tfile,'%6.2f',gg_sp(1:2));
@@ -279,6 +284,7 @@ for tim=timint
          fprintf(tfile,'\n');
         end
         Vdate=[Vdate selDate];
+        Vleap=[Vleap selLeap];
         Vpos=[Vpos;gg_sp];
         Vg=[Vg;V_real];
         Vgv=[Vgv;Vvar_real];
@@ -304,7 +310,7 @@ else
  end 
  Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstraint',uperr,'MinDir',mind,'DynasondeVelocity',dynavel);
  name_sig=[local.host ' ' local.user ' ' datestr(now)];
- save_noglobal([result_file '.mat'],Vdate,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,name_sig,name_sigs,name_strategy,name_strategies,GUP_ver,Vinputs)
+ save_noglobal([result_file '.mat'],Vdate,Vleap,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,name_sig,name_sigs,name_strategy,name_strategies,GUP_ver,Vinputs)
 
  fprintf('Making NCAR file...\n')
  NCAR_output

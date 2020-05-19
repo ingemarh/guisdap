@@ -1,5 +1,5 @@
 function [date,leaps] = timeconv(date0,direction)
-% [date,leaps] = timeconv(date0,direction)
+% [date,leaps] = timeconv(date0,direction,inleap)
 % Convert between different time formats utc|tai|mat|unx|gup
 %
 % date: output time in new format
@@ -10,19 +10,24 @@ function [date,leaps] = timeconv(date0,direction)
 %            Possible options: '(tai|utc|mat|unx|gup)2(tai|utc|mat|unx|gup)'
 %            Default 'utc2tai'
 %
-% time formats:	tai float secs since 1970-1-1
+% time formats:	tai float secs since 1970-01-01
 %               utc datevec [y,m,d,h,m,s], s>=60 for leaps
-%               mat matlab date (or string format in input)
-%               unx float secs since 1970-1-1
+%               mat matlab date 
+%               unx float secs since 1970-01-01 without leaps
 %               gup [y,secs] secs>365*86400 for leaps
-% optional extra row of nanosecs in input added to output
+%
+%               Optional extra column for tai|utc|unx|gup with nanosecs
+%               Optional extra column for mat with leapsecs used
 %
 % Currently step times are through Jan 1 2017, but need to be added in the
 % function list as they are instuted. The first addition of leapseconds (10 s) was at 
 % 'Jan 1 1972'. Following dates correspond to additions of new individual
 % leapseconds.
-if nargin<2
+if nargin<2 | isempty(direction)
   direction='utc2tai';
+end
+if nargin<3
+  inleap=[];
 end
 f='utc mat unx tai gup';
 dir=split(direction,'2');
@@ -67,29 +72,33 @@ step=[0;10;ones(length(stepdate)-1,1);Inf]/86400;
 steptime=cumsum(step);
 jansteps=strfind(stepdate(:,2)','a')'; %guptime can handle leaps over new year
 stepdate=[-Inf;datenum(stepdate);Inf]; %step date conversion
+ncol=size(date0,2);
 %% Arg Checking
 if strcmp('tai',dir{1})
-  if size(date0,2)>1
+  if ncol>1
     ns=date0(:,2); date0(:,1)=date0(:,1)+ns*1e-9;
   end
   date0=date0(:,1)/86400+unx0;
 elseif strcmp('unx',dir{1})
-  if size(date0,2)>1
+  if ncol>1
     ns=date0(:,2); date0(:,1)=date0(:,1)+ns*1e-9;
   end
   date0=date0(:,1)/86400+unx0;
 elseif strcmp('gup',dir{1})
-  if size(date0,2)>2
+  if ncol>2
     ns=date0(:,3); date0(:,2)=date0(:,2)+ns*1e-9;
   end
   leapin=find(date0(:,2)>=365*86400); % tentative leaps
   date0=date0(:,2)/86400+datenum(date0(:,1),1,1);
 else
-  if strcmp('utc',dir{1}) && isnumeric(date0) && size(date0,2)>5 % extract secs>60
-    if size(date0,2)>6
+  if strcmp('utc',dir{1}) && ncol>5 % extract secs>60
+    if ncol>6
       ns=date0(:,7); date0(:,6)=date0(:,6)+ns*1e-9; date0(:,7:end)=[];
     end
     leapin=find(date0(:,6)>=60); % tentative leaps
+  elseif ncol>1
+    inleap=date0(:,2);
+    date0(:,2)=[];
   end
   date0=datenum(date0); %will error if not a proper format
 end
@@ -101,6 +110,9 @@ if ~strcmp(dir{1},'tai')
     l60=discretize(date0(leapin),stepdates);
     d=find(rem(l60,2)==0);
     l(leapin(d))=l(leapin(d))-1; % valid leaps
+  elseif ~isempty(inleap)
+    d=find(steptime(l)*86400~=inleap);
+    date0(d)=date0(d)-step(l(d));
   end
   date0=date0+steptime(l);
 end

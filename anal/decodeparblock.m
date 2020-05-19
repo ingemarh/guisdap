@@ -29,11 +29,9 @@ elseif ant_id==6
 end
 
 % endtime of integration 
-[time,year]=tosecs(d_parbl(1:6)); 
-d_time(2,:)=toYMDHMS(year,time);
+d_time(2,:)=row(d_parbl(1:6)); 
 % starttime of integration 
-time=time-d_parbl(7);
-d_time(1,:)=toYMDHMS(year,time);
+d_time(1,:)=timeconv(timeconv(d_time(2,:),'utc2tai')-d_parbl(7),'tai2utc');
 
 ch_Pt=d_parbl(a_txpower(1))*a_txpower(2);
 ch_el=d_parbl(9);

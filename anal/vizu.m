@@ -261,8 +261,8 @@ end
 %%%%%%%%%% Time scales %%%%%%%%%%%%%
 if strcmp(lower(act),'verbose')
  if isempty(START_TIME)
-  START_TIME=floor(datevec(Time(1,1)));
-  END_TIME=ceil(datevec(Time(2,end)));
+  START_TIME=floor(timeconv(Time(1,1),'mat2utc'));
+  END_TIME=ceil(timeconv(Time(2,end),'mat2utc'));
   Y_TYPE=Y_TYPE1;
  end
  START_TIME=minput('Start time',START_TIME);
@@ -279,7 +279,7 @@ elseif ~REALT
   DATA_PATH=DATA_PATH(1:end-1);
  end
  [d,dpath]=fileparts(DATA_PATH);
- START_TIME=datevec(median(Time(:))); START_TIME(4:6)=[0 0 0];
+ START_TIME=timeconv(median(Time(:)),'mat2utc'); START_TIME(4:6)=[0 0 0];
  END_TIME=START_TIME+[0 0 0 24 0 0];
 end
 if strcmp(lower(act),'update') && ~isempty(OLD_WHICH)

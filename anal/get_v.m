@@ -7,14 +7,10 @@ function [day,v]=get_v(t1,t2,site,r)
 % region: empty: default F | E
 % v: Matrix [ v ev ]
 
-if nargin==0, t1=[]; end
-if isempty(t1), t1=now, end
+if nargin==0 | isempty(t1), t1=now, end
+if nargin<2 | isempty(t2), t2=t1; end
+if nargin<3 | isempty(site), site='tromso'; end
 
-if nargin<2, t2=[]; end
-if isempty(t2), t2=t1; end
-
-if nargin<3, site=[]; end
-if isempty(site), site='tromso'; end
 if findstr(site(1),'TV'), site='tromso'; end
 if site(1)=='L', site='svalbard'; end
 site3=site(1:3);
@@ -36,9 +32,8 @@ for t=fix(t1):fix(t2)
  query=sprintf(qform,r,r,r,r,site,tt(1:3),r);
  [of,i]=urlread([www strrep(query,' ','%20')]);
  if i
-  d=textscan(of,form,'headerlines',2);
-  v=[v;[d{2:end}]];
-  day=[day;d{1}+datenum(tt(1),1,1)-1];
-  end
+   d=textscan(of,form,'headerlines',2);
+   v=[v;[d{2:end}]];
+   day=[day;d{1}+datenum(tt(1),1,1)-1];
  end
 end

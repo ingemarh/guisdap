@@ -8,7 +8,7 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,status,update)
 %  or err2D[Ne,Te,Ti,Vi,Coll]
 %
 global name_expr r_RECloc name_ant name_strategy r_Magic_const myparams load_apriori rres ppres max_ppw r_XMITloc
-global allnames
+global allnames Leap
 persistent lastfile
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
@@ -20,7 +20,7 @@ do_rpar=nargout==4;
 do_err=nargout==5;
 
 if isempty(strfind(data_path,'*')) && ~isdir(data_path)
-  [~,filename,ext] = fileparts(data_path);
+  [~,filename,ext] = fileparts(data_path); Leap=[];
   if strcmp(ext,'.hdf5') && strcmp(filename(1:6),'EISCAT')
     [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(data_path);
     return
@@ -45,6 +45,7 @@ lastfile=list(n);
 re=6370;
 npar2D=9; nrpar2D=3; nerr2D=npar2D-4;
 Time=zeros(2,n_tot);
+Leap=zeros(2,n_tot);
 fileslist=cell2mat({list.file}); fileform='%08d%s'; 
 if any(rem(fileslist,1)), fileform='%012.3f%s'; end
 
@@ -124,7 +125,7 @@ for i=1:n_tot
     err2D(n,i,[1 3 5])=r_error(:,myparams);
     err2D(n,i,[2 4])=[(r_error(:,2)./r_param(:,2)+r_error(:,3)./r_param(:,3)).*par2D(n,i,4) r_error(:,5)];
   end
-  Time(:,i)	=datenum(r_time);
+  [Time(:,i),Leap(:,i)]=timeconv(r_time,'utc2mat');
   if npar1>npar1D
    par1D=[par1D zeros(n_tot,npar1-npar1D)];
    npar1D=npar1;

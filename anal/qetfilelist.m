@@ -29,19 +29,19 @@ else
       qraw=1;
     end
     dirlen=length(dirlist);
-    l=repmat(struct('dir',fullfile(dp,dirs(j).name),'file',0,'time',0),[dirlen 1]);
+    l=repmat(struct('dir',fullfile(dp,dirs(j).name),'file',0,'tai',0),[dirlen 1]);
     for i=1:dirlen
       l(i).file=dirlist(i).name;
       if qraw
         d=datenum(dirlist(i).date);
       else
         a=sscanf(dirlist(i).name,'ch%1d_%4d%2d%2d_%2d%2d%2d');
-        d=datenum(row(a(2:7)));
+        d=timeconv(row(a(2:7)),'utc2tai');
       end
-      l(i).time=86400*(d-8/24);
+      l(i).tai=d-8*3600;
     end
     if qraw
-      mdt=median(diff(cell2mat({l.time})));
+      mdt=median(diff(cell2mat({l.tai})));
       fprintf('Note: Mean timestamp increment is %.1fs, using ',mdt) 
       if mdt>a_timestamp(1) && mdt<a_timestamp(2)
         fprintf('quick filemark times\n')
@@ -52,19 +52,19 @@ else
         [a,b]=fileparts(dirs(j).name); d_date=sscanf(b,'%4d_%2d_%2d_%2d-%2d*s')';
         for i=1:dirlen
           d=gettimestamp(fullfile(l(i).dir,l(i).file),d_date);
-          l(i).time=86400*(d-8/24);
+          l(i).tai=d-8*3600; % beijing time -> tai
         end
       end
     end
     list=[list;l];
   end
   if ~isempty(newer)
-    d=find(cell2mat({list.time})>newer.time,d_date);
+    d=find(cell2mat({list.tai})>newer.tai,d_date);
     list=list(d);
   end
 end
 if ~isempty(list)
-  [dum,d]=sort(cell2mat({list.time})); list=list(d);
+  [dum,d]=sort(cell2mat({list.tai})); list=list(d);
   global maxlend
   if ~isempty(maxlend) & length(d)>maxlend, list=list(1:maxlend); end
 elseif isempty(newer)
@@ -77,7 +77,7 @@ fseek(fid,32768*511*4+7*4,'bof');
 t=fliplr([sum([fread(fid,4,'ubit4');fread(fid,1,'ubit3')].*[0.001;.01;.1;1;10]) ...
   sum([fread(fid, 1, 'ubit4') fread(fid, 1, 'ubit3')].*[1 10]) ...
   sum([fread(fid, 1, 'ubit4') fread(fid, 1, 'ubit2')].*[1 10])]);
-if t(1)>23 || t(2)>59 || t(3)>59.9999
+if t(1)>23 || t(2)>59
   error(sprintf('Cannot get the time from %s, %d %d %g',file,t))
 end
-d=datenum([d_date(1:3) t]);
+d=timeconv([d_date(1:3) t],'utc2tai');
