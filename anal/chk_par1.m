@@ -136,7 +136,7 @@ else
   a_end  =timeconv(analysis_end,'utc2tai');
   a_year=analysis_start(1);
   d=cell2mat({d_filelist.file})';
-  d=num2cell(timeconv([a_year*ones(size(d)) d],'gup2tai'));
+  d=num2cell(round(timeconv([a_year*ones(size(d)) d],'gup2tai')));
   [d_filelist.tai]=d{:};
   a_ind=0;
  end

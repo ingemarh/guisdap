@@ -101,7 +101,6 @@ if isfinite(ld(1))
  if libisloaded('onera_desp_lib')
   ILAT=1;
  else
-  addpath(fullfile(path_GUP,'models_m'),'-begin')
   secs=timeconv(r_time,'utc2gup');
   magF=IGRF(); DIMO=magF.FELDCOF(secs(1)+secs(2)/86400/365);
  end

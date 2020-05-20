@@ -1,9 +1,25 @@
 function m_iri=iri(par,tim,loc,h)
 % function m_iri=iri(par,tim,loc,h)
 % par parameter list, default [1 4 3]
+%   	 fields 1  electron density/m-3
+%   		2  neutral temperature/K
+%   		3  ion temperature/K
+%   		4  electron temperature/K
+%   		5  O+ density/m-3
+%   		6  H+ densitY/m-3
+%   		7  He+ density/m-3
+%   		8  O2+ density/m-3
+%   		9  NO+ density/m-3
+%              12  heights
 % tim date as [tsec year], default [15552090 1996]
 % loc location, default [69.2 19.2]
-% h heights in km, default [100 590 0]
+% h heights limits and step in km, default [100 590 0] max 100 heights
+%*********************************************
+%* Altitude limits: lower (day/night) upper  *
+%* electron density      60/80 km    1000 km *
+%* temperatures            120 km    3000 km *
+%* ion densities           100 km    1000 km *
+%*********************************************
 if nargin<4, h=[]; end
 if nargin<3, loc=[]; end
 if nargin<2, tim=[]; end
@@ -13,11 +29,8 @@ if length(h)<3 || h(3)==0, h(3)=diff(h(1:2))/99; end
 if isempty(loc), loc=[69.2 19.2]; end
 if isempty(tim), tim=[15552090 1996]; end
 if isempty(par), par=[1 4 3]; end
-if ~libisloaded('libiri')
- global path_GUP
- libdir=fullfile(path_GUP,'lib');
- loadlibrary(fullfile(libdir,'libiri.so'),fullfile(libdir,'iri.h'))
-end
+
+if libisloaded('libiri')
 
 jf=libpointer('int32Ptr',ones(50,1));
 jf.value([4 5 21 23 28:30 33:35 39])=0;
@@ -38,3 +51,20 @@ if find(par==12)
  m_iri(:,find(par==12))=h(1)+(0:nh-1)'*h(3);
 end
 m_iri(find(m_iri==-1))=NaN;
+
+else
+
+iri_m=IRI2012();
+JF = IRI2012.defaultIRIswitches();
+JF(IRI2012.MESSAGES_ON_SW)=false;
+
+JMAG = IGRF.GEOGRAPHIC_COORDINATES;
+id=-tim(1)/86400.;
+ut=tim(1)/3600.+id*24;
+iy=round(tim(2));
+[outf,oarr,iri_m] = iri_m.IRI_SUB(JF,JMAG,loc(1),loc(2),iy,id-1,ut+25,h(1),h(2),h(3));
+m_iri=outf(par,:)';
+d=find(par==12); if length(d)==1, m_iri(:,d)=h(1)+h(3)*(0:len-1)'; end
+d=find(m_iri==-1); if length(d), m_iri(d)=NaN; end
+
+end

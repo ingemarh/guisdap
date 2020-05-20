@@ -7,7 +7,7 @@ function [date,leaps] = timeconv(date0,direction)
 % 
 % date0:     input time to be converted, column vecctor
 % direction: specifies the time formats of the input and output. 
-%            Possible options: '(tai|utc|mat|unx|gup)2(tai|utc|mat|unx|gup)'
+%            Possible options: '(tai|utc|mat|unx|gup|kst)2(tai|utc|mat|unx|gup)'
 %            Default 'utc2tai'
 %
 % time formats:	tai float secs since 1970-01-01
@@ -15,6 +15,7 @@ function [date,leaps] = timeconv(date0,direction)
 %               mat matlab date 
 %               unx float secs since 1970-01-01 without leaps
 %               gup [y,secs] secs>365*86400 for leaps
+%               kst eros3 parameter block yymm ddHH MMSS format
 %
 %               Optional extra column for tai|utc|unx|gup with nanosecs
 %               Optional extra column for mat with leapsecs used
@@ -29,7 +30,7 @@ end
 if nargin<3
   inleap=[];
 end
-f='utc mat unx tai gup';
+f='utc mat unx tai gup kst';
 dir=split(direction,'2');
 unx0=datenum(1970,1,1);
 leapin=[]; ns=[];
@@ -91,6 +92,10 @@ elseif strcmp('gup',dir{1})
   leapin=find(date0(:,2)>=365*86400); % tentative leaps
   date0=date0(:,2)/86400+datenum(date0(:,1),1,1);
 else
+  if strcmp('kst',dir{1})
+    date0=sscanf(sprintf('%04d%04d%04d',date0),'%02d%02d%02d%02d%02d%02d',[6 Inf])';
+    date0(:,1)=date0(:,1)+1900; dir{1}='utc'; ncol=6;
+  end
   if strcmp('utc',dir{1}) && ncol>5 % extract secs>60
     if ncol>6
       ns=date0(:,7); date0(:,6)=date0(:,6)+ns*1e-9; date0(:,7:end)=[];

@@ -325,7 +325,7 @@ while isempty(df)
   end
 end
 d=cell2mat({df.file});
-d=num2cell(timeconv([a_year*ones(size(d)) d],'gup2tai'));
+d=num2cell(round(timeconv([a_year*ones(size(d)) d],'gup2tai')));
 [df.tai]=d{:};
 d_filelist=[d_filelist;df];
 if j>0, fprintf('\n'); end

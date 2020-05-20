@@ -9,7 +9,6 @@
 clear all, clear global, clear functions
 
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local
-finish
 
 path_GUP=which('start_GUP','-all');
 if iscell(path_GUP), path_GUP=char(path_GUP(end)); end
@@ -101,7 +100,6 @@ if ~exist(data_path,'dir'), data_path=path_tmp; end
 if ~exist(result_path,'dir'), result_path=path_tmp; end
 if ~setuplibs
  fprintf('***** using no compiled library enhancements *****\n')
- addpath(fullfile(path_GUP,'models_m'),'-begin')
 elseif libisloaded('onera_desp_lib') 
  addpath(fullfile(path_GUP,'models','irbem-code','matlab'))
  onera_desp_lib_get_mlt(now,[60 20 0]);
