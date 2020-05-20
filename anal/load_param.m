@@ -46,12 +46,10 @@ re=6370;
 npar2D=9; nrpar2D=3; nerr2D=npar2D-4;
 Time=zeros(2,n_tot);
 Leap=zeros(2,n_tot);
-fileslist=cell2mat({list.file}); fileform='%08d%s'; 
-if any(rem(fileslist,1)), fileform='%012.3f%s'; end
 
 for i=1:n_tot
 % clear('r_*','name_*')
-  load(canon(fullfile(list(i).dir,sprintf(fileform,list(i).file,list(i).ext)),0))
+  load(canon(list(i).fname,0))
   if exist('r_Offsetppd')
     rOff=r_Offsetppd;
   elseif exist('r_phasepush')
@@ -91,7 +89,7 @@ for i=1:n_tot
   nsig=regexprep(name_sig,'(\s[012][0-9]:[0-5][0-9]:[0-5][0-9])$',''); %remove tod
   if exist(name_sig,'var'), nsig=split(name_sig); nsig=char(join(nsig(1:end-1))); end
   if isempty(name_strategy)
-    name_strategy=char(regexp(list(i).dir,'[^_]+(?=@)','match')); if strcmp(name_strategy,name_expr), name_strategy=''; end
+    name_strategy=char(regexp(list(i).fname,'[^_]+(?=@)','match')); if strcmp(name_strategy,name_expr), name_strategy=''; end
   end
   if isempty(allnames)
     allnames.ant=name_ant(1:3); allnames.expr=name_expr; allnames.sig=nsig; allnames.strategy=name_strategy;
@@ -186,7 +184,7 @@ if ~isempty(err2D), err2D=err2D(:,s,:); end
 if isempty(name_strategy)
   dt=diff(Time)*86400; name_strategy=sprintf('%.0f',median(dt));
   if std(dt)>10, name_strategy='ant'; end
-  if exist(fullfile(list(1).dir,'.gup'),'file')
+  if exist(fullfile(fileparts(list(1).fname),'.gup'),'file')
     load('-mat',fullfile(data_path,'.gup'),'intper')
     if length(intper)>1
       name_strategy='scan';

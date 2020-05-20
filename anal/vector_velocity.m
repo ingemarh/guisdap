@@ -221,7 +221,7 @@ for tim=timint
        if alti>uperr(2)
         B=geomag(gg_sp',r_time)';
         A=[A;-B(1:3)/norm(B(1:3))];
-        up=15.*cos((rem(datenum(r_time),1)-21.5/24.)*2*pi);
+        up=15.*cos((rem(timeconv(r_time,'utc2tai')/86400,1)-21.5/24.)*2*pi);
         Vll=[Vll;up];
         Vlle=[Vlle;uperr(1)];
        else

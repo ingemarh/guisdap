@@ -33,7 +33,7 @@ global path_exps path_GUP local
 [fl,msg]=getfilelist(fullfile(pl_dir,filesep));
 if msg, error(msg), end
 nfl=length(fl);
-load(canon(fullfile(fl(1).dir,sprintf('%08d%s',fl(1).file,fl(1).ext))))
+load(canon(fl(1).fname))
 
 exps=dir(path_exps); pldef='pl_def'; pdefs=[];
 for i=1:length(exps)
@@ -87,8 +87,7 @@ p_time=zeros(2,nfl);
 upar=zeros(nfreq,nfl);
 for i=1:nfl
  if i>1
-  filename=fullfile(fl(i).dir,sprintf('%08d%s',fl(i).file,fl(i).ext));
-  load(canon(filename,0))
+  load(canon(fl(i).fname,0))
  end
  p_time(:,i)=datenum(row(d_parbl(1:6)))+[-d_parbl(7)/86400;0];
  if nlag>0

@@ -14,25 +14,25 @@ if isempty(dirpath)
 elseif isunix & a_realtime | strfind(dirpath,'?')
   i=' ';
   if ~isempty(newer)
-    i=sprintf(' -newer %s/%08d%s ',newer.dir,newer.file,newer.ext);
+    i=sprintf(' -newer %s ',newer.fname);
   end
-  template=[row(col('\[0-9]')*ones(1,8)) '.mat\*'];
-  dirpath(strfind(dirpath,'\'))=[]; % remove escapes
+  template=[row(col('\[0-9]')*ones(1,8)) '.mat\*'],
+  dirpath(strfind(dirpath,'\'))=[], % remove escapes
   cmd=sprintf('find %s -name %s%s -print 2>/dev/null',dirpath(1:end-1),template,i);
   [status,d]=unix(cmd);
+  whos status d
   if status
     msg=['Error listing mat files in ' dirpath ' ' cmd];
   elseif length(d)
     try
-      d=textscan(d,['%' num2str(length(dirpath)-1) 's/%08d%s']);
-      dirlen=length(d{1});
-      list=repmat(struct('dir','','file',0,'ext',''),[dirlen 1]);
+      d=textscan(d,'%s');
+      dirlen=length(d{1}),
+      list=repmat(struct('fname','','file',0),[dirlen 1]);
+      [list.fname]=d{1}{:};
       for i=1:dirlen
-        list(i).dir=char(d{1}{i});
-        list(i).file=double(d{2}(i));
-        list(i).ext=char(d{3}{i});
+        [~,file]=fileparts(list(i).fname);
+        list(i).file=sscanf(file,'%f');
       end
-      %ist=cell2struct(d,{'dir' 'file' 'ext'},2);
     catch, disp(lasterr)
     end
   end
@@ -52,16 +52,11 @@ else
      dirlist=dir(fullfile(dp,dirs(j).name,'*.mat.bz2'));
      dirlen=length(dirlist);
     end
-    l=repmat(struct('dir',fullfile(dp,dirs(j).name),'file',0,'ext',''),[dirlen 1]);
+    l=repmat(struct('fname','','file',0),[dirlen 1]);
     for i=dirlen:-1:1
-      f=textscan(dirlist(i).name,'%f%s');
-      l(i).file=f{1};
-      f=char(f{2}); if ~strcmp(f(1),'.'), f=['.' f]; end
-      l(i).ext=f;
+      l(i).file=cell2mat(textscan(dirlist(i).name,'%f'));
+      l(i).fname=fullfile(dp,dirs(j).name,dirlist(i).name);
       if isempty(l(i).file), l(i)=[]; end
-      %l(i).file=sscanf(dirlist(i).name,'%08d%*s');
-      %l(i).ext=sscanf(dirlist(i).name,'%*8s%s');
-      %if ~isnumeric(l(i).file) | ~strcmp(l(i).ext(1),'.'), l(i)=[]; end
     end
     list=[list;l];
   end

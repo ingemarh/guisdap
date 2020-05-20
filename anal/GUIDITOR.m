@@ -6,7 +6,7 @@
 %
 % See also: GUISPERT
 %
-if name_site=='S' & d_time(1,1)==2003 & tosecs(d_time(1,:))>22809600 & tosecs(d_time(2,:))<23037600
+if name_site=='S' & d_date>datenum(2003,9,22) & d_date<datenum(2003,9,24,15,20,0)
   %correct a 10 kHz LO2 error in sept 2003 at Sodankyla
   r_phasepush=10e3;
 end
