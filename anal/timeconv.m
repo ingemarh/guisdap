@@ -33,7 +33,7 @@ end
 f='utc mat unx tai gup kst';
 dir=split(direction,'2');
 unx0=datenum(1970,1,1);
-leapin=[]; ns=[];
+leapin=[];
 if ~contains(f,dir{1}) &&  length(dir)>1 && ~contains(f,dir{2})
   error(['Error: ' direction ' is not a possible convert direction.'])
 end
@@ -74,38 +74,41 @@ steptime=cumsum(step);
 jansteps=strfind(stepdate(:,2)','a')'; %guptime can handle leaps over new year
 stepdate=[-Inf;datenum(stepdate);Inf]; %step date conversion
 ncol=size(date0,2);
+ns_in=0;
 %% Arg Checking
-if strcmp('tai',dir{1})
+if contains('tai unx',dir{1})
   if ncol>1
-    ns=date0(:,2); date0(:,1)=date0(:,1)+ns*1e-9;
+    ns=date0(:,2); ns_in=1;
+  else
+    ns=rem(date0,1)*1e9;
   end
-  date0=date0(:,1)/86400+unx0;
-elseif strcmp('unx',dir{1})
-  if ncol>1
-    ns=date0(:,2); date0(:,1)=date0(:,1)+ns*1e-9;
-  end
-  date0=date0(:,1)/86400+unx0;
+  date0=fix(date0(:,1))/86400+unx0;
 elseif strcmp('gup',dir{1})
   if ncol>2
-    ns=date0(:,3); date0(:,2)=date0(:,2)+ns*1e-9;
+    ns=date0(:,3); date0(:,2)=date0(:,2)+ns*1e-9; ns_in=1;
+  else
+    ns=rem(date0(:,2),1)*1e9;
   end
   leapin=find(date0(:,2)>=365*86400); % tentative leaps
-  date0=date0(:,2)/86400+datenum(date0(:,1),1,1);
+  date0=fix(date0(:,2))/86400+datenum(date0(:,1),1,1);
 else
   if strcmp('kst',dir{1})
     date0=sscanf(sprintf('%04d%04d%04d',date0),'%02d%02d%02d%02d%02d%02d',[6 Inf])';
     date0(:,1)=date0(:,1)+1900; dir{1}='utc'; ncol=6;
-  end
-  if strcmp('utc',dir{1}) && ncol>5 % extract secs>60
+  elseif strcmp('utc',dir{1}) && ncol>5 % extract secs>=60
     if ncol>6
-      ns=date0(:,7); date0(:,6)=date0(:,6)+ns*1e-9; date0(:,7:end)=[];
+      ns=date0(:,7); date0(:,7:end)=[]; ns_in=1;
+    else
+      ns=rem(date0(:,6),1)*1e9; date0(:,6)=fix(date0(:,6));
     end
     leapin=find(date0(:,6)>=60); % tentative leaps
   elseif ncol>1
-    inleap=date0(:,2);
-    date0(:,2)=[];
+    inleap=date0(:,2); date0(:,2:end)=[];
   end
   date0=datenum(date0); %will error if not a proper format
+  if ~exist('ns') & ~ns_in
+    ns=rem(date0*86400,1)*1e9; date0=fix(date0*86400)/86400;
+  end
 end
 %% Conversion to tai
 if ~strcmp(dir{1},'tai')
@@ -125,9 +128,11 @@ l=discretize(date0,stepdate+steptime);
 leaps=steptime(l)*86400;
 %% Conversion from tai
 if strcmp(dir{2},'tai')
-  date=(date0-unx0)*86400;
-  if ~isempty(ns)
-    date=[floor(date) ns];
+  date=round((date0-unx0)*86400);
+  if ns_in
+    date=[date ns];
+  else
+    date=date+ns*1e-9;
   end
 elseif strcmp(dir{2},'utc')
   date=date0-steptime(l);
@@ -135,18 +140,22 @@ elseif strcmp(dir{2},'utc')
   l60=discretize(date0,stepdates);
   d=find(rem(l60,2)==0);
   date(d)=date(d)-1;
-  date=datevec(date);
+  date=round(datevec(date));
   ld=length(d);
   date(d,4:6)=[repmat([23 59 60],ld,1)+[zeros(ld,2) date(d,6)]];
-  if ~isempty(ns)
-    date=[fix(date) ns];
+  if ns_in
+    date=[date ns];
+  else
+    date(:,6)=date(:,6)+ns*1e-9;
   end
 else
   date=date0-steptime(l);
   if strcmp('unx',dir{2})
-    date=(date-unx0)*86400;
-    if ~isempty(ns)
-      date=[floor(date) ns];
+    date=round((date-unx0)*86400);
+    if ns_in
+      date=[date ns];
+    else
+      date=date+ns*1e-9;
     end
   elseif strcmp('gup',dir{2})
     stepdates=sort([stepdate+steptime;stepdate(2:end-1)+steptime(1:end-2)]);
@@ -154,9 +163,17 @@ else
     i=find(rem(l60,2)==0 & ismember(l60/2,jansteps));
     dated=datevec(date);
     dated(i,1)=dated(i,1)-1;
-    date=[dated(:,1) (date-datenum(dated(:,1),1,1))*86400];
-    if ~isempty(ns)
-      date=[fix(date) ns];
+    date=[dated(:,1) round((date-datenum(dated(:,1),1,1))*86400)];
+    if ns_in
+      date=[date ns];
+    else
+      date(:,2)=date(:,2)+ns*1e-9;
+    end
+  elseif strcmp('mat',dir{2})
+    if ns_in
+      date=[date ns];
+    else
+      date=date+ns/86400e9;
     end
   end
 end
