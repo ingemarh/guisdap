@@ -107,13 +107,13 @@ if ~isempty(p)
   pos=get(gcf,'defaultaxespos'); xp=pos(1); yp=sum(pos([2 4]));
   axes('Position',[xp yp pos(3) 1-yp],'visible','off');
   suptitle=['\fontsize{24}EISCAT Scientific Association\fontsize{16}' char(10) 'Vector ion drift velocities'];
-  vddt=vdd+[1 -1]/1440;
+  vddt=vdd+[1;-1]/1440;
   t2=[datestr(vddt(2),'dd mmmm yyyy')];
   if t2(1)=='0', t2(1)=[]; end
   if diff(floor(vddt))
    ii=diff(datevec(vddt));
    if ii(2)
-    t2=[datestr(vddt(1),'dd mmmm') ' - ' t2];
+    t2=[datestr(vddt(1),'dd mmm') ' - ' datestr(vddt(2),'dd mmm yyyy')];
    else
     t2=[datestr(vddt(1),'dd') '-' t2];
    end
