@@ -108,7 +108,7 @@ if ~isempty(p)
   axes('Position',[xp yp pos(3) 1-yp],'visible','off');
   suptitle=['\fontsize{24}EISCAT Scientific Association\fontsize{16}' char(10) 'Vector ion drift velocities'];
   vddt=vdd+[1 -1]/1440;
-  t2=[datestr(vddt(2)),'dd mmmm yyyy')];
+  t2=[datestr(vddt(2),'dd mmmm yyyy')];
   if t2(1)=='0', t2(1)=[]; end
   if diff(floor(vddt))
    ii=diff(datevec(vddt));
