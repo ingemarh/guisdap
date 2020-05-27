@@ -2,7 +2,7 @@ function insert_exif(fig,file,exts)
 exif=''; td=[];
 prog='exiftool';
 flags='-overwrite_original';
-ud={'Experiment' 'Radar' 'Copyright' 'Computer' 'Results'};
+ud={'Copyright' 'Experiment' 'Radar' 'Computer' 'Results'};
 fd={'Name'};
 d=findobj(fig,'type','axes');
 for i=d'
@@ -28,15 +28,15 @@ if ~isunix | unix(['which ' prog ' >/dev/null'])
   end
 end
 if strcmp(prog,'exiv2')
-  tags={' -M"set Exif.Image.ImageDescription ' ' -M"set Exif.Image.DocumentName ' ' -M"set Exif.Image.Copyright ' ' -"set Exif.Image.HostComputer ' ' -M"set Exif.Photo.UserComment '};
+  tags={' -M"set Exif.Image.Copyright ' ' -M"set Exif.Image.ImageDescription ' ' -M"set Exif.Image.DocumentName ' ' -"set Exif.Image.HostComputer ' ' -M"set Exif.Photo.UserComment '};
   ftags={' -M"set Exif.Image.ImageID '};
   exif=cmdline(fig,ud,tags,td,fd,ftags,'"');
 elseif strcmp(prog,'exiftool')
-  tags={' -description="' ' -title="' ' -copyright="' ' -author="' ' -comment="'};
+  tags={' -copyright="' ' -description="' ' -title="' ' -author="' ' -comment="'};
   ftags={' -source="'};
   exif=cmdline(fig,ud,tags,td,fd,ftags,'"');
 elseif strcmp(prog,'imwrite')
-  tags={'Description' 'Title' 'Copyright' 'Author' 'Comment'};
+  tags={'Copyright' 'Description' 'Title' 'Author' 'Comment'};
   ftags={'Source'};
   exif=cmdline(fig,ud,tags,td,fd,ftags,[]);
 end

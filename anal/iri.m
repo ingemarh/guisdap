@@ -29,6 +29,7 @@ if length(h)<3 || h(3)==0, h(3)=diff(h(1:2))/99; end
 if isempty(loc), loc=[69.2 19.2]; end
 if isempty(tim), tim=[15552090 1996]; end
 if isempty(par), par=[1 4 3]; end
+nh=diff(h(1:2))/h(3)+1;
 
 if libisloaded('libiri')
 
@@ -37,7 +38,6 @@ jf.value([4 5 21 23 28:30 33:35 39])=0;
 id=fix(-tim(1)/86400);
 ut=tim(1)/3600+id*24;
 iy=round(tim(2));
-nh=diff(h(1:2))/h(3)+1;
 if nh>500, error('Max 500 heights'), end
 outf=libpointer('singlePtr',zeros(20,1000));
 oarr=libpointer('singlePtr',zeros(100,1));
@@ -64,7 +64,7 @@ ut=tim(1)/3600.+id*24;
 iy=round(tim(2));
 [outf,oarr,iri_m] = iri_m.IRI_SUB(JF,JMAG,loc(1),loc(2),iy,id-1,ut+25,h(1),h(2),h(3));
 m_iri=outf(par,:)';
-d=find(par==12); if length(d)==1, m_iri(:,d)=h(1)+h(3)*(0:len-1)'; end
+d=find(par==12); if length(d)==1, m_iri(:,d)=h(1)+h(3)*(0:nh-1)'; end
 d=find(m_iri==-1); if length(d), m_iri(d)=NaN; end
 
 end

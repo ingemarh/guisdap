@@ -77,19 +77,22 @@ np=length(plots);
 ntp=[];
 for i=1:np, if ~isempty(plots{i}), ntp=[ntp i]; end, end
 np=length(ntp);
+set(gcf,'DefaultAxesFontSize',10,'DefaultTextFontSize',10,'PaperPosition',[0.4 0.7 20.65 28.4],'Name',r)
 if strcmp(ptype,'t')
  npc=1; npr=np;
  if np==1
-  orient rotated
+  %orient rotated
+  ppos=get(gcf,'PaperPosition'); s=3.4;
+  set(gcf,'PaperOrient','landscape','PaperPosition',[0.7 0.4 28.4 19.65])
  else
-  orient tall
+  %orient tall
   sq=np^2;
  end
 else
  npc=floor(sqrt(np)); npr=ceil(np/npc);
  %sq=sqrt(8);
  sq=3*(npr-1.5).^2+2;
- orient tall
+ %orient tall
 end
 for i=1:np
  subplot(npr,npc,np+1-i,'align')
@@ -115,6 +118,7 @@ if strcmp(ptype,'p') || np>1
 end
 print('-dpdf',r)
 print('-dpng256',r)
+insert_exif(gcf,r,{'pdf' 'png'})
 if strcmp(ptype,'p') || np>1
  for i=1:length(gc)
   set(gc(i),'pos',pos{i})

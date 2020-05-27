@@ -35,6 +35,7 @@ load(vfile)
 if isempty(Vdate)
  error('Empty data file')
 end
+global local
 degrad=pi/180;
 np=size(Vdate,2);
 %%%%
@@ -62,7 +63,6 @@ end
 d=find(Vpos(:,3)>alt(1) & Vpos(:,3)<alt(2) & Vpos(:,1)>lat(1) & Vpos(:,1)<lat(2));
 MLT=[]; ilat=[];
 if ~isempty(p)
- global path_GUP
  ifor='\Lambda';
  dir={'East_{\perp}' 'North_{\perp}' 'Up_{//}'};
  if strfind(p,'V')
@@ -89,6 +89,7 @@ if ~isempty(p)
   START_TIME=minput('Start time',START_TIME);
   END_TIME=minput('  End time',END_TIME);
  end
+ vdd=datenum([START_TIME;END_TIME]);
  if verbose(1)<2
   maxv=norm(vp(d,:),1)/length(d);
   if verbose
@@ -100,46 +101,43 @@ if ~isempty(p)
   end
  end
  d=d(find(max(vpe(d,:),[],2)<maxverr & max(abs(vp(d,:)),[],2)<maxv));
- if isempty(d)
-  error('No data within the limits')
- end
  vd=mean(Vdate(:,d));
  if isempty(findobj(gcf,'userdata','logo'))
   ax=gca;
-  tit=datestr(mean(vd),29);
   pos=get(gcf,'defaultaxespos'); xp=pos(1); yp=sum(pos([2 4]));
   axes('Position',[xp yp pos(3) 1-yp],'visible','off');
-  text('Position',[0.5 0.5],... %'VerticalAlignment','bottom',...
-    'Horizontal','center','FontSize',24,'FontWeight','bold',...
-    'String','EISCAT Scientific Association','userdata','Copyright');
-  %load(fullfile(path_GUP,'matfiles','logo'))
-  %axes('Position',[xp/10 yp xp/2 1-yp]); plot(y,x,'.k')
-  %axis square
-  %hds=get(gca,'child'); set(hds,'markersize',1,'userdata','logo')
-  %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
-  axes('Position',[xp/10 yp xp/2 1-yp]); eiscatlogo(1)
+  suptitle=['\fontsize{24}EISCAT Scientific Association\fontsize{16}' char(10) 'Vector ion drift velocities'];
+  t2=[datestr(END_TIME,'dd mmmm yyyy')];
+  if t2(1)=='0', t2(1)=[]; end
+  if diff(floor(vdd))
+   ii=diff(datevec(vdd));
+   if ii(2)
+    t2=[datestr(vdd(1),'dd mmmm') ' - ' t2];
+   else
+    t2=[datestr(vdd(1),'dd') '-' t2];
+   end
+   if t2(1)=='0', t2(1)=[]; end
+  end
+  nstrat=regexp(name_strategy,'[A-Z0-9]');
+  t2=sprintf('%s %s  %s %d',name_ant,lower(name_strategy(nstrat)),t2);
+  if ~isempty(name_expr)
+    t2=[name_expr ' ' t2];
+  end
+  suptitle=[suptitle '\fontsize{12}' char(10) t2];
+  text('Position',[0.5 0.1],'VerticalAlignment','bottom','Horizontal','center','FontWeight','bold',...
+    'String',suptitle,'userdata','Copyright');
+  text('Position',[0 0.1],'Color',[.5 .5 .5],'Horizontal','Left','FontSize',8,'VerticalAlignment','bottom',...
+    'String',['Produced@' local.host ' ' date],'userdata','Computer');
+  axes('Position',[0 0.1+0.9*yp xp 0.9*(1-yp)]); eiscatlogo(1)
   set(gca,'userdata','logo')
   set(gcf,'currentaxes',ax);
  end
- vdd=[Vdate(2,d(1)) Vdate(1,d(end))];
- tit=[datestr(vdd(2),'dd mmm yyyy')];
- if tit(1)=='0', tit(1)=[]; end
- if diff(floor(vdd))
-  ii=diff(datevec(vdd));
-  if ii(2)
-   tit=[datestr(vdd(1),'dd mmm') ' - ' tit];
-  else
-   tit=[datestr(vdd(1),'dd') '-' tit];
-  end
-  if tit(1)=='0', tit(1)=[]; end
- end
- if strfind(p,'g')
-  hgt=sprintf('%.0fkm',mean(Vpos(d,3)));
- else
-  hgt=[];
+ if isempty(d)
+  warning('No data within the limits')
+  set(gca,'visible','off'), return
  end
  if strfind(p,'t')
-  xlim=[datenum(START_TIME) datenum(END_TIME)];
+  xlim=vdd;
   tickform='HH:MM';
   np=size(vp,2);
   if verbose(1)<2
@@ -167,20 +165,22 @@ if ~isempty(p)
     ylabel([yfor1 ' ' dir{i} ' [' yfor2 ']'])
     set(gca,'xgrid','on','ygrid','on')
     mydatetick(gca,xlim,1)
-    text('String',hgt,'Units','Normalized','Position',[1.025 0.5],'Rotation',-90,'Color','k')
+    %text('String',sprintf('Height %g-%g km',alt),'Units','Normalized','Position',[1.025 0.5],'Rotation',-90,'Color','k','Horiz','center')
    end
   else
    plot(vdt,vpt)
    set(gca,'XLim',xlim)
-   ylabel([yfor1 ' [' yfor2 '] ' hgt])
+   ylabel([yfor1 ' [' yfor2 ']'])
    set(gca,'xgrid','on','ygrid','on')
    mydatetick(gca,xlim,1)
    color=get(gca,'ColorOrder');
    for i=1:np
-    text('String',dir{i},'Units','Normalized','Position',[1.13-i*.035 0.5],'Rotation',-90,'Color',color(i,:))
+    text('String',dir{i},'Units','Normalized','Position',[1.13-i*.035 0.5],'Rotation',-90,'Color',color(i,:),'Horiz','center')
    end
   end
-  xlabel([tit ' [UT]'])
+  xlabel('UNIVERSAL TIME')
+  text('Position',[1 1],'Horizontal','Right','FontSize',10,'Units','Normalized','VerticalAlignment','bottom',...
+    'String',sprintf('Altitude %g-%g km',alt));
  elseif strfind(p,'p')
   if verbose(1)<2
    minlat=10*floor(min(Vpos(d,1)/10));
@@ -238,10 +238,7 @@ if ~isempty(p)
    text(i,0,sprintf('%d',90-i),'horiz','center')
   end
   text(minrlat,0,['  ' ifor])
-  if hgt
-   tit=[tit ' Height=' hgt];
-  end
-  text(0,-minrlat,tit,'horiz','center','vertical','top')
+  text(0,-minrlat,sprintf('Altitude %g-%g km',alt),'horiz','center','vertical','top')
  end
 end
 if nargout>0
