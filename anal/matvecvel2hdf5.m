@@ -33,7 +33,7 @@ for t1=t1all
     t2all=unique(sort(Vdate(2,d)));
     for t2=t2all
         d1=d(find(Vdate(2,d)==t2));
-        nrec = [nrec; length(d1)];
+        nrec  = [nrec; length(d1)];
         vdate = [vdate;Vdate(:,d1)'];
         vpos  = [vpos;Vpos(d1,:)]; 
         vg    = [vg;Vg(d1,:)];
@@ -54,7 +54,6 @@ end
 
 if exist('Vdate','var')
     parameters_vdate = {'time1' 'time2'};
-    %matfile.data.utime = [posixtime(datetime(datestr(vdate(:,1)))) posixtime(datetime(datestr(vdate(:,1))))];
     [matfile.data.utime,leaps] = timeconv(vdate,'mat2unx');
     for ii = 1:2
         a = find(strcmp(char(parameters_vdate(ii)),parameters_list)==1);
@@ -229,7 +228,7 @@ if exist('name_exps','var'); nn = nn + 1;
         if i == 1
             nameexps = name_exps(1,:);
         else
-            nameexps = [nameexps ', ' name_exps(i,:)];
+            nameexps = [nameexps ' ' name_exps(i,:)];
         end
     end
     infoname(2) = {nameexps};
@@ -244,7 +243,7 @@ if exist('name_ants','var'); nn = nn + 1;
         if i == 1
             nameants = name_ants(1,:);
         else
-            nameants = [nameants ', ' name_ants(i,:)];
+            nameants = [nameants ' ' name_ants(i,:)];
         end
     end
     infoname(2) = {nameants};
@@ -255,7 +254,14 @@ if exist('name_ants','var'); nn = nn + 1;
 end
 if exist('name_strategies','var'); nn = nn + 1;
     infoname(1) = {'name_strategies'};
-    infoname(2) = {name_strategies};
+    for i = 1:length(name_strategies(:,1))
+        if i == 1
+            namestrategies = name_strategies(1,:);
+        else
+            namestrategies = [namestrategies ' ' name_strategies(i,:)];
+        end
+    end
+    infoname(2) = {namestrategies};
     a = find(strcmp('name_strategy',parameters_list)==1);                
     [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
     infoname(3) = infodesc;
