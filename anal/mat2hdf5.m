@@ -17,6 +17,8 @@ if isstring(datapath)
     datapath = char(datapath);    % need to be char class
 end
 
+hdf5ver = '0.9.0';
+
 [~,matfolder] = fileparts(matpath);
 
 filelist   = dir(fullfile(matpath,'*.mat')); 
@@ -651,6 +653,14 @@ if exist('r_ver','var'); nn = nn + 1;
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';
 end
+nn = nn + 1; 
+infoname(1) = {'EISCAThdf5_ver'};
+infoname(2) = {hdf5ver};
+a = find(strcmp('EISCAThdf5_ver',parameters_list)==1);                
+[~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+infoname(3) = infodesc;
+matfile.metadata.names(:,nn) = infoname';
+
 
 aa = find(cellfun('isempty',matfile.metadata.par0d(6,:)));    matfile.metadata.par0d(6,aa)= {'0'};
 aa = find(cellfun('isempty',matfile.metadata.par0d(7,:)));    matfile.metadata.par0d(7,aa)= {'0'};

@@ -310,42 +310,15 @@ for ii = 1:npar
     end
 end
 
-
-% % add the RECloc data
-% cc1 = find(strcmp(exprparnames,'instrument latitude')==1);
-% cc2 = find(strcmp(exprparnames,'instrument longitude')==1);
-% cc3 = find(strcmp(exprparnames,'instrument altitude')==1);
-% 
-% %gupparameters_list = text(:,1);
-% if cc1, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc1})];
-%     aa = find(strcmp('RECloc1',gupparameters_list)==1);
-%     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
-%     info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-%     matfile.metadata.par0d = [matfile.metadata.par0d info'];
-% end
-% if cc2, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc2})];
-%     aa = find(strcmp('RECloc2',gupparameters_list)==1);
-%     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
-%     info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-%     matfile.metadata.par0d = [matfile.metadata.par0d info'];
-% end
-% if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})];
-%     aa = find(strcmp('RECloc3',gupparameters_list)==1);
-%     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
-%     info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-%     matfile.metadata.par0d = [matfile.metadata.par0d info'];
-% end
-
 % TAI time (leapseconds)
-[~,leaps] = timeconv(matfile.data.utime,'unx2tai');      % leap seconds between utc --> tai format
-
+[~,leaps] = timeconv(double(matfile.data.utime),'unx2tai');      
 if length(unique(leaps)) == 1
     if isfield(matfile.data,'par0d')
     	ll0 = length(matfile.data.par0d);
     else	
     	ll0 = 0;
     end
-    matfile.data.par0d(ll0+1) = leaps1(1);  
+    matfile.data.par0d(ll0+1) = leaps(1);  
     a = find(strcmp('leaps',gupparameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};

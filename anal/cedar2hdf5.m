@@ -382,15 +382,14 @@ if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})];
 end
 
 % TAI time (leapseconds)
-[~,leaps] = timeconv(matfile.data.utime,'unx2tai');      % leap seconds between utc --> tai format
-
+[~,leaps] = timeconv(double(matfile.data.utime),'unx2tai');
 if length(unique(leaps)) == 1
     if isfield(matfile.data,'par0d')
     	ll0 = length(matfile.data.par0d);
     else	
     	ll0 = 0;
     end
-    matfile.data.par0d(ll0+1) = leaps1(1);  
+    matfile.data.par0d(ll0+1) = leaps(1);  
     a = find(strcmp('leaps',gupparameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
