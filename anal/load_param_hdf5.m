@@ -291,8 +291,7 @@ if ii2d_pp == 1
         if ~isempty(pperror), pperror_tomerge = pperror(rangerange); else pperror_tomerge = []; end
         if ~isempty(ppw), ppw_tomerge = ppw(rangerange); else ppw_tomerge = []; end
         if ~isempty(pprange), pprange_tomerge = pprange(rangerange); else pprange_tomerge = []; end
-        [pp_merged,pperror_merged,ppw_merged,pprange_merged,pprofile_id] = pp_merge(pp_tomerge,pperror_tomerge,ppw_tomerge,pprange_tomerge);
-        %[pp_merged,pperror_merged,ppw_merged,pprange_merged,pprofile_id] = pp_merge(pp(rangerange),pperror(rangerange),ppw(rangerange),pprange(rangerange));
+        [pprange_merged,pperror_merged,ppw_merged,pp_merged,pprofile_id] = pp_merge(pprange_tomerge/1000,pperror_tomerge,ppw_tomerge/1000,pp_tomerge);   % /1000: m --> km 
         npprange_merged(ii) = length(pprange_merged);
         rpar2D(1:npprange_merged(ii),ii,:) = [pprange_merged pprange_merged pp_merged];
         npprange_tmp = npprange_tmp + npprange(ii);

@@ -14,6 +14,7 @@ global path_GUP %result_path
 %     datapath = char(datapath);    % need to be char class
 % end
 
+
 load(matfile_vel)
 
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
@@ -21,6 +22,7 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 parameters_list = text(:,1);
 
 vdate = [];
+vleap = [];
 vpos  = [];
 vg    = [];
 vgv   = [];
@@ -35,6 +37,9 @@ for t1=t1all
         d1=d(find(Vdate(2,d)==t2));
         nrec  = [nrec; length(d1)];
         vdate = [vdate;Vdate(:,d1)'];
+        if exist('Vleap','var')
+         vleap = [vleap;Vleap(:,d1)'];
+        end
         vpos  = [vpos;Vpos(d1,:)]; 
         vg    = [vg;Vg(d1,:)];
         vgv   = [vgv;Vgv(d1,:)];
@@ -51,10 +56,12 @@ else
     matfile.data.par1d = nrec;
     matfile.metadata.par1d = info';
 end
-
+keyboard
 if exist('Vdate','var')
     parameters_vdate = {'time1' 'time2'};
-    [matfile.data.utime,leaps] = timeconv(vdate,'mat2unx');
+    %[matfile.data.utime,leaps] = timeconv(vdate,'mat2unx');
+    keyboard
+    [matfile.data.utime,leaps] = reshape(timeconv([vdate(:) vleap(:)],'mat2unx'),[],2);
     for ii = 1:2
         a = find(strcmp(char(parameters_vdate(ii)),parameters_list)==1);
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
@@ -67,7 +74,8 @@ end
 n = 0;
 if exist('Vpos','var')
     parameters_vpos = {'h_h' 'lon' 'lat'};
-    matfile.data.par2d(:,n+1:n+3) = vpos;
+    matfile.data.par2d(:,n+1)     = vpos(:,1)*1000;  % km --> m
+    matfile.data.par2d(:,n+2:n+3) = vpos(:,2:3);
     for ii = 1:3
         n = n + 1; 
         a = find(strcmp(char(parameters_vpos(ii)),parameters_list)==1);
@@ -101,7 +109,6 @@ if exist('Vgv','var')
         matfile.metadata.par2d(:,n) = info';
     end
 end
-
 
 % store the Vinput content
 if exist('Vinputs','var')

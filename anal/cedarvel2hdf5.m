@@ -17,11 +17,13 @@ datapar = h5read(hdf5file,'/Metadata/Data Parameters');
 data    = h5read(hdf5file,'/Data/Table Layout');
 exprpar = h5read(hdf5file,'/Metadata/Experiment Parameters');
 
+hdf5ver = '0.9.0';
+
 exprparnames = cellstr(exprpar.name');
 exprparvalues = cellstr(exprpar.value');
 
 for ii = 1:length(exprparnames)
-    matfile.metadata.experiment.(char(regexprep(exprparnames(ii),' ','_'))) = {exprparvalues{ii}};
+    matfile.metadata.software.experiment.(char(regexprep(exprparnames(ii),' ','_'))) = {exprparvalues{ii}};
 end
 
 aa = find(strcmp(exprparnames,'Cedar file name')==1);
@@ -73,8 +75,8 @@ if kindats(1) >= 6800
 else
     name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
 end
-matfile.metadata.experiment.name_expr = {name_expr}; 
-matfile.metadata.experiment.intper_median = {num2str(intper_med)};
+matfile.metadata.software.experiment.name_expr = {name_expr}; 
+%matfile.metadata.experiment.intper_median = {num2str(intper_med)};
 
 datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' num2str(intper_med) '@' name_ant];
 storepath = fullfile(datapath,datafolder);
@@ -203,8 +205,8 @@ for ii = 1:npar
             continue
         else
             parameterdata = data.(char(Parsinfile_list(ii)));
-            if strcmp(Parsinfile_list(ii),'power')
-                parameterdata = parameterdata*1000;   % kW --> W
+            if contains('gdalt range power',Parsinfile_list(ii))
+                parameterdata = parameterdata*1000;   % km --> m, kW --> W
             end
             if strcmp(Parsinfile_list(ii),'nsamp') && isfield(data,'nsampi')
                 parameterdata = parameterdata + data.nsampi;   % nsamp = nsamp+nsampi
@@ -274,7 +276,6 @@ for ii = 1:npar
                 end
                 start = start + nrec(kk,jj);
             end
-            
             
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
             
@@ -387,7 +388,8 @@ end
 
 software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = [];
-matfile.metadata.software_link = {software};
+matfile.metadata.software.software_link = {software};
+matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
 matfile.metadata.level2_links = level2_link;
 
 % Delete any empty fields from the structure

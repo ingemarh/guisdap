@@ -23,12 +23,12 @@ end
 
 inform2 = h5info(EISCAThdf5file,'/metadata');
 metagroups = {inform2.Datasets.Name}';
-if isempty(find(strcmp(metagroups,'/metadata/gfd'))) && isempty(find(strcmp(metagroups,'/metadata/experiment')))
+if isempty(find(strcmp(metagroups,'/metadata/software/gfd'))) && isempty(find(strcmp(metagroups,'/metadata/software/experiment')))
     fields = fieldnames(experiment);
     for ii = 1:length(fields)
-        strds2hdf5(EISCAThdf5file,'/metadata/experiment',char(fields(ii)),experiment.(char(fields(ii))))
+        strds2hdf5(EISCAThdf5file,'/metadata/software/experiment',char(fields(ii)),experiment.(char(fields(ii))))
     end
 else
-    display('/metadata/gfd or /metadata/experiment already exists in the new HDF5-file.')
+    display('/metadata/software/gfd or /metadata/software/experiment already exists in the new HDF5 file.')
     return
 end

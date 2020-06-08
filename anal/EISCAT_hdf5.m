@@ -168,14 +168,14 @@ if ~isempty(vecvel_files)
 end
 
 if npdf
-     strds2hdf5(EISCATvecvel_hdf5file,'/metadata','figure_links',pdf_forHDF5')
+     strds2hdf5(EISCATvecvel_hdf5file,'/figures','figure_links',pdf_forHDF5')
      npdf = 0;
      pdf_forHDF5 = {};
 end
 
 
 for ii = 1:length(data_files)
-    display(['Handling ' data_files{ii} ' at the moment ...'])
+    disp(['Handling ' data_files{ii} ' at the moment ...'])
     if contains(data_files{ii},'.tar.gz')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
@@ -344,7 +344,7 @@ for ii = 1:length(data_files)
     end 
     
     if npdf
-        strds2hdf5(EISCAThdf5file,'/metadata','figure_links',pdf_forHDF5')
+        strds2hdf5(EISCAThdf5file,'/figures','figure_links',pdf_forHDF5')
         npdf = 0;
         clear pdf_forHDF5
     end
@@ -368,11 +368,11 @@ for ii = 1:length(data_files)
     end
     
     % Check if metadata exist
-    info = h5info(EISCAThdf5file,'/metadata');
+    info = h5info(EISCAThdf5file,'/metadata/software');
     metagroups = {info.Groups.Name}';
     hdf5fileformeta = [];
    
-    if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metagroups,'/metadata/gfd')))
+    if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metagroups,'/metadata/software/gfd'),1))
         [~,tarfilename1,~] = fileparts(data_files{ii});
         [~,tarfilename,~]  = fileparts(tarfilename1);
         if ~isempty(hdf5ncar_files)
@@ -384,7 +384,7 @@ for ii = 1:length(data_files)
         if isempty(hdf5fileformeta) && length(data_files) == 1
             hdf5fileformeta = hdf5rest_files{1};
         end
-        disp(hdf5fileformeta)
+        disp(['gfd was missing ... Taking metadata from' hdf5fileformeta '.'])
         if hdf5fileformeta
             metacompl(hdf5fileformeta,EISCAThdf5file)  
         end
@@ -420,7 +420,7 @@ for ii = 1:length(data_files)
             store_image2Hdf5(newpng,EISCAThdf5file);
             copyfile(newpdf,storepath)
             [~,pdfname,ext]=fileparts(newpdf);
-            strds2hdf5(EISCAThdf5file,'/metadata','figure_links',{[pdfname ext]})
+            strds2hdf5(EISCAThdf5file,'/figures','figure_links',{[pdfname ext]})
         end
     end  
     copyfile(data_files{ii},storepath)

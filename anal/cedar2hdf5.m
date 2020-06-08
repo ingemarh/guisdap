@@ -3,6 +3,7 @@
 function [storepath,EISCAThdf5file] = cedar2hdf5(hdf5file,datapath)
 
 global path_GUP 
+hdf5ver = '0.9.0';
 
 if nargin<1
     error('A .hdf5 (or .hdf) file is needed as input.')
@@ -22,7 +23,7 @@ exprparnames = cellstr(exprpar.name');
 exprparvalues = cellstr(exprpar.value');
 
 for ii = 1:length(exprparnames)
-    matfile.metadata.experiment.(char(regexprep(exprparnames(ii),' ','_'))) = {exprparvalues{ii}};
+    matfile.metadata.software.experiment.(char(regexprep(exprparnames(ii),' ','_'))) = {exprparvalues{ii}};
 end
 
 aa = find(strcmp(exprparnames,'Cedar file name')==1);
@@ -62,7 +63,7 @@ if intper_med < 10
 else
     name_strategy = num2str(intper_med);
 end
-matfile.metadata.experiment.intper_median = {num2str(intper_med)};
+%matfile.metadata.software.experiment.intper_median = {num2str(intper_med)};
 
 aa = find(strcmp(exprparnames,'instrument')==1);
 if contains(char(exprparvalues(aa)),'Kiruna'), name_ant = 'kir'; 
@@ -77,7 +78,7 @@ if kindats(1) >= 6800
 else
     name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
 end
-matfile.metadata.experiment.name_expr = {name_expr}; 
+matfile.metadata.software.experiment.name_expr = {name_expr}; 
 
 datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant];
 storepath = fullfile(datapath,datafolder);
@@ -221,8 +222,8 @@ for ii = 1:npar
             continue
         else
             parameterdata = data.(char(Parsinfile_list(ii)));
-            if strcmp(Parsinfile_list(ii),'power')
-                parameterdata = parameterdata*1000;   % kW --> W
+            if contains('gdalt range power',Parsinfile_list(ii)) 
+                parameterdata = parameterdata*1000;   % km --> m, kW --> W
             end
             if strcmp(Parsinfile_list(ii),'nsamp') && isfield(data,'nsampi')
                 parameterdata = parameterdata + data.nsampi;   % nsamp = nsamp+nsampi
@@ -374,7 +375,7 @@ if cc2, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc2})];
     info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
     matfile.metadata.par0d = [matfile.metadata.par0d info'];
 end
-if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})];
+if cc3, matfile.data.par0d = [matfile.data.par0d str2num(exprparvalues{cc3})*1000];
     aa = find(strcmp('RECloc3',gupparameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
     info(4) = {'-'}; info(6:7) = {'0' num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
@@ -425,14 +426,6 @@ if exist('name_ant','var'); nn = nn + 1;
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';
 end
-if exist('name_strategy'); nn = nn + 1;
-    infoname(1) = {'name_strategy'};
-    infoname(2) = {name_strategy};
-    a = find(strcmp('name_strategy',gupparameters_list)==1);                
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;    
-    matfile.metadata.names(:,nn) = infoname';
-end
 
 % DataCite
 symbols = ['a':'z' 'A':'Z' '0':'9'];
@@ -475,8 +468,12 @@ end
 
 software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = [];
-matfile.metadata.software_link = {software};
+matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
+matfile.metadata.software.software_link = {software};
 matfile.metadata.level2_links = level2_link;
+if exist('name_strategy')
+    matfile.metadata.software.strategy = {'name_strategy'};
+end
 
 
 

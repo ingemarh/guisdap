@@ -53,14 +53,14 @@ if exist('r_gfd','var')
             end
             extra(s,:)=[];
             if ~isempty(extra)
-                matfile.metadata.gfd.extra = {row([extra ones(size(extra,1))*'#']')};
+                matfile.metadata.software.gfd.extra = {row([extra ones(size(extra,1))*'#']')};
             else
-                matfile.metadata.gfd.extra = {'None'};
+                matfile.metadata.software.gfd.extra = {'None'};
             end
         elseif ~ischar(r_gfd.(char(gf)))
-            matfile.metadata.gfd.(char(gf)) = {num2str(r_gfd.(char(gf)))};
+            matfile.metadata.software.gfd.(char(gf)) = {num2str(r_gfd.(char(gf)))};
         else
-            matfile.metadata.gfd.(char(gf)) = {r_gfd.(char(gf))};
+            matfile.metadata.software.gfd.(char(gf)) = {r_gfd.(char(gf))};
         end
     end
     starttime = datestr(r_gfd.t1,'yyyy-mm-ddTHH:MM:SS');
@@ -72,19 +72,20 @@ if exist('r_gfd','var')
     
 elseif ~isempty(gupfilecheck)
     load('-mat',gupfile);
-    if exist('name_expr','var'),    matfile.metadata.gfd.name_expr      = {name_expr};           end
-    if exist('expver','var'),       matfile.metadata.gfd.expver         = {num2str(expver)};     end
-    if exist('siteid','var'),       matfile.metadata.gfd.siteid         = {num2str(siteid)};     end
-    if exist('data_path','var'),    matfile.metadata.gfd.data_path      = {data_path};           end
-    if exist('result_path','var'),  matfile.metadata.gfd.result_path    = {result_path};         end 
-    if exist('intper','var'),       matfile.metadata.gfd.intper         = {num2str(intper)};  
+    if exist('name_expr','var'),    matfile.metadata.software.gfd.name_expr      = {name_expr};           end
+    if exist('expver','var'),       matfile.metadata.software.gfd.expver         = {num2str(expver)};     end
+    if exist('siteid','var'),       matfile.metadata.software.gfd.siteid         = {num2str(siteid)};     end
+    if exist('data_path','var'),    matfile.metadata.software.gfd.data_path      = {data_path};           end
+    if exist('result_path','var'),  matfile.metadata.software.gfd.result_path    = {result_path};         end 
+    if exist('intper','var'),       matfile.metadata.software.gfd.intper         = {num2str(intper)};  
         if ~exist('intper_med','var'), intper_med = median(intper); intper_med_str = num2str(intper_med); end
-                                    matfile.metadata.gfd.intper_median  = {num2str(intper_med)}; end
-    if exist('t1','var'),           matfile.metadata.gfd.t1             = {num2str(t1)};         end
-    if exist('t2','var'),           matfile.metadata.gfd.t2             = {num2str(t2)};         end
-    if exist('rt','var'),           matfile.metadata.gfd.rt             = {num2str(rt)};         end
-    if exist('figs','var'),         matfile.metadata.gfd.figs           = {num2str(figs)};       end
-    if exist('path_exps','var'),    matfile.metadata.gfd.path_exps      = {path_exps};           end
+                                    %matfile.metadata.software.gfd.intper_median  = {num2str(intper_med)};
+    end
+    if exist('t1','var'),           matfile.metadata.software.gfd.t1             = {num2str(t1)};         end
+    if exist('t2','var'),           matfile.metadata.software.gfd.t2             = {num2str(t2)};         end
+    if exist('rt','var'),           matfile.metadata.software.gfd.rt             = {num2str(rt)};         end
+    if exist('figs','var'),         matfile.metadata.software.gfd.figs           = {num2str(figs)};       end
+    if exist('path_exps','var'),    matfile.metadata.software.gfd.path_exps      = {path_exps};           end
     if exist('extra','var')
         for r = 1:size(extra,1)
             if contains(extra(r,:),'%')
@@ -93,9 +94,9 @@ elseif ~isempty(gupfilecheck)
         end
         extra(s,:)=[];
         if ~isempty(extra)
-            matfile.metadata.gfd.extra = {row([extra ones(size(extra,1))*'#']')};
+            matfile.metadata.software.gfd.extra = {row([extra ones(size(extra,1))*'#']')};
         else
-            matfile.metadata.gfd.extra = {'None'};
+            matfile.metadata.software.gfd.extra = {'None'};
         end
         
     end
@@ -106,10 +107,8 @@ end
 if ~exist('intper_med','var')
     intper_med = median(intper_vec);
 end
-if exist('intper_med_str','var')
-    matfile.metadata.gfd.intper_median = {intper_med_str};
-else
-    intper_med_str = num2str(intper_med);    % don't save to .gfd.intper_median in this case, since there is no gfd/gupfile
+if ~exist('intper_med_str','var')
+    intper_med_str = num2str(intper_med);
 end
 
 if ~exist('name_strategy','var')
@@ -159,7 +158,7 @@ end
 
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
-matfile.metadata.software_link = {software};
+%matfile.metadata.software_link = {software};
 if ~isempty(level2_link)
     matfile.metadata.level2_links = {level2_link};
 end
@@ -478,15 +477,15 @@ for ii = 1:length(parameters)
         evalc([char(parameters(ii)) '=par']);
     end
 end
-
+keyboard
 matfile.data.par1d    = [h_Magic_const h_az h_el h_Pt...
-    h_SCangle h_XMITloc h_RECloc h_Tsys h_code h_om0 h_m0...
-    h_phasepush h_Offsetppd h_gain h_fradar nh npprange];
+    h_SCangle h_XMITloc(:,1:2) h_XMITloc(:,3)*1000 h_RECloc(:,1:2) h_RECloc(:,3)*1000 ...
+    h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar nh npprange];
 
-matfile.data.par2d    = [h_h h_range h_param h_error h_apriori...
-    h_apriorierror h_status h_dp h_res h_w];
+matfile.data.par2d    = [h_h*1000 h_range*1000 h_param h_error h_apriori...
+    h_apriorierror h_status h_dp h_res h_w*1000];
 
-matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
+matfile.data.par2d_pp = [h_pprange*1000 h_pp h_pperr h_ppw*1000];
 
 imcol = find(any(imag(matfile.data.par1d) ~= 0) == 1);
 for kk = imcol
@@ -637,30 +636,25 @@ if exist('name_sig','var'); nn = nn + 1;
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';
 end
-if exist('name_strategy'); nn = nn + 1;
-    infoname(1) = {'name_strategy'};
-    infoname(2) = {name_strategy};
-    a = find(strcmp('name_strategy',parameters_list)==1);                
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;    
-    matfile.metadata.names(:,nn) = infoname';
-end
-if exist('r_ver','var'); nn = nn + 1; 
-    infoname(1) = {'gupver'};
-    infoname(2) = {num2str(r_ver)};
-    a = find(strcmp('h_ver',parameters_list)==1);                
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;
-    matfile.metadata.names(:,nn) = infoname';
-end
-nn = nn + 1; 
-infoname(1) = {'EISCAThdf5_ver'};
-infoname(2) = {hdf5ver};
-a = find(strcmp('EISCAThdf5_ver',parameters_list)==1);                
-[~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-infoname(3) = infodesc;
-matfile.metadata.names(:,nn) = infoname';
 
+
+% nn = nn + 1; 
+% infoname(1) = {'EISCAThdf5_ver'};
+% infoname(2) = {hdf5ver};
+% a = find(strcmp('EISCAThdf5_ver',parameters_list)==1);                
+% [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+% infoname(3) = infodesc;
+% matfile.metadata.names(:,nn) = infoname';
+
+%%% More software
+matfile.metadata.software.software_link = {software};
+matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
+if exist('r_ver','var')
+    matfile.metadata.software.GUISDAP_ver = {num2str(r_ver)};
+end
+if exist('name_strategy')
+    matfile.metadata.software.strategy = {'name_strategy'};
+end
 
 aa = find(cellfun('isempty',matfile.metadata.par0d(6,:)));    matfile.metadata.par0d(6,aa)= {'0'};
 aa = find(cellfun('isempty',matfile.metadata.par0d(7,:)));    matfile.metadata.par0d(7,aa)= {'0'};
@@ -827,7 +821,7 @@ if addfigs
         end
     end
     if npdf>0
-        strds2hdf5(hdffilename,'/metadata','figure_links',pdf_forHDF5');
+        strds2hdf5(hdffilename,'/figures','figure_links',pdf_forHDF5');
     end
 end
 
