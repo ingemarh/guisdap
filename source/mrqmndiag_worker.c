@@ -344,8 +344,10 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	start2=gethrtime(); end1+=(start2-start1+end2);
 	printf("Spec loop:%.3f %.1f\n",((float)end2)/((float)end1),end1/1e6);
 #endif
-	free(dyda); free(afree); free(aaOld); free(thread); free(scr); free(aa2); free(errorBar);
-	free(indicesVector);
+	free(dyda); free(afree); free(aaOld); free(scr); free(aa2); free(errorBar); free(indicesVector);
+#ifdef GUPTHREAD
+	if(nth>1) free(thread);
+#endif
 }
 
 void *dirthe_loop(struct pth *pth)
@@ -369,7 +371,7 @@ void *dirthe_loop(struct pth *pth)
 	/* Change one of the parameters... */
 	aa2[pth->afree[i]]+=0.0001;
 	/* ...and calculate the derivatives using DirtheCalc 
-	and one loop which calculates the erotusosam‰‰r‰*/
+	and one loop which calculates the derivative*/
 
 /* logscale pars IH*/
 	for(j=0;j<pth->nag;j++)

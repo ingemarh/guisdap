@@ -75,7 +75,7 @@ while ~EOF
         warning('GUISDAP:default','Changed radar freq and antenna gain from init')
       end
       Ant_eff=radar_effs(ant_id);
-      if a_control(4)>=2, load_GUPvar, end  
+      if a_control(4)>1, load_GUPvar, end  
       if any(a_simul), simulparblock; end
       if exist([path_expr 'guizard.m'])==2
         run([path_expr 'guizard'])
@@ -87,7 +87,7 @@ while ~EOF
       clear lpg_wom vc_Aenv vc_Apenv vc_penvabs ad_coeff_no_Pt
     end
     if exist('N_averaged')
-      if a_control(4)==1 & M_averaged(2)<6
+      if a_control(4)<2 & M_averaged(2)<6
         var_prof(N_averaged,M_averaged,6)
       else
         d_var1=d_var1-d_data.*d_data./N_averaged;
@@ -99,7 +99,7 @@ while ~EOF
         d1=d(find(N_averaged(d)>0));
         N_averaged(d1)=M_averaged(1)./N_averaged(d1);
         d_data(d)=d_data(d).*N_averaged(d);
-        if a_control(4)==1 & M_averaged(2)>=6
+        if a_control(4)<2 & M_averaged(2)>=6
           d_var1(d)=d_var1(d).*N_averaged(d).^2;
           d_var2(d)=d_var2(d).*N_averaged(d).^2;
         end

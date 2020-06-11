@@ -6,17 +6,16 @@
 %
 % *Righ-click* on the icon of this file.
 % Select Run.
-% Happy Guisdapping!
+% Happy Gupping!
 %
-%
-% --- comment out
-disp('Edit this file first.')
-disp('You should insert the path to your GUISDAP directory')
-% ---
-%
-% --- modify and uncomment
 % mypath='C:\Users\myuser\mydir\guisdap9';
-% addpath(fullfile(mypath,'anal'))
-% start_GUP
+try
+ mypath=pwd;
+ addpath(fullfile(mypath,'anal'))
+ start_GUP
+ cd(userpath)
+catch
+ disp(sprintf(['Please edit %s, or add the path to guisdap9/anal directory'],mfilename('fullpath')))
+end
 % analyse
 % ---

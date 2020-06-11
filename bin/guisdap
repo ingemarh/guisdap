@@ -95,16 +95,6 @@ TS07_DATA_PATH=$GUP/models/irbem-code/TS07D
 
 sys=`uname -s`
 case $sys in
-	SunOS)
-		PATH=/usr/bin:/usr/local/bin:/opt/sfw/bin:/usr/sfw/bin:$GUP/bin
-		LD_LIBRARY_PATH=$GUP/lib:/opt/SUNWspro/lib:/usr/local/ssl/lib
-		matenv=`$matlab -n`
-		if `echo $matenv | grep sol64 >/dev/null 2>&1`
-		then
-			#LD_LIBRARY_PATH=$GUP/lib/sparcv9:/opt/SUNWspro/lib/v9:/opt/matlab75/sys/os/sol64:/usr/local/ssl/lib
-			LD_LIBRARY_PATH=$GUP/lib/sparcv9:/opt/SUNWspro/lib/v9:/usr/local/ssl/lib
-		fi
-		;;
 	Linux)
 		export HISTSIZE=0
 		LD_LIBRARY_PATH=$GUP/lib:/opt/madrigal/lib:/lib/x86_64-linux-gnu
@@ -112,8 +102,8 @@ case $sys in
 		unset `env | grep UTF | awk -F = '{ print $1 }'`
 		;;
 esac
-if [ -d $GUP/NW/lib ]; then
-	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GUP/NW/lib
+if [ -d /opt/madrigal/lib ]; then
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/madrigal/lib
 fi
 
 #echo "$matlab $mflags $tail"

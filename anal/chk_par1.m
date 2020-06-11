@@ -148,6 +148,7 @@ a_control=[-1 0.01 100 1];
 % a_control(3)  Maximum number of iterations
 % a_control(4)  Variance calculation
 %               = 1 when variance estimated from data
+%               = 1.5 use ambiguity funcs if no estimates low for data var calcs
 %               = 2 when variance estimated using ambiguity functions
 if exist('analysis_control','var')
  ind=find(analysis_control>0);

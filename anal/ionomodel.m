@@ -107,18 +107,20 @@ end
 
 if nargout>1
  if ionomodel_control>5 & nion==2 & ~any(p_m0-[30.5 16])
-  global pp_height
+  global pp_height pp_err d_time p_XMITloc
+  hbreak=210+(69.2-p_XMITloc(1)); %based on Tromso data <2000 (=210) and ESR data 2007 (=200)
   if ~isempty(pp_height) & ionomodel_control==7
    global pp_profile p_N0 di_figures
    nepp=pp_profile*p_N0; hpp=pp_height';
-   forc=log([1e11;300;100;1e11;120;25]); %;1e11;170;25]);
+   forc=log([1e11;275;100;1e11;120;25]); %;1e11;170;25]);
    tol=log([ 10  ;2  ;2  ;10  ;1.3;1.5]);%;10  ;2  ;2]);
-   fac=(hpp/210).^2*median(nepp);
+   fac=(hpp/hbreak).^2*median(nepp);
+   fac=pp_err*p_N0;
 %  nepp=ne_from_pp; hpp=heights; fac=median(nepp);
    opts=optimset(optimset('fminsearch'),'MaxFunEvals',10000);
    chap=fminsearch('fit_chaps',forc,opts,nepp,hpp,forc,tol,fac,1);
    chap=exp(reshape(chap,3,[]));
-   Ne210=chapman(210,chap);
+   Ne210=chapman(hbreak,chap);
    nepp=chapman(heights2,chap);
    if di_figures(2)
     hold on,plot(ne_from_pp/1e11,heights2,'g',nepp/1e11,heights2,'b'),hold off,drawnow
@@ -127,13 +129,12 @@ if nargout>1
    end
    ne_from_pp=nepp;
   elseif ionomodel_control<8
-   global d_time p_XMITloc
    tsec=tosecs(d_time(1,:));
    Ne210=[tsec p_XMITloc(1:2)];
   else
-   Ne210=exp(inter3(210,altitude,log(ne)))';
+   Ne210=exp(inter3(hbreak,altitude,log(ne)))';
   end
-  apriori(:,6)=comp_model(heights2,Ne210);
+  apriori(:,6)=comp_model(heights2,Ne210,hbreak);
  end
 
  if ionomodel_control~=1
