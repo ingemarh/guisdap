@@ -324,7 +324,7 @@ while isempty(df)
     EOF=1; break
   end
 end
-d=cell2mat({df.file});
+d=cell2mat({df.file})';
 d=num2cell(timeconv([a_year*ones(size(d)) d],'gup2tai'));
 [df.tai]=d{:};
 d_filelist=[d_filelist;df];

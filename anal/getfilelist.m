@@ -16,17 +16,16 @@ elseif isunix & a_realtime | strfind(dirpath,'?')
   if ~isempty(newer)
     i=sprintf(' -newer %s ',newer.fname);
   end
-  template=[row(col('\[0-9]')*ones(1,8)) '.mat\*'],
-  dirpath(strfind(dirpath,'\'))=[], % remove escapes
+  template=[row(col('\[0-9]')*ones(1,8)) '.mat\*'];
+  dirpath(strfind(dirpath,'\'))=[]; % remove escapes
   cmd=sprintf('find %s -name %s%s -print 2>/dev/null',dirpath(1:end-1),template,i);
   [status,d]=unix(cmd);
-  whos status d
   if status
     msg=['Error listing mat files in ' dirpath ' ' cmd];
   elseif length(d)
     try
       d=textscan(d,'%s');
-      dirlen=length(d{1}),
+      dirlen=length(d{1});
       list=repmat(struct('fname','','file',0),[dirlen 1]);
       [list.fname]=d{1}{:};
       for i=1:dirlen
