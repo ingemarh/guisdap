@@ -16,6 +16,7 @@ function [varargout]=vizu(varargin)
 % >> vizu print [printer]
 % To save the current figure in .eps and .png formats:
 % >> vizu save [extra tail]
+% >> vizu Save [extra tail] for large plots
 % To get more selection possibilities
 % >> vizu verbose
 % To get even more selection possibilities
@@ -133,7 +134,11 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   %i=i || local.matlabversion>8.3;
   %if ~i, set(hds(2:3),'visible','off'), end
   file=fullfile(dirs,fig);
-  print(vizufig,['-d' ext 'c'],[file '.' ext]);
+  if strcmp(act(1),'S')
+   print(vizufig,'-opengl',['-d' ext 'c'],'-r600',[file '.' ext]);
+  else
+   print(vizufig,['-d' ext 'c'],[file '.' ext]);
+  end
   if rotate
    set(vizufig,'PaperOrient','portrait','PaperPosition',ppos)
   end
@@ -165,7 +170,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   fprintf('Created %s.pdf and .png\n',file)
   insert_exif(vizufig,file,{'pdf' 'png'})
  end
- if strcmp(act,'save') && nargout==1
+ if strcmpi(act,'save') && nargout==1
   varargout(1)={file};
  end
  return

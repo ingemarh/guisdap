@@ -119,10 +119,15 @@ if ~isempty(p)
    end
    if t2(1)=='0', t2(1)=[]; end
   end
-  nstrat=regexp(name_strategy,'[A-Z0-9]');
-  t2=sprintf('%s %s  %s %d',name_ant,lower(name_strategy(nstrat)),t2);
-  if ~isempty(name_expr)
-    t2=[name_expr ' ' t2];
+  if exist('name_strategy','var')
+   nstrat=regexp(name_strategy,'[A-Z0-9]');
+   t2=[lower(name_strategy(nstrat)) '  ' t2];
+  end
+  if exist('name_ant','var')
+   t2=[name_ant ' ' t2];
+  end
+  if exist('name_expr','var')
+   t2=[name_expr ' ' t2];
   end
   suptitle=[suptitle '\fontsize{12}' char(10) t2];
   text('Position',[0.5 0.1],'VerticalAlignment','bottom','Horizontal','center','FontWeight','bold',...
