@@ -20,7 +20,7 @@ if nargin<2
 end
 
 if ~exist('path_GUP','var') || isempty(path_GUP)
-   error('Guisdap needs to be started first.')
+   error('Guisdap needs to be initiated. Run start_GUP.')
 end
 
 if ~exist(dirpath)
@@ -159,8 +159,45 @@ if ~isempty(vecvel_files)
             end
         else
             [storepath,EISCATvecvel_hdf5file] = cedarvel2hdf5(vecvel_files{i},datapath);
-            if isempty(image_filelist)
-                %%% Make a new plot from efield?
+            if isempty(image_filelist) %%% Make a new plot from efield!
+                metadata1d = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/par1d'));
+                names      = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/names'));
+                data1d     = h5read(EISCATvecvel_hdf5file,'/data/par1d');
+                utime      = h5read(EISCATvecvel_hdf5file,'/data/utime');
+                v   = {'vi_east' 'vi_north' 'vi_up'};
+                dv  = {'dvi_east' 'dvi_north' 'dvi_up'};
+                pos = {'lat' 'lon' 'h'};
+                AA = []; BB = []; CC = [];
+                for ii = 1:3
+                    aa = find(strcmp(metadata1d(1,:),v{ii})==1);
+                    bb = find(strcmp(metadata1d(1,:),dv{ii})==1);
+                    cc = find(strcmp(metadata1d(1,:),pos{ii})==1);
+                    AA = [AA aa]; BB = [BB bb]; CC = [CC cc];
+                end
+                dd = find(strcmp(names(1,:),'name_expr')==1);
+                ee = find(strcmp(names(1,:),'name_ant')==1);
+                Vg    = data1d(:,AA);
+                Vgv   = data1d(:,BB);
+                Vpos  = data1d(:,CC); Vpos(:,3) = Vpos(:,3)/1000; % m --> km
+                Vdate = [timeconv(utime(:,1),'unx2mat')';timeconv(utime(:,2),'unx2mat')'];
+                name_expr = names{2,dd};
+                name_ant  = names{2,ee};
+                [~,file,~] = fileparts(EISCATvecvel_hdf5file);
+                vfile = [storepath '/' file(8:end)];
+                save(vfile,'Vdate','Vpos','Vg','Vgv','name_expr','name_ant');
+                if contains(name_expr,'cp3')
+                    plottype = 'p';    
+                else
+                    plottype = [];
+                end
+                efield(vfile,plottype)
+                print('-dpdf',vfile)
+                npdf = npdf + 1;
+                pdf_forHDF5(npdf) = {[file(8:end) '.pdf']};
+                print('-dpng256',vfile)
+                store_image2Hdf5([vfile '.png'],EISCATvecvel_hdf5file);
+                insert_exif(gcf,vfile,{'pdf' 'png'})
+                delete([vfile '.mat'],[vfile '.png'])
             end
         end    
         display(EISCATvecvel_hdf5file)  
