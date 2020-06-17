@@ -3,6 +3,7 @@
 function [storepath,EISCATvelhdf5file] = cedarvel2hdf5(hdf5file,datapath)
 
 global path_GUP 
+hdf5ver = '0.9.0';
 
 if nargin<1
     error('A .hdf5 (or .hdf) file is needed as input.')
@@ -13,11 +14,15 @@ end
 if ~strcmp(ext,'.hdf5') && ~strcmp(ext,'.hdf')
     error('The input file is not an .hdf5 or .hdf.')
 end
+
 datapar = h5read(hdf5file,'/Metadata/Data Parameters');
 data    = h5read(hdf5file,'/Data/Table Layout');
 exprpar = h5read(hdf5file,'/Metadata/Experiment Parameters');
 
-hdf5ver = '0.9.0';
+%%% Check if velocity data exist
+if ~isfield(data,'vipe')
+    error(['Error: No velocity data in ' hdf5file])
+end
 
 exprparnames = cellstr(exprpar.name');
 exprparvalues = cellstr(exprpar.value');
@@ -54,8 +59,7 @@ day    = sprintf('%02d',data.day(1));
 hour   = sprintf('%02d',data.hour(1));
 minute = sprintf('%02d',data.min(1));
 second = sprintf('%02d',data.sec(1));
-
-recs = length(data.ut1_unix);                            % # of records
+                      
 intper_med = median(data.ut2_unix-data.ut1_unix);        % median integration time
 
 display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
@@ -70,6 +74,7 @@ else
     elseif contains(char(exprparvalues(aa)),'UHF'), name_ant = 'uhf';
     else name_ant = 'vhf'; end
 end
+
 if kindats(1) >= 6800
     name_expr = 'gup';
 else
@@ -90,7 +95,7 @@ MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '@' name_ant '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCATvelhdf5file = hdffilename;
-
+hdf5file
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 [~,text] = xlsread(GuisdapParFile);     
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
@@ -105,114 +110,44 @@ for ii = 1:npar
     Parsinfile_list{ii} = deblank(parnames(ii,:));
 end
 
-newrec = (data.recno(end)+1)/nkindats;
-
-nrec = [];
-for ii= 1:newrec    
-    nrec_tmp = [];
-    for jj = 1:nkindats
-        nrec_tmp = [nrec_tmp length(find(data.recno+1==(ii-1)*nkindats+jj))];
+%%% Remove no-data (Vm = [0 0 0]), and create new data.*
+Vm = [data.vipn data.vipe data.vi6];
+MM = [];
+for mm = 1:length(data.vipn)
+    if all(Vm(mm,:)==0)
+        MM = [MM mm];
     end
-    nrec = [nrec; nrec_tmp];
 end
-
-% % Spatial description of datapoints for DataCite
-% loc = [data.elm data.azm data.range];
-% rr_lon = find(strcmp(exprparnames,'instrument longitude')==1);
-% rr_lat = find(strcmp(exprparnames,'instrument latitude')==1);
-% rr_alt = find(strcmp(exprparnames,'instrument altitude')==1);
-% RECloc = [str2num(exprparvalues{rr_lon}) str2num(exprparvalues{rr_lat}) str2num(exprparvalues{rr_alt})];
-% gg = zeros(length(data.elm),3);
-% for ss = 1:length(data.elm)
-%     gg(ss,:) = loc2gg(RECloc,loc(ss,:));
-% end
-%  
-% if nkindats>1
-%     cc       = find(data.kindat == str2num(evenkindat));
-%     cc_pp    = find(data.kindat == str2num(evenkindat)-1);
-%     gg_sp    = gg(cc,:);
-%     gg_sp_pp = gg(cc_pp,:);
-% else
-%     gg_sp = gg;
-% end
+for ii = 1:npar
+     data.(char(Parsinfile_list{ii}))(MM) = [];
+end
+data.recno = [0:length(data.recno)-1]';
 
 matfile.data.par0d     = [];
 matfile.metadata.par0d = [];
 matfile.data.par1d     = [];
 matfile.metadata.par1d = [];
-matfile.data.par2d     = [];
-matfile.metadata.par2d = [];
 matfile.data.utime     = [];
 matfile.metadata.utime = [];
 
-for ii = 1:nkindats
-    aa = find(strcmp('nrec',gupparameters_list)==1);
-    if ii==2
-        aa = find(strcmp('nrec_pp',gupparameters_list)==1);
-        matfile.data.par2d_pp = [];
-        matfile.metadata.par2d_pp = [];     
-    end
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
-    info(2) = {[info{2} '(kindat=' num2str(kindats(ii)) ')']};
-    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-    if length(unique(nrec(:,ii)))==1
-        matfile.data.par0d = [matfile.data.par0d nrec(1,ii)];
-        matfile.metadata.par0d = [matfile.metadata.par0d info'];
-    elseif length(unique(nrec(:,ii)))>1
-        matfile.data.par1d = [matfile.data.par1d nrec(:,ii)];
-        matfile.metadata.par1d = [matfile.metadata.par1d info'];
-    end
-end
-
-% if nkindats>1
-%     cckind = find(data.kindat == str2num(evenkindat));   % data.kindat does not seem to exist when there is only 1 kindat for the experiment
-% else cckind = 1:length(data.recno);
-% end
+%%% nrec
+aa = find(strcmp('nrec',gupparameters_list)==1);
+[~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
+info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
+matfile.data.par0d = 1;
+matfile.metadata.par0d = [matfile.metadata.par0d info'];
 
 for ii = 1:npar
-    if strcmp(char(Parsinfile_list(ii)),'nsampi')
-        continue
-    end
-    
     aa = find(strcmp(char(Parsinfile_list(ii)),parameters_list)==1);
     if aa
-        bb = strfind(Parsinfile_list{ii},'+');
-        if bb
-            parameterdata = data.([Parsinfile_list{ii}(1:bb-1) '0x2B']);   % Rename e.g. po+ --> po0x2B, because the data name is like that for some reason (This will only affect parameter names that end with '+')
-        elseif strcmp(char(Parsinfile_list(ii)),'sfacf0')
+        parameterdata = data.(char(Parsinfile_list(ii)));   
+        if contains('gdalt range power',Parsinfile_list(ii))
+            parameterdata = parameterdata*1000;   % km --> m, kW --> W
+        elseif contains('bn be bd dvipn dvipe dvi6',Parsinfile_list(ii))
             continue
-        elseif strcmp(char(Parsinfile_list(ii)),'acf')   
-            if nkindats>1
-                cckind = find(data.kindat == str2num(evenkindat));   % data.kindat does not seem to exist when there is only 1 kindat for the experiment
-            else cckind = 1:length(data.recno);
-            end
-            for dd = 0:nracf  
-                acfdata_rec = data.([char(Parsinfile_list(ii)) num2str(dd)]);
-                real_acf = [real_acf real(acfdata_rec(cckind))];
-                imag_acf = [imag_acf imag(acfdata_rec(cckind))];
-            end
-            matfile.data.acf(1,:,:) = real_acf;
-            matfile.data.acf(2,:,:) = imag_acf;
-            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
-            if cell2mat(strfind(info(1),'h_'))==1
-                info{1} = info{1}(3:end);
-            end
-            info{2} = [info{2} ', the real(1) and imaginary(2) parts of acf0 to acf' num2str(nracf) '.'];
-            info{4} = ['acf0 = sracf0*sfacf0, racf1-racf' num2str(nracf) ' (real) and iacf1-iacf' num2str(nracf) ' (imaginary)'];
-            info{5} = ['(3800,3900) 3801-38' num2str(nracf,'%02.f') ' (racf:s) and 3901-39' num2str(nracf,'%02.f') ' (iacf:s)'];
-            info{6} = '60';
-            matfile.metadata.acf = info';
-            continue
-        else
-            parameterdata = data.(char(Parsinfile_list(ii)));
-            if contains('gdalt range power',Parsinfile_list(ii))
-                parameterdata = parameterdata*1000;   % km --> m, kW --> W
-            end
-            if strcmp(Parsinfile_list(ii),'nsamp') && isfield(data,'nsampi')
-                parameterdata = parameterdata + data.nsampi;   % nsamp = nsamp+nsampi
-            end
         end
         
+        %%% 0d
         if length(unique(parameterdata))==1
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
             if cell2mat(strfind(info(1),'h_'))==1
@@ -220,10 +155,6 @@ for ii = 1:npar
             end
             info(4) = {'-'};
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-                
-            if strcmp('tfreq',char(Parsinfile_list(ii)))
-                aa = aa(1);                                    % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
-            end
             if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
                 matfile.data.utime = [matfile.data.utime parameterdata(1)]; 
                 matfile.metadata.utime = [matfile.metadata.utime info'];
@@ -237,81 +168,48 @@ for ii = 1:npar
         if sum(isnan(parameterdata))==length(parameterdata)   % check if all data are NaN
             continue                                          % if so, skip to next iteration
         end
-        
-        for jj = 1:nkindats
-            if nkindats>1
-                cc = find(data.kindat == kindats(jj));
-                parameterdata_kindat = parameterdata(cc);
-            else
-                parameterdata_kindat = parameterdata;
-            end    
+                                  
+        [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
+            
+        if cell2mat(strfind(info(1),'h_'))==1
+            info{1} = info{1}(3:end);
+        end
+        info(4) = {'-'};
+        info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
                         
-            if sum(isnan(parameterdata_kindat))==length(parameterdata_kindat)   % check if all data (for a certain kindat) are NaN
-                continue                                                        % if so, skip to next iteration
-            end
-                      
-            if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
-                bb = aa; end
-            if strcmp('range',char(Parsinfile_list(ii)))
-                aa = bb(jj); end                                            % since there are two 'range' in parameters_list there will be two values in aa. This bit of code requires the 'normal range' (range) to be before 'pprange' in the Guisdap parameter list.  
-            if strcmp('tfreq',char(Parsinfile_list(ii))), aa = aa(1); end   % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
-            
-            if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1);  end
-            if strcmp('dvobi',char(Parsinfile_list(ii))), aa = find(strcmp('dvo',parameters_list)==1); end
-            if strcmp('nel',char(Parsinfile_list(ii))),   aa = find(strcmp('ne',parameters_list)==1);  parameterdata_kindat = 10.^parameterdata_kindat; end
-            if strcmp('dnel',char(Parsinfile_list(ii))),  aa = find(strcmp('dne',parameters_list)==1); parameterdata_kindat = 10.^parameterdata_kindat; end
-            if strcmp('col',char(Parsinfile_list(ii))),   aa = find(strcmp('co',parameters_list)==1);  parameterdata_kindat = 10.^parameterdata_kindat; end
-            if strcmp('dcol',char(Parsinfile_list(ii))),  aa = find(strcmp('dco',parameters_list)==1); parameterdata_kindat = 10.^parameterdata_kindat; end
-            if strcmp('snl',char(Parsinfile_list(ii))),   aa = find(strcmp('sn',parameters_list)==1);  parameterdata_kindat = 10.^parameterdata_kindat; end
-            if strcmp('dsnl',char(Parsinfile_list(ii))),  aa = find(strcmp('dsn',parameters_list)==1); parameterdata_kindat = 10.^parameterdata_kindat; end
-            if strcmp('popl',char(Parsinfile_list(ii))),  aa = find(strcmp('pop',parameters_list)==1); parameterdata_kindat = 10.^parameterdata_kindat; end
-            
-            start = 0;
-            par_1d = [];
-            for kk = 1:newrec
-                par_rec = parameterdata_kindat(start+1:start+nrec(kk,jj));
-                par_check1d(kk) = length(unique(par_rec));
-                if par_check1d(kk) == 1
-                    par_1d = [par_1d; par_rec(1)];
-                end
-                start = start + nrec(kk,jj);
-            end
-            
-            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
-            
-            if cell2mat(strfind(info(1),'h_'))==1
-                info{1} = info{1}(3:end);
-            end
-            info(4) = {'-'};
-            info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-            if (contains(char(Parsinfile_list(ii)),'racf') || contains(char(Parsinfile_list(ii)),'iacf')) && ~contains(char(Parsinfile_list(ii)),'racf0')
-                info2split = strsplit(char(info(2)));
-                info(2) = join(info2split(2:end));
-            end
-            
-            if length(par_1d)==newrec 
-                if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
-                    matfile.data.utime = [matfile.data.utime par_1d]; 
-                    matfile.metadata.utime = [matfile.metadata.utime info'];
-                else
-                    matfile.data.par1d = [matfile.data.par1d double(par_1d)]; 
-                    matfile.metadata.par1d = [matfile.metadata.par1d info'];
-                end
-                break
-            else
-                if jj == 2
-                    matfile.data.par2d_pp = [matfile.data.par2d_pp single(parameterdata_kindat)];
-                    matfile.metadata.par2d_pp = [matfile.metadata.par2d_pp info'];
-                else
-                    matfile.data.par2d = [matfile.data.par2d single(parameterdata_kindat)];
-                    matfile.metadata.par2d = [matfile.metadata.par2d info'];
-                end
-            end
+        if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
+            matfile.data.utime = [matfile.data.utime parameterdata]; 
+            matfile.metadata.utime = [matfile.metadata.utime info'];
+        else
+            matfile.data.par1d = [matfile.data.par1d double(parameterdata)]; 
+            matfile.metadata.par1d = [matfile.metadata.par1d info'];
         end
     end
 end
 
-% TAI time (leapseconds)
+%%% Velocities
+Vm = [data.vipn data.vipe data.vi6];
+dVm = [data.dvipn data.dvipe data.dvi6];
+B = [data.bn data.be data.bd];
+Vg  = [];
+dVg = [];
+for mm = 1:length(data.vipn)
+    [vg,dvg] = Vm2Vg(Vm(mm,:),B(mm,:),dVm(mm,:));
+    Vg  = [Vg;vg'];
+    dVg = [dVg;dvg'];
+end
+
+new_v  = {'vi1' 'vi2' 'vi3' 'dvi1' 'dvi2' 'dvi3'};
+ll1 = length(matfile.data.par1d(1,:));
+matfile.data.par1d(:,ll1+1:ll1+6) = [Vg dVg];
+for jj = 1:6
+    a = find(strcmp(new_v{jj},parameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+    matfile.metadata.par1d(:,ll1+jj) = info';
+end
+
+%%% TAI time (leapseconds)
 [~,leaps] = timeconv(double(matfile.data.utime),'unx2tai');      
 if length(unique(leaps)) == 1
     if isfield(matfile.data,'par0d')
@@ -384,11 +282,9 @@ if ~isempty(PointInPol)
     matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
 end
 
-
-
-software = 'https://git.eiscat.se/eiscat/on-an';
+%software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = [];
-matfile.metadata.software.software_link = {software};
+%matfile.metadata.software.software_link = {software};
 matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
 matfile.metadata.level2_links = level2_link;
 
@@ -430,23 +326,6 @@ if isfield(matfile.metadata,'par2d_pp')
     matfile.metadata.par2d_pp(gupnamesindex,:) = [];
 end
 
-% Remove alt, lon and lat from par2d_pp
-% a = find(strcmp('h',matfile.metadata.par2d_pp(1,:)));
-% if a
-%     matfile.data.par2d_pp(:,a)     = [];
-%     matfile.metadata.par2d_pp(:,a) = [];
-% end
-% a = find(strcmp('lon',matfile.metadata.par2d_pp(1,:)));
-% if a
-%     matfile.data.par2d_pp(:,a)     = [];
-%     matfile.metadata.par2d_pp(:,a) = [];
-% end   
-% a = find(strcmp('lat',matfile.metadata.par2d_pp(1,:)));
-% if a
-%     matfile.data.par2d_pp(:,a)     = [];
-%     matfile.metadata.par2d_pp(:,a) = [];
-% end 
-
 
 save(matfilename,'matfile')
 
@@ -466,7 +345,7 @@ for sf = sFields.'
             elseif ge(npar,chunklim), csize = [ndata chunklim];
             else csize = [ndata npar]; end 
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
-            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
         elseif strcmp('data',char(sf)) && strcmp('acf',char(tf))
             acfsize = size(matfile.data.acf); 
             nrow   = acfsize(1);
@@ -477,7 +356,7 @@ for sf = sFields.'
             elseif ge(ndepth,chunklim), csize = [nrow ncol chunklim];
             else, csize = [nrow nrow ncol]; end
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
-            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
         elseif strcmp('metadata',char(sf)) 
             if isstruct(matfile.(char(sf)).(char(tf)))
                 group2 = [group1 '/' char(tf)];
@@ -514,7 +393,7 @@ for sf = sFields.'
             end
         else
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
-            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],matfile.(char(sf)).(char(tf)));
         end   
     end
 end

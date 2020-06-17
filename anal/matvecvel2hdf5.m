@@ -56,12 +56,11 @@ else
     matfile.data.par1d = nrec;
     matfile.metadata.par1d = info';
 end
-keyboard
+
 if exist('Vdate','var')
     parameters_vdate = {'time1' 'time2'};
-    %[matfile.data.utime,leaps] = timeconv(vdate,'mat2unx');
-    keyboard
-    [matfile.data.utime,leaps] = reshape(timeconv([vdate(:) vleap(:)],'mat2unx'),[],2);
+    [matfile.data.utime(:,1),leaps(:,1)] = timeconv([vdate(:,1) vleap(:,1)],'mat2unx');
+    [matfile.data.utime(:,2),leaps(:,2)] = timeconv([vdate(:,2) vleap(:,2)],'mat2unx');
     for ii = 1:2
         a = find(strcmp(char(parameters_vdate(ii)),parameters_list)==1);
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
@@ -353,7 +352,7 @@ for sf = sFields.'
             elseif ge(npar,chunklim), csize = [ndata chunklim];
             else csize = [ndata npar]; end    
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
-            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
         elseif strcmp('metadata',char(sf)) 
             if isstruct(matfile.(char(sf)).(char(tf)))
                 group2 = [group1 '/' char(tf)];
@@ -390,7 +389,7 @@ for sf = sFields.'
             end
         else
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
-            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],matfile.(char(sf)).(char(tf)));
         end
     end   
 end

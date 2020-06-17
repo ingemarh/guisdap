@@ -444,7 +444,6 @@ nh = [];
 npprange = [];
 
 for ii = 1:length(parameters)
-    %if strcmp(parameters(ii),'h_w'), keyboard, end
     h_name = char(parameters(ii));
     if ~exist(['r_' h_name(3:end)],'var') 
         evalc([h_name '=[]']); continue
@@ -477,7 +476,7 @@ for ii = 1:length(parameters)
         evalc([char(parameters(ii)) '=par']);
     end
 end
-keyboard
+
 matfile.data.par1d    = [h_Magic_const h_az h_el h_Pt...
     h_SCangle h_XMITloc(:,1:2) h_XMITloc(:,3)*1000 h_RECloc(:,1:2) h_RECloc(:,3)*1000 ...
     h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar nh npprange];
@@ -764,8 +763,8 @@ for sf = sFields.'
             elseif ge(ndata,chunklim), csize = [chunklim npar];
             elseif ge(npar,chunklim), csize = [ndata chunklim];
             else csize = [ndata npar]; end    
-            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
-            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9,'Datatype','single');
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
         elseif strcmp('metadata',char(sf)) 
             if isstruct(matfile.(char(sf)).(char(tf)))
                 group2 = [group1 '/' char(tf)];
@@ -801,8 +800,8 @@ for sf = sFields.'
                 strds2hdf5(hdffilename,group1,dsname,strdata)
             end
         else
-            h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
-            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))));
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],matfile.(char(sf)).(char(tf)));
         end
     end   
 end

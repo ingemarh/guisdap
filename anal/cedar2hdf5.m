@@ -89,8 +89,6 @@ mkdir(storepath);
 
 Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
 MatFile = sprintf('%s%s',datafolder,'.mat');
-% Hdf5File = [datafolder '.hdf5'];
-% MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCAThdf5file = hdffilename;
@@ -552,7 +550,7 @@ for sf = sFields.'
             elseif ge(npar,chunklim), csize = [ndata chunklim];
             else csize = [ndata npar]; end 
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
-            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
         elseif strcmp('data',char(sf)) && strcmp('acf',char(tf))
             acfsize = size(matfile.data.acf); 
             nrow   = acfsize(1);
@@ -563,7 +561,7 @@ for sf = sFields.'
             elseif ge(ndepth,chunklim), csize = [nrow ncol chunklim];
             else, csize = [nrow nrow ncol]; end
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
-            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
         elseif strcmp('metadata',char(sf)) 
             if isstruct(matfile.(char(sf)).(char(tf)))
                 group2 = [group1 '/' char(tf)];
@@ -600,7 +598,7 @@ for sf = sFields.'
             end
         else
             h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]));
-            h5write(hdffilename,['/' char(sf) '/' char(tf)],[matfile.(char(sf)).(char(tf))]);
+            h5write(hdffilename,['/' char(sf) '/' char(tf)],matfile.(char(sf)).(char(tf)));
         end   
     end
 end

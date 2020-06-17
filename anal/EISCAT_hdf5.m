@@ -80,11 +80,9 @@ if ~isempty(hdf5oldfiles)
     k = 1; l = 1; n = 1; m = 1; o = 1;
     for ii = 1:length(hdf5oldfiles)
         hdf5_filename = hdf5oldfiles(ii).name;
-        %if contains(hdf5_filename,'vecvel') || contains(hdf5_filename,'.ar')
-            %hdf5vel_files{k} = fullfile(dirpath,'overview',hdf5_filename); k = k+1;    
         if contains(hdf5_filename,'.ar')    
             hdf5vel_files{k} = fullfile(dirpath,'overview',hdf5_filename); k = k+1;    
-        elseif contains(hdf5_filename,'.vr') || contains(hdf5_filename,'.tr') || contains(hdf5_filename,'.kr') || contains(hdf5_filename,'.sr') 
+        elseif contains(hdf5_filename,'.vr') || contains(hdf5_filename,'.tr') || contains(hdf5_filename,'.kr') || contains(hdf5_filename,'.sr')
             hdf5_files{l} = fullfile(dirpath,'overview',hdf5_filename); l = l+1;
             hdf5_allfiles{o} = fullfile(dirpath,'overview',hdf5_filename); o = o + 1;
         elseif contains(hdf5_filename,'NCAR_')
@@ -161,6 +159,9 @@ if ~isempty(vecvel_files)
             end
         else
             [storepath,EISCATvecvel_hdf5file] = cedarvel2hdf5(vecvel_files{i},datapath);
+            if isempty(image_filelist)
+                %%% Make a new plot from efield?
+            end
         end    
         display(EISCATvecvel_hdf5file)  
         copyfile(vecvel_files{i},storepath)
