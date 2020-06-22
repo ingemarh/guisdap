@@ -4,8 +4,8 @@ function [Vg,dVg] = Vm2Vg(Vm,B,dVm)
 % Vg = Vm2Vg(Vm,B)
 %
 % Transforming velocity in local magnetic Vm (magn. east perp, magn. north perp, antiparallel) 
-% to local geographic coordinates Vg (east, north, up) given the magnetic
-% field in geographical coordinates B = (Be,Bn,Bu).
+% to local geographic coordinates Vg (east,north,up) given the magnetic
+% field in geographical coordinates B = (Bnorth,Beast,Bdown).
 
 if nargin<2, error('Error: Magnetic field vector is needed.'), end
 
@@ -27,11 +27,11 @@ A = [e;n;b];    % rotational matrix, Xm = A*Xg --> Xg = C*Xm, with C = A'
 C = A';
 
 Vg = C*Vm;
-% keyboard
-% T=(C'*(C./(dVm.^2*ones(1,3))))^(-1);
-% dVg = diag(T);
 
-dVg = sqrt(C.^2*(Vg.*dVm./Vm).^2);
+T=(C'*(C./(dVm.^2*ones(1,3))))^(-1);
+
+dVg = sqrt(diag(T));
+
 
 
 

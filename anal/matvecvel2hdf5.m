@@ -97,13 +97,20 @@ if exist('Vg','var')
     end
 end
 if exist('Vgv','var')
-    parameters_vgv = {'dvi_east' 'dvi_north' 'dvi_up'};
+    parameters_vgv = {'dvi_east' 'dvi_north' 'dvi_up' 'crossvar12' 'crossvar13' 'crossvar23'};
     matfile.data.par2d(:,n+1:n+3) = sqrt(vgv(:,1:3));
-    for ii = 1:3
+    for ii = 1:6
         n = n + 1; 
-        a = find(strcmp(char(parameters_vgv(ii)),parameters_list)==1);
+        if ii < 4
+            a = find(strcmp(char(parameters_vgv(ii)),parameters_list)==1);
+            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+        else
+            a = find(strcmp('crossvar',parameters_list)==1);
+            info(1) = parameters_vgv(ii);
+            info(2) = {['cross variance (' parameters_vg{str2num(parameters_vgv{ii}(end-1))} ',' parameters_vg{str2num(parameters_vgv{ii}(end))}] ')'};
+            info([3 5]) = {'N/A'};
+        end
         info(4) = {'Vgv'};
-        [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
         matfile.metadata.par2d(:,n) = info';
     end

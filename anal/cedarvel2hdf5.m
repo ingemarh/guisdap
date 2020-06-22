@@ -188,9 +188,9 @@ for ii = 1:npar
 end
 
 %%% Velocities
-Vm = [data.vipn data.vipe data.vi6];
-dVm = [data.dvipn data.dvipe data.dvi6];
-B = [data.bn data.be data.bd];
+Vm = [data.vipe data.vipn data.vi6];        % [eastperp, northperp, antiparallel]
+dVm = [data.dvipe data.dvipn data.dvi6];
+B = [data.bn data.be data.bd];              % [north, east, down]
 Vg  = [];
 dVg = [];
 for mm = 1:length(data.vipn)

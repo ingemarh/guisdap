@@ -177,8 +177,8 @@ if ~isempty(vecvel_files)
                 dd = find(strcmp(names(1,:),'name_expr')==1);
                 ee = find(strcmp(names(1,:),'name_ant')==1);
                 Vg    = data1d(:,AA);
-                Vgv   = data1d(:,BB);
-                Vpos  = data1d(:,CC); Vpos(:,3) = Vpos(:,3)/1000; % m --> km
+                Vgv   = [data1d(:,BB) zeros(size(data1d(:,BB),1),3)];                    % there are no available crossvariations, so these are set to 0 
+                Vpos  = double(data1d(:,CC)); Vpos(:,3) = Vpos(:,3)/1000; % m --> km
                 Vdate = [timeconv(utime(:,1),'unx2mat')';timeconv(utime(:,2),'unx2mat')'];
                 name_expr = names{2,dd};
                 name_ant  = names{2,ee};
@@ -186,11 +186,11 @@ if ~isempty(vecvel_files)
                 vfile = [storepath '/' file(8:end)];
                 save(vfile,'Vdate','Vpos','Vg','Vgv','name_expr','name_ant');
                 if contains(name_expr,'cp3')
-                    plottype = 'p';    
+                    plottype = 'pVm';    
                 else
-                    plottype = [];
+                    plottype = 'tVm3';
                 end
-                efield(vfile,plottype)
+                efield(vfile,plottype);
                 print('-dpdf',vfile)
                 npdf = npdf + 1;
                 pdf_forHDF5(npdf) = {[file(8:end) '.pdf']};
