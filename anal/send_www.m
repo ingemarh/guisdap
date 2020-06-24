@@ -1,5 +1,5 @@
 function send_www
-global webfile
+global webfile name_site
 l=length(webfile);
 if l>0 & isunix
  [i,d]=unix('ps | grep curl | grep -v grep');
@@ -7,9 +7,11 @@ if l>0 & isunix
   file=[];
   for i=1:l
    if iscellstr(webfile(i))
+    file2=char(webfile(1));       % For local web server
     file=[file ' -F file=@' char(webfile(i))];
    end
   end
   unix(['curl -s' file ' "http://portal.eiscat.se/raw/rtg/upload.cgi" >/dev/null &']);
+  if exist('file2','var') & (name_site=='T' | name_site=='V'), unix(['scp ' file2 ' palver5:/var/www/html/rtg/ >/dev/null &']); end
  end
 end
