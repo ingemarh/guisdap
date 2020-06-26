@@ -3,7 +3,10 @@
 function [storepath,EISCATvelhdf5file] = cedarvel2hdf5(hdf5file,datapath)
 
 global path_GUP 
-hdf5ver = '0.9.0';
+
+hdf5ver = hdfver;
+%software = 'https://git.eiscat.se/eiscat/on-an';
+level2_link = '';
 
 if nargin<1
     error('A .hdf5 (or .hdf) file is needed as input.')
@@ -60,7 +63,8 @@ hour   = sprintf('%02d',data.hour(1));
 minute = sprintf('%02d',data.min(1));
 second = sprintf('%02d',data.sec(1));
                       
-intper_med = median(data.ut2_unix-data.ut1_unix);        % median integration time
+intper_mean = subsetmean(data.ut2_unix-data.ut1_unix);        % mean integration time (of quartile range 2 and 3)
+intper_mean_str = num2str(round(intper_mean,3,'significant'));
 
 display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
@@ -81,9 +85,8 @@ else
     name_expr = ['cp' evenkindat(2) lower(char(96 + str2num(evenkindat(3:4))/2))];
 end
 matfile.metadata.software.experiment.name_expr = {name_expr}; 
-%matfile.metadata.experiment.intper_median = {num2str(intper_med)};
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' num2str(intper_med) '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant];
 storepath = fullfile(datapath,datafolder);
 if exist(storepath)
    rmdir(storepath,'s');
@@ -283,10 +286,14 @@ if ~isempty(PointInPol)
 end
 
 %software = 'https://git.eiscat.se/eiscat/on-an';
-level2_link = [];
+level2_link = '';
 %matfile.metadata.software.software_link = {software};
 matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
-matfile.metadata.level2_links = level2_link;
+matfile.metadata.software.strategy = {intper_mean_str};
+if ~isempty(level2_link)
+    matfile.metadata.software.level2_links = {level2_link};
+end
+
 
 % Delete any empty fields from the structure
 sFields = fieldnames(matfile);

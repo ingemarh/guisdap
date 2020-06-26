@@ -17,7 +17,9 @@ if isstring(datapath)
     datapath = char(datapath);    % need to be char class
 end
 
-hdf5ver = '0.9.0';
+hdf5ver = hdfver;
+software = 'https://git.eiscat.se/cvs/guisdap9';
+level2_link = '';
 
 [~,matfolder] = fileparts(matpath);
 
@@ -32,10 +34,10 @@ for tt = 1:rec
     load(fullfile(matpath,filelist(tt).name))
     intper_vec(tt) = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6))); 
 end    
-if median(intper_vec) < 10
-    intper_med = median(intper_vec);
-    intper_med_str = sprintf('%g',round(intper_med,3));
-end
+% if subsetmean(intper_vec) < 10
+%     intper_mean = subsetmean(intper_vec);
+%     intper_mean_str = sprintf('%g',round(intper_mean,3));
+% end
 
 % store the gfd content
 load(fullfile(matpath,filelist(1).name));
@@ -65,11 +67,9 @@ if exist('r_gfd','var')
     end
     starttime = datestr(r_gfd.t1,'yyyy-mm-ddTHH:MM:SS');
     endtime   = datestr(r_gfd.t2,'yyyy-mm-ddTHH:MM:SS');
-    if ~exist('intper_med','var')
-        intper_med = median(r_gfd.intper);
-        intper_med_str = num2str(intper_med);
-    end
-    
+    intper_mean = subsetmean(r_gfd.intper);
+    intper_mean_str = num2str(round(intper_mean,3,'significant'));
+        
 elseif ~isempty(gupfilecheck)
     load('-mat',gupfile);
     if exist('name_expr','var'),    matfile.metadata.software.gfd.name_expr      = {name_expr};           end
@@ -78,8 +78,7 @@ elseif ~isempty(gupfilecheck)
     if exist('data_path','var'),    matfile.metadata.software.gfd.data_path      = {data_path};           end
     if exist('result_path','var'),  matfile.metadata.software.gfd.result_path    = {result_path};         end 
     if exist('intper','var'),       matfile.metadata.software.gfd.intper         = {num2str(intper)};  
-        if ~exist('intper_med','var'), intper_med = median(intper); intper_med_str = num2str(intper_med); end
-                                    %matfile.metadata.software.gfd.intper_median  = {num2str(intper_med)};
+        if ~exist('intper_mean','var'), intper_mean = subsetmean(intper); intper_mean_str = num2str(round(intper_mean,3,'significant')); end
     end
     if exist('t1','var'),           matfile.metadata.software.gfd.t1             = {num2str(t1)};         end
     if exist('t2','var'),           matfile.metadata.software.gfd.t2             = {num2str(t2)};         end
@@ -104,22 +103,22 @@ elseif ~isempty(gupfilecheck)
     endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
 end
 
-if ~exist('intper_med','var')
-    intper_med = median(intper_vec);
+if ~exist('intper_mean','var')
+    intper_mean = subsetmean(intper_vec);
 end
-if ~exist('intper_med_str','var')
-    intper_med_str = num2str(intper_med);
+if ~exist('intper_mean_str','var')
+    intper_mean_str = num2str(round(intper_mean,3,'significant'));
 end
 
 if ~exist('name_strategy','var')
     if contains(matfolder,'scan')
         name_strategy = 'scan';
-    elseif intper_med == 0
+    elseif intper_mean == 0
         name_strategy = 'ant';
-    elseif intper_med < 0
-        name_strategy = ['ant' num2str(-intper_med)];
+    elseif intper_mean < 0
+        name_strategy = ['ant' num2str(-round(intper_mean,3,'significant'))];
     else 
-        name_strategy = intper_med_str;
+        name_strategy = intper_mean_str;
     end
 end
 
@@ -155,13 +154,6 @@ for tt = 1:rec
     gg_sp_pp = [gg_sp_pp; gg_rec];
 end
 %ndatapoints = length(gg_sp(:,1));
-
-software = 'https://git.eiscat.se/cvs/guisdap9';
-level2_link = '';
-%matfile.metadata.software_link = {software};
-if ~isempty(level2_link)
-    matfile.metadata.level2_links = {level2_link};
-end
 
 year = num2str(r_time(1,1));
 month = sprintf('%02d',r_time(1,2));
@@ -637,22 +629,17 @@ if exist('name_sig','var'); nn = nn + 1;
 end
 
 
-% nn = nn + 1; 
-% infoname(1) = {'EISCAThdf5_ver'};
-% infoname(2) = {hdf5ver};
-% a = find(strcmp('EISCAThdf5_ver',parameters_list)==1);                
-% [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-% infoname(3) = infodesc;
-% matfile.metadata.names(:,nn) = infoname';
-
-%%% More software
+%%% Software
 matfile.metadata.software.software_link = {software};
 matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
 if exist('r_ver','var')
     matfile.metadata.software.GUISDAP_ver = {num2str(r_ver)};
 end
+if ~isempty(level2_link)
+    matfile.metadata.level2_links = {level2_link};
+end
 if exist('name_strategy')
-    matfile.metadata.software.strategy = {'name_strategy'};
+    matfile.metadata.software.strategy = {name_strategy};
 end
 
 aa = find(cellfun('isempty',matfile.metadata.par0d(6,:)));    matfile.metadata.par0d(6,aa)= {'0'};

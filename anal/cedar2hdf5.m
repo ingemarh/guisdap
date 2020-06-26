@@ -3,7 +3,10 @@
 function [storepath,EISCAThdf5file] = cedar2hdf5(hdf5file,datapath)
 
 global path_GUP 
-hdf5ver = '0.9.0';
+
+hdf5ver = hdfver;
+software = 'https://git.eiscat.se/eiscat/on-an';
+level2_link = '';
 
 if nargin<1
     error('A .hdf5 (or .hdf) file is needed as input.')
@@ -57,13 +60,12 @@ second = sprintf('%02d',data.sec(1));
 display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
 recs = length(data.ut1_unix);    % # of records
-intper_med = median(data.ut2_unix-data.ut1_unix);
-if intper_med < 10
+intper_mean = subsetmean(data.ut2_unix-data.ut1_unix);
+if intper_mean < 10
     name_strategy = 'ant';
 else
-    name_strategy = num2str(intper_med);
+    name_strategy = num2str(round(intper_mean,3,'significant'));
 end
-%matfile.metadata.software.experiment.intper_median = {num2str(intper_med)};
 
 aa = find(strcmp(exprparnames,'instrument')==1);
 if contains(char(exprparvalues(aa)),'Kiruna'), name_ant = 'kir'; 
@@ -461,16 +463,14 @@ if nkindats>1
     end
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-software = 'https://git.eiscat.se/eiscat/on-an';
-level2_link = [];
-matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
+% Software
 matfile.metadata.software.software_link = {software};
-matfile.metadata.level2_links = level2_link;
+matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
+if ~isempty(level2_link)
+    matfile.metadata.software.level2_links = {level2_link};
+end
 if exist('name_strategy')
-    matfile.metadata.software.strategy = {'name_strategy'};
+    matfile.metadata.software.strategy = {name_strategy};
 end
 
 

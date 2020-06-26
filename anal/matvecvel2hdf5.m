@@ -13,7 +13,9 @@ global path_GUP %result_path
 % if isstring(datapath)
 %     datapath = char(datapath);    % need to be char class
 % end
-
+hdf5ver = hdfver;
+software = 'https://git.eiscat.se/cvs/guisdap9';
+level2_link = '';
 
 load(matfile_vel)
 
@@ -96,9 +98,10 @@ if exist('Vg','var')
         matfile.metadata.par2d(:,n) = info';
     end
 end
+
 if exist('Vgv','var')
     parameters_vgv = {'dvi_east' 'dvi_north' 'dvi_up' 'crossvar12' 'crossvar13' 'crossvar23'};
-    matfile.data.par2d(:,n+1:n+3) = sqrt(vgv(:,1:3));
+    matfile.data.par2d(:,n+1:n+6) = [sqrt(vgv(:,1:3)) vgv(:,4:6)];
     for ii = 1:6
         n = n + 1; 
         if ii < 4
@@ -107,7 +110,7 @@ if exist('Vgv','var')
         else
             a = find(strcmp('crossvar',parameters_list)==1);
             info(1) = parameters_vgv(ii);
-            info(2) = {['cross variance (' parameters_vg{str2num(parameters_vgv{ii}(end-1))} ',' parameters_vg{str2num(parameters_vgv{ii}(end))}] ')'};
+            info(2) = {['cross variance (' parameters_vg{str2num(parameters_vgv{ii}(end-1))} ',' parameters_vg{str2num(parameters_vgv{ii}(end))} ')']};
             info([3 5]) = {'N/A'};
         end
         info(4) = {'Vgv'};
@@ -137,13 +140,6 @@ end
 starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
 endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
 
-software = 'https://git.eiscat.se/cvs/guisdap9';
-level2_link = '';
-matfile.metadata.software_link = {software};
-if ~isempty(level2_link)
-    matfile.metadata.level2_links = {level2_link};
-end
-
 r_time = datevec(Vdate(1,1));
 starttime = datestr(r_time);
 
@@ -159,7 +155,7 @@ e_time = datevec(Vdate(2,end));
 endtime = datestr(e_time);
 
 if ~exist('name_expr','var'), name_expr=''; end
- 
+keyboard 
 [~,filename,~] = fileparts(matfile_vel); 
 storepath = fullfile(datapath,['EISCAT_' filename]);
 if exist(storepath)
@@ -229,12 +225,12 @@ if exist('name_sig','var'); nn = nn + 1;
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';   
 end
-if exist('name_strategy','var'); nn = nn + 1;
-    infoname(1) = {'name_strategy'};
-    infoname(2) = {name_strategy};
-    infoname(3) = {'limitations applied and used in the velocity-vector calculations'};
-    matfile.metadata.names(:,nn) = infoname';
-end
+% if exist('name_strategy','var'); nn = nn + 1;
+%     infoname(1) = {'name_strategy'};
+%     infoname(2) = {name_strategy};
+%     infoname(3) = {'limitations applied and used in the velocity-vector calculations'};
+%     matfile.metadata.names(:,nn) = infoname';
+% end
 if exist('name_exps','var'); nn = nn + 1; 
     infoname(1) = {'name_exps'};
     for i = 1:length(name_exps(:,1))
@@ -265,8 +261,14 @@ if exist('name_ants','var'); nn = nn + 1;
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';
 end
-if exist('name_strategies','var'); nn = nn + 1;
-    infoname(1) = {'name_strategies'};
+
+% Software
+matfile.metadata.software.software_link = {software};
+matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
+if ~isempty(level2_link)
+    matfile.metadata.software.level2_links = {level2_link};
+end
+if exist('name_strategies','var')
     for i = 1:length(name_strategies(:,1))
         if i == 1
             namestrategies = name_strategies(1,:);
@@ -274,19 +276,7 @@ if exist('name_strategies','var'); nn = nn + 1;
             namestrategies = [namestrategies ' ' name_strategies(i,:)];
         end
     end
-    infoname(2) = {namestrategies};
-    a = find(strcmp('name_strategy',parameters_list)==1);                
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;
-    matfile.metadata.names(:,nn) = infoname';
-end
-if exist('GUP_ver','var'); nn = nn + 1; 
-    infoname(1) = {'gupver'};
-    infoname(2) = {num2str(GUP_ver)};
-    a = find(strcmp('h_ver',parameters_list)==1);                
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;
-    matfile.metadata.names(:,nn) = infoname';
+    matfile.metadata.software.strategies = {namestrategies};
 end
 
 if isfield(matfile.metadata,'par0d')

@@ -184,17 +184,18 @@ if ~isempty(vecvel_files)
                 name_ant  = names{2,ee};
                 [~,file,~] = fileparts(EISCATvecvel_hdf5file);
                 vfile = [storepath '/' file(8:end)];
-                save(vfile,'Vdate','Vpos','Vg','Vgv','name_expr','name_ant');
+                save([vfile '.mat'],'Vdate','Vpos','Vg','Vgv','name_expr','name_ant');
                 if contains(name_expr,'cp3')
                     plottype = 'pVm';    
                 else
                     plottype = 'tVm3';
                 end
-                efield(vfile,plottype);
-                print('-dpdf',vfile)
+                efield([vfile '.mat'],plottype);
+                print('-dpdf',[vfile '.pdf'])
                 npdf = npdf + 1;
                 pdf_forHDF5(npdf) = {[file(8:end) '.pdf']};
-                print('-dpng256',vfile)
+                print('-dpng256',[vfile '.png'])
+                keyboard
                 store_image2Hdf5([vfile '.png'],EISCATvecvel_hdf5file);
                 insert_exif(gcf,vfile,{'pdf' 'png'})
                 delete([vfile '.mat'],[vfile '.png'])
