@@ -53,8 +53,8 @@ Loc=local.site;
 if strcmp(action(naction,nvargin,varargin),'rtgup')
   global a_year a_start a_end a_realtime a_autodir
   if isempty(START_TIME)
-    START_TIME=toYMDHMS(a_year,a_start);
-    END_TIME=toYMDHMS(a_year,a_end);
+    START_TIME=timeconv(a_start,'tai2utc');
+    END_TIME=timeconv(a_end,'tai2utc');
     if isstruct(a_autodir) && any([START_TIME(1:3)~=END_TIME(1:3) ~a_realtime naction>1])
       START_TIME=[a_autodir.date 0 0 0];
       END_TIME=START_TIME+[0 0 0 24 0 0];
