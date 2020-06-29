@@ -100,7 +100,7 @@ if exist('Vg','var')
 end
 
 if exist('Vgv','var')
-    parameters_vgv = {'dvi_east' 'dvi_north' 'dvi_up' 'crossvar12' 'crossvar13' 'crossvar23'};
+    parameters_vgv = {'dvi_east' 'dvi_north' 'dvi_up' 'crossvar12' 'crossvar23' 'crossvar13'};
     matfile.data.par2d(:,n+1:n+6) = [sqrt(vgv(:,1:3)) vgv(:,4:6)];
     for ii = 1:6
         n = n + 1; 
@@ -155,7 +155,6 @@ e_time = datevec(Vdate(2,end));
 endtime = datestr(e_time);
 
 if ~exist('name_expr','var'), name_expr=''; end
-keyboard 
 [~,filename,~] = fileparts(matfile_vel); 
 storepath = fullfile(datapath,['EISCAT_' filename]);
 if exist(storepath)
