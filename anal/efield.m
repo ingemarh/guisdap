@@ -10,9 +10,11 @@
 %					g geographical coords
 %					m (local) magnetic coords
 %	alt	[0 Inf] altitude range, km
-%	verbose	[0]	Specify plot parameters:	0 autoscale
-%							1 interactive
-%							2 fixed values
+%       lat     [0 Inf] latitude range, degrees 
+%	verbose	[0]	Specify plot parameters:	[0] autoscale
+%							[1] interactive
+%                                                       [2] fixed values   
+%							vector: custom values
 %				[minlat maxV maxVerr scaleV stretchtime]
 % See also VECTOR_VELOCITY VEL_WRAPPER
 %
@@ -90,6 +92,8 @@ if ~isempty(p)
   END_TIME=minput('  End time',END_TIME);
  end
  vdd=datenum([START_TIME;END_TIME]);
+ % actually cut out time interval, so even polar plot shows only selected interval
+ d=d(find(Vdate(1,:)>=vdd(1) & Vdate(2,:)<=vdd(2)))
  if verbose(1)<2
   maxv=norm(vp(d,:),1)/length(d);
   if verbose
@@ -106,7 +110,13 @@ if ~isempty(p)
   ax=gca;
   pos=get(gcf,'defaultaxespos'); xp=pos(1); yp=sum(pos([2 4]));
   axes('Position',[xp yp pos(3) 1-yp],'visible','off');
-  suptitle=['\fontsize{24}EISCAT Scientific Association\fontsize{16}' char(10) 'Vector ion drift velocities'];
+ if strfind(p, 'V')
+  plotdescr='Ion drift velocities';
+ else
+   plotdescr='Electric field';
+ end
+  % suptitle=['\fontsize{24}EISCAT Scientific Association\fontsize{16}' char(10) 'Vector ion drift velocities'];
+  suptitle=['\fontsize{24}EISCAT Scientific Association\fontsize{16}' char(10) plotdescr];
   vddt=vdd+[1;-1]/1440;
   t2=[datestr(vddt(2),'dd mmmm yyyy')];
   if t2(1)=='0', t2(1)=[]; end
