@@ -195,7 +195,6 @@ if ~isempty(vecvel_files)
                 npdf = npdf + 1;
                 pdf_forHDF5(npdf) = {[file(8:end) '.pdf']};
                 print('-dpng256',[vfile '.png'])
-                keyboard
                 store_image2Hdf5([vfile '.png'],EISCATvecvel_hdf5file);
                 insert_exif(gcf,vfile,{'pdf' 'png'})
                 delete([vfile '.mat'],[vfile '.png'])
@@ -405,10 +404,13 @@ for ii = 1:length(data_files)
         logfile = fullfile(dirpath,logfiles(nn).name);
         copyfile(logfile,storepath)
     end
-    
     % Check if metadata exist
     info = h5info(EISCAThdf5file,'/metadata/software');
-    metagroups = {info.Groups.Name}';
+    if ~isempty(info.Groups)
+        metagroups = {info.Groups.Name}';
+    else
+        metagroups = {''}';
+    end
     hdf5fileformeta = [];
    
     if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metagroups,'/metadata/software/gfd'),1))

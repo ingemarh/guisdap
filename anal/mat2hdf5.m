@@ -243,6 +243,42 @@ for jj = 1:rec
      leaps = [leaps;leap'];
 end
 
+matfile_tmp = fullfile(matpath,filelist(1).name);
+load(matfile_tmp)
+nn = 0;
+if exist('name_expr','var'); nn = nn + 1; 
+    infoname(1) = {'name_expr'};
+    infoname(2) = {name_expr};
+    a = find(strcmp('name_expr',parameters_list)==1);                
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
+end
+if exist('name_site','var'); nn = nn + 1; 
+    infoname(1) = {'name_site'};
+    infoname(2) = {name_site};
+    a = find(strcmp('name_site',parameters_list)==1);                
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
+end
+if exist('name_ant','var'); nn = nn + 1; 
+    infoname(1) = {'name_ant'};
+    infoname(2) = {name_ant};
+    a = find(strcmp('name_ant',parameters_list)==1); 
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
+end
+if exist('name_sig','var'); nn = nn + 1; 
+    infoname(1) = {'name_sig'};
+    infoname(2) = {name_sig};
+    a = find(strcmp('name_sig',parameters_list)==1);                
+    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+    infoname(3) = infodesc;
+    matfile.metadata.names(:,nn) = infoname';
+end
+
 nn1 = 0;
 [uniom0,unigain,unifradar] = deal(0);
 for ii = 1:length(parameters_1d)
@@ -594,41 +630,6 @@ else
     matfile.metadata.par1d(:,ll1+2) = info';
 end
 
-nn = 0;
-if exist('name_expr','var'); nn = nn + 1; 
-    infoname(1) = {'name_expr'};
-    infoname(2) = {name_expr};
-    a = find(strcmp('name_expr',parameters_list)==1);                
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;
-    matfile.metadata.names(:,nn) = infoname';
-end
-if exist('name_site','var'); nn = nn + 1; 
-    infoname(1) = {'name_site'};
-    infoname(2) = {name_site};
-    a = find(strcmp('name_site',parameters_list)==1);                
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;
-    matfile.metadata.names(:,nn) = infoname';
-end
-if exist('name_ant','var'); nn = nn + 1; 
-    infoname(1) = {'name_ant'};
-    infoname(2) = {name_ant};
-    a = find(strcmp('name_ant',parameters_list)==1); 
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;
-    matfile.metadata.names(:,nn) = infoname';
-end
-if exist('name_sig','var'); nn = nn + 1; 
-    infoname(1) = {'name_sig'};
-    infoname(2) = {name_sig};
-    a = find(strcmp('name_sig',parameters_list)==1);                
-    [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-    infoname(3) = infodesc;
-    matfile.metadata.names(:,nn) = infoname';
-end
-
-
 %%% Software
 matfile.metadata.software.software_link = {software};
 matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
@@ -669,8 +670,8 @@ matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 % If area of convhull (or distance between 2 points) < 10-4 deg^2, 
 % define all points as one (average)
 % imag = 1 to plot the data and the corresponding box if there is a box
-im = 1;
 
+im = 0;
 [plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],im);
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = plonlat(:,2);

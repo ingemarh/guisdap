@@ -444,7 +444,7 @@ matfile.metadata.schemes.DataCite.PublicationYear = {year};
 % Find the smallest box (4 corners and mid-point) to enclose the data.
 % If area of convhull < 10-4 deg^2, define alla points as one (average)
 % imag = 1 to plot the data and the corresponding box
-im = 1;
+im = 0;
 [plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],im);
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);
 matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = plonlat(:,2);
