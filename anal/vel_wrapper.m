@@ -7,7 +7,7 @@
 %		ip2kst for tristatic UHF ip2 scan
 %		cp2 for monostatic cp2 scan
 %		cp2kst for tristatic UHF ip2 scan
-%		cp1kst for tristatic UHF cp1 scan
+%		cp1, cp1kst, lowel for tristatic UHF fixed point
 %		cp3kst for tristatic UHF cp3 scan
 %		cluster for overlapped ESR and VHF beams
 %	dirs	{result_path} Directories containing data (wild cards accepted)
@@ -52,7 +52,7 @@ switch scan
   alt=[e f]; td=1440./[1 2]; uperr=50; ld=60:.5:90; ptype='p';
   plots(2:length(alt)-3)={'Vg'}; plots([1 end+2])={[] 'Vm'};
   case {'cp1' 'cp1kst' 'lowel'}
-    % all tristatic cases should work with these settings
+    % all fixed tristatic cases should work with these settings
   alt=f; td=1;
  case {'cp2' 'cp2t' 'cp2e'}
   alt=[e f]; td=360;
