@@ -126,7 +126,7 @@ if ~exist('starttime','var')
     matfile_tmp = fullfile(matpath,filelist(1).name);
     load(matfile_tmp)
     starttime = datestr(r_time(1,:),'yyyy-mm-ddTHH:MM:SS');
-    matfile_tmp = fullfile(matpath,filelist(1).name);
+    matfile_tmp = fullfile(matpath,filelist(end).name);
     load(matfile_tmp)
     endtime = datestr(r_time(2,:),'yyyy-mm-ddTHH:MM:SS');
 end

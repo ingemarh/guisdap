@@ -10,7 +10,7 @@ function EISCAT_hdf5(dirpath, datapath, showfigs)
 % No:  showfigs = []
 % Yes: showfigs = 1 (non-empty)
 
-global name_ant path_GUP
+global path_GUP % name_ant
 
 if nargin<3
     showfigs = []; 
@@ -281,7 +281,6 @@ for ii = 1:length(data_files)
            
             fig_intper_set = 0;
             c = 0;
-            
             for oo = 1:length(dd)
                 
                 if oo == length(dd)
@@ -313,16 +312,17 @@ for ii = 1:length(data_files)
                 end
             end
 
-            if fig_intper_set == 0
-                if antcheck == 1
-                    fig_intper = '0';
-                elseif  ~isempty(intper)
-                    fig_intper = intper;
-                end
-            end
-
+%             if fig_intper_set == 0
+%                 if antcheck == 1
+%                     fig_intper = '0';
+%                 elseif  ~isempty(intper)
+%                     fig_intper = intper;
+%                 end
+%             end
+            
             if (strcmp(fig_intper,intper) && contains(fig_ant,ant) && strcmp(fig_pulse,pulse)) && c == 1 || ...
-               (strcmp(fig_intper,intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...     
+               (strcmp(fig_intper,intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...   
+               (isempty(fig_intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ... 
                (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
                (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...
                ((contains(figname,'BoreSight') || contains(figname,'WestBeam')) && contains(fig_pulse,pulse))
@@ -422,12 +422,17 @@ for ii = 1:length(data_files)
                 hdf5fileformeta = hdf5ncar_files{gg};
             end
         end
-        if isempty(hdf5fileformeta) && length(data_files) == 1
+        if isempty(hdf5fileformeta) && length(hdf5rest_files) == 1
             hdf5fileformeta = hdf5rest_files{1};
         end
-        disp(['gfd was missing ... Taking metadata from' hdf5fileformeta '.'])
+        
         if hdf5fileformeta
             metacompl(hdf5fileformeta,EISCAThdf5file)  
+            disp(['gfd was missing ... Taking metadata from ' hdf5fileformeta '.'])
+        elseif isempty(hdf5fileformeta) && length(hdf5rest_files) > 1
+            warning(['gfd was missing ... several (>1) older HDF5-files (not NCAR) were found. The correct complementing metadata need to be manually extracted.'])
+        else
+            warning(['gfd was missing ... but no complementing metadata was found.'])
         end
     else
     end
