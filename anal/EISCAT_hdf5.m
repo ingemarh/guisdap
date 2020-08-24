@@ -72,7 +72,7 @@ end
 hdf5oldfiles     = dir(fullfile(dirpath,'overview','*hdf5')); 
 hdf5_allfiles  = [];
 hdf5_files     = [];
-hdf5vel_files   = [];
+hdf5vel_files  = [];
 hdf5ncar_files = [];
 hdf5rest_files = [];
 
