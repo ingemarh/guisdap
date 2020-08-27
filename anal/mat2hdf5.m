@@ -23,8 +23,14 @@ level2_link = '';
 
 [~,matfolder] = fileparts(matpath);
 
-filelist   = dir(fullfile(matpath,'*.mat')); 
-rec        = length(filelist);
+filelist   = dir(fullfile(matpath,'*.mat'));
+for ff = 1:length(filelist)
+     [~,nameoffile] = fileparts(filelist(ff).name);
+     if isempty(str2num(nameoffile))
+	 filelist(ff) = [];          % Remove any .matfiles with names consisting of not only numbers, e.g. matlab.mat if exists
+     end
+end
+rec  = length(filelist);
 
 gupfile    = fullfile(matpath,'.gup');
 gupfilecheck =  dir(gupfile);

@@ -1,4 +1,4 @@
-function EISCAThdf5_generate_year(yearpath,datapath,matfile_lists)
+function EISCAThdf5_generate_year(yearpath,datapath,matfile_lists,runcrashed)
 % EISCAThdf5_generate_year(yearpath,datapath,matfile_lists)
 %
 % Generate EISCAT HDF5-files from one year of Madrigal data.
@@ -10,7 +10,9 @@ function EISCAThdf5_generate_year(yearpath,datapath,matfile_lists)
 %                       1) to be handled (List_2BHandled)
 %                       2) that were handled and were OK (List_HandledOK) 
 %                       3) that crashed (List_Crashed)
-
+% runcrashed	    If it is non-empty the experiments in List_Crashed will be run.
+if nargin < 4
+    runcrashed = []; end	
 if nargin < 3
     matfile_lists = ''; end
 if nargin < 2
@@ -29,7 +31,7 @@ else
     datapath = fullfile(datapath,['EISCAT_HDF5_' year]); end
 % elseif strcmp(datapath(end),'/')
 %     datapath = datapath(1:end-1); end
-
+keyboard
 if ~isempty(matfile_lists)
     load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
 else
@@ -48,6 +50,11 @@ else
             mm = mm + 1;
         end
     end
+end
+
+if ~isempty(runcrashed)
+    List_2BHandled = List_Crashed;
+    List_Crashed = {};
 end
 
 while ~isempty(List_2BHandled)
