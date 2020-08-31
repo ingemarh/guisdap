@@ -26,7 +26,7 @@ pathparts = strsplit(yearpath,'/');
 year = pathparts{end};
 
 if isempty(datapath)
-    datapath = fullfile(pwd,['EISCAT_HDF5_' year]);
+    datapath = fullfile(pwd,'EISCAT_HDF5',year);
 else
     datapath = fullfile(datapath,['EISCAT_HDF5_' year]); end
 % elseif strcmp(datapath(end),'/')
