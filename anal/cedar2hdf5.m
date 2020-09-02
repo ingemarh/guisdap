@@ -57,7 +57,7 @@ day    = sprintf('%02d',data.day(1));
 hour   = sprintf('%02d',data.hour(1));
 minute = sprintf('%02d',data.min(1));
 second = sprintf('%02d',data.sec(1));
-display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
+%display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
 recs = length(data.ut1_unix);    % # of records
 intper_mean = subsetmean(data.ut2_unix-data.ut1_unix);
@@ -190,7 +190,7 @@ for ii = 1:npar
     if strcmp(char(Parsinfile_list(ii)),'nsampi')
         continue
     end
-    
+
     aa = find(strcmp(char(Parsinfile_list(ii)),parameters_list)==1);
     if aa
         bb = strfind(Parsinfile_list{ii},'+');

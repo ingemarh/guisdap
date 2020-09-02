@@ -46,13 +46,13 @@ logs_files = [];
 logs_filename = [];
 vecvel_tarfiles = [];
 vecvel_tarfilename = [];
-targz_filecheck = dir(fullfile(dirpath,'*tar.gz'));
+targz_filecheck = [dir(fullfile(dirpath,'*tar.gz'));dir(fullfile(dirpath,'*tar'))];
 targz_files = [];
 if ~isempty(targz_filecheck)
     n = 1; m = 1; o = 1;
     for ii = 1:length(targz_filecheck)
         targz_filename = targz_filecheck(ii).name;
-        if contains(targz_filename,'logs.tar.gz')
+        if contains(targz_filename,'logs.tar')
             logs_files{m} = fullfile(dirpath,targz_filename);
             [~,name,ext] = fileparts(logs_files{m}); 
             logs_filename{m} = [name ext];
@@ -213,8 +213,8 @@ end
 
 
 for ii = 1:length(data_files)
-    disp(['Handling ' data_files{ii} ' at the moment ...'])
-    if contains(data_files{ii},'.tar.gz')
+    disp(['Handling:' newline data_files{ii}])
+    if contains(data_files{ii},'.tar')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
             rmdir(untarpath,'s')
@@ -225,6 +225,7 @@ for ii = 1:length(data_files)
             untar(data_files{ii},untarpath)
         catch
             warning(['Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.'])
+
             continue
         end
         
@@ -413,7 +414,7 @@ for ii = 1:length(data_files)
     end
     hdf5fileformeta = [];
    
-    if contains(data_files{ii},'.tar.gz') && isempty(find(strcmp(metagroups,'/metadata/software/gfd'),1))
+    if contains(data_files{ii},'.tar') && isempty(find(strcmp(metagroups,'/metadata/software/gfd'),1))
         [~,tarfilename1,~] = fileparts(data_files{ii});
         [~,tarfilename,~]  = fileparts(tarfilename1);
         if ~isempty(hdf5ncar_files)

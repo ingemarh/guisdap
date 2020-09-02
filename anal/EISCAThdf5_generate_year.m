@@ -26,12 +26,12 @@ pathparts = strsplit(yearpath,'/');
 year = pathparts{end};
 
 if isempty(datapath)
-    datapath = fullfile(pwd,'EISCAT_HDF5',year);
+    datapath = fullfile(pwd,'EISCAT',year);
 else
-    datapath = fullfile(datapath,['EISCAT_HDF5_' year]); end
+    datapath = fullfile(datapath,'EISCAT',year); end
 % elseif strcmp(datapath(end),'/')
 %     datapath = datapath(1:end-1); end
-keyboard
+
 if ~isempty(matfile_lists)
     load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
 else
