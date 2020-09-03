@@ -37,7 +37,7 @@ if strfind(fn,'.bz2')
         %system(['pbzip2 -cd ' fn ' >' local.tfile ext]);
    elseif ispc
          %We run on Windows. adapt this path as needed
-        system(['"C:\Program Files\7-Zip\7z.exe" e -so "' fn '" >' local.tfile ext] ); 
+        system(['"C:\Program Files\7-Zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']); 
    end
 	fn=[local.tfile ext];
     
@@ -45,7 +45,7 @@ elseif strfind(fn,'.gz')
     if isunix
         system(['gunzip -c ' fn ' >' local.tfile ext]); 
     elseif ispc
-        system(['"c:\Program Files\7-zip\7z.exe" e -so "' fn '" >' local.tfile ext] ); 
+        system(['"C:\Program Files\7-zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']); 
     end
 	fn=[local.tfile ext];
 end
