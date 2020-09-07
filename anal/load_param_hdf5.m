@@ -33,6 +33,12 @@ if ~isempty(find(strcmp(metavar,'experiment')))
     end
 end
 
+if ~isempty(find(strcmp(metavar,'utime_pp')))
+    do_rpar = false;
+else
+    do_rpar = true;
+end
+
 time_id   = 1;                             % [ut]
 par1d_id  = [4 5 6 10];                    % [az el Pt Tsys]
 par2d_id  = [19 18 20 22 21 24 23 54 55];  % [range, alt, ne, tr, ti, vi, collf, po+, res]
@@ -65,10 +71,13 @@ if ~isempty(find(strcmp(metavar,'par2d')))
     columns = find(str2num(char(matdata.metadata.par2d(end,:)))==20);
     ndata2d =  length(matdata.data.par2d(:,columns));
 end
-if ~isempty(find(strcmp(metavar,'par2d_pp')))
-    ii2d_pp = 1;
+if ~isempty(find(strcmp(metavar,'par2d_pp'))) && do_rpar
+%     ii2d_pp = 1;
+%     do_rpar
     matdata.metadata.par2d_pp = deblank(h5read(filename,'/metadata/par2d_pp'));
     matdata.data.par2d_pp     = h5read(filename,'/data/par2d_pp');
+else
+    do_rpar = false;
 end
 
 nh_id = 76;
@@ -234,7 +243,8 @@ for ii = 1:n_tot
     nhalt_tmp = nhalt_tmp + nh(ii);
 end
 
-if ii2d_pp == 1
+%if ii2d_pp == 1
+if do_rpar
     for ii = rpar2d_id
         columns = find(str2num(char(matdata.metadata.par2d_pp(end,:)))==ii);
         par_tmp = matdata.data.par2d_pp(:,columns);
@@ -284,6 +294,8 @@ if ii2d_pp == 1
     nrpar2d = length(rpar2d_id);
     rpar2D  = NaN(npprange_range,n_tot,nrpar2d);
     
+    keyboard
+    
     npprange_tmp = 0;
     for ii = 1:n_tot
         rangerange = (npprange_tmp+1):(npprange_tmp+npprange(ii));
@@ -312,54 +324,3 @@ else
 end
 
 Time = Time';
-
-% npar2d=length(par2d_id);
-% nerr2d=length(err2d_id);
-% nrpar2d=length(rpar2d_id);
-% 
-% %create 3D-matrices
-% par2D  = NaN(nh_alt,n_tot,npar2d);
-% err2D  = NaN(nh_alt,n_tot,nerr2d);
-% rpar2D = NaN(npprange_range,n_tot,nrpar2d);
-
-% nhalt_tmp = 0;
-% for ii = 1:n_tot
-%         altrange = (nhalt_tmp+1):(nhalt_tmp+nh(ii));
-%         par2D(1:nh(ii),ii,:) = par2d(altrange,:); 
-%         err2D(1:nh(ii),ii,:) = err2d(altrange,:); 
-%         nhalt_tmp = nhalt_tmp + nh(ii);
-% end
-
-% npprange_tmp = 0;
-% for ii = 1:n_tot
-%         rangerange = (npprange_tmp+1):(npprange_tmp+npprange(ii));
-%         if ~isempty(pp), pp_tomerge = pp(rangerange); else pp_tomerge = []; end 
-%         if ~isempty(pperror), pperror_tomerge = pperror(rangerange); else pperror_tomerge = []; end
-%         if ~isempty(ppw), ppw_tomerge = ppw(rangerange); else ppw_tomerge = []; end
-%         if ~isempty(pprange), pprange_tomerge = pprange(rangerange); else pprange_tomerge = []; end
-%         [pp_merged,pperror_merged,ppw_merged,pprange_merged,pprofile_id] = pp_merge(pp_tomerge,pperror_tomerge,ppw_tomerge,pprange_tomerge);
-%         %[pp_merged,pperror_merged,ppw_merged,pprange_merged,pprofile_id] = pp_merge(pp(rangerange),pperror(rangerange),ppw(rangerange),pprange(rangerange));
-%         npprange_merged(ii) = length(pprange_merged);
-%         rpar2D(1:npprange_merged(ii),ii,:) = [pprange_merged pprange_merged pp_merged];
-%         npprange_tmp = npprange_tmp + npprange(ii);
-% end
-% 
-% % Remove redundant NaNs from rpar2D (since the merged is smaller than unmerged)
-% npprange_merged_max = max(npprange_merged);
-% rpar2D = rpar2D(1:npprange_merged_max,:,:);
-% 
-% re=6370;
-% elev = par1D(:,2);
-% for ii = 1:n_tot  % caluclate ppalt fromm pprange
-%    x = rpar2D(:,ii,1)/re;
-%    rpar2D(:,ii,2) = re*sqrt(1+x.*(x+2*sin(elev(ii)/57.2957795)))-re;
-% end
-
-% Time = Time';
-% 
-% d=find(par1D(:,2)>90); % Cast azimuth and elevation into range 0-360, 0-90 degrees
-% par1D(d,2)=180-par1D(d,2);
-% par1D(d,1)=par1D(d,1)+180; 
-% par1D(:,1)=mod(par1D(:,1)+360,360);
-
-% end
