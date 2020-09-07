@@ -317,7 +317,7 @@ for ii = 1:npar
                     matfile.data.par1d = [matfile.data.par1d double(par_1d)]; 
                     matfile.metadata.par1d = [matfile.metadata.par1d info'];
                 end
-                break
+                break     
             else
                 if jj == 2
                     matfile.data.par2d_pp = [matfile.data.par2d_pp single(parameterdata_kindat)];
