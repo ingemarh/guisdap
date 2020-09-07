@@ -56,8 +56,6 @@ matdata.data.par1d        = h5read(filename,'/data/par1d');
 matdata.metadata.utime    = deblank(h5read(filename,'/metadata/utime'));
 matdata.data.utime        = h5read(filename,'/data/utime');
 
-keyboard
-
 columns = find(str2num(char(matdata.metadata.utime(end,:)))==time_id);
 Time = datenum(datetime(matdata.data.utime(:,columns),'ConvertFrom','posixtime'));
 rec = length(Time(:,1));

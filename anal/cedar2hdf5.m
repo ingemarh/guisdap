@@ -136,7 +136,7 @@ for ii = 1:nrecs
     nreckindat = [nreckindat; n_rec kindat_rec];  % A paramater giving number of datapoints for each record and the corresponding kindats
 end
 
-nkin1 = []; nkin2 = [];
+nkin1 = 0; nkin2 = 0;
 if nkindats == 2
     nkin1 = length(find(nreckindat(:,2)==kindats(1)));
     nkin2 = length(find(nreckindat(:,2)==kindats(2)));
@@ -203,7 +203,6 @@ for ii = 1:nkindats
     end
 end
 
-keyboard
 
 for ii = 1:npar
     if strcmp(char(Parsinfile_list(ii)),'nsampi')
@@ -339,7 +338,7 @@ for ii = 1:npar
                     matfile.data.par1d_pp = [matfile.data.par1d_pp double(par_1d)]; 
                     matfile.metadata.par1d_pp = [matfile.metadata.par1d_pp info'];
                 end
-            elseif length(par_1d)==recs 
+            elseif length(par_1d)==recs && jj == 1
                 if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
                     matfile.data.utime = [matfile.data.utime par_1d]; 
                     matfile.metadata.utime = [matfile.metadata.utime info'];
