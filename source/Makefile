@@ -48,7 +48,7 @@ GUPLIB:=	$(GUPLIB) -lpthread
 endif
 
 
-all: lib install
+all: iri geomag msis mex
 
 iri:
 	$(MEX) $(MEXOPTS) iri.F $(IRILIB)
