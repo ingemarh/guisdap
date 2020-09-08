@@ -23,14 +23,12 @@ filename = hdf5file;
 a = strfind(b,'@');
 name_ant = b(a+1:end);
 
-inform = h5info(filename,'/metadata');
+inform      = h5info(filename,'/metadata');
 metavar = {inform.Datasets.Name}';
-if ~isempty(find(strcmp(metavar,'experiment')))
-    experimentdata = h5read(filename,'/metadata/experiment');
-    fields = fieldnames(experimentdata);
-    if ~isempty(find(strcmp(fields,'name_expr')))
-        name_expr = deblank(experimentdata.name_expr');
-    end
+if ~isempty(find(strcmp(metavar,'names')))
+    namesdata = h5read(filename,'/metadata/names');
+    nnexpr = find(strcmp(deblank(namesdata(1,:)),'name_expr'));
+    name_expr = deblank(namesdata{2,nnexpr});
 end
 
 if ~isempty(find(strcmp(metavar,'utime_pp')))
@@ -72,8 +70,6 @@ if ~isempty(find(strcmp(metavar,'par2d')))
     ndata2d =  length(matdata.data.par2d(:,columns));
 end
 if ~isempty(find(strcmp(metavar,'par2d_pp'))) && do_rpar
-%     ii2d_pp = 1;
-%     do_rpar
     matdata.metadata.par2d_pp = deblank(h5read(filename,'/metadata/par2d_pp'));
     matdata.data.par2d_pp     = h5read(filename,'/data/par2d_pp');
 else
