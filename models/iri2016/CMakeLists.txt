@@ -1,0 +1,11 @@
+project(libiri)
+
+#string(APPEND CMAKE_Fortran_FLAGS " -fno-automatic -fno-align-commons")
+
+file(GLOB IRI_SRC "*.f*")
+add_library(iri SHARED)
+target_sources(iri PRIVATE ${IRI_SRC})
+
+file(GLOB PUBLIC_ASC "*.asc")
+file(GLOB PUBLIC_DAT "*.dat")
+file(INSTALL ${PUBLIC_ASC} ${PUBLIC_DAT} DESTINATION ${SHARE_DIRECTORY}/iri)

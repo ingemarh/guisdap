@@ -101,7 +101,7 @@ if ~exist(result_path,'dir'), result_path=path_tmp; end
 if ~setuplibs
  fprintf('***** using no compiled library enhancements *****\n')
 elseif libisloaded('onera_desp_lib') 
- addpath(fullfile(path_GUP,'models','irbem-code','matlab'))
+ addpath(fullfile(path_GUP,'matlab','irbem','matlab'))
  onera_desp_lib_get_mlt(now,[60 20 0]);
 end
 

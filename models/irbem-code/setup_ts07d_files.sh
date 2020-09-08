@@ -2,26 +2,32 @@
 # written by Adam C. Kellerman
 # modified Nov 7, 2016 to automate download and unpacking
 
-cd $TS07_DATA_PATH # by default we specify the global variable
+#cd $TS07_DATA_PATH # by default we specify the global variable
 echo "TS07_DATA_PATH: $TS07_DATA_PATH"
 
 COEFF_DIR=$TS07_DATA_PATH/Coeffs
 TAIL_PAR_DIR=$TS07_DATA_PATH/TAIL_PAR
 
 #download the TAIL_PAR files
+if [ ! -f TAIL_PAR.zip ]
+then	
 echo 'Downloading TAIL_PAR.zip'
 wget -N http://rbspgway.jhuapl.edu/sites/default/files/SpaceWeather/TAIL_PAR.zip
 echo "done"
+fi
 
 printf "Unpacking "
 mkdir -p $TAIL_PAR_DIR
 unzip -u TAIL_PAR.zip -d $TAIL_PAR_DIR
 echo "done"
 
+if [ ! -f all.tgz ]
+then
 echo 'Downloading coefficient files'
 #download all the coefficient files
 wget -N http://rbspgway.jhuapl.edu/models/magneticfieldmodeling/ts07d/coeffs/2017/all.tgz
 echo "done"
+fi
 
 #unpack them
 printf 'unpacking coefficient files...'
