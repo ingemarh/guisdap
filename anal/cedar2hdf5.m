@@ -59,7 +59,7 @@ minute = sprintf('%02d',data.min(1));
 second = sprintf('%02d',data.sec(1));
 %display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
-recs = length(data.ut1_unix);    % # of records
+%recs = length(data.ut1_unix);    % # of records
 intper_mean = subsetmean(data.ut2_unix-data.ut1_unix);
 if intper_mean < 10
     name_strategy = 'ant';
@@ -95,7 +95,6 @@ hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCAThdf5file = hdffilename;
 
-%keyboard
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 [~,text] = xlsread(GuisdapParFile);     
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
@@ -124,15 +123,23 @@ if ~isempty(find(strcmp(Parsinfile_list,'sracf0')==1)) && ~isempty(find(strcmp(P
     imag_acf = [];
 end
 
-newrec = (data.recno(end)+1)/nkindats;
-
-nrec = [];
-for ii= 1:newrec    
-    nrec_tmp = [];
-    for jj = 1:nkindats
-        nrec_tmp = [nrec_tmp length(find(data.recno+1==(ii-1)*nkindats+jj))];
+nrecs = data.recno(end)+1;
+nreckindat = [];
+for ii = 1:nrecs
+    rr = find(data.recno == ii-1);
+    n_rec      = length(rr);
+    if nkindats>1
+        kindat_rec = data.kindat(rr(1));
+    else
+        kindat_rec = kindats;
     end
-    nrec = [nrec; nrec_tmp];
+    nreckindat = [nreckindat; n_rec kindat_rec];  % A paramater giving number of datapoints for each record and the corresponding kindats
+end
+
+nkin1 = 0; nkin2 = 0;
+if nkindats == 2
+    nkin1 = length(find(nreckindat(:,2)==kindats(1)));
+    nkin2 = length(find(nreckindat(:,2)==kindats(2)));
 end
 
 if ~isfield(data,'range')
@@ -166,6 +173,12 @@ matfile.data.par2d     = [];
 matfile.metadata.par2d = [];
 matfile.data.utime     = [];
 matfile.metadata.utime = [];
+if nkindats == 2 && nkin1 ~= nkin2
+    matfile.data.par1d_pp     = [];
+    matfile.metadata.par1d_pp = [];
+    matfile.data.utime_pp     = [];
+    matfile.metadata.utime_pp = [];
+end
 
 for ii = 1:nkindats
     aa = find(strcmp('nrec',gupparameters_list)==1);
@@ -177,14 +190,19 @@ for ii = 1:nkindats
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
     info(2) = {[info{2} '(kindat=' num2str(kindats(ii)) ')']};
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-    if length(unique(nrec(:,ii)))==1
-        matfile.data.par0d = [matfile.data.par0d nrec(1,ii)];
+    kin = find(nreckindat(:,2) == kindats(ii));
+    if length(unique(nreckindat(kin,1)))==1
+        matfile.data.par0d = [matfile.data.par0d nreckindat(kin(1),1)];
         matfile.metadata.par0d = [matfile.metadata.par0d info'];
-    elseif length(unique(nrec(:,ii)))>1
-        matfile.data.par1d = [matfile.data.par1d nrec(:,ii)];
+    elseif length(unique(nreckindat(kin,1)))>1 && nkin1 ~= nkin2 && ii == 2
+        matfile.data.par1d_pp = [matfile.data.par1d_pp nreckindat(kin,1)];
+        matfile.metadata.par1d_pp = [matfile.metadata.par1d_pp info'];
+    elseif length(unique(nreckindat(kin,1)))>1
+        matfile.data.par1d = [matfile.data.par1d nreckindat(kin,1)];
         matfile.metadata.par1d = [matfile.metadata.par1d info'];
     end
 end
+
 
 for ii = 1:npar
     if strcmp(char(Parsinfile_list(ii)),'nsampi')
@@ -201,7 +219,8 @@ for ii = 1:npar
         elseif strcmp(char(Parsinfile_list(ii)),'acf')   
             if nkindats>1
                 cckind = find(data.kindat == str2num(evenkindat));   % data.kindat does not seem to exist when there is only 1 kindat for the experiment
-            else cckind = 1:length(data.recno);
+            else
+                cckind = 1:length(data.recno);
             end
             for dd = 0:nracf  
                 acfdata_rec = data.([char(Parsinfile_list(ii)) num2str(dd)]);
@@ -287,13 +306,15 @@ for ii = 1:npar
             
             start = 0;
             par_1d = [];
-            for kk = 1:newrec
-                par_rec = parameterdata_kindat(start+1:start+nrec(kk,jj));
-                par_check1d(kk) = length(unique(par_rec));
-                if par_check1d(kk) == 1
-                    par_1d = [par_1d; par_rec(1)];
-                end
-                start = start + nrec(kk,jj);
+            rr = find(nreckindat(:,2)==kindats(jj));
+            recs = length(rr);
+            for kk = 1:recs
+                 par_rec = parameterdata_kindat(start+1:start+nreckindat(rr(kk),1));
+                 par_check1d(kk) = length(unique(par_rec));
+                 if par_check1d(kk) == 1
+                     par_1d = [par_1d; par_rec(1)];
+                 end
+                 start = start + nreckindat(rr(kk),1);
             end
             
             
@@ -309,7 +330,15 @@ for ii = 1:npar
                 info(2) = join(info2split(2:end));
             end
             
-            if length(par_1d)==newrec 
+            if length(par_1d)==recs && nkin1 ~= nkin2 && jj == 2
+                if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
+                    matfile.data.utime_pp = [matfile.data.utime_pp par_1d]; 
+                    matfile.metadata.utime_pp = [matfile.metadata.utime_pp info'];
+                else
+                    matfile.data.par1d_pp = [matfile.data.par1d_pp double(par_1d)]; 
+                    matfile.metadata.par1d_pp = [matfile.metadata.par1d_pp info'];
+                end
+            elseif length(par_1d)==recs && jj == 1
                 if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
                     matfile.data.utime = [matfile.data.utime par_1d]; 
                     matfile.metadata.utime = [matfile.metadata.utime info'];
@@ -317,7 +346,6 @@ for ii = 1:npar
                     matfile.data.par1d = [matfile.data.par1d double(par_1d)]; 
                     matfile.metadata.par1d = [matfile.metadata.par1d info'];
                 end
-                break     
             else
                 if jj == 2
                     matfile.data.par2d_pp = [matfile.data.par2d_pp single(parameterdata_kindat)];
