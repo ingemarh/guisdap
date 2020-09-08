@@ -17,13 +17,7 @@ if modinfo
  if i5>datenum(i4,i3,31) | i5<datenum(i2,i1,1)
   error('Date is outside iri model time range, please update the iri model')
  end
- if exist('iri')==3
-  [d1,d]=fileparts(iripath);
- else
-  d='IRI2012';
-  if ~exist(d), d='IRI'; end
- end
- fprintf('** The model uses the %s model at the tx position (%.1f %.1f)**\n',d,loc)
+ fprintf('** The model uses the IRI model at the tx position (%.1f %.1f)**\n',loc)
 end
 [tsec,year]=tosecs(dtime);
 hh=[min(heights)-1 max(heights)+1.1 1]; if hh(2)-hh(1)>100, hh(3)=0; end
