@@ -61,7 +61,7 @@ rec = length(Time(:,1));
 columns = find(str2num(char(matdata.metadata.par0d(end,:)))==recloc_id);
 r_RECloc = matdata.data.par0d(columns);
 
-[ii2d,ii2d_pp] = deal(0,0);
+ii2d = 0;
 if ~isempty(find(strcmp(metavar,'par2d')))
     ii2d = 1;
     matdata.metadata.par2d    = deblank(h5read(filename,'/metadata/par2d'));
@@ -132,11 +132,11 @@ if ii2d == 1
         columns = find(str2num(char(matdata.metadata.par2d(end,:)))==ii);
         if isempty(columns) && ii == 18       % if alt is empty, it is in par1d
             column = find(str2num(char(matdata.metadata.par1d(end,:)))==ii);
-            alt = matdata.data.par1d(:,column); 
-            par_tmp = kron(alt,ones(nh_alt,1));                                          % alt = [a s d f g h...] --> alt = [a a b b c c d d e e f f g g h h...] (for nh_alt =2)
+            alt = matdata.data.par1d(:,column)/1000;                                % km
+            par_tmp = kron(alt,ones(nh_alt,1));                                     % alt = [a s d f g h...] --> alt = [a a b b c c d d e e f f g g h h...] (for nh_alt =2)
         elseif isempty(columns) && ii == 19    % if range is empty, it is in par1d
             column = find(str2num(char(matdata.metadata.par1d(end,:)))==ii);
-            range = matdata.data.par1d(:,column); 
+            range = matdata.data.par1d(:,column)/1000;                              % km 
             par_tmp = kron(range,ones(nh_alt,1));                                   % range = [a s d f g h...] --> range = [a a b b c c d d e e f f g g h h...] (for nh_alt =2)
         elseif isempty(columns) && ii == 22    % if Tr is empty
             b = 1;
@@ -238,8 +238,8 @@ for ii = 1:n_tot
     err2D(1:nh(ii),ii,:) = err2d(altrange,:); 
     nhalt_tmp = nhalt_tmp + nh(ii);
 end
+par2D(:,:,1:2) = par2D(:,:,1:2)/1000;       % range, alt --> km
 
-%if ii2d_pp == 1
 if do_rpar
     for ii = rpar2d_id
         columns = find(str2num(char(matdata.metadata.par2d_pp(end,:)))==ii);
