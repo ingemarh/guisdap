@@ -93,7 +93,7 @@ if ~isempty(p)
  end
  vdd=datenum([START_TIME;END_TIME]);
  % actually cut out time interval, so even polar plot shows only selected interval
- d=d(find(Vdate(1,:)>=vdd(1) & Vdate(2,:)<=vdd(2)))
+ d=d(find(Vdate(1,d)>=vdd(1) & Vdate(2,d)<=vdd(2)));
  if verbose(1)<2
   maxv=norm(vp(d,:),1)/length(d);
   if verbose

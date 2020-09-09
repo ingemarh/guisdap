@@ -66,7 +66,7 @@ second = sprintf('%02d',data.sec(1));
 intper_mean = subsetmean(data.ut2_unix-data.ut1_unix);        % mean integration time (of quartile range 2 and 3)
 intper_mean_str = num2str(round(intper_mean,3,'significant'));
 
-display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
+%display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
 
 if contains(hdf5file,'.ar'), name_ant = 'kst';
 else
@@ -98,7 +98,7 @@ MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '@' name_ant '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCATvelhdf5file = hdffilename;
-hdf5file
+%hdf5file
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 [~,text] = xlsread(GuisdapParFile);     
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
