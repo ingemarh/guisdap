@@ -160,26 +160,34 @@ if ~isempty(vecvel_files)
         else
             [storepath,EISCATvecvel_hdf5file] = cedarvel2hdf5(vecvel_files{i},datapath);
             if isempty(image_filelist) %%% Make a new plot from efield!
+                metadata0d = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/par0d'));
                 metadata1d = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/par1d'));
                 names      = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/names'));
+                data0d     = h5read(EISCATvecvel_hdf5file,'/data/par0d');
                 data1d     = h5read(EISCATvecvel_hdf5file,'/data/par1d');
                 utime      = h5read(EISCATvecvel_hdf5file,'/data/utime');
                 v   = {'vi_east' 'vi_north' 'vi_up'};
                 dv  = {'dvi_east' 'dvi_north' 'dvi_up'};
                 pos = {'lat' 'lon' 'h'};
-                AA = []; BB = []; CC = [];
+                Vg = []; Vgv = []; Vpos = [];
                 for ii = 1:3
                     aa = find(strcmp(metadata1d(1,:),v{ii})==1);
                     bb = find(strcmp(metadata1d(1,:),dv{ii})==1);
                     cc = find(strcmp(metadata1d(1,:),pos{ii})==1);
-                    AA = [AA aa]; BB = [BB bb]; CC = [CC cc];
+                    if isempty(cc)
+                        cc = find(strcmp(metadata0d(1,:),pos{ii})==1);
+                        Vpos = [Vpos data0d(cc)*ones(length(utime(:,1)),1)];
+                    else
+                        Vpos  = [Vpos data1d(:,cc)]; 
+                    end
+                    Vg  = [Vg data1d(:,aa)]; 
+                    Vgv = [Vgv data1d(:,bb)]; 
                 end
+                Vpos(:,3) = Vpos(:,3)/1e3;    % m --> km 
+                Vgv   = [Vgv zeros(length(utime(:,1)),3)];        % there are no available crossvariations, so these are set to 0
+                Vdate = [timeconv(utime(:,1),'unx2mat')';timeconv(utime(:,2),'unx2mat')'];
                 dd = find(strcmp(names(1,:),'name_expr')==1);
                 ee = find(strcmp(names(1,:),'name_ant')==1);
-                Vg    = data1d(:,AA);
-                Vgv   = [data1d(:,BB) zeros(size(data1d(:,BB),1),3)];                    % there are no available crossvariations, so these are set to 0 
-                Vpos  = double(data1d(:,CC)); Vpos(:,3) = Vpos(:,3)/1000; % m --> km
-                Vdate = [timeconv(utime(:,1),'unx2mat')';timeconv(utime(:,2),'unx2mat')'];
                 name_expr = names{2,dd};
                 name_ant  = names{2,ee};
                 [~,file,~] = fileparts(EISCATvecvel_hdf5file);

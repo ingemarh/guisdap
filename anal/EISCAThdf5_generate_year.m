@@ -69,4 +69,4 @@ while ~isempty(List_2BHandled)
     List_2BHandled(1) = [];
 end
 
-save([datapath '/Lists_' datestr(date,'yyyy-mm-dd') '.mat'],'List_2BHandled','List_HandledOK','List_Crashed')
+save([datapath '/Lists_' datestr(now,'yyyy-mm-dd_HHMM') '.mat'],'List_2BHandled','List_HandledOK','List_Crashed')

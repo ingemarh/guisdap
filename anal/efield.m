@@ -37,6 +37,8 @@ load(vfile)
 if isempty(Vdate)
  error('Empty data file')
 end
+[~,i]=sort(mean(Vdate));
+Vdate=Vdate(:,i); Vg=Vg(i,:); Vgv=Vgv(i,:); Vpos=Vpos(i,:);
 global local
 degrad=pi/180;
 np=size(Vdate,2);
