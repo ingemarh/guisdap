@@ -94,7 +94,7 @@ end
 mkdir(storepath);
 
 Hdf5File = [datafolder '.hdf5'];
-MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '@' name_ant '.mat'];
+MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCATvelhdf5file = hdffilename;

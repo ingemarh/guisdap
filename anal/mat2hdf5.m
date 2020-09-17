@@ -208,7 +208,8 @@ Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
 MatFile = sprintf('%s%s',datafolder,'.mat');
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
-EISCAThdf5file = hdffilename;
+storepath = {storepath};
+EISCAThdf5file = {hdffilename};
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 
 if exist(hdffilename)==2, delete(hdffilename); end
@@ -821,7 +822,7 @@ if addnotes
     notesfiles = dir(fullfile(matpath,'notes*txt'));
     for nn = 1:length(notesfiles)
         notesfile = fullfile(matpath,notesfiles(nn).name);
-        addNote2Hdf5(notesfile,EISCAThdf5file,nn)
+        addNote2Hdf5(notesfile,EISCAThdf5file{1},nn)
     end
 end
 
