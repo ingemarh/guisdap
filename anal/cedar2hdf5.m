@@ -121,7 +121,7 @@ for qq = 1:length(evenkindats)
         matfile.metadata.software.experiment.(char(regexprep(exprparnames(ii),' ','_'))) = {exprparvalues{ii}};
     end
      
-    % Modify metadata
+    % Modify metadata if needed
     if length(evenkindats) > 1
         
         % kindat
@@ -156,8 +156,6 @@ for qq = 1:length(evenkindats)
             
     end
    
-    
-    %recs = length(data.ut1_unix);    % # of records
     intper_mean = subsetmean(data.ut2_unix(ki)-data.ut1_unix(ki));
     if intper_mean < 10
         name_strategy = 'ant';
@@ -174,10 +172,17 @@ for qq = 1:length(evenkindats)
 
     datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant];
     storepath = fullfile(datapath,datafolder);
-    if exist(storepath)
-        datafolder = [datafolder 'X'];
+    
+    while exist(storepath)
+        letters = 'a':'z';
+        at = strfind(datafolder,'@'); 
+        if length(datafolder(at+1:end)) == 3
+            datafolder = [datafolder letters(1)];
+        else
+            letno = strfind(letters,storepath(end));
+            datafolder = [datafolder(1:end-1) letters(letno+1)];
+        end
         storepath = fullfile(datapath,datafolder);
-        warning(['Store folder ' storepath(1:end-1) ' already existed. A store folder ' storepath ' was created instead.'])
     end
     mkdir(storepath);
 

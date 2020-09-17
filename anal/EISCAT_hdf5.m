@@ -275,7 +275,7 @@ for ii = 1:length(data_files)
     else
         [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
     end
-    keyboard
+    
     nfiles = length(EISCAThdf5file);
     
     for nnn = 1:nfiles    
