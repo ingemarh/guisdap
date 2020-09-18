@@ -28,10 +28,28 @@ C = A';
 
 Vg = C*Vm;
 
-T=(C'*(C./(dVm.^2*ones(1,3))))^(-1);
+T=(C'*(C./(dVm.^2*ones(1,3))));
 
-dVg = sqrt(diag(T));
+if isposdef(T)
+    T = T^(-1);
+    dVg = sqrt(diag(T));
+else
+    warning('Covariance matrix not positive definite')
+    % trying direct route, but errors handled in a clumsy way
+    [~,dVg]=lscov(C,Vm,1../dVm.^2);
+    if size(C,1) == 3
+        dVg = abs(C)\dVm;
+    end
+end
 
 
-
+function ret=isposdef(M)
+ret=true;
+for i=1:length(M)
+  if det(M(1:i,1:i))<=0
+    ret=false;
+    break
+  end
+end
+return
 
