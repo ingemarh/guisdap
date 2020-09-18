@@ -333,7 +333,6 @@ if isfield(matfile.metadata,'par2d_pp')
     matfile.metadata.par2d_pp(gupnamesindex,:) = [];
 end
 
-
 save(matfilename,'matfile')
 
 % Generate an HDF5-file 

@@ -164,9 +164,10 @@ if ~isempty(vecvel_files)
                 metadata0d = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/par0d'));
                 metadata1d = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/par1d'));
                 names      = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/names'));
-                data0d     = h5read(EISCATvecvel_hdf5file,'/data/par0d');
-                data1d     = h5read(EISCATvecvel_hdf5file,'/data/par1d');
+                data0d     = double(h5read(EISCATvecvel_hdf5file,'/data/par0d'));
+                data1d     = double(h5read(EISCATvecvel_hdf5file,'/data/par1d'));
                 utime      = h5read(EISCATvecvel_hdf5file,'/data/utime');
+                
                 v   = {'vi_east' 'vi_north' 'vi_up'};
                 dv  = {'dvi_east' 'dvi_north' 'dvi_up'};
                 pos = {'lat' 'lon' 'h'};
