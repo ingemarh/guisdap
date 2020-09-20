@@ -107,7 +107,10 @@ for qq = 1:length(evenkindats)
     else 
         ki = 1:length(data.ut1_unix);   % There is only one kindat for all data ('data.kindat' does not exist in this case)
     end
-    
+    if length(ki) == 1
+	   continue
+    end 
+
     for pp = 1:npar
         bb = strfind(Parsinfile_list{pp},'+');
         if bb
@@ -126,7 +129,7 @@ for qq = 1:length(evenkindats)
         
         % kindat
         matfile.metadata.software.experiment.kindat = {num2str(kindats(1))};
-        if length(kindats)==2
+        if nkindats==2
             matfile.metadata.software.experiment.kindat = {[matfile.metadata.software.experiment.kindat{1} ', ' num2str(kindats(2))]};
         end
         
@@ -337,6 +340,10 @@ for qq = 1:length(evenkindats)
         
             if length(unique(parameterdata))==1
             
+		if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
+                    bb = aa; end
+                if strcmp('range',char(Parsinfile_list(ii)))
+                    aa = bb(jj); end    
                 if strcmp('tfreq',char(Parsinfile_list(ii)))
                     aa = aa(1);                                    % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
                 end
