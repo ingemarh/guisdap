@@ -22,34 +22,37 @@ if e(1)<0
 end
 n = cross(b,e);                          % nperp (y)   
 
-A = [e;n;b];    % rotational matrix, Xm = A*Xg --> Xg = C*Xm, with C = A'
+A = [e;n;b];  % gtm  % rotational matrix, Xm = A*Xg --> Xg = C*Xm, with C = A'
 
-C = A';
+C = inv(A);   % mtg  % for a rotational matrix inv(A) = transpose(A), possible to check
 
 Vg = C*Vm;
+Vmv = diag(dVm.^2);
+Vgv = C*Vmv/C;
+dVg = sqrt(diag(Vgv));
 
-T=(C'*(C./(dVm.^2*ones(1,3))));
-
-if isposdef(T)
-    T = T^(-1);
-    dVg = sqrt(diag(T));
-else
-    warning('Covariance matrix not positive definite')
-    % trying direct route, but errors handled in a clumsy way
-    [~,dVg]=lscov(C,Vm,1../dVm.^2);
-    if size(C,1) == 3
-        dVg = abs(C)\dVm;
-    end
-end
-
-
-function ret=isposdef(M)
-ret=true;
-for i=1:length(M)
-  if det(M(1:i,1:i))<=0
-    ret=false;
-    break
-  end
-end
-return
+% T=(C'*(C./(dVm.^2*ones(1,3))));
+% 
+% if isposdef(T)
+%     T = T^(-1);
+%     dVg = sqrt(diag(T));
+% else
+%     warning('Covariance matrix not positive definite')
+%     % trying direct route, but errors handled in a clumsy way
+%     [~,dVg]=lscov(C,Vm,1../dVm.^2);
+%     if size(C,1) == 3
+%         dVg = abs(C)\dVm;
+%     end
+% end
+% 
+% 
+% function ret=isposdef(M)
+% ret=true;
+% for i=1:length(M)
+%   if det(M(1:i,1:i))<=0
+%     ret=false;
+%     break
+%   end
+% end
+% return
 

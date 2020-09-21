@@ -23,33 +23,23 @@ level2_link = '';
 
 [~,matfolder] = fileparts(matpath);
 
-filelist   = dir(fullfile(matpath,'*.mat'));
-for ff = 1:length(filelist)
-     [~,nameoffile] = fileparts(filelist(ff).name);
-     if isempty(str2num(nameoffile))
-	 filelist(ff) = [];          % Remove any .matfiles with names consisting of not only numbers, e.g. matlab.mat if exists
-     end
+if ~strcmp(matpath(end),'/')
+    matpath = [matpath '/'];   % in order to make 'getfilelist.m' work
 end
-rec  = length(filelist);
 
-gupfile    = fullfile(matpath,'.gup');
-gupfilecheck =  dir(gupfile);
+filelist = getfilelist(matpath);
+rec  = length(filelist);
 
 intper_vec = zeros(rec,1);
 for tt = 1:rec
-    load(fullfile(matpath,filelist(tt).name))
+    load(filelist(tt).fname)
     intper_vec(tt) = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6))); 
 end    
-% if subsetmean(intper_vec) < 10
-%     intper_mean = subsetmean(intper_vec);
-%     intper_mean_str = sprintf('%g',round(intper_mean,3));
-% end
 
 % store the gfd content
-load(fullfile(matpath,filelist(1).name));
+load(filelist(1).fname)
 s = [];
 if exist('r_gfd','var')
-    %matfile.metadata.gfd = r_gfd;
     gfd_Fields = fieldnames(r_gfd);
     for gf = gfd_Fields.'   
         if strcmp(gf,'extra')
@@ -75,9 +65,8 @@ if exist('r_gfd','var')
     endtime   = datestr(r_gfd.t2,'yyyy-mm-ddTHH:MM:SS');
     intper_mean = subsetmean(r_gfd.intper);
     intper_mean_str = num2str(round(intper_mean,3,'significant'));
-        
-elseif ~isempty(gupfilecheck)
-    load('-mat',gupfile);
+elseif exist(fullfile(matpath,'.gup'),'file')    
+    load('-mat',fullfile(matpath,'.gup'));
     if exist('name_expr','var'),    matfile.metadata.software.gfd.name_expr      = {name_expr};           end
     if exist('expver','var'),       matfile.metadata.software.gfd.expver         = {num2str(expver)};     end
     if exist('siteid','var'),       matfile.metadata.software.gfd.siteid         = {num2str(siteid)};     end
@@ -129,20 +118,16 @@ if ~exist('name_strategy','var')
 end
 
 if ~exist('starttime','var')
-    matfile_tmp = fullfile(matpath,filelist(1).name);
-    load(matfile_tmp)
+    load(filelist(1).fname)
     starttime = datestr(r_time(1,:),'yyyy-mm-ddTHH:MM:SS');
-    matfile_tmp = fullfile(matpath,filelist(end).name);
-    load(matfile_tmp)
+    load(filelist(end).fname)
     endtime = datestr(r_time(2,:),'yyyy-mm-ddTHH:MM:SS');
 end
     
-
 gg_sp    = [];
 gg_sp_pp = [];
 for tt = 1:rec
-    matfile_tmp = fullfile(matpath,filelist(tt).name);
-    load(matfile_tmp)
+    load(filelist(tt).fname)
     loc(1:2) = [r_el r_az];
     gg_rec = [];
     for uu = 1:length(r_range)
@@ -159,7 +144,6 @@ for tt = 1:rec
     end
     gg_sp_pp = [gg_sp_pp; gg_rec];
 end
-%ndatapoints = length(gg_sp(:,1));
 
 year = num2str(r_time(1,1));
 month = sprintf('%02d',r_time(1,2));
@@ -242,16 +226,13 @@ end
 
 % UTC time
 for jj = 1:rec
-     matfile_tmp = fullfile(matpath,filelist(jj).name);
-     load(matfile_tmp)
-     %timepar = [timepar; posixtime(datetime(r_time(1,:))) posixtime(datetime(r_time(2,:)))];   % unix time
+     load(filelist(jj).fname)
      [utime_rec,leap] = timeconv([r_time(1,:);r_time(2,:)],'utc2unx');
      matfile.data.utime = [matfile.data.utime;utime_rec'];
      leaps = [leaps;leap'];
 end
 
-matfile_tmp = fullfile(matpath,filelist(1).name);
-load(matfile_tmp)
+load(filelist(jj).fname)
 nn = 0;
 if exist('name_expr','var'); nn = nn + 1; 
     infoname(1) = {'name_expr'};
@@ -485,8 +466,7 @@ for ii = 1:length(parameters)
     else
         par = []; 
         for jj = 1:rec
-            matfile_tmp = fullfile(matpath,filelist(jj).name);
-            load(matfile_tmp)
+            load(filelist(jj).fname)
             if strcmp(h_name,'h_Tsys')
                 par = [par; eval(['r_' h_name(3:end)])'];                                                
             elseif strcmp(h_name,'h_h')
@@ -567,8 +547,7 @@ for ii = 1:length(parameters_special)
         matfile.metadata.(name) = info';
         par = []; 
         for jj = 1:rec
-            matfile_tmp = fullfile(matpath,filesep,filelist(jj).name);
-            load(matfile_tmp)
+            load(filelist(jj).fname)
             par = [par;  eval(['r_' name])'];
         end      
         imcol = find(any(imag(par) ~= 0) == 1);
@@ -696,10 +675,6 @@ if ~isempty(PointInPol)
     matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = PointInPol(2);
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 if exist('name_sig')
     dd = strfind(name_sig,' ');
     if ~isempty(str2num(name_sig(dd(1)+1:dd(1)+2)))
@@ -712,7 +687,6 @@ if exist('name_sig')
     matfile.metadata.schemes.DataCite.PublicationYear = {publyear}; 
     matfile.metadata.schemes.DataCite.Date.Created = {publdate};
 end
-
 
 % Delete any empty fields from the structure
 sFields = fieldnames(matfile);
