@@ -196,17 +196,22 @@ dVm = [data.dvipe data.dvipn data.dvi6];
 B = [data.bn data.be data.bd];              % [north, east, down]
 Vg  = [];
 dVg = [];
+Vg_crossvar = [];
 for mm = 1:length(data.vipn)
-    [vg,dvg] = Vm2Vg(Vm(mm,:),B(mm,:),dVm(mm,:));
+    [vg,vgv] = Vm2Vg(Vm(mm,:),B(mm,:),dVm(mm,:));
+    dvg = sqrt(diag(vgv));
     Vg  = [Vg;vg'];
     dVg = [dVg;dvg'];
+    Vg_crossvar = [Vg_crossvar;vgv([2 6 3])];
 end
 
-new_v  = {'vi1' 'vi2' 'vi3' 'dvi1' 'dvi2' 'dvi3'};
+%new_v  = {'vi1' 'vi2' 'vi3' 'dvi1' 'dvi2' 'dvi3' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
+new_v  = {'vi_east' 'vi_north' 'vi_up' 'dvi_east' 'dvi_north' 'dvi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
 ll1 = length(matfile.data.par1d(1,:));
-matfile.data.par1d(:,ll1+1:ll1+6) = [Vg dVg];
-for jj = 1:6
-    a = find(strcmp(new_v{jj},parameters_list)==1);
+matfile.data.par1d(:,ll1+1:ll1+9) = [Vg dVg Vg_crossvar];
+
+for jj = 1:9
+    a = find(strcmp(new_v{jj},gupparameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
     matfile.metadata.par1d(:,ll1+jj) = info';
@@ -266,7 +271,7 @@ matfile.metadata.schemes.DataCite.Identifier = {PID};
 matfile.metadata.schemes.DataCite.Creator = {name_ant};
 matfile.metadata.schemes.DataCite.Title = {datafolder};
 matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
-matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3 Ionosphere velocity vectors'};
+matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 4a Derived ionospheric data'};
 matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 matfile.metadata.schemes.DataCite.PublicationYear = {year};
 

@@ -48,6 +48,7 @@ vecvel_tarfiles = [];
 vecvel_tarfilename = [];
 targz_filecheck = [dir(fullfile(dirpath,'*tar.gz'));dir(fullfile(dirpath,'*tar'))];
 targz_files = [];
+
 if ~isempty(targz_filecheck)
     n = 1; m = 1; o = 1;
     for ii = 1:length(targz_filecheck)
@@ -57,14 +58,38 @@ if ~isempty(targz_filecheck)
             [~,name,ext] = fileparts(logs_files{m}); 
             logs_filename{m} = [name ext];
             m = m + 1;
-        elseif contains(targz_filename,'vecvel')
-            vecvel_tarfiles{o} = fullfile(dirpath,targz_filename);
-            [~,name,ext] = fileparts(vecvel_tarfiles{o}); 
-            vecvel_tarfilename{o} = [name ext];
-            o = o + 1;
         else
-            targz_files{n} = fullfile(dirpath,targz_filename);
-            n = n + 1;
+            %targz_files{n} = fullfile(dirpath,targz_filename);
+            targz_file = fullfile(dirpath,targz_filename);
+            checkuntarpath = fullfile(tempdir,'CheckFile');
+            if exist(checkuntarpath)
+                rmdir(checkuntarpath,'s')
+            end
+            mkdir(checkuntarpath);
+        
+            try
+                untar(targz_file,checkuntarpath)
+            catch
+                warning(['Ooops ... ' targz_file ' could not be untared, and is therefore ignored.'])
+                continue
+            end
+        
+            untar_filelist = dir(checkuntarpath);
+    
+            %while length(untar_filelist(3:end)) == 1 && ~contains(untar_filelist(3).name,'.mat')
+            while ~contains(untar_filelist(3).name,'.mat')
+                untarfolder = untar_filelist(3).name;
+                checkuntarpath = fullfile(checkuntarpath,untarfolder);
+                untar_filelist = dir(checkuntarpath);
+            end
+            load(fullfile(untar_filelist(3).folder,untar_filelist(3).name))
+            if exist('Vg')
+                vecvel_tarfiles{o} = fullfile(dirpath,targz_filename);
+                o = o + 1;
+            else
+                targz_files{n} = fullfile(dirpath,targz_filename);
+                n = n + 1;
+            end
         end
     end
 end
@@ -96,11 +121,11 @@ if ~isempty(hdf5oldfiles)
 end
 
 oldhdf5_files = [];
-if isempty(targz_files) && isempty(hdf5oldfiles) 
+if isempty(targz_files) && isempty(vecvel_tarfiles) && isempty(hdf5oldfiles) 
     error('No "old" hdf5-files nor any tar.gz-files with mat-files exist.')
-elseif isempty(targz_files) && ~isempty(hdf5oldfiles)
+elseif isempty(targz_files) && isempty(vecvel_tarfiles) && ~isempty(hdf5oldfiles)
     oldhdf5_files = hdf5_allfiles;                     % consider all old hdf5 files when making new EISCAT hdf5 files
-elseif ~isempty(targz_files) && ~isempty(hdf5_files)
+elseif (~isempty(targz_files) || ~isempty(vecvel_tarfiles)) && ~isempty(hdf5_files)
     oldhdf5_files = hdf5_files;                        % consider only the .vr, .tr, .kr, and .sr of the old hdf5 files when making new EISCAT hdf5 files
 end
 
@@ -129,16 +154,9 @@ if ~isempty(vecvel_files)
                 rmdir(untarpath,'s')
             end
             mkdir(untarpath);
-        
-            try
-                untar(vecvel_files{i},untarpath)
-            catch
-                warning(['Ooops ... ' vecvel_files{i} ' could not be untared, and is therefore ignored.'])
-                continue
-            end
-        
+            untar(vecvel_files{i},untarpath)
             untar_filelist = dir(untarpath);
-    
+   
             %while length(untar_filelist(3:end)) == 1 && ~contains(untar_filelist(3).name,'.mat')
             while ~contains(untar_filelist(3).name,'.mat')
                 untarfolder = untar_filelist(3).name;
@@ -147,95 +165,88 @@ if ~isempty(vecvel_files)
             end
             matvecfile = fullfile(untar_filelist(3).folder,untar_filelist(3).name);
             [storepath,EISCATvecvel_hdf5file] = matvecvel2hdf5(matvecfile,datapath);
-            for im = 1:length(image_filelist_vecvel)
-                figurefile = fullfile(dirpath,image_filelist_vecvel(im).name);
-                [~,figname,ext] = fileparts(figurefile);
-                if strcmp(ext,'.pdf')
-                    npdf = npdf + 1;
-                    copyfile(figurefile,storepath)
-                    pdf_forHDF5(npdf) = {[figname ext]};
-                else
-                    store_image2Hdf5(figurefile,EISCATvecvel_hdf5file)
-                end
-            end
         else
             [storepath,EISCATvecvel_hdf5file] = cedarvel2hdf5(vecvel_files{i},datapath);
-            if isempty(image_filelist) %%% Make a (or two) new plot(s) from efield!
-                metadata0d = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/par0d'));
-                metadata1d = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/par1d'));
-                names      = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/names'));
-                data0d     = double(h5read(EISCATvecvel_hdf5file,'/data/par0d'));
-                data1d     = double(h5read(EISCATvecvel_hdf5file,'/data/par1d'));
-                utime      = h5read(EISCATvecvel_hdf5file,'/data/utime');
-                
-                v   = {'vi_east' 'vi_north' 'vi_up'};
-                dv  = {'dvi_east' 'dvi_north' 'dvi_up'};
-                pos = {'lat' 'lon' 'h'};
-                Vg = []; Vgv = []; Vpos = [];
-                for ii = 1:3
-                    aa = find(strcmp(metadata1d(1,:),v{ii})==1);
-                    bb = find(strcmp(metadata1d(1,:),dv{ii})==1);
-                    cc = find(strcmp(metadata1d(1,:),pos{ii})==1);
-                    if isempty(cc)
-                        cc = find(strcmp(metadata0d(1,:),pos{ii})==1);
-                        Vpos = [Vpos data0d(cc)*ones(length(utime(:,1)),1)];
-                    else
-                        Vpos  = [Vpos data1d(:,cc)]; 
-                    end
-                    Vg  = [Vg data1d(:,aa)]; 
-                    Vgv = [Vgv data1d(:,bb)]; 
-                end
-                Vpos(:,3) = Vpos(:,3)/1e3;    % m --> km 
-                Vgv   = [Vgv zeros(length(utime(:,1)),3)];        % there are no available crossvariations, so these are set to 0
-                Vdate = [timeconv(utime(:,1),'unx2mat')';timeconv(utime(:,2),'unx2mat')'];
-                dd = find(strcmp(names(1,:),'name_expr')==1);
-                ee = find(strcmp(names(1,:),'name_ant')==1);
-                name_expr = names{2,dd};
-                name_ant  = names{2,ee};
-                [~,file,~] = fileparts(EISCATvecvel_hdf5file);
-                plotfilename = file(8:end);
-                vfile = [storepath '/' plotfilename];
-                save([vfile '.mat'],'Vdate','Vpos','Vg','Vgv','name_expr','name_ant');
-                
-                if contains(name_expr,'cp1')
-                    plotfilename_orig = plotfilename;
-                    f = strfind(plotfilename_orig,'_V');
-                    plottype = 'tVm3';
-                    altlim = [90 160 500];
-                    region = ['E';'F'];
-                    for pp = 1:2
-                         hh = find(Vpos(:,3)>=altlim(pp) & Vpos(:,3)<altlim(pp+1));
-                         if hh
-                            plotfilename = [plotfilename_orig(1:f-1) '_' region(pp) plotfilename_orig(f:end)];
-                            plotfile = [storepath '/' plotfilename];
-                            efield([vfile '.mat'],plottype,[altlim(pp) altlim(pp+1)])
-                            print('-dpdf',[plotfile '.pdf'])
-                            npdf = npdf + 1;
-                            pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
-                            print('-dpng256',[plotfile '.png'])
-                            store_image2Hdf5([plotfile '.png'],EISCATvecvel_hdf5file);
-                            insert_exif(gcf,plotfile,{'pdf' 'png'})
-                            delete([plotfile '.png'])
-                         end
-                    end
+        end
+        if isempty(image_filelist) %%% Make a (or two) new plot(s) from efield!
+            metadata0d = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/par0d'));
+            metadata1d = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/par1d'));
+            names      = deblank(h5read(EISCATvecvel_hdf5file,'/metadata/names'));
+            data0d     = double(h5read(EISCATvecvel_hdf5file,'/data/par0d'));
+            data1d     = double(h5read(EISCATvecvel_hdf5file,'/data/par1d'));
+            utime      = h5read(EISCATvecvel_hdf5file,'/data/utime');
+               
+            v   = {'vi_east' 'vi_north' 'vi_up'};
+            dv  = {'dvi_east' 'dvi_north' 'dvi_up'};
+            pos = {'lat' 'lon' 'h'};
+            Vg = []; Vgv = []; Vpos = [];
+            for ii = 1:3
+                aa = find(strcmp(metadata1d(1,:),v{ii})==1);
+                bb = find(strcmp(metadata1d(1,:),dv{ii})==1);
+                cc = find(strcmp(metadata1d(1,:),pos{ii})==1);
+                if isempty(cc)
+                    cc = find(strcmp(metadata0d(1,:),pos{ii})==1);
+                    Vpos = [Vpos data0d(cc)*ones(length(utime(:,1)),1)];
                 else
-                    if contains(name_expr,'cp2')
-                        plottype = 'tVm3';
-                    else
-                        plottype = 'pVm';
-                    end
-                    efield([vfile '.mat'],plottype);
-                    print('-dpdf',[vfile '.pdf'])
-                    npdf = npdf + 1;
-                    pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
-                    print('-dpng256',[vfile '.png'])
-                    store_image2Hdf5([vfile '.png'],EISCATvecvel_hdf5file);
-                    insert_exif(gcf,vfile,{'pdf' 'png'})
-                    delete([vfile '.png'])
+                    Vpos  = [Vpos data1d(:,cc)]; 
                 end
+                Vg  = [Vg data1d(:,aa)]; 
+                Vgv = [Vgv data1d(:,bb)]; 
+            end
+            Vpos(:,3) = Vpos(:,3)/1e3;    % m --> km 
+            Vgv   = [Vgv zeros(length(utime(:,1)),3)];        % there are no available crossvariations, so these are set to 0
+            Vdate = [timeconv(utime(:,1),'unx2mat')';timeconv(utime(:,2),'unx2mat')'];
+            dd = find(strcmp(names(1,:),'name_expr')==1);
+            ee = find(strcmp(names(1,:),'name_ant')==1);
+            name_expr = names{2,dd};
+            name_ant  = names{2,ee};
+            [~,file,~] = fileparts(EISCATvecvel_hdf5file);
+            plotfilename = file(8:end);
+            vfile = [storepath '/' plotfilename];
+            save([vfile '.mat'],'Vdate','Vpos','Vg','Vgv','name_expr','name_ant');
+                
+            if contains(name_expr,'cp1')
+                plotfilename_orig = plotfilename;
+                f = strfind(plotfilename_orig,'_V');
+                plottype = 'tVm3';
+                altlim = [90 160 500];
+                region = ['E';'F'];
+                for pp = 1:2
+                     hh = find(Vpos(:,3)>=altlim(pp) & Vpos(:,3)<altlim(pp+1));
+                     if hh
+                        plotfilename = [plotfilename_orig(1:f-1) '_' region(pp) plotfilename_orig(f:end)];
+                        plotfile = [storepath '/' plotfilename];
+                        efield([vfile '.mat'],plottype,[altlim(pp) altlim(pp+1)])
+                        print('-dpdf',[plotfile '.pdf'])
+                        npdf = npdf + 1;
+                        pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
+                        print('-dpng256',[plotfile '.png'])
+                        store_image2Hdf5([plotfile '.png'],EISCATvecvel_hdf5file);
+                        insert_exif(gcf,plotfile,{'pdf' 'png'})
+                        delete([plotfile '.png'])
+                    end
+                end
+            else
+                if contains(name_expr,'cp2')
+                    plottype = 'tVm3';
+                else
+                    plottype = 'pVm';
+                end
+                efield([vfile '.mat'],plottype);
+                print('-dpdf',[vfile '.pdf'])
+                npdf = npdf + 1;
+                pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
+                print('-dpng256',[vfile '.png'])
+                store_image2Hdf5([vfile '.png'],EISCATvecvel_hdf5file);
+                insert_exif(gcf,vfile,{'pdf' 'png'})
+                delete([vfile '.png'])
             end
             delete([vfile '.mat'])
+        elseif length(vecvel_files)==1 && isempty(data_files) 
+            
         end
+        
+        
         display(EISCATvecvel_hdf5file)  
         copyfile(vecvel_files{i},storepath)
     end    
@@ -247,7 +258,6 @@ if npdf
      pdf_forHDF5 = {};
 end
 
-
 for ii = 1:length(data_files)
     disp(['Handling:' newline data_files{ii}])
     if contains(data_files{ii},'.tar')
@@ -256,15 +266,7 @@ for ii = 1:length(data_files)
             rmdir(untarpath,'s')
         end
         mkdir(untarpath);
-        
-        try
-            untar(data_files{ii},untarpath)
-        catch
-            warning(['Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.'])
-
-            continue
-        end
-        
+        untar(data_files{ii},untarpath)
         untar_filelist = dir(untarpath);
     
         while length(untar_filelist(3:end)) == 1 && ~contains(untar_filelist(3).name,'.mat')
@@ -384,7 +386,7 @@ for ii = 1:length(data_files)
                         nfigs_expr =  nfigs_expr +1;
                     end
                 end
-            elseif length(data_files) == 1
+            elseif length(data_files) == 1 && isempty(vecvel_files)
                 if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
                     if strcmp(ext,'.pdf')
                         npdf = npdf + 1;

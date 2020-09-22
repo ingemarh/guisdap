@@ -558,7 +558,11 @@ for qq = 1:length(evenkindats)
     matfile.metadata.schemes.DataCite.Creator = {name_ant};
     matfile.metadata.schemes.DataCite.Title = {datafolder};
     matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
-    matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3 Velocity'};
+    if strcmp(kindatstr(1:2),'66')
+        matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3b Atmosphere'};
+    else
+        matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3a Ionosphere'};
+    end
     matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
     matfile.metadata.schemes.DataCite.PublicationYear = {year};
 
@@ -593,8 +597,6 @@ for qq = 1:length(evenkindats)
     if exist('name_strategy')
         matfile.metadata.software.strategy = {name_strategy};
     end
-
-
 
     % Delete any empty fields from the structure
     sFields = fieldnames(matfile);

@@ -61,8 +61,13 @@ end
 
 if exist('Vdate','var')
     parameters_vdate = {'time1' 'time2'};
-    [matfile.data.utime(:,1),leaps(:,1)] = timeconv([vdate(:,1) vleap(:,1)],'mat2unx');
-    [matfile.data.utime(:,2),leaps(:,2)] = timeconv([vdate(:,2) vleap(:,2)],'mat2unx');
+    if ~isempty(vleap)
+        [matfile.data.utime(:,1),leaps(:,1)] = timeconv([vdate(:,1) vleap(:,1)],'mat2unx');
+        [matfile.data.utime(:,2),leaps(:,2)] = timeconv([vdate(:,2) vleap(:,2)],'mat2unx');
+    else
+        matfile.data.utime(:,1) = timeconv(vdate(:,1),'mat2unx');
+        matfile.data.utime(:,2) = timeconv(vdate(:,2),'mat2unx');
+    end
     for ii = 1:2
         a = find(strcmp(char(parameters_vdate(ii)),parameters_list)==1);
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
@@ -153,7 +158,7 @@ second = sprintf('%02.f',r_time(6));
 
 e_time = datevec(Vdate(2,end));
 endtime = datestr(e_time);
-
+keyboard
 if ~exist('name_expr','var'), name_expr=''; end
 [~,filename,~] = fileparts(matfile_vel); 
 storepath = fullfile(datapath,['EISCAT_' filename]);
@@ -177,30 +182,31 @@ parameters_list = text(:,1);    % list that includes all Guisdap parameters and 
 matfile.metadata.header= text(1,1:7)';
 
 % TAI time (leapseconds)
-if length(unique(leaps)) == 1
-    if isfield(matfile.data,'par0d')
-    	ll0 = length(matfile.data.par0d);
-    else	
-    	ll0 = 0;
+if exist('leaps','var')
+    if length(unique(leaps)) == 1
+        if isfield(matfile.data,'par0d')
+            ll0 = length(matfile.data.par0d);
+        else	
+            ll0 = 0;
+        end
+        matfile.data.par0d(ll0+1) = leaps(1);  
+        a = find(strcmp('leaps',parameters_list)==1);
+        [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+        info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+        matfile.metadata.par0d(:,ll0+1) = info';
+    else
+        ll1 = length(matfile.data.par1d(1,:));
+        matfile.data.par1d(:,ll1+1:ll1+2) = leaps;
+        a = find(strcmp('leaps1',parameters_list)==1);
+        [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+        info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+        matfile.metadata.par1d(:,ll1+1) = info';
+        a = find(strcmp('leaps2',parameters_list)==1);
+        [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+        info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+        matfile.metadata.par1d(:,ll1+2) = info';
     end
-    matfile.data.par0d(ll0+1) = leaps(1);  
-    a = find(strcmp('leaps',parameters_list)==1);
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-    matfile.metadata.par0d(:,ll0+1) = info';
-else
-    ll1 = length(matfile.data.par1d(1,:));
-    matfile.data.par1d(:,ll1+1:ll1+2) = leaps;
-    a = find(strcmp('leaps1',parameters_list)==1);
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-    matfile.metadata.par1d(:,ll1+1) = info';
-    a = find(strcmp('leaps2',parameters_list)==1);
-    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-    matfile.metadata.par1d(:,ll1+2) = info';
 end
-
 nn = 0;
 if exist('name_expr','var'); nn = nn + 1;
     infoname(1) = {'name_expr'};
@@ -301,7 +307,7 @@ matfile.metadata.schemes.DataCite.Identifier = {PID};
 matfile.metadata.schemes.DataCite.Creator = {name_ant};
 matfile.metadata.schemes.DataCite.Title = {['EISCAT_' filename]};
 matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
-matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3 Ionosphere'};
+matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 4a Derived ionospheric data'};
 matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 
 % Find the smallest box (4 corners and mid-point) to enclose the data, 
