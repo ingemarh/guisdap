@@ -20,11 +20,12 @@ typedef struct {
 
 #include <fftw3.h>
 #define CPU_SPEED 1.e9
-#ifdef __linux__
-#include <stdio.h>
-#include <time.h>
 #include <sys/time.h>
+//##ifndef gethrtime /*gcc case*/
+#ifndef NANOSEC /*gcc case*/
+#include <time.h>
 #define NANOSEC 1000000000 
+typedef	unsigned long long int hrtime_t;
 unsigned long gethrtime(void)
 {
 	struct timespec ts;
@@ -63,11 +64,7 @@ int clutter_6(ulong nbits,int *par,ulong fbits,float *fpar,DSPCMPLXSHORT *in,
 	ulong	i,j,k,k2,clutthreads,float_notch=0,ncth;
 	int nth;
 	struct pth	pth;
-#ifdef __linux__
-	unsigned long long int	start[]={0,0,0,0,0};
-#else
 	hrtime_t	start[]={0,0,0,0,0};
-#endif
 	start[0]=gethrtime();
 
 	pth.nr_win=par[0];

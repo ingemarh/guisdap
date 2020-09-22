@@ -8,7 +8,7 @@ if name_site=='L'
  a_satch.repair=[Inf];
  analysis_maxwidth=3*analysis_maxwidth;
  analysis_gating=2;
-elseif name_site='V'
+elseif name_site=='V'
  analysis_maxwidth=3*analysis_maxwidth;
  analysis_gating=2;
  if expver>1

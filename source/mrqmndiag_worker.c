@@ -51,14 +51,14 @@ struct pth {
 };
 void *dirthe_loop(struct pth *);
 #ifdef THTIME
-#ifdef __linux__
-/* Only used for linux, a high resolution timer operating at the CPU clock
- * speed is returned */
-__inline__ unsigned long long int gethrtime (void)
+#ifndef NANOSEC /* gcc*/
+#define NANOSEC 1000000000
+typedef	unsigned long long int hrtime_t;
+unsigned long gethrtime(void)
 {
-  unsigned long long int x = 0;
-  __asm__ volatile (".byte 0x0f, 0x31":"=A" (x));
-  return x;
+	struct timespec ts;
+	if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts) != 0) return (-1);
+	return ((ts.tv_sec * NANOSEC) + ts.tv_nsec);
 }
 #endif
 #endif
@@ -87,12 +87,8 @@ double *aPr,*ymPr,*variancePr,*ftolPr,*itMaxPr,*coefPr,*womPr,*kd2Pr,*omPr,*aaOu
 	struct pth pth;
 
 #ifdef THTIME
-#ifdef __linux__
-	unsigned long long int start1, start2, end1=0, end2=0;
-#else /* if solaris */
-	hrtime_t start1, start2, end1=0, end2=0; 
-#endif
-  	start1=gethrtime();
+	hrtime_t start1, start2, end1=0, end2=0;
+	start1=gethrtime();
 #endif
 
 	for(i=0;i<aaN;i++)

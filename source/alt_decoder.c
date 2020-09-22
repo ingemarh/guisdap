@@ -82,6 +82,19 @@ typedef struct
 #ifdef __linux__
 int *get_cpu_speeds (void);
 __inline__ unsigned long long int gethrtime (void);
+#else
+#include <sys/time.h>
+#ifndef NANOSEC /*gcc?*/
+#include <time.h>
+#define NANOSEC 1000000000
+typedef	unsigned long long int hrtime_t;
+unsigned long gethrtime(void)
+{
+	struct timespec ts;
+	if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts) != 0) return (-1);
+	return ((ts.tv_sec * NANOSEC) + ts.tv_nsec);
+}
+#endif
 #endif
 
 int __user__decolen (int nsamples, int maxlag, int codelen, int nfract,
