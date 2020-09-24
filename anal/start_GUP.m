@@ -48,11 +48,9 @@ set(0,'DefaultFigureRenderer','painters')
 warning off backtrace
 
 %localities
-local.printer='color';
 local.site=getenv('EISCATSITE');
 local.host=getenv('HOSTNAME'); if isempty(local.host), local.host=getenv('COMPUTERNAME'); end
 local.user=getenv('USER'); if isempty(local.user), local.user=getenv('USERNAME'); end
-local.browser='firefox';
 local.x=prod(get(0,'ScreenSize'))-1;
 local.x=~usejava('jvm') || feature('ShowFigureWindows');
 matver=ver('matlab');
@@ -88,13 +86,7 @@ switch local.site
  case 'L'
   data_path='/data/';
  otherwise
-  local.site=[]; local.browser=[];
-end
-if ~isempty(getenv('LPDEST'))
- local.printer=getenv('LPDEST');
-end
-if ~isempty(getenv('BROWSER'))
- local.browser=getenv('BROWSER');
+  local.site=[];
 end
 if ~exist(data_path,'dir'), data_path=path_tmp; end
 if ~exist(result_path,'dir'), result_path=path_tmp; end

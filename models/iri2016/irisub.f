@@ -392,7 +392,7 @@ C*****************************************************************
       REAL       LATI,LONGI,MO2,MO,MODIP,NMF2,MAGBR,INVDIP,IAPO,  
      &           NMF1,NME,NMD,MM,MLAT,MLONG,NMF2S,NMES,INVDPC,
      &           INVDIP_OLD,INVDPC_OLD
-      CHARACTER  FILNAM*112,path*100
+      CHARACTER  FILNAM*128
 c-web-for webversion
 c      CHARACTER FILNAM*53
 
@@ -411,6 +411,9 @@ c      CHARACTER FILNAM*53
      &  NOTEM,NOION,TENEOP,OLD79,JF(50),URSIFO,igin,igino,mess,
      &  dnight,enight,fnight,fstorm_on,estorm_on,B0IN,B1IN,
      &  fof2ino,hmf2ino,f107in,f107ino,f107_81in,f107_81ino
+           character path*128
+           common /iripath/path,lenpath
+
 
       COMMON /CONST/UMR,PI  /const1/humr,dumr   /ARGEXP/ARGMAX
      &   /IGRF1/ERA,AQUAD,BQUAD,DIMO
@@ -1166,8 +1169,7 @@ C
           endif
 
 7797    URSIFO=URSIF2
-          call getenv('IRIPATH',path)
-        WRITE(FILNAM,104) path(1:index(path,' ')-1),MONTH+10
+        WRITE(FILNAM,104) path(1:lenpath),MONTH+10
 104         FORMAT(a,'/ccir',I2,'.asc')
 c-web-for webversion
 c104     FORMAT('/var/www/omniweb/cgi/vitmo/IRI/ccir',I2,'.asc')
@@ -1180,7 +1182,7 @@ C
 C then URSI if chosen ....................................
 C
         if(URSIF2) then
-          WRITE(FILNAM,1144) path(1:index(path,' ')-1),MONTH+10
+          WRITE(FILNAM,1144) path(1:lenpath),MONTH+10
 1144          FORMAT(a,'/ursi',I2,'.asc')
 c-web-for webversion
 c1144    FORMAT('/var/www/omniweb/cgi/vitmo/IRI/ursi',I2,'.asc')
@@ -1201,7 +1203,7 @@ c
 c first CCIR ..............................................
 c
 
-        WRITE(FILNAM,104) path(1:index(path,' ')-1),NMONTH+10
+        WRITE(FILNAM,104) path(1:lenpath),NMONTH+10
         OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,action='read',
      &          FORM='FORMATTED')
         READ(IUCCIR,4689) F2N,FM3N
@@ -1211,7 +1213,7 @@ C
 C then URSI if chosen .....................................
 C
         if(URSIF2) then
-          WRITE(FILNAM,1144) path(1:index(path,' ')-1),NMONTH+10
+          WRITE(FILNAM,1144) path(1:lenpath),NMONTH+10
           OPEN(IUCCIR,FILE=FILNAM,STATUS='OLD',ERR=8448,action='read',
      &         FORM='FORMATTED')
           READ(IUCCIR,4689) F2N

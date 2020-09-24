@@ -3,11 +3,13 @@ function [ rtn ] = getAP( i )
   persistent JYs JMNs JDs iiaps IAPDAs IRs F107Ds F107_81s F365s ...
     IYBEG IYEND IDEND IMEND s;
   if isempty(JYs)
-    s = 'ftp://spdf.gsfc.nasa.gov/pub/models/iri/iri2012/apf107.dat';
-    fmt = '%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%.1f%.1f%.1f';
-    [f,status] = urlread(s);
-    if status == 0 % bad Internet, try local file
-      s = 'apf107.dat';
+    %s = 'ftp://spdf.gsfc.nasa.gov/pub/models/iri/iri2012/apf107.dat';
+    %fmt = '%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%.1f%.1f%.1f';
+    %[f,status] = urlread(s);
+    %if status == 0 % bad Internet, try local file
+    if true
+      global path_GUP
+      s = fullfile(path_GUP,'share','iri','apf107.dat');
       f = fopen(s,'r');
       if f == -1
         status = 0;

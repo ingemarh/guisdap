@@ -5834,16 +5834,17 @@ c     .. array arguments ..
 	double precision coeff_month(0:148,0:47)
 c     .. local scalars ..
 	integer coeff_month_read(1:12)
-	character(256) filedata,path*100
-	integer i, j
+	character(256) filedata
+	integer i, j, lenpath
 c     .. local arrays ..
 	double precision coeff_month_all(0:148,0:47,1:12)
+           character path*128
+           common /iripath/path,lenpath
 	save coeff_month_all
 	data coeff_month_read /12*0/
 c
       if (coeff_month_read(month) .eq. 0) then
-              call getenv('IRIPATH',path)
-        write(filedata, 10) path(1:index(path,' ')-1),month+10
+        write(filedata, 10) path(1:lenpath),month+10
         open(10, File=filedata, status='old')
 	  do j=0,47
 	    read(10,20) (coeff_month_all(i,j,month),i=0,148)
@@ -8722,7 +8723,7 @@ C
             END
 c
 c
-           subroutine read_ig_rz 
+           subroutine read_ig_rz(ipath,iplen)
 c----------------------------------------------------------------
 c Reads the Rz12 and IG12 indices file IG_RZ.DAT from I/O UNIT=12 
 c and stores the indices in COMMON:
@@ -8770,12 +8771,16 @@ c----------------------------------------------------------------
 
            integer	iyst,iyend,iymst,iupd,iupm,iupy,imst,imend
            real		aig(806),arz(806)
-           character path*100
-           
+           integer ipath(1)
+           character path*128
+           common /iripath/path,lenpath
            common /igrz/aig,arz,iymst,iymend
+           lenpath=iplen
+           do 3 i=1,lenpath
+3          path(i:i)=char(ipath(i))
 
-           call getenv('IRIPATH',path)
-           open(unit=12,file=path(1:index(path,' ')-1)//'/ig_rz.dat',
+C          call getenv('IRIPATH',path)
+           open(unit=12,file=path(1:lenpath)//'/ig_rz.dat',
      ,FORM='FORMATTED',status='old',action='read')
 
 c-web- special for web version
@@ -8953,12 +8958,12 @@ c If date is outside the range of the Ap indices file then IAP(1)=-5
 C-------------------------------------------------------------------------
 C
         INTEGER		aap(23000,9),iiap(8)
-        character path*100
         DIMENSION 	af107(23000,3)
+           character path*128
+           common /iripath/path,lenpath
         COMMON		/apfa/aap,af107,n
 
-        call getenv('IRIPATH',path)
-        Open(13,FILE=path(1:index(path,' ')-1)//'/apf107.dat',
+        Open(13,FILE=path(1:lenpath)//'/apf107.dat',
      ,FORM='FORMATTED',STATUS='OLD',action='read')
 c-web-sepcial vfor web version
 c      OPEN(13,FILE='/var/www/omniweb/cgi/vitmo/IRI/apf107.dat',

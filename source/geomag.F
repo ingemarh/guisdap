@@ -14,10 +14,11 @@ C par=iri95(rp,tim,pos,h)
 C KEEP THE ABOVE SUBROUTINE, ARGUMENT, AND FUNCTION DECLARATIONS FOR USE
 C IN ALL YOUR FORTRAN MEX FILES.
 C---------------------------------------------------------------------
-      integer ttim(9),tim(6)
+      integer ttim(9),tim(6),ipath(128)
       real*8 par(6)
       real pos(3)
-      data pos/69.2,19.2,200./
+      character path*128
+      data pos/69.2,19.2,200./path/'/opt/guisdap9/share/iri'/,iplen/23/
 C CHECK FOR PROPER NUMBER OF ARGUMENTS
       IF(NLHS.GT.1)CALL mexErrMsgTxt('Only one output argument')
       call gmtime(time(),ttim)
@@ -37,7 +38,14 @@ C CHECK FOR PROPER NUMBER OF ARGUMENTS
         enddo
        endif
       endif
-      call read_ig_rz
+      if(nrhs.gt.2)then
+        iplen=mxGetN(prhs(3))
+        dum=mxGetString(prhs(3),path,iplen)
+      endif
+      do i=1,iplen
+       ipath(i)=ichar(path(i:i))
+      enddo
+      call read_ig_rz(ipath,iplen)
       call readapf107
       if(nrhs.eq.0.or.mxGetM(prhs(1)).ne.3)then
         CALL mexErrMsgTxt('Exact three numbers in row')

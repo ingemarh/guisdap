@@ -707,9 +707,12 @@ C                                 = -2, records out of order
 C                                 = FORTRAN run-time error number    
 C ===============================================================               
                                                                                 
-        CHARACTER  FSPEC*(*), FOUT*80,path*100
+        CHARACTER  FSPEC*(*), FOUT*180
         DIMENSION       GH(196)
         LOGICAL		mess 
+        character path*128
+        common /iripath/path,lenpath
+
         COMMON/iounit/konsol,mess        
         do 1 j=1,196  
 1          GH(j)=0.0
@@ -718,8 +721,7 @@ C ---------------------------------------------------------------
 C       Open coefficient file. Read past first header record.        
 C       Read degree and order of model and Earth's radius.           
 C ---------------------------------------------------------------               
-        call getenv('IRIPATH',path)
-        WRITE(FOUT,667) path(1:index(path,' ')-1),FSPEC
+        WRITE(FOUT,667) path(1:lenpath),FSPEC
  667    FORMAT(a,'/',A13)
 c-web-for webversion
 c 667    FORMAT('/var/www/omniweb/cgi/vitmo/IRI/',A13)

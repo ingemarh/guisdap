@@ -66,11 +66,13 @@ function [ rz,ig,rsn,nmonth ] = TCON( context, yr,mm,day,idn )
   ig = zeros(1,3);
   rz = zeros(1,3);
   if isempty(ionoindx)
-    s = 'ftp://spdf.gsfc.nasa.gov/pub/models/iri/iri2012/ig_rz.dat';
-    fmt = '%f';
-    [f,status] = urlread(s);
-    if status == 0 % bad Internet, try local file
-      s = 'ig_rz.dat';
+    %s = 'ftp://spdf.gsfc.nasa.gov/pub/models/iri/iri2012/ig_rz.dat';
+    %fmt = '%f';
+    %[f,status] = urlread(s);
+    %if status == 0 % bad Internet, try local file
+    if true
+      global path_GUP
+      s = fullfile(path_GUP,'share','iri','ig_rz.dat');
       f = fopen(s,'r');
       if f == -1
         status = 0;

@@ -147,8 +147,8 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   % unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
   %end
   if strcmpi(act,'print') || strcmpi(a3,'print')
-    if isempty(a2), dev=local.printer; else, dev=a2; end
-    unix(['lp -c -d' dev ' ' file '.' ext ' >/dev/null 2>&1']);
+    if isempty(a2), dev=''; else, dev=['-d' a2 ' ']; end
+    unix(['lp -c ' dev file '.' ext ' >/dev/null 2>&1']);
     if strcmpi(act,'print'), delete([file '.' ext]), end
   end
   if strcmpi(act,'save')

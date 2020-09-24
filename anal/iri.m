@@ -1,4 +1,4 @@
-function m_iri=iri(par,tim,loc,h)
+function m_iri=iri(par,tim,loc,h,iripath)
 % function m_iri=iri(par,tim,loc,h)
 % par parameter list, default [1 4 3]
 %   	 fields 1  electron density/m-3
@@ -20,6 +20,7 @@ function m_iri=iri(par,tim,loc,h)
 %* temperatures            120 km    3000 km *
 %* ion densities           100 km    1000 km *
 %*********************************************
+if nargin<5, global path_GUP, iripath=fullfile(path_GUP,'share','iri'); end
 if nargin<4, h=[]; end
 if nargin<3, loc=[]; end
 if nargin<2, tim=[]; end
@@ -42,7 +43,7 @@ if nh>500, error('Max 500 heights'), end
 outf=libpointer('singlePtr',zeros(20,1000));
 oarr=libpointer('singlePtr',zeros(100,1));
 
-calllib('libiri','read_ig_rz_');
+calllib('libiri','read_ig_rz_',int32(iripath),length(iripath));
 calllib('libiri','readapf107_');
 calllib('libiri','iri_sub_',jf,0,loc(1),loc(2),iy,id-1,ut+25,h(1),h(2),h(3),outf,oarr);
 
