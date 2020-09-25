@@ -1,5 +1,6 @@
 function [altitude,ne,te,ti,coll,cO,cM2,cH]=ionomodel(heights,modinfo)
 global d_time p_XMITloc path_GUP
+persistent iripath
 if isempty(d_time)
  dtime=clock;
 else
@@ -11,8 +12,7 @@ else
  loc=p_XMITloc(1:2);
 end
 if modinfo
- persistent iripath
- iripath=fullfile(path_GUP,'share','iri'),
+ iripath=fullfile(path_GUP,'share','iri');
  [i1,i2,i3,i4]=textread(fullfile(iripath,'ig_rz.dat'),'%d,%d,%d,%d',1,'headerlines',2);
  i5=datenum(dtime);
  if i5>datenum(i4,i3,31) | i5<datenum(i2,i1,1)

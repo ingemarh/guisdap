@@ -7,5 +7,6 @@ add_library(iri SHARED)
 target_sources(iri PRIVATE ${IRI_SRC})
 
 file(GLOB PUBLIC_ASC "*.asc")
-file(GLOB PUBLIC_DAT "*.dat")
+#file(GLOB PUBLIC_DAT "*.dat")
+file(GLOB PUBLIC_DAT "[di]grf*.dat" "mcsat*.dat")
 file(INSTALL ${PUBLIC_ASC} ${PUBLIC_DAT} DESTINATION ${SHARE_DIRECTORY}/iri)

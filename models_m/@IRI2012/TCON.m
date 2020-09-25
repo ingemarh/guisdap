@@ -67,7 +67,7 @@ function [ rz,ig,rsn,nmonth ] = TCON( context, yr,mm,day,idn )
   rz = zeros(1,3);
   if isempty(ionoindx)
     %s = 'ftp://spdf.gsfc.nasa.gov/pub/models/iri/iri2012/ig_rz.dat';
-    %fmt = '%f';
+    fmt = '%f';
     %[f,status] = urlread(s);
     %if status == 0 % bad Internet, try local file
     if true

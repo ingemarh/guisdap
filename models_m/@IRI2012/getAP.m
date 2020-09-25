@@ -4,7 +4,7 @@ function [ rtn ] = getAP( i )
     IYBEG IYEND IDEND IMEND s;
   if isempty(JYs)
     %s = 'ftp://spdf.gsfc.nasa.gov/pub/models/iri/iri2012/apf107.dat';
-    %fmt = '%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%.1f%.1f%.1f';
+    fmt = '%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%3d%.1f%.1f%.1f';
     %[f,status] = urlread(s);
     %if status == 0 % bad Internet, try local file
     if true
