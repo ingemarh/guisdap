@@ -12,6 +12,6 @@ elseif name_site=='V'
  analysis_maxwidth=3*analysis_maxwidth;
  analysis_gating=2;
  if expver>1
-  plasma_range=col(ones(5*200,1)*(0:1)*25668+(1:5*200)'*ones(1,2)+24668);
+  plasma_range=col(ones(5*200,1)*(0:1)*25688+(1:5*200)'*ones(1,2)+24688);
  end
 end
