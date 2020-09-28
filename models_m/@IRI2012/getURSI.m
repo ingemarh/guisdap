@@ -2,10 +2,11 @@ function [ f2 ] = getURSI( )
 %GETURSI retrieve URSI data
 
   persistent f2ursi;
+  global path_GUP
   if isempty(f2ursi)
     f2ursi = zeros(12,IRI2012.F2numI,IRI2012.F2numJ,2,IRI2012.float_t);
     for mn = 1:12
-      FILNAM = sprintf('ursi%2d.asc', mn+10);
+      FILNAM = fullfile(path_GUP,'share','iri',sprintf('ursi%2d.asc', mn+10));
       IUCCIR = fopen(FILNAM,'r');
       if IUCCIR == -1
         fprintf(1,' The file %s is not in your directory.\n', FILNAM);

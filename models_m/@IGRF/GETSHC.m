@@ -30,7 +30,8 @@ function [ NMAX, ERAD, GH, IER ] = GETSHC( context, FSPEC )
   %       Open coefficient file. Read past first header record.        
   %       Read degree and order of model and Earth's radius.           
   % ---------------------------------------------------------------               
-  FOUT = FSPEC;
+  global path_GUP
+  FOUT=fullfile(path_GUP,'share','iri',FSPEC);
   % 667    FORMAT(A13)
   % 667    FORMAT('/var/www/omniweb/cgi/vitmo/IRI/',A13)
   IU = fopen (FOUT, 'r');

@@ -2,11 +2,12 @@ function [ f2,fm3 ] = getCCIRF2( )
 %GETCCIRF2 get CCIR data
 
   persistent f2ccir fm3ccir;
+  global path_GUP
   if isempty(f2ccir)
     f2ccir = zeros(12,IRI2012.F2numI,IRI2012.F2numJ,2,IRI2012.float_t);
     fm3ccir = zeros(12,IRI2012.FM3numI,IRI2012.FM3numJ,2,IRI2012.float_t);
     for mn = 1:12
-      FILNAM = sprintf('ccir%2d.asc', mn+10);
+      FILNAM = fullfile(path_GUP,'share','iri',sprintf('ccir%2d.asc', mn+10));
       IUCCIR = fopen(FILNAM,'r');
       if IUCCIR == -1
         fprintf(1,' The file %s is not in your directory.\n', FILNAM);

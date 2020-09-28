@@ -25,15 +25,19 @@ if nargin==0
     l=[cl libext];
     h=fullfile(d,[char(heads(i)) '.h']);
     if exist(l,'file') && exist(h,'file')
-     loadlibrary(cl,h,'thunkfilename',th);
-     res=res+1;
-     res_atmos=res_atmos+atmos(i);
+     try
+      loadlibrary(cl,h,'thunkfilename',th);
+      res=res+1;
+      res_atmos=res_atmos+atmos(i);
+     catch
+      disp(lasterr)
+     end
     end
    end
   end
  end
  cd(owd)
- catch, cd(owd), error(lasterr)
+ catch, cd(owd), disp(lasterr)
  end
  if res_atmos~=sum(atmos)
   addpath(mmodel)
