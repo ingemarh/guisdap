@@ -42,9 +42,8 @@ month  = sprintf('%02d',data.month(1));
 day    = sprintf('%02d',data.day(1));
 hour   = sprintf('%02d',data.hour(1));
 minute = sprintf('%02d',data.min(1));
-
 second = sprintf('%02d',data.sec(1));
-%display(['The site is ' site ' (' year ') and contains kindat ' kindat_values])
+
 kindat_values = char(exprparvalues(bb,:));
 allkinds = str2num(char(strsplit(kindat_values,', ')'));
 
@@ -156,7 +155,6 @@ for qq = 1:length(evenkindats)
             end
             matfile.metadata.software.experiment.kind_of_data_file = {['This experiment has ' num2str(length(aa)) ' kinds of data. They are: ' exprstr1 ', ' exprstr2]};
         end
-            
     end
    
     intper_mean = subsetmean(data.ut2_unix(ki)-data.ut1_unix(ki));
@@ -180,7 +178,7 @@ for qq = 1:length(evenkindats)
         letters = 'a':'z';
         at = strfind(datafolder,'@'); 
         if length(datafolder(at+1:end)) == 3
-            datafolder = [datafolder letters(1)];
+            datafolder = [datafolder letters(2)];
         else
             letno = strfind(letters,storepath(end));
             datafolder = [datafolder(1:end-1) letters(letno+1)];
@@ -263,6 +261,7 @@ for qq = 1:length(evenkindats)
     matfile.metadata.par2d = [];
     matfile.data.utime     = [];
     matfile.metadata.utime = [];
+    
     if nkindats == 2 && nkin1 ~= nkin2
         matfile.data.par1d_pp     = [];
         matfile.metadata.par1d_pp = [];
@@ -340,7 +339,7 @@ for qq = 1:length(evenkindats)
         
             if length(unique(parameterdata))==1
             
-		if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
+                if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
                     bb = aa; end
                 if strcmp('range',char(Parsinfile_list(ii)))
                     aa = bb(jj); end    
