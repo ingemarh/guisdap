@@ -180,11 +180,18 @@ if isempty(name_ant)
 end
 
 datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more name_strategy '@' name_ant];
-%display(datafolder)
-
 storepath = fullfile(datapath,datafolder);
-if exist(storepath)
-   rmdir(storepath,'s');
+
+while exist(storepath)
+    letters = 'a':'z';
+    at = strfind(datafolder,'@'); 
+    if length(datafolder(at+1:end)) == 3
+        datafolder = [datafolder letters(2)];
+    else
+        letno = strfind(letters,storepath(end));
+        datafolder = [datafolder(1:end-1) letters(letno+1)];
+    end
+    storepath = fullfile(datapath,datafolder);
 end
 mkdir(storepath);
 
