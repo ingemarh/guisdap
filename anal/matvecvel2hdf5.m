@@ -1,6 +1,6 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function [storepath,EISCAThdf5file] = matvecvel2hdf5(matfile_vel,datapath)%,addfigs,addnotes) 
+function [Storepath,EISCAThdf5file] = matvecvel2hdf5(matfile_vel,datapath)%,addfigs,addnotes) 
 
 global path_GUP %result_path 
 % if nargin<4, addnotes = []; else addnotes = 1; end 
@@ -28,34 +28,40 @@ vleap = [];
 vpos  = [];
 vg    = [];
 vgv   = [];
-nrec  = [];
+varea = [];
+lrec  = [];
 
 % Sorting time
-t1all=unique(sort(Vdate(1,:)));
+tolsec = 1e-2;
+tol = tolsec/max(Vdate(1,:)*24*3600);       % tolerence = 0,01 s
+t1all=uniquetol(sort(Vdate(1,:)*24*3600),tol);
 for t1=t1all
-    d=find(Vdate(1,:)==t1);
-    t2all=unique(sort(Vdate(2,d)));
+    d=find(Vdate(1,:)*24*3600>(t1-tolsec) & Vdate(1,:)*24*3600<(t1+tolsec));
+    tol = tolsec/max(Vdate(2,d)*24*3600);   % tolerence = 0,01 s
+    t2all=uniquetol(sort(Vdate(2,d)*24*3600),tol);
     for t2=t2all
-        d1=d(find(Vdate(2,d)==t2));
-        nrec  = [nrec; length(d1)];
-        vdate = [vdate;Vdate(:,d1)'];
+        d1=d(find(Vdate(2,d)*24*3600>(t2-tolsec) & Vdate(2,d)*24*3600<(t2+tolsec)));
+        lrec  = [lrec; length(d1)];
+        vdate = [vdate;Vdate(:,d1(1))'];
         if exist('Vleap','var')
-         vleap = [vleap;Vleap(:,d1)'];
+         vleap = [vleap;Vleap(:,d1(1))'];
         end
         vpos  = [vpos;Vpos(d1,:)]; 
         vg    = [vg;Vg(d1,:)];
         vgv   = [vgv;Vgv(d1,:)];
+        varea = [varea;V_area(d1)];
     end
 end
+nrecs = length(lrec);
 
 a = find(strcmp('nrec',parameters_list)==1);
 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};        
-if length(unique(nrec)) == 1
-    matfile.data.par0d = nrec(1);
+if length(unique(lrec)) == 1
+    matfile.data.par0d = lrec(1);
     matfile.metadata.par0d = info';
 else
-    matfile.data.par1d = nrec;
+    matfile.data.par1d = lrec;
     matfile.metadata.par1d = info';
 end
 
@@ -77,49 +83,141 @@ if exist('Vdate','var')
     end
 end
 
-n = 0;
+l = 0; m = 0; n = 0; 
+
 if exist('Vpos','var')
-    parameters_vpos = {'h_h' 'lon' 'lat'};
-    matfile.data.par2d(:,n+1)     = vpos(:,1)*1000;  % km --> m
-    matfile.data.par2d(:,n+2:n+3) = vpos(:,2:3);
+    parameters_vpos = {'lat' 'lon' 'h_h'};
+    vpos(:,3) = vpos(:,3)*1000;   % km --> m
+    
     for ii = 1:3
-        n = n + 1; 
+        
         a = find(strcmp(char(parameters_vpos(ii)),parameters_list)==1);
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+        if parameters_vpos{ii} == 'h_h'; 
+            info{1} = 'h'; end
         info(4) = {'Vpos'};
         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-        matfile.metadata.par2d(:,n) = info';
+    
+        start = 0;
+        par_1d = [];
+        for kk = 1:nrecs
+            par_rec = vpos(start+1:start+lrec(kk),ii);
+            if length(unique(par_rec)) == 1
+                par_1d = [par_1d; par_rec(1)];
+            end
+            start = start + lrec(kk);
+        end
+        
+        if length(par_1d) == nrecs
+            if length(unique(par_1d)) == 1
+                l = l + 1; 
+                matfile.data.par0d(:,l) = par_1d(1);
+                matfile.metadata.par0d(:,l) = info';
+            else
+                m = m + 1; 
+                matfile.data.par1d(:,m) = par_1d;
+                matfile.metadata.par1d(:,m) = info';
+            end
+        else
+            n = n + 1; 
+            matfile.data.par2d(:,n) = vpos(:,ii);
+            matfile.metadata.par2d(:,n) = info';
+        end
     end
 end
+
 if exist('Vg','var')
     parameters_vg = {'vi_east' 'vi_north' 'vi_up'};
-    matfile.data.par2d(:,n+1:n+3) = vg;
-    for ii = 1:length(vg(1,:))
-        n = n + 1; 
+    
+    for ii = 1:3
         a = find(strcmp(char(parameters_vg(ii)),parameters_list)==1);
-        info(4) = {'Vg'};
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-        matfile.metadata.par2d(:,n) = info';
+        
+        start = 0;
+        par_1d = [];
+        for kk = 1:nrecs
+            par_rec = vg(start+1:start+lrec(kk),ii);
+            if length(unique(par_rec)) == 1
+                par_1d = [par_1d; par_rec(1)];
+            end
+            start = start + lrec(kk);
+        end
+
+        if length(par_1d) == nrecs
+            m = m + 1; 
+            matfile.data.par1d(:,m) = par_1d;
+            matfile.metadata.par1d(:,m) = info';
+        else
+            n = n + 1; 
+            matfile.data.par2d(:,n) = vg(:,ii);
+            matfile.metadata.par2d(:,n) = info';
+        end
     end
 end
 
 if exist('Vgv','var')
-    parameters_vgv = {'dvi_east' 'dvi_north' 'dvi_up' 'crossvar12' 'crossvar23' 'crossvar13'};
-    matfile.data.par2d(:,n+1:n+6) = [sqrt(vgv(:,1:3)) vgv(:,4:6)];
+    parameters_vgv = {'dvi_east' 'dvi_north' 'dvi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
+
     for ii = 1:6
-        n = n + 1; 
-        if ii < 4
-            a = find(strcmp(char(parameters_vgv(ii)),parameters_list)==1);
-            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-        else
-            a = find(strcmp('crossvar',parameters_list)==1);
-            info(1) = parameters_vgv(ii);
-            info(2) = {['cross variance (' parameters_vg{str2num(parameters_vgv{ii}(end-1))} ',' parameters_vg{str2num(parameters_vgv{ii}(end))} ')']};
-            info([3 5]) = {'N/A'};
-        end
-        info(4) = {'Vgv'};
+        a = find(strcmp(char(parameters_vgv(ii)),parameters_list)==1);
+        [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+        
+        start = 0;
+        par_1d = [];
+        for kk = 1:nrecs
+            par_rec = vgv(start+1:start+lrec(kk),ii);
+            if length(unique(par_rec)) == 1
+                par_1d = [par_1d; par_rec(1)];
+            end
+            start = start + lrec(kk);
+        end
+
+        if length(par_1d) == nrecs
+            m = m + 1; 
+            if ii <= 3
+                matfile.data.par1d(:,m) = sqrt(par_1d);
+            else
+                matfile.data.par1d(:,m) = par_1d;
+            end
+            matfile.metadata.par1d(:,m) = info';
+        else
+            n = n + 1; 
+            if ii <= 3
+                matfile.data.par2d(:,n) = sqrt(vgv(:,ii));
+            else
+                matfile.data.par2d(:,n) = vgv(:,ii);
+            end
+            matfile.metadata.par2d(:,n) = info';
+        end
+    end
+end
+
+if exist('V_area','var')
+
+    parameters_varea = {'vi_area'};
+    a = find(strcmp(char(parameters_varea),parameters_list)==1);
+    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+        
+    start = 0;
+    par_1d = [];
+    for kk = 1:nrecs
+        par_rec = varea(start+1:start+lrec(kk));
+        if length(unique(par_rec)) == 1
+            par_1d = [par_1d; par_rec(1)];
+        end
+        start = start + lrec(kk);
+    end
+
+    if length(par_1d) == nrecs
+        m = m + 1; 
+        matfile.data.par1d(:,m) = par_1d;
+        matfile.metadata.par1d(:,m) = info';
+    else
+        n = n + 1; 
+        matfile.data.par2d(:,n) = varea;
         matfile.metadata.par2d(:,n) = info';
     end
 end
@@ -158,12 +256,21 @@ second = sprintf('%02.f',r_time(6));
 
 e_time = datevec(Vdate(2,end));
 endtime = datestr(e_time);
-keyboard
+
 if ~exist('name_expr','var'), name_expr=''; end
 [~,filename,~] = fileparts(matfile_vel); 
 storepath = fullfile(datapath,['EISCAT_' filename]);
-if exist(storepath)
-   rmdir(storepath,'s');
+
+while exist(storepath)
+    letters = 'a':'z';
+    at = strfind(filename,'@'); 
+    if length(filename(at+1:end)) == 3
+        filename = [filename letters(2)];
+    else
+        letno = strfind(letters,storepath(end));
+        filename = [filename(1:end-1) letters(letno+1)];
+    end
+    storepath = fullfile(datapath,['EISCAT_' filename]);
 end
 mkdir(storepath);
 
@@ -171,7 +278,8 @@ Hdf5File = sprintf('%s%s%s','EISCAT_',filename,'.hdf5');
 MatFile = sprintf('%s%s%s','EISCAT_',filename,'.mat');
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
-EISCAThdf5file = hdffilename;
+EISCAThdf5file = {hdffilename};
+Storepath = {storepath};
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 
 if exist(hdffilename)==2, delete(hdffilename); end
