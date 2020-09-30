@@ -23,6 +23,8 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 [~,text] = xlsread(GuisdapParFile);
 parameters_list = text(:,1);
 
+V_area = col(V_area);
+
 vdate = [];
 vleap = [];
 vpos  = [];
@@ -196,7 +198,7 @@ end
 
 if exist('V_area','var')
 
-    parameters_varea = {'vi_area'};
+    parameters_varea = {'vi_solidangle'};
     a = find(strcmp(char(parameters_varea),parameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
@@ -210,14 +212,17 @@ if exist('V_area','var')
         end
         start = start + lrec(kk);
     end
-
+    
+    circ_area = pi*(pi/2)^2;        % half sphere, projected to circle
+    sph_sr = 2*pi;                  % half sphere, sr
+    
     if length(par_1d) == nrecs
         m = m + 1; 
-        matfile.data.par1d(:,m) = par_1d;
+        matfile.data.par1d(:,m) = par_1d/circ_area*sph_sr;
         matfile.metadata.par1d(:,m) = info';
     else
         n = n + 1; 
-        matfile.data.par2d(:,n) = varea;
+        matfile.data.par2d(:,n) = varea/circ_area*sph_sr;
         matfile.metadata.par2d(:,n) = info';
     end
 end
