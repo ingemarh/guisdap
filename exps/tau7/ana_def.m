@@ -2,7 +2,11 @@
 %a_satch.sigma=4;
 a_satch.cut=1;
 analysis_ppshortlags=1;
-if name_site=='L'
+if strfind(data_path,'@32p')
+ analysis_txpower=8;
+ analysis_intfix(5:6)=47:48;
+ analysis_plasmaline=1;
+elseif name_site=='L'
  d=find(analysis_altit>1200); analysis_altit(d(1))=1400;
  a_satch.clutter=[120];
  a_satch.repair=[Inf];
