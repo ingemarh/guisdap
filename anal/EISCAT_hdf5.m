@@ -464,6 +464,7 @@ for ii = 1:length(data_files)
                                 store_image2Hdf5([plotfile '.png'],EISCAThdf5file{nnn});
                                 insert_exif(gcf,plotfile,{'pdf' 'png'})
                                 delete([plotfile '.png'])
+                                clf
                             end
                         end
                     else
@@ -480,6 +481,7 @@ for ii = 1:length(data_files)
                         store_image2Hdf5([vfile '.png'],EISCAThdf5file{nnn});
                         insert_exif(gcf,vfile,{'pdf' 'png'})
                         delete([vfile '.png'])
+                        clf
                     end
                     if npdf
                         strds2hdf5(EISCAThdf5file{nnn},'/figures','figure_links',pdf_forHDF5')
