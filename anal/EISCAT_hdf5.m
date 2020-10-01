@@ -108,10 +108,10 @@ end
 
 figure_check = zeros(length(image_filelist),1);
 npdf = 0;
-pdf_forHDF5 = {};
 
 for ii = 1:length(data_files)
     disp(['Handling:' newline data_files{ii}])
+    %pdf_forHDF5 = {};
     if contains(data_files{ii},'.tar')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
@@ -299,6 +299,7 @@ for ii = 1:length(data_files)
 
         if npdf
             strds2hdf5(EISCAThdf5file{nnn},'/figures','figure_links',pdf_forHDF5')
+            clear pdf_forHDF5
         end
 
         for nn = 1:length(notesfiles)
@@ -485,6 +486,7 @@ for ii = 1:length(data_files)
                     end
                     if npdf
                         strds2hdf5(EISCAThdf5file{nnn},'/figures','figure_links',pdf_forHDF5')
+                        clear pdf_forHDF5
                     end
                     delete([vfile '.mat'])
                 end
