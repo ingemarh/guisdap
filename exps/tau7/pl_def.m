@@ -12,6 +12,18 @@ if d_parbl(41)==3 && vs>1 %VHF
  else
   startad=24688+(0:1)*25688+1;
  end
+ if isempty(gate), gate=2; end
+elseif d_parbl(41)==8 %ESR plasma
+ nfft=256; nint=1; ngates=1; nlag=0;
+ freq=[-5.7 5.7]*1e6; dt=0.4e-6; invert=-1;
+ ran=[98.5 401.6]; fradar=499.7e6;
+ maxe=2; ele=81.6; updown=0:1; nup_d=1;
+ startad=20+(0:1)*276+1; gate=1; skip_if=0;
+ band=minput('Which side','both',1);
+ if strcmp(band,'down')
+  freq=freq(1); updown=0; startad=startad(1);
+ elseif strcmp(band,'up')
+  freq=freq(2); updown=0; startad=startad(2);
+ end
 end
-
-if isempty(gate), gate=2; end
+if isempty(gate), gate=1; end
