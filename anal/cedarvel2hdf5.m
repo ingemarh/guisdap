@@ -402,12 +402,12 @@ for qq = 1:nkindats
         tFields = fieldnames(matfile.(char(sf)));
         for tf = tFields.'
             if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)))
-                npar  = length(matfile.data.(char(tf))(1,:));
+                npars  = length(matfile.data.(char(tf))(1,:));
                 ndata = length(matfile.data.(char(tf))(:,1));
-                if ge(ndata,chunklim) && ge(npar,chunklim), csize = [chunklim chunklim];
-                elseif ge(ndata,chunklim), csize = [chunklim npar];
-                elseif ge(npar,chunklim), csize = [ndata chunklim];
-                else csize = [ndata npar]; end 
+                if ge(ndata,chunklim) && ge(npars,chunklim), csize = [chunklim chunklim];
+                elseif ge(ndata,chunklim), csize = [chunklim npars];
+                elseif ge(npars,chunklim), csize = [ndata chunklim];
+                else csize = [ndata npars]; end 
                 h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
                 h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
             elseif strcmp('data',char(sf)) && strcmp('acf',char(tf))
