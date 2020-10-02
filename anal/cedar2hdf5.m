@@ -34,8 +34,26 @@ cedarfile = char(exprparvalues(aa,:));
 
 pathparts = strsplit(cedarfile,filesep);
 site = char(pathparts(end-2));
-parnames = datapar.mnemonic';
+parnames = lower(datapar.mnemonic');
 npar = size(parnames,1);
+Parsinfile_list = cell(npar,1);
+for ii = 1:npar
+    Parsinfile_list{ii} = deblank(parnames(ii,:));
+end
+
+%Remove data with strange times
+medtime = median(data.ut1_unix(:,1));
+tt = find(data.ut1_unix(:,1)<medtime-1e6 | data.ut1_unix(:,1)>medtime+1e6);
+if tt
+    for pp = 1:npar
+        plus = strfind(Parsinfile_list{pp},'+');
+        if plus
+            data.([Parsinfile_list{pp}(1:plus-1) '0x2B'])(tt) = [];   % Because e.g. po+ is named po0x2B, in data (This will only affect parameter names that end with '+')
+        else   
+            data.(Parsinfile_list{pp})(tt) = [];
+        end
+    end
+end
 
 year   = num2str(data.year(1));
 month  = sprintf('%02d',data.month(1));
@@ -77,13 +95,6 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
 gupparameters_list = text(:,1);   
     
-parnames = lower(datapar.mnemonic');
-npar = size(parnames,1);
-Parsinfile_list = cell(npar,1);
-for ii = 1:npar
-    Parsinfile_list{ii} = deblank(parnames(ii,:));
-end
-
 for qq = 1:length(evenkindats)
     
     if exist('matfile','var')
