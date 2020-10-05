@@ -38,14 +38,13 @@ set(0,'currentfigure',ogcf)
 if isempty(gate) | gate==0, gate=p.gate; end
 if isempty(gate), gate=1; end
 
-re=6370; ratio=[];
+re=6370;
 %First guess of altitudes (Not very important)
 alt=re*sqrt(1+p.ran(gate,:)/re.*(p.ran(gate,:)/re+2*sin(p.ele/57.2957795)))-re;
 if p.ele==0, alt=[150 450]; end
 %Read in the analysed data
 lf=vizu('verbose',alt,'L1 AE');
 for i=1:2
- hlim(:,i)=p.ran(gate,i)*(p.ran(gate,i)/re+2*sin(par1D(:,2)/57.2957795));
  hlim(:,i)=p.ran(gate,i)*(p.ran(gate,i)/re+2*sin(par1D(:,2)/57.2957795));
 end
 hlim=re*sqrt(1+hlim/re)-re;
