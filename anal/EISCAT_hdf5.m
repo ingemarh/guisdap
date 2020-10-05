@@ -88,7 +88,9 @@ end
 
 oldhdf5_files = [];
 if isempty(targz_files) && isempty(hdf5oldfiles) 
-    error('No "old" hdf5-files nor any tar.gz-files with mat-files exist.')
+    keyboard
+    disp('No "old" hdf5-files nor any tar.gz-files with mat-files exist.')
+    error('Noold" hdf5-files nor any tar.gz-files with mat-files exist.')
 elseif isempty(targz_files) && ~isempty(hdf5oldfiles)
     oldhdf5_files = hdf5_allfiles;                     % consider all old hdf5 files when making new EISCAT hdf5 files
 elseif ~isempty(targz_files)  && ~isempty(hdf5_files)
