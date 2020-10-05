@@ -87,7 +87,7 @@ end
 
 oldhdf5_files = [];
 if isempty(targz_files) && isempty(hdf5oldfiles) 
-    disp(['Error: No hdf5-files nor any tar.gz-files exist to handle in ' dirpath '.'])
+    disp(['No EISCAT_hdf5 file generated: no old hdf5-files nor any tar.gz-files exist to handle in ' dirpath '.'])
     error('See message above.')
 elseif isempty(targz_files) && ~isempty(hdf5oldfiles)
     oldhdf5_files = hdf5_allfiles;                     % consider all old hdf5 files when making new EISCAT hdf5 files
