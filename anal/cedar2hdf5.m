@@ -604,7 +604,7 @@ for qq = 1:length(evenkindats)
     end
         
     % check if pprange exists
-    if ~isempty(matfile.metadata.par2d_pp)
+    if isfield(matfile.metadata,'par2d_pp') && ~isempty(matfile.metadata.par2d_pp)
         pp2dcheck = find(strcmp(matfile.metadata.par2d_pp(1,:),'pprange')==1);
         if pp2dcheck
             pp2d = 1;
