@@ -65,7 +65,6 @@ end
 hdf5oldfiles     = dir(fullfile(dirpath,'overview','*hdf5')); 
 hdf5_allfiles  = [];
 hdf5_files     = [];
-%hdf5vel_files  = [];
 hdf5ncar_files = [];
 hdf5rest_files = [];
 
@@ -88,9 +87,8 @@ end
 
 oldhdf5_files = [];
 if isempty(targz_files) && isempty(hdf5oldfiles) 
-    keyboard
-    disp('No "old" hdf5-files nor any tar.gz-files with mat-files exist.')
-    error('Noold" hdf5-files nor any tar.gz-files with mat-files exist.')
+    disp(['Error: No hdf5-files nor any tar.gz-files exist to handle in ' dirpath '.'])
+    error('See message above.')
 elseif isempty(targz_files) && ~isempty(hdf5oldfiles)
     oldhdf5_files = hdf5_allfiles;                     % consider all old hdf5 files when making new EISCAT hdf5 files
 elseif ~isempty(targz_files)  && ~isempty(hdf5_files)
