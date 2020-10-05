@@ -602,8 +602,8 @@ for qq = 1:length(evenkindats)
         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = PointInPol(1);
         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
     end
-
-    if nkindats>1
+    
+    if nkindats>1 && ~isempty(matfile.data.par2d_pp)
         [plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
         matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1); 
         matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
@@ -634,6 +634,29 @@ for qq = 1:length(evenkindats)
         end
     end
 
+    % Delete all pp-fields from the structure if par2d_pp is empty    
+    if ~isfield(matfile.data,'par2d_pp')
+        display(['2d_pp data (kindat: ' num2str(kindats(2)) ') do not exist'])
+        if isfield(matfile.data,'par1d_pp')
+            matfile.metadata = rmfield(matfile.metadata,'par1d_pp');
+            matfile.data     = rmfield(matfile.data,'par1d_pp'); end
+        if isfield(matfile.data,'utime_pp')
+            matfile.metadata = rmfield(matfile.metadata,'utime_pp');
+            matfile.data     = rmfield(matfile.data,'utime_pp'); end
+        
+        if nkindats == 2
+            % Modify metadata.experiment data
+            
+            % kindat
+            matfile.metadata.software.experiment.kindat = {num2str(kindats(1))};
+
+            % kind_of_data_file
+            bb = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' 1)']);
+            cc = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),['(code ' num2str(kindats(1)) ')']);
+            matfile.metadata.software.experiment.kind_of_data_file = {matfile.metadata.software.experiment.kind_of_data_file{1}(bb+4:cc-2)};
+        end
+    end
+    
     % Remove the 'Original parameter' (guisdap analysis parameter name) cells from
     % the metadata since they are empty, and put empty values in 'Madrigal Id'
     % and 'Identifier' to 0 instead
