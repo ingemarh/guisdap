@@ -602,8 +602,20 @@ for qq = 1:length(evenkindats)
         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = PointInPol(1);
         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
     end
+        
+    % check if pprange exists
+    if ~isempty(matfile.metadata.par2d_pp)
+        pp2dcheck = find(strcmp(matfile.metadata.par2d_pp(1,:),'pprange')==1);
+        if pp2dcheck
+            pp2d = 1;
+        else
+            pp2d = 0;
+        end
+    else
+        pp2d = 0;
+    end
     
-    if nkindats>1 && ~isempty(matfile.data.par2d_pp)
+    if nkindats>1 && pp2d
         [plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
         matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1); 
         matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
@@ -634,9 +646,12 @@ for qq = 1:length(evenkindats)
         end
     end
 
-    % Delete all pp-fields from the structure if par2d_pp is empty    
-    if ~isfield(matfile.data,'par2d_pp')
+    % Delete all pp-fields from the structure if pp data do not exist
+    if ~pp2d
         display(['2d_pp data (kindat: ' num2str(kindats(2)) ') do not exist'])
+        if isfield(matfile.data,'par2d_pp')
+            matfile.metadata = rmfield(matfile.metadata,'par2d_pp');
+            matfile.data     = rmfield(matfile.data,'par2d_pp'); end
         if isfield(matfile.data,'par1d_pp')
             matfile.metadata = rmfield(matfile.metadata,'par1d_pp');
             matfile.data     = rmfield(matfile.data,'par1d_pp'); end
