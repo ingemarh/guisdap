@@ -41,6 +41,20 @@ for ii = 1:npar
     Parsinfile_list{ii} = deblank(parnames(ii,:));
 end
 
+% Remove parameters starting with 'x'...
+field_names = fieldnames(data);
+rmpar = [];
+for fn = 1:length(field_names)
+    if strcmp(field_names{fn}(1),'x')
+        data = rmfield(data,field_names{fn});
+        rmpar = [rmpar; fn];
+    end    
+end
+if rmpar
+    Parsinfile_list(rmpar) = [];
+end
+npar = length(Parsinfile_list);
+
 %Remove data with strange times
 medtime = median(data.ut1_unix(:,1));
 tt = find(data.ut1_unix(:,1)<medtime-1e6 | data.ut1_unix(:,1)>medtime+1e6);
@@ -94,7 +108,7 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 [~,text] = xlsread(GuisdapParFile);     
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
 gupparameters_list = text(:,1);   
-    
+
 for qq = 1:length(evenkindats)
     
     if exist('matfile','var')
@@ -321,6 +335,7 @@ for qq = 1:length(evenkindats)
                 else
                     cckind = 1:length(data_set.recno);                  % data.kindat does not seem to exist when there is only 1 kindat for the experiment
                 end
+                
                 for dd = 0:nracf  
                     acfdata_rec = data_set.([char(Parsinfile_list(ii)) num2str(dd)]);
                     real_acf = [real_acf real(acfdata_rec(cckind))];
