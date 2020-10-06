@@ -263,12 +263,12 @@ for qq = 1:length(evenkindats)
     rr_lon = find(strcmp(exprparnames,'instrument longitude')==1);
     rr_lat = find(strcmp(exprparnames,'instrument latitude')==1);
     rr_alt = find(strcmp(exprparnames,'instrument altitude')==1);
-    RECloc = [str2num(exprparvalues{rr_lon}) str2num(exprparvalues{rr_lat}) str2num(exprparvalues{rr_alt})];
+    RECloc = [str2num(exprparvalues{rr_lat}) str2num(exprparvalues{rr_lon}) str2num(exprparvalues{rr_alt})];
     gg = zeros(length(data_set.elm),3);
     for ss = 1:length(data_set.elm)
         gg(ss,:) = loc2gg(RECloc,loc(ss,:));
     end
-  
+    
     if nkindats>1
         cc       = find(data_set.kindat == kindats(1));
         cc_pp    = find(data_set.kindat == kindats(2));
