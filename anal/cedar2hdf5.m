@@ -648,7 +648,7 @@ for qq = 1:length(evenkindats)
 
     % Delete all pp-fields from the structure if pp data do not exist
     if ~pp2d && ~isnan(kindats(2))
-        display(['2d_pp data (kindat: ' num2str(kindats(2)) ') do not exist']) end
+        display(['2d_pp data (kindat: ' num2str(kindats(2)) ') do not exist'])
         if isfield(matfile.data,'par2d_pp')
             matfile.metadata = rmfield(matfile.metadata,'par2d_pp');
             matfile.data     = rmfield(matfile.data,'par2d_pp'); end
