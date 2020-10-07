@@ -365,10 +365,10 @@ for qq = 1:length(evenkindats)
         
             if length(unique(parameterdata))==1
             
-                if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
-                    bb = aa; end
+%                 if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
+%                     bb = aa; end
                 if strcmp('range',char(Parsinfile_list(ii)))
-                    aa = bb(jj); end    
+                    aa = aa(1); end    
                 if strcmp('tfreq',char(Parsinfile_list(ii)))
                     aa = aa(1);                                    % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
                 end
