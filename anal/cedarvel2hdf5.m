@@ -281,7 +281,12 @@ for qq = 1:nkindats
 
     %new_v  = {'vi1' 'vi2' 'vi3' 'dvi1' 'dvi2' 'dvi3' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
     new_v  = {'vi_east' 'vi_north' 'vi_up' 'dvi_east' 'dvi_north' 'dvi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
-    ll1 = length(matfile.data.par1d(1,:));
+    if ~isempty(matfile.data.par1d)
+        ll1 = length(matfile.data.par1d(1,:));
+    else
+        ll1 = 0;
+        matfile.metadata.par1d = {};
+    end
     matfile.data.par1d(:,ll1+1:ll1+9) = [Vg dVg Vg_crossvar];
 
     for jj = 1:9
