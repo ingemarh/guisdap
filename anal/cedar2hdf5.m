@@ -365,8 +365,6 @@ for qq = 1:length(evenkindats)
         
             if length(unique(parameterdata))==1
             
-%                 if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
-%                     bb = aa; end
                 if strcmp('range',char(Parsinfile_list(ii)))
                     aa = aa(1); end    
                 if strcmp('tfreq',char(Parsinfile_list(ii)))
