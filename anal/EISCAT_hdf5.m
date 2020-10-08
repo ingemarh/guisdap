@@ -241,7 +241,7 @@ for ii = 1:length(data_files)
                    (isempty(fig_intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ... 
                    (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
                    (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...
-                   ((contains(figname,'BoreSight') || contains(figname,'WestBeam')) && contains(fig_pulse,pulse))
+                   ((contains(figname,'Bore') || contains(figname,'West')) && contains(fig_pulse,pulse))
                     if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
                         if strcmp(ext,'.pdf')
                             npdf = npdf + 1;
@@ -457,6 +457,7 @@ for ii = 1:length(data_files)
                              if hh
                                 plotfilename = [plotfilename_orig(1:f-1) '_' region(pp) plotfilename_orig(f:end)];
                                 plotfile = [storepath{nnn} '/' plotfilename];
+                                clf
                                 efield([vfile '.mat'],plottype,[altlim(pp) altlim(pp+1)])
                                 print('-dpdf',[plotfile '.pdf'])
                                 npdf = npdf + 1;
@@ -465,7 +466,6 @@ for ii = 1:length(data_files)
                                 store_image2Hdf5([plotfile '.png'],EISCAThdf5file{nnn});
                                 insert_exif(gcf,plotfile,{'pdf' 'png'})
                                 delete([plotfile '.png'])
-                                clf
                             end
                         end
                     else
@@ -474,6 +474,7 @@ for ii = 1:length(data_files)
                         else
                             plottype = 'pVm';
                         end
+                        clf
                         efield([vfile '.mat'],plottype);
                         print('-dpdf',[vfile '.pdf'])
                         npdf = npdf + 1;
@@ -482,7 +483,6 @@ for ii = 1:length(data_files)
                         store_image2Hdf5([vfile '.png'],EISCAThdf5file{nnn});
                         insert_exif(gcf,vfile,{'pdf' 'png'})
                         delete([vfile '.png'])
-                        clf
                     end
                     if npdf
                         strds2hdf5(EISCAThdf5file{nnn},'/figures','figure_links',pdf_forHDF5')
