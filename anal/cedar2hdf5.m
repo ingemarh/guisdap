@@ -78,7 +78,10 @@ second = sprintf('%02d',data.sec(1));
 
 kindat_values = char(exprparvalues(bb,:));
 allkinds = str2num(char(strsplit(kindat_values,', ')'));
-
+fsk = find(allkinds==6831);
+if fsk
+    allkinds(fsk) = 6800; 
+end    
 evenkindats = allkinds(find(rem(allkinds,2)==0));
 kinds = ones(length(evenkindats),2);
 kinds(1,:) = evenkindats;
@@ -149,7 +152,7 @@ for qq = 1:length(evenkindats)
     end
      
     % Modify metadata if needed
-    if length(evenkindats) > 1
+    if length(evenkindats) > 1 || (kindats(1) == 6800 && fsk)
         
         % kindat
         matfile.metadata.software.experiment.kindat = {num2str(kindats(1))};
@@ -157,31 +160,33 @@ for qq = 1:length(evenkindats)
             matfile.metadata.software.experiment.kindat = {[matfile.metadata.software.experiment.kindat{1} ', ' num2str(kindats(2))]};
         end
         
-        % start_ & end_time
-        dtstart = datetime(data.ut1_unix(ki(1)),'ConvertFrom','posixtime');
-        dtend   = datetime(data.ut2_unix(ki(end)),'ConvertFrom','posixtime');
-        matfile.metadata.software.experiment.start_time = {datestr(dtstart,'yyyy-mm-dd HH:MM:SS UT')};
-        matfile.metadata.software.experiment.end_time   = {datestr(dtend,'yyyy-mm-dd HH:MM:SS UT')};
+        if length(evenkindats) > 1
+            % start_ & end_time
+            dtstart = datetime(data.ut1_unix(ki(1)),'ConvertFrom','posixtime');
+            dtend   = datetime(data.ut2_unix(ki(end)),'ConvertFrom','posixtime');
+            matfile.metadata.software.experiment.start_time = {datestr(dtstart,'yyyy-mm-dd HH:MM:SS UT')};
+            matfile.metadata.software.experiment.end_time   = {datestr(dtend,'yyyy-mm-dd HH:MM:SS UT')};
         
-        % kind_of_data_file
-        aa = find(allkinds==kindats(1) | allkinds==kindats(2));
-        bb1 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(1)) ')']);
-        if length(aa) == 1
-            cc = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),['(code ' num2str(kindats(1)) ')']);
-            matfile.metadata.software.experiment.kind_of_data_file = {matfile.metadata.software.experiment.kind_of_data_file{1}(bb1+4:cc-2)};
-        else 
-            bb2 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)) ')']);
-            exprstr1 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb1+4:bb2-3);
-            if ~contains(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)+1) ')'])
-                exprstr2 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb2+4:end);
-            else
-                bb3 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)+1) ')']);
-                exprstr2 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb2+4:bb3-3);
+            % kind_of_data_file
+            aa = find(allkinds==kindats(1) | allkinds==kindats(2));
+            bb1 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(1)) ')']);
+            if length(aa) == 1
+                cc = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),['(code ' num2str(kindats(1)) ')']);
+                matfile.metadata.software.experiment.kind_of_data_file = {matfile.metadata.software.experiment.kind_of_data_file{1}(bb1+4:cc-2)};
+            else 
+                bb2 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)) ')']);
+                exprstr1 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb1+4:bb2-3);
+                if ~contains(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)+1) ')'])
+                    exprstr2 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb2+4:end);
+                else
+                    bb3 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)+1) ')']);
+                    exprstr2 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb2+4:bb3-3);
+                end
+                matfile.metadata.software.experiment.kind_of_data_file = {['This experiment has ' num2str(length(aa)) ' kinds of data. They are: ' exprstr1 ', ' exprstr2]};
             end
-            matfile.metadata.software.experiment.kind_of_data_file = {['This experiment has ' num2str(length(aa)) ' kinds of data. They are: ' exprstr1 ', ' exprstr2]};
         end
     end
-   
+   keyboard
     intper_mean = subsetmean(data.ut2_unix(ki)-data.ut1_unix(ki));
     if intper_mean < 10
         name_strategy = 'ant';
