@@ -186,7 +186,7 @@ for qq = 1:length(evenkindats)
             end
         end
     end
-   keyboard
+   
     intper_mean = subsetmean(data.ut2_unix(ki)-data.ut1_unix(ki));
     if intper_mean < 10
         name_strategy = 'ant';
@@ -455,7 +455,10 @@ for qq = 1:length(evenkindats)
                         matfile.data.utime_pp = [matfile.data.utime_pp par_1d]; 
                         matfile.metadata.utime_pp = [matfile.metadata.utime_pp info'];
                     else
-                        matfile.data.par1d_pp = [matfile.data.par1d_pp double(par_1d)]; 
+                        matfile.data.par1d_pp = [matfile.data.par1d_pp double(par_1d)];
+                        if strcmp('tfreq',char(Parsinfile_list(ii)))
+                            info(1) = {'ppftrans'};
+                        end
                         matfile.metadata.par1d_pp = [matfile.metadata.par1d_pp info'];
                     end
                 elseif length(par_1d)==recs && jj == 2
@@ -471,6 +474,9 @@ for qq = 1:length(evenkindats)
                 else
                     if jj == 2
                         matfile.data.par2d_pp = [matfile.data.par2d_pp single(parameterdata_kindat)];
+                        if strcmp('tfreq',char(Parsinfile_list(ii)))
+                            info(1) = {'ppftrans'};
+                        end
                         matfile.metadata.par2d_pp = [matfile.metadata.par2d_pp info'];
                     else
                         matfile.data.par2d = [matfile.data.par2d single(parameterdata_kindat)];
