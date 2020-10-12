@@ -65,7 +65,6 @@ end
 hdf5oldfiles     = dir(fullfile(dirpath,'overview','*hdf5')); 
 hdf5_allfiles  = [];
 hdf5_files     = [];
-%hdf5vel_files  = [];
 hdf5ncar_files = [];
 hdf5rest_files = [];
 
@@ -88,7 +87,8 @@ end
 
 oldhdf5_files = [];
 if isempty(targz_files) && isempty(hdf5oldfiles) 
-    error('No "old" hdf5-files nor any tar.gz-files with mat-files exist.')
+    disp(['No EISCAT_hdf5 file generated: no old hdf5-files nor any tar.gz-files exist to handle in ' dirpath '.'])
+    error('See message above.')
 elseif isempty(targz_files) && ~isempty(hdf5oldfiles)
     oldhdf5_files = hdf5_allfiles;                     % consider all old hdf5 files when making new EISCAT hdf5 files
 elseif ~isempty(targz_files)  && ~isempty(hdf5_files)
@@ -108,10 +108,10 @@ end
 
 figure_check = zeros(length(image_filelist),1);
 npdf = 0;
-pdf_forHDF5 = {};
 
 for ii = 1:length(data_files)
     disp(['Handling:' newline data_files{ii}])
+    %pdf_forHDF5 = {};
     if contains(data_files{ii},'.tar')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
@@ -241,7 +241,7 @@ for ii = 1:length(data_files)
                    (isempty(fig_intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ... 
                    (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
                    (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...
-                   ((contains(figname,'BoreSight') || contains(figname,'WestBeam')) && contains(fig_pulse,pulse))
+                   ((contains(figname,'Bore') || contains(figname,'West')) && contains(fig_pulse,pulse))
                     if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
                         if strcmp(ext,'.pdf')
                             npdf = npdf + 1;
@@ -299,6 +299,7 @@ for ii = 1:length(data_files)
 
         if npdf
             strds2hdf5(EISCAThdf5file{nnn},'/figures','figure_links',pdf_forHDF5')
+            npdf = 0; clear pdf_forHDF5
         end
 
         for nn = 1:length(notesfiles)
@@ -456,14 +457,20 @@ for ii = 1:length(data_files)
                              if hh
                                 plotfilename = [plotfilename_orig(1:f-1) '_' region(pp) plotfilename_orig(f:end)];
                                 plotfile = [storepath{nnn} '/' plotfilename];
+                                close
                                 efield([vfile '.mat'],plottype,[altlim(pp) altlim(pp+1)])
-                                print('-dpdf',[plotfile '.pdf'])
-                                npdf = npdf + 1;
-                                pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
-                                print('-dpng256',[plotfile '.png'])
-                                store_image2Hdf5([plotfile '.png'],EISCAThdf5file{nnn});
-                                insert_exif(gcf,plotfile,{'pdf' 'png'})
-                                delete([plotfile '.png'])
+                                fig = gcf; axObjs = fig.Children; dataObjs = axObjs(3).Children;
+                                if isempty(dataObjs)
+                                    warning('Empty plot, figure was not saved.')
+                                else
+                                    print('-dpdf',[plotfile '.pdf'])
+                                    npdf = npdf + 1;
+                                    pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
+                                    print('-dpng256',[plotfile '.png'])
+                                    store_image2Hdf5([plotfile '.png'],EISCAThdf5file{nnn});
+                                    insert_exif(gcf,plotfile,{'pdf' 'png'})
+                                    delete([plotfile '.png'])
+                                end
                             end
                         end
                     else
@@ -472,17 +479,24 @@ for ii = 1:length(data_files)
                         else
                             plottype = 'pVm';
                         end
+                        close
                         efield([vfile '.mat'],plottype);
-                        print('-dpdf',[vfile '.pdf'])
-                        npdf = npdf + 1;
-                        pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
-                        print('-dpng256',[vfile '.png'])
-                        store_image2Hdf5([vfile '.png'],EISCAThdf5file{nnn});
-                        insert_exif(gcf,vfile,{'pdf' 'png'})
-                        delete([vfile '.png'])
+                        fig = gcf; axObjs = fig.Children; dataObjs = axObjs(3).Children;
+                        if isempty(dataObjs)
+                             warning('Empty plot, figure was not saved.')
+                        else
+                            print('-dpdf',[vfile '.pdf'])
+                            npdf = npdf + 1;
+                            pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
+                            print('-dpng256',[vfile '.png'])
+                            store_image2Hdf5([vfile '.png'],EISCAThdf5file{nnn});
+                            insert_exif(gcf,vfile,{'pdf' 'png'})
+                            delete([vfile '.png'])
+                        end
                     end
                     if npdf
                         strds2hdf5(EISCAThdf5file{nnn},'/figures','figure_links',pdf_forHDF5')
+                        npdf = 0; clear pdf_forHDF5
                     end
                     delete([vfile '.mat'])
                 end

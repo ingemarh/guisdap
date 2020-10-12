@@ -39,8 +39,21 @@ cedarfile = char(exprparvalues(aa,:));
 
 pathparts = strsplit(cedarfile,filesep);
 site = char(pathparts(end-2));
-parnames = datapar.mnemonic';
+parnames = lower(datapar.mnemonic');
 npar = size(parnames,1);
+Parsinfile_list = cell(npar,1);
+for ii = 1:npar
+    Parsinfile_list{ii} = deblank(parnames(ii,:));
+end
+
+%Remove data with strange time stamps
+medtime = median(data.ut1_unix(:,1));
+tt = find(data.ut1_unix(:,1)<medtime-1e6 | data.ut1_unix(:,1)>medtime+1e6);
+if tt
+    for pp = 1:npar
+        data.(Parsinfile_list{pp})(tt) = [];
+    end
+end
 
 year   = num2str(data.year(1));
 month  = sprintf('%02d',data.month(1));
@@ -75,12 +88,7 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
 gupparameters_list = text(:,1);
 
-parnames = lower(datapar.mnemonic');
-npar = size(parnames,1);
-Parsinfile_list = cell(npar,1);
-for ii = 1:npar
-    Parsinfile_list{ii} = deblank(parnames(ii,:));
-end
+
 
 for qq = 1:nkindats
     
@@ -273,7 +281,12 @@ for qq = 1:nkindats
 
     %new_v  = {'vi1' 'vi2' 'vi3' 'dvi1' 'dvi2' 'dvi3' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
     new_v  = {'vi_east' 'vi_north' 'vi_up' 'dvi_east' 'dvi_north' 'dvi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
-    ll1 = length(matfile.data.par1d(1,:));
+    if ~isempty(matfile.data.par1d)
+        ll1 = length(matfile.data.par1d(1,:));
+    else
+        ll1 = 0;
+        matfile.metadata.par1d = {};
+    end
     matfile.data.par1d(:,ll1+1:ll1+9) = [Vg dVg Vg_crossvar];
 
     for jj = 1:9
@@ -402,12 +415,12 @@ for qq = 1:nkindats
         tFields = fieldnames(matfile.(char(sf)));
         for tf = tFields.'
             if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)))
-                npar  = length(matfile.data.(char(tf))(1,:));
+                npars  = length(matfile.data.(char(tf))(1,:));
                 ndata = length(matfile.data.(char(tf))(:,1));
-                if ge(ndata,chunklim) && ge(npar,chunklim), csize = [chunklim chunklim];
-                elseif ge(ndata,chunklim), csize = [chunklim npar];
-                elseif ge(npar,chunklim), csize = [ndata chunklim];
-                else csize = [ndata npar]; end 
+                if ge(ndata,chunklim) && ge(npars,chunklim), csize = [chunklim chunklim];
+                elseif ge(ndata,chunklim), csize = [chunklim npars];
+                elseif ge(npars,chunklim), csize = [ndata chunklim];
+                else csize = [ndata npars]; end 
                 h5create(hdffilename,['/' char(sf) '/' char(tf)],size([matfile.(char(sf)).(char(tf))]),'ChunkSize',csize,'Deflate',9,'Datatype','single');
                 h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
             elseif strcmp('data',char(sf)) && strcmp('acf',char(tf))

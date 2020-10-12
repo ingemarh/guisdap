@@ -34,8 +34,40 @@ cedarfile = char(exprparvalues(aa,:));
 
 pathparts = strsplit(cedarfile,filesep);
 site = char(pathparts(end-2));
-parnames = datapar.mnemonic';
+parnames = lower(datapar.mnemonic');
 npar = size(parnames,1);
+Parsinfile_list = cell(npar,1);
+for ii = 1:npar
+    Parsinfile_list{ii} = deblank(parnames(ii,:));
+end
+
+% Remove parameters starting with 'x'...
+field_names = fieldnames(data);
+rmpar = [];
+for fn = 1:length(field_names)
+    if strcmp(field_names{fn}(1),'x')
+        data = rmfield(data,field_names{fn});
+        rmpar = [rmpar; fn];
+    end    
+end
+if rmpar
+    Parsinfile_list(rmpar) = [];
+end
+npar = length(Parsinfile_list);
+
+%Remove data with strange times
+medtime = median(data.ut1_unix(:,1));
+tt = find(data.ut1_unix(:,1)<medtime-1e6 | data.ut1_unix(:,1)>medtime+1e6);
+if tt
+    for pp = 1:npar
+        plus = strfind(Parsinfile_list{pp},'+');
+        if plus
+            data.([Parsinfile_list{pp}(1:plus-1) '0x2B'])(tt) = [];   % Because e.g. po+ is named po0x2B, in data (This will only affect parameter names that end with '+')
+        else   
+            data.(Parsinfile_list{pp})(tt) = [];
+        end
+    end
+end
 
 year   = num2str(data.year(1));
 month  = sprintf('%02d',data.month(1));
@@ -46,7 +78,10 @@ second = sprintf('%02d',data.sec(1));
 
 kindat_values = char(exprparvalues(bb,:));
 allkinds = str2num(char(strsplit(kindat_values,', ')'));
-
+fsk = find(allkinds==6831);
+if fsk
+    allkinds(fsk) = 6800; 
+end    
 evenkindats = allkinds(find(rem(allkinds,2)==0));
 kinds = ones(length(evenkindats),2);
 kinds(1,:) = evenkindats;
@@ -76,13 +111,6 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 [~,text] = xlsread(GuisdapParFile);     
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
 gupparameters_list = text(:,1);   
-    
-parnames = lower(datapar.mnemonic');
-npar = size(parnames,1);
-Parsinfile_list = cell(npar,1);
-for ii = 1:npar
-    Parsinfile_list{ii} = deblank(parnames(ii,:));
-end
 
 for qq = 1:length(evenkindats)
     
@@ -124,7 +152,7 @@ for qq = 1:length(evenkindats)
     end
      
     % Modify metadata if needed
-    if length(evenkindats) > 1
+    if length(evenkindats) > 1 || (kindats(1) == 6800 && fsk)
         
         % kindat
         matfile.metadata.software.experiment.kindat = {num2str(kindats(1))};
@@ -132,28 +160,30 @@ for qq = 1:length(evenkindats)
             matfile.metadata.software.experiment.kindat = {[matfile.metadata.software.experiment.kindat{1} ', ' num2str(kindats(2))]};
         end
         
-        % start_ & end_time
-        dtstart = datetime(data.ut1_unix(ki(1)),'ConvertFrom','posixtime');
-        dtend   = datetime(data.ut2_unix(ki(end)),'ConvertFrom','posixtime');
-        matfile.metadata.software.experiment.start_time = {datestr(dtstart,'yyyy-mm-dd HH:MM:SS UT')};
-        matfile.metadata.software.experiment.end_time   = {datestr(dtend,'yyyy-mm-dd HH:MM:SS UT')};
+        if length(evenkindats) > 1
+            % start_ & end_time
+            dtstart = datetime(data.ut1_unix(ki(1)),'ConvertFrom','posixtime');
+            dtend   = datetime(data.ut2_unix(ki(end)),'ConvertFrom','posixtime');
+            matfile.metadata.software.experiment.start_time = {datestr(dtstart,'yyyy-mm-dd HH:MM:SS UT')};
+            matfile.metadata.software.experiment.end_time   = {datestr(dtend,'yyyy-mm-dd HH:MM:SS UT')};
         
-        % kind_of_data_file
-        aa = find(allkinds==kindats(1) | allkinds==kindats(2));
-        bb1 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(1)) ')']);
-        if length(aa) == 1
-            cc = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),['(code ' num2str(kindats(1)) ')']);
-            matfile.metadata.software.experiment.kind_of_data_file = {matfile.metadata.software.experiment.kind_of_data_file{1}(bb1+4:cc-2)};
-        else 
-            bb2 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)) ')']);
-            exprstr1 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb1+4:bb2-3);
-            if ~contains(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)+1) ')'])
-                exprstr2 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb2+4:end);
-            else
-                bb3 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)+1) ')']);
-                exprstr2 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb2+4:bb3-3);
+            % kind_of_data_file
+            aa = find(allkinds==kindats(1) | allkinds==kindats(2));
+            bb1 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(1)) ')']);
+            if length(aa) == 1
+                cc = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),['(code ' num2str(kindats(1)) ')']);
+                matfile.metadata.software.experiment.kind_of_data_file = {matfile.metadata.software.experiment.kind_of_data_file{1}(bb1+4:cc-2)};
+            else 
+                bb2 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)) ')']);
+                exprstr1 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb1+4:bb2-3);
+                if ~contains(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)+1) ')'])
+                    exprstr2 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb2+4:end);
+                else
+                    bb3 = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' ' num2str(aa(2)+1) ')']);
+                    exprstr2 = matfile.metadata.software.experiment.kind_of_data_file{1}(bb2+4:bb3-3);
+                end
+                matfile.metadata.software.experiment.kind_of_data_file = {['This experiment has ' num2str(length(aa)) ' kinds of data. They are: ' exprstr1 ', ' exprstr2]};
             end
-            matfile.metadata.software.experiment.kind_of_data_file = {['This experiment has ' num2str(length(aa)) ' kinds of data. They are: ' exprstr1 ', ' exprstr2]};
         end
     end
    
@@ -238,12 +268,12 @@ for qq = 1:length(evenkindats)
     rr_lon = find(strcmp(exprparnames,'instrument longitude')==1);
     rr_lat = find(strcmp(exprparnames,'instrument latitude')==1);
     rr_alt = find(strcmp(exprparnames,'instrument altitude')==1);
-    RECloc = [str2num(exprparvalues{rr_lon}) str2num(exprparvalues{rr_lat}) str2num(exprparvalues{rr_alt})];
+    RECloc = [str2num(exprparvalues{rr_lat}) str2num(exprparvalues{rr_lon}) str2num(exprparvalues{rr_alt})];
     gg = zeros(length(data_set.elm),3);
     for ss = 1:length(data_set.elm)
         gg(ss,:) = loc2gg(RECloc,loc(ss,:));
     end
-  
+    
     if nkindats>1
         cc       = find(data_set.kindat == kindats(1));
         cc_pp    = find(data_set.kindat == kindats(2));
@@ -310,6 +340,7 @@ for qq = 1:length(evenkindats)
                 else
                     cckind = 1:length(data_set.recno);                  % data.kindat does not seem to exist when there is only 1 kindat for the experiment
                 end
+                
                 for dd = 0:nracf  
                     acfdata_rec = data_set.([char(Parsinfile_list(ii)) num2str(dd)]);
                     real_acf = [real_acf real(acfdata_rec(cckind))];
@@ -339,10 +370,8 @@ for qq = 1:length(evenkindats)
         
             if length(unique(parameterdata))==1
             
-                if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
-                    bb = aa; end
                 if strcmp('range',char(Parsinfile_list(ii)))
-                    aa = bb(jj); end    
+                    aa = aa(1); end    
                 if strcmp('tfreq',char(Parsinfile_list(ii)))
                     aa = aa(1);                                    % since there are two 'tfreq' in parameters_list there will be two values in aa. However, for old experiments it is always the first one in the list that is the correct metadata
                 end
@@ -426,7 +455,10 @@ for qq = 1:length(evenkindats)
                         matfile.data.utime_pp = [matfile.data.utime_pp par_1d]; 
                         matfile.metadata.utime_pp = [matfile.metadata.utime_pp info'];
                     else
-                        matfile.data.par1d_pp = [matfile.data.par1d_pp double(par_1d)]; 
+                        matfile.data.par1d_pp = [matfile.data.par1d_pp double(par_1d)];
+                        if strcmp('tfreq',char(Parsinfile_list(ii)))
+                            info(1) = {'ppftrans'};
+                        end
                         matfile.metadata.par1d_pp = [matfile.metadata.par1d_pp info'];
                     end
                 elseif length(par_1d)==recs && jj == 2
@@ -442,6 +474,9 @@ for qq = 1:length(evenkindats)
                 else
                     if jj == 2
                         matfile.data.par2d_pp = [matfile.data.par2d_pp single(parameterdata_kindat)];
+                        if strcmp('tfreq',char(Parsinfile_list(ii)))
+                            info(1) = {'ppftrans'};
+                        end
                         matfile.metadata.par2d_pp = [matfile.metadata.par2d_pp info'];
                     else
                         matfile.data.par2d = [matfile.data.par2d single(parameterdata_kindat)];
@@ -576,8 +611,20 @@ for qq = 1:length(evenkindats)
         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = PointInPol(1);
         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
     end
-
-    if nkindats>1
+        
+    % check if pprange exists
+    if isfield(matfile.metadata,'par2d_pp') && ~isempty(matfile.metadata.par2d_pp)
+        pp2dcheck = find(strcmp(matfile.metadata.par2d_pp(1,:),'pprange')==1);
+        if pp2dcheck
+            pp2d = 1;
+        else
+            pp2d = 0;
+        end
+    else
+        pp2d = 0;
+    end
+    
+    if nkindats>1 && pp2d
         [plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
         matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1); 
         matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
@@ -608,6 +655,32 @@ for qq = 1:length(evenkindats)
         end
     end
 
+    % Delete all pp-fields from the structure if pp data do not exist
+    if ~pp2d && ~isnan(kindats(2))
+        display(['2d_pp data (kindat: ' num2str(kindats(2)) ') do not exist'])
+        if isfield(matfile.data,'par2d_pp')
+            matfile.metadata = rmfield(matfile.metadata,'par2d_pp');
+            matfile.data     = rmfield(matfile.data,'par2d_pp'); end
+        if isfield(matfile.data,'par1d_pp')
+            matfile.metadata = rmfield(matfile.metadata,'par1d_pp');
+            matfile.data     = rmfield(matfile.data,'par1d_pp'); end
+        if isfield(matfile.data,'utime_pp')
+            matfile.metadata = rmfield(matfile.metadata,'utime_pp');
+            matfile.data     = rmfield(matfile.data,'utime_pp'); end
+        
+        if nkindats == 2
+            % Modify metadata.experiment data
+            
+            % kindat
+            matfile.metadata.software.experiment.kindat = {num2str(kindats(1))};
+
+            % kind_of_data_file
+            bb = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' 1)']);
+            cc = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),['(code ' num2str(kindats(1)) ')']);
+            matfile.metadata.software.experiment.kind_of_data_file = {matfile.metadata.software.experiment.kind_of_data_file{1}(bb+4:cc-2)};
+        end
+    end
+    
     % Remove the 'Original parameter' (guisdap analysis parameter name) cells from
     % the metadata since they are empty, and put empty values in 'Madrigal Id'
     % and 'Identifier' to 0 instead
