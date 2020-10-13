@@ -121,7 +121,7 @@ for ii = 1:length(data_files)
         try
             untar(data_files{ii},untarpath)
         catch
-            warning(['Ooops ... ' targz_file ' could not be untared, and is therefore ignored.'])
+            warning(['Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.'])
             continue
         end
         untar_filelist = dir(untarpath);
