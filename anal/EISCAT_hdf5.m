@@ -110,7 +110,7 @@ figure_check = zeros(length(image_filelist),1);
 npdf = 0;
 
 for ii = 1:length(data_files)
-    disp(['Handling:' newline data_files{ii}])
+    disp(['Handling:' newline data_files{ii} newline])
     if contains(data_files{ii},'.tar')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
@@ -122,14 +122,14 @@ for ii = 1:length(data_files)
             tared = 1;
         catch
             if length(data_files) == 1 && length(hdf5rest_files) == 1
-                warning([newline 'Ooops ... ' data_files{ii} ' could not be untared, and is replaced by ' hdf5rest_files{ii}])
+                warning(['Ooops ... ' data_files{ii} ' could not be untared, and is replaced by ' hdf5rest_files{ii} newline])
                 data_files = hdf5rest_files;
-                disp([newline 'Handling:' newline data_files{ii} newline])
+                disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
                 vecvel = 0;
                 tared = 0;
             else
-                warning([newline 'Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.' newline])
+                warning(['Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.' newline])
                 continue
             end
         end    
@@ -164,7 +164,7 @@ for ii = 1:length(data_files)
             vecvel = 0;
         end
     end
-    keyboard
+    
     nfiles = length(EISCAThdf5file);
 
     isempt = [];
