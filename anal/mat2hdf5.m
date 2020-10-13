@@ -157,20 +157,20 @@ if strcmp(matpath(end),'/')
     matpath = matpath(1:end-1);
 end
 
-[~,matfolder] = fileparts(matpath);
+%[~,matfolder] = fileparts(matpath);
 dd_  = strfind(matfolder,'_');
 ddat = strfind(matfolder,'@');
 dd = sort([dd_ ddat]);
-if length(dd)==4
-    name_expr_more = [matfolder(dd(2)+1:dd(3)-1) '_'];
-else
-    name_expr_more = [];
-end
-
+% if length(dd)==4
+%     name_expr_more = [matfolder(dd(2)+1:dd(3)-1) '_'];
+% else
+%     name_expr_more = [];
+% end
 ant = matfolder(dd(end)+1:end);
+
 if isempty(name_ant) 
    switch name_site
-       case 'L', if isempty(str2num(ant)), name_ant = ant; else name_ant = 'esr'; end
+       case 'L', if contains('32m 42m',ant), name_ant = ant; else name_ant = 'esr'; end
        case 'K', name_ant = 'kir';
        case 'T', name_ant = 'uhf';
        case 'S', name_ant = 'sod';
@@ -179,7 +179,8 @@ if isempty(name_ant)
    end
 end
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more name_strategy '@' name_ant];
+%datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more name_strategy '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant];
 storepath = fullfile(datapath,datafolder);
 
 while exist(storepath)
@@ -369,6 +370,9 @@ for ii = 1:length(parameters_2d)
         matfile.metadata.par2d(:,nn2) = info';
     elseif strcmp(h_name2,'h_param') || strcmp(h_name2,'h_error') || strcmp(h_name2,'h_apriori') || strcmp(h_name2,'h_apriorierror')
         a = find(strcmp(h_name2,parameters_list)==1);
+        if strcmp(h_name2,'h_error')
+            a = find(strcmp('h_diagvariance',parameters_list)==1);
+        end
         if strcmp(h_name2,'h_apriori') || strcmp(h_name2,'h_apriorierror')
             nump = length(r_apriori(1,:));
         else
@@ -379,22 +383,23 @@ for ii = 1:length(parameters_2d)
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
             matfile.metadata.par2d(:,nn2) = info';
         end
-        [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj+1) ':E' num2str(a+jj+1)]); info_tmp = info;
-        info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj+1)])) };
+        
         if ge(nump,6)
+            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj+1) ':E' num2str(a+jj+1)]); info_tmp = info;
+            info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj+1)])) };
             for kk=1:length(r_m0)-1; nn2 = nn2 + 1; 
                 if  (length(r_m0)-1)>1
                     info(1) = {[char(info_tmp(1)) num2str(kk)]};
                 end
                 if r_m0(kk)==30.5   
                     if     strcmp(h_name2,'h_param'),        info(2)={'ion mix content: [O2+,NO+]/N'};                info(5)={'pm'};  info(6)={'690'};
-                    elseif strcmp(h_name2,'h_error'),        info(2)={'error ion mix content: [O2+,NO+]/N'};          info(5)={'dpm'}; info(6)={'-690'};
+                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of ion mix content: [O2+,NO+]/N'};          info(5)={'N/A'}; info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori ion mix content: [O2+,NO+]/N'};       info(5)={'N/A'}; info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error ion mix content: [O2+,NO+]/N'}; info(5)={'N/A'}; info(6)={'0'};
                     end  
                 elseif r_m0(kk)==16 
                     if     strcmp(h_name2,'h_param'),        info(2)={'O+ content: [O+]/N'};                info(5)={'po+'};  info(6)={'620'};
-                    elseif strcmp(h_name2,'h_error'),        info(2)={'error O+ content: [O+]/N'};          info(5)={'dpo+'}; info(6)={'-620'};
+                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of O+ content: [O+]/N'};          info(5)={'N/A'}; info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};  info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error O+ content: [O+]/N'}; info(5)={'N/A'};  info(6)={'0'};
                     end
@@ -482,6 +487,11 @@ for ii = 1:length(parameters)
             elseif strcmp(h_name,'h_pprange')
                 npprange = [npprange; length(r_pprange)];
                 par = [par; eval(['r_' h_name(3:end)])];
+            elseif strcmp(h_name,'h_error')
+                for k = 1:nump
+                    r_error(:,k) = r_error(:,k).^2;        % error to 'variance'
+                end    
+                par = [par; eval(['r_' h_name(3:end)])];
             elseif strcmp(h_name,'h_om0') && uniom0 == 1
                 r_om0 = r_om0(1);  
                 par = [par; eval(['r_' h_name(3:end)])]; 
@@ -504,42 +514,31 @@ matfile.data.par1d    = [h_Magic_const h_az h_el h_Pt...
     h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar nh npprange];
 matfile.data.par2d    = [h_h*1000 h_range*1000 h_param h_error h_apriori...
     h_apriorierror h_status h_dp h_res h_w*1000];
-
 matfile.data.par2d_pp = [h_pprange*1000 h_pp h_pperr h_ppw*1000];
 
-imcol = find(any(imag(matfile.data.par1d) ~= 0) == 1);
-for kk = imcol
-    ccc = find((imag(matfile.data.par1d(:,kk)) ~= 0) == 1);      % find indices where the value is complex
-    if length(ccc) == 1
-        matfile.data.par1d(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
-        warning(['One (1) value in ' matfile.metadata.par1d{1,kk} ' was complex and replaced by NaN, at position ' ...
-                num2str(ccc) '. ([' num2str(ccc) ',' num2str(kk) '] in data.par1d)'])
-    else
-        error(['error: More than one (1) complex value in ' matfile.metadata.par1d{1,kk} ' (at positions ' num2str(ccc') '.)'])
+% find indices where the value is complex, and replace with NaN
+if ~isempty(find(any(imag(matfile.data.par1d) ~= 0) == 1, 1))
+    [rrow,ccol] = find((imag(matfile.data.par1d) ~= 0) == 1);
+    for j = 1:length(rrow)
+        matfile.data.par1d(rrow(j),ccol(j)) = NaN;
     end
+    warning([num2str(length(rrow)) ' value(s) in matfile.metadata.par1d  was (were) complex and replaced by NaN.'])
 end
-imcol = find(any(imag(matfile.data.par2d) ~= 0) == 1);
-for kk = imcol
-    ccc = find((imag(matfile.data.par2d(:,kk)) ~= 0) == 1);      % find indices where the value is complex
-    if length(ccc) == 1
-        matfile.data.par2d(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
-        warning(['One (1) value in ' matfile.metadata.par2d{1,kk} ' was complex and replaced by NaN, at position ' ...
-                num2str(ccc) '. ([' num2str(ccc) ',' num2str(kk) '] in data.par2d)'])
-    else
-        error(['error: More than one (1) complex value in ' matfile.metadata.par2d{1,kk} ' (at positions ' num2str(ccc') '.)'])
+if ~isempty(find(any(imag(matfile.data.par2d) ~= 0) == 1, 1))
+    [rrow,ccol] = find((imag(matfile.data.par2d) ~= 0) == 1);
+    for j = 1:length(rrow)
+        matfile.data.par2d(rrow(j),ccol(j)) = NaN;
     end
+    warning([num2str(length(rrow)) ' value(s) in matfile.metadata.par2d  was (were) complex and replaced by NaN.'])
 end
-imcol = find(any(imag(matfile.data.par2d_pp) ~= 0) == 1);
-for kk = imcol
-    ccc = find((imag(matfile.data.par2d_pp(:,kk)) ~= 0) == 1);      % find indices where the value is complex
-    if length(ccc) == 1
-        matfile.data.par2d_pp(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
-        warning(['One (1) value in ' matfile.metadata.par2d_pp{1,kk} ' was complex and replaced by NaN, at position ' ...
-                num2str(ccc) '. ([' num2str(ccc) ',' num2str(kk) '] in data.par2d_pp)'])
-    else
-        error(['error: More than one (1) complex value in ' matfile.metadata.par2d_pp{1,kk} ' (at positions ' num2str(ccc') '.)'])
+if ~isempty(find(any(imag(matfile.data.par2d_pp) ~= 0) == 1, 1))
+    [rrow,ccol] = find((imag(matfile.data.par2d_pp) ~= 0) == 1);
+    for j = 1:length(rrow)
+        matfile.data.par2d_pp(rrow(j),ccol(j)) = NaN;
     end
+    warning([num2str(length(rrow)) ' value(s) in matfile.metadata.par2d_pp  was (were) complex and replaced by NaN.'])
 end
+
 
 parameters_special = {'h_om' 'h_lag' 'h_spec' 'h_freq' 'h_acf' 'h_ace'};
 for ii = 1:length(parameters_special)
@@ -556,16 +555,14 @@ for ii = 1:length(parameters_special)
         for jj = 1:rec
             load(filelist(jj).fname)
             par = [par;  eval(['r_' name])'];
-        end      
-        imcol = find(any(imag(par) ~= 0) == 1);
-        for kk = imcol
-            ccc = find((imag(par(:,kk)) ~= 0) == 1);      % find indices where the value is complex
-            if length(ccc) == 1
-                par(ccc,kk) = NaN;                        % if only one (1) complex value, replace it with NaN
-                warning(['One (1) value in ' matfile.metadata.(name){1} ' was complex and replaced by NaN, at position (' num2str(ccc) ',' num2str(kk) ').'])
-            else
-                error(['error: More than one (1) complex value in ' matfile.metadata.(name){1} '(' num2str(kk) ') at positions ' num2str(ccc') '.'])
+        end
+        
+        if ~isempty(find(any(imag(par) ~= 0) == 1, 1))
+            [rrow,ccol] = find((imag(par) ~= 0) == 1);      % find indices where the value is complex
+            for j = 1:length(rrow)
+                par(rrow(j),ccol(j)) = NaN;
             end
+            warning([num2str(length(rrow)) ' value(s) in ' matfile.metadata.(name){1} ' was complex and replaced by NaN.'])
         end
         matfile.data.(name) = par;
     end
