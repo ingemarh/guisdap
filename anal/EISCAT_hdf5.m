@@ -73,7 +73,7 @@ if ~isempty(hdf5oldfiles)
     for ii = 1:length(hdf5oldfiles)
         hdf5_filename = hdf5oldfiles(ii).name;
         if contains(hdf5_filename,'.ar') || contains(hdf5_filename,'.vr') || contains(hdf5_filename,'.tr') || contains(hdf5_filename,'.kr') || contains(hdf5_filename,'.sr')
-            hdf5_files{l} = fullfile(dirpath,'overview',hdf5_filename); l = l+1;
+            hdf5_files{l} = fullfile(dirpath,'overview',hdf5_filename); l = l + 1;
             hdf5_allfiles{o} = fullfile(dirpath,'overview',hdf5_filename); o = o + 1;
         elseif contains(hdf5_filename,'NCAR_')
             hdf5ncar_files{m} = fullfile(dirpath,'overview',hdf5_filename); m = m+1;
@@ -111,7 +111,6 @@ npdf = 0;
 
 for ii = 1:length(data_files)
     disp(['Handling:' newline data_files{ii}])
-    %pdf_forHDF5 = {};
     if contains(data_files{ii},'.tar')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
@@ -120,30 +119,42 @@ for ii = 1:length(data_files)
         mkdir(untarpath);
         try
             untar(data_files{ii},untarpath)
+            tared = 1;
         catch
-            warning(['Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.'])
-            continue
-        end
-        untar_filelist = dir(untarpath);
-        untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..'}));   % ignore '.' and '..'
-
-        %while length(untar_filelist(3:end)) == 1 && ~contains(untar_filelist(3).name,'.mat')
-        while length(untar_filelist) == 1 && ~contains(untar_filelist(1).name,'.mat')
-            untarfolder = untar_filelist(1).name;
-            untarpath = fullfile(untarpath,untarfolder);
-            untar_filelist = dir(untarpath);
-            untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..','.gup','gfd_setup.m'}));   % ignore '.' and '..'
-        end
-       
-        load(fullfile(untar_filelist(1).folder,untar_filelist(1).name))
-        if exist('Vg')
-            matvecfile = fullfile(untar_filelist(1).folder,untar_filelist(1).name);
-            [storepath,EISCAThdf5file] = matvecvel2hdf5(matvecfile,datapath);
-            vecvel = 1;
-        else
-            [storepath,EISCAThdf5file] = mat2hdf5(untarpath,datapath); 
-            vecvel = 0;
+            if length(data_files) == 1 && length(hdf5rest_files) == 1
+                warning([newline 'Ooops ... ' data_files{ii} ' could not be untared, and is replaced by ' hdf5rest_files{ii}])
+                data_files = hdf5rest_files;
+                disp([newline 'Handling:' newline data_files{ii} newline])
+                [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
+                vecvel = 0;
+                tared = 0;
+            else
+                warning([newline 'Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.' newline])
+                continue
+            end
         end    
+        
+        if tared
+            untar_filelist = dir(untarpath);
+            untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..'}));   % ignore '.' and '..'
+
+            while length(untar_filelist) == 1 && ~contains(untar_filelist(1).name,'.mat')
+                untarfolder = untar_filelist(1).name;
+                untarpath = fullfile(untarpath,untarfolder);
+                untar_filelist = dir(untarpath);
+                untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..','.gup','gfd_setup.m'}));   % ignore '.' and '..'
+            end
+
+            load(fullfile(untar_filelist(1).folder,untar_filelist(1).name))
+            if exist('Vg')
+                matvecfile = fullfile(untar_filelist(1).folder,untar_filelist(1).name);
+                [storepath,EISCAThdf5file] = matvecvel2hdf5(matvecfile,datapath);
+                vecvel = 1;
+            else
+                [storepath,EISCAThdf5file] = mat2hdf5(untarpath,datapath); 
+                vecvel = 0;
+            end
+        end
     else
         if contains(data_files{ii},'.ar')
             [storepath,EISCAThdf5file] = cedarvel2hdf5(data_files{ii},datapath);
@@ -153,7 +164,7 @@ for ii = 1:length(data_files)
             vecvel = 0;
         end
     end
-    
+    keyboard
     nfiles = length(EISCAThdf5file);
 
     isempt = [];
