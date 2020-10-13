@@ -1,26 +1,13 @@
 #!/bin/sh
 tail=
 init=
+mex=
 my="$HOME/gup/mygup"
-mflags="-nojvm -nosplash"
+mflags="-nodesktop -nosplash"
 usage="Usage: guisdap [-a] [-i] [-b] [-B script] [-x] [-t] [-m path] [-g file]"
 if [ -z "$matlab" ]
 then
 	matlab="matlab"
-fi
-MATLAB=`$matlab -n | grep " MATLAB " | awk '{ print $NF }'`
-if [ -e $MATLAB/.VERSION ]
-then
-	matver=`cat $MATLAB/.VERSION`
-else
-	matver="2012a"
-fi
-MEXD=mex
-mex=
-str=${matver%%[A-Za-z]} ; str=${str##[A-Za-z]} ; str=${str%%.[0-9]}
-if [ $matver = "R2008b" ] | [ $str -gt 2008 ]
-then
-	mflags="-nodesktop -nosplash"
 fi
 
 if [ -z "$TMP" ]
@@ -31,24 +18,11 @@ if [ ! -d $TMP ]; then
 	mkdir $TMP
 fi
 SHELL=/bin/sh
-TZ=UTC
 
 #find GUP
-filename=$0
-while [ -h $filename ]; do
-	lscmd=`ls -l $filename 2>/dev/null`
-	f1=`echo "$lscmd" | awk '{ print $NF }'`
-	fp=`echo "$f1" | awk '{ print index($1,"/") }'`
-	if [ $fp != "1" ];then
-		filename=`dirname $filename`/$f1
-	else
-		filename=$f1
-	fi
-done
+filename=`readlink -f $0`
 GUP=`dirname $filename`
-if [ $GUP = . ];then GUP=$PWD; fi
 GUP=`dirname $GUP`
-if [ $GUP = . ];then GUP=$PWD; fi
 #echo $GUP
 
 while getopts aibB:xtm:g: flag
@@ -67,7 +41,7 @@ do
 		g) tail="-r go_on('$OPTARG')";;
 		m) my="$OPTARG";;
 		t) mflags=;;
-		x) mex=$GUP/$MEXD:;;
+		x) mex=$GUP/mex:;;
 		?) echo $usage
 		   exit 2;;
 	esac
@@ -82,7 +56,6 @@ if [ "$*" != "" ];then
 	mflags=$*
 fi
 
-
 if [ ! -d $my ];then
 	my=
 else
@@ -90,23 +63,18 @@ else
 fi
 
 MATLABPATH=$my$mex$GUP/anal$init
-#IRIPATH=$GUP/models/iri2016
-#TS07_DATA_PATH=$GUP/models/irbem-code/TS07D
-TS07_DATA_PATH=$GUP/share/tsd07
 
 sys=`uname -s`
 case $sys in
 	Linux)
 		export HISTSIZE=0
-		LD_LIBRARY_PATH=$GUP/lib:/opt/madrigal/lib:/lib/x86_64-linux-gnu
-		PATH=$PATH:$GUP/bin
 		unset `env | grep UTF | awk -F = '{ print $1 }'`
 		;;
 esac
 if [ -d /opt/madrigal/lib ]; then
-	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/madrigal/lib
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/madrigal/lib
 fi
 
 #echo "$matlab $mflags $tail"
-export TMP MATLABPATH TS07_DATA_PATH PATH LD_LIBRARY_PATH SHELL TZ
+export TMP MATLABPATH SHELL
 $matlab $mflags $tail

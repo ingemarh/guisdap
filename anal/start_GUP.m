@@ -94,8 +94,13 @@ if ~setuplibs
  fprintf('***** using no compiled library enhancements *****\n')
 elseif libisloaded('onera_desp_lib') 
  addpath(fullfile(path_GUP,'irbem'))
+ setenv('TS07_DATA_PATH',fullfile(path_GUP,'share','TS07'))
  onera_desp_lib_get_mlt(now,[60 20 0]);
 end
+if contains(path,fullfile(path_GUP,'mex')) && ~contains(getenv('LD_LIBRARY_PATH'),fullfile(path_GUP,'lib'))
+ setenv('LD_LIBRARY_PATH',[getenv(LD_LIBRARY_PATH) ':' fullfile(path_GUP,'lib')])
+end
+setenv('TZ','UTC')
 
 warning('off','MATLAB:connector:connector:ConnectorNotRunning')
 feature('DefaultCharacterSet','UTF-8');

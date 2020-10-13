@@ -4,7 +4,7 @@ if fft
  %100 kHz, 1km resolution, fast but might need correction
  df=.1; lf=round(diff(zscale/df)); freqs=(0:lf-1)/(lf-1)*diff(zscale)+zscale(1);
  df=1/(lf-1)*diff(zscale);
- lf=length(freqs); freq=zeros(length(freqs),s);
+ freq=zeros(lf,s);
  hf=min(hlim(:,1)):max(hlim(:,2)); lh=length(hf);
  fmat=zeros(lf,lh); fpow=(hlim(1)./hf).^2;	%take r^2 effect into account
  hf=log(hf); peak=ones(s,2)*NaN;

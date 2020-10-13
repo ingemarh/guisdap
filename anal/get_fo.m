@@ -1,4 +1,4 @@
-function [day,fo]=get_fo(t1,t2,site,epar,fpar)
+function [day,fo,tsound]=get_fo(t1,t2,site,epar,fpar)
 %
 % Retrieve DSND data from database
 % Update 20160408: E and F layer parameters selectable by user for new
@@ -6,13 +6,11 @@ function [day,fo]=get_fo(t1,t2,site,epar,fpar)
 % Default: foE and foF2. 
 % Suggested: sometimes FMXE and FMXF are better.
 %  
-% Usage: [day,fo]=get_fo(t1,t2,site,epar,fpar)
+% Usage: [day,fo,tsound]=get_fo(t1,t2,site,epar,fpar)
 % t1, t2: Time interval as Matlab datenum. Empty: default today
 % site: empty: default Tromsø | '(tromso|uhf|vfh)' | '(svalbard|32m|42m)'
 % epar: empty: default foE    |  1: FMXE           | '<parameter name>'
 % fpar: empty: default foF2   |  1: FMXF           | '<parameter name>'
-%
-% Last modified C-F Enell 20160408
 
 global local
 
@@ -36,6 +34,7 @@ if isempty(epar), epar='foE'; end
 if nargin<5, fpar='foF2'; end
 if fpar==1, fpar='FMXF'; end
 if isempty(fpar), fpar='foF2'; end
+tsound=225;
 
 if strcmp(site3,'quj')
  ifile=minput('Enter ionosonde monthly foF2 table','KMG',1);
@@ -47,6 +46,7 @@ if strcmp(site3,'quj')
  ti=(ti1+(0:length(fof2)-1)'/24)-7/24;
  d=find(ti>t1-3599/86400 & ti<t2+3599/86400);
  day=ti(d); fo=[ones(length(d),1)*NaN fof2(d)];
+ tsound=900;
  return
 end
 day=[]; fo=[];

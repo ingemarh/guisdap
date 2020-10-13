@@ -1,7 +1,8 @@
 #!/bin/sh -e
 if [ "$pkgdir" ]
 then
- destdir=${pkgdir}/opt/$pkgname
+ destdir=${pkgdir}/opt/guisdap
+ export PKG=dum
 else
  destdir=$PWD
 fi
