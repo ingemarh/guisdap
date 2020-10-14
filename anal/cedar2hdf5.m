@@ -69,6 +69,12 @@ if tt
     end
 end
 
+if ~isfield(data,'range')
+     data.range = height_to_range(data.gdalt,data.elm,1e3);
+     Parsinfile_list(npar+1) = {'range'};
+     npar = npar + 1;
+ end
+
 year   = num2str(data.year(1));
 month  = sprintf('%02d',data.month(1));
 day    = sprintf('%02d',data.day(1));
@@ -260,9 +266,6 @@ for qq = 1:length(evenkindats)
         nkin2 = length(find(nreckindat(:,2)==kindats(2)));
     end
 
-    if ~isfield(data_set,'range')
-        data_set.range = height_to_range(data_set.gdalt,data_set.elm,1e3);
-    end
     % Spatial description of datapoints for DataCite
     loc = [data_set.elm data_set.azm data_set.range];
     rr_lon = find(strcmp(exprparnames,'instrument longitude')==1);

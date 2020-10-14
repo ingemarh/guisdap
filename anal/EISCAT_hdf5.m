@@ -110,7 +110,7 @@ figure_check = zeros(length(image_filelist),1);
 npdf = 0;
 
 for ii = 1:length(data_files)
-    disp(['Handling:' newline data_files{ii} newline])
+    disp([newline 'Handling:' newline data_files{ii}])
     if contains(data_files{ii},'.tar')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
@@ -180,7 +180,7 @@ for ii = 1:length(data_files)
     for nnn = 1:nfiles    
         folders = regexp(storepath{nnn},filesep,'split');
         storefolder = char(folders(end));
-        display(EISCAThdf5file{nnn})
+        display(['Generated:' newline EISCAThdf5file{nnn}])
 
         %%% copying figures to the new data folders
 
