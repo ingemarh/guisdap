@@ -266,18 +266,26 @@ for ii = 1:length(data_files)
                         figure_check(jj) = figure_check(jj) + 1;
                         nfigs_expr =  nfigs_expr +1;
                     else
+                        saveplot = 1;
                         if strcmp(ext,'.gz')
-                            epsfile = gunzip(figurefile);
-                            figurefile = epsfile{1};
+                            try
+                                epsfile = gunzip(figurefile);
+                                figurefile = epsfile{1};
+                            catch
+                                warning([figurefile ' could not be unziped.'])
+                                saveplot = 0;
+                            end    
                         end
-                        pdffile = eps2pdf(figurefile);
-                        npdf = npdf + 1;
-                        copyfile(pdffile,storepath{nnn})
-                        [~,pdfname,ext] = fileparts(pdffile);
-                        pdf_forHDF5(npdf) = {[pdfname ext]};
-                        delete(pdffile,figurefile)
-                        figure_check(jj) = figure_check(jj) + 1;
-                        nfigs_expr =  nfigs_expr +1;
+                        if saveplot
+                            pdffile = eps2pdf(figurefile);
+                            npdf = npdf + 1;
+                            copyfile(pdffile,storepath{nnn})
+                            [~,pdfname,ext] = fileparts(pdffile);
+                            pdf_forHDF5(npdf) = {[pdfname ext]};
+                            delete(pdffile,figurefile)
+                            figure_check(jj) = figure_check(jj) + 1;
+                            nfigs_expr =  nfigs_expr +1;
+                        end
                     end
                 end
             elseif length(data_files) == 1 
@@ -293,18 +301,26 @@ for ii = 1:length(data_files)
                     figure_check(jj) = figure_check(jj) + 1;
                     nfigs_expr =  nfigs_expr +1;
                 else
+                    saveplot = 1;
                     if strcmp(ext,'.gz')
-                        epsfile = gunzip(figurefile);
-                        figurefile = epsfile{1};
+                        try
+                            epsfile = gunzip(figurefile);
+                            figurefile = epsfile{1};
+                        catch
+                            warning([figurefile ' could not be unziped.'])
+                            saveplot = 0;
+                        end
                     end
-                    pdffile = eps2pdf(figurefile);
-                    npdf = npdf + 1;
-                    copyfile(pdffile,storepath{nnn})
-                    [~,pdfname,ext] = fileparts(pdffile);
-                    pdf_forHDF5(npdf) = {[pdfname ext]};
-                    delete(pdffile,figurefile)
-                    figure_check(jj) = figure_check(jj) + 1;
-                    nfigs_expr =  nfigs_expr +1;
+                    if saveplot
+                        pdffile = eps2pdf(figurefile);
+                        npdf = npdf + 1;
+                        copyfile(pdffile,storepath{nnn})
+                        [~,pdfname,ext] = fileparts(pdffile);
+                        pdf_forHDF5(npdf) = {[pdfname ext]};
+                        delete(pdffile,figurefile)
+                        figure_check(jj) = figure_check(jj) + 1;
+                        nfigs_expr =  nfigs_expr +1;
+                    end
                 end
             end
         end 
