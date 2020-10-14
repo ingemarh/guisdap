@@ -142,7 +142,8 @@ for ii = 1:length(data_files)
                 untarfolder = untar_filelist(1).name;
                 untarpath = fullfile(untarpath,untarfolder);
                 untar_filelist = dir(untarpath);
-                untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..','.gup','gfd_setup.m'}));   % ignore '.' and '..'
+                %untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..','.gup','gfd_setup.m'));   % ignore '.' and '..'
+                untar_filelist = untar_filelist(~startsWith({untar_filelist.name},{'.'}) & ~endsWith({untar_filelist.name},{'.m','.dat','.log'}));   % ignore '.' and '..'
             end
 
             load(fullfile(untar_filelist(1).folder,untar_filelist(1).name))
