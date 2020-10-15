@@ -10,7 +10,8 @@ function EISCAThdf5_generate_year(yearpath,datapath,matfile_lists,runcrashed)
 %                       1) to be handled (List_2BHandled)
 %                       2) that were handled and were OK (List_HandledOK) 
 %                       3) that crashed (List_Crashed)
-% runcrashed	    If it is non-empty the experiments in List_Crashed will be run.
+% runcrashed	    If it is non-empty the experiments in List_Crashed will be run, if and only if List_2BHandled 
+%                   is empty.
 if nargin < 4
     runcrashed = []; end	
 if nargin < 3
@@ -51,6 +52,9 @@ else
 end
 
 if ~isempty(runcrashed)
+    if ~isempty(List_2BHandled) % check that List_2BHandled is empty first
+        error('List_2BHandled is not empty. Handle these files before running the files in List_Crashed.')
+    end
     List_2BHandled = List_Crashed;
     List_Crashed = {};
 end
