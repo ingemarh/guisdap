@@ -200,7 +200,7 @@ for qq = 1:length(evenkindats)
         name_strategy = num2str(round(intper_mean,3,'significant'));
     end
 
-    if kindats(1) >= 6800
+    if kindats(1) >= 6800 || kindats(1) == 6000
         name_expr = 'gup';
     else
         name_expr = ['cp' evenkindat_str(2) lower(char(96 + str2num(evenkindat_str(3:4))/2))];

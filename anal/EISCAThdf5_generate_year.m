@@ -29,8 +29,6 @@ if isempty(datapath)
     datapath = fullfile(pwd,'EISCAT',year);
 else
     datapath = fullfile(datapath,'EISCAT',year); end
-% elseif strcmp(datapath(end),'/')
-%     datapath = datapath(1:end-1); end
 
 if ~isempty(matfile_lists)
     load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
@@ -64,9 +62,10 @@ while ~isempty(List_2BHandled)
         List_HandledOK(lenok+1) = List_2BHandled(1);
     catch
         lencr = length(List_Crashed);
+        display(['Crashed somewhere in ' List_2BHandled{1}])
         List_Crashed(lencr+1) = List_2BHandled(1);
     end
     List_2BHandled(1) = [];
+    delete([datapath '/Lists*.mat'])
+    save([datapath '/Lists_' datestr(now,'yyyy-mm-dd_HHMM') '.mat'],'List_2BHandled','List_HandledOK','List_Crashed')
 end
-
-save([datapath '/Lists_' datestr(now,'yyyy-mm-dd_HHMM') '.mat'],'List_2BHandled','List_HandledOK','List_Crashed')
