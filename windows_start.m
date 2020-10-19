@@ -12,14 +12,14 @@ mypath='C:\Users\myuser\mydir\guisdap9';
 if ~exist(mypath,'dir')
  mypath=fileparts(mfilename('fullpath'));
 end
-if ~exist('start_GUP')
+if ~exist('start_GUP','file')
  addpath(fullfile(mypath,'anal'))
  cd(userpath)
 end
 try
  start_GUP
 catch
- fprintf('Please edit file or add the path to guisdap9/anal directory like\n%s%sanal\n',mypath,filesep))
+ fprintf('Please edit file or add the path to guisdap9/anal directory like\n%s%sanal\n',mypath,filesep)
 end
 clear mypath
 % analyse

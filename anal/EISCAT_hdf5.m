@@ -110,7 +110,7 @@ figure_check = zeros(length(image_filelist),1);
 npdf = 0;
 
 for ii = 1:length(data_files)
-    disp(['Handling:' newline data_files{ii}])
+    disp([newline 'Handling:' newline data_files{ii}])
     if contains(data_files{ii},'.tar')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
@@ -122,14 +122,14 @@ for ii = 1:length(data_files)
             tared = 1;
         catch
             if length(data_files) == 1 && length(hdf5rest_files) == 1
-                warning([newline 'Ooops ... ' data_files{ii} ' could not be untared, and is replaced by ' hdf5rest_files{ii}])
+                warning(['Ooops ... ' data_files{ii} ' could not be untared, and is replaced by ' hdf5rest_files{ii} newline])
                 data_files = hdf5rest_files;
-                disp([newline 'Handling:' newline data_files{ii} newline])
+                disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
                 vecvel = 0;
                 tared = 0;
             else
-                warning([newline 'Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.' newline])
+                warning(['Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.' newline])
                 continue
             end
         end    
@@ -142,7 +142,8 @@ for ii = 1:length(data_files)
                 untarfolder = untar_filelist(1).name;
                 untarpath = fullfile(untarpath,untarfolder);
                 untar_filelist = dir(untarpath);
-                untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..','.gup','gfd_setup.m'}));   % ignore '.' and '..'
+                %untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..','.gup','gfd_setup.m'));   % ignore '.' and '..'
+                untar_filelist = untar_filelist(~startsWith({untar_filelist.name},{'.'}) & ~endsWith({untar_filelist.name},{'.m','.dat','.log'}));   % ignore '.' and '..'
             end
 
             load(fullfile(untar_filelist(1).folder,untar_filelist(1).name))
@@ -164,7 +165,7 @@ for ii = 1:length(data_files)
             vecvel = 0;
         end
     end
-    keyboard
+    
     nfiles = length(EISCAThdf5file);
 
     isempt = [];
@@ -180,7 +181,7 @@ for ii = 1:length(data_files)
     for nnn = 1:nfiles    
         folders = regexp(storepath{nnn},filesep,'split');
         storefolder = char(folders(end));
-        display(EISCAThdf5file{nnn})
+        display(['Generated:' newline EISCAThdf5file{nnn}])
 
         %%% copying figures to the new data folders
 
@@ -265,18 +266,26 @@ for ii = 1:length(data_files)
                         figure_check(jj) = figure_check(jj) + 1;
                         nfigs_expr =  nfigs_expr +1;
                     else
+                        saveplot = 1;
                         if strcmp(ext,'.gz')
-                            epsfile = gunzip(figurefile);
-                            figurefile = epsfile{1};
+                            try
+                                epsfile = gunzip(figurefile);
+                                figurefile = epsfile{1};
+                            catch
+                                warning([figurefile ' could not be unziped.'])
+                                saveplot = 0;
+                            end    
                         end
-                        pdffile = eps2pdf(figurefile);
-                        npdf = npdf + 1;
-                        copyfile(pdffile,storepath{nnn})
-                        [~,pdfname,ext] = fileparts(pdffile);
-                        pdf_forHDF5(npdf) = {[pdfname ext]};
-                        delete(pdffile,figurefile)
-                        figure_check(jj) = figure_check(jj) + 1;
-                        nfigs_expr =  nfigs_expr +1;
+                        if saveplot
+                            pdffile = eps2pdf(figurefile);
+                            npdf = npdf + 1;
+                            copyfile(pdffile,storepath{nnn})
+                            [~,pdfname,ext] = fileparts(pdffile);
+                            pdf_forHDF5(npdf) = {[pdfname ext]};
+                            delete(pdffile,figurefile)
+                            figure_check(jj) = figure_check(jj) + 1;
+                            nfigs_expr =  nfigs_expr +1;
+                        end
                     end
                 end
             elseif length(data_files) == 1 
@@ -292,18 +301,26 @@ for ii = 1:length(data_files)
                     figure_check(jj) = figure_check(jj) + 1;
                     nfigs_expr =  nfigs_expr +1;
                 else
+                    saveplot = 1;
                     if strcmp(ext,'.gz')
-                        epsfile = gunzip(figurefile);
-                        figurefile = epsfile{1};
+                        try
+                            epsfile = gunzip(figurefile);
+                            figurefile = epsfile{1};
+                        catch
+                            warning([figurefile ' could not be unziped.'])
+                            saveplot = 0;
+                        end
                     end
-                    pdffile = eps2pdf(figurefile);
-                    npdf = npdf + 1;
-                    copyfile(pdffile,storepath{nnn})
-                    [~,pdfname,ext] = fileparts(pdffile);
-                    pdf_forHDF5(npdf) = {[pdfname ext]};
-                    delete(pdffile,figurefile)
-                    figure_check(jj) = figure_check(jj) + 1;
-                    nfigs_expr =  nfigs_expr +1;
+                    if saveplot
+                        pdffile = eps2pdf(figurefile);
+                        npdf = npdf + 1;
+                        copyfile(pdffile,storepath{nnn})
+                        [~,pdfname,ext] = fileparts(pdffile);
+                        pdf_forHDF5(npdf) = {[pdfname ext]};
+                        delete(pdffile,figurefile)
+                        figure_check(jj) = figure_check(jj) + 1;
+                        nfigs_expr =  nfigs_expr +1;
+                    end
                 end
             end
         end 

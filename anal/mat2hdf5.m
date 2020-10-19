@@ -161,11 +161,11 @@ end
 dd_  = strfind(matfolder,'_');
 ddat = strfind(matfolder,'@');
 dd = sort([dd_ ddat]);
-% if length(dd)==4
-%     name_expr_more = [matfolder(dd(2)+1:dd(3)-1) '_'];
-% else
-%     name_expr_more = [];
-% end
+if length(dd)==4
+    name_expr_more = [matfolder(dd(2)+1:dd(3)-1) '_'];
+else
+    name_expr_more = [];
+end
 ant = matfolder(dd(end)+1:end);
 
 if isempty(name_ant) 
@@ -179,8 +179,8 @@ if isempty(name_ant)
    end
 end
 
-%datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more name_strategy '@' name_ant];
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more name_strategy '@' name_ant];
+%datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant];
 storepath = fullfile(datapath,datafolder);
 
 while exist(storepath)

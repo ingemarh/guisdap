@@ -10,7 +10,8 @@ function EISCAThdf5_generate_year(yearpath,datapath,matfile_lists,runcrashed)
 %                       1) to be handled (List_2BHandled)
 %                       2) that were handled and were OK (List_HandledOK) 
 %                       3) that crashed (List_Crashed)
-% runcrashed	    If it is non-empty the experiments in List_Crashed will be run.
+% runcrashed	    If it is non-empty the experiments in List_Crashed will be run, if and only if List_2BHandled 
+%                   is empty.
 if nargin < 4
     runcrashed = []; end	
 if nargin < 3
@@ -29,8 +30,6 @@ if isempty(datapath)
     datapath = fullfile(pwd,'EISCAT',year);
 else
     datapath = fullfile(datapath,'EISCAT',year); end
-% elseif strcmp(datapath(end),'/')
-%     datapath = datapath(1:end-1); end
 
 if ~isempty(matfile_lists)
     load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
@@ -53,6 +52,9 @@ else
 end
 
 if ~isempty(runcrashed)
+    if ~isempty(List_2BHandled) % check that List_2BHandled is empty first
+        error('List_2BHandled is not empty. Handle these files before running the files in List_Crashed.')
+    end
     List_2BHandled = List_Crashed;
     List_Crashed = {};
 end
@@ -64,9 +66,10 @@ while ~isempty(List_2BHandled)
         List_HandledOK(lenok+1) = List_2BHandled(1);
     catch
         lencr = length(List_Crashed);
+        display(['Crashed somewhere in ' List_2BHandled{1}])
         List_Crashed(lencr+1) = List_2BHandled(1);
     end
     List_2BHandled(1) = [];
+    delete([datapath '/Lists*.mat'])
+    save([datapath '/Lists_' datestr(now,'yyyy-mm-dd_HHMM') '.mat'],'List_2BHandled','List_HandledOK','List_Crashed')
 end
-
-save([datapath '/Lists_' datestr(now,'yyyy-mm-dd_HHMM') '.mat'],'List_2BHandled','List_HandledOK','List_Crashed')

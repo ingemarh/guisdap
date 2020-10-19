@@ -8,7 +8,6 @@ function strds2hdf5_v2(hdffilename,group,dsname,strdata)
 % dsname: name of the dataset, 'datasetname'.
 % strdata: the string data, in cell form.
 
-%keyboard
 if ~strcmp(group(1),'/')
     error('"group" need to start with a /, (/G1/G2/...)')
 end
@@ -49,10 +48,8 @@ space_id = H5S.create_simple(2,h5_dims,h5_maxdims);
 dcpl = 'H5P_DEFAULT';
 
 dset_id = H5D.create(gid(end),dsname,type_id,space_id,dcpl);
-try
+
 H5D.write(dset_id,'H5ML_DEFAULT','H5S_ALL','H5S_ALL',plist,char(strdata) .'); 
-catch keyboard
-end
 H5S.close(space_id);
 H5D.close(dset_id);     
 H5T.close(type_id);

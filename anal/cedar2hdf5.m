@@ -69,6 +69,12 @@ if tt
     end
 end
 
+if ~isfield(data,'range')
+     data.range = height_to_range(data.gdalt,data.elm,1e3);
+     Parsinfile_list(npar+1) = {'range'};
+     npar = npar + 1;
+ end
+
 year   = num2str(data.year(1));
 month  = sprintf('%02d',data.month(1));
 day    = sprintf('%02d',data.day(1));
@@ -78,10 +84,11 @@ second = sprintf('%02d',data.sec(1));
 
 kindat_values = char(exprparvalues(bb,:));
 allkinds = str2num(char(strsplit(kindat_values,', ')'));
-fsk = find(allkinds==6831);
-if fsk
-    allkinds(fsk) = 6800; 
-end    
+fsk = 0;
+if length(allkinds) == 1 && (allkinds==6831 || allkinds == 6801)   % seems lika special cases
+    allkinds = 6800;
+    fsk = 1;
+end
 evenkindats = allkinds(find(rem(allkinds,2)==0));
 kinds = ones(length(evenkindats),2);
 kinds(1,:) = evenkindats;
@@ -152,7 +159,7 @@ for qq = 1:length(evenkindats)
     end
      
     % Modify metadata if needed
-    if length(evenkindats) > 1 || (kindats(1) == 6800 && fsk)
+    if length(evenkindats) > 1 || (allkinds == 6800 && fsk)
         
         % kindat
         matfile.metadata.software.experiment.kindat = {num2str(kindats(1))};
@@ -194,7 +201,7 @@ for qq = 1:length(evenkindats)
         name_strategy = num2str(round(intper_mean,3,'significant'));
     end
 
-    if kindats(1) >= 6800
+    if kindats(1) >= 6800 || kindats(1) == 6000
         name_expr = 'gup';
     else
         name_expr = ['cp' evenkindat_str(2) lower(char(96 + str2num(evenkindat_str(3:4))/2))];
@@ -260,9 +267,6 @@ for qq = 1:length(evenkindats)
         nkin2 = length(find(nreckindat(:,2)==kindats(2)));
     end
 
-    if ~isfield(data_set,'range')
-        data_set.range = height_to_range(data_set.gdalt,data_set.elm,1e3);
-    end
     % Spatial description of datapoints for DataCite
     loc = [data_set.elm data_set.azm data_set.range];
     rr_lon = find(strcmp(exprparnames,'instrument longitude')==1);
