@@ -37,7 +37,7 @@ else
     List_Crashed = {};
     List_HandledOK = {};
     sitelist = dir(yearpath);
-    sitelist = sitelist(~ismember({sitelist.name},{'.','..','EISCAT_HDF5'}));   % ignore '.', '..' and 'EISCAT_HDF5' if exists
+    sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','EISCAT_HDF5'}));   % ignore '.', '..' and 'EISCAT_HDF5' if exists
     mm = 1;
     for ii = 1:length(sitelist)
         %sitename = sitelist(ii).name;

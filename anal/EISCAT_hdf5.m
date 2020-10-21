@@ -121,9 +121,10 @@ for ii = 1:length(data_files)
             untar(data_files{ii},untarpath)
             tared = 1;
         catch
-            if length(data_files) == 1 && length(hdf5rest_files) == 1
-                warning(['Ooops ... ' data_files{ii} ' could not be untared, and is replaced by ' hdf5rest_files{ii} newline])
-                data_files = hdf5rest_files;
+            %if length(data_files) == 1 && length(hdf5rest_files) == 1
+            if length(data_files) == 1 && ~isempty(hdf5_allfiles)    
+                warning(['Ooops ... ' data_files{ii} ' could not be untared, and is replaced by ' hdf5_allfiles{1} newline])
+                data_files = hdf5_allfiles(1);
                 disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
                 vecvel = 0;
@@ -145,15 +146,27 @@ for ii = 1:length(data_files)
                 %untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..','.gup','gfd_setup.m'));   % ignore '.' and '..'
                 untar_filelist = untar_filelist(~startsWith({untar_filelist.name},{'.'}) & ~endsWith({untar_filelist.name},{'.m','.dat','.log'}));   % ignore '.' and '..'
             end
-
-            load(fullfile(untar_filelist(1).folder,untar_filelist(1).name))
-            if exist('Vg')
-                matvecfile = fullfile(untar_filelist(1).folder,untar_filelist(1).name);
-                [storepath,EISCAThdf5file] = matvecvel2hdf5(matvecfile,datapath);
-                vecvel = 1;
-            else
-                [storepath,EISCAThdf5file] = mat2hdf5(untarpath,datapath); 
+            
+            if isempty(untar_filelist) && length(data_files) == 1 && ~isempty(hdf5_allfiles)  
+                warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is replaced by ' hdf5_allfiles{1} newline])
+                data_files = hdf5_allfiles(1);
+                disp(['Handling:' newline data_files{ii} newline])
+                [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
                 vecvel = 0;
+                tared = 0;
+            elseif isempty(untar_filelist)
+                warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is therefore ignored.' newline])
+                continue
+            else
+                load(fullfile(untar_filelist(1).folder,untar_filelist(1).name))
+                if exist('Vg')
+                    matvecfile = fullfile(untar_filelist(1).folder,untar_filelist(1).name);
+                    [storepath,EISCAThdf5file] = matvecvel2hdf5(matvecfile,datapath);
+                    vecvel = 1;
+                else
+                    [storepath,EISCAThdf5file] = mat2hdf5(untarpath,datapath); 
+                    vecvel = 0;
+                end
             end
         end
     else
