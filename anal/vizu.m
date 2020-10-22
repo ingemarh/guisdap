@@ -578,6 +578,10 @@ return
 %%%%% surf_plot function %%%%%%%%%%
 function surf_plot(s,yparam,zparam,zscale,yscale,YTitle,Barlabel,lg)
 
+if strcmp(lg,'log')
+ zparam(find(zparam<=0))=eps;
+ zparam=log10(zparam); zscale=log10(zscale);
+end
 zscale=many(zparam,zscale);
 if size(zparam,1)==1
  line_plot(s,zparam',zscale,Barlabel,[],lg);
@@ -590,14 +594,9 @@ if length(axs)<add_plot
  set(ax,'UserData',zscale)
 else
  ax=axs(add_plot);
- %set(gcf,'currentaxes',ax)
  zscale=get(ax,'UserData');
 end
   
-if strcmp(lg,'log')
- zparam(find(zparam<=0))=eps;
- zparam=log10(zparam); zscale=log10(zscale);
-end
 o2=ones(1,2);
 for i=s
  d=max([2;find(isfinite(yparam(:,i)))]);
@@ -705,23 +704,18 @@ f=[0 0 0 0 0 1 2 2 2 2 2 2 2
 nc=size(f,1);
 n=nc-cut;
 b=round([0:n-1]/(n-1)*(nl-1))+1;
-%f=sin(interp1(b,f(1:n,:),1:nl)*pi/2);
 f=tanh(interp1(b,f(1:n,:),1:nl))/tanh(1);
 return
 
-function l=many(x,l,p)
+function l=many(x,l)
+% limits should cover >(100-10*manylim)% of the points
 global manylim
-if nargin<3, p=sqrt(min(size(x))); end
-lx=prod(size(x));
 x=sort(x(find(isfinite(x))));
-llx=length(x);
-p=p/100; if length(p)<2, p=ones(1,2)*p; end
-p=round([1 llx]+[1 -1].*p*manylim*lx);
-if llx>p(1) && p(1)>0 && x(p(1))<l(1)
- l(1)=x(p(1));
-end
-if llx>p(2) && p(2)>0 && x(p(2))>l(2)
- l(2)=x(p(2));
+lx=length(x);
+p=round(lx*manylim/20);
+if lx>0 && p>0 && p<lx
+ if x(p)<l(1), l(1)=x(p); end
+ if x(lx-p)>l(2), l(2)=x(lx-p); end
 end
 
 function comm=action(naction,narg,vizuarg)
