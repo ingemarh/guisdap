@@ -36,8 +36,9 @@ for tt = 1:rec
     intper_vec(tt) = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6))); 
 end    
 
-% store the gfd content
+% store the gfd content and check Tsys
 load(filelist(1).fname)
+if exist('r_Tsys','var'), nTsys = length(r_Tsys); end
 s = [];
 if exist('r_gfd','var')
     gfd_Fields = fieldnames(r_gfd);
@@ -480,27 +481,25 @@ for ii = 1:length(parameters)
         for jj = 1:rec
             load(filelist(jj).fname)
             if strcmp(h_name,'h_Tsys')
-                par = [par; eval(['r_' h_name(3:end)])'];                                                
+                if length(r_Tsys) < nTsys, r_Tsys(length(r_Tsys)+1:nTsys) = r_Tsys(end); end   % if Tsys for some record for some reason is shorter: fill it up
+                par = [par; row(r_Tsys)];                                                
             elseif strcmp(h_name,'h_h')
                 nh = [nh; length(r_h)];
-                par = [par; eval(['r_' h_name(3:end)])];
+                par = [par; col(r_h)];
             elseif strcmp(h_name,'h_pprange')
                 npprange = [npprange; length(r_pprange)];
-                par = [par; eval(['r_' h_name(3:end)])];
+                par = [par; col(r_pprange)];
             elseif strcmp(h_name,'h_error')
                 for k = 1:nump
                     r_error(:,k) = r_error(:,k).^2;        % error to 'variance'
                 end    
-                par = [par; eval(['r_' h_name(3:end)])];
+                par = [par; r_error];
             elseif strcmp(h_name,'h_om0') && uniom0 == 1
-                r_om0 = r_om0(1);  
-                par = [par; eval(['r_' h_name(3:end)])]; 
+                par = [par; r_om0(1)]; 
             elseif strcmp(h_name,'h_gain') && unigain == 1
-                r_gain = r_gain(1);
-                par = [par; eval(['r_' h_name(3:end)])]; 
+                par = [par; r_gain(1)]; 
             elseif strcmp(h_name,'h_fradar') && unifradar == 1
-                r_fradar = r_fradar(1);
-                par = [par; eval(['r_' h_name(3:end)])];    
+                par = [par; r_fradar(1)];    
             else
                 par = [par; eval(['r_' h_name(3:end)])];    
             end
