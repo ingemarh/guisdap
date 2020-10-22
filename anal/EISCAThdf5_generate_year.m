@@ -37,12 +37,12 @@ else
     List_Crashed = {};
     List_HandledOK = {};
     sitelist = dir(yearpath);
-    sitelist = sitelist(~ismember({sitelist.name},{'.','..','EISCAT_HDF5'}));   % ignore '.', '..' and 'EISCAT_HDF5' if exists
+    sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
     mm = 1;
     for ii = 1:length(sitelist)
         %sitename = sitelist(ii).name;
         exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
-        exprlist = exprlist(~ismember({exprlist.name},{'.','..'}));   % ignore '.' and '..'
+        exprlist = exprlist(~ismember({exprlist.name},{'.','..'}) & ~endsWith({exprlist.name},{'_vhf','_uhf','_32m','_42m'}));   % ignore '.' and '..'
         for jj = 1:length(exprlist)
             %display(['year: ' year ', site: ' sitename ', date: ' exprlist(jj).name])
             List_2BHandled{mm} = fullfile(exprlist(jj).folder,exprlist(jj).name);
