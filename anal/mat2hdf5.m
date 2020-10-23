@@ -481,7 +481,12 @@ for ii = 1:length(parameters)
         for jj = 1:rec
             load(filelist(jj).fname)
             if strcmp(h_name,'h_Tsys')
-                if length(r_Tsys) < nTsys, r_Tsys(length(r_Tsys)+1:nTsys) = r_Tsys(end); end   % if Tsys for some record for some reason is shorter: fill it up
+                if length(r_Tsys) < nTsys
+                    r_Tsys(length(r_Tsys)+1:nTsys) = NaN;     % if r_Tsys is shorter: fill it up
+                elseif length(r_Tsys) > nTsys
+                    par(:,nTsys+1:length(r_Tsys)) = NaN;      % if r_Tsys is longer: fill up par
+                    nTsys = length(r_Tsys);
+                end
                 par = [par; row(r_Tsys)];                                                
             elseif strcmp(h_name,'h_h')
                 nh = [nh; length(r_h)];
@@ -489,10 +494,15 @@ for ii = 1:length(parameters)
             elseif strcmp(h_name,'h_pprange')
                 npprange = [npprange; length(r_pprange)];
                 par = [par; col(r_pprange)];
+            elseif strcmp(h_name,'h_param')
+                rpars = size(r_param,2); hpars = size(par,2);
+                if rpars < hpars, r_param(:,rpars+1:hpars) = NaN;
+                elseif rpars > hpars && ~isempty(par), par(:,hpars+1:rpars) = NaN; end
+                par = [par; r_param];
             elseif strcmp(h_name,'h_error')
                 for k = 1:nump
                     r_error(:,k) = r_error(:,k).^2;        % error to 'variance'
-                end    
+                end   
                 par = [par; r_error];
             elseif strcmp(h_name,'h_om0') && uniom0 == 1
                 par = [par; r_om0(1)]; 
