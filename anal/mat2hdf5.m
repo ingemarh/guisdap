@@ -38,7 +38,11 @@ end
 
 % store the gfd content and check Tsys
 load(filelist(1).fname)
-if exist('r_Tsys','var'), nTsys = length(r_Tsys); end
+if exist('r_Tsys','var'),   nTsys   = length(r_Tsys);   end
+if exist('r_om0','var'),    nom0    = length(r_om0);    end
+if exist('r_fradar','var'), nfradar = length(r_fradar); end
+if exist('r_gain','var'),   ngain   = length(r_gain);   end
+
 s = [];
 if exist('r_gfd','var')
     gfd_Fields = fieldnames(r_gfd);
@@ -46,12 +50,14 @@ if exist('r_gfd','var')
         if strcmp(gf,'extra')
             extra=r_gfd.extra;
             for r = 1:size(extra,1)
-                if contains(extra(r,:),'%')
+                if contains(extra(r,:),'%') || isempty(deblank(extra(r,:)))
                     s = [s r];
                 end
             end
             extra(s,:)=[];
-            if ~isempty(extra)
+            if ~isempty(extra) && size(extra,1) == 1
+                matfile.metadata.software.gfd.extra = {deblank(extra)};
+            elseif ~isempty(extra) 
                 matfile.metadata.software.gfd.extra = {row([extra ones(size(extra,1))*'#']')};
             else
                 matfile.metadata.software.gfd.extra = {'None'};
@@ -83,17 +89,18 @@ elseif exist(fullfile(matpath,'.gup'),'file')
     if exist('path_exps','var'),    matfile.metadata.software.gfd.path_exps      = {path_exps};           end
     if exist('extra','var')
         for r = 1:size(extra,1)
-            if contains(extra(r,:),'%')
+            if contains(extra(r,:),'%') || isempty(deblank(extra(r,:)))
                 s = [s r];
             end
         end
         extra(s,:)=[];
-        if ~isempty(extra)
+        if ~isempty(extra) && size(extra,1) == 1
+            matfile.metadata.software.gfd.extra = {deblank(extra)};
+        elseif ~isempty(extra)
             matfile.metadata.software.gfd.extra = {row([extra ones(size(extra,1))*'#']')};
         else
             matfile.metadata.software.gfd.extra = {'None'};
-        end
-        
+        end        
     end
     starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
     endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
@@ -207,16 +214,6 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 
 if exist(hdffilename)==2, delete(hdffilename); end
 
-% 0d and 1d parameters 
-parameters_1d = {'h_Magic_const' 'h_az' 'h_el' 'h_Pt' 'h_SCangle'...
-    'h_XMITloc' 'h_RECloc' 'h_Tsys' 'h_code' 'h_om0' 'h_m0' 'h_phasepush'...
-    'h_Offsetppd' 'h_gain' 'h_fradar'};
-% 2d parameters 
-parameters_2d = {'h_h' 'h_range' 'h_param' 'h_error' 'h_apriori'...
-    'h_apriorierror' 'h_status' 'h_dp' 'h_res' 'h_w'};
-% 2d_pp parameters 
-parameters_2dpp = {'h_pprange' 'h_pp' 'h_pperr' 'h_ppw'};
-
 [~,text] = xlsread(GuisdapParFile);
 parameters_list = text(:,1);    % list that includes all Guisdap parameters and keep their positions from the excel arc
 
@@ -276,93 +273,222 @@ if exist('name_sig','var'); nn = nn + 1;
     matfile.metadata.names(:,nn) = infoname';
 end
 
-nn1 = 0;
-[uniom0,unigain,unifradar] = deal(0);
-for ii = 1:length(parameters_1d)
-     h_name1 = char(parameters_1d(ii));
-     if ~exist(['r_' h_name1(3:end)],'var')
-         continue
-     elseif strcmp(h_name1,'h_XMITloc')
-         a = find(strcmp(h_name1,parameters_list)==1);
-         for jj = 1:3; nn1 = nn1+1; 
-            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
-            info(1) = {[h_name1(3:end) num2str(jj)]};
-            info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
-            matfile.metadata.par1d(:,nn1) = info';
-         end
-     elseif strcmp(h_name1,'h_RECloc') 
-         a = find(strcmp(h_name1,parameters_list)==1);
-         for jj = 1:3; nn1 = nn1+1; 
-            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
-            info(1) = {[h_name1(3:end) num2str(jj)]};
-            info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
-            matfile.metadata.par1d(:,nn1) = info';
-         end
-     elseif strcmp(h_name1,'h_om0') && length(unique(eval(['r_om0']))) == 1
-         nn1 = nn1+1;
-         uniom0 = 1;
-         a = find(strcmp(h_name1,parameters_list)==1);
-         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-         info(1) = {[h_name1(3:end)]};
-         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-         matfile.metadata.par1d(:,nn1) = info';
-     elseif strcmp(h_name1,'h_gain') && length(unique(eval(['r_gain']))) == 1
-         nn1 = nn1+1;
-         unigain = 1;
-         a = find(strcmp(h_name1,parameters_list)==1);
-         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-         info(1) = {[h_name1(3:end)]};
-         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-         matfile.metadata.par1d(:,nn1) = info';   
-     elseif strcmp(h_name1,'h_fradar') && length(unique(eval(['r_fradar']))) == 1
-         nn1 = nn1+1;
-         unifradar = 1;
-         a = find(strcmp(h_name1,parameters_list)==1);
-         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-         info(1) = {[h_name1(3:end)]};
-         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-         matfile.metadata.par1d(:,nn1) = info';    
-     elseif length(eval(['r_' h_name1(3:end)]))==1
-         nn1 = nn1+1;
-         a = find(strcmp(h_name1,parameters_list)==1);             
-         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-         info(1) = {h_name1(3:end)};
-         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))}; 
-         matfile.metadata.par1d(:,nn1) = info';
-     else
-         num = length(eval(['r_' h_name1(3:end)]));
-         a = find(strcmp(h_name1,parameters_list)==1);
-         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-         for jj = 1:num; nn1 = nn1+1;
-             info(1) = {[h_name1(3:end) num2str(jj)]};  
-             matfile.metadata.par1d(:,nn1) = info';
-         end
-     end
-     
+
+[h_Magic_const, h_az, h_el, h_Pt, h_SCangle, h_XMITloc, h_RECloc, h_nrec, h_nrec_pp, ...
+h_Tsys, h_code, h_om0, h_m0, h_phasepush, h_Offsetppd, h_gain, h_fradar, ...
+h_h, h_range, h_param, h_error, h_apriori, h_apriorierror, h_status, h_dp, ...
+h_res, h_w, h_pprange, h_pp, h_pperr, h_ppw] = deal([]);
+
+unicheck_om0    = zeros(rec,1);
+unicheck_gain   = zeros(rec,1);
+unicheck_fradar = zeros(rec,1);
+
+for jj = 1:rec
+    load(filelist(jj).fname)
+    if exist('r_Magic_const','var'), h_Magic_const = [h_Magic_const; r_Magic_const]; end
+    if exist('r_az','var'), h_az = [h_az; col(r_az)]; end
+    if exist('r_el','var'), h_el = [h_el; col(r_el)]; end
+    if exist('r_Pt','var'), h_Pt = [h_Pt; col(r_Pt)]; end
+    if exist('r_SCangle','var'), h_SCangle = [h_SCangle; col(r_SCangle)]; end
+    if exist('r_XMITloc','var')
+        r_XMITloc(3) = r_XMITloc(3)*1000; 
+        h_XMITloc = [h_XMITloc; row(r_XMITloc)]; end
+    if exist('r_RECloc','var')
+        r_RECloc(3) = r_RECloc(3)*1000; 
+        h_RECloc = [h_RECloc; row(r_RECloc)]; end
+    if exist('r_Tsys','var')
+        if length(r_Tsys) < nTsys
+            r_Tsys(length(r_Tsys)+1:nTsys) = NaN;       % if r_Tsys is shorter: fill it up
+        elseif length(r_Tsys) > nTsys
+            h_Tsys(:,nTsys+1:length(r_Tsys)) = NaN;     % if r_Tsys is longer: fill up h_Tsys
+            nTsys = length(r_Tsys);
+        end
+        h_Tsys = [h_Tsys; row(r_Tsys)]; end
+    if exist('r_code','var'), h_code = [h_code; r_code]; end
+    if exist('r_m0','var'), h_m0 = [h_m0; r_m0]; end
+    if exist('r_phasepush','var'), h_phasepush = [h_phasepush; r_phasepush]; end
+    if exist('r_Offsetppd','var'), h_Offsetppd = [h_Offsetppd; r_Offsetppd]; end
+    if exist('r_om0','var')
+        if length(unique(r_om0)) == 1, unicheck_om0(jj) = 1; end
+        if length(r_om0) < nom0
+            r_om0(length(r_om0)+1:nom0) = NaN;           % if r_om0 is shorter: fill it up
+        elseif length(r_om0) > nom0
+            h_om0(:,nom0+1:length(r_om0)) = NaN;         % if r_om0 is longer: fill up h_om0
+            nom0 = length(r_om0);
+        end
+        h_om0 = [h_om0; row(r_om0)];
+    end
+    if exist('r_gain','var')
+        if length(unique(r_gain)) == 1, unicheck_gain(jj) = 1; end
+            if length(r_gain) < ngain
+                r_gain(length(r_gain)+1:ngain) = NaN;          % if r_mo0 is shorter: fill it up
+            elseif length(r_gain) > ngain
+                h_gain(:,ngain+1:length(r_gain)) = NaN;        % if r_mo0 is longer: fill up h_mo0
+                ngain = length(r_gain);
+            end
+            h_gain = [h_gain; row(r_gain)];
+    end
+    if exist('r_fradar','var')
+        if length(unique(r_fradar)) == 1, unicheck_fradar(jj) = 1; end
+            if length(r_fradar) < nfradar
+                r_fradar(length(r_fradar)+1:nfradar) = NaN;          % if r_fradar is shorter: fill it up
+            elseif length(r_fradar) > nfradar
+                h_fradar(:,nfradar+1:length(r_fradar)) = NaN;        % if r_fradar is longer: fill up h_fradar
+                nfradar = length(r_fradar);
+            end
+            h_fradar = [h_fradar; row(r_fradar)];
+    end
+    if exist('r_h','var')
+        h_nrec = [h_nrec; length(r_h)];
+        h_h = [h_h; col(r_h)*1000]; end
+    if exist('r_range','var'), h_range = [h_range; col(r_range)*1000]; end
+    if exist('r_res','var'), h_res = [h_res; r_res]; end
+    if exist('r_dp','var'), h_dp = [h_dp; r_dp]; end
+    if exist('r_status','var'), h_status = [h_status; r_status]; end
+    if exist('r_w','var'), h_w = [h_w; r_w*1000]; end
+    if exist('r_param','var')
+        rpars = size(r_param,2); hpars = size(h_param,2);
+        if rpars < hpars
+            pardiff = hpars - rpars;
+            r_param(:,rpars+1:hpars) = NaN;
+            if exist('r_error','var')
+                r_error_tmp = ones(size(r_error,1),size(h_error,2));
+                r1 = 0;
+                h1 = 0; 
+                for ii = 1:rpars
+                    r2 = r1 + rpars-(ii-1);
+                    h2 = h1 + rpars-(ii-1) + pardiff ;
+                    r_error_tmp(:,h1+1:h2-pardiff) = r_error(:,r1+1:r2);
+                    r_error_tmp(:,h2-pardiff+1:h2) = NaN;
+                    r1 = r2;
+                    h1 = h2;
+                end
+                r_error_tmp(h1+1:h1+sum(1:pardiff)) = NaN;
+                r_error = r_error_tmp;
+            else
+                r_error = [];
+            end
+        elseif rpars > hpars && ~isempty(h_param)
+            pardiff = rpars - hpars;
+            h_param(:,hpars+1:rpars) = NaN;
+            if exist('r_error','var')
+                h_error_tmp = ones(size(h_error,1),size(r_error,2));
+                r1 = 0;
+                h1 = 0;
+                for ii = 1:rpars
+                    r2 = r1 + rpars-(ii-1);
+                    h2 = h1 + rpars-(ii-1) - pardiff;
+                    h_error_tmp(:,r1+1:r2-pardiff) = h_error(:,h1+1:h2);
+                    h_error_tmp(:,r2-pardiff+1:r2) = NaN;
+                    r1 = r2;
+                    h1 = h2;
+                end
+                h_error_tmp(r1+1:r1+sum(1:pardiff)) = NaN;
+                h_error = h_error_tmp;
+            else
+                r_error = [];
+            end
+        end
+        h_param = [h_param; r_param]; 
+        h_error = [h_error; r_error]; 
+    end
+    if exist('r_apriori','var')
+        rpars = size(r_apriori,2); hpars = size(h_apriori,2);
+        if rpars < hpars
+            r_apriori(:,rpars+1:hpars) = NaN;
+        elseif rpars > hpars && ~isempty(h_apriori)
+            h_apriori(:,hpars+1:rpars) = NaN;
+        end
+        h_apriori = [h_apriori; r_apriori]; 
+    end 
+    if exist('r_apriorierror','var')
+        rpars = size(r_apriorierror,2); hpars = size(h_apriorierror,2);
+        if rpars < hpars
+            r_apriorierror(:,rpars+1:hpars) = NaN;
+        elseif rpars > hpars && ~isempty(h_apriorierror)
+            h_apriorierror(:,hpars+1:rpars) = NaN;
+        end
+        h_apriorierror = [h_apriorierror; r_apriorierror]; 
+    end 
+    if exist('r_pprange','var')
+        h_nrec_pp = [h_nrec_pp; length(r_pprange)];
+        h_pprange = [h_pprange; col(r_pprange)*1000]; end
+    if exist('r_pperr','var'), h_pperr = [h_pperr; r_pperr]; end
+    if exist('r_pp','var'), h_pp = [h_pp; r_pp]; end
+    if exist('r_ppw','var'), h_ppw = [h_ppw; r_ppw*1000]; end
 end
 
-% adding record lengths 
-nn1 = nn1 + 1;
-a = find(strcmp('nrec',parameters_list)==1);
-[~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-matfile.metadata.par1d(:,nn1) = info';
+if ~any(unicheck_om0==0),    h_om0    = h_om0(:,1); end
+if ~any(unicheck_gain==0),   h_gain   = h_gain(:,1); end
+if ~any(unicheck_fradar==0), h_fradar = h_fradar(:,1); end
 
-nn1 = nn1 + 1;
-a = find(strcmp('nrec_pp',parameters_list)==1);
-[~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-matfile.metadata.par1d(:,nn1) = info';
+
+matfile.data.par1d    = [h_Magic_const h_az h_el h_Pt h_SCangle h_XMITloc ...
+    h_RECloc h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar h_nrec h_nrec_pp];
+matfile.data.par2d    = [h_h h_range h_param h_error h_apriori...
+    h_apriorierror h_status h_dp h_res h_w];
+matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
+
+
+% 0d and 1d parameters 
+parameters_1d = {'h_Magic_const' 'h_az' 'h_el' 'h_Pt' 'h_SCangle'...
+    'h_XMITloc' 'h_RECloc' 'h_Tsys' 'h_code' 'h_om0' 'h_m0' 'h_phasepush'...
+    'h_Offsetppd' 'h_gain' 'h_fradar' 'h_nrec' 'h_nrec_pp'};
+% 2d parameters 
+parameters_2d = {'h_h' 'h_range' 'h_param' 'h_error' 'h_apriori'...
+    'h_apriorierror' 'h_status' 'h_dp' 'h_res' 'h_w'};
+% 2d_pp parameters 
+parameters_2dpp = {'h_pprange' 'h_pp' 'h_pperr' 'h_ppw'};
+
+nn1 = 0;
+for ii = 1:length(parameters_1d)
+    h_name1 = char(parameters_1d(ii));
+    if isempty(eval(h_name1))
+        continue
+    elseif strcmp(h_name1,'h_XMITloc')
+        a = find(strcmp(h_name1,parameters_list)==1);
+        for jj = 1:3; nn1 = nn1+1; 
+            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
+            info(1) = {[h_name1(3:end) num2str(jj)]};
+            info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
+            matfile.metadata.par1d(:,nn1) = info';
+        end
+    elseif strcmp(h_name1,'h_RECloc') 
+        a = find(strcmp(h_name1,parameters_list)==1);
+        for jj = 1:3; nn1 = nn1+1; 
+            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
+            info(1) = {[h_name1(3:end) num2str(jj)]};
+            info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
+            matfile.metadata.par1d(:,nn1) = info';
+        end
+    else
+        a = find(strcmp(h_name1,parameters_list)==1);             
+        [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+        info(1) = {h_name1(3:end)};
+        info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))}; 
+        cols = size(eval(h_name1),2);
+        if cols > 1
+            for jj = 1:cols; nn1 = nn1+1;
+                info(1) = {[h_name1(3:end) num2str(jj)]};  
+                matfile.metadata.par1d(:,nn1) = info';
+            end
+        else
+            nn1 = nn1+1; 
+            matfile.metadata.par1d(:,nn1) = info';
+        end
+    end
+end     
+
 
 nn2 = 0;
 for ii = 1:length(parameters_2d)
     h_name2 = char(parameters_2d(ii));
-    if ~exist(['r_' h_name2(3:end)],'var')
+    if isempty(eval(h_name2))
         continue
     end
-    dim=size(eval(['r_' h_name2(3:end)]));
-    if dim(2)==1
+    cols = size(eval(h_name2),2);
+    %dim=size(eval(['r_' h_name2(3:end)]));
+    if cols==1
         nn2 = nn2 + 1;
         a = find(strcmp(h_name2,parameters_list)==1);
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
@@ -375,9 +501,9 @@ for ii = 1:length(parameters_2d)
             a = find(strcmp('h_diagvariance',parameters_list)==1);
         end
         if strcmp(h_name2,'h_apriori') || strcmp(h_name2,'h_apriorierror')
-            nump = length(r_apriori(1,:));
+            nump = length(h_apriori(1,:));
         else
-            nump = length(r_param(1,:));
+            nump = length(h_param(1,:));
         end
         for jj = 1:5; nn2 = nn2 + 1; 
             [~,~,info]  = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
@@ -388,17 +514,17 @@ for ii = 1:length(parameters_2d)
         if ge(nump,6)
             [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj+1) ':E' num2str(a+jj+1)]); info_tmp = info;
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj+1)])) };
-            for kk=1:length(r_m0)-1; nn2 = nn2 + 1; 
-                if  (length(r_m0)-1)>1
+            for kk=1:length(h_m0(1,:))-1; nn2 = nn2 + 1; 
+                if  (length(h_m0(1,:))-1)>1
                     info(1) = {[char(info_tmp(1)) num2str(kk)]};
                 end
-                if r_m0(kk)==30.5   
+                if h_m0(1,kk)==30.5   
                     if     strcmp(h_name2,'h_param'),        info(2)={'ion mix content: [O2+,NO+]/N'};                info(5)={'pm'};  info(6)={'690'};
                     elseif strcmp(h_name2,'h_error'),        info(2)={'variance of ion mix content: [O2+,NO+]/N'};          info(5)={'N/A'}; info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori ion mix content: [O2+,NO+]/N'};       info(5)={'N/A'}; info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error ion mix content: [O2+,NO+]/N'}; info(5)={'N/A'}; info(6)={'0'};
                     end  
-                elseif r_m0(kk)==16 
+                elseif h_m0(1,kk)==16 
                     if     strcmp(h_name2,'h_param'),        info(2)={'O+ content: [O+]/N'};                info(5)={'po+'};  info(6)={'620'};
                     elseif strcmp(h_name2,'h_error'),        info(2)={'variance of O+ content: [O+]/N'};          info(5)={'N/A'}; info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};  info(6)={'0'};
@@ -446,7 +572,7 @@ for ii = 1:length(parameters_2d)
         a = find(strcmp(parameters_2d(ii),parameters_list)==1); 
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
-        for jj = 1:dim(2); nn2 = nn2 + 1;
+        for jj = 1:cols, nn2 = nn2 + 1;
             info(1) = {[h_name2(3:end) num2str(jj)]};       
             matfile.metadata.par2d(:,nn2) = info';
         end
@@ -456,7 +582,7 @@ end
 nn3 = 0;
 for ii = 1:length(parameters_2dpp)
      h_name2pp = char(parameters_2dpp(ii));
-     if ~exist(['r_' h_name2pp(3:end)],'var')
+     if isempty(eval(h_name2pp))
          continue
      end
      nn3 = nn3 + 1;
@@ -467,63 +593,6 @@ for ii = 1:length(parameters_2dpp)
      matfile.metadata.par2d_pp(:,nn3) = info';
 end
 
-parameters = [parameters_1d parameters_2d parameters_2dpp];
-
-nh = [];
-npprange = [];
-
-for ii = 1:length(parameters)
-    h_name = char(parameters(ii));
-    if ~exist(['r_' h_name(3:end)],'var') 
-        evalc([h_name '=[]']); continue
-    else
-        par = []; 
-        for jj = 1:rec
-            load(filelist(jj).fname)
-            if strcmp(h_name,'h_Tsys')
-                if length(r_Tsys) < nTsys
-                    r_Tsys(length(r_Tsys)+1:nTsys) = NaN;     % if r_Tsys is shorter: fill it up
-                elseif length(r_Tsys) > nTsys
-                    par(:,nTsys+1:length(r_Tsys)) = NaN;      % if r_Tsys is longer: fill up par
-                    nTsys = length(r_Tsys);
-                end
-                par = [par; row(r_Tsys)];                                                
-            elseif strcmp(h_name,'h_h')
-                nh = [nh; length(r_h)];
-                par = [par; col(r_h)];
-            elseif strcmp(h_name,'h_pprange')
-                npprange = [npprange; length(r_pprange)];
-                par = [par; col(r_pprange)];
-            elseif strcmp(h_name,'h_param')
-                rpars = size(r_param,2); hpars = size(par,2);
-                if rpars < hpars, r_param(:,rpars+1:hpars) = NaN;
-                elseif rpars > hpars && ~isempty(par), par(:,hpars+1:rpars) = NaN; end
-                par = [par; r_param];
-            elseif strcmp(h_name,'h_error')
-                for k = 1:nump
-                    r_error(:,k) = r_error(:,k).^2;        % error to 'variance'
-                end   
-                par = [par; r_error];
-            elseif strcmp(h_name,'h_om0') && uniom0 == 1
-                par = [par; r_om0(1)]; 
-            elseif strcmp(h_name,'h_gain') && unigain == 1
-                par = [par; r_gain(1)]; 
-            elseif strcmp(h_name,'h_fradar') && unifradar == 1
-                par = [par; r_fradar(1)];    
-            else
-                par = [par; eval(['r_' h_name(3:end)])];    
-            end
-        end   
-        evalc([char(parameters(ii)) '=par']);
-    end
-end
-
-matfile.data.par1d    = [h_Magic_const h_az h_el h_Pt...
-    h_SCangle h_XMITloc(:,1:2) h_XMITloc(:,3)*1000 h_RECloc(:,1:2) h_RECloc(:,3)*1000 ...
-    h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar nh npprange];
-matfile.data.par2d    = [h_h*1000 h_range*1000 h_param h_error h_apriori...
-    h_apriorierror h_status h_dp h_res h_w*1000];
-matfile.data.par2d_pp = [h_pprange*1000 h_pp h_pperr h_ppw*1000];
 
 % find indices where the value is complex, and replace with NaN
 if ~isempty(find(any(imag(matfile.data.par1d) ~= 0) == 1, 1))
