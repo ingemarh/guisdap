@@ -203,7 +203,7 @@ for qq = 1:nkindats
         n_rec(nr) = length(rr);
     end
 
-    aa = find(strcmp('nrec',gupparameters_list)==1);
+    aa = find(strcmp('h_nrec',gupparameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
     if length(unique(n_rec)) == 1
