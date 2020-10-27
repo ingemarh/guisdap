@@ -304,9 +304,9 @@ for qq = 1:length(evenkindats)
     end
 
     for ii = 1:nkindats
-        aa = find(strcmp('nrec',gupparameters_list)==1);
+        aa = find(strcmp('h_nrec',gupparameters_list)==1);
         if ii==2
-            aa = find(strcmp('nrec_pp',gupparameters_list)==1);
+            aa = find(strcmp('h_nrec_pp',gupparameters_list)==1);
             matfile.data.par2d_pp = [];
             matfile.metadata.par2d_pp = [];     
         end

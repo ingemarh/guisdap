@@ -56,7 +56,7 @@ for t1=t1all
 end
 nrecs = length(lrec);
 
-a = find(strcmp('nrec',parameters_list)==1);
+a = find(strcmp('h_nrec',parameters_list)==1);
 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};        
 if length(unique(lrec)) == 1
