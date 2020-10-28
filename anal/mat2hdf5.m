@@ -521,7 +521,7 @@ for ii = 1:length(parameters_2d)
                 if  (length(h_m0(1,:))-1)>1
                     info(1) = {[char(info_tmp(1)) num2str(kk)]};
                 end
-                if h_m0(1,kk)==30.5   
+                if any(h_m0(1,kk) == [28 30 30.5 32])
                     if     strcmp(h_name2,'h_param'),        info(2)={'ion mix content: [O2+,NO+]/N'};                info(5)={'pm'};  info(6)={'690'};
                     elseif strcmp(h_name2,'h_error'),        info(2)={'variance of ion mix content: [O2+,NO+]/N'};    info(5)={'N/A'}; info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori ion mix content: [O2+,NO+]/N'};       info(5)={'N/A'}; info(6)={'0'};
@@ -533,11 +533,17 @@ for ii = 1:length(parameters_2d)
                     elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};  info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error O+ content: [O+]/N'}; info(5)={'N/A'};  info(6)={'0'};
                     end
+                elseif h_m0(1,kk)==4 
+                    if     strcmp(h_name2,'h_param'),        info(2)={'He+ content: [He+]/N'};                info(5)={'phe+'}; info(6)={'650'};
+                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of He+ content: [He+]/N'};    info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori He+ content: [He+]/N'};       info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error He+ content: [He+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                    end
                 elseif h_m0(1,kk)==1 
                     if     strcmp(h_name2,'h_param'),        info(2)={'H+ content: [H+]/N'};                info(5)={'ph+'};  info(6)={'660'};
-                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of O+ content: [O+]/N'};    info(5)={'N/A'};  info(6)={'0'};
-                    elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};  info(6)={'0'};
-                    elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error O+ content: [O+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of H+ content: [H+]/N'};    info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori H+ content: [H+]/N'};       info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error H+ content: [H+]/N'}; info(5)={'N/A'};  info(6)={'0'};
                     end    
                 end
                 matfile.metadata.par2d(:,nn2) = info';

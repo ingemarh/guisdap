@@ -84,7 +84,7 @@ second = sprintf('%02d',data.sec(1));
 
 kindat_values = char(exprparvalues(bb,:));
 allkinds = str2num(char(strsplit(kindat_values,', ')'));
-fsk = 0;
+fsk = [];
 if length(allkinds) == 1 && (allkinds==6831 || allkinds == 6801)   % seems lika special cases
     allkinds = 6800;
     fsk = 1;
@@ -157,9 +157,8 @@ for qq = 1:length(evenkindats)
     for ii = 1:length(exprparnames)
         matfile.metadata.software.experiment.(char(regexprep(exprparnames(ii),' ','_'))) = {exprparvalues{ii}};
     end
-     
     % Modify metadata if needed
-    if length(evenkindats) > 1 || (allkinds == 6800 && fsk)
+    if length(evenkindats) > 1 || (any(allkinds == 6800) && ~isempty(fsk))
         
         % kindat
         matfile.metadata.software.experiment.kindat = {num2str(kindats(1))};
