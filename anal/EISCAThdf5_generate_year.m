@@ -37,7 +37,7 @@ else
     List_Crashed = {};
     List_HandledOK = {};
     sitelist = dir(yearpath);
-    sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
+    sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
     mm = 1;
     for ii = 1:length(sitelist)
         %sitename = sitelist(ii).name;

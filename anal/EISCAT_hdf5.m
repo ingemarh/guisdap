@@ -144,9 +144,9 @@ for ii = 1:length(data_files)
                 untarpath = fullfile(untarpath,untarfolder);
                 untar_filelist = dir(untarpath);
                 %untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..','.gup','gfd_setup.m'));   % ignore '.' and '..'
-                untar_filelist = untar_filelist(~startsWith({untar_filelist.name},{'.'}) & ~endsWith({untar_filelist.name},{'.m','.dat','.log'}));   % ignore '.' and '..'
+                untar_filelist = untar_filelist(~startsWith({untar_filelist.name},{'.'}) & ~endsWith({untar_filelist.name},{'.m','.dat','.log','.tar','.gz'}));   % ignore '.' and '..' etc
             end
-            
+           
             if isempty(untar_filelist) && length(data_files) == 1 && ~isempty(hdf5_allfiles)  
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is replaced by ' hdf5_allfiles{1} newline])
                 data_files = hdf5_allfiles(1);

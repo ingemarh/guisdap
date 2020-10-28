@@ -39,6 +39,7 @@ end
 % store the gfd content and check Tsys
 load(filelist(1).fname)
 if exist('r_Tsys','var'),   nTsys   = length(r_Tsys);   end
+if exist('r_code','var'),   ncode   = length(r_code);   end
 if exist('r_om0','var'),    nom0    = length(r_om0);    end
 if exist('r_fradar','var'), nfradar = length(r_fradar); end
 if exist('r_gain','var'),   ngain   = length(r_gain);   end
@@ -273,7 +274,6 @@ if exist('name_sig','var'); nn = nn + 1;
     matfile.metadata.names(:,nn) = infoname';
 end
 
-
 [h_Magic_const, h_az, h_el, h_Pt, h_SCangle, h_XMITloc, h_RECloc, h_nrec, h_nrec_pp, ...
 h_Tsys, h_code, h_om0, h_m0, h_phasepush, h_Offsetppd, h_gain, h_fradar, ...
 h_h, h_range, h_param, h_error, h_apriori, h_apriorierror, h_status, h_dp, ...
@@ -304,7 +304,14 @@ for jj = 1:rec
             nTsys = length(r_Tsys);
         end
         h_Tsys = [h_Tsys; row(r_Tsys)]; end
-    if exist('r_code','var'), h_code = [h_code; r_code]; end
+    if exist('r_code','var')
+        if length(r_code) < ncode
+            r_code(length(r_code)+1:ncode) = NaN;       % if r_code is shorter: fill it up
+        elseif length(r_code) > ncode
+            h_code(:,ncode+1:length(r_code)) = NaN;     % if r_code is longer: fill up h_code
+            ncode = length(r_code);
+        end
+        h_code = [h_code; r_code]; end
     if exist('r_m0','var'), h_m0 = [h_m0; r_m0]; end
     if exist('r_phasepush','var'), h_phasepush = [h_phasepush; r_phasepush]; end
     if exist('r_Offsetppd','var'), h_Offsetppd = [h_Offsetppd; r_Offsetppd]; end
@@ -316,8 +323,7 @@ for jj = 1:rec
             h_om0(:,nom0+1:length(r_om0)) = NaN;         % if r_om0 is longer: fill up h_om0
             nom0 = length(r_om0);
         end
-        h_om0 = [h_om0; row(r_om0)];
-    end
+        h_om0 = [h_om0; row(r_om0)]; end
     if exist('r_gain','var')
         if length(unique(r_gain)) == 1, unicheck_gain(jj) = 1; end
             if length(r_gain) < ngain
@@ -326,8 +332,7 @@ for jj = 1:rec
                 h_gain(:,ngain+1:length(r_gain)) = NaN;        % if r_mo0 is longer: fill up h_mo0
                 ngain = length(r_gain);
             end
-            h_gain = [h_gain; row(r_gain)];
-    end
+            h_gain = [h_gain; row(r_gain)]; end
     if exist('r_fradar','var')
         if length(unique(r_fradar)) == 1, unicheck_fradar(jj) = 1; end
             if length(r_fradar) < nfradar
@@ -336,8 +341,7 @@ for jj = 1:rec
                 h_fradar(:,nfradar+1:length(r_fradar)) = NaN;        % if r_fradar is longer: fill up h_fradar
                 nfradar = length(r_fradar);
             end
-            h_fradar = [h_fradar; row(r_fradar)];
-    end
+            h_fradar = [h_fradar; row(r_fradar)]; end
     if exist('r_h','var')
         h_nrec = [h_nrec; length(r_h)];
         h_h = [h_h; col(r_h)*1000]; end
@@ -487,7 +491,6 @@ for ii = 1:length(parameters_2d)
         continue
     end
     cols = size(eval(h_name2),2);
-    %dim=size(eval(['r_' h_name2(3:end)]));
     if cols==1
         nn2 = nn2 + 1;
         a = find(strcmp(h_name2,parameters_list)==1);
@@ -518,23 +521,35 @@ for ii = 1:length(parameters_2d)
                 if  (length(h_m0(1,:))-1)>1
                     info(1) = {[char(info_tmp(1)) num2str(kk)]};
                 end
-                if h_m0(1,kk)==30.5   
+                if any(h_m0(1,kk) == [28 30 30.5 32])
                     if     strcmp(h_name2,'h_param'),        info(2)={'ion mix content: [O2+,NO+]/N'};                info(5)={'pm'};  info(6)={'690'};
-                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of ion mix content: [O2+,NO+]/N'};          info(5)={'N/A'}; info(6)={'0'};
+                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of ion mix content: [O2+,NO+]/N'};    info(5)={'N/A'}; info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori ion mix content: [O2+,NO+]/N'};       info(5)={'N/A'}; info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error ion mix content: [O2+,NO+]/N'}; info(5)={'N/A'}; info(6)={'0'};
                     end  
                 elseif h_m0(1,kk)==16 
                     if     strcmp(h_name2,'h_param'),        info(2)={'O+ content: [O+]/N'};                info(5)={'po+'};  info(6)={'620'};
-                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of O+ content: [O+]/N'};          info(5)={'N/A'}; info(6)={'0'};
+                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of O+ content: [O+]/N'};    info(5)={'N/A'};  info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};  info(6)={'0'};
                     elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error O+ content: [O+]/N'}; info(5)={'N/A'};  info(6)={'0'};
                     end
+                elseif h_m0(1,kk)==4 
+                    if     strcmp(h_name2,'h_param'),        info(2)={'He+ content: [He+]/N'};                info(5)={'phe+'}; info(6)={'650'};
+                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of He+ content: [He+]/N'};    info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori He+ content: [He+]/N'};       info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error He+ content: [He+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                    end
+                elseif h_m0(1,kk)==1 
+                    if     strcmp(h_name2,'h_param'),        info(2)={'H+ content: [H+]/N'};                info(5)={'ph+'};  info(6)={'660'};
+                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of H+ content: [H+]/N'};    info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori H+ content: [H+]/N'};       info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error H+ content: [H+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                    end    
                 end
                 matfile.metadata.par2d(:,nn2) = info';
             end
             if isempty(kk); kk=0; end
-            for ll = (jj + 2):nump; nn2 = nn2 + 1;
+            for ll = (jj + 2):nump-(kk-1); nn2 = nn2 + 1;
                 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+ll) ':E' num2str(a+ll)]); 
                 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+ll)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+ll)]))};
                 matfile.metadata.par2d(:,nn2) = info';
