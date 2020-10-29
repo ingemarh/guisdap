@@ -41,23 +41,24 @@ for ii = 1:npar
     Parsinfile_list{ii} = deblank(parnames(ii,:));
 end
 
-% Remove parameters starting with 'x'...
+% Remove parameters starting with 'x' (strange acf-parameter names)
 field_names = fieldnames(data);
-rmpar = [];
+rmacf = [];
 for fn = 1:length(field_names)
     if strcmp(field_names{fn}(1),'x')
         data = rmfield(data,field_names{fn});
-        rmpar = [rmpar; fn];
+        rmacf = [rmacf; fn];
     end    
 end
-if rmpar
-    Parsinfile_list(rmpar) = [];
+if rmacf
+    Parsinfile_list(rmacf) = [];
 end
 npar = length(Parsinfile_list);
 
 %Remove data with strange times
-medtime = median(data.ut1_unix(:,1));
-tt = find(data.ut1_unix(:,1)<medtime-1e6 | data.ut1_unix(:,1)>medtime+1e6);
+% medtime = median(data.ut1_unix(:,1));
+% tt = find(data.ut1_unix(:,1)<medtime-1e6 | data.ut1_unix(:,1)>medtime+1e6);
+tt = find(data.ut1_unix(:,1)<data.ut1_unix(1,1)-1e6 | data.ut1_unix(:,1)>data.ut1_unix(1,1)+1e6);
 if tt
     for pp = 1:npar
         plus = strfind(Parsinfile_list{pp},'+');
@@ -118,7 +119,7 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 [~,text] = xlsread(GuisdapParFile);     
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
 gupparameters_list = text(:,1);   
-
+ 
 for qq = 1:length(evenkindats)
     
     if exist('matfile','var')
@@ -141,7 +142,7 @@ for qq = 1:length(evenkindats)
     else 
         ki = 1:length(data.ut1_unix);   % There is only one kindat for all data ('data.kindat' does not exist in this case)
     end
-    if length(ki) == 1
+    if length(ki) == 1 || isempty(ki)
 	   continue
     end 
 
@@ -165,7 +166,7 @@ for qq = 1:length(evenkindats)
         if nkindats==2
             matfile.metadata.software.experiment.kindat = {[matfile.metadata.software.experiment.kindat{1} ', ' num2str(kindats(2))]};
         end
-        
+    
         if length(evenkindats) > 1
             % start_ & end_time
             dtstart = datetime(data.ut1_unix(ki(1)),'ConvertFrom','posixtime');
@@ -232,13 +233,14 @@ for qq = 1:length(evenkindats)
     
     if exist(hdffilename)==2, delete(hdffilename); end
 
-    if ~isempty(find(strcmp(Parsinfile_list,'sracf0')==1)) && ~isempty(find(strcmp(Parsinfile_list,'sfacf0')==1))
+    if ~isempty(find(strcmp(Parsinfile_list,'sracf0')==1)) && ~isempty(find(strcmp(Parsinfile_list,'sfacf0')==1)) && isempty(rmacf)
         nracf = length(find(cell2mat(strfind(Parsinfile_list,'racf'))==1));    % # of racf (racf1, racf2, ... , racfnracf)
         data_set.acf0 = data_set.sracf0.*data_set.sfacf0;
         aa = find(strcmp(Parsinfile_list,'sracf0')==1);
         bb = find(strcmp(Parsinfile_list,'sfacf0')==1);
         Parsinfile_list{aa}= 'acf';  
         data_set = rmfield(data_set,'sfacf0');
+
         for mm = 1:nracf
             evalc(['data_set.acf' num2str(mm) '= data_set.acf0.*complex(data_set.racf' num2str(mm) ',data_set.iacf' num2str(mm) ')']);
         end
@@ -310,6 +312,7 @@ for qq = 1:length(evenkindats)
             matfile.metadata.par2d_pp = [];     
         end
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
+        info(1) = {info{1}(3:end)};   % h_nrec --> nrec, h_nrec_pp --> nrec_pp
         info(2) = {[info{2} '(kindat=' num2str(kindats(ii)) ')']};
         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
         kin = find(nreckindat(:,2) == kindats(ii));
@@ -337,7 +340,7 @@ for qq = 1:length(evenkindats)
                 parameterdata = data_set.([Parsinfile_list{ii}(1:bb-1) '0x2B']);   % Rename e.g. po+ --> po0x2B, because the data.-parameter name is like that for some reason (This will only affect parameter names that end with '+')
             elseif strcmp(char(Parsinfile_list(ii)),'sfacf0')
                 continue
-            elseif strcmp(char(Parsinfile_list(ii)),'acf')   
+            elseif strcmp(char(Parsinfile_list(ii)),'acf') && isempty(rmacf)
                 if nkindats>1
                     cckind = find(data_set.kindat == kindats(1));  
                 else
@@ -448,7 +451,7 @@ for qq = 1:length(evenkindats)
                 end
                 info(4) = {'-'};
                 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
-                if (contains(char(Parsinfile_list(ii)),'racf') || contains(char(Parsinfile_list(ii)),'iacf')) && ~contains(char(Parsinfile_list(ii)),'racf0')
+                if (contains(char(Parsinfile_list(ii)),'racf') || contains(char(Parsinfile_list(ii)),'iacf')) && ~contains(char(Parsinfile_list(ii)),'racf0') && isempty(rmacf)
                     info2split = strsplit(char(info(2)));
                     info(2) = join(info2split(2:end));
                 end
