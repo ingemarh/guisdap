@@ -88,8 +88,6 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
 gupparameters_list = text(:,1);
 
-
-
 for qq = 1:nkindats
     
     if exist('matfile','var')
@@ -106,7 +104,7 @@ for qq = 1:nkindats
     else 
         ki = 1:length(data.ut1_unix);   % There is only one kindat for all data ('data.kindat' does not exist in this case)
     end
-    if length(ki) == 1
+    if length(ki) == 1 || isempty(ki)
 	   continue
     end 
 
@@ -205,6 +203,7 @@ for qq = 1:nkindats
 
     aa = find(strcmp('h_nrec',gupparameters_list)==1);
     [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
+    info(1) = {info{1}(3:end)};
     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
     if length(unique(n_rec)) == 1
         matfile.data.par0d = n_rec(1);
