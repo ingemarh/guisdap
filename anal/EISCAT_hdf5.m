@@ -234,7 +234,7 @@ for ii = 1:length(data_files)
 
                     if oo == length(dd)
                         figpart = figname(dd(oo)+1:end);
-                    elseif length(bbcc) == 5 && oo == 1
+                    elseif length(bbcc) == 5 && oo == 1 && length(dd) > 2
                         figpart = figname(dd(oo)+1:dd(oo+2)-1);
                         if strcmp(pulse,figpart)
                             c = 1;
