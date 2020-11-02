@@ -126,9 +126,11 @@ if ~exist('name_strategy','var')
     end
 end
 
-if ~exist('starttime','var')
+if ~exist('starttime','var') || size(starttime,1)>1
     load(filelist(1).fname)
     starttime = datestr(r_time(1,:),'yyyy-mm-ddTHH:MM:SS');
+end
+if ~exist('endtime','var') || size(endtime,1)>1
     load(filelist(end).fname)
     endtime = datestr(r_time(2,:),'yyyy-mm-ddTHH:MM:SS');
 end
@@ -424,6 +426,7 @@ for jj = 1:rec
         end
         h_apriorierror = [h_apriorierror; r_apriorierror]; 
     end 
+    
     if exist('r_pprange','var')
         h_nrec_pp = [h_nrec_pp; length(r_pprange)];
         h_pprange = [h_pprange; col(r_pprange)*1000]; end
@@ -435,6 +438,10 @@ end
 if ~any(unicheck_om0==0),    h_om0    = h_om0(:,1); end
 if ~any(unicheck_gain==0),   h_gain   = h_gain(:,1); end
 if ~any(unicheck_fradar==0), h_fradar = h_fradar(:,1); end
+
+if length(h_pp)    ~= length(h_pprange), h_pp    = []; end
+if length(h_pperr) ~= length(h_pprange), h_pperr = []; end
+if length(h_ppw)   ~= length(h_pprange), h_ppw   = []; end
 
 matfile.data.par1d    = [h_Magic_const h_az h_el h_Pt h_SCangle h_XMITloc ...
     h_RECloc h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar h_nrec h_nrec_pp];
