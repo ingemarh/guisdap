@@ -67,7 +67,7 @@ while ~isempty(List_2BHandled)
     catch
         lencr = length(List_Crashed);
         %display(['Crashed somewhere in ' List_2BHandled{1}])
-        display(lasterr)
+        display([lasterr newline])
         List_Crashed(lencr+1) = List_2BHandled(1);
     end
     List_2BHandled(1) = [];

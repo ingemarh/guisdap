@@ -87,8 +87,7 @@ end
 
 oldhdf5_files = [];
 if isempty(targz_files) && isempty(hdf5oldfiles) 
-    disp(['No EISCAT_hdf5 file generated: no old hdf5-files nor any tar.gz-files exist to handle in ' dirpath '.'])
-    error('See message above.')
+    error(['No EISCAT_hdf5 file generated: no old hdf5-files nor any tar.gz-files exist to handle in ' dirpath '.'])
 elseif isempty(targz_files) && ~isempty(hdf5oldfiles)
     oldhdf5_files = hdf5_allfiles;                     % consider all old hdf5 files when making new EISCAT hdf5 files
 elseif ~isempty(targz_files)  && ~isempty(hdf5_files)
@@ -166,7 +165,6 @@ for ii = 1:length(data_files)
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is therefore ignored.' newline])
                 continue
             else
-                %load(fullfile(untar_filelist(1).folder,untar_filelist(1).name))   
                 load(matfilelist(1).fname)
                 if exist('Vg')
                     matvecfile = fullfile(untar_filelist(1).folder,untar_filelist(1).name);

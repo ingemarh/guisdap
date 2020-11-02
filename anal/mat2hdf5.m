@@ -134,7 +134,6 @@ if ~exist('starttime','var')
 end
     
 gg_sp    = [];
-gg_sp_pp = [];
 for tt = 1:rec
     load(filelist(tt).fname)
     loc(1:2) = [r_el r_az];
@@ -145,13 +144,21 @@ for tt = 1:rec
         gg_rec = [gg_rec; gg_point];
     end
     gg_sp = [gg_sp; gg_rec];
-    gg_rec = [];
-    for uu = 1:length(r_pprange)
-        loc(3) = r_pprange(uu);
-        gg_point = loc2gg(r_RECloc,loc);
-        gg_rec = [gg_rec; gg_point];
+end
+
+gg_sp_pp = [];
+if exist('r_pprange','var')
+    for tt = 1:rec
+        load(filelist(tt).fname)
+        loc(1:2) = [r_el r_az];
+        gg_rec = [];
+        for uu = 1:length(r_pprange)
+            loc(3) = r_pprange(uu);
+            gg_point = loc2gg(r_RECloc,loc);
+            gg_rec = [gg_rec; gg_point];
+        end
+        gg_sp_pp = [gg_sp_pp; gg_rec];
     end
-    gg_sp_pp = [gg_sp_pp; gg_rec];
 end
 
 year = num2str(r_time(1,1));
@@ -348,7 +355,10 @@ for jj = 1:rec
     if exist('r_range','var'), h_range = [h_range; col(r_range)*1000]; end
     if exist('r_res','var'), h_res = [h_res; r_res]; end
     if exist('r_dp','var'), h_dp = [h_dp; r_dp]; end
-    if exist('r_status','var'), h_status = [h_status; r_status]; end
+    if exist('r_status','var')
+%         if ~isempty(r_status) && length(r_status) ~= length(r_h)
+%             r_status = 2*ones(size(r_h)); end    % put 'no fit' = 2 for whole record, because of wrong r_status record length
+        h_status = [h_status; r_status]; end
     if exist('r_w','var'), h_w = [h_w; r_w*1000]; end
     if exist('r_param','var')
         rpars = size(r_param,2); hpars = size(h_param,2);
@@ -425,7 +435,6 @@ end
 if ~any(unicheck_om0==0),    h_om0    = h_om0(:,1); end
 if ~any(unicheck_gain==0),   h_gain   = h_gain(:,1); end
 if ~any(unicheck_fradar==0), h_fradar = h_fradar(:,1); end
-
 
 matfile.data.par1d    = [h_Magic_const h_az h_el h_Pt h_SCangle h_XMITloc ...
     h_RECloc h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar h_nrec h_nrec_pp];
