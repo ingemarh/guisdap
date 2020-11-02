@@ -66,8 +66,10 @@ if ~isempty(find(strcmp(metavar,'par2d')))
     ii2d = 1;
     matdata.metadata.par2d    = deblank(h5read(filename,'/metadata/par2d'));
     matdata.data.par2d        = h5read(filename,'/data/par2d');
-    columns = find(str2num(char(matdata.metadata.par2d(end,:)))==20);
-    ndata2d =  length(matdata.data.par2d(:,columns));
+    column = find(str2num(char(matdata.metadata.par2d(end,:)))==20);
+    if isempty(column), column = find(str2num(char(matdata.metadata.par2d(end,:)))==18); end
+    if isempty(column), column = find(str2num(char(matdata.metadata.par2d(end,:)))==19); end
+    ndata2d =  length(matdata.data.par2d(:,column));
 end
 if ~isempty(find(strcmp(metavar,'par2d_pp'))) && do_rpar
     matdata.metadata.par2d_pp = deblank(h5read(filename,'/metadata/par2d_pp'));

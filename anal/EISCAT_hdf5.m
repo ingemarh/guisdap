@@ -87,8 +87,7 @@ end
 
 oldhdf5_files = [];
 if isempty(targz_files) && isempty(hdf5oldfiles) 
-    disp(['No EISCAT_hdf5 file generated: no old hdf5-files nor any tar.gz-files exist to handle in ' dirpath '.'])
-    error('See message above.')
+    error(['No EISCAT_hdf5 file generated: no old hdf5-files nor any tar.gz-files exist to handle in ' dirpath '.'])
 elseif isempty(targz_files) && ~isempty(hdf5oldfiles)
     oldhdf5_files = hdf5_allfiles;                     % consider all old hdf5 files when making new EISCAT hdf5 files
 elseif ~isempty(targz_files)  && ~isempty(hdf5_files)
@@ -143,10 +142,18 @@ for ii = 1:length(data_files)
                 untarfolder = untar_filelist(1).name;
                 untarpath = fullfile(untarpath,untarfolder);
                 untar_filelist = dir(untarpath);
-                %untar_filelist = untar_filelist(~ismember({untar_filelist.name},{'.','..','.gup','gfd_setup.m'));   % ignore '.' and '..'
                 untar_filelist = untar_filelist(~startsWith({untar_filelist.name},{'.'}) & ~endsWith({untar_filelist.name},{'.m','.dat','.log','.tar','.gz'}));   % ignore '.' and '..' etc
             end
-           
+        
+            for jj = 1:length(untar_filelist)
+                [~,~,ext] = fileparts(untar_filelist(1).name);
+                if strcmp(ext,'.bz2')
+                    unix(['bunzip2 ' fullfile(untar_filelist(jj).folder,untar_filelist(jj).name)]);
+                end
+            end
+            
+            matfilelist = getfilelist([untarpath '/']);
+
             if isempty(untar_filelist) && length(data_files) == 1 && ~isempty(hdf5_allfiles)  
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is replaced by ' hdf5_allfiles{1} newline])
                 data_files = hdf5_allfiles(1);
@@ -158,7 +165,7 @@ for ii = 1:length(data_files)
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is therefore ignored.' newline])
                 continue
             else
-                load(fullfile(untar_filelist(1).folder,untar_filelist(1).name))
+                load(matfilelist(1).fname)
                 if exist('Vg')
                     matvecfile = fullfile(untar_filelist(1).folder,untar_filelist(1).name);
                     [storepath,EISCAThdf5file] = matvecvel2hdf5(matvecfile,datapath);
@@ -234,7 +241,7 @@ for ii = 1:length(data_files)
 
                     if oo == length(dd)
                         figpart = figname(dd(oo)+1:end);
-                    elseif length(bbcc) == 5 && oo == 1
+                    elseif length(bbcc) == 5 && oo == 1 && length(dd) > 2
                         figpart = figname(dd(oo)+1:dd(oo+2)-1);
                         if strcmp(pulse,figpart)
                             c = 1;
