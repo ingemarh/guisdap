@@ -165,10 +165,18 @@ for ii = 1:length(data_files)
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is therefore ignored.' newline])
                 continue
             else
-                load(matfilelist(1).fname)
+                try
+                    load(matfilelist(1).fname)
+                catch
+                    if length(matfilelist) == 1
+                        display('File was not possible to handle: Only one (1) mat-file and it was corrupt/unreadable')
+                        continue
+                    end
+                end
                 if exist('Vg')
-                    matvecfile = fullfile(untar_filelist(1).folder,untar_filelist(1).name);
-                    [storepath,EISCAThdf5file] = matvecvel2hdf5(matvecfile,datapath);
+                    %matvecfile = fullfile(untar_filelist(1).folder,untar_filelist(1).name);
+                    %[storepath,EISCAThdf5file] = matvecvel2hdf5(matvecfile,datapath);
+                    [storepath,EISCAThdf5file] = matvecvel2hdf5(matfilelist(1).fname,datapath);
                     vecvel = 1;
                 else
                     [storepath,EISCAThdf5file] = mat2hdf5(untarpath,datapath); 
