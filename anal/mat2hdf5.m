@@ -39,6 +39,7 @@ end
 % store the gfd content and check Tsys
 load(filelist(1).fname)
 if exist('r_Tsys','var'),   nTsys   = length(r_Tsys);   end
+if exist('r_m0','var'),     nm0     = length(r_m0);     end
 if exist('r_code','var'),   ncode   = length(r_code);   end
 if exist('r_om0','var'),    nom0    = length(r_om0);    end
 if exist('r_fradar','var'), nfradar = length(r_fradar); end
@@ -321,7 +322,22 @@ for jj = 1:rec
             ncode = length(r_code);
         end
         h_code = [h_code; r_code]; end
-    if exist('r_m0','var'), h_m0 = [h_m0; r_m0]; end
+    if exist('r_m0','var')
+%         if length(r_m0) < nm0
+%             r_m0(length(r_m0)+1:nm0) = NaN;       % if r_m0 is shorter: fill it up
+%         elseif length(r_m0) > nm0
+%             h_m0(:,nm0+1:length(r_m0)) = NaN;     % if r_m0 is longer: fill up h_m0
+%             nm0 = length(r_m0);
+%         end
+%         if length(r_m0) < size(h_m0,2) && ~isempty(h_m0)
+%             for qq = 1:length(r_m0)
+%                 rm = find(h_m0(1,:) == r_m0(qq));
+%                 h_m0(1,:)
+%             end
+%             find() 
+%         end
+        h_m0 = [h_m0; r_m0];
+    end
     if exist('r_phasepush','var'), h_phasepush = [h_phasepush; r_phasepush]; end
     if exist('r_Offsetppd','var'), h_Offsetppd = [h_Offsetppd; r_Offsetppd]; end
     if exist('r_om0','var')
@@ -358,10 +374,12 @@ for jj = 1:rec
     if exist('r_res','var'), h_res = [h_res; r_res]; end
     if exist('r_dp','var'), h_dp = [h_dp; r_dp]; end
     if exist('r_status','var')
-%         if ~isempty(r_status) && length(r_status) ~= length(r_h)
+%         if ~isempty(r_status) && length(r_status) ~= length(r_h), keyboard, end
 %             r_status = 2*ones(size(r_h)); end    % put 'no fit' = 2 for whole record, because of wrong r_status record length
         h_status = [h_status; r_status]; end
-    if exist('r_w','var'), h_w = [h_w; r_w*1000]; end
+    if exist('r_w','var')
+        if size(r_w,2) == length(r_h), r_w = r_w'; end    
+        h_w = [h_w; r_w*1000]; n = n+1; nrecw(jj) = length(r_w); end
     if exist('r_param','var')
         rpars = size(r_param,2); hpars = size(h_param,2);
         if rpars < hpars
