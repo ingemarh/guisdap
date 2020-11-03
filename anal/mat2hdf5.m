@@ -379,7 +379,7 @@ for jj = 1:rec
         h_status = [h_status; r_status]; end
     if exist('r_w','var')
         if size(r_w,2) == length(r_h), r_w = r_w'; end    
-        h_w = [h_w; r_w*1000]; n = n+1; nrecw(jj) = length(r_w); end
+        h_w = [h_w; r_w*1000]; end
     if exist('r_param','var')
         rpars = size(r_param,2); hpars = size(h_param,2);
         if rpars < hpars
