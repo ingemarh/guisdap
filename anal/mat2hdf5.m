@@ -29,16 +29,22 @@ end
 
 filelist = getfilelist(matpath);
 rec  = length(filelist);
+TT = []; intper_vec = [];
 for tt = 1:rec
     try
         load(filelist(tt).fname)
+        TT = [TT tt];
+        intper_vec_rec = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6)));
+        intper_vec = [intper_vec; intper_vec_rec];
     catch
-        filelist(tt) = [];    % matfile was corrupt (could not be read) and removed 
         continue 
     end
-end   
+end
+if length(TT)<rec
+    filelist = filelist(TT);       % matfile(s) that was(were) corrupt or could not be read is(are) removed 
+    rec  = length(filelist);
+end
 
-rec  = length(filelist);
 intper_vec = zeros(rec,1);
 for tt = 1:rec
     load(filelist(tt).fname)
