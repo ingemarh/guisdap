@@ -55,7 +55,7 @@ else
     for i=dirlen:-1:1
       l(i).file=cell2mat(textscan(dirlist(i).name,'%f'));
       l(i).fname=fullfile(dp,dirs(j).name,dirlist(i).name);
-      if isempty(l(i).file), l(i)=[]; end
+      if length(l(i).file)~=1, l(i)=[]; end
     end
     list=[list;l];
   end
