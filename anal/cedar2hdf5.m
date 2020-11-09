@@ -119,7 +119,7 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 [~,text] = xlsread(GuisdapParFile);     
 parameters_list = text(:,5);   % list that includes all parameters and keep their positions from the excel arc
 gupparameters_list = text(:,1);   
- 
+
 for qq = 1:length(evenkindats)
     
     if exist('matfile','var')
@@ -430,7 +430,7 @@ for qq = 1:length(evenkindats)
                 if strcmp('snl',char(Parsinfile_list(ii))),   aa = find(strcmp('sn',parameters_list)==1);  parameterdata_kindat = 10.^parameterdata_kindat; end
                 if strcmp('dsnl',char(Parsinfile_list(ii))),  aa = find(strcmp('dsn',parameters_list)==1); parameterdata_kindat = 10.^parameterdata_kindat; end
                 if strcmp('popl',char(Parsinfile_list(ii))),  aa = find(strcmp('pop',parameters_list)==1); parameterdata_kindat = 10.^parameterdata_kindat; end
-            
+                if strcmp('tfreq',char(Parsinfile_list(ii))) && jj == 2, aa = find(strcmp('tfreqpp',parameters_list)==1); end
                 start = 0;
                 par_1d = [];
                 rr = find(nreckindat(:,2)==kindats(jj));
@@ -462,27 +462,36 @@ for qq = 1:length(evenkindats)
                         matfile.metadata.utime_pp = [matfile.metadata.utime_pp info'];
                     else
                         matfile.data.par1d_pp = [matfile.data.par1d_pp double(par_1d)];
-                        if strcmp('tfreq',char(Parsinfile_list(ii)))
-                            info(1) = {'ppftrans'};
-                        end
                         matfile.metadata.par1d_pp = [matfile.metadata.par1d_pp info'];
                     end
                 elseif length(par_1d)==recs && jj == 2
-                    continue
+                    if strcmp(char(Parsinfile_list(ii)),'tfreq')
+                        if length(unique(par_1d)) == 1
+                            matfile.data.par0d = [matfile.data.par0d double(par_1d(1))]; 
+                            matfile.metadata.par0d = [matfile.metadata.par0d info'];
+                        else
+                            matfile.data.par1d = [matfile.data.par1d double(par_1d)]; 
+                            matfile.metadata.par1d = [matfile.metadata.par1d info'];
+                        end
+                    else
+                        continue
+                    end
                 elseif length(par_1d)==recs % && jj == 1
                     if strcmp(char(Parsinfile_list(ii)),'ut1_unix') || strcmp(char(Parsinfile_list(ii)),'ut2_unix')
                         matfile.data.utime = [matfile.data.utime par_1d]; 
                         matfile.metadata.utime = [matfile.metadata.utime info'];
                     else
-                        matfile.data.par1d = [matfile.data.par1d double(par_1d)]; 
-                        matfile.metadata.par1d = [matfile.metadata.par1d info'];
+                        if strcmp(char(Parsinfile_list(ii)),'tfreq') && length(unique(par_1d)) == 1
+                             matfile.data.par0d = [matfile.data.par0d double(par_1d(1))]; 
+                             matfile.metadata.par0d = [matfile.metadata.par0d info'];
+                        else
+                            matfile.data.par1d = [matfile.data.par1d double(par_1d)]; 
+                            matfile.metadata.par1d = [matfile.metadata.par1d info'];
+                        end
                     end
                 else
                     if jj == 2
                         matfile.data.par2d_pp = [matfile.data.par2d_pp single(parameterdata_kindat)];
-                        if strcmp('tfreq',char(Parsinfile_list(ii)))
-                            info(1) = {'ppftrans'};
-                        end
                         matfile.metadata.par2d_pp = [matfile.metadata.par2d_pp info'];
                     else
                         matfile.data.par2d = [matfile.data.par2d single(parameterdata_kindat)];
