@@ -182,6 +182,7 @@ for qq = 1:nkindats
         rmdir(storepath)
         EISCATvelhdf5file(qq,:) = {''};
         Storepath(qq,:) = {''};
+        display([mat2str(kindats(qq)) ': Only V=0, data ignored and no hdf5-file created.'])
         continue
     end
     for ii = 1:npar

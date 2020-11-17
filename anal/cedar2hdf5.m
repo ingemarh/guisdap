@@ -55,10 +55,10 @@ if rmacf
 end
 npar = length(Parsinfile_list);
 
-%Remove data with strange times
+% Remove data with strange times and/or altitudes == 0
 % medtime = median(data.ut1_unix(:,1));
 % tt = find(data.ut1_unix(:,1)<medtime-1e6 | data.ut1_unix(:,1)>medtime+1e6);
-tt = find(data.ut1_unix(:,1)<data.ut1_unix(1,1)-1e6 | data.ut1_unix(:,1)>data.ut1_unix(1,1)+1e6);
+tt = find(data.ut1_unix<data.ut1_unix(1)-1e6 | data.ut1_unix>data.ut1_unix(1)+1e6 | data.gdalt == 0);
 if tt
     for pp = 1:npar
         plus = strfind(Parsinfile_list{pp},'+');
@@ -332,7 +332,6 @@ for qq = 1:length(evenkindats)
         if strcmp(char(Parsinfile_list(ii)),'nsampi')
             continue
         end
-
         aa = find(strcmp(char(Parsinfile_list(ii)),parameters_list)==1);
         if aa
             bb = strfind(Parsinfile_list{ii},'+');
@@ -376,9 +375,18 @@ for qq = 1:length(evenkindats)
         
             if length(unique(parameterdata))==1
             
-                if strcmp('range',char(Parsinfile_list(ii)))
-                    aa = aa(1);
-                end    
+                if strcmp('range',char(Parsinfile_list(ii))), aa = aa(1); end    
+                if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1);  end
+                if strcmp('dvobi',char(Parsinfile_list(ii))), aa = find(strcmp('dvo',parameters_list)==1); end
+                if strcmp('nel',char(Parsinfile_list(ii))),   aa = find(strcmp('ne',parameters_list)==1);  parameterdata = 10.^parameterdata; end
+                if strcmp('dnel',char(Parsinfile_list(ii))),  aa = find(strcmp('dne',parameters_list)==1); parameterdata = 10.^parameterdata; end
+                if strcmp('col',char(Parsinfile_list(ii))),   aa = find(strcmp('co',parameters_list)==1);  parameterdata = 10.^parameterdata; end
+                if strcmp('dcol',char(Parsinfile_list(ii))),  aa = find(strcmp('dco',parameters_list)==1); parameterdata = 10.^parameterdata; end
+                if strcmp('snl',char(Parsinfile_list(ii))),   aa = find(strcmp('sn',parameters_list)==1);  parameterdata = 10.^parameterdata; end
+                if strcmp('dsnl',char(Parsinfile_list(ii))),  aa = find(strcmp('dsn',parameters_list)==1); parameterdata = 10.^parameterdata; end
+                if strcmp('popl',char(Parsinfile_list(ii))),  aa = find(strcmp('pop',parameters_list)==1); parameterdata = 10.^parameterdata; end
+                if strcmp('tfreq',char(Parsinfile_list(ii))), aa = aa(1); end
+                
                 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
                 if cell2mat(strfind(info(1),'h_'))==1
                     info{1} = info{1}(3:end);
@@ -411,7 +419,7 @@ for qq = 1:length(evenkindats)
                 if sum(isnan(parameterdata_kindat))==length(parameterdata_kindat)   % check if all data (for a certain kindat) are NaN
                     continue                                                        % if so, skip to next iteration
                 end
-                      
+                  
                 if strcmp('range',char(Parsinfile_list(ii))) && jj == 1
                     bb = aa; end
                 if strcmp('range',char(Parsinfile_list(ii)))
@@ -509,18 +517,48 @@ for qq = 1:length(evenkindats)
                 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(ww) ':E' num2str(ww)]);
                 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(ww)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(ww)]))};
                 matfile.metadata.par2d(:,vv) = info';
-                if strcmp(cp6_faultpars(ii),'te') || strcmp(cp6_faultpars(ii),'dte') || strcmp(cp6_faultpars(ii),'ti') || strcmp(cp6_faultpars(ii),'dti')
+                if strcmp(cp6_correctpars(ii),'Ne_lag0+') || strcmp(cp6_correctpars(ii),'dNe_lag0+') || strcmp(cp6_correctpars(ii),'Ne_tp') || strcmp(cp6_correctpars(ii),'dNe_tp')
                     matfile.data.par2d(:,vv) = 10.^(matfile.data.par2d(:,vv)/1000);
-                elseif strcmp(cp6_faultpars(ii),'pm') || strcmp(cp6_faultpars(ii),'dpm') || strcmp(cp6_faultpars(ii),'po+') || strcmp(cp6_faultpars(ii),'dpo+')
+                elseif strcmp(cp6_correctpars(ii),'hw_lor') || strcmp(cp6_correctpars(ii),'dhw_lor') || strcmp(cp6_correctpars(ii),'hw_expfit') || strcmp(cp6_correctpars(ii),'dhw_expfit')
                     matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)*1000/10;
-                elseif strcmp(cp6_faultpars(ii),'ph+') || strcmp(cp6_faultpars(ii),'dph+')
+                elseif strcmp(cp6_correctpars(ii),'ampl') || strcmp(cp6_correctpars(ii),'dampl')
                     matfile.data.par2d(:,vv) = matfile.data.par2d(:,vv)*1000*1e6;
-                elseif strcmp(cp6_faultpars(ii),'co') || strcmp(cp6_faultpars(ii),'dco')
+                elseif strcmp(cp6_correctpars(ii),'blev') || strcmp(cp6_correctpars(ii),'dblev')
                     matfile.data.par2d(:,vv) = log10(matfile.data.par2d(:,vv))*1000*1e6;
                 end
             end
         end
     end
+    
+    % error --> variance
+    errorpars = {'dne','dte','dti','dvo','dpm','dpo+','dph+','dhe+','dco'};
+    varpars   = {'var_Ne','var_Te','var_Ti','var_Vi','var_pm','var_po+','var_ph+','var_he+','var_Collf'};
+    for ii = 1:length(errorpars)
+        if isfield(matfile.metadata,'par2d')
+            a = find(~cellfun(@isempty,strfind(matfile.metadata.par2d(5,:),errorpars{ii})));
+            if ~isempty(a)
+                matfile.data.par2d(:,a) = matfile.data.par2d(:,a).^2;
+                aa = find(strcmp(char(varpars(ii)),gupparameters_list)==1);
+                [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
+                info(4) = {'-'};
+                info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
+                matfile.metadata.par2d(:,a) = info';
+            end
+        end
+        if isfield(matfile.metadata,'par1d')
+            a = find(~cellfun(@isempty,strfind(matfile.metadata.par1d(5,:),errorpars{ii})));
+            if ~isempty(a)
+                matfile.data.par1d(:,a) = matfile.data.par1d(:,a).^2; 
+                aa = find(strcmp(char(varpars(ii)),gupparameters_list)==1);
+                [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
+                info(4) = {'-'};
+                info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(aa)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(aa)]))};
+                matfile.metadata.par1d(:,a) = info';
+            end
+        end
+    end
+    
+   
 
     % add the RECloc data
     cc1 = find(strcmp(exprparnames,'instrument latitude')==1);
@@ -685,7 +723,7 @@ for qq = 1:length(evenkindats)
             matfile.metadata.software.experiment.kindat = {num2str(kindats(1))};
 
             % kind_of_data_file
-            bb = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),[' 1)']);
+            bb = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),' 1)');
             cc = strfind(char(matfile.metadata.software.experiment.kind_of_data_file),['(code ' num2str(kindats(1)) ')']);
             matfile.metadata.software.experiment.kind_of_data_file = {matfile.metadata.software.experiment.kind_of_data_file{1}(bb+4:cc-2)};
         end
@@ -752,7 +790,30 @@ for qq = 1:length(evenkindats)
             matfile.metadata.par2d_pp(:,a) = [];
         end
     end
-
+    
+    % Change numeric units (1) to string ('1'), e.g. for ratios like ion composition 
+    if isfield(matfile.metadata,'par0d')
+        for i = 1:length(matfile.metadata.par0d(3,:))     
+            if isnumeric(matfile.metadata.par0d{3,i})
+                matfile.metadata.par0d(3,i) = {num2str(matfile.metadata.par0d{3,i})};
+            end
+        end
+    end
+    if isfield(matfile.metadata,'par1d')
+        for i = 1:length(matfile.metadata.par1d(3,:))     
+            if isnumeric(matfile.metadata.par1d{3,i})
+                matfile.metadata.par1d(3,i) = {num2str(matfile.metadata.par1d{3,i})};
+            end
+        end
+    end
+    if isfield(matfile.metadata,'par2d')
+        for i = 1:length(matfile.metadata.par2d(3,:))     
+            if isnumeric(matfile.metadata.par2d{3,i})
+                matfile.metadata.par2d(3,i) = {num2str(matfile.metadata.par2d{3,i})};
+            end
+        end
+    end
+    keyboard
     save(matfilename,'matfile')
 
     % Generate an HDF5-file 
