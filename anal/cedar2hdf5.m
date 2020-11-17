@@ -534,7 +534,7 @@ for qq = 1:length(evenkindats)
     errorpars = {'dne','dte','dti','dvo','dpm','dpo+','dph+','dhe+','dco'};
     varpars   = {'var_Ne','var_Te','var_Ti','var_Vi','var_pm','var_po+','var_ph+','var_he+','var_Collf'};
     for ii = 1:length(errorpars)
-        if isfield(matfile.metadata,'par2d')
+        if ~isempty(matfile.metadata.par2d)   %isfield(matfile.metadata,'par2d') 
             a = find(~cellfun(@isempty,strfind(matfile.metadata.par2d(5,:),errorpars{ii})));
             if ~isempty(a)
                 matfile.data.par2d(:,a) = matfile.data.par2d(:,a).^2;
@@ -545,7 +545,7 @@ for qq = 1:length(evenkindats)
                 matfile.metadata.par2d(:,a) = info';
             end
         end
-        if isfield(matfile.metadata,'par1d')
+        if ~isempty(matfile.metadata.par1d)   %isfield(matfile.metadata,'par1d')
             a = find(~cellfun(@isempty,strfind(matfile.metadata.par1d(5,:),errorpars{ii})));
             if ~isempty(a)
                 matfile.data.par1d(:,a) = matfile.data.par1d(:,a).^2; 
@@ -813,7 +813,7 @@ for qq = 1:length(evenkindats)
             end
         end
     end
-    keyboard
+   
     save(matfilename,'matfile')
 
     % Generate an HDF5-file 
