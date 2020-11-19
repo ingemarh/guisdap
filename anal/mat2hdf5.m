@@ -45,11 +45,11 @@ if length(TT)<rec
     rec  = length(filelist);
 end
 
-intper_vec = zeros(rec,1);
-for tt = 1:rec
-    load(filelist(tt).fname)
-    intper_vec(tt) = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6))); 
-end
+% intper_vec = zeros(rec,1);
+% for tt = 1:rec
+%     load(filelist(tt).fname)
+%     intper_vec(tt) = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6))); 
+% end
 
 % store the gfd content and check Tsys
 load(filelist(1).fname)
@@ -299,9 +299,9 @@ if exist('name_sig','var'); nn = nn + 1;
     matfile.metadata.names(:,nn) = infoname';
 end
 
-[h_Magic_const, h_az, h_el, h_Pt, h_SCangle, h_XMITloc, h_RECloc, h_nrec, h_nrec_pp, ...
+[h_Magic_const, h_az, h_el, h_Pt, h_SCangle, h_XMITloc, h_RECloc, h_nrec, h_ppnrec, ...
 h_Tsys, h_code, h_om0, h_m0, h_phasepush, h_Offsetppd, h_gain, h_fradar, ...
-h_h, h_range, h_param, h_error, h_apriori, h_apriorierror, h_status, h_dp, ...
+h_h, h_range, h_param, h_error, h_apriori, h_apriorierror, h_status, h_dp_first, ...
 h_res, h_w, h_pprange, h_pp, h_pperr, h_ppw] = deal([]);
 
 unicheck_om0    = zeros(rec,1);
@@ -336,7 +336,9 @@ for jj = 1:rec
             h_code(:,ncode+1:length(r_code)) = NaN;     % if r_code is longer: fill up h_code
             ncode = length(r_code);
         end
-        h_code = [h_code; r_code]; end
+        h_code = [h_code; r_code];
+    end
+    dp_first_index = [];
     if exist('r_m0','var')
 %         if length(r_m0) < nm0
 %             r_m0(length(r_m0)+1:nm0) = NaN;       % if r_m0 is shorter: fill it up
@@ -352,9 +354,14 @@ for jj = 1:rec
 %             find() 
 %         end
         h_m0 = [h_m0; r_m0];
+        if exist('r_param','var'),        r_dp_first  = 1 - sum(r_param(:,6:4+length(r_m0)),2);          dp_first_index = 1;                  end  % calculate first dp (corresponding to r_m0(1))
+        if exist('r_error','var'),        r_ddp_first = sum(r_error(:,6:4+length(r_m0)),2);              dp_first_index = [dp_first_index 2]; end  % calculate first dp error (corresponding to r_m0(1))
+        if exist('r_apriori','var'),      r_aprdp_first = 1 - sum(r_apriori(:,6:4+length(r_m0)),2);      dp_first_index = [dp_first_index 3]; end  % calculate first dp apriori (corresponding to r_m0(1))
+        if exist('r_apriorierror','var'), r_aprdp_err_first = sum(r_apriorierror(:,6:4+length(r_m0)),2); dp_first_index = [dp_first_index 4]; end  % calculate first dp error (corresponding to r_m0(1))
+        h_dp_first = [h_dp_first; col(r_dp_first) col(r_ddp_first) col(r_aprdp_first) col(r_aprdp_err_first)];
     end
     if exist('r_phasepush','var'), h_phasepush = [h_phasepush; r_phasepush]; end
-    if exist('r_Offsetppd','var'), h_Offsetppd = [h_Offsetppd; r_Offsetppd]; end
+    if exist('r_Offsetppd','var'), h_Offsetppd = [h_Offsetppd; r_Offsetppd/1e6]; end     % us --> s
     if exist('r_om0','var')
         if length(unique(r_om0)) == 1, unicheck_om0(jj) = 1; end
         if length(r_om0) < nom0
@@ -387,7 +394,7 @@ for jj = 1:rec
         h_h = [h_h; col(r_h)*1000]; end
     if exist('r_range','var'), h_range = [h_range; col(r_range)*1000]; end
     if exist('r_res','var'), h_res = [h_res; r_res]; end
-    if exist('r_dp','var'), h_dp = [h_dp; r_dp]; end
+%   if exist('r_dp','var'), h_dp = [h_dp; r_dp]; end
     if exist('r_status','var')
 %         if ~isempty(r_status) && length(r_status) ~= length(r_h), keyboard, end
 %             r_status = 2*ones(size(r_h)); end    % put 'no fit' = 2 for whole record, because of wrong r_status record length
@@ -397,47 +404,47 @@ for jj = 1:rec
         h_w = [h_w; r_w*1000]; end
     if exist('r_param','var')
         rpars = size(r_param,2); hpars = size(h_param,2);
-        if rpars < hpars
-            pardiff = hpars - rpars;
-            r_param(:,rpars+1:hpars) = NaN;
-            if exist('r_error','var')
-                r_error_tmp = ones(size(r_error,1),size(h_error,2));
-                r1 = 0;
-                h1 = 0; 
-                for ii = 1:rpars
-                    r2 = r1 + rpars-(ii-1);
-                    h2 = h1 + rpars-(ii-1) + pardiff ;
-                    r_error_tmp(:,h1+1:h2-pardiff) = r_error(:,r1+1:r2);
-                    r_error_tmp(:,h2-pardiff+1:h2) = NaN;
-                    r1 = r2;
-                    h1 = h2;
-                end
-                r_error_tmp(h1+1:h1+sum(1:pardiff)) = NaN;
-                r_error = r_error_tmp;
-            else
-                r_error = [];
-            end
-        elseif rpars > hpars && ~isempty(h_param)
-            pardiff = rpars - hpars;
-            h_param(:,hpars+1:rpars) = NaN;
-            if exist('r_error','var')
-                h_error_tmp = ones(size(h_error,1),size(r_error,2));
-                r1 = 0;
-                h1 = 0;
-                for ii = 1:rpars
-                    r2 = r1 + rpars-(ii-1);
-                    h2 = h1 + rpars-(ii-1) - pardiff;
-                    h_error_tmp(:,r1+1:r2-pardiff) = h_error(:,h1+1:h2);
-                    h_error_tmp(:,r2-pardiff+1:r2) = NaN;
-                    r1 = r2;
-                    h1 = h2;
-                end
-                h_error_tmp(r1+1:r1+sum(1:pardiff)) = NaN;
-                h_error = h_error_tmp;
-            else
-                r_error = [];
-            end
-        end
+%         if rpars < hpars
+%             pardiff = hpars - rpars;
+%             r_param(:,rpars+1:hpars) = NaN;
+%             if exist('r_error','var')
+%                 r_error_tmp = ones(size(r_error,1),size(h_error,2));
+%                 r1 = 0;
+%                 h1 = 0; 
+%                 for ii = 1:rpars
+%                     r2 = r1 + rpars-(ii-1);
+%                     h2 = h1 + rpars-(ii-1) + pardiff ;
+%                     r_error_tmp(:,h1+1:h2-pardiff) = r_error(:,r1+1:r2);
+%                     r_error_tmp(:,h2-pardiff+1:h2) = NaN;
+%                     r1 = r2;
+%                     h1 = h2;
+%                 end
+%                 r_error_tmp(h1+1:h1+sum(1:pardiff)) = NaN;
+%                 r_error = r_error_tmp;
+%             else
+%                 r_error = [];
+%             end
+%         elseif rpars > hpars && ~isempty(h_param)
+%             pardiff = rpars - hpars;
+%             h_param(:,hpars+1:rpars) = NaN;
+%             if exist('r_error','var')
+%                 h_error_tmp = ones(size(h_error,1),size(r_error,2));
+%                 r1 = 0;
+%                 h1 = 0;
+%                 for ii = 1:rpars
+%                     r2 = r1 + rpars-(ii-1);
+%                     h2 = h1 + rpars-(ii-1) - pardiff;
+%                     h_error_tmp(:,r1+1:r2-pardiff) = h_error(:,h1+1:h2);
+%                     h_error_tmp(:,r2-pardiff+1:r2) = NaN;
+%                     r1 = r2;
+%                     h1 = h2;
+%                 end
+%                 h_error_tmp(r1+1:r1+sum(1:pardiff)) = NaN;
+%                 h_error = h_error_tmp;
+%             else
+%                 r_error = [];
+%             end
+%         end
         h_param = [h_param; r_param]; 
         h_error = [h_error; r_error]; 
     end
@@ -461,7 +468,7 @@ for jj = 1:rec
     end 
     
     if exist('r_pprange','var')
-        h_nrec_pp = [h_nrec_pp; length(r_pprange)];
+        h_ppnrec  = [h_ppnrec; length(r_pprange)];
         h_pprange = [h_pprange; col(r_pprange)*1000]; end
     if exist('r_pperr','var'), h_pperr = [h_pperr; r_pperr]; end
     if exist('r_pp','var'), h_pp = [h_pp; r_pp]; end
@@ -476,20 +483,29 @@ if length(h_pp)    ~= length(h_pprange), h_pp    = []; end
 if length(h_pperr) ~= length(h_pprange), h_pperr = []; end
 if length(h_ppw)   ~= length(h_pprange), h_ppw   = []; end
 
+if exist('r_m0','var') % put 
+    h_param        = [h_param(:,1:5) h_dp_first(:,1) h_param(:,6:end)];
+    h_error        = [h_error(:,1:5) h_dp_first(:,2) h_error(:,6:end)];
+    h_apriori      = [h_apriori(:,1:5) h_dp_first(:,3) h_apriori(:,6:end)];
+    h_apriorierror = [h_apriorierror(:,1:5) h_dp_first(:,4) h_apriorierror(:,6:end)];
+end
+
+h_error = h_error.^2;     % error --> variance
+
 matfile.data.par1d    = [h_Magic_const h_az h_el h_Pt h_SCangle h_XMITloc ...
-    h_RECloc h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar h_nrec h_nrec_pp];
+    h_RECloc h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar h_nrec h_ppnrec];
 matfile.data.par2d    = [h_h h_range h_param h_error h_apriori...
-    h_apriorierror h_status h_dp h_res h_w];
+    h_apriorierror h_status h_res h_w];
 matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
 
 
 % 0d and 1d parameters 
 parameters_1d = {'h_Magic_const' 'h_az' 'h_el' 'h_Pt' 'h_SCangle'...
     'h_XMITloc' 'h_RECloc' 'h_Tsys' 'h_code' 'h_om0' 'h_m0' 'h_phasepush'...
-    'h_Offsetppd' 'h_gain' 'h_fradar' 'h_nrec' 'h_nrec_pp'};
+    'h_Offsetppd' 'h_gain' 'h_fradar' 'h_nrec' 'h_ppnrec'};
 % 2d parameters 
 parameters_2d = {'h_h' 'h_range' 'h_param' 'h_error' 'h_apriori'...
-    'h_apriorierror' 'h_status' 'h_dp' 'h_res' 'h_w'};
+    'h_apriorierror' 'h_status' 'h_res' 'h_w'};
 % 2d_pp parameters 
 parameters_2dpp = {'h_pprange' 'h_pp' 'h_pperr' 'h_ppw'};
 
@@ -531,8 +547,7 @@ for ii = 1:length(parameters_1d)
         end
     end
 end     
-
-
+ 
 nn2 = 0;
 for ii = 1:length(parameters_2d)
     h_name2 = char(parameters_2d(ii));
@@ -553,9 +568,9 @@ for ii = 1:length(parameters_2d)
             a = find(strcmp('h_diagvariance',parameters_list)==1);
         end
         if strcmp(h_name2,'h_apriori') || strcmp(h_name2,'h_apriorierror')
-            nump = length(h_apriori(1,:));
+            nump = length(h_apriori(1,:))-1;                % -1 because of the extra content parameter (corresponding to r_m0(1)) included in 
         else
-            nump = length(h_param(1,:));
+            nump = length(h_param(1,:))-1;                  % -1 because of the extra content parameter (corresponding to r_m0(1)) included in 
         end
         for jj = 1:5; nn2 = nn2 + 1; 
             [~,~,info]  = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
@@ -563,42 +578,43 @@ for ii = 1:length(parameters_2d)
             matfile.metadata.par2d(:,nn2) = info';
         end
         
-        if ge(nump,6)
-            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj+1) ':E' num2str(a+jj+1)]); info_tmp = info;
+        if nump > 5
+            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj+1) ':E' num2str(a+jj+1)]);% info_tmp = info;
             info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj+1)])) };
-            for kk=1:length(h_m0(1,:))-1; nn2 = nn2 + 1; 
-                if  (length(h_m0(1,:))-1)>1
-                    info(1) = {[char(info_tmp(1)) num2str(kk)]};
-                end
+            for kk=1:length(h_m0(1,:)); nn2 = nn2 + 1; 
+%            for kk=1:length(h_m0(1,:))-1; nn2 = nn2 + 1; 
+%                 if  (length(h_m0(1,:))-1)>1
+%                     info(1) = {[char(info_tmp(1)) num2str(kk)]};
+%                 end
                 if any(h_m0(1,kk) == [28 30 30.5 32])
-                    if     strcmp(h_name2,'h_param'),        info(2)={'ion mix content: [O2+,NO+]/N'};                info(5)={'pm'};  info(6)={'690'};
-                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of ion mix content: [O2+,NO+]/N'};    info(5)={'N/A'}; info(6)={'0'};
-                    elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori ion mix content: [O2+,NO+]/N'};       info(5)={'N/A'}; info(6)={'0'};
-                    elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error ion mix content: [O2+,NO+]/N'}; info(5)={'N/A'}; info(6)={'0'};
+                    if     strcmp(h_name2,'h_param'),        info(1)={'pm'};            info(2)={'ion mix content: [O2+,NO+]/N'};                info(5)={'pm'};  info(6)={'690'};
+                    elseif strcmp(h_name2,'h_error'),        info(1)={'var_pm'};        info(2)={'variance of ion mix content: [O2+,NO+]/N'};    info(5)={'N/A'}; info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprpm'};         info(2)={'a priori ion mix content: [O2+,NO+]/N'};       info(5)={'N/A'}; info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprpm_error'};   info(2)={'a priori error ion mix content: [O2+,NO+]/N'}; info(5)={'N/A'}; info(6)={'0'};
                     end  
-                elseif h_m0(1,kk)==16 
-                    if     strcmp(h_name2,'h_param'),        info(2)={'O+ content: [O+]/N'};                info(5)={'po+'};  info(6)={'620'};
-                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of O+ content: [O+]/N'};    info(5)={'N/A'};  info(6)={'0'};
-                    elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};  info(6)={'0'};
-                    elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error O+ content: [O+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                elseif h_m0(1,kk) == 16 
+                    if     strcmp(h_name2,'h_param'),        info(1)={'po'};            info(2)={'O+ content: [O+]/N'};                info(5)={'po+'};  info(6)={'620'};
+                    elseif strcmp(h_name2,'h_error'),        info(1)={'var_po'};        info(2)={'variance of O+ content: [O+]/N'};    info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprpo'};         info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprpo_error'};   info(2)={'a priori error O+ content: [O+]/N'}; info(5)={'N/A'};  info(6)={'0'};
                     end
-                elseif h_m0(1,kk)==4 
-                    if     strcmp(h_name2,'h_param'),        info(2)={'He+ content: [He+]/N'};                info(5)={'phe+'}; info(6)={'650'};
-                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of He+ content: [He+]/N'};    info(5)={'N/A'};  info(6)={'0'};
-                    elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori He+ content: [He+]/N'};       info(5)={'N/A'};  info(6)={'0'};
-                    elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error He+ content: [He+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                elseif h_m0(1,kk) == 4 
+                    if     strcmp(h_name2,'h_param'),        info(1)={'phe'};           info(2)={'He+ content: [He+]/N'};                info(5)={'phe+'}; info(6)={'650'};
+                    elseif strcmp(h_name2,'h_error'),        info(1)={'var_phe'};       info(2)={'variance of He+ content: [He+]/N'};    info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprphe'};        info(2)={'a priori He+ content: [He+]/N'};       info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprphe_error'};  info(2)={'a priori error He+ content: [He+]/N'}; info(5)={'N/A'};  info(6)={'0'};
                     end
-                elseif h_m0(1,kk)==1 
-                    if     strcmp(h_name2,'h_param'),        info(2)={'H+ content: [H+]/N'};                info(5)={'ph+'};  info(6)={'660'};
-                    elseif strcmp(h_name2,'h_error'),        info(2)={'variance of H+ content: [H+]/N'};    info(5)={'N/A'};  info(6)={'0'};
-                    elseif strcmp(h_name2,'h_apriori'),      info(2)={'a priori H+ content: [H+]/N'};       info(5)={'N/A'};  info(6)={'0'};
-                    elseif strcmp(h_name2,'h_apriorierror'), info(2)={'a priori error H+ content: [H+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                elseif h_m0(1,kk) == 1 
+                    if     strcmp(h_name2,'h_param'),        info(1)={'ph'};            info(2)={'H+ content: [H+]/N'};                info(5)={'ph+'};  info(6)={'660'};
+                    elseif strcmp(h_name2,'h_error'),        info(1)={'var_ph'};        info(2)={'variance of H+ content: [H+]/N'};    info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprph'};         info(2)={'a priori H+ content: [H+]/N'};       info(5)={'N/A'};  info(6)={'0'};
+                    elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprph_error'};   info(2)={'a priori error H+ content: [H+]/N'}; info(5)={'N/A'};  info(6)={'0'};
                     end    
                 end
                 matfile.metadata.par2d(:,nn2) = info';
             end
             if isempty(kk); kk=0; end
-            for ll = (jj + 2):nump-(kk-1); nn2 = nn2 + 1;
+            for ll = (jj + 2):nump-(kk-2); nn2 = nn2 + 1;
                 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+ll) ':E' num2str(a+ll)]); 
                 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+ll)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+ll)]))};
                 matfile.metadata.par2d(:,nn2) = info';
@@ -866,6 +882,29 @@ if isfield(matfile.metadata,'par1d')
    b = find(strcmp('Vobi',parnames));
    if a, matfile.data.par1d(:,a) = -matfile.data.par1d(:,a); end % change sign
    if b, matfile.data.par1d(:,b) = -matfile.data.par1d(:,b); end % change sign
+end
+
+% Change numeric units (1) to string ('1'), e.g. for ratios like ion compositions
+if isfield(matfile.metadata,'par0d')
+    for i = 1:length(matfile.metadata.par0d(3,:))     
+        if isnumeric(matfile.metadata.par0d{3,i})
+            matfile.metadata.par0d(3,i) = {num2str(matfile.metadata.par0d{3,i})};
+        end
+    end
+end
+if isfield(matfile.metadata,'par1d')
+    for i = 1:length(matfile.metadata.par1d(3,:))     
+        if isnumeric(matfile.metadata.par1d{3,i})
+            matfile.metadata.par1d(3,i) = {num2str(matfile.metadata.par1d{3,i})};
+        end
+    end
+end
+if isfield(matfile.metadata,'par2d')
+    for i = 1:length(matfile.metadata.par2d(3,:))     
+        if isnumeric(matfile.metadata.par2d{3,i})
+            matfile.metadata.par2d(3,i) = {num2str(matfile.metadata.par2d{3,i})};
+        end
+    end
 end
 
 save(matfilename,'matfile')
