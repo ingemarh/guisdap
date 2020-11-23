@@ -553,7 +553,7 @@ xlabel('UNIVERSAL TIME')
 drawnow
 if REALT && ~isempty(Loc) && a_realtime && isunix
  if local.x
-  flag='-dpng'; flag2='-r72';
+  flag='-dpng'; flag2='-r0';
  else
   flag='-dpng256'; flag2=[];
  end

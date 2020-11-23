@@ -2,6 +2,7 @@ function [OK,ad_sat]=satch(el,secs,inttime)
 global lpg_lag lpg_wr lpg_w lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h
 global d_data a_satch a_code local
 global ad_range ad_w ad_code ad_lag ad_bac ad_bcs
+global r_sd
 persistent calold
 
 ad_sat=[];
@@ -21,6 +22,7 @@ if ~isfield(a_satch,'filled')
  if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
  if ~isfield(a_satch,'lpg_skip'), a_satch.lpg_skip=[]; end% lpg to skip
  if ~isfield(a_satch,'cut'), a_satch.cut=0; end		% cut or trash
+ if ~isfield(a_satch,'store'), a_satch.store=1; end	% store detections
  if ~isfield(a_satch,'do'), a_satch.do=1; end		% do satch
  a_satch.opts=optimset(optimset('fminsearch'),'display','off');
  a_satch.filled=1;
@@ -171,6 +173,9 @@ if ~OK %| Nsatb>0
   OK=1;
  else
   warning('GUISDAP:satch',[msg ' dump'])
+ end
+ if a_satch.store
+  r_sd=[r_sd;ones(size(x0))*secs sat_ran(:,[4 1]) x0];
  end
 end
 return
