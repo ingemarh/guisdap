@@ -411,10 +411,12 @@ for ii = 1:length(data_files)
         
         vizugo = [];
         if nfigs_expr == 0
-            if contains(data_files{ii},'.tar.gz') && vecvel == 0
-                input = untarpath;
-                vizugo = 1;
-            elseif vecvel == 1
+%             if contains(data_files{ii},'.tar.gz') && vecvel == 0
+%                 %input = untarpath;
+%                 input = EISCAThdf5file{nnn};
+%                 vizugo = 1;
+            %elseif vecvel == 1
+            if vecvel == 1
                 if isempty(image_filelist) %%% Make a (or two) new plot(s) from efield!
                     
                     hdf5file_info = h5info(EISCAThdf5file{nnn},'/metadata/');
@@ -447,17 +449,18 @@ for ii = 1:length(data_files)
                     end
                     utime = utime_tmp;
                     
-                    v   = {'vi_east' 'vi_north' 'vi_up'};
-                    dv  = {'dvi_east' 'dvi_north' 'dvi_up'};
-                    var = {'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
+                    v = {'vi_east' 'vi_north' 'vi_up'};
+%                     dv  = {'dvi_east' 'dvi_north' 'dvi_up'};
+                    var_v = {'var_vi_east' 'var_vi_north' 'var_vi_up'};
+                    crossvar = {'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
                     pos = {'lat' 'lon' 'h'};
-                    Vg = []; Dv = []; Var = []; Vpos = []; Vgv = [];
-                    
+                    Vg = []; Dv = []; Vvar = []; Crossvar = []; Vpos = []; Vgv = [];
                     for vv = 1:3
                         if (exist('nr1','var') && ~isempty(nr1)) || (exist('nr0','var') &&  ~isempty(nr0) && data0d(nr0)>1)   % data in 2d
                             aa = find(strcmp(metadata2d(1,:),v{vv})==1);
-                            bb = find(strcmp(metadata2d(1,:),dv{vv})==1);
-                            cc = find(strcmp(metadata2d(1,:),var{vv})==1);
+%                             bb = find(strcmp(metadata2d(1,:),dv{vv})==1);
+                            bb = find(strcmp(metadata2d(1,:),var_v{vv})==1);
+                            cc = find(strcmp(metadata2d(1,:),crossvar{vv})==1);
                             dd = find(strcmp(metadata2d(1,:),pos{vv})==1);
                             if isempty(dd)
                                 dd = find(strcmp(metadata1d(1,:),pos{vv})==1);
@@ -470,13 +473,15 @@ for ii = 1:length(data_files)
                             else
                                 Vpos  = [Vpos data2d(:,dd)]; 
                             end
-                            Vg  = [Vg data2d(:,aa)];
-                            Dv  = [Dv data2d(:,bb)];
-                            Var = [Var data2d(:,cc)];
+                            Vg   = [Vg data2d(:,aa)];
+%                             Dv  = [Dv data2d(:,bb)];
+                            Vvar = [Vvar data2d(:,bb)];
+                            Crossvar = [Crossvar data2d(:,cc)];
                         else                                                        % data in 1d
                             aa = find(strcmp(metadata1d(1,:),v{vv})==1);
-                            bb = find(strcmp(metadata1d(1,:),dv{vv})==1);
-                            cc = find(strcmp(metadata1d(1,:),var{vv})==1);
+%                             bb = find(strcmp(metadata1d(1,:),dv{vv})==1);
+                            bb = find(strcmp(metadata1d(1,:),var_v{vv})==1);
+                            cc = find(strcmp(metadata1d(1,:),crossvar{vv})==1);
                             dd = find(strcmp(metadata1d(1,:),pos{vv})==1);
                             if isempty(dd)
                                 dd = find(strcmp(metadata0d(1,:),pos{vv})==1);
@@ -485,13 +490,15 @@ for ii = 1:length(data_files)
                                 Vpos  = [Vpos data1d(:,dd)]; 
                             end
                             Vg  = [Vg data1d(:,aa)];
-                            Dv  = [Dv data1d(:,bb)];
-                            Var = [Var data1d(:,cc)];
+%                             Dv  = [Dv data1d(:,bb)];
+                            Vvar = [Vvar data1d(:,bb)];
+                            Crossvar = [Crossvar data1d(:,cc)];
                         end
                     end
                     
                     Vpos(:,3) = Vpos(:,3)/1e3;    % m --> km 
-                    Vgv   = [Dv.^2 Var];        
+%                     Vgv   = [Dv.^2 Crossvar];  
+                    Vgv   = [Vvar Crossvar];  
                     Vdate = [timeconv(utime(:,1),'unx2mat')';timeconv(utime(:,2),'unx2mat')'];
                     ee= find(strcmp(names(1,:),'name_expr')==1);
                     ff = find(strcmp(names(1,:),'name_ant')==1);

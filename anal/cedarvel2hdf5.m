@@ -269,33 +269,35 @@ for qq = 1:nkindats
     dVm = [data_set.dvipe data_set.dvipn data_set.dvi6];
     B = [data_set.bn data_set.be data_set.bd];              % [north, east, down]
     Vg  = [];
-    dVg = [];
-    Vg_crossvar = [];
+%     dVg = [];
+    Vg_var = [];
+%     Vg_crossvar = [];
     for mm = 1:length(data_set.vipn)
         [vg,vgv] = Vm2Vg(Vm(mm,:),B(mm,:),dVm(mm,:));
-        dvg = sqrt(diag(vgv));
+        %dvg = sqrt(diag(vgv));
         Vg  = [Vg;vg'];
-        dVg = [dVg;dvg'];
-        Vg_crossvar = [Vg_crossvar;vgv([2 6 3])];
+%         dVg = [dVg;dvg'];
+%         Vg_crossvar = [Vg_crossvar;vgv([2 6 3])];
+        Vg_var = [Vg_var; vgv([1 5 9 2 6 3])];
     end
 
-    %new_v  = {'vi1' 'vi2' 'vi3' 'dvi1' 'dvi2' 'dvi3' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
-    new_v  = {'vi_east' 'vi_north' 'vi_up' 'dvi_east' 'dvi_north' 'dvi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
+%     new_v  = {'vi_east' 'vi_north' 'vi_up' 'dvi_east' 'dvi_north' 'dvi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
+    new_v  = {'vi_east' 'vi_north' 'vi_up' 'var_vi_east' 'var_vi_north' 'var_vi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
     if ~isempty(matfile.data.par1d)
         ll1 = length(matfile.data.par1d(1,:));
     else
         ll1 = 0;
         matfile.metadata.par1d = {};
     end
-    matfile.data.par1d(:,ll1+1:ll1+9) = [Vg dVg Vg_crossvar];
-
+%     matfile.data.par1d(:,ll1+1:ll1+9) = [Vg dVg Vg_crossvar];
+    matfile.data.par1d(:,ll1+1:ll1+9) = [Vg Vg_var];
     for jj = 1:9
         a = find(strcmp(new_v{jj},gupparameters_list)==1);
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
         matfile.metadata.par1d(:,ll1+jj) = info';
     end
-
+    
     %%% TAI time (leapseconds)
     [~,leaps] = timeconv(double(matfile.data.utime),'unx2tai');      
     if length(unique(leaps)) == 1
