@@ -30,7 +30,7 @@ if length(h)<3 || h(3)==0, h(3)=diff(h(1:2))/99; end
 if isempty(loc), loc=[69.2 19.2]; end
 if isempty(tim), tim=[15552090 1996]; end
 if isempty(par), par=[1 4 3]; end
-nh=diff(h(1:2))/h(3)+1;
+nh=round(diff(h(1:2))/h(3))+1;
 
 if libisloaded('libiri')
 
@@ -48,8 +48,9 @@ calllib('libiri','readapf107_');
 calllib('libiri','iri_sub_',jf,0,loc(1),loc(2),iy,id-1,ut+25,h(1),h(2),h(3),outf,oarr);
 
 m_iri=double(outf.value(par,1:nh)');
-if find(par==12)
- m_iri(:,find(par==12))=h(1)+(0:nh-1)'*h(3);
+d=find(par==12);
+if d
+ m_iri(:,d)=h(1)+(0:nh-1)'*h(3);
 end
 m_iri(find(m_iri==-1))=NaN;
 

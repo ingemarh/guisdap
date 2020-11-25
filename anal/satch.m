@@ -69,7 +69,7 @@ for i=lp
  pb=pb(ind)+L/2; x0=x0(ind);
  if ind>0
    sat_ran=[sat_ran;[lpg_h(i)+(pb-1)*lpg_dt(i)...
-           ones(size(pb))*[2*lpg_w(i)-lpg_dt(i) L*lpg_dt(i) lpg_code(i)]]];
+           ones(size(pb))*[2*lpg_w(i)-lpg_dt(i) L*lpg_dt(i) lpg_code(i) i] x0]];
  end
  if a_satch.plot
   eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb;'])
@@ -175,7 +175,8 @@ if ~OK %| Nsatb>0
   warning('GUISDAP:satch',[msg ' dump'])
  end
  if a_satch.store
-  r_sd=[r_sd;ones(size(x0))*secs sat_ran(:,[4 1]) x0];
+whos r_sd sat_ran	
+  r_sd=[r_sd;ones(size(sat_ran,1),1)*secs sat_ran(:,[5 1 6])], % store time,lpg,range,power
  end
 end
 return
@@ -192,8 +193,8 @@ mS_c=mean([S_c(1:(end-1)) S_c(2:end)],2);
 dat_s=diff(dat)./mS_c;
 
 %calculate pulse shape and diff in sampling intervals
-%if el low an echoe would be wider (5km wide beam)
-Le=floor(5/C/.15/p_dtau);
+%if el low an echoe would be wider (5km wide beam) and an average aspect angle
+Le=floor(5/C/.15/p_dtau/(pi/2));
 if Le>1
  wr=conv(wr,ones(Le,1)/Le);
 end
