@@ -23,7 +23,7 @@ GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path
 [~,text] = xlsread(GuisdapParFile);
 parameters_list = text(:,1);
 
-V_area = col(V_area);
+if exist('V_area','var'), V_area = col(V_area); end
 
 vdate = [];
 vleap = [];
@@ -46,12 +46,14 @@ for t1=t1all
         lrec  = [lrec; length(d1)];
         vdate = [vdate;Vdate(:,d1(1))'];
         if exist('Vleap','var')
-         vleap = [vleap;Vleap(:,d1(1))'];
+            vleap = [vleap;Vleap(:,d1(1))'];
         end
         vpos  = [vpos;Vpos(d1,:)]; 
         vg    = [vg;Vg(d1,:)];
         vgv   = [vgv;Vgv(d1,:)];
-        varea = [varea;V_area(d1)];
+        if exist('V_area','var')
+            varea = [varea;V_area(d1)];
+        end
     end
 end
 nrecs = length(lrec);
@@ -240,10 +242,11 @@ if exist('Vinputs','var')
             end
         end      
     end
+    for field = Vinputs_Fields.'
+        matfile.metadata.Vinputs.(char(field)) = matfile.metadata.Vinputs.(char(field))';
+    end
 end
-for field = Vinputs_Fields.'
-    matfile.metadata.Vinputs.(char(field)) = matfile.metadata.Vinputs.(char(field))';
-end
+
     
 starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
 endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
@@ -262,7 +265,10 @@ second = sprintf('%02.f',r_time(6));
 e_time = datevec(Vdate(2,end));
 endtime = datestr(e_time);
 
-if ~exist('name_expr','var'), name_expr=''; end
+if ~exist('name_expr','var'), name_expr='missing'; end
+if ~exist('name_ant','var'), name_ant='missing'; end
+if ~exist('name_sig','var'), name_sig='missing'; end
+
 [~,filename,~] = fileparts(matfile_vel); 
 storepath = fullfile(datapath,['EISCAT_' filename]);
 
@@ -320,6 +326,7 @@ if exist('leaps','var')
         matfile.metadata.par1d(:,ll1+2) = info';
     end
 end
+
 nn = 0;
 if exist('name_expr','var'); nn = nn + 1;
     infoname(1) = {'name_expr'};
@@ -428,7 +435,7 @@ matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 % If area of convhull (or distance between 2 points) < 10-4 deg^2, 
 % define all points as one (average)
 % imag = 1 to plot the data and the corresponding box if there is a box
-im = 1;
+im = 0;
 gg_sp = [Vpos(:,2) Vpos(:,1)];
 
 [plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],im);

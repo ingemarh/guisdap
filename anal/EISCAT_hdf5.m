@@ -120,8 +120,8 @@ for ii = 1:length(data_files)
             untar(data_files{ii},untarpath)
             tared = 1;
         catch
-            %if length(data_files) == 1 && length(hdf5rest_files) == 1
-            if length(data_files) == 1 && ~isempty(hdf5_allfiles)    
+            %if length(data_files) == 1 && ~length(hdf5rest_files)
+            if length(data_files) == 1 && ~isempty(hdf5_allfiles) == 1    
                 warning(['Ooops ... ' data_files{ii} ' could not be untared, and is replaced by ' hdf5_allfiles{1} newline])
                 data_files = hdf5_allfiles(1);
                 disp(['Handling:' newline data_files{ii} newline])
@@ -142,46 +142,27 @@ for ii = 1:length(data_files)
                 untarfolder = untar_filelist(1).name;
                 untarpath = fullfile(untarpath,untarfolder);
                 untar_filelist = dir(untarpath);
-                untar_filelist = untar_filelist(~startsWith({untar_filelist.name},{'.'}) & ~endsWith({untar_filelist.name},{'.m','.dat','.log','.tar','.gz'}));   % ignore '.' and '..' etc
+                untar_filelist = untar_filelist(~startsWith({untar_filelist.name},{'.'}) & ~endsWith({untar_filelist.name},{'.m','.dat','.log','bin','.tar','.gz'}));   % ignore '.' and '..' etc
             end
         
             for jj = 1:length(untar_filelist)
-                [~,~,ext] = fileparts(untar_filelist(1).name);
+                [~,~,ext] = fileparts(untar_filelist(jj).name);
                 if strcmp(ext,'.bz2')
                     unix(['bunzip2 ' fullfile(untar_filelist(jj).folder,untar_filelist(jj).name)]);
                 end
             end
-            
-            matfilelist = getfilelist([untarpath '/']);
-
-            if isempty(untar_filelist) && length(data_files) == 1 && ~isempty(hdf5_allfiles)  
+           
+            if ~isempty(untar_filelist)
+                [storepath,EISCAThdf5file,vecvel] = mat2hdf5(untarpath,datapath);
+            elseif isempty(untar_filelist) && length(data_files) == 1 && ~isempty(hdf5_allfiles)  
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is replaced by ' hdf5_allfiles{1} newline])
                 data_files = hdf5_allfiles(1);
                 disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
-                vecvel = 0;
-                tared = 0;
+                vecvel = length(EISCAThdf5file);
             elseif isempty(untar_filelist)
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is therefore ignored.' newline])
                 continue
-            else
-                try
-                    load(matfilelist(1).fname)
-                catch
-                    if length(matfilelist) == 1
-                        display('File was not possible to handle: Only one (1) mat-file and it was corrupt/unreadable')
-                        continue
-                    end
-                end
-                if exist('Vg')
-                    %matvecfile = fullfile(untar_filelist(1).folder,untar_filelist(1).name);
-                    %[storepath,EISCAThdf5file] = matvecvel2hdf5(matvecfile,datapath);
-                    [storepath,EISCAThdf5file] = matvecvel2hdf5(matfilelist(1).fname,datapath);
-                    vecvel = 1;
-                else
-                    [storepath,EISCAThdf5file] = mat2hdf5(untarpath,datapath); 
-                    vecvel = 0;
-                end
             end
         end
     else
@@ -195,7 +176,12 @@ for ii = 1:length(data_files)
     end
     
     nfiles = length(EISCAThdf5file);
-
+    if vecvel == 0
+        vecvel = zeros(nfiles,1);
+    else
+        vecvel = [1:vecvel vecvel+1:nfiles];
+    end
+    
     isempt = [];
     for nf = 1:nfiles
         if isempty(EISCAThdf5file{nf})
@@ -204,15 +190,16 @@ for ii = 1:length(data_files)
     end
     EISCAThdf5file(isempt) = [];
     storepath(isempt) = [];
+    vecvel(isempt) = [];
+    
     nfiles = length(EISCAThdf5file);
 
     for nnn = 1:nfiles    
         folders = regexp(storepath{nnn},filesep,'split');
         storefolder = char(folders(end));
-        display(['Generated:' newline EISCAThdf5file{nnn}])
+        display([newline 'Generated:' newline EISCAThdf5file{nnn}])
 
         %%% copying figures to the new data folders
-
         bb = strfind(storefolder,'_');
         cc = strfind(storefolder,'@');
         bbcc = sort([bb cc]);
@@ -224,7 +211,10 @@ for ii = 1:length(data_files)
             intper = storefolder(bb(3)+1:cc-1);
         end
         ant = storefolder(cc+1:end);
-
+        if ~isnan(str2double(ant(end)))  % If last 'letter' in ant is a number, remove it before comparison with figure antenna name.
+            ant = ant(1:end-1);
+        end
+        
         nfigs_expr = 0;
 
         for jj = 1:length(image_filelist)
@@ -404,20 +394,15 @@ for ii = 1:length(data_files)
             elseif isempty(hdf5fileformeta) && length(hdf5rest_files) > 1
                 warning(['gfd was missing ... several (>1) older HDF5-files (not NCAR) were found. The correct complementing metadata need to be manually extracted.'])
             else
-                warning(['gfd was missing ... but no complementing metadata was found.'])
+                warning(['gfd was missing ... and no complementing metadata was found.'])
             end
         else
         end
         
         vizugo = [];
         if nfigs_expr == 0
-%             if contains(data_files{ii},'.tar.gz') && vecvel == 0
-%                 %input = untarpath;
-%                 input = EISCAThdf5file{nnn};
-%                 vizugo = 1;
-            %elseif vecvel == 1
-            if vecvel == 1
-                if isempty(image_filelist) %%% Make a (or two) new plot(s) from efield!
+            if vecvel(nnn) == 1
+                if isempty(image_filelist) %%% Make one (or two) new plot(s) from efield!
                     
                     hdf5file_info = h5info(EISCAThdf5file{nnn},'/metadata/');
                     meta_datasets = {hdf5file_info.Datasets.Name}';
@@ -450,7 +435,6 @@ for ii = 1:length(data_files)
                     utime = utime_tmp;
                     
                     v = {'vi_east' 'vi_north' 'vi_up'};
-%                     dv  = {'dvi_east' 'dvi_north' 'dvi_up'};
                     var_v = {'var_vi_east' 'var_vi_north' 'var_vi_up'};
                     crossvar = {'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
                     pos = {'lat' 'lon' 'h'};
@@ -458,7 +442,6 @@ for ii = 1:length(data_files)
                     for vv = 1:3
                         if (exist('nr1','var') && ~isempty(nr1)) || (exist('nr0','var') &&  ~isempty(nr0) && data0d(nr0)>1)   % data in 2d
                             aa = find(strcmp(metadata2d(1,:),v{vv})==1);
-%                             bb = find(strcmp(metadata2d(1,:),dv{vv})==1);
                             bb = find(strcmp(metadata2d(1,:),var_v{vv})==1);
                             cc = find(strcmp(metadata2d(1,:),crossvar{vv})==1);
                             dd = find(strcmp(metadata2d(1,:),pos{vv})==1);
@@ -474,12 +457,10 @@ for ii = 1:length(data_files)
                                 Vpos  = [Vpos data2d(:,dd)]; 
                             end
                             Vg   = [Vg data2d(:,aa)];
-%                             Dv  = [Dv data2d(:,bb)];
                             Vvar = [Vvar data2d(:,bb)];
                             Crossvar = [Crossvar data2d(:,cc)];
                         else                                                        % data in 1d
                             aa = find(strcmp(metadata1d(1,:),v{vv})==1);
-%                             bb = find(strcmp(metadata1d(1,:),dv{vv})==1);
                             bb = find(strcmp(metadata1d(1,:),var_v{vv})==1);
                             cc = find(strcmp(metadata1d(1,:),crossvar{vv})==1);
                             dd = find(strcmp(metadata1d(1,:),pos{vv})==1);
@@ -490,14 +471,12 @@ for ii = 1:length(data_files)
                                 Vpos  = [Vpos data1d(:,dd)]; 
                             end
                             Vg  = [Vg data1d(:,aa)];
-%                             Dv  = [Dv data1d(:,bb)];
                             Vvar = [Vvar data1d(:,bb)];
                             Crossvar = [Crossvar data1d(:,cc)];
                         end
                     end
                     
                     Vpos(:,3) = Vpos(:,3)/1e3;    % m --> km 
-%                     Vgv   = [Dv.^2 Crossvar];  
                     Vgv   = [Vvar Crossvar];  
                     Vdate = [timeconv(utime(:,1),'unx2mat')';timeconv(utime(:,2),'unx2mat')'];
                     ee= find(strcmp(names(1,:),'name_expr')==1);
