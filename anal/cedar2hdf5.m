@@ -815,7 +815,7 @@ for qq = 1:length(evenkindats)
             end
         end
     end
-   keyboard
+   
     save(matfilename,'matfile')
 
     % Generate an HDF5-file 
