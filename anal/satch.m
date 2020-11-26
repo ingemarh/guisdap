@@ -2,6 +2,7 @@ function [OK,ad_sat]=satch(el,secs,inttime)
 global lpg_lag lpg_wr lpg_w lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h
 global d_data a_satch a_code local
 global ad_range ad_w ad_code ad_lag ad_bac ad_bcs
+global r_sd
 persistent calold
 
 ad_sat=[];
@@ -21,6 +22,7 @@ if ~isfield(a_satch,'filled')
  if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
  if ~isfield(a_satch,'lpg_skip'), a_satch.lpg_skip=[]; end% lpg to skip
  if ~isfield(a_satch,'cut'), a_satch.cut=0; end		% cut or trash
+ if ~isfield(a_satch,'store'), a_satch.store=1; end	% store detections
  if ~isfield(a_satch,'do'), a_satch.do=1; end		% do satch
  a_satch.opts=optimset(optimset('fminsearch'),'display','off');
  a_satch.filled=1;
@@ -67,7 +69,7 @@ for i=lp
  pb=pb(ind)+L/2; x0=x0(ind);
  if ind>0
    sat_ran=[sat_ran;[lpg_h(i)+(pb-1)*lpg_dt(i)...
-           ones(size(pb))*[2*lpg_w(i)-lpg_dt(i) L*lpg_dt(i) lpg_code(i)]]];
+           ones(size(pb))*[2*lpg_w(i)-lpg_dt(i) L*lpg_dt(i) lpg_code(i) i] x0]];
  end
  if a_satch.plot
   eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb;'])
@@ -172,6 +174,10 @@ if ~OK %| Nsatb>0
  else
   warning('GUISDAP:satch',[msg ' dump'])
  end
+ if a_satch.store
+whos r_sd sat_ran	
+  r_sd=[r_sd;ones(size(sat_ran,1),1)*secs sat_ran(:,[5 1 6])], % store time,lpg,range,power
+ end
 end
 return
 
@@ -187,8 +193,8 @@ mS_c=mean([S_c(1:(end-1)) S_c(2:end)],2);
 dat_s=diff(dat)./mS_c;
 
 %calculate pulse shape and diff in sampling intervals
-%if el low an echoe would be wider (5km wide beam)
-Le=floor(5/C/.15/p_dtau);
+%if el low an echoe would be wider (5km wide beam) and an average aspect angle
+Le=floor(5/C/.15/p_dtau/(pi/2));
 if Le>1
  wr=conv(wr,ones(Le,1)/Le);
 end
