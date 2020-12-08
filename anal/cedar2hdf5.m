@@ -504,7 +504,7 @@ for qq = 1:length(evenkindats)
             end
         end
     end
-    
+   
     % special treatment for cp6 experiments (kindat = '66xx')
     kindatstr = num2str(kindats(1));
     if strcmp(kindatstr(1:2),'66')
@@ -529,13 +529,14 @@ for qq = 1:length(evenkindats)
             end
         end
     end
-    
+  
     % error --> variance
-    errorpars = {'dne','dte','dti','dvo','dpm','dpo+','dph+','dhe+','dco'};
-    varpars   = {'var_Ne','var_Te','var_Ti','var_Vi','var_pm','var_po+','var_ph+','var_he+','var_Collf'};
+    errorpars = {'dne','dte','dti','dvo','dpm','dpo+','dph+','dhe+','dco','dne_lag0+','dne_tp','dhw_lor','dhw_expfit','dampl','dblev'};
+    varpars   = {'var_Ne','var_Te','var_Ti','var_Vi','var_pm','var_po+','var_ph+','var_he+','var_Collf','var_Ne_lag0+','var_Ne_tp','var_hw_lor','var_hw_expfit','var_ampl','var_blev'};
     for ii = 1:length(errorpars)
         if ~isempty(matfile.metadata.par2d)   %isfield(matfile.metadata,'par2d') 
-            a = find(~cellfun(@isempty,strfind(matfile.metadata.par2d(5,:),errorpars{ii})));
+            %a = find(~cellfun(@isempty,strfind(matfile.metadata.par2d(5,:),errorpars{ii})));
+            a = find(strcmp(matfile.metadata.par2d(5,:),errorpars{ii})==1);
             if ~isempty(a)
                 matfile.data.par2d(:,a) = matfile.data.par2d(:,a).^2;
                 aa = find(strcmp(char(varpars(ii)),gupparameters_list)==1);
@@ -546,7 +547,8 @@ for qq = 1:length(evenkindats)
             end
         end
         if ~isempty(matfile.metadata.par1d)   %isfield(matfile.metadata,'par1d')
-            a = find(~cellfun(@isempty,strfind(matfile.metadata.par1d(5,:),errorpars{ii})));
+            %a = find(~cellfun(@isempty,strfind(matfile.metadata.par1d(5,:),errorpars{ii})));
+            a = find(strcmp(matfile.metadata.par1d(5,:),errorpars{ii})==1);
             if ~isempty(a)
                 matfile.data.par1d(:,a) = matfile.data.par1d(:,a).^2; 
                 aa = find(strcmp(char(varpars(ii)),gupparameters_list)==1);
