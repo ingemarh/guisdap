@@ -26,7 +26,7 @@ bacs=diff_val(bacs);  % find all different values
 
 for bac=bacs
   addr=lpg_addr(bac)+ADDR_SHIFT; % To change from radar to Matlab addressing
-  background=meddan(data(addr));
+  background=median_c(data(addr));
   variance1=mean(var1(addr))/lpg_nt(bac);
   variance2=mean(var2(addr))/lpg_nt(bac);
   for lpg=find(lpg_bac==bac)
@@ -38,6 +38,3 @@ for bac=bacs
     d_var2(addr)=var2(addr)+variance2;
   end
 end
-
-function m=meddan(x)
-m=median(real(x))+i*median(imag(x));

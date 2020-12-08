@@ -44,7 +44,7 @@ struct pth {
 	DSPCMPLXSHORT *in;
 	DSPCMPLX *out;
 	ulong nr_pp;
-	ulong do_pp;
+	ulong nr_lag;
 	ulong nr_clutter;
 	int fft_clutter;
 	ulong debug;
@@ -54,14 +54,14 @@ struct pth {
 };
 
 void *plwin_clutter(struct pth *);
-void *plwin_pp(struct pth *);
+void *plwin_lp(struct pth *);
 
 int clutter_6(ulong nbits,int *par,ulong fbits,float *fpar,DSPCMPLXSHORT *in,
 	DSPCMPLX *out,double *upar)
 {
 
 /*printf("%ld %ld %ld %ld %ld %ld %ld\n",nbits,par,fbits,fpar,in,out,upar);*/
-	ulong	i,j,k,k2,clutthreads,float_notch=0,ncth;
+	ulong	i,j,k,k2,clutthreads,float_notch=0,ncth,nlth,nout;
 	int nth;
 	struct pth	pth;
 	hrtime_t	start[]={0,0,0,0,0};
@@ -75,7 +75,7 @@ int clutter_6(ulong nbits,int *par,ulong fbits,float *fpar,DSPCMPLXSHORT *in,
 	else pth.notch=(int)upar[0];
 	clutthreads=par[5];
 	pth.debug=par[6];
-	pth.do_pp=par[7];
+	pth.nr_lag=par[7];
 
 	if(pth.notch<0)	float_notch=1;
 	pth.fft_clutter=pth.nr_rep/pth.nr_win;
@@ -84,17 +84,22 @@ int clutter_6(ulong nbits,int *par,ulong fbits,float *fpar,DSPCMPLXSHORT *in,
 	void	*retval;
 	pthread_t	*thread=NULL;
 	struct pth	*ptth=NULL;
-	ncth=sysconf(_SC_NPROCESSORS_ONLN)-pth.do_pp;
-	if(ncth>clutthreads) ncth=clutthreads;
+	nth=sysconf(_SC_NPROCESSORS_ONLN);
+	ncth=clutthreads;
 	if(ncth>pth.nr_clutter) ncth=pth.nr_clutter;
-	nth=ncth+pth.do_pp;
+	nlth=pth.nr_lag;
+	if(nlth>nth) nlth=nth;
+	nth=(nlth>ncth) ? nlth : ncth; /*max threads*/
 	if(nth>1) {
 		pthread_attr_init(&sched_glob);
 		pthread_attr_setscope(&sched_glob,PTHREAD_SCOPE_SYSTEM);
 		thread=(pthread_t *)malloc(nth*sizeof(pthread_t));
-		ptth=(struct pth *)malloc(ncth*sizeof(struct pth));
+		ptth=(struct pth *)malloc(nth*sizeof(struct pth));
 	}
 
+	nout=pth.nr_pp*pth.nr_lag-pth.nr_lag*(pth.nr_lag-1)/2;
+	if(nout==0) nout=1;
+	bzero(out,nout*sizeof(DSPCMPLX));
 	pth.in=in;
 	pth.out=out;
 	if(ncth>0) {
@@ -112,13 +117,6 @@ int clutter_6(ulong nbits,int *par,ulong fbits,float *fpar,DSPCMPLXSHORT *in,
 			pthread_create(thread+i,&sched_glob,(void *(*)(void *)) plwin_clutter,(void *)(ptth+i));
 		} else plwin_clutter(&pth);
 	}
-	if(pth.do_pp && pth.nr_pp>pth.nr_clutter) {
-		pth.k1=k; pth.k2=pth.nr_pp;
-		if(nth>1)
-			pthread_create(thread+nth,&sched_glob,(void *(*)(void *)) plwin_pp,(void *)&pth);
-		else plwin_pp(&pth);
-	}
-
 	if(ncth>1)
 		for(i=0;i<ncth;i++) {
 			pthread_join(thread[i],&retval);
@@ -126,8 +124,20 @@ int clutter_6(ulong nbits,int *par,ulong fbits,float *fpar,DSPCMPLXSHORT *in,
 			else pth.notch+=ptth[i].notch;
 			if(pth.debug>0) printf("%d",ptth[i].notch);
 		}
-	if(pth.do_pp && pth.nr_pp>pth.nr_clutter && nth>1)
-		pthread_join(thread[nth],&retval);
+	if(nlth>0) {
+		for(k=0,i=0;i<nlth;i++,k=k2) {
+			k2=pth.nr_lag*(i+1)/nlth;
+			pth.th=i; pth.k1=k; pth.k2=k2;
+			if(nlth>1) {
+				memcpy(ptth+i,&pth,sizeof(struct pth));
+				pthread_create(thread+i,&sched_glob,(void *(*)(void *)) plwin_lp,(void *)(ptth+i));
+			} else plwin_lp(&pth);
+		}
+		if(nlth>1)
+			for(i=0;i<nlth;i++)
+				pthread_join(thread[i],&retval);
+	}
+
 	if(ncth>0) {
 		out[0].im=(float)pth.notch/(float)ncth;
 		fftwf_destroy_plan(pth.pc);
@@ -139,7 +149,7 @@ int clutter_6(ulong nbits,int *par,ulong fbits,float *fpar,DSPCMPLXSHORT *in,
 	}
 	if(pth.debug>0) {
 		start[4]=gethrtime();
-		printf("clutter: %d threads: %.2g s",nth,(start[4]-start[0])/CPU_SPEED);
+		printf("clutter: [%ld %ld] threads: %.2g s",ncth,nlth,(start[4]-start[0])/CPU_SPEED);
 		if(ncth>0 && float_notch)
 			printf(" Notch: %.2g",out[0].im);
 		if(pth.debug>1)
@@ -206,26 +216,27 @@ void *plwin_clutter(struct pth *pth)
 					in->re=rint(clx[k/pth->nr_win].re*clf);
 					in->im=rint(clx[k/pth->nr_win].im*clf);
 	}		}	}
-	if(pth->do_pp) plwin_pp(pth);
 	
 	return NULL;
 }
 
-void *plwin_pp(struct pth *pth)
+void *plwin_lp(struct pth *pth)
 {
-	ulong	k,j;
+	ulong	i,k,j;
 	DSPCMPLXSHORT	*in;
-	DSPCMPLX	*out;
+	DSPCMPLX	*out,s0,s1;
 
-	out=pth->out+pth->k1;
-	bzero(out,(pth->k2-pth->k1)*sizeof(DSPCMPLX));
-	for(j=pth->k1;j<pth->k2;j++) {
-		for(k=0;k<pth->nr_rep;k++) {
-			in=pth->in+k*pth->nr_pp+j;
-			out->re+=(in->re*in->re+in->im*in->im);
-		}
-		out++;
-	}
+	for(i=0;i<pth->nr_rep;i++) {
+		in=pth->in+i*pth->nr_pp;
+		out=pth->out+pth->nr_pp*pth->k1-pth->k1*(pth->k1-1)/2;
+		for(j=pth->k1;j<pth->k2;j++)
+			for(k=0;k<pth->nr_pp-j;k++) {
+				s0.re=in[k].re; s0.im=in[k].im;
+				s1.re=in[k+j].re; s1.im=in[k+j].im;
+				out->re+=(s0.re*s1.re+s0.im*s1.im);
+				out->im+=(s0.im*s1.re-s0.re*s1.im);
+				out++;
+	}		}
 	return NULL;
 }
 

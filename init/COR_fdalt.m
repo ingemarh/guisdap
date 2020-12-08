@@ -86,7 +86,8 @@ for ind=ii
   ra=ra0;                   % Set the counter
   ra0=ra0+NlowG+NG+NupG;
 
-  for i=[-fliplr(1:NlowG)*frac 0 (1:NupG)*frac]
+  i0=0; if NG==0, i0=[]; end
+  for i=[-fliplr(1:NlowG)*frac i0 (1:NupG)*frac]
     %Find the filtering coefficients
     nt=1;
     if i<=0

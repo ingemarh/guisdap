@@ -45,8 +45,8 @@ if ~isempty(calTemp)
  sysTemp=[];
  for cal=calibs
   bac=lpg_bac(cal);
-  bac_power=median(d_data(lpg_addr(bac)+ADDR_SHIFT));
-  cal_power=median(d_data(lpg_addr(cal)+ADDR_SHIFT));
+  bac_power=median_c(d_data(lpg_addr(bac)+ADDR_SHIFT));
+  cal_power=median_c(d_data(lpg_addr(cal)+ADDR_SHIFT));
   if length(calTemp)>1
     scale(cal)=(cal_power-bac_power)/calTemp(lpg_code(cal));
   else
@@ -62,7 +62,7 @@ elseif ~isempty(sysTemp)
  for cal=calibs
   lpg_cal(find(lpg_code==lpg_code(cal)))=cal;
   bac=lpg_bac(cal);
-  bac_power=median(d_data(lpg_addr(bac)+ADDR_SHIFT));
+  bac_power=median_c(d_data(lpg_addr(bac)+ADDR_SHIFT));
   scale(cal)=bac_power/sysTemp;
  end
 else

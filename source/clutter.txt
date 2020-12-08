@@ -12,6 +12,7 @@ Line	Name		Notes
 5	clutthreads	Number of threads in the calcuclations
 6	debug		If >0: Display debugging messages
 			If >1: Display more debugging messages
-7	do_pp		If non-zero: Calculate power profile
+7	nr_lag		No lags to calculate
+			If 0: One point in result
 
 Number of lines: 8

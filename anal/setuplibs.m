@@ -1,12 +1,13 @@
 function r=setuplibs(unload)
 global local path_GUP path_tmp
 res=0;
-libs={'libguisdap','libiri','libmsis','plwin','alt_decoder','clutter','onera_desp_lib'};
+libs={'libguisdap','libiri','libmsis','plwin','alt_decoder','clutter','cluttlp','onera_desp_lib'};
+ll=length(libs);
 thdir=fullfile(path_tmp,'gupthunk');
 mmodel=fullfile(path_GUP,'models_m');
 if nargin==0
- atmos=[0 1 1 0 0 0 1]; res_atmos=0;
- heads={'libgup','iri','msis','plwin','plwin','plwin','onera_desp_lib'};
+ atmos=zeros(1,ll); atmos([2 3 end])=1; res_atmos=0;
+ heads={'libgup','iri','msis','plwin','plwin','plwin','plwin','onera_desp_lib'};
  d=fullfile(path_GUP,'lib');
  if ~exist(thdir,'dir'), mkdir(thdir), end
  owd=pwd;
@@ -15,7 +16,7 @@ if nargin==0
  else libext = '.so'; end
  try, cd(thdir) % ugly, but matlab bugs
  if exist(d,'dir')
-  for i=1:length(libs)
+  for i=1:ll
    cl=char(libs(i));
    if libisloaded(cl)
     res=res+1;
@@ -45,7 +46,7 @@ if nargin==0
   rmpath(mmodel)
  end
 else
- for i=1:length(libs)
+ for i=1:ll
   cl=char(libs(i));
   if libisloaded(cl)
    unloadlibrary(cl);

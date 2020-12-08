@@ -175,8 +175,7 @@ if ~OK %| Nsatb>0
   warning('GUISDAP:satch',[msg ' dump'])
  end
  if a_satch.store
-whos r_sd sat_ran	
-  r_sd=[r_sd;ones(size(sat_ran,1),1)*secs sat_ran(:,[5 1 6])], % store time,lpg,range,power
+  r_sd=[r_sd;ones(size(sat_ran,1),1)*secs sat_ran(:,[5 1 6])]; % store time,lpg,range,power
  end
 end
 return
