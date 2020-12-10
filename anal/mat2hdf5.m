@@ -437,6 +437,7 @@ for rr = 1:length(pci)
                         h_apr    = [h_apr; R_apr];
                         h_aprerr = [h_aprerr; R_aprerr];
                     end
+                    clear('R_dp')
                 else
                     r_dp_first  = 1 - sum(r_param(:,6:4+length(r_m0)),2);              % calculate first dp (corresponding to r_m0(1))
                     r_ddp_first = sum(r_error(:,6:4+length(r_m0)),2);                  % calculate first dp error (corresponding to r_m0(1))
