@@ -20,12 +20,11 @@ end
 hdf5ver = hdfver;
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
-
-[~,matfolder] = fileparts(matpath);
-
-if ~strcmp(matpath(end),'/')
-    matpath = [matpath '/'];   % in order to make 'getfilelist.m' work
+if strcmp(matpath(end),'/')
+    matpath = matpath(1:end-1);   % remove last / in order to extract matfolder correctly
 end
+[~,matfolder] = fileparts(matpath);
+matpath = [matpath '/'];          % in order to make 'getfilelist.m' work
 
 % Chech for vector velocity data
 filelist_all = dir(matpath);
@@ -52,11 +51,14 @@ if length(filelist_all) > length(filelist)
         end
     end
 end
-vecvel = qq - 1;   % number vecvel-experiments
+vecvel = qq;   % number vecvel-experiments
 
 rec  = length(filelist);
-TT = []; intper_vec = []; pars_recs = [];
+TT = []; intper_vec = []; pars_recs = []; h_sd = []; ntstamps_sd = [];
 for tt = 1:rec
+    if exist('r_sd','var')
+        clear('r_sd')
+    end
     try
         load(filelist(tt).fname)
     catch
@@ -65,8 +67,13 @@ for tt = 1:rec
     TT = [TT tt];
     intper_vec_rec = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6)));
     intper_vec = [intper_vec; intper_vec_rec];
-    %s(tt) = length(r_param(1,:));
     pars_recs = [pars_recs length(r_param(1,:))];
+    if exist('r_sd','var')
+        ntstamps_sd = [ntstamps_sd size(r_sd,1)];
+        h_sd = [h_sd; r_sd];
+    else
+        ntstamps_sd = [ntstamps_sd 0];
+    end
 end
 if length(TT)<rec
     filelist = filelist(TT);       % matfile(s) that was(were) corrupt or could not be read is(are) removed 
@@ -81,17 +88,30 @@ for d = 1:length(pci)
     else rec(d) = pci(d)-pci(d-1); end        
 end
 
-
 for rr = 1:length(pci)
     qq = qq + 1; 
     
     if rr == 1
-        startexpr = 1; 
+        startexpr = 1;
+        start_sd  = 1;
     else
         startexpr = pci(rr-1) + 1;
+        if ~isempty(h_sd)
+            start_sd  = sum(ntstamps_sd(1:startexpr)) + 1;
+        end
     end
-    Filelist = filelist(startexpr:pci(rr));
-    Intper_vec = intper_vec(startexpr:pci(rr));
+    stopexpr = pci(rr);
+    Filelist = filelist(startexpr:stopexpr);
+    Intper_vec = intper_vec(startexpr:stopexpr);
+    
+    % space debris data
+    if ~isempty(h_sd)
+        stop_sd = sum(ntstamps_sd(1:stopexpr));    
+        h_Sd = h_sd(start_sd:stop_sd,:);      
+    end
+    
+    
+    
     
     % store the gfd content and check Tsys
     load(Filelist(1).fname)
@@ -204,8 +224,6 @@ for rr = 1:length(pci)
             name_strategy = intper_mean_str;
         end
     end
-
-    
 
     gg_sp = [];
     for tt = 1:rec(rr)
@@ -355,7 +373,7 @@ for rr = 1:length(pci)
     [h_Magic_const, h_az, h_el, h_Pt, h_SCangle, h_XMITloc, h_RECloc, h_nrec, h_ppnrec, ...
     h_Tsys, h_code, h_om0, h_m0, h_phasepush, h_Offsetppd, h_gain, h_fradar, ...
     h_h, h_range, h_param, h_error, h_apriori, h_apriorierror, h_status, h_dp_first, ...
-    h_res, h_w, h_pprange, h_pp, h_pperr, h_ppw] = deal([]);
+    h_dp, h_ddp, h_apr, h_aprerr, h_res, h_w, h_pprange, h_pp, h_pperr, h_ppw] = deal([]);
 
     unicheck_om0    = zeros(rec(rr),1);
     unicheck_gain   = zeros(rec(rr),1);
@@ -391,14 +409,43 @@ for rr = 1:length(pci)
             end
             h_code = [h_code; r_code];
         end
-        dp_first_index = [];
         if exist('r_m0','var')
             h_m0 = [h_m0; r_m0];
-            if exist('r_param','var'),        r_dp_first  = 1 - sum(r_param(:,6:4+length(r_m0)),2);          dp_first_index = 1;                  end  % calculate first dp (corresponding to r_m0(1))
-            if exist('r_error','var'),        r_ddp_first = sum(r_error(:,6:4+length(r_m0)),2);              dp_first_index = [dp_first_index 2]; end  % calculate first dp error (corresponding to r_m0(1))
-            if exist('r_apriori','var'),      r_aprdp_first = 1 - sum(r_apriori(:,6:4+length(r_m0)),2);      dp_first_index = [dp_first_index 3]; end  % calculate first dp apriori (corresponding to r_m0(1))
-            if exist('r_apriorierror','var'), r_aprdp_err_first = sum(r_apriorierror(:,6:4+length(r_m0)),2); dp_first_index = [dp_first_index 4]; end  % calculate first dp error (corresponding to r_m0(1))
-            h_dp_first = [h_dp_first; col(r_dp_first) col(r_ddp_first) col(r_aprdp_first) col(r_aprdp_err_first)];
+            if exist('r_param','var')        
+                if length(r_param(1,:)) == 5 && ~isempty(r_m0)     % if ion composition is missing in r_param
+                    dpO = find(r_m0 == 16);
+                    if isempty(dpO) || ~exist('r_dp')
+                        %display('No ion composition data available.')
+                    else
+                        if length(r_m0) < 3
+                            for iidp = 1:length(r_m0)
+                                if iidp == dpO
+                                    R_dp(:,iidp)  = col(r_dp);
+                                else
+                                    R_dp(:,iidp)  = 1-col(r_dp);
+                                end
+                            end
+                        else
+                            R_dp = col(r_dp);
+                        end
+                        R_ddp    = zeros(size(R_dp));
+                        R_apr    = nan(size(R_dp));
+                        R_aprerr = R_apr;
+                        
+                        h_dp     = [h_dp; R_dp];
+                        h_ddp    = [h_ddp; R_ddp];
+                        h_apr    = [h_apr; R_apr];
+                        h_aprerr = [h_aprerr; R_aprerr];
+                    end
+                    clear('R_dp')
+                else
+                    r_dp_first  = 1 - sum(r_param(:,6:4+length(r_m0)),2);              % calculate first dp (corresponding to r_m0(1))
+                    r_ddp_first = sum(r_error(:,6:4+length(r_m0)),2);                  % calculate first dp error (corresponding to r_m0(1))
+                    r_aprdp_first = 1 - sum(r_apriori(:,6:4+length(r_m0)),2);          % calculate first dp apriori (corresponding to r_m0(1))
+                    r_aprdp_err_first = sum(r_apriorierror(:,6:4+length(r_m0)),2);     % calculate first dp error (corresponding to r_m0(1))
+                    h_dp_first = [h_dp_first; col(r_dp_first) col(r_ddp_first) col(r_aprdp_first) col(r_aprdp_err_first)];
+                end
+            end
         end
         if exist('r_phasepush','var'), h_phasepush = [h_phasepush; r_phasepush]; end
         if exist('r_Offsetppd','var'), h_Offsetppd = [h_Offsetppd; r_Offsetppd/1e6]; end     % us --> s
@@ -442,29 +489,19 @@ for rr = 1:length(pci)
             if size(r_w,2) == length(r_h), r_w = r_w'; end    
             h_w = [h_w; r_w*1000]; end
         if exist('r_param','var')
-            rpars = size(r_param,2); hpars = size(h_param,2);
-            h_param = [h_param; r_param]; 
-            h_error = [h_error; r_error]; 
-        end
+            h_param = [h_param; r_param]; end
+        if exist('r_error','var')    
+            h_error = [h_error; r_error]; end
         if exist('r_apriori','var')
-            rpars = size(r_apriori,2); hpars = size(h_apriori,2);
-            if rpars < hpars
-                r_apriori(:,rpars+1:hpars) = NaN;
-            elseif rpars > hpars && ~isempty(h_apriori)
-                h_apriori(:,hpars+1:rpars) = NaN;
+            if length(h_param(1,:)) == 5
+                r_apriori = r_apriori(:,1:5);
             end
-            h_apriori = [h_apriori; r_apriori]; 
-        end 
+            h_apriori = [h_apriori; r_apriori]; end 
         if exist('r_apriorierror','var')
-            rpars = size(r_apriorierror,2); hpars = size(h_apriorierror,2);
-            if rpars < hpars
-                r_apriorierror(:,rpars+1:hpars) = NaN;
-            elseif rpars > hpars && ~isempty(h_apriorierror)
-                h_apriorierror(:,hpars+1:rpars) = NaN;
+            if length(h_param(1,:)) == 5
+                r_apriorierror = r_apriorierror(:,1:5);
             end
-            h_apriorierror = [h_apriorierror; r_apriorierror]; 
-        end 
-
+            h_apriorierror = [h_apriorierror; r_apriorierror]; end 
         if exist('r_pprange','var')
             h_ppnrec  = [h_ppnrec; length(r_pprange)];
             h_pprange = [h_pprange; col(r_pprange)*1000]; end
@@ -472,7 +509,10 @@ for rr = 1:length(pci)
         if exist('r_pp','var'), h_pp = [h_pp; r_pp]; end
         if exist('r_ppw','var'), h_ppw = [h_ppw; r_ppw*1000]; end
     end
-
+    if length(r_param(1,:)) == 5 && isempty(h_dp)
+        display('No ion composition data available.')
+    end
+        
     if ~any(unicheck_om0==0),    h_om0    = h_om0(:,1); end
     if ~any(unicheck_gain==0),   h_gain   = h_gain(:,1); end
     if ~any(unicheck_fradar==0), h_fradar = h_fradar(:,1); end
@@ -481,11 +521,24 @@ for rr = 1:length(pci)
     if length(h_pperr) ~= length(h_pprange), h_pperr = []; end
     if length(h_ppw)   ~= length(h_pprange), h_ppw   = []; end
 
-    if exist('r_m0','var') % put 
-        h_param        = [h_param(:,1:5) h_dp_first(:,1) h_param(:,6:end)];
-        h_error        = [h_error(:,1:5) h_dp_first(:,2) h_error(:,6:end)];
-        h_apriori      = [h_apriori(:,1:5) h_dp_first(:,3) h_apriori(:,6:end)];
-        h_apriorierror = [h_apriorierror(:,1:5) h_dp_first(:,4) h_apriorierror(:,6:end)];
+    if exist('r_m0','var')
+        if length(h_param(1,:)) > 5
+            h_param        = [h_param(:,1:5) h_dp_first(:,1) h_param(:,6:end)];
+            h_error        = [h_error(:,1:5) h_dp_first(:,2) h_error(:,6:end)];
+            h_apriori      = [h_apriori(:,1:5) h_dp_first(:,3) h_apriori(:,6:end)];
+            h_apriorierror = [h_apriorierror(:,1:5) h_dp_first(:,4) h_apriorierror(:,6:end)];
+        elseif length(h_param(1,:)) == 5    
+            h_param        = [h_param h_dp];
+            h_error        = [h_error(:,1:5) h_ddp h_error(:,6:end)];
+            h_apriori      = [h_apriori h_apr];
+            h_apriorierror = [h_apriorierror h_aprerr];
+            if length(h_m0(1,:)) > 2
+                hh_m0 = h_m0(1,:);
+                hh_m0(dpO) = [];
+                h_m0 = h_m0(:,dpO);    % keeping only O+
+                warning(['No ion composition data available for mi = ' regexprep(num2str(hh_m0),'\s+',', ')])
+            end
+        end
     end
 
     h_error = h_error.^2;     % error --> variance
@@ -540,7 +593,7 @@ for rr = 1:length(pci)
                     matfile.metadata.par1d(:,nn1) = info';
                 end
             else
-                nn1 = nn1+1; 
+                nn1 = nn1+1;
                 matfile.metadata.par1d(:,nn1) = info';
             end
         end
@@ -566,10 +619,11 @@ for rr = 1:length(pci)
                 a = find(strcmp('h_diagvariance',parameters_list)==1);
             end
             if strcmp(h_name2,'h_apriori') || strcmp(h_name2,'h_apriorierror')
-                nump = length(h_apriori(1,:))-1;                % -1 because of the extra content parameter (corresponding to r_m0(1)) included in 
+                nump = length(h_apriori(1,:))-1;                % -1 because of the extra content parameter (corresponding to r_m0(1)) included in r_param etc
             else
-                nump = length(h_param(1,:))-1;                  % -1 because of the extra content parameter (corresponding to r_m0(1)) included in 
+                nump = length(h_param(1,:))-1;                  % -1 because of the extra content parameter (corresponding to r_m0(1)) included in r_param etc
             end
+            if length(r_param(1,:)) == 5, nump = nump + size(h_dp,2); end          % in this case no extra content parameter exists
             for jj = 1:5; nn2 = nn2 + 1; 
                 [~,~,info]  = xlsread(GuisdapParFile,1,['A' num2str(a+jj) ':E' num2str(a+jj)]);
                 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj)]))};
@@ -607,17 +661,20 @@ for rr = 1:length(pci)
                     end
                     matfile.metadata.par2d(:,nn2) = info';
                 end
-                if isempty(kk); kk=0; end
-                for ll = (jj + 2):nump-(kk-2); nn2 = nn2 + 1;
-                    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+ll) ':E' num2str(a+ll)]); 
-                    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+ll)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+ll)]))};
-                    matfile.metadata.par2d(:,nn2) = info';
+                if length(r_param(1,:)) > 5
+                    if isempty(kk); kk=0; end
+                    for ll = (jj + 2):nump-(kk-2); nn2 = nn2 + 1;
+                        [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+ll) ':E' num2str(a+ll)]); 
+                        info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+ll)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+ll)]))};
+                        matfile.metadata.par2d(:,nn2) = info';
+                    end
                 end
             end
             if strcmp(h_name2,'h_error')
                 a = find(strcmp('crossvar',parameters_list)==1);
                 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
                 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+                if length(r_param(1,:)) == 5, nump = 5; end  % For this case ignore the extra ion composition parameters that were added (in h_param)
                 for jj = 1:nump-1
                     for kk = 1:nump-jj; nn2 = nn2 + 1;
                         info(1) = {['crossvar_' num2str(kk) num2str(kk+jj)]};
@@ -771,6 +828,51 @@ for rr = 1:length(pci)
         matfile.metadata.par1d(:,ll1+2) = info';
     end
 
+    % space debris
+    if exist('h_Sd','var')
+        
+        h_Sd(:,3) =  h_Sd(:,3)*1000;      % range: km --> m
+        matfile.data.par0d_sd = [];
+        matfile.data.par1d_sd = [];
+        
+        parameters_sd = {'time_sd' 'lpg_sd' 'range_sd' 'power_sd'};
+        
+        nn0 = 0; nn1 = 0;
+        for ii = 1:length(parameters_sd)
+            a = find(strcmp(parameters_sd{ii},parameters_list)==1);
+            [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+            info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+            
+            if strcmp('time_sd',parameters_sd{ii})
+                [matfile.data.utime_sd,leaps_sd] = timeconv(h_Sd(:,1),'tai2unx');
+                matfile.metadata.utime_sd = info';
+                a = find(strcmp('leaps',parameters_list)==1);
+                [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+                info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
+                if length(unique(leaps_sd)) == 1
+                    nn0 = nn0 + 1;
+                    matfile.data.par0d_sd(nn0) = leaps_sd(1);  
+                    matfile.metadata.par0d_sd(:,nn0) = info';
+                else
+                    nn1 = nn1 + 1;
+                    matfile.data.par1d_sd(nn1) = leaps_sd;  
+                    matfile.metadata.par1d_sd(:,nn1) = info';
+                end
+            else
+                if length(unique(h_Sd(:,ii))) == 1
+                    nn0 = nn0 + 1;
+                    matfile.data.par0d_sd(:,nn0) = h_Sd(1,ii);
+                    matfile.metadata.par0d_sd(:,nn0) = info';
+                else
+                    nn1 = nn1 + 1;
+                    matfile.data.par1d_sd(:,nn1) = h_Sd(:,ii);
+                    matfile.metadata.par1d_sd(:,nn1) = info';
+                end
+            end
+        end
+    end
+    
+    
     %%% Software
     matfile.metadata.software.software_link = {software};
     matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
@@ -799,7 +901,16 @@ for rr = 1:length(pci)
     if isfield(matfile.metadata,'par2d_pp')
         aa = find(cellfun('isempty',matfile.metadata.par2d_pp(6,:))); matfile.metadata.par2d_pp(6,aa)= {'0'};
         aa = find(cellfun('isempty',matfile.metadata.par2d_pp(7,:))); matfile.metadata.par2d_pp(7,aa)= {'0'}; end
-
+    if isfield(matfile.metadata,'utime_sd')
+        aa = find(cellfun('isempty',matfile.metadata.utime_sd(6,:))); matfile.metadata.utime_sd(6,aa)= {'0'};
+        aa = find(cellfun('isempty',matfile.metadata.utime_sd(7,:))); matfile.metadata.utime_sd(7,aa)= {'0'}; end
+    if isfield(matfile.metadata,'par0d_sd')
+        aa = find(cellfun('isempty',matfile.metadata.par0d_sd(6,:))); matfile.metadata.par0d_sd(6,aa)= {'0'};
+        aa = find(cellfun('isempty',matfile.metadata.par0d_sd(7,:))); matfile.metadata.par0d_sd(7,aa)= {'0'}; end
+    if isfield(matfile.metadata,'par1d_sd')
+        aa = find(cellfun('isempty',matfile.metadata.par1d_sd(6,:))); matfile.metadata.par1d_sd(6,aa)= {'0'};
+        aa = find(cellfun('isempty',matfile.metadata.par1d_sd(7,:))); matfile.metadata.par1d_sd(7,aa)= {'0'}; end
+    
     symbols = ['a':'z' 'A':'Z' '0':'9'];
     strLength = 10;
     nums = randi(numel(symbols),[1 strLength]);
@@ -813,7 +924,7 @@ for rr = 1:length(pci)
     matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3a Ionosphere'};
     matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 
-    % Find the smallest box (4 corners and mid-point) to enclose the data, 
+    % Find the smallest box (4 corners and midpoint) to enclose the data, 
     % or 1 or unique 2 points that describes the data.
     % If area of convhull (or distance between 2 points) < 10-4 deg^2, 
     % define all points as one (average)
@@ -897,6 +1008,20 @@ for rr = 1:length(pci)
         for i = 1:length(matfile.metadata.par2d(3,:))     
             if isnumeric(matfile.metadata.par2d{3,i})
                 matfile.metadata.par2d(3,i) = {num2str(matfile.metadata.par2d{3,i})};
+            end
+        end
+    end
+    if isfield(matfile.metadata,'par0d_sd')
+        for i = 1:length(matfile.metadata.par0d_sd(3,:))     
+            if isnumeric(matfile.metadata.par0d_sd{3,i})
+                matfile.metadata.par0d_sd(3,i) = {num2str(matfile.metadata.par0d_sd{3,i})};
+            end
+        end
+    end
+    if isfield(matfile.metadata,'par1d_sd')
+        for i = 1:length(matfile.metadata.par1d_sd(3,:))     
+            if isnumeric(matfile.metadata.par1d_sd{3,i})
+                matfile.metadata.par1d_sd(3,i) = {num2str(matfile.metadata.par1d_sd{3,i})};
             end
         end
     end
