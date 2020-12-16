@@ -1,6 +1,11 @@
 function [phd,phdd]=phasecorr(draw,penv,dt,nbit,ind,lo)
 %function phd=phasecorr(draw,penv,dt,nbit,ind,lo)
 %Calculate the Dopplershift caused by phasepushing in klystron
+% draw tx samples
+% penv transmitter envelopes
+% dt sampling interval (vs p_dtau)
+% ind no samples to use
+% lo constrain with old value
 global ch_fradar p_dtau
 persistent phd_old
 %penv=vcg_penv(:,1:64); draw=d_raw; dt=10; nbit=64-1;
@@ -39,7 +44,7 @@ mphd=pi2/rdt; aatd=atd(:,ind)./abs(atd(:,ind));
 fit_tx=inline('norm(exp(complex(0,P1*x(1)+x(2)))-P2)',2);
 opts=optimset('fminsearch'); optimset(opts,'display','off');
 [x,f,flag]=phasesearch(fit_tx,opts,flim,t,aatd,p,[phd_old*pi2 mean(ca)]);
-%gupfigure(9), plot(t,[ca angle(exp(complex(0,t*x(1)+x(2))))]), drawnow
+%gupfigure(9), plot(t,[ca angle(exp(complex(0,t*x(1)+x(2))))]), pause(2)
 if f<flim
  phd=rem(x(1),mphd)/pi2;
  phd_old=phd;
