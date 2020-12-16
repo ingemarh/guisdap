@@ -1,11 +1,12 @@
 
 function [Vg,Vgv] = Vm2Vg(Vm,B,dVm)
 
-% Vg = Vm2Vg(Vm,B)
+% [Vg,Vgv] = Vm2Vg(Vm,B)
 %
 % Transforming velocity in local magnetic Vm (magn. east perp, magn. north perp, antiparallel) 
 % to local geographic coordinates Vg (east,north,up) given the magnetic
-% field in geographical coordinates B = (Bnorth,Beast,Bdown).
+% field in geographical coordinates B = (Bnorth,Beast,Bdown). Vgv is the
+% covariance matrix components
 
 if nargin<2, error('Error: Magnetic field vector is needed.'), end
 

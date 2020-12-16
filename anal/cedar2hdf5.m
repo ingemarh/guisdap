@@ -212,18 +212,15 @@ for qq = 1:length(evenkindats)
     storepath = fullfile(datapath,datafolder);
     
     while exist(storepath)
-        letters = 'a':'z';
-        at = strfind(datafolder,'@'); 
-        if length(datafolder(at+1:end)) == 3
-            datafolder = [datafolder letters(2)];
+        endnum = str2double(datafolder(end));
+        if isnan(endnum)
+            datafolder = [datafolder(1:end) num2str(1)];
         else
-            letno = strfind(letters,storepath(end));
-            datafolder = [datafolder(1:end-1) letters(letno+1)];
+            datafolder = [datafolder(1:end-1) num2str(endnum+1)];            
         end
         storepath = fullfile(datapath,datafolder);
     end
-    mkdir(storepath);
-
+    
     Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
     MatFile = sprintf('%s%s',datafolder,'.mat');
     hdffilename = fullfile(storepath,Hdf5File);
@@ -815,7 +812,8 @@ for qq = 1:length(evenkindats)
             end
         end
     end
-   
+    
+    mkdir(storepath);
     save(matfilename,'matfile')
 
     % Generate an HDF5-file 

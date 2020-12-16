@@ -438,7 +438,7 @@ for ii = 1:length(data_files)
                     var_v = {'var_vi_east' 'var_vi_north' 'var_vi_up'};
                     crossvar = {'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
                     pos = {'lat' 'lon' 'h'};
-                    Vg = []; Dv = []; Vvar = []; Crossvar = []; Vpos = []; Vgv = [];
+                    Vg = []; Vvar = []; Crossvar = []; Vpos = []; 
                     for vv = 1:3
                         if (exist('nr1','var') && ~isempty(nr1)) || (exist('nr0','var') &&  ~isempty(nr0) && data0d(nr0)>1)   % data in 2d
                             aa = find(strcmp(metadata2d(1,:),v{vv})==1);

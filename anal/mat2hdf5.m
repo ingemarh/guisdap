@@ -87,6 +87,7 @@ for d = 1:length(pci)
         rec(d) = pci(d);
     else rec(d) = pci(d)-pci(d-1); end        
 end
+if pci == 0, pci = []; end 
 
 for rr = 1:length(pci)
     qq = qq + 1; 
@@ -299,7 +300,6 @@ for rr = 1:length(pci)
         end
         storepath = fullfile(datapath,datafolder);
     end
-    mkdir(storepath);
 
     Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
     MatFile = sprintf('%s%s',datafolder,'.mat');
@@ -1026,6 +1026,7 @@ for rr = 1:length(pci)
         end
     end
 
+    mkdir(storepath);    
     save(matfilename,'matfile')
 
     % Generate an HDF5-file from the MAT-file
