@@ -95,7 +95,7 @@ elseif ~isempty(targz_files)  && ~isempty(hdf5_files)
 end
 
 data_files = [targz_files,oldhdf5_files];
-pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','tyco','gup0','gup3'};
+pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','otia','tyco','gup0','gup3'};
 ants   = {'32m','42m','uhf','vhf','esa','esr','eis','kir','sod','tro','lyr'};
 
 antcheck = 0;
