@@ -75,10 +75,22 @@ for tt = 1:rec
         ntstamps_sd = [ntstamps_sd 0];
     end
 end
+
 if length(TT)<rec
     filelist = filelist(TT);       % matfile(s) that was(were) corrupt or could not be read is(are) removed 
     %rec  = length(filelist);
 end
+
+upars = unique(pars_recs);
+UUind = [];
+for uu = 1:length(upars)
+    uuind = find(pars_recs == upars(uu));
+    if length(uuind) == 1
+        UUind = [UUind uuind];
+    end
+end
+filelist(UUind)  = [];
+pars_recs(UUind) = [];
 
 % check where # of pars change + end index
 pci = [find(diff(pars_recs) ~= 0) length(filelist)];
