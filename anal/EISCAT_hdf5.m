@@ -224,7 +224,8 @@ for ii = 1:length(data_files)
                 [~,figname,~] = fileparts(figname);
             end
 
-            if length(data_files) > 1
+%             if length(data_files) > 1
+            if nfiles > 1   
                 fig_pulse  = '';
                 fig_intper = '';
                 fig_ant    = '';
@@ -306,7 +307,8 @@ for ii = 1:length(data_files)
                         end
                     end
                 end
-            elseif length(data_files) == 1 
+%             elseif length(data_files) == 1 
+            elseif nfiles == 1    
                 if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
                     if strcmp(ext,'.pdf')
                         npdf = npdf + 1;
