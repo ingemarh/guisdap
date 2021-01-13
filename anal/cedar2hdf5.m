@@ -201,29 +201,40 @@ for qq = 1:length(evenkindats)
         name_strategy = num2str(round(intper_mean,3,'significant'));
     end
 
-    if kindats(1) >= 6800 || kindats(1) == 6000
+%     if kindats(1) >= 6800 || kindats(1) == 6000
+%         name_expr = 'unk';
+%     else
+%         name_expr = ['cp' evenkindat_str(2) lower(char(96 + str2num(evenkindat_str(3:4))/2))];
+%     end
+    if any([6000:6001 6041 6801:6899] == kindats(1)) 
         name_expr = 'gup';
+    elseif any([6042 6999:7000] == kindats(1))
+        name_expr = 'unk';
+    elseif any(6903:6904 == kindats(1))
+        name_expr = 'spviuhf1';
+    elseif any(6905:6906 == kindats(1))
+        name_expr = 'spviuhf2';
+    elseif any(6907:6910 == kindats(1))
+        name_expr = 'spviuhf3';    
     else
         name_expr = ['cp' evenkindat_str(2) lower(char(96 + str2num(evenkindat_str(3:4))/2))];
     end
+
     matfile.metadata.software.experiment.name_expr = {name_expr}; 
 
     datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant];
     storepath = fullfile(datapath,datafolder);
     
     while exist(storepath)
-        letters = 'a':'z';
-        at = strfind(datafolder,'@'); 
-        if length(datafolder(at+1:end)) == 3
-            datafolder = [datafolder letters(2)];
+        endnum = str2double(datafolder(end));
+        if isnan(endnum)
+            datafolder = [datafolder(1:end) num2str(1)];
         else
-            letno = strfind(letters,storepath(end));
-            datafolder = [datafolder(1:end-1) letters(letno+1)];
+            datafolder = [datafolder(1:end-1) num2str(endnum+1)];            
         end
         storepath = fullfile(datapath,datafolder);
     end
-    mkdir(storepath);
-
+    
     Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
     MatFile = sprintf('%s%s',datafolder,'.mat');
     hdffilename = fullfile(storepath,Hdf5File);
@@ -815,7 +826,8 @@ for qq = 1:length(evenkindats)
             end
         end
     end
-   
+    
+    mkdir(storepath);
     save(matfilename,'matfile')
 
     % Generate an HDF5-file 

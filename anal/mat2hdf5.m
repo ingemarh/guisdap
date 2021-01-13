@@ -42,8 +42,7 @@ qq = 0;
 if length(filelist_all) > length(filelist)
     for kk = 1:length(filelist_all)
         matfilecheck = fullfile(filelist_all(kk).folder,filelist_all(kk).name);
-        load(matfilecheck)
-        if exist('Vg')
+        if ~isempty(who('-file',matfilecheck,'Vg'))
             qq = qq + 1; 
             [storepath,file_EISCAThdf5] = matvecvel2hdf5(matfilecheck,datapath);
             EISCAThdf5file(qq,:) = file_EISCAThdf5;
@@ -75,10 +74,24 @@ for tt = 1:rec
         ntstamps_sd = [ntstamps_sd 0];
     end
 end
+
 if length(TT)<rec
     filelist = filelist(TT);       % matfile(s) that was(were) corrupt or could not be read is(are) removed 
     %rec  = length(filelist);
 end
+
+upars = unique(pars_recs);
+UUind = [];
+for uu = 1:length(upars)
+    uuind = find(pars_recs == upars(uu));
+    if length(uuind) == 1
+        UUind = [UUind uuind];
+    else
+        
+    end
+end
+filelist(UUind)  = [];
+pars_recs(UUind) = [];
 
 % check where # of pars change + end index
 pci = [find(diff(pars_recs) ~= 0) length(filelist)];
@@ -87,9 +100,15 @@ for d = 1:length(pci)
         rec(d) = pci(d);
     else rec(d) = pci(d)-pci(d-1); end        
 end
+if pci == 0, pci = []; end 
 
 for rr = 1:length(pci)
-    qq = qq + 1; 
+    
+    if exist('matfile','var')
+        clear matfile
+    end
+    
+    qq = qq + 1;
     
     if rr == 1
         startexpr = 1;
@@ -285,6 +304,8 @@ for rr = 1:length(pci)
            case 'V', name_ant = 'vhf';
            case 'Q', name_ant = 'quj';
        end
+    else
+        name_ant = lower(name_ant);
     end
 
     datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more name_strategy '@' name_ant];
@@ -299,7 +320,6 @@ for rr = 1:length(pci)
         end
         storepath = fullfile(datapath,datafolder);
     end
-    mkdir(storepath);
 
     Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
     MatFile = sprintf('%s%s',datafolder,'.mat');
@@ -355,7 +375,7 @@ for rr = 1:length(pci)
     end
     if exist('name_ant','var'); nn = nn + 1; 
         infoname(1) = {'name_ant'};
-        infoname(2) = {name_ant};
+        infoname(2) = {lower(name_ant)};
         a = find(strcmp('name_ant',parameters_list)==1); 
         [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
         infoname(3) = infodesc;
@@ -918,7 +938,7 @@ for rr = 1:length(pci)
     PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
 
     matfile.metadata.schemes.DataCite.Identifier = {PID};
-    matfile.metadata.schemes.DataCite.Creator = {name_ant};
+    matfile.metadata.schemes.DataCite.Creator = {lower(name_ant)};
     matfile.metadata.schemes.DataCite.Title = {datafolder};
     matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
     matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3a Ionosphere'};
@@ -1026,6 +1046,7 @@ for rr = 1:length(pci)
         end
     end
 
+    mkdir(storepath);    
     save(matfilename,'matfile')
 
     % Generate an HDF5-file from the MAT-file

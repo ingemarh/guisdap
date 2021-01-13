@@ -95,7 +95,7 @@ elseif ~isempty(targz_files)  && ~isempty(hdf5_files)
 end
 
 data_files = [targz_files,oldhdf5_files];
-pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','tyco','gup0','gup3'};
+pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','otia','tyco','gup0','gup3'};
 ants   = {'32m','42m','uhf','vhf','esa','esr','eis','kir','sod','tro','lyr'};
 
 antcheck = 0;
@@ -224,7 +224,8 @@ for ii = 1:length(data_files)
                 [~,figname,~] = fileparts(figname);
             end
 
-            if length(data_files) > 1
+%             if length(data_files) > 1
+            if nfiles > 1   
                 fig_pulse  = '';
                 fig_intper = '';
                 fig_ant    = '';
@@ -306,7 +307,8 @@ for ii = 1:length(data_files)
                         end
                     end
                 end
-            elseif length(data_files) == 1 
+%             elseif length(data_files) == 1 
+            elseif nfiles == 1    
                 if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
                     if strcmp(ext,'.pdf')
                         npdf = npdf + 1;
@@ -438,7 +440,7 @@ for ii = 1:length(data_files)
                     var_v = {'var_vi_east' 'var_vi_north' 'var_vi_up'};
                     crossvar = {'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
                     pos = {'lat' 'lon' 'h'};
-                    Vg = []; Dv = []; Vvar = []; Crossvar = []; Vpos = []; Vgv = [];
+                    Vg = []; Vvar = []; Crossvar = []; Vpos = []; 
                     for vv = 1:3
                         if (exist('nr1','var') && ~isempty(nr1)) || (exist('nr0','var') &&  ~isempty(nr0) && data0d(nr0)>1)   % data in 2d
                             aa = find(strcmp(metadata2d(1,:),v{vv})==1);

@@ -60,6 +60,7 @@ nrecs = length(lrec);
 
 a = find(strcmp('h_nrec',parameters_list)==1);
 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
+info(1) = {info{1}(3:end)};
 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};        
 if length(unique(lrec)) == 1
     matfile.data.par0d = lrec(1);
@@ -97,7 +98,7 @@ if exist('Vpos','var')
         
         a = find(strcmp(char(parameters_vpos(ii)),parameters_list)==1);
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
-        if parameters_vpos{ii} == 'h_h'; 
+        if parameters_vpos{ii} == 'h_h' 
             info{1} = 'h'; end
         info(4) = {'Vpos'};
         info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a)]))};
@@ -161,8 +162,7 @@ if exist('Vg','var')
 end
 
 if exist('Vgv','var')
-    parameters_vgv = {'dvi_east' 'dvi_north' 'dvi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
-
+    parameters_vgv = {'var_vi_east' 'var_vi_north' 'var_vi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
     for ii = 1:6
         a = find(strcmp(char(parameters_vgv(ii)),parameters_list)==1);
         [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a) ':E' num2str(a)]);
@@ -180,19 +180,11 @@ if exist('Vgv','var')
 
         if length(par_1d) == nrecs
             m = m + 1; 
-            if ii <= 3
-                matfile.data.par1d(:,m) = sqrt(par_1d);
-            else
-                matfile.data.par1d(:,m) = par_1d;
-            end
+            matfile.data.par1d(:,m) = par_1d;
             matfile.metadata.par1d(:,m) = info';
         else
-            n = n + 1; 
-            if ii <= 3
-                matfile.data.par2d(:,n) = sqrt(vgv(:,ii));
-            else
-                matfile.data.par2d(:,n) = vgv(:,ii);
-            end
+            n = n + 1;
+            matfile.data.par2d(:,n) = vgv(:,ii);
             matfile.metadata.par2d(:,n) = info';
         end
     end
@@ -262,28 +254,45 @@ hour   = sprintf('%02d',r_time(4));
 minute = sprintf('%02d',r_time(5));
 second = sprintf('%02.f',r_time(6));
 
+intper_mean = subsetmean(diff(matfile.data.utime,1,2));        % mean integration time (of quartile range 2 and 3)
+intper_mean_str = num2str(round(intper_mean,3,'significant'));
+
 e_time = datevec(Vdate(2,end));
 endtime = datestr(e_time);
 
-if ~exist('name_expr','var'), name_expr='missing'; end
-if ~exist('name_ant','var'), name_ant='missing'; end
+[~,filename,~] = fileparts(matfile_vel); 
+pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','otia','tyco','gup0','gup3'};
+ants   = {'32m','42m','uhf','vhf','esa','esr','eis','kir','sod','tro','lyr'};
+if ~exist('name_expr','var')
+    name_expr='missing'; 
+    for pp = 1:length(pulses)
+        if contains(filename,pulses(pp))
+            name_expr = pulses(pp);
+        end
+    end
+end
+if ~exist('name_ant','var')
+    name_ant='missing';
+    for pp = 1:length(ants)
+        if contains(filename,ants(pp))
+            name_ant = ants(pp);
+        end
+    end
+end
 if ~exist('name_sig','var'), name_sig='missing'; end
 
-[~,filename,~] = fileparts(matfile_vel); 
-storepath = fullfile(datapath,['EISCAT_' filename]);
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant];
+storepath = fullfile(datapath,datafolder);
 
 while exist(storepath)
-    letters = 'a':'z';
-    at = strfind(filename,'@'); 
-    if length(filename(at+1:end)) == 3
-        filename = [filename letters(2)];
+    endnum = str2double(datafolder(end));
+    if isnan(endnum)
+        datafolder = [datafolder(1:end) num2str(1)];
     else
-        letno = strfind(letters,storepath(end));
-        filename = [filename(1:end-1) letters(letno+1)];
+        datafolder = [datafolder(1:end-1) num2str(endnum+1)];            
     end
-    storepath = fullfile(datapath,['EISCAT_' filename]);
+    storepath = fullfile(datapath,datafolder);
 end
-mkdir(storepath);
 
 Hdf5File = sprintf('%s%s%s','EISCAT_',filename,'.hdf5');
 MatFile = sprintf('%s%s%s','EISCAT_',filename,'.mat');
@@ -457,6 +466,7 @@ for sf = sFields.'
     end
 end
 
+mkdir(storepath);
 save(matfilename,'matfile')
 
 % Generate an HDF5-file from the MAT-file

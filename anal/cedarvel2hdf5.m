@@ -149,17 +149,14 @@ for qq = 1:nkindats
     storepath = fullfile(datapath,datafolder);
 
     while exist(storepath)
-        letters = 'a':'z';
-        at = strfind(datafolder,'@'); 
-        if length(datafolder(at+1:end)) == 3
-            datafolder = [datafolder letters(2)];
+        endnum = str2double(datafolder(end));
+        if isnan(endnum)
+            datafolder = [datafolder(1:end) num2str(1)];
         else
-            letno = strfind(letters,storepath(end));
-            datafolder = [datafolder(1:end-1) letters(letno+1)];
+            datafolder = [datafolder(1:end-1) num2str(endnum+1)];            
         end
         storepath = fullfile(datapath,datafolder);
     end
-    mkdir(storepath);
 
     Hdf5File = [datafolder '.hdf5'];
     MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant '.mat'];
@@ -269,19 +266,13 @@ for qq = 1:nkindats
     dVm = [data_set.dvipe data_set.dvipn data_set.dvi6];
     B = [data_set.bn data_set.be data_set.bd];              % [north, east, down]
     Vg  = [];
-%     dVg = [];
     Vg_var = [];
-%     Vg_crossvar = [];
     for mm = 1:length(data_set.vipn)
         [vg,vgv] = Vm2Vg(Vm(mm,:),B(mm,:),dVm(mm,:));
-        %dvg = sqrt(diag(vgv));
         Vg  = [Vg;vg'];
-%         dVg = [dVg;dvg'];
-%         Vg_crossvar = [Vg_crossvar;vgv([2 6 3])];
         Vg_var = [Vg_var; vgv([1 5 9 2 6 3])];
     end
-
-%     new_v  = {'vi_east' 'vi_north' 'vi_up' 'dvi_east' 'dvi_north' 'dvi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
+    
     new_v  = {'vi_east' 'vi_north' 'vi_up' 'var_vi_east' 'var_vi_north' 'var_vi_up' 'vi_crossvar_12' 'vi_crossvar_23' 'vi_crossvar_13'};
     if ~isempty(matfile.data.par1d)
         ll1 = length(matfile.data.par1d(1,:));
@@ -289,7 +280,6 @@ for qq = 1:nkindats
         ll1 = 0;
         matfile.metadata.par1d = {};
     end
-%     matfile.data.par1d(:,ll1+1:ll1+9) = [Vg dVg Vg_crossvar];
     matfile.data.par1d(:,ll1+1:ll1+9) = [Vg Vg_var];
     for jj = 1:9
         a = find(strcmp(new_v{jj},gupparameters_list)==1);
@@ -406,7 +396,8 @@ for qq = 1:nkindats
         aa = find(cellfun('isempty',matfile.metadata.par1d(7,:)));    matfile.metadata.par1d(7,aa)= {'0'};
         matfile.metadata.par1d(gupnamesindex,:) = [];
     end
-
+    
+    mkdir(storepath);
     save(matfilename,'matfile')
 
     % Generate an HDF5-file 
