@@ -86,6 +86,8 @@ for uu = 1:length(upars)
     uuind = find(pars_recs == upars(uu));
     if length(uuind) == 1
         UUind = [UUind uuind];
+    else
+        
     end
 end
 filelist(UUind)  = [];
@@ -101,7 +103,12 @@ end
 if pci == 0, pci = []; end 
 
 for rr = 1:length(pci)
-    qq = qq + 1; 
+    
+    if exist('matfile','var')
+        clear matfile
+    end
+    
+    qq = qq + 1;
     
     if rr == 1
         startexpr = 1;
@@ -297,6 +304,8 @@ for rr = 1:length(pci)
            case 'V', name_ant = 'vhf';
            case 'Q', name_ant = 'quj';
        end
+    else
+        name_ant = lower(name_ant);
     end
 
     datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more name_strategy '@' name_ant];
@@ -366,7 +375,7 @@ for rr = 1:length(pci)
     end
     if exist('name_ant','var'); nn = nn + 1; 
         infoname(1) = {'name_ant'};
-        infoname(2) = {name_ant};
+        infoname(2) = {lower(name_ant)};
         a = find(strcmp('name_ant',parameters_list)==1); 
         [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
         infoname(3) = infodesc;
@@ -929,7 +938,7 @@ for rr = 1:length(pci)
     PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
 
     matfile.metadata.schemes.DataCite.Identifier = {PID};
-    matfile.metadata.schemes.DataCite.Creator = {name_ant};
+    matfile.metadata.schemes.DataCite.Creator = {lower(name_ant)};
     matfile.metadata.schemes.DataCite.Title = {datafolder};
     matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
     matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3a Ionosphere'};

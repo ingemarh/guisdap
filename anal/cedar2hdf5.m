@@ -201,11 +201,25 @@ for qq = 1:length(evenkindats)
         name_strategy = num2str(round(intper_mean,3,'significant'));
     end
 
-    if kindats(1) >= 6800 || kindats(1) == 6000
+%     if kindats(1) >= 6800 || kindats(1) == 6000
+%         name_expr = 'unk';
+%     else
+%         name_expr = ['cp' evenkindat_str(2) lower(char(96 + str2num(evenkindat_str(3:4))/2))];
+%     end
+    if any([6000:6001 6041 6801:6899] == kindats(1)) 
         name_expr = 'gup';
+    elseif any([6042 6999:7000] == kindats(1))
+        name_expr = 'unk';
+    elseif any(6903:6904 == kindats(1))
+        name_expr = 'spviuhf1';
+    elseif any(6905:6906 == kindats(1))
+        name_expr = 'spviuhf2';
+    elseif any(6907:6910 == kindats(1))
+        name_expr = 'spviuhf3';    
     else
         name_expr = ['cp' evenkindat_str(2) lower(char(96 + str2num(evenkindat_str(3:4))/2))];
     end
+
     matfile.metadata.software.experiment.name_expr = {name_expr}; 
 
     datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_strategy '@' name_ant];
