@@ -120,7 +120,6 @@ for ii = 1:length(data_files)
             untar(data_files{ii},untarpath)
             tared = 1;
         catch
-            %if length(data_files) == 1 && ~length(hdf5rest_files)
             if length(data_files) == 1 && ~isempty(hdf5_allfiles) == 1    
                 warning(['Ooops ... ' data_files{ii} ' could not be untared, and is replaced by ' hdf5_allfiles{1} newline])
                 data_files = hdf5_allfiles(1);
@@ -223,9 +222,8 @@ for ii = 1:length(data_files)
             if strcmp(ext,'.gz')
                 [~,figname,~] = fileparts(figname);
             end
-
-%             if length(data_files) > 1
-            if nfiles > 1   
+            
+            if nfiles > 1 || length(data_files) > 1
                 fig_pulse  = '';
                 fig_intper = '';
                 fig_ant    = '';
@@ -307,8 +305,8 @@ for ii = 1:length(data_files)
                         end
                     end
                 end
-%             elseif length(data_files) == 1 
-            elseif nfiles == 1    
+            %elseif nfiles == 1  
+            else
                 if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
                     if strcmp(ext,'.pdf')
                         npdf = npdf + 1;

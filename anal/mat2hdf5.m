@@ -80,16 +80,25 @@ if length(TT)<rec
     %rec  = length(filelist);
 end
 
-upars = unique(pars_recs);
+% Remove isolated record(s) with another number of parameters in r_param
+% than the direct previous and direct subsequent record
 UUind = [];
-for uu = 1:length(upars)
-    uuind = find(pars_recs == upars(uu));
-    if length(uuind) == 1
-        UUind = [UUind uuind];
-    else
-        
+dpars_recs = diff(pars_recs);
+for hj = 1:length(pars_recs)
+    if hj == 1 
+        if dpars_recs(hj) ~= 0      % first record has another number of parameters than second
+            UUind = hj;
+        end
+    elseif hj == length(pars_recs) 
+        if dpars_recs(hj-1) ~= 0    % last record has another number of parameters than second last
+            UUind = hj;
+        end
+    elseif dpars_recs(hj-1) ~= 0
+        if dpars_recs(hj) ~= 0
+            UUind = [UUind hj];
+        end
     end
-end
+end 
 filelist(UUind)  = [];
 pars_recs(UUind) = [];
 
@@ -128,9 +137,6 @@ for rr = 1:length(pci)
         stop_sd = sum(ntstamps_sd(1:stopexpr));    
         h_Sd = h_sd(start_sd:stop_sd,:);      
     end
-    
-    
-    
     
     % store the gfd content and check Tsys
     load(Filelist(1).fname)
