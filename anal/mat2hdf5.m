@@ -1,6 +1,6 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function [Storepath,EISCAThdf5file,vecvel] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
+function [Storepath,EISCAThdf5file,nvecvel] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
 
 global path_GUP result_path name_ant
 
@@ -50,7 +50,7 @@ if length(filelist_all) > length(filelist)
         end
     end
 end
-vecvel = qq;   % number vecvel-experiments
+nvecvel = qq;   % number vecvel-experiments
 
 rec  = length(filelist);
 TT = []; intper_vec = []; pars_recs = []; h_sd = []; ntstamps_sd = [];

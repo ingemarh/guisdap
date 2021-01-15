@@ -176,7 +176,7 @@ for qq = 1:nkindats
         end
     end
     if length(MM) == length(data_set.vipn)    % That is, if al Vm = 0
-        rmdir(storepath)
+        %rmdir(storepath)
         EISCATvelhdf5file(qq,:) = {''};
         Storepath(qq,:) = {''};
         display([mat2str(kindats(qq)) ': Only V=0, data ignored and no hdf5-file created.'])

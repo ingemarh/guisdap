@@ -125,7 +125,7 @@ for ii = 1:length(data_files)
                 data_files = hdf5_allfiles(1);
                 disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
-                vecvel = 0;
+                vecvel = zeros(length(EISCAThdf5file),1);
                 tared = 0;
             else
                 warning(['Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.' newline])
@@ -152,13 +152,17 @@ for ii = 1:length(data_files)
             end
            
             if ~isempty(untar_filelist)
-                [storepath,EISCAThdf5file,vecvel] = mat2hdf5(untarpath,datapath);
+                [storepath,EISCAThdf5file,nvecvel] = mat2hdf5(untarpath,datapath);
+                vecvel = zeros(length(EISCAThdf5file),1);
+                if nvecvel>0
+                    vecvel(1:nvecvel) = ones(nvecvel,1); 
+                end
             elseif isempty(untar_filelist) && length(data_files) == 1 && ~isempty(hdf5_allfiles)  
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is replaced by ' hdf5_allfiles{1} newline])
                 data_files = hdf5_allfiles(1);
                 disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
-                vecvel = length(EISCAThdf5file);
+                vecvel = zeros(length(EISCAThdf5file),1);
             elseif isempty(untar_filelist)
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is therefore ignored.' newline])
                 continue
@@ -167,21 +171,15 @@ for ii = 1:length(data_files)
     else
         if contains(data_files{ii},'.ar')
             [storepath,EISCAThdf5file] = cedarvel2hdf5(data_files{ii},datapath);
-            vecvel = 1;
+            vecvel = ones(length(EISCAThdf5file),1);
         else
             [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
-            vecvel = 0;
+            vecvel = zeros(length(EISCAThdf5file),1);
         end
     end
     
     nfiles = length(EISCAThdf5file);
-    if vecvel == 0
-        vecvel = zeros(nfiles,1);
-    else
-        vecvel = [1:vecvel vecvel+1:nfiles];
-    end
-    
-    isempt = [];
+    t isempt = [];
     for nf = 1:nfiles
         if isempty(EISCAThdf5file{nf})
             isempt = [isempt nf];
