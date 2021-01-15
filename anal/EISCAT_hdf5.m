@@ -179,7 +179,7 @@ for ii = 1:length(data_files)
     end
     
     nfiles = length(EISCAThdf5file);
-    t isempt = [];
+    isempt = [];
     for nf = 1:nfiles
         if isempty(EISCAThdf5file{nf})
             isempt = [isempt nf];
