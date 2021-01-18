@@ -201,12 +201,7 @@ for qq = 1:length(evenkindats)
         name_strategy = num2str(round(intper_mean,3,'significant'));
     end
 
-%     if kindats(1) >= 6800 || kindats(1) == 6000
-%         name_expr = 'unk';
-%     else
-%         name_expr = ['cp' evenkindat_str(2) lower(char(96 + str2num(evenkindat_str(3:4))/2))];
-%     end
-    if any([6000:6001 6041 6801:6899] == kindats(1)) 
+    if any([6000:6001 6041 6800:6899] == kindats(1)) 
         name_expr = 'gup';
     elseif any([6042 6999:7000] == kindats(1))
         name_expr = 'unk';
