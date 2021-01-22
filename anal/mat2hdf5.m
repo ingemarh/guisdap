@@ -77,7 +77,13 @@ end
 
 if length(TT)<rec
     filelist = filelist(TT);       % matfile(s) that was(were) corrupt or could not be read is(are) removed 
-    %rec  = length(filelist);
+end
+
+if isempty(filelist) || length(filelist) == 1    % Ignore if empty or if there is only one(1) record
+    qq = qq + 1;
+    EISCAThdf5file(qq,:) = {''};
+    Storepath(qq,:) = {''};
+    pars_recs = [];
 end
 
 % Remove isolated record(s) with another number of parameters in r_param
@@ -107,9 +113,11 @@ pci = [find(diff(pars_recs) ~= 0) length(filelist)];
 for d = 1:length(pci)
     if d == 1
         rec(d) = pci(d);
-    else rec(d) = pci(d)-pci(d-1); end        
+    else
+        rec(d) = pci(d)-pci(d-1);
+    end
 end
-if pci == 0, pci = []; end 
+if any(pci == [0,1]), pci = []; end 
 
 for rr = 1:length(pci)
     
