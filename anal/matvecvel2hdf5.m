@@ -293,7 +293,7 @@ while exist(storepath)
     end
     storepath = fullfile(datapath,datafolder);
 end
-keyboard
+
 Hdf5File = sprintf('%s%s%s','EISCAT_',datafolder,'.hdf5');
 MatFile = sprintf('%s%s%s','EISCAT_',datafolder,'.mat');
 hdffilename = fullfile(storepath,Hdf5File);
