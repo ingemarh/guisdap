@@ -266,16 +266,16 @@ ants   = {'32m','42m','uhf','vhf','esa','esr','eis','kir','sod','tro','lyr'};
 if ~exist('name_expr','var')
     name_expr='missing'; 
     for pp = 1:length(pulses)
-        if contains(filename,pulses(pp))
-            name_expr = pulses(pp);
+        if contains(filename,pulses{pp})
+            name_expr = pulses{pp};
         end
     end
 end
 if ~exist('name_ant','var')
     name_ant='missing';
     for pp = 1:length(ants)
-        if contains(filename,ants(pp))
-            name_ant = ants(pp);
+        if contains(filename,ants{pp})
+            name_ant = ants{pp};
         end
     end
 end
