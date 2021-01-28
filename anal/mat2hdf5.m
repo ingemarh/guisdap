@@ -370,6 +370,7 @@ for rr = 1:length(pci)
     end
 
     load(Filelist(jj).fname)
+   
     nn = 0;
     if exist('name_expr','var'); nn = nn + 1; 
         infoname(1) = {'name_expr'};
@@ -664,37 +665,69 @@ for rr = 1:length(pci)
                 matfile.metadata.par2d(:,nn2) = info';
             end
 
-            if nump > 5
-                [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj+1) ':E' num2str(a+jj+1)]);% info_tmp = info;
-                info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj+1)])) };
+            if nump > 5      
                 for kk=1:length(h_m0(1,:)); nn2 = nn2 + 1;
                     if any(h_m0(1,kk) == [28 30 30.5 32])
-                        if     strcmp(h_name2,'h_param'),        info(1)={'pm'};            info(2)={'ion mix content: [O2+,NO+]/N'};                info(5)={'pm'};  info(6)={'690'};
-                        elseif strcmp(h_name2,'h_error'),        info(1)={'var_pm'};        info(2)={'variance of ion mix content: [O2+,NO+]/N'};    info(5)={'N/A'}; info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprpm'};         info(2)={'a priori ion mix content: [O2+,NO+]/N'};       info(5)={'N/A'}; info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprpm_error'};   info(2)={'a priori error ion mix content: [O2+,NO+]/N'}; info(5)={'N/A'}; info(6)={'0'};
+                        if     strcmp(h_name2,'h_param'),        par = {'pm'};
+                        elseif strcmp(h_name2,'h_error'),        par = {'var_pm'}; 
+                        elseif strcmp(h_name2,'h_apriori'),      par = {'aprpm'};
+                        elseif strcmp(h_name2,'h_apriorierror'), par = {'aprpm_error'};
                         end  
                     elseif h_m0(1,kk) == 16 
-                        if     strcmp(h_name2,'h_param'),        info(1)={'po'};            info(2)={'O+ content: [O+]/N'};                info(5)={'po+'};  info(6)={'620'};
-                        elseif strcmp(h_name2,'h_error'),        info(1)={'var_po'};        info(2)={'variance of O+ content: [O+]/N'};    info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprpo'};         info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprpo_error'};   info(2)={'a priori error O+ content: [O+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                        if     strcmp(h_name2,'h_param'),        par = {'po+'};
+                        elseif strcmp(h_name2,'h_error'),        par = {'var_po+'};
+                        elseif strcmp(h_name2,'h_apriori'),      par = {'aprpo+'};
+                        elseif strcmp(h_name2,'h_apriorierror'), par = {'aprpo+_error'};
                         end
                     elseif h_m0(1,kk) == 4 
-                        if     strcmp(h_name2,'h_param'),        info(1)={'phe'};           info(2)={'He+ content: [He+]/N'};                info(5)={'phe+'}; info(6)={'650'};
-                        elseif strcmp(h_name2,'h_error'),        info(1)={'var_phe'};       info(2)={'variance of He+ content: [He+]/N'};    info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprphe'};        info(2)={'a priori He+ content: [He+]/N'};       info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprphe_error'};  info(2)={'a priori error He+ content: [He+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                        if     strcmp(h_name2,'h_param'),        par = {'phe+'};
+                        elseif strcmp(h_name2,'h_error'),        par = {'var_phe+'};
+                        elseif strcmp(h_name2,'h_apriori'),      par = {'aprphe+'};
+                        elseif strcmp(h_name2,'h_apriorierror'), par = {'aprphe+_error'};
                         end
                     elseif h_m0(1,kk) == 1 
-                        if     strcmp(h_name2,'h_param'),        info(1)={'ph'};            info(2)={'H+ content: [H+]/N'};                info(5)={'ph+'};  info(6)={'660'};
-                        elseif strcmp(h_name2,'h_error'),        info(1)={'var_ph'};        info(2)={'variance of H+ content: [H+]/N'};    info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprph'};         info(2)={'a priori H+ content: [H+]/N'};       info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprph_error'};   info(2)={'a priori error H+ content: [H+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                        if     strcmp(h_name2,'h_param'),        par = {'ph+'};
+                        elseif strcmp(h_name2,'h_error'),        par = {'var_ph+'};
+                        elseif strcmp(h_name2,'h_apriori'),      par = {'aprph+'};
+                        elseif strcmp(h_name2,'h_apriorierror'), par = {'aprph+_error'};
                         end    
                     end
+                    b = find(strcmp(par,parameters_list)==1);
+                    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(b) ':E' num2str(b)]);% info_tmp = info;
+                    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(b)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(b)])) };
                     matfile.metadata.par2d(:,nn2) = info';
                 end
+%                 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj+1) ':E' num2str(a+jj+1)]);% info_tmp = info;
+%                 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj+1)])) };
+%                 for kk=1:length(h_m0(1,:)); nn2 = nn2 + 1;
+%                     if any(h_m0(1,kk) == [28 30 30.5 32])
+%                         if     strcmp(h_name2,'h_param'),        info(1)={'pm'};            info(2)={'ion mix content: [O2+,NO+]/N'};                info(5)={'pm'};     info(6)={'690'};
+%                         elseif strcmp(h_name2,'h_error'),        info(1)={'var_pm'};        info(2)={'variance of ion mix content: [O2+,NO+]/N'};    info(5)={'var_pm'}; info(6)={'2395'};
+%                         elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprpm'};         info(2)={'a priori ion mix content: [O2+,NO+]/N'};       info(5)={'N/A'};    info(6)={'0'};
+%                         elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprpm_error'};   info(2)={'a priori error ion mix content: [O2+,NO+]/N'}; info(5)={'N/A'};    info(6)={'0'};
+%                         end  
+%                     elseif h_m0(1,kk) == 16 
+%                         if     strcmp(h_name2,'h_param'),        info(1)={'po'};            info(2)={'O+ content: [O+]/N'};                info(5)={'po+'};     info(6)={'620'};
+%                         elseif strcmp(h_name2,'h_error'),        info(1)={'var_po'};        info(2)={'variance of O+ content: [O+]/N'};    info(5)={'var_po+'}; info(6)={'2390'};
+%                         elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprpo'};         info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};     info(6)={'0'};
+%                         elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprpo_error'};   info(2)={'a priori error O+ content: [O+]/N'}; info(5)={'N/A'};     info(6)={'0'};
+%                         end
+%                     elseif h_m0(1,kk) == 4 
+%                         if     strcmp(h_name2,'h_param'),        info(1)={'phe'};           info(2)={'He+ content: [He+]/N'};                info(5)={'phe+'};     info(6)={'650'};
+%                         elseif strcmp(h_name2,'h_error'),        info(1)={'var_phe'};       info(2)={'variance of He+ content: [He+]/N'};    info(5)={'var_phe+'}; info(6)={'2393'};
+%                         elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprphe'};        info(2)={'a priori He+ content: [He+]/N'};       info(5)={'N/A'};      info(6)={'0'};
+%                         elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprphe_error'};  info(2)={'a priori error He+ content: [He+]/N'}; info(5)={'N/A'};      info(6)={'0'};
+%                         end
+%                     elseif h_m0(1,kk) == 1 
+%                         if     strcmp(h_name2,'h_param'),        info(1)={'ph'};            info(2)={'H+ content: [H+]/N'};                info(5)={'ph+'};     info(6)={'660'};
+%                         elseif strcmp(h_name2,'h_error'),        info(1)={'var_ph'};        info(2)={'variance of H+ content: [H+]/N'};    info(5)={'var_ph+'}; info(6)={'2394'};
+%                         elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprph'};         info(2)={'a priori H+ content: [H+]/N'};       info(5)={'N/A'};     info(6)={'0'};
+%                         elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprph_error'};   info(2)={'a priori error H+ content: [H+]/N'}; info(5)={'N/A'};     info(6)={'0'};
+%                         end    
+%                     end
+%                     matfile.metadata.par2d(:,nn2) = info';
+%                 end
+
                 if length(r_param(1,:)) > 5
                     if isempty(kk); kk=0; end
                     for ll = (jj + 2):nump-(kk-2); nn2 = nn2 + 1;

@@ -37,7 +37,8 @@ end
 % load(fullfile(tempdir,'my_input.mat'));
 % delete(fullfile(tempdir,'my_input.mat'));
 
-image_filelist        = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*.pdf'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
+image_filelist = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*.pdf'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
+image_filelist_unk = [dir(fullfile('/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/11mar08_unkfigures','*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*.pdf'));dir(fullfile('/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/11mar08_unkfigures','*ps.gz'));dir(fullfile(dirpath,'*ps'))];
 notesfiles = dir(fullfile(dirpath,'notes*txt'));
 logfiles = dir(fullfile(dirpath,'*log')); 
 
