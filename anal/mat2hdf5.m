@@ -117,7 +117,7 @@ for d = 1:length(pci)
         rec(d) = pci(d)-pci(d-1);
     end
 end
-if any(pci == [0,1]), pci = []; end 
+if length(pci) == 1 && any(pci == [0,1]), pci = []; end 
 
 for rr = 1:length(pci)
     

@@ -49,7 +49,7 @@ else
 end
 
 if isempty(List_2BHandled) % check that List_2BHandled is empty first
-    if ~isempty(List_2BHandled)
+    if ~isempty(List_Crashed)
         List_2BHandled = List_Crashed;
         List_Crashed = {};
         display('Handling files in List_Crashed')
