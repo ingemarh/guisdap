@@ -31,7 +31,7 @@ end
 if ~isempty(d_saveint)
  d=strfind(d_saveint.dir,'AUTO');
  if length(d)==1
-  d_saveint.dir=[d_saveint.dir(1:d-1) sprintf('%s_%s%d_%d@%s',datestr(analysis_start,29),name_expr,expver,analysis_integr(1),name_site)];
+  d_saveint.dir=[d_saveint.dir(1:d-1) sprintf('%s_%s%d_%d@%s',datestr(analysis_start,29),name_expr,expver,floor(analysis_integr(1)),name_site)];
   if isfield(d_saveint,'range')
    d_saveint.dir=[d_saveint.dir 'p'];
   end
