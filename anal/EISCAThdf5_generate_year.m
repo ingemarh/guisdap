@@ -40,7 +40,7 @@ else
     mm = 1;
     for ii = 1:length(sitelist)
         exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
-        exprlist = exprlist(~ismember({exprlist.name},{'.','..'}) & ~endsWith({exprlist.name},{'_vhf','_uhf','_32m','_42m'}));   % ignore '.' and '..'
+        exprlist = exprlist(~ismember({exprlist.name},{'.','..'}) & ~endsWith({exprlist.name},{'_vhf','_uhf','_32m','_42m','_sod'}));   % ignore '.' and '..'
         for jj = 1:length(exprlist)
             List_2BHandled{mm} = fullfile(exprlist(jj).folder,exprlist(jj).name);
             mm = mm + 1;
@@ -48,7 +48,7 @@ else
     end
 end
 
-if isempty(List_2BHandled) % check that List_2BHandled is empty first
+if isempty(List_2BHandled) % check if List_2BHandled is empty
     if ~isempty(List_Crashed)
         List_2BHandled = List_Crashed;
         List_Crashed = {};

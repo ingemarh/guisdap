@@ -697,37 +697,7 @@ for rr = 1:length(pci)
                     info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(b)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(b)])) };
                     matfile.metadata.par2d(:,nn2) = info';
                 end
-%                 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj+1) ':E' num2str(a+jj+1)]);% info_tmp = info;
-%                 info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj+1)])) };
-%                 for kk=1:length(h_m0(1,:)); nn2 = nn2 + 1;
-%                     if any(h_m0(1,kk) == [28 30 30.5 32])
-%                         if     strcmp(h_name2,'h_param'),        info(1)={'pm'};            info(2)={'ion mix content: [O2+,NO+]/N'};                info(5)={'pm'};     info(6)={'690'};
-%                         elseif strcmp(h_name2,'h_error'),        info(1)={'var_pm'};        info(2)={'variance of ion mix content: [O2+,NO+]/N'};    info(5)={'var_pm'}; info(6)={'2395'};
-%                         elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprpm'};         info(2)={'a priori ion mix content: [O2+,NO+]/N'};       info(5)={'N/A'};    info(6)={'0'};
-%                         elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprpm_error'};   info(2)={'a priori error ion mix content: [O2+,NO+]/N'}; info(5)={'N/A'};    info(6)={'0'};
-%                         end  
-%                     elseif h_m0(1,kk) == 16 
-%                         if     strcmp(h_name2,'h_param'),        info(1)={'po'};            info(2)={'O+ content: [O+]/N'};                info(5)={'po+'};     info(6)={'620'};
-%                         elseif strcmp(h_name2,'h_error'),        info(1)={'var_po'};        info(2)={'variance of O+ content: [O+]/N'};    info(5)={'var_po+'}; info(6)={'2390'};
-%                         elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprpo'};         info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};     info(6)={'0'};
-%                         elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprpo_error'};   info(2)={'a priori error O+ content: [O+]/N'}; info(5)={'N/A'};     info(6)={'0'};
-%                         end
-%                     elseif h_m0(1,kk) == 4 
-%                         if     strcmp(h_name2,'h_param'),        info(1)={'phe'};           info(2)={'He+ content: [He+]/N'};                info(5)={'phe+'};     info(6)={'650'};
-%                         elseif strcmp(h_name2,'h_error'),        info(1)={'var_phe'};       info(2)={'variance of He+ content: [He+]/N'};    info(5)={'var_phe+'}; info(6)={'2393'};
-%                         elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprphe'};        info(2)={'a priori He+ content: [He+]/N'};       info(5)={'N/A'};      info(6)={'0'};
-%                         elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprphe_error'};  info(2)={'a priori error He+ content: [He+]/N'}; info(5)={'N/A'};      info(6)={'0'};
-%                         end
-%                     elseif h_m0(1,kk) == 1 
-%                         if     strcmp(h_name2,'h_param'),        info(1)={'ph'};            info(2)={'H+ content: [H+]/N'};                info(5)={'ph+'};     info(6)={'660'};
-%                         elseif strcmp(h_name2,'h_error'),        info(1)={'var_ph'};        info(2)={'variance of H+ content: [H+]/N'};    info(5)={'var_ph+'}; info(6)={'2394'};
-%                         elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprph'};         info(2)={'a priori H+ content: [H+]/N'};       info(5)={'N/A'};     info(6)={'0'};
-%                         elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprph_error'};   info(2)={'a priori error H+ content: [H+]/N'}; info(5)={'N/A'};     info(6)={'0'};
-%                         end    
-%                     end
-%                     matfile.metadata.par2d(:,nn2) = info';
-%                 end
-
+                
                 if length(r_param(1,:)) > 5
                     if isempty(kk); kk=0; end
                     for ll = (jj + 2):nump-(kk-2); nn2 = nn2 + 1;
@@ -1017,12 +987,11 @@ for rr = 1:length(pci)
     end
 
     if exist('name_sig')
-        dd = strfind(name_sig,' ');
-        if ~isempty(str2num(name_sig(dd(1)+1:dd(1)+2)))
-            publdate = name_sig(dd(1)+1:dd(2)-1);
-        else
-            publdate = name_sig(dd(2)+1:dd(3)-1);
-        end
+        months = {'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'};
+        % assuming date in name_sig is always in the form DD-mmm-YYYY, (e.g. 06-Feb-1980)
+        mon = find(contains(months,strsplit(name_sig,'-')));  
+        dd = strfind(name_sig,months(mon));
+        publdate = name_sig(dd-3:dd+7);
         publdate = datestr(datenum(publdate,'dd-mmm-yyyy'),'yyyy-mm-dd'); % date on the form YYYY-MM-DD
         publyear = publdate(1:4);
         matfile.metadata.schemes.DataCite.PublicationYear = {publyear}; 
