@@ -159,7 +159,7 @@ for qq = 1:nkindats
     end
 
     Hdf5File = [datafolder '.hdf5'];
-    MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant '.mat'];
+    MatFile =  [datafolder '.mat'];
     hdffilename = fullfile(storepath,Hdf5File);
     matfilename = fullfile(storepath,MatFile);
     EISCATvelhdf5file(qq,:) = {hdffilename};

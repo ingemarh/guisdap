@@ -230,15 +230,21 @@ if exist('Vinputs','var')
             if ischar(Vinputs(jj).(char(field)))
                 matfile.metadata.Vinputs.(char(field))(jj) = {Vinputs(jj).(char(field))}; 
             else
-                matfile.metadata.Vinputs.(char(field))(jj) = {num2str(Vinputs(jj).(char(field)))};
+                if strcmp(field,'UpConstriant')
+                    matfile.metadata.Vinputs.UpConstraint(jj) = {num2str(Vinputs(jj).UpConstriant)};
+                else
+                    matfile.metadata.Vinputs.(char(field))(jj) = {num2str(Vinputs(jj).(char(field)))};
+                end
             end
         end      
     end
     for field = Vinputs_Fields.'
+        if strcmp(field,'UpConstriant')
+            field = {'UpConstraint'};
+        end
         matfile.metadata.Vinputs.(char(field)) = matfile.metadata.Vinputs.(char(field))';
     end
 end
-
     
 starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
 endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
@@ -294,8 +300,10 @@ while exist(storepath)
     storepath = fullfile(datapath,datafolder);
 end
 
-Hdf5File = sprintf('%s%s%s','EISCAT_',datafolder,'.hdf5');
-MatFile = sprintf('%s%s%s','EISCAT_',datafolder,'.mat');
+% Hdf5File = sprintf('%s%s',datafolder,'.hdf5');
+% MatFile = sprintf('%s%s',datafolder,'.mat');
+Hdf5File = [datafolder '.hdf5'];
+MatFile  = [datafolder '.mat'];
 hdffilename = fullfile(storepath,Hdf5File);
 matfilename = fullfile(storepath,MatFile);
 EISCAThdf5file = {hdffilename};
@@ -359,12 +367,6 @@ if exist('name_sig','var'); nn = nn + 1;
     infoname(3) = infodesc;
     matfile.metadata.names(:,nn) = infoname';   
 end
-% if exist('name_strategy','var'); nn = nn + 1;
-%     infoname(1) = {'name_strategy'};
-%     infoname(2) = {name_strategy};
-%     infoname(3) = {'limitations applied and used in the velocity-vector calculations'};
-%     matfile.metadata.names(:,nn) = infoname';
-% end
 if exist('name_exps','var'); nn = nn + 1; 
     infoname(1) = {'name_exps'};
     for i = 1:length(name_exps(:,1))
