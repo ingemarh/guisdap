@@ -292,7 +292,7 @@ for ii = 1:length(data_files)
                                 epsfile = gunzip(figurefile);
                                 figurefile = epsfile{1};
                             catch
-                                warning([figurefile ' could not be unziped.'])
+                                warning([figurefile ' could not be unzipped.'])
                                 saveplot = 0;
                             end    
                         end
@@ -327,7 +327,7 @@ for ii = 1:length(data_files)
                             epsfile = gunzip(figurefile);
                             figurefile = epsfile{1};
                         catch
-                            warning([figurefile ' could not be unziped.'])
+                            warning([figurefile ' could not be unzipped.'])
                             saveplot = 0;
                         end
                     end

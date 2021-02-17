@@ -4,7 +4,7 @@ function [Storepath,EISCATvelhdf5file] = cedarvel2hdf5(hdf5file,datapath)
 
 global path_GUP 
 
-hdf5ver = hdfver;
+hdf5version
 %software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = '';
 

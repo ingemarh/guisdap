@@ -17,9 +17,10 @@ if isstring(datapath)
     datapath = char(datapath);    % need to be char class
 end
 
-hdf5ver = hdfver;
+hdf5version % set hdf5ver
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
+
 if strcmp(matpath(end),'/')
     matpath = matpath(1:end-1);   % remove last / in order to extract matfolder correctly
 end

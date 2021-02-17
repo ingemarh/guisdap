@@ -13,7 +13,7 @@ global path_GUP %result_path
 % if isstring(datapath)
 %     datapath = char(datapath);    % need to be char class
 % end
-hdf5ver = hdfver;
+hdf5version
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
 
