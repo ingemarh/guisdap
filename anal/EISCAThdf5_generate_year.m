@@ -30,23 +30,56 @@ else
     datapath = fullfile(datapath,'EISCAT',year);
 end
 
-if ~isempty(matfile_lists)
-    load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
-else
-    List_Crashed = {};
-    List_HandledOK = {};
-    sitelist = dir(yearpath);
-    sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
-    mm = 1;
-    for ii = 1:length(sitelist)
-        exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
-        exprlist = exprlist(~ismember({exprlist.name},{'.','..'}) & ~endsWith({exprlist.name},{'_vhf','_uhf','_32m','_42m','_sod'}));   % ignore '.' and '..'
-        for jj = 1:length(exprlist)
-            List_2BHandled{mm} = fullfile(exprlist(jj).folder,exprlist(jj).name);
-            mm = mm + 1;
-        end
+% if ~isempty(matfile_lists)
+%     load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
+% else
+%     List_Crashed = {};
+%     List_HandledOK = {};
+% %     sitelist = dir(yearpath);
+% %     sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
+% %     mm = 1;
+% %     for ii = 1:length(sitelist)
+% %         exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
+% %         exprlist = exprlist(~ismember({exprlist.name},{'.','..'}) & ~endsWith({exprlist.name},{'_vhf','_uhf','_32m','_42m','_sod'}));   % ignore '.' and '..'
+% %         for jj = 1:length(exprlist)
+% %             List_2BHandled{mm} = fullfile(exprlist(jj).folder,exprlist(jj).name);
+% %             mm = mm + 1;
+% %         end
+% %     end
+% end
+
+sitelist = dir(yearpath);
+sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
+mm = 1;
+for ii = 1:length(sitelist)
+    exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
+    exprlist = exprlist(~ismember({exprlist.name},{'.','..'}) & ~endsWith({exprlist.name},{'_vhf','_uhf','_32m','_42m','_sod'}));   % ignore '.' and '..'
+    for jj = 1:length(exprlist)
+        List_all{mm} = fullfile(exprlist(jj).folder,exprlist(jj).name);
+        mm = mm + 1;
     end
 end
+
+if isempty(matfile_lists)
+    List_2BHandled = List_all;
+    List_Crashed = {};
+    List_HandledOK = {};
+else
+    load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
+    
+    %check if new analysed experiments have been added 
+    List_allold = [List_2BHandled List_HandledOK List_Crashed'];
+    if length(List_all)>length(List_allold)
+        List_check = [List_allold List_all];
+        %
+        [Unika,~,X] = unique(List_check);
+        Y = hist(X,unique(X));
+        List_newadd = Unika(find(Y == 1));
+        List_2Handled = [List_2BHandled List_newadd];
+        display('New experiments have been added to ' year ' and are handled.')
+    end
+end
+
 
 if isempty(List_2BHandled) % check if List_2BHandled is empty
     if ~isempty(List_Crashed)
