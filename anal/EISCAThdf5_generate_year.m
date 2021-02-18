@@ -1,19 +1,17 @@
-function EISCAThdf5_generate_year(yearpath,datapath,matfile_lists,runcrashed)
+function EISCAThdf5_generate_year(yearpath,datapath,matfile_lists)
 % EISCAThdf5_generate_year(yearpath,datapath,matfile_lists)
 %
 % Generate EISCAT HDF5-files from one year of Madrigal data.
 %
 % yearpath:         path to folder specifying which year to handle (E.g in eiscathq: '/opt/madrigal/experiments/yyyy')
-% datapath:         path to stored EISCAT HDF5-files, where a folder datapath/EISCAT_HDF5_yyyy is created 
+% datapath:         path to stored EISCAT HDF5-files, where a folder datapath/EISCAT/yyyy is created 
 %                   including all files and lists. If datapath is left out it is set to current folder (pwd).
 % matfile_lists:    .mat-file containing lists of dates 
 %                       1) to be handled (List_2BHandled)
 %                       2) that were handled and were OK (List_HandledOK) 
 %                       3) that crashed (List_Crashed)
-% runcrashed	    If it is non-empty the experiments in List_Crashed will be run, if and only if List_2BHandled 
-%                   is empty.
-if nargin < 4
-    runcrashed = []; end	
+%                   If 'matfile_lists' is left out these list are set and the whole year (specified by 'yearpath') is handled
+
 if nargin < 3
     matfile_lists = ''; end
 if nargin < 2
@@ -29,35 +27,70 @@ year = pathparts{end};
 if isempty(datapath)
     datapath = fullfile(pwd,'EISCAT',year);
 else
-    datapath = fullfile(datapath,'EISCAT',year); end
+    datapath = fullfile(datapath,'EISCAT',year);
+end
 
-if ~isempty(matfile_lists)
-    load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
-else
+% if ~isempty(matfile_lists)
+%     load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
+% else
+%     List_Crashed = {};
+%     List_HandledOK = {};
+% %     sitelist = dir(yearpath);
+% %     sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
+% %     mm = 1;
+% %     for ii = 1:length(sitelist)
+% %         exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
+% %         exprlist = exprlist(~ismember({exprlist.name},{'.','..'}) & ~endsWith({exprlist.name},{'_vhf','_uhf','_32m','_42m','_sod'}));   % ignore '.' and '..'
+% %         for jj = 1:length(exprlist)
+% %             List_2BHandled{mm} = fullfile(exprlist(jj).folder,exprlist(jj).name);
+% %             mm = mm + 1;
+% %         end
+% %     end
+% end
+
+sitelist = dir(yearpath);
+sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
+mm = 1;
+for ii = 1:length(sitelist)
+    exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
+    exprlist = exprlist(~ismember({exprlist.name},{'.','..'}) & ~endsWith({exprlist.name},{'_vhf','_uhf','_32m','_42m','_sod'}));   % ignore '.' and '..'
+    for jj = 1:length(exprlist)
+        List_all{mm} = fullfile(exprlist(jj).folder,exprlist(jj).name);
+        mm = mm + 1;
+    end
+end
+
+if isempty(matfile_lists)
+    List_2BHandled = List_all;
     List_Crashed = {};
     List_HandledOK = {};
-    sitelist = dir(yearpath);
-    sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
-    mm = 1;
-    for ii = 1:length(sitelist)
-        %sitename = sitelist(ii).name;
-        exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
-        exprlist = exprlist(~ismember({exprlist.name},{'.','..'}) & ~endsWith({exprlist.name},{'_vhf','_uhf','_32m','_42m'}));   % ignore '.' and '..'
-        for jj = 1:length(exprlist)
-            %display(['year: ' year ', site: ' sitename ', date: ' exprlist(jj).name])
-            List_2BHandled{mm} = fullfile(exprlist(jj).folder,exprlist(jj).name);
-            mm = mm + 1;
-        end
+else
+    load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
+    
+    %check if new analysed experiments have been added 
+    List_allold = [List_2BHandled List_HandledOK List_Crashed'];
+    if length(List_all)>length(List_allold)
+        List_check = [List_allold List_all];
+        %
+        [Unika,~,X] = unique(List_check);
+        Y = hist(X,unique(X));
+        List_newadd = Unika(find(Y == 1));
+        List_2Handled = [List_2BHandled List_newadd];
+        display('New experiments have been added to ' year ' and are handled.')
     end
 end
 
-if ~isempty(runcrashed)
-    if ~isempty(List_2BHandled) % check that List_2BHandled is empty first
-        error('List_2BHandled is not empty. Handle these files before running the files in List_Crashed.')
+
+if isempty(List_2BHandled) % check if List_2BHandled is empty
+    if ~isempty(List_Crashed)
+        List_2BHandled = List_Crashed;
+        List_Crashed = {};
+        display('Handling files in List_Crashed')
+    else
+        display('Nothing to handle, both List_Crashed and List_2BHandled are empty')
     end
-    List_2BHandled = List_Crashed;
-    List_Crashed = {};
 end
+
 
 while ~isempty(List_2BHandled)
     try 

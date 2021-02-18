@@ -4,7 +4,7 @@ function [Storepath,EISCAThdf5file] = cedar2hdf5(hdf5file,datapath)
 
 global path_GUP 
 
-hdf5ver = hdfver;
+hdf5version
 software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = '';
 
@@ -91,7 +91,7 @@ if length(allkinds) == 1 && (allkinds==6831 || allkinds == 6801)   % seems lika 
     fsk = 1;
 end
 evenkindats = allkinds(find(rem(allkinds,2)==0));
-kinds = ones(length(evenkindats),2);
+kinds = ones(2,length(evenkindats));
 kinds(1,:) = evenkindats;
 for evk = 1:length(evenkindats)
     ff = find(allkinds == evenkindats(evk)-1);
@@ -101,7 +101,12 @@ for evk = 1:length(evenkindats)
         kinds(2,evk) = NaN;
     end
 end
-
+if length(evenkindats)==1 && evenkindats==6800  % special case, handling guisdap analysis with kindat 6800 and 6801
+    ff = find(allkinds == 6801);
+    if ff
+        kinds(2) = 6801;
+    end
+end
 starttime = char(exprparvalues(cc,:));
 endtime   = char(exprparvalues(dd,:));
 starttime(11) = 'T'; starttime(20:22) = '';
@@ -201,12 +206,7 @@ for qq = 1:length(evenkindats)
         name_strategy = num2str(round(intper_mean,3,'significant'));
     end
 
-%     if kindats(1) >= 6800 || kindats(1) == 6000
-%         name_expr = 'unk';
-%     else
-%         name_expr = ['cp' evenkindat_str(2) lower(char(96 + str2num(evenkindat_str(3:4))/2))];
-%     end
-    if any([6000:6001 6041 6801:6899] == kindats(1)) 
+    if any([6000:6001 6041 6800:6899] == kindats(1)) 
         name_expr = 'gup';
     elseif any([6042 6999:7000] == kindats(1))
         name_expr = 'unk';
@@ -376,7 +376,7 @@ for qq = 1:length(evenkindats)
                 continue
             else
                 parameterdata = data_set.(char(Parsinfile_list(ii)));
-                if contains('gdalt range power',Parsinfile_list(ii)) 
+                if contains('gdalt range power rgate',Parsinfile_list(ii)) 
                     parameterdata = parameterdata*1000;   % km --> m, kW --> W
                 end
                 if strcmp(Parsinfile_list(ii),'nsamp') && isfield(data_set,'nsampi')
@@ -389,13 +389,14 @@ for qq = 1:length(evenkindats)
                 if strcmp('range',char(Parsinfile_list(ii))), aa = aa(1); end    
                 if strcmp('vobi',char(Parsinfile_list(ii))),  aa = find(strcmp('vo',parameters_list)==1);  end
                 if strcmp('dvobi',char(Parsinfile_list(ii))), aa = find(strcmp('dvo',parameters_list)==1); end
-                if strcmp('nel',char(Parsinfile_list(ii))),   aa = find(strcmp('ne',parameters_list)==1);  parameterdata = 10.^parameterdata; end
-                if strcmp('dnel',char(Parsinfile_list(ii))),  aa = find(strcmp('dne',parameters_list)==1); parameterdata = 10.^parameterdata; end
-                if strcmp('col',char(Parsinfile_list(ii))),   aa = find(strcmp('co',parameters_list)==1);  parameterdata = 10.^parameterdata; end
-                if strcmp('dcol',char(Parsinfile_list(ii))),  aa = find(strcmp('dco',parameters_list)==1); parameterdata = 10.^parameterdata; end
-                if strcmp('snl',char(Parsinfile_list(ii))),   aa = find(strcmp('sn',parameters_list)==1);  parameterdata = 10.^parameterdata; end
-                if strcmp('dsnl',char(Parsinfile_list(ii))),  aa = find(strcmp('dsn',parameters_list)==1); parameterdata = 10.^parameterdata; end
-                if strcmp('popl',char(Parsinfile_list(ii))),  aa = find(strcmp('pop',parameters_list)==1); parameterdata = 10.^parameterdata; end
+                if strcmp('nel',char(Parsinfile_list(ii))),   aa = find(strcmp('ne',parameters_list)==1);   parameterdata = 10.^parameterdata; end
+                if strcmp('dnel',char(Parsinfile_list(ii))),  aa = find(strcmp('dne',parameters_list)==1);  parameterdata = 10.^parameterdata; end
+                if strcmp('col',char(Parsinfile_list(ii))),   aa = find(strcmp('co',parameters_list)==1);   parameterdata = 10.^parameterdata; end
+                if strcmp('dcol',char(Parsinfile_list(ii))),  aa = find(strcmp('dco',parameters_list)==1);  parameterdata = 10.^parameterdata; end
+                if strcmp('snl',char(Parsinfile_list(ii))),   aa = find(strcmp('sn',parameters_list)==1);   parameterdata = 10.^parameterdata; end
+                if strcmp('dsnl',char(Parsinfile_list(ii))),  aa = find(strcmp('dsn',parameters_list)==1);  parameterdata = 10.^parameterdata; end
+                if strcmp('popl',char(Parsinfile_list(ii))),  aa = find(strcmp('pop',parameters_list)==1);  parameterdata = 10.^parameterdata; end
+                if strcmp('dpopl',char(Parsinfile_list(ii))), aa = find(strcmp('dpop',parameters_list)==1); parameterdata = 10.^parameterdata; end
                 if strcmp('tfreq',char(Parsinfile_list(ii))), aa = aa(1); end
                 
                 [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(aa) ':E' num2str(aa)]);
@@ -444,6 +445,7 @@ for qq = 1:length(evenkindats)
                 if strcmp('snl',char(Parsinfile_list(ii))),   aa = find(strcmp('sn',parameters_list)==1);  parameterdata_kindat = 10.^parameterdata_kindat; end
                 if strcmp('dsnl',char(Parsinfile_list(ii))),  aa = find(strcmp('dsn',parameters_list)==1); parameterdata_kindat = 10.^parameterdata_kindat; end
                 if strcmp('popl',char(Parsinfile_list(ii))),  aa = find(strcmp('pop',parameters_list)==1); parameterdata_kindat = 10.^parameterdata_kindat; end
+                if strcmp('dpopl',char(Parsinfile_list(ii))), aa = find(strcmp('dpop',parameters_list)==1); parameterdata = 10.^parameterdata; end
                 if strcmp('tfreq',char(Parsinfile_list(ii))) && jj == 2, aa = find(strcmp('tfreqpp',parameters_list)==1); end
                 start = 0;
                 par_1d = [];
@@ -451,8 +453,7 @@ for qq = 1:length(evenkindats)
                 recs = length(rr);
                 for kk = 1:recs
                     par_rec = parameterdata_kindat(start+1:start+nreckindat(rr(kk),1));
-                    par_check1d(kk) = length(unique(par_rec));
-                    if par_check1d(kk) == 1
+                    if length(unique(par_rec)) == 1 || sum(isnan(par_rec)) == length(par_rec)  % If only one(1) unique value (inlc. cases of only NaN) in record
                         par_1d = [par_1d; par_rec(1)];
                     end
                     start = start + nreckindat(rr(kk),1);
@@ -479,7 +480,7 @@ for qq = 1:length(evenkindats)
                         matfile.metadata.par1d_pp = [matfile.metadata.par1d_pp info'];
                     end
                 elseif length(par_1d)==recs && jj == 2
-                    if strcmp(char(Parsinfile_list(ii)),'tfreq')
+                    if contains('tfreq rgate',char(Parsinfile_list(ii)))
                         if length(unique(par_1d)) == 1
                             matfile.data.par0d = [matfile.data.par0d double(par_1d(1))]; 
                             matfile.metadata.par0d = [matfile.metadata.par0d info'];
@@ -826,7 +827,7 @@ for qq = 1:length(evenkindats)
             end
         end
     end
-    
+
     mkdir(storepath);
     save(matfilename,'matfile')
 

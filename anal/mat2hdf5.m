@@ -1,6 +1,6 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function [Storepath,EISCAThdf5file,vecvel] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
+function [Storepath,EISCAThdf5file,nvecvel] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
 
 global path_GUP result_path name_ant
 
@@ -17,9 +17,10 @@ if isstring(datapath)
     datapath = char(datapath);    % need to be char class
 end
 
-hdf5ver = hdfver;
+hdf5version % set hdf5ver
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
+
 if strcmp(matpath(end),'/')
     matpath = matpath(1:end-1);   % remove last / in order to extract matfolder correctly
 end
@@ -50,7 +51,7 @@ if length(filelist_all) > length(filelist)
         end
     end
 end
-vecvel = qq;   % number vecvel-experiments
+nvecvel = qq;   % number vecvel-experiments
 
 rec  = length(filelist);
 TT = []; intper_vec = []; pars_recs = []; h_sd = []; ntstamps_sd = [];
@@ -77,19 +78,34 @@ end
 
 if length(TT)<rec
     filelist = filelist(TT);       % matfile(s) that was(were) corrupt or could not be read is(are) removed 
-    %rec  = length(filelist);
 end
 
-upars = unique(pars_recs);
-UUind = [];
-for uu = 1:length(upars)
-    uuind = find(pars_recs == upars(uu));
-    if length(uuind) == 1
-        UUind = [UUind uuind];
-    else
-        
-    end
+if isempty(filelist) || length(filelist) == 1    % Ignore if empty or if there is only one(1) record
+    qq = qq + 1;
+    EISCAThdf5file(qq,:) = {''};
+    Storepath(qq,:) = {''};
+    pars_recs = [];
 end
+
+% Remove isolated record(s) with another number of parameters in r_param
+% than the direct previous and direct subsequent record
+UUind = [];
+dpars_recs = diff(pars_recs);
+for hj = 1:length(pars_recs)
+    if hj == 1 
+        if dpars_recs(hj) ~= 0      % first record has another number of parameters than second
+            UUind = hj;
+        end
+    elseif hj == length(pars_recs) 
+        if dpars_recs(hj-1) ~= 0    % last record has another number of parameters than second last
+            UUind = hj;
+        end
+    elseif dpars_recs(hj-1) ~= 0
+        if dpars_recs(hj) ~= 0
+            UUind = [UUind hj];
+        end
+    end
+end 
 filelist(UUind)  = [];
 pars_recs(UUind) = [];
 
@@ -98,9 +114,11 @@ pci = [find(diff(pars_recs) ~= 0) length(filelist)];
 for d = 1:length(pci)
     if d == 1
         rec(d) = pci(d);
-    else rec(d) = pci(d)-pci(d-1); end        
+    else
+        rec(d) = pci(d)-pci(d-1);
+    end
 end
-if pci == 0, pci = []; end 
+if length(pci) == 1 && any(pci == [0,1]), pci = []; end 
 
 for rr = 1:length(pci)
     
@@ -128,9 +146,6 @@ for rr = 1:length(pci)
         stop_sd = sum(ntstamps_sd(1:stopexpr));    
         h_Sd = h_sd(start_sd:stop_sd,:);      
     end
-    
-    
-    
     
     % store the gfd content and check Tsys
     load(Filelist(1).fname)
@@ -356,6 +371,7 @@ for rr = 1:length(pci)
     end
 
     load(Filelist(jj).fname)
+   
     nn = 0;
     if exist('name_expr','var'); nn = nn + 1; 
         infoname(1) = {'name_expr'};
@@ -650,37 +666,39 @@ for rr = 1:length(pci)
                 matfile.metadata.par2d(:,nn2) = info';
             end
 
-            if nump > 5
-                [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(a+jj+1) ':E' num2str(a+jj+1)]);% info_tmp = info;
-                info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(a+jj+1)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(a+jj+1)])) };
+            if nump > 5      
                 for kk=1:length(h_m0(1,:)); nn2 = nn2 + 1;
                     if any(h_m0(1,kk) == [28 30 30.5 32])
-                        if     strcmp(h_name2,'h_param'),        info(1)={'pm'};            info(2)={'ion mix content: [O2+,NO+]/N'};                info(5)={'pm'};  info(6)={'690'};
-                        elseif strcmp(h_name2,'h_error'),        info(1)={'var_pm'};        info(2)={'variance of ion mix content: [O2+,NO+]/N'};    info(5)={'N/A'}; info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprpm'};         info(2)={'a priori ion mix content: [O2+,NO+]/N'};       info(5)={'N/A'}; info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprpm_error'};   info(2)={'a priori error ion mix content: [O2+,NO+]/N'}; info(5)={'N/A'}; info(6)={'0'};
+                        if     strcmp(h_name2,'h_param'),        par = {'pm'};
+                        elseif strcmp(h_name2,'h_error'),        par = {'var_pm'}; 
+                        elseif strcmp(h_name2,'h_apriori'),      par = {'aprpm'};
+                        elseif strcmp(h_name2,'h_apriorierror'), par = {'aprpm_error'};
                         end  
                     elseif h_m0(1,kk) == 16 
-                        if     strcmp(h_name2,'h_param'),        info(1)={'po'};            info(2)={'O+ content: [O+]/N'};                info(5)={'po+'};  info(6)={'620'};
-                        elseif strcmp(h_name2,'h_error'),        info(1)={'var_po'};        info(2)={'variance of O+ content: [O+]/N'};    info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprpo'};         info(2)={'a priori O+ content: [O+]/N'};       info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprpo_error'};   info(2)={'a priori error O+ content: [O+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                        if     strcmp(h_name2,'h_param'),        par = {'po+'};
+                        elseif strcmp(h_name2,'h_error'),        par = {'var_po+'};
+                        elseif strcmp(h_name2,'h_apriori'),      par = {'aprpo+'};
+                        elseif strcmp(h_name2,'h_apriorierror'), par = {'aprpo+_error'};
                         end
                     elseif h_m0(1,kk) == 4 
-                        if     strcmp(h_name2,'h_param'),        info(1)={'phe'};           info(2)={'He+ content: [He+]/N'};                info(5)={'phe+'}; info(6)={'650'};
-                        elseif strcmp(h_name2,'h_error'),        info(1)={'var_phe'};       info(2)={'variance of He+ content: [He+]/N'};    info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprphe'};        info(2)={'a priori He+ content: [He+]/N'};       info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprphe_error'};  info(2)={'a priori error He+ content: [He+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                        if     strcmp(h_name2,'h_param'),        par = {'phe+'};
+                        elseif strcmp(h_name2,'h_error'),        par = {'var_phe+'};
+                        elseif strcmp(h_name2,'h_apriori'),      par = {'aprphe+'};
+                        elseif strcmp(h_name2,'h_apriorierror'), par = {'aprphe+_error'};
                         end
                     elseif h_m0(1,kk) == 1 
-                        if     strcmp(h_name2,'h_param'),        info(1)={'ph'};            info(2)={'H+ content: [H+]/N'};                info(5)={'ph+'};  info(6)={'660'};
-                        elseif strcmp(h_name2,'h_error'),        info(1)={'var_ph'};        info(2)={'variance of H+ content: [H+]/N'};    info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriori'),      info(1)={'aprph'};         info(2)={'a priori H+ content: [H+]/N'};       info(5)={'N/A'};  info(6)={'0'};
-                        elseif strcmp(h_name2,'h_apriorierror'), info(1)={'aprph_error'};   info(2)={'a priori error H+ content: [H+]/N'}; info(5)={'N/A'};  info(6)={'0'};
+                        if     strcmp(h_name2,'h_param'),        par = {'ph+'};
+                        elseif strcmp(h_name2,'h_error'),        par = {'var_ph+'};
+                        elseif strcmp(h_name2,'h_apriori'),      par = {'aprph+'};
+                        elseif strcmp(h_name2,'h_apriorierror'), par = {'aprph+_error'};
                         end    
                     end
+                    b = find(strcmp(par,parameters_list)==1);
+                    [~,~,info] = xlsread(GuisdapParFile,1,['A' num2str(b) ':E' num2str(b)]);% info_tmp = info;
+                    info(6:7) = {num2str(xlsread(GuisdapParFile,1,['F' num2str(b)])) num2str(xlsread(GuisdapParFile,1,['G' num2str(b)])) };
                     matfile.metadata.par2d(:,nn2) = info';
                 end
+                
                 if length(r_param(1,:)) > 5
                     if isempty(kk); kk=0; end
                     for ll = (jj + 2):nump-(kk-2); nn2 = nn2 + 1;
@@ -970,12 +988,11 @@ for rr = 1:length(pci)
     end
 
     if exist('name_sig')
-        dd = strfind(name_sig,' ');
-        if ~isempty(str2num(name_sig(dd(1)+1:dd(1)+2)))
-            publdate = name_sig(dd(1)+1:dd(2)-1);
-        else
-            publdate = name_sig(dd(2)+1:dd(3)-1);
-        end
+        months = {'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'};
+        % assuming date in name_sig is always in the form DD-mmm-YYYY, (e.g. 06-Feb-1980)
+        mon = find(contains(months,strsplit(name_sig,'-')));  
+        dd = strfind(name_sig,months(mon));
+        publdate = name_sig(dd-3:dd+7);
         publdate = datestr(datenum(publdate,'dd-mmm-yyyy'),'yyyy-mm-dd'); % date on the form YYYY-MM-DD
         publyear = publdate(1:4);
         matfile.metadata.schemes.DataCite.PublicationYear = {publyear}; 

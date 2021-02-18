@@ -4,7 +4,7 @@ function [Storepath,EISCATvelhdf5file] = cedarvel2hdf5(hdf5file,datapath)
 
 global path_GUP 
 
-hdf5ver = hdfver;
+hdf5version
 %software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = '';
 
@@ -159,7 +159,7 @@ for qq = 1:nkindats
     end
 
     Hdf5File = [datafolder '.hdf5'];
-    MatFile =  ['MAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant '.mat'];
+    MatFile =  [datafolder '.mat'];
     hdffilename = fullfile(storepath,Hdf5File);
     matfilename = fullfile(storepath,MatFile);
     EISCATvelhdf5file(qq,:) = {hdffilename};
@@ -176,7 +176,7 @@ for qq = 1:nkindats
         end
     end
     if length(MM) == length(data_set.vipn)    % That is, if al Vm = 0
-        rmdir(storepath)
+        %rmdir(storepath)
         EISCATvelhdf5file(qq,:) = {''};
         Storepath(qq,:) = {''};
         display([mat2str(kindats(qq)) ': Only V=0, data ignored and no hdf5-file created.'])

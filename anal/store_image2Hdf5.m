@@ -6,8 +6,10 @@ function store_image2Hdf5(figurefile,hdf5file)
 if nargin<2 
     error('A figure file and an HDF5 file to save the figure data to are needed as input');
 end
+
+warning('off','MATLAB:imagesci:png:libraryWarning')
 try
-    [X,map] = imread(figurefile);
+    [X,map] = imread(figurefile);    
 catch
     display(['Failed to read ' figurefile '.'])
     return
@@ -17,6 +19,7 @@ if ~isempty(map)
 else
     x = X;
 end
+
 figinfo = imfinfo(figurefile);
 F = fieldnames(figinfo);
 

@@ -37,7 +37,8 @@ end
 % load(fullfile(tempdir,'my_input.mat'));
 % delete(fullfile(tempdir,'my_input.mat'));
 
-image_filelist        = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*.pdf'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
+image_filelist = [dir(fullfile(dirpath,'*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*.pdf'));dir(fullfile(dirpath,'*ps.gz'));dir(fullfile(dirpath,'*ps'))];
+%image_filelist_unk = [dir(fullfile('/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/tro/11mar08_unkfigures','*.png'));dir(fullfile(dirpath,'*.gif'));dir(fullfile(dirpath,'*.jpg'));dir(fullfile(dirpath,'*.jpeg'));dir(fullfile(dirpath,'*.pdf'));dir(fullfile('/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/11mar08_unkfigures','*ps.gz'));dir(fullfile(dirpath,'*ps'))];
 notesfiles = dir(fullfile(dirpath,'notes*txt'));
 logfiles = dir(fullfile(dirpath,'*log')); 
 
@@ -120,13 +121,12 @@ for ii = 1:length(data_files)
             untar(data_files{ii},untarpath)
             tared = 1;
         catch
-            %if length(data_files) == 1 && ~length(hdf5rest_files)
             if length(data_files) == 1 && ~isempty(hdf5_allfiles) == 1    
                 warning(['Ooops ... ' data_files{ii} ' could not be untared, and is replaced by ' hdf5_allfiles{1} newline])
                 data_files = hdf5_allfiles(1);
                 disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
-                vecvel = 0;
+                vecvel = zeros(length(EISCAThdf5file),1);
                 tared = 0;
             else
                 warning(['Ooops ... ' data_files{ii} ' could not be untared, and is therefore ignored.' newline])
@@ -153,13 +153,17 @@ for ii = 1:length(data_files)
             end
            
             if ~isempty(untar_filelist)
-                [storepath,EISCAThdf5file,vecvel] = mat2hdf5(untarpath,datapath);
+                [storepath,EISCAThdf5file,nvecvel] = mat2hdf5(untarpath,datapath);
+                vecvel = zeros(length(EISCAThdf5file),1);
+                if nvecvel>0
+                    vecvel(1:nvecvel) = ones(nvecvel,1); 
+                end
             elseif isempty(untar_filelist) && length(data_files) == 1 && ~isempty(hdf5_allfiles)  
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is replaced by ' hdf5_allfiles{1} newline])
                 data_files = hdf5_allfiles(1);
                 disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
-                vecvel = length(EISCAThdf5file);
+                vecvel = zeros(length(EISCAThdf5file),1);
             elseif isempty(untar_filelist)
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is therefore ignored.' newline])
                 continue
@@ -168,20 +172,14 @@ for ii = 1:length(data_files)
     else
         if contains(data_files{ii},'.ar')
             [storepath,EISCAThdf5file] = cedarvel2hdf5(data_files{ii},datapath);
-            vecvel = 1;
+            vecvel = ones(length(EISCAThdf5file),1);
         else
             [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
-            vecvel = 0;
+            vecvel = zeros(length(EISCAThdf5file),1);
         end
     end
-    
+
     nfiles = length(EISCAThdf5file);
-    if vecvel == 0
-        vecvel = zeros(nfiles,1);
-    else
-        vecvel = [1:vecvel vecvel+1:nfiles];
-    end
-    
     isempt = [];
     for nf = 1:nfiles
         if isempty(EISCAThdf5file{nf})
@@ -218,14 +216,14 @@ for ii = 1:length(data_files)
         nfigs_expr = 0;
 
         for jj = 1:length(image_filelist)
+            
             figurefile = fullfile(dirpath,image_filelist(jj).name);
             [~,figname,ext] = fileparts(figurefile);
             if strcmp(ext,'.gz')
                 [~,figname,~] = fileparts(figname);
             end
-
-%             if length(data_files) > 1
-            if nfiles > 1   
+            
+            if nfiles > 1 || length(data_files) > 1
                 fig_pulse  = '';
                 fig_intper = '';
                 fig_ant    = '';
@@ -266,11 +264,14 @@ for ii = 1:length(data_files)
                         end
                     end
                 end
+                
+                intpertol = 3;
+                intpercheck = str2double(intper)-intpertol < str2double(fig_intper) && str2double(fig_intper) < str2double(intper)+intpertol;  % demand fig_interp to be in the interval intper +/- som tolerence
 
-                if (strcmp(fig_intper,intper) && contains(fig_ant,ant) && strcmp(fig_pulse,pulse)) && c == 1 || ...
-                   (strcmp(fig_intper,intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...   
+                if (intpercheck && contains(fig_ant,ant) && strcmp(fig_pulse,pulse) && c == 1) || ...
+                   (intpercheck && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...   
                    (isempty(fig_intper) && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ... 
-                   (contains(figname,'plasmaline') && strcmp(intper,fig_intper) && contains(fig_pulse,pulse)) || ...
+                   (contains(figname,'plasmaline') && intpercheck && contains(fig_pulse,pulse)) || ...
                    (contains(figname,'scan') && contains(fig_ant,ant) && contains(fig_pulse,pulse)) || ...
                    ((contains(figname,'Bore') || contains(figname,'West')) && contains(fig_pulse,pulse))
                     if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
@@ -291,7 +292,7 @@ for ii = 1:length(data_files)
                                 epsfile = gunzip(figurefile);
                                 figurefile = epsfile{1};
                             catch
-                                warning([figurefile ' could not be unziped.'])
+                                warning([figurefile ' could not be unzipped.'])
                                 saveplot = 0;
                             end    
                         end
@@ -307,8 +308,7 @@ for ii = 1:length(data_files)
                         end
                     end
                 end
-%             elseif length(data_files) == 1 
-            elseif nfiles == 1    
+            else
                 if ~strcmp(ext,'.gz') && ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')  
                     if strcmp(ext,'.pdf')
                         npdf = npdf + 1;
@@ -327,7 +327,7 @@ for ii = 1:length(data_files)
                             epsfile = gunzip(figurefile);
                             figurefile = epsfile{1};
                         catch
-                            warning([figurefile ' could not be unziped.'])
+                            warning([figurefile ' could not be unzipped.'])
                             saveplot = 0;
                         end
                     end
