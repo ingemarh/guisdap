@@ -55,3 +55,5 @@ if length(d_data)==nup_d*length(updown)*ngates*nlag
 end
 if isempty(gate), gate=2; end
 %freq=freq(1); startad=startad(1); updown=0;
+
+%freq=[-6]*1e6; startad=startad(2); clear uparfreq
