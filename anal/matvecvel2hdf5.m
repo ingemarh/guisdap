@@ -2,7 +2,7 @@
 
 function [Storepath,EISCAThdf5file] = matvecvel2hdf5(matfile_vel,datapath)%,addfigs,addnotes) 
 
-global path_GUP %result_path 
+global path_GUP hdf5ver %result_path 
 % if nargin<4, addnotes = []; else addnotes = 1; end 
 % if nargin<3, addfigs = []; else addfigs = 1; end 
 % if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
@@ -13,7 +13,7 @@ global path_GUP %result_path
 % if isstring(datapath)
 %     datapath = char(datapath);    % need to be char class
 % end
-hdf5version
+
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
 
@@ -469,7 +469,7 @@ for sf = sFields.'
 end
 
 mkdir(storepath);
-save(matfilename,'matfile')
+%save(matfilename,'matfile')
 
 % Generate an HDF5-file from the MAT-file
 chunklim = 10;

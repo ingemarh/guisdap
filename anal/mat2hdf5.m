@@ -2,7 +2,7 @@
 
 function [Storepath,EISCAThdf5file,nvecvel] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
 
-global path_GUP result_path name_ant
+global path_GUP result_path name_ant hdf5ver
 
 name_ant = [];
 
@@ -17,7 +17,6 @@ if isstring(datapath)
     datapath = char(datapath);    % need to be char class
 end
 
-hdf5version % set hdf5ver
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
 
@@ -1064,7 +1063,7 @@ for rr = 1:length(pci)
     end
 
     mkdir(storepath);    
-    save(matfilename,'matfile')
+    %save(matfilename,'matfile')
 
     % Generate an HDF5-file from the MAT-file
     chunklim = 10;

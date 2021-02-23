@@ -2,9 +2,8 @@
 
 function [Storepath,EISCAThdf5file] = cedar2hdf5(hdf5file,datapath)
 
-global path_GUP 
+global path_GUP hdf5ver
 
-hdf5version
 software = 'https://git.eiscat.se/eiscat/on-an';
 level2_link = '';
 
@@ -829,7 +828,7 @@ for qq = 1:length(evenkindats)
     end
 
     mkdir(storepath);
-    save(matfilename,'matfile')
+    %save(matfilename,'matfile')
 
     % Generate an HDF5-file 
     chunklim = 10;
