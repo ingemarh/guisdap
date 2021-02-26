@@ -267,7 +267,7 @@ e_time = datevec(Vdate(2,end));
 endtime = datestr(e_time);
 
 [~,filename,~] = fileparts(matfile_vel); 
-pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','otia','tyco','gup0','gup3'};
+pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','othia','tyko','gup0','gup3'};
 ants   = {'32m','42m','uhf','vhf','esa','esr','eis','kir','sod','tro','lyr'};
 if ~exist('name_expr','var')
     name_expr='missing'; 
@@ -287,7 +287,8 @@ if ~exist('name_ant','var')
 end
 if ~exist('name_sig','var'), name_sig='missing'; end
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant];
+%datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant];
+datafolder = ['EISCAT_' filename];
 storepath = fullfile(datapath,datafolder);
 
 while exist(storepath)

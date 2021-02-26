@@ -7,8 +7,6 @@ end
 lon = lonlat(isfinite(lonlat(:,1)),1);
 lat = lonlat(isfinite(lonlat(:,2)),2);  % assuming
 
-toldeg = 1e-4;
-tol = toldeg/max(Vdate(1,:)*24*3600);       % tolerence = 0,01 s
 lonlat_unique = uniquetol([lon,lat],1e-4,'ByRows',true);    % with a tolerance of 1e-4 degrees
 nunique = length(lonlat_unique(:,1));
 
