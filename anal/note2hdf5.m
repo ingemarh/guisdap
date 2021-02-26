@@ -1,5 +1,5 @@
-function addNote2Hdf5(notefile,hdf5file,N)
-%addNote2Hdf5(notefile,hdf5file) adds any text (comments, notes etc) in 'notefile' 
+function note2hdf5(notefile,hdf5file,N)
+%note2hdf5(notefile,hdf5file) adds any text (comments, notes etc) in 'notefile' 
 %to 'hdf5file'in /metadata/commentN, where N is a number (left out if N = 1) 
 
 if nargin<3
@@ -11,7 +11,6 @@ end
 
 fid = fopen(notefile);
 notes = textscan(fid,'%s','delimiter','');
-
 
 notes_lines = notes{1};
 notes_str = '';

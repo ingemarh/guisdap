@@ -317,7 +317,7 @@ else
  NCAR_output
 
  fprintf('Making EISCAT HDF5 file...\n')
- matvecvel2hdf5([result_file '.mat'],odir);
+ mat2hdf5_vel([result_file '.mat'],odir);
 end
 if tfile, fclose(tfile); end
 return

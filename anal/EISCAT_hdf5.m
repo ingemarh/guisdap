@@ -171,7 +171,7 @@ for ii = 1:length(data_files)
         end
     else
         if contains(data_files{ii},'.ar')
-            [storepath,EISCAThdf5file] = cedarvel2hdf5(data_files{ii},datapath);
+            [storepath,EISCAThdf5file] = cedar2hdf5_vel(data_files{ii},datapath);
             vecvel = ones(length(EISCAThdf5file),1);
         else
             [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
@@ -281,7 +281,7 @@ for ii = 1:length(data_files)
                             [~,pdfname,ext] = fileparts(figurefile);
                             pdf_forHDF5(npdf) = {[pdfname ext]};
                         else    
-                            store_image2Hdf5(figurefile,EISCAThdf5file{nnn})
+                            image2hdf5(figurefile,EISCAThdf5file{nnn})
                         end
                         figure_check(jj) = figure_check(jj) + 1;
                         nfigs_expr =  nfigs_expr +1;
@@ -316,7 +316,7 @@ for ii = 1:length(data_files)
                         [~,pdfname,ext] = fileparts(figurefile);
                         pdf_forHDF5(npdf) = {[pdfname ext]};
                     else
-                        store_image2Hdf5(figurefile,EISCAThdf5file{nnn})
+                        image2hdf5(figurefile,EISCAThdf5file{nnn})
                     end
                     figure_check(jj) = figure_check(jj) + 1;
                     nfigs_expr =  nfigs_expr +1;
@@ -352,7 +352,7 @@ for ii = 1:length(data_files)
 
         for nn = 1:length(notesfiles)
             notesfile = fullfile(dirpath,notesfiles(nn).name);
-            addNote2Hdf5(notesfile,EISCAThdf5file{nnn},nn)
+            note2hdf5(notesfile,EISCAThdf5file{nnn},nn)
         end
 
         for ll = 1:length(logs_filename)
@@ -511,7 +511,7 @@ for ii = 1:length(data_files)
                                     npdf = npdf + 1;
                                     pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
                                     print('-dpng256',[plotfile '.png'])
-                                    store_image2Hdf5([plotfile '.png'],EISCAThdf5file{nnn});
+                                    image2hdf5([plotfile '.png'],EISCAThdf5file{nnn});
                                     insert_exif(gcf,plotfile,{'pdf' 'png'})
                                     delete([plotfile '.png'])
                                 end
@@ -533,7 +533,7 @@ for ii = 1:length(data_files)
                             npdf = npdf + 1;
                             pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
                             print('-dpng256',[vfile '.png'])
-                            store_image2Hdf5([vfile '.png'],EISCAThdf5file{nnn});
+                            image2hdf5([vfile '.png'],EISCAThdf5file{nnn});
                             insert_exif(gcf,vfile,{'pdf' 'png'})
                             delete([vfile '.png'])
                         end
@@ -566,7 +566,7 @@ for ii = 1:length(data_files)
                 file = vizu('save','24hrplt');
                 newpng = [file '.png'];
                 newpdf = [file '.pdf'];
-                store_image2Hdf5(newpng,EISCAThdf5file{nnn});
+                image2hdf5(newpng,EISCAThdf5file{nnn});
                 copyfile(newpdf,storepath{nnn})
                 [~,pdfname,ext]=fileparts(newpdf);
                 strds2hdf5(EISCAThdf5file{nnn},'/figures','figure_links',{[pdfname ext]})
@@ -598,3 +598,61 @@ end
 if exist(fullfile(tempdir,'UntaredContent'))
     rmdir(fullfile(tempdir,'UntaredContent'),'s')
 end
+
+
+
+function metacompl(OldHdf5file,EISCAThdf5file)
+% metacompl(OldHdf5file,EISCAThdf5file)
+% If experiment metadata is missing in EISCAThdf5file, extract experiment 
+% metadata from older HDF5-file (OldHdf5file) and insert in the new 
+% HDF5-file (EISCAThdf5file)
+
+inform1 = h5info(OldHdf5file,'/Metadata');
+metavar = {inform1.Datasets.Name}';
+if ~isempty(find(strcmp(metavar,'Experiment Parameters')))
+    exprpar = h5read(OldHdf5file,'/Metadata/Experiment Parameters');
+else
+    warning('No field named "Experiment Parameters"')
+    return
+end
+exprparnames = cellstr(exprpar.name');
+exprparvalues = cellstr(exprpar.value');
+
+for ii = 1:length(exprparnames)
+   experiment.(char(regexprep(exprparnames(ii),' ','_'))) = {exprparvalues{ii}};
+end
+
+inform2 = h5info(EISCAThdf5file,'/metadata');
+metagroups = {inform2.Datasets.Name}';
+if isempty(find(strcmp(metagroups,'/metadata/software/gfd'))) && isempty(find(strcmp(metagroups,'/metadata/software/experiment')))
+    fields = fieldnames(experiment);
+    for ii = 1:length(fields)
+        strds2hdf5(EISCAThdf5file,'/metadata/software/experiment',char(fields(ii)),experiment.(char(fields(ii))))
+    end
+else
+    display('/metadata/software/gfd or /metadata/software/experiment already exists in the new HDF5 file.')
+    return
+end
+
+
+function pdffile = eps2pdf(epsfile) 
+% Generating a pdf-file from an eps or ps file.
+
+if nargin<1
+    error('No eps or ps-file as input')
+end
+
+[dirpath,epsfilename,ext] = fileparts(epsfile);
+if ~strcmp(ext,'.eps') && ~strcmp(ext,'.ps')
+    error('The input file is not .eps or .ps')
+end
+
+epsfile = [dirpath filesep epsfilename];
+
+pngor = '820x580';
+gd=fullfile(matlabroot,'sys','ghostscript',filesep);
+gsbin=fullfile(gd,'bin',lower(computer),'gs');
+gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
+if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
+unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s%s </dev/null >/dev/null',gsbin,gsinc,pngor,epsfile,epsfile,ext));
+pdffile = [epsfile '.pdf'];

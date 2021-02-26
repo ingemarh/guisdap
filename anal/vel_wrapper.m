@@ -134,7 +134,7 @@ mkdir(r)
 
 [namepath,namefile] = fileparts(r);
 EISCAThdf5file = fullfile(namepath,['EISCAT_' namefile],['EISCAT_' namefile '.hdf5']);
-store_image2Hdf5([r '.png'],EISCAThdf5file);
+image2hdf5([r '.png'],EISCAThdf5file);
 strds2hdf5(EISCAThdf5file,'/figures','figure_links',{[namefile '.pdf']})
 
 filelist = dir(fullfile(namepath,['*' namefile '*']));

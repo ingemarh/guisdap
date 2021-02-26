@@ -1,6 +1,6 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function [Storepath,EISCAThdf5file] = matvecvel2hdf5(matfile_vel,datapath)%,addfigs,addnotes) 
+function [Storepath,EISCAThdf5file] = mat2hdf5_vel(matfile_vel,datapath)%,addfigs,addnotes) 
 
 global path_GUP hdf5ver %result_path 
 % if nargin<4, addnotes = []; else addnotes = 1; end 

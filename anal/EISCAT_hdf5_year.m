@@ -1,5 +1,5 @@
-function EISCAThdf5_generate_year(yearpath,datapath,matfile_lists)
-% EISCAThdf5_generate_year(yearpath,datapath,matfile_lists)
+function EISCAT_hdf5_year(yearpath,datapath,matfile_lists)
+% EISCAT_hdf5_year(yearpath,datapath,matfile_lists)
 %
 % Generate EISCAT HDF5-files from one year of Madrigal data.
 %
