@@ -1,72 +1,39 @@
-GUISDAP 9.0
+Guisdap 9.2
 
-This release of guisdap contains a few new features and bugfixes, but
-everything is made compatible with older versions (hopefully). The package
-should be compatible with not too ancient Matlab versions (>2013), but there may (or
-may not) be some problems on specific platforms.
-
+This release of guisdap contains new features and bugfixes, but everything is made compatible
+with older versions (hopefully). The package should be compatible with not too ancient Matlab
+versions (>2016), but there may (or may not) be some problems on specific platforms.
 Install
 
-Guisdap-9.0 has been succesfully installed on linux. Other architectures may
-have to change the makefiles, if speed is desired, othervise it should run
-without the compiled routines.
-On Windows systems it is recommended to run under the cygwin
-environment for best compabilitiy. Please report any changes needed for any
-systems.
+Guisdap-9.2 has been succesfully installed on linux. The software is available as a git repository,
+or as precompiled precompiled packages. For best performance it's adviced to compile the git scripts:
 
-untar the distribution at your favourite place
 cd into the guisdap directory
-if you want the speed improvements the mex utility provides:
- make "lib" and "mex7" directories
- cd models/iri2016
- "make" (should be gnu-make)
- cd ../nrlmsise00
- "make"
- cd ../irbem
- make OS=... ENV=... all
- cd ../../mexsources
- "make"
-
+ . ./libinstall.sh
 make a link of bin/guisdap to a place on your path (ex /usr/local/bin)
 
-Provided is a searchpath to ~/gup/mygup where your personal and edited
-distribution files should go.
+Provided is a searchpath to ~/gup/mygup where your personal and edited distribution files should go.
 
 Running
 
-At the prompt, type "guisdap --help" to see all the switches available. Normal
-analysis is done running "guisdap -a" which will bring up a window with some
-entries to fill in. (Hopefully selfexplained) This is the same as "guisdap" and
-then "analyse". When finished hit "GO". A more detailed instruction can be found
-at http://www.eiscat.se/raw/GUISDAP/doc/howto.html.
-
-There is also a course presentation describing how to initialise new experiments
-and some useful tips on more specialised analysis in the EISCAT web site. The
-initialisation scripts are avaiable with "guisdap -i".
+On a unix system prompt, type "guisdap --help" to see all the switches available. Normal analysis
+is done running "guisdap -a" which will bring up a window with some entries to fill in. (Hopefully
+selfexplained) This is the same as "guisdap" and then "analyse". When finished hit "GO". A more
+detailed instruction can be found at here.There is also a course presentation describing how to
+initialise new experiments and some useful tips on more specialised analysis. The initialisation
+scripts are avaiable with "guisdap -i".
+For Windows there is a startup script windows_start.m available that should be chosen as 'Run'
+with right-click.
 
 New features
 
-With version 9 there are provisions for analysing raw voltage data.
+With version 9.2 the new HDF5 format for the result data is introduced.
+* There is a comprehensive document descriping the format: share/doc/pdf/EISCAT_Hdf5_data_format.pdf
+* There is a quicklook spreadsheet file for the format: matfiles/Guisdap_Parameters.xlsx
+* More rawdata taking experiments have been prepared for automatic lagprofiling and analysis
+* mainly to get sub-dump resolutions of data
+* The libraries have been rewritten to allow more compilers and be more matlab independent
+* Mex routines are now optional
+* The internal time format is now TAI to allow unique time stamps Numerous bugfixings and updates
 
-* The most common EISCAT dsp routines are included, and on some expeiments
-  there are wrappers to control the lagprofiling processing via the
-  analysis_lagprofiling parameter:
-*   analysis_lagprofiling.par  The control parameter list, normally static
-*   analysis_lagprofiling.data Start address to insert the results
-*   analysis_lagprofiling.raw  Start address for the raw data
-*   analysis_lagprofiling.do   Do or don't lagprofile
-*   analysis_lagprofiling.lib  Dsp routine to use
-*   Some generic names for the wrapping:
-*     analysis_lagprofiling.nsamp No raw samples per scan
-*     analysis_lagprofiling.nrep No repititions
-*     analysis_lagprofiling.nwin No windows (codes)
-*     analysis_lagprofiling.wlen Window length
-*     analysis_lagprofiling.p    [First last] profile to process
-
-Provisions for QuJing radar data
-
-Numerous bugfixings and updates
-
-Further information can be found at www.eiscat.se.
-
-Ingemar Häggström.
+Contact: Ingemar HÃ¤ggstrÃ¶m
