@@ -149,7 +149,9 @@ C 2016.14 04/23/18 Versioning now based on year of major releases
 C 2016.15 05/07/18 StormVd: AE7_12S -> AEd7_12S                [K. Knight]
 C 2020.01 07/02/19 Added subroutines BOOKER and tops_cor2 (COMMON/BLO11) 
 C 2020.02 07/19/19 XE1:itopn=3 is topside cor2 option (solar activity term)
-C 2020.03 08/05/19 XE1: corrections and BLO11 change 
+C 2020.03 08/05/19 XE1: corrections and BLO11 change
+C 2020.04 09/14/20 SOCO: special case sunrse > sunset 
+C 2020.05 10/12/20 SOCO: sign(99,flat) -> sign(99.0,flat)     [P. Coisson] 
 C                  
 c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c IRI functions and subroutines:
@@ -202,13 +204,13 @@ C	B2TOP   is the topside scale height that depends on foF2 and
 C           hmF2. 
 C Switch for choosing the desired option is itopn in COMMON /BLO11
 C   itopn   =0 IRI-2001, =1 IRI-2001-corrected, =2 NeQuick
-C           =3 Gulyaeva-0.5 is not yet implemented. 
+C           =3 IRI-cor2. 
 c----------------------------------------------------------------
         COMMON  /BLOCK1/HMF2,XNMF2,HMF1,F1REG
      &          /BLO10/BETA,ETA,DELTA,ZETA
 c     &          /BLO11/B2TOP,TC3,itopn,alg10,hcor1,tcor2
      &          /BLO11/B2TOP,itopn,tcor
-     &          /QTOP/Y05,H05TOP,QF,XNETOP,xm3000,hhalf,tau
+c     &          /QTOP/Y05,H05TOP,QF,XNETOP,xm3000,hhalf,tau
      &          /ARGEXP/ARGMAX
 
         logical 	f1reg              
@@ -8096,6 +8098,17 @@ c
         sunset = 12. + phi - et
         if(sunrse.lt.0.) sunrse = sunrse + 24.
         if(sunset.ge.24.) sunset = sunset - 24.
+c special case sunrse > sunset
+        if(sunrse.gt.sunset) then
+        	sunx=sign(99.0,flat)
+        	if(ld.gt.91.and.ld.lt.273) then
+        		sunset = sunx
+        		sunrse = sunx
+        	else
+        		sunset = -sunx
+        		sunrse = -sunx
+        	endif
+        	endif
 c
         return
         end

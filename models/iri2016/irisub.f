@@ -192,7 +192,14 @@ C 2020.02 07/19/19 itopn=1 cor option, itopn=3 cor2 option
 C 2020.03 07/29/19 added 'endif' itopn=3 and declared a01(2,2)        
 C 2020.04 08/05/19 itopn=3 requires itopn=1, BLO11 change        
 C 2020.05 01/16/20 ion composition topside if h.ge.300km
-C
+C 2020.06 06/15/20 Den_NO=0.0,rn=0.0 before CHEMION ---- M. Hausman
+C 2020.06 06/15/20 IF(..hcor1) after IF(itopn....) ..... M. Hausman 
+C 2020.07 08/24/20 changed if(sam_moye ...) ------------ A. Rodland
+C 2020.07 08/24/20 FELDCOF only when new date ---------- A. Rodland             
+C 2020.08 09/16/20 added HPOL for topside COR2 option
+C 2020.08 09/16/20 not comp'd oarr variables: -1 or -100 for lati
+C 2020.08 09/16/20 jf(47) for CGM computation on/off; lati>25
+
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
 C*****************************************************************
@@ -268,6 +275,7 @@ C   43    B0 from model          B0 user input in OARR(10)           t
 C   44    B1 from model          B1 user input in OARR(35)           t
 C   45    HNEA=65/80km dya/night HNEA user input in OARR(89)         t
 C   46    HNEE=2000km 	         HNEE user input in OARR(90)         t
+C   47    CGM computation on 	 CGM computation off                 f
 C      ....
 C   50    
 C   ------------------------------------------------------------------
@@ -410,10 +418,10 @@ c      CHARACTER FILNAM*53
      &  HMF1IN,FOEIN,HMEIN,RZIN,sam_doy,F1_OCPRO,F1_L_COND,NODEN,
      &  NOTEM,NOION,TENEOP,OLD79,JF(50),URSIFO,igin,igino,mess,
      &  dnight,enight,fnight,fstorm_on,estorm_on,B0IN,B1IN,
-     &  fof2ino,hmf2ino,f107in,f107ino,f107_81in,f107_81ino
+     &  fof2ino,hmf2ino,f107in,f107ino,f107_81in,f107_81ino,
+     &  sam_moye
            character path*128
-           common /iripath/path,lenpath
-
+           common /iripath/path,lenpath      
 
       COMMON /CONST/UMR,PI  /const1/humr,dumr   /ARGEXP/ARGMAX
      &   /IGRF1/ERA,AQUAD,BQUAD,DIMO
@@ -454,14 +462,14 @@ C
         oarr(9)=-1.
         do 8398 kind=11,14,1
 8398    	oarr(kind)=-1.
-        do 8378 kind=17,32,1
+        do 8378 kind=17,22,1
 8378    	oarr(kind)=-1.
-        oarr(34)=-1.
-        do 8478 kind=36,38,1
-8478    	oarr(kind)=-1.
-        oarr(40)=-1.
-        do 8428 kind=42,88,1
-8428    	if(kind.ne.46) oarr(kind)=-1.
+c        oarr(34)=-1.
+c        do 8478 kind=36,38,1
+c8478    	oarr(kind)=-1.
+c        oarr(40)=-1.
+c        do 8428 kind=42,88,1
+c8428    	if(kind.ne.46) oarr(kind)=-1.
         do 8429 kind=91,100,1
 8429    	oarr(kind)=-1.
 
@@ -906,7 +914,7 @@ C
         ENDIF
         CALL GEODIP(IYEAR,LATI,LONGI,MLAT,MLONG,JMAG)
 
-        CALL FELDCOF(RYEAR)
+        if((iyear.ne.iyearo).or.(daynr.ne.idaynro)) CALL FELDCOF(RYEAR)
 
         if(jf(18)) then
         	call igrf_dip(lati,longi,ryear,300.0,dec,dip,magbr,modip)
@@ -930,7 +938,28 @@ c
         ABSMLT=ABS(MLAT)
         ABSMDP=ABS(MODIP)
         ABSMBR=ABS(MAGBR)
-
+c
+c calculation of CGM coordinates if abs(latitude) > 25 degrees
+c
+		cgm_lat=-100.0
+		cgm_lon=-100.0
+		cgm_mlt=-1.0
+        if(jf(47).and.(abslat.gt.25.0)) then
+	        DAT(1,1)=lati
+	        DAT(2,1)=longi
+            call GEOCGM01(1,IYEAR,height_center,DAT,PLA,PLO)
+c            		cgm_lat=DAT(3,1)
+c            		cgm_lon=DAT(4,1)
+c            		cgm_mlt00_ut=DAT(11,1)
+            cgm_lat=DAT(3,3)
+            cgm_lon=DAT(4,3)
+            cgm_mlt00_ut=DAT(11,3)
+            cgm_mlt=hourut-cgm_mlt00_ut
+            if(cgm_mlt.lt.0.) cgm_mlt=24.+hourut-cgm_mlt00_ut
+c            		cgm_mlt_ut=DAT(11,1)
+c        	 		cgm_mlt=cgm_mlt_ut+cgm_lon/15.	 		
+c        	 		if(cgm_mlt.gt.24.) cgm_mlt=cgm_mlt-24.
+			endif
 c
 C CALCULATION OF UT/LT and XMLT  ...............
 c
@@ -988,6 +1017,7 @@ C
         sam_yea=(iyear.eq.iyearo)
         sam_doy=(daynr.eq.idaynro)
         sam_date=(sam_yea.and.sam_doy)
+        sam_moye=(sam_yea.and.sam_mon)
         sam_ut=(hourut.eq.ut0)
         
         if(sam_date.and..not.rzin.and..not.rzino
@@ -1163,10 +1193,12 @@ C
       IF((FOF2IN).AND.(HMF2IN).and.(itopn.ne.2)) GOTO 501
       IF((FOF2INO).OR.(HMF2INO)) GOTO 7797
       IF(URSIF2.NEQV.URSIFO) GOTO 7797
-      if(.not.rzin.and..not.rzino.and..not.igin.and..not.igino) then
-          IF(sam_mon.AND.(nmonth.EQ.nmono).and.sam_yea) GOTO 4292
-          IF(sam_mon) GOTO 4293
-          endif
+      IF(sam_moye.AND.(nmonth.NE.nmono)) GOTO 4293
+      if(rzin.or.igin.or.rzino.or.igino) then
+        IF(sam_moye.AND.(nmonth.EQ.nmono)) GOTO 4291
+      else
+        IF(sam_moye.AND.(nmonth.EQ.nmono)) GOTO 4292
+      endif
 
 7797    URSIFO=URSIF2
         WRITE(FILNAM,104) path(1:lenpath),MONTH+10
@@ -1317,35 +1349,22 @@ c
             NMES=1.24E10*FOES*FOES
             endif
 c
-c calculation of equatorward auroral boundary
-c
+c calculation of equatorward auroral boundary: corrected magnetic
+c latitude (CGM) of the boundary (ab_mlat(1:48)) for MLT=0.0,0.5,
+c 1.0 ... 23.5 h and kp=xkp.
+c 
+		cgmlat=-100.0
+		do 2929 i=1,48  
+2929		ab_mlat(i)=-100.0
         if(jf(33)) then
-c Corrected magnetic latitude CGM of equatorward boundary, 
-c ab_mlat(48), for MLT=0.0,0.5,1.0 ... 23.5 h and kp=xkp
-            call auroral_boundary(xkp,-1.0,cgmlat,ab_mlat)
-	        DAT(1,1)=lati
-	        DAT(2,1)=longi
-            call GEOCGM01(1,IYEAR,height_center,DAT,PLA,PLO)
-c            cgm_lat=DAT(3,1)
-c            cgm_lon=DAT(4,1)
-c            cgm_mlt00_ut=DAT(11,1)
-            cgm_lat=DAT(3,3)
-            cgm_lon=DAT(4,3)
-            cgm_mlt00_ut=DAT(11,3)
-            cgm_mlt=hourut-cgm_mlt00_ut
-            if(cgm_mlt.lt.0.) cgm_mlt=24.+hourut-cgm_mlt00_ut
-c            cgm_mlt_ut=DAT(11,1)
-c        	cgm_mlt=cgm_mlt_ut+cgm_lon/15.	 		
-c        	if(cgm_mlt.gt.24.) cgm_mlt=cgm_mlt-24.
-
-c CGM latitude of boundary (cgmlat) for present MLT value
-C 2012.02 12/17/12 Add magnetic declination as oarr(84) output
-            zmlt=xmlt
-C            zmlt=cgm_mlt
-            cgmlat=100.0
-            if(zmlt.ge.0.0.and.zmlt.le.24.0) 
-     &          call auroral_boundary(xkp,zmlt,cgmlat,ab_mlat)
+        	zmlt=xmlt
+c            	zmlt=cgm_mlt
+            if(zmlt.lt.0.0.or.zmlt.gt.24.0) zmlt=-1.0 
+           	call auroral_boundary(xkp,zmlt,cgmlat,ab_mlat)
             endif
+c
+c determine latitude RLAT for AMTB-2013 hmF2 model and ABT-2009 B0 model
+c            
 		IF(((.not.JF(4)).and.JF(31)).or.((.not.JF(39)).and.JF(40))) THEN
 	    	FLON=LONGI+15.*hourut
           	if(FLON.gt.360.) FLON=FLON-360.
@@ -1361,9 +1380,9 @@ C            zmlt=cgm_mlt
              	endif
           	RLAT=XRLAT
           	ENDIF
-          	
+c          	
 c Computation of hmF2: user input or 3 model options		
-
+c
     	IF(HMF2IN) THEN
         	IF(AHMF2.LT.50.0) THEN
           		XM3000=AHMF2
@@ -1375,6 +1394,7 @@ c if jf(36)=false then foF2_storm in hmF2 formula
           		HMF2=AHMF2
 c No longer used because NeQuick only with CCIR-M(3000)F2
 c          		XM3000=XM3000HM(MAGBR,RSSN,FOF2/FOE,HMF2)
+				xm3000=-1.0
           	ENDIF
     	ELSE IF(JF(39)) THEN
         	ratf=fof2/foe
@@ -2000,8 +2020,8 @@ c
           endif
 
       tcor1=0.0
-      IF(height.lt.hcor1) goto 2319
       IF(itopn.eq.1.or.itopn.eq.3) then             
+          IF(height.lt.hcor1) goto 2319
           xred = height - hcor1
           rco = tc3 * xred
           TCOR1 = rco * alg10
@@ -2010,8 +2030,9 @@ c
 2319  tcor2=0.0
       if(itopn.eq.3.and.height.gt.hmf2) then
       	  call tops_cor2(height,modip,a01)
-      	  tcor2=a01(1,1)+a01(2,1)*pf107
-          if (fnight) tcor2=a01(1,2)+a01(2,2)*pf107
+      	  tcor2d=a01(1,1)+a01(2,1)*pf107
+          tcor2n=a01(1,2)+a01(2,2)*pf107
+          tcor2 = HPOL(HOUR,tcor2d,tcor2n,SAX300,SUX300,1.,1.)
       	  endif	
       	  				
       tcor=tcor1+tcor2 
@@ -2085,6 +2106,8 @@ c Richards-Bilitza-Voglozin-2010 IDC model
 			EDENS=ELEDE/1.e6
 			jprint=1
 			if(jf(38)) jprint=0
+			Den_NO = 0.0
+			rn = 0.0
             CALL CHEMION(jprint,height,F107YOBS,F10781OBS,TEH,TIH,
      &       	TNH,D_MSIS(2),D_MSIS(4),D_MSIS(3),D_MSIS(1),
      &       	D_MSIS(7),-1.0,XN4S,EDENS,-1.0,xhi,ro,ro2,rno,rn2,

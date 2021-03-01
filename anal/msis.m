@@ -1,9 +1,9 @@
-function [d,texo]=msis(h,tim,loc,ap)
+function [d,texo]=msis2(h,tim,loc,ap)
 % function [d,texo]=msis(h,tim,loc,ap);
 % h heights in m, default 200e3
 % tim date as dayno secinday, default [180 43200]
 % loc location, default [69.2 19.2]
-% ap vector [f107a f107 ap], default [100 100 5];
+% ap vector [f107a f107 ap], default [100 100 4];
 % d matrix [He O N2 O2 Ar H N mass T]
 % texo exospheric temperature
 
@@ -11,7 +11,7 @@ if nargin<4, ap=[]; end
 if nargin<3, loc=[]; end
 if nargin<2, tim=[]; end
 if nargin<1, h=[]; end
-if isempty(ap), ap=[100 100 5]; end
+if isempty(ap), ap=[100 100 4]; end
 if isempty(loc), loc=[69.2 19.2]; end
 if isempty(tim), tim=[180 43200]; end
 if isempty(h), h=200e3; end
@@ -19,18 +19,17 @@ if isempty(h), h=200e3; end
 if libisloaded('libmsis')
 
 nh=length(h);
-it=round(tim);
 stl=tim(2)/3600+loc(2)/15;
-dens=libpointer('singlePtr',zeros(1,8));
+dens=libpointer('singlePtr',zeros(1,9));
 t=libpointer('singlePtr',zeros(2,1));
 dval=[1:5 7 8 6];
 d=ones(nh,9)*NaN;
 
-calllib('libmsis','meters_',1);
 for i=1:nh
- calllib('libmsis','gtd7_',it(1),it(2),h(i)/1000,loc(1),loc(2),stl,ap(1),ap(2),ap(3),48,dens,t);
- d(i,:)=[dens.value(dval) t.value(2)];
+ calllib('libmsis','gtd8d_',round(tim(1)),tim(2),h(i)/1000,loc(1),loc(2),stl,ap(1),ap(2),ap(3)*ones(1,7),[],dens,t);
+ d(i,:)=[dens.value(dval)*1e6 t.value(2)];
 end
+d(:,8)=d(:,8)/1e3;
 texo=double(t.value(1));
 
 else

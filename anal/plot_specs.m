@@ -1,4 +1,4 @@
-function plot_specs(file,g)
+function plot_specs(file,g,l)
 % GUISDAP v8.5   07-01-27 Copyright EISCAT
 %
 % Altitude plot of the saved spectra from the analysis
@@ -6,6 +6,7 @@ function plot_specs(file,g)
 % Input: Result file name
 %
 % function plot_specs(file,gates)
+if nargin<3, lg=[]; end
 if nargin<2, g=[]; end
 if nargin<1, file=[]; end
 nf=1; nlev=128;
@@ -21,6 +22,7 @@ else
  sc_angle=r_SCangle*2; p_om0=r_om0; d_time=r_time;
 end
 if isempty(g), g=1:length(r_h); end
+if isempty(l), l='log'; end
 lg=length(g);
 if lg>1
  r_h=r_h(g);
@@ -77,12 +79,18 @@ end
 set(gca,'xgrid','on','ygrid','on','box','on','layer','top')
 if nf>1
  s=ss;
- s0=exp(log(max(max(max(ss)))))/nlev/nlev; ss(find(ss<s0))=s0;
- %ss(find(ss<0))=0;
+ if strcmp(l,'log')
+  s0=exp(log(max(max(max(ss)))))/nlev/nlev; ss(find(ss<s0))=s0;
+ else
+  ss(find(ss<0))=0;
+ end
  for gg=1:lg
   subplot(length(g),1,lg-gg+1)
-  imagesc(mean(tt),[f f(end)],log(ss(:,:,gg))')
-  %imagesc(mean(tt),[f f(end)],ss(:,:,gg)')
+  if strcmp(l,'log')
+   imagesc(mean(tt),[f f(end)],log(ss(:,:,gg))')
+  else
+   imagesc(mean(tt),[f f(end)],ss(:,:,gg)')
+  end
   set(gca,'ydir','normal')
   datetick('x')
   ylabel('Frequency (kHz)')
