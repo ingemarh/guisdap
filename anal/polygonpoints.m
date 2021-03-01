@@ -7,7 +7,9 @@ end
 lon = lonlat(isfinite(lonlat(:,1)),1);
 lat = lonlat(isfinite(lonlat(:,2)),2);  % assuming
 
-lonlat_unique = uniquetol([lon,lat],1e-4,'ByRows',true);    % with a tolerance of 1e-4 degrees
+toldeg = 1e-4;
+tol = toldeg/max(max([lon,lat]));       % tolerence = 1e-4 deg
+lonlat_unique = uniquetol([lon,lat],tol,'ByRows',true);    % with a tolerance of 1e-4 degrees
 nunique = length(lonlat_unique(:,1));
 
 % if lon or lat is unique but not the other, calculate max 'distance'
