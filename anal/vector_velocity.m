@@ -307,7 +307,7 @@ else
  else
   result_file
  end 
- Vinputs=struct('InputData',{dirs},'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstraint',uperr,'MinDir',mind,'DynasondeVelocity',dynavel);
+ Vinputs=struct('InputData',dirs,'AltitudeRange',alt,'TimeSpan',td,'LatitudeRange',ld,'UpConstraint',uperr,'MinDir',mind,'DynasondeVelocity',dynavel);
  name_sig=[local.host ' ' local.user ' ' datestr(now)];
  save_noglobal([result_file '.mat'],Vdate,Vleap,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,name_sig,name_sigs,name_strategy,name_strategies,GUP_ver,Vinputs)
 
@@ -316,8 +316,8 @@ else
  NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))
  NCAR_output
 
- fprintf('Making EISCAT HDF5 file...\n')
- matvecvel2hdf5([result_file '.mat'],odir);
+%  fprintf('Making EISCAT HDF5 file...\n')
+%  mat2hdf5_vel([result_file '.mat'],odir);
 end
 if tfile, fclose(tfile); end
 return

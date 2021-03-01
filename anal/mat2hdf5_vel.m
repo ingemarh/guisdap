@@ -1,8 +1,8 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function [Storepath,EISCAThdf5file] = matvecvel2hdf5(matfile_vel,datapath)%,addfigs,addnotes) 
+function [Storepath,EISCAThdf5file] = mat2hdf5_vel(matfile_vel,datapath)%,addfigs,addnotes) 
 
-global path_GUP %result_path 
+global path_GUP hdf5ver %result_path 
 % if nargin<4, addnotes = []; else addnotes = 1; end 
 % if nargin<3, addfigs = []; else addfigs = 1; end 
 % if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
@@ -13,7 +13,7 @@ global path_GUP %result_path
 % if isstring(datapath)
 %     datapath = char(datapath);    % need to be char class
 % end
-hdf5version
+
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
 
@@ -267,7 +267,7 @@ e_time = datevec(Vdate(2,end));
 endtime = datestr(e_time);
 
 [~,filename,~] = fileparts(matfile_vel); 
-pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','otia','tyco','gup0','gup3'};
+pulses = {'arc','beata','bella','cp','CP','folke','hilde','ipy','manda','steffe','taro','tau','othia','tyko','gup0','gup3'};
 ants   = {'32m','42m','uhf','vhf','esa','esr','eis','kir','sod','tro','lyr'};
 if ~exist('name_expr','var')
     name_expr='missing'; 
@@ -287,7 +287,8 @@ if ~exist('name_ant','var')
 end
 if ~exist('name_sig','var'), name_sig='missing'; end
 
-datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant];
+%datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant];
+datafolder = ['EISCAT_' filename];
 storepath = fullfile(datapath,datafolder);
 
 while exist(storepath)
@@ -469,7 +470,7 @@ for sf = sFields.'
 end
 
 mkdir(storepath);
-save(matfilename,'matfile')
+%save(matfilename,'matfile')
 
 % Generate an HDF5-file from the MAT-file
 chunklim = 10;

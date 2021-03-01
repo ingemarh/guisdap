@@ -2,7 +2,7 @@
 
 function [Storepath,EISCAThdf5file,nvecvel] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
 
-global path_GUP result_path name_ant
+global path_GUP result_path name_ant hdf5ver
 
 name_ant = [];
 
@@ -17,7 +17,6 @@ if isstring(datapath)
     datapath = char(datapath);    % need to be char class
 end
 
-hdf5version % set hdf5ver
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
 
@@ -45,7 +44,7 @@ if length(filelist_all) > length(filelist)
         matfilecheck = fullfile(filelist_all(kk).folder,filelist_all(kk).name);
         if ~isempty(who('-file',matfilecheck,'Vg'))
             qq = qq + 1; 
-            [storepath,file_EISCAThdf5] = matvecvel2hdf5(matfilecheck,datapath);
+            [storepath,file_EISCAThdf5] = mat2hdf5_vel(matfilecheck,datapath);
             EISCAThdf5file(qq,:) = file_EISCAThdf5;
             Storepath(qq,:) = storepath;
         end
@@ -1064,7 +1063,7 @@ for rr = 1:length(pci)
     end
 
     mkdir(storepath);    
-    save(matfilename,'matfile')
+    %save(matfilename,'matfile')
 
     % Generate an HDF5-file from the MAT-file
     chunklim = 10;
@@ -1130,7 +1129,7 @@ for rr = 1:length(pci)
             figurefile = fullfile(matpath,image_filelist(ii).name);
             [~,filename,ext] = fileparts(figurefile);
             if strcmp(ext,'.png')
-                store_image2Hdf5(figurefile,hdffilename)
+                image2hdf5(figurefile,hdffilename)
             elseif strcmp(ext,'.pdf')
                 npdf = npdf + 1;
                 pdf_forHDF5(npdf) = {[filename ext]};          
@@ -1145,7 +1144,7 @@ for rr = 1:length(pci)
         notesfiles = dir(fullfile(matpath,'notes*txt'));
         for nn = 1:length(notesfiles)
             notesfile = fullfile(matpath,notesfiles(nn).name);
-            addNote2Hdf5(notesfile,EISCAThdf5file{1},nn)
+            note2hdf5(notesfile,EISCAThdf5file{1},nn)
         end
     end
     

@@ -1,5 +1,5 @@
-function EISCAThdf5_generate_year(yearpath,datapath,matfile_lists)
-% EISCAThdf5_generate_year(yearpath,datapath,matfile_lists)
+function EISCAT_hdf5_year(yearpath,datapath,matfile_lists)
+% EISCAT_hdf5_year(yearpath,datapath,matfile_lists)
 %
 % Generate EISCAT HDF5-files from one year of Madrigal data.
 %
@@ -20,7 +20,8 @@ if nargin < 1
     error('Specify yearly data to be handled.'); end
 
 if strcmp(yearpath(end),'/')
-    yearpath = yearpath(1:end-1); end
+    yearpath = yearpath(1:end-1);
+end
 pathparts = strsplit(yearpath,'/');
 year = pathparts{end};
 
@@ -30,23 +31,12 @@ else
     datapath = fullfile(datapath,'EISCAT',year);
 end
 
-% if ~isempty(matfile_lists)
-%     load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
-% else
-%     List_Crashed = {};
-%     List_HandledOK = {};
-% %     sitelist = dir(yearpath);
-% %     sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
-% %     mm = 1;
-% %     for ii = 1:length(sitelist)
-% %         exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
-% %         exprlist = exprlist(~ismember({exprlist.name},{'.','..'}) & ~endsWith({exprlist.name},{'_vhf','_uhf','_32m','_42m','_sod'}));   % ignore '.' and '..'
-% %         for jj = 1:length(exprlist)
-% %             List_2BHandled{mm} = fullfile(exprlist(jj).folder,exprlist(jj).name);
-% %             mm = mm + 1;
-% %         end
-% %     end
-% end
+% check if the folder 'datapath' is not empty (contains folders or files) and make error if matfile_lists is empty, in order to not overwrite already handled data.
+datapath_content = dir(datapath);
+datapath_content = datapath_content(~ismember({datapath_content.name},{'.','..'}))  % ignoring '.' and '..'
+if isempty(matfile_lists) && ~isempty(datapath_content)
+    error(['There is content in ' datapath '. The routine is stopped in order to not delete/overwrite this content. Run command again with the "matfile_list" (found in ' datapath ') as input or empty/delete ' datapath '.'])
+end
 
 sitelist = dir(yearpath);
 sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
@@ -66,17 +56,16 @@ if isempty(matfile_lists)
     List_HandledOK = {};
 else
     load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
-    
+   
     %check if new analysed experiments have been added 
     List_allold = [List_2BHandled List_HandledOK List_Crashed'];
-    if length(List_all)>length(List_allold)
-        List_check = [List_allold List_all];
-        %
-        [Unika,~,X] = unique(List_check);
-        Y = hist(X,unique(X));
-        List_newadd = Unika(find(Y == 1));
-        List_2Handled = [List_2BHandled List_newadd];
-        display('New experiments have been added to ' year ' and are handled.')
+    List_check = [List_allold List_all];
+    [Unika,~,X] = unique(List_check);
+    Y = hist(X,unique(X));
+    List_newadd = Unika(find(Y == 1));
+    if ~isempty(List_newadd)
+    	List_2BHandled = [List_2BHandled List_newadd];
+        display(['New experiments have been added to ' year ' and are handled.'])
     end
 end
 

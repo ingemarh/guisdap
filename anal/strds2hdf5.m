@@ -32,14 +32,11 @@ catch
         try   gid = H5G.open(fid,gg);
         catch gid = H5G.create(fid,gg,plist,plist,plist); 
         end
-        %gid = H5G.open(gid,['/' char(groups(ii))]);
     end
 end
    
 lchar = max(max(strlength(strdata)));
-%H5T.set_size(type_id,'H5T_VARIABLE')
 H5T.set_size(type_id,lchar);
-%H5T.set_strpad(type_id,'H5T_STR_NULLTERM');
 dims = size(strdata);
 h5_dims = fliplr(dims);
 h5_maxdims = h5_dims;

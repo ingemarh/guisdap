@@ -1,6 +1,6 @@
-% Generating a pdf-file from an eps or ps file.
 
 function pdffile = eps2pdf(epsfile) 
+% Generating a pdf-file from an eps or ps file.
 
 if nargin<1
     error('No eps or ps-file as input')

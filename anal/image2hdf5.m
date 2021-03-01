@@ -1,6 +1,6 @@
 
-function store_image2Hdf5(figurefile,hdf5file)
-% function store_image2Hdf5(figurefile,hdf5file)
+function image2hdf5(figurefile,hdf5file)
+% function image2hdf5(figurefile,hdf5file)
 % store data from an image (figurefile) to and HDF5-file (hdf5file)
 
 if nargin<2 
