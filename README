@@ -6,7 +6,8 @@ versions (>2016), but there may (or may not) be some problems on specific platfo
 Install
 
 Guisdap-9.2 has been succesfully installed on linux. The software is available as a git repository,
-or as precompiled precompiled packages. For best performance it's adviced to compile the git scripts:
+https://gitlab.com/eiscat/guisdap9, or as precompiled precompiled packages,
+https://cloud.eiscat.se/s/XGm8jnePJWCwP3A. For best performance it's adviced to compile the git scripts:
 
 cd into the guisdap directory
  . ./libinstall.sh
