@@ -1,0 +1,32 @@
+<h1>Guisdap 9.2</h1>
+This release of guisdap contains new features and bugfixes, but everything is made compatible with older versions (hopefully). The package should be compatible with not too ancient Matlab versions (>2016), but there may (or may not) be some problems on specific platforms.<a name="section-1"></a>
+<h2>Install</h2>
+Guisdap-9.2 has been succesfully installed on linux. The software is available as a
+<a href="https://gitlab.com/eiscat/guisdap9">git repository</a>, or as precompiled
+<a href="https://cloud.eiscat.se/s/XGm8jnePJWCwP3A">precompiled packages</a>.
+For best performance it's adviced to compile the git scripts:
+<pre>cd into the guisdap directory
+ . ./libinstall.sh
+make a link of bin/guisdap to a place on your path (ex /usr/local/bin)</pre>
+Provided is a searchpath to ~/gup/mygup where your personal and edited distribution files should go.<a name="section-2"></a>
+<h2>Running</h2>
+On a unix system prompt, type "guisdap --help" to see all the switches available. Normal analysis is done running "guisdap -a" which will bring up a window with some entries to fill in. (Hopefully selfexplained) This is the same as "guisdap" and then "analyse". When finished hit "GO". A more detailed instruction can be found at <a href="https://www.eiscat.se/document/user-documentation/guisdap8-for-dummies/">here</a>.There is also a course <a href="https://www.eiscat.se/wp-content/uploads/2016/08/GUISDAP.pdf">presentation</a> describing how to initialise new experiments and some useful tips on more specialised analysis. The initialisation scripts are avaiable with "guisdap -i".
+<br>
+For Windows there is a startup script <code>windows_start.m</code> available that should be chosen as 'Run' with right-click.
+
+<h2>New features</h2>
+With version 9.2 the new HDF5 format for the result data is introduced.
+
+* There is a comprehensive document descriping the format: <code>share/doc/pdf/EISCAT_Hdf5_data_format.pdf</code>
+* There is a quicklook spreadsheet file for the format: <code>matfiles/Guisdap_Parameters.xlsx</code>
+* More rawdata taking experiments have been prepared for automatic lagprofiling and analysis
+*  mainly to get sub-dump resolutions of data
+* The libraries have been rewritten to allow more compilers and be more matlab independent
+*  Mex routines are now optional
+* The internal time format is now TAI to allow unique time stamps
+
+Numerous bugfixings and updates
+
+<hr />
+
+Contact: <a href="mailto: ingemar@eiscat.se">Ingemar Häggström</a>
