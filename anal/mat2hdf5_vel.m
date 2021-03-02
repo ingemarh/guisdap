@@ -529,29 +529,29 @@ for sf = sFields.'
     end   
 end
 
-% mathpath = fileparts(matfile_vel);
-% if addfigs
-%     image_filelist = [dir(fullfile(matpath,'*.png'));dir(fullfile(matpath,'*.pdf'))];
-%     npdf = 0;
-%     for ii = 1:length(image_filelist)
-%         figurefile = fullfile(matpath,image_filelist(ii).name);
-%         [~,filename,ext] = fileparts(figurefile);
-%         if strcmp(ext,'.png')
-%             image2hdf5(figurefile,hdffilename)
-%         elseif strcmp(ext,'.pdf')
-%             npdf = npdf + 1;
-%             pdf_forHDF5(npdf) = {[filename ext]};          
-%         end
-%     end
-%     if npdf>0
-%         strds2hdf5(hdffilename,'/figures','figure_links',pdf_forHDF5');
-%     end
-% end
-% 
-% if addnotes
-%     notesfiles = dir(fullfile(matpath,'notes*txt'));
-%     for nn = 1:length(notesfiles)
-%         notesfile = fullfile(matpath,notesfiles(nn).name);
-%         note2hdf5(notesfile,EISCAThdf5file{1},nn)
-%     end
-% end
+mathpath = fileparts(matfile_vel);
+if addfigs
+    image_filelist = [dir(fullfile(matpath,'*.png'));dir(fullfile(matpath,'*.pdf'))];
+    npdf = 0;
+    for ii = 1:length(image_filelist)
+        figurefile = fullfile(matpath,image_filelist(ii).name);
+        [~,filename,ext] = fileparts(figurefile);
+        if strcmp(ext,'.png')
+            image2hdf5(figurefile,hdffilename)
+        elseif strcmp(ext,'.pdf')
+            npdf = npdf + 1;
+            pdf_forHDF5(npdf) = {[filename ext]};          
+        end
+    end
+    if npdf>0
+        strds2hdf5(hdffilename,'/figures','figure_links',pdf_forHDF5');
+    end
+end
+
+if addnotes
+    notesfiles = dir(fullfile(matpath,'notes*txt'));
+    for nn = 1:length(notesfiles)
+        notesfile = fullfile(matpath,notesfiles(nn).name);
+        note2hdf5(notesfile,EISCAThdf5file{1},nn)
+    end
+end
