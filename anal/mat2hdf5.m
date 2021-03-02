@@ -44,7 +44,7 @@ if length(filelist_all) > length(filelist)
         matfilecheck = fullfile(filelist_all(kk).folder,filelist_all(kk).name);
         if ~isempty(who('-file',matfilecheck,'Vg'))
             qq = qq + 1; 
-            [storepath,file_EISCAThdf5] = mat2hdf5_vel(matfilecheck,datapath);
+            [storepath,file_EISCAThdf5] = mat2hdf5_vel(matfilecheck,datapath,addfigs,addnotes);
             EISCAThdf5file(qq,:) = file_EISCAThdf5;
             Storepath(qq,:) = storepath;
         end
