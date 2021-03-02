@@ -8,7 +8,7 @@ mmodel=fullfile(path_GUP,'models_m');
 if nargin==0
  atmos=zeros(1,ll); atmos([2 3 end])=1; res_atmos=0;
  heads={'libgup','iri','msis','plwin','plwin','plwin','plwin','onera_desp_lib'};
- init={[],[],[],{'matface_' length(path_GUP)+12 fullfile(path_GUP,'share','msis',filesep)},[],[],[],[],[]};
+ init={[],[],{'matface_' length(path_GUP)+12 fullfile(path_GUP,'share','msis',filesep)},[],[],[],[],[]};
  d=fullfile(path_GUP,'lib');
  if ~exist(thdir,'dir'), mkdir(thdir), end
  owd=pwd;
