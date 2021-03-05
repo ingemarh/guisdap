@@ -287,8 +287,7 @@ if ~exist('name_ant','var')
 end
 if ~exist('name_sig','var'), name_sig='missing'; end
 
-%datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant];
-datafolder = ['EISCAT_' filename];
+datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_V' intper_mean_str '@' name_ant];
 storepath = fullfile(datapath,datafolder);
 
 while exist(storepath)
@@ -529,7 +528,7 @@ for sf = sFields.'
     end   
 end
 
-mathpath = fileparts(matfile_vel);
+matpath = fileparts(matfile_vel);
 if addfigs
     image_filelist = [dir(fullfile(matpath,'*.png'));dir(fullfile(matpath,'*.pdf'))];
     npdf = 0;
