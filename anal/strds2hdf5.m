@@ -34,9 +34,15 @@ catch
         end
     end
 end
-   
-lchar = max(max(strlength(strdata)));
-H5T.set_size(type_id,lchar);
+
+if length(strdata) == 1
+    H5T.set_size(type_id,'H5T_VARIABLE')
+    H5T.set_cset(type_id,H5ML.get_constant_value('H5T_CSET_UTF8'));
+else
+    lchar = max(max(strlength(strdata)));
+    H5T.set_size(type_id,lchar);
+end
+    
 dims = size(strdata);
 h5_dims = fliplr(dims);
 h5_maxdims = h5_dims;
