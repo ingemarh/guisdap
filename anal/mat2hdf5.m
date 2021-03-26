@@ -1,6 +1,6 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function [Storepath,EISCAThdf5file,nvecvel] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
+function [Storepath,EISCAThdf5file,nvecvel,list_fortar,list_junkfortar,list_linksfortar] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
 
 global path_GUP result_path name_ant hdf5ver
 
@@ -19,6 +19,9 @@ end
 
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
+list_fortar = {};
+list_junkfortar = {};
+list_linksfortar = {};
 
 if strcmp(matpath(end),'/')
     matpath = matpath(1:end-1);   % remove last / in order to extract matfolder correctly
@@ -28,25 +31,32 @@ matpath = [matpath '/'];          % in order to make 'getfilelist.m' work
 
 % Chech for vector velocity data
 filelist_all = dir(matpath);
-filelist_all = filelist_all(endsWith({filelist_all.name},'.mat'));   % consider only .mat-files
-for jj = 1:length(filelist_all)
-    [~,~,ext] = fileparts(filelist_all(jj).name);
+filelist_allmat = filelist_all(endsWith({filelist_all.name},'.mat'));   % consider only .mat-files
+for jj = 1:length(filelist_allmat)
+    [~,~,ext] = fileparts(filelist_allmat(jj).name);
     if strcmp(ext,'.bz2')
-        unix(['bunzip2 ' fullfile(filelist_all(jj).folder,filelist_all(jj).name)]);
+        unix(['bunzip2 ' fullfile(filelist_allmat(jj).folder,filelist_allmat(jj).name)]);
     end
 end
 filelist = getfilelist(matpath);
+list_fortar = [list_fortar;{filelist.fname}'];
+
+filelist_rest = filelist_all(~ismember({filelist_all.name},{'.','..','.gup'}) & ~endsWith({filelist_all.name},{'.mat'}));   % ignore '.' and '..' etc
+for utf = 1:length(filelist_rest)
+    list_junkfortar(utf,:) = {strjoin([{filelist_rest(utf).folder} {filelist_rest(utf).name}],'/')};
+end
 
 qq = 0;
 % Chech for vector velocity data
-if length(filelist_all) > length(filelist)
-    for kk = 1:length(filelist_all)
-        matfilecheck = fullfile(filelist_all(kk).folder,filelist_all(kk).name);
+if length(filelist_allmat) > length(filelist)
+    for kk = 1:length(filelist_allmat)
+        matfilecheck = fullfile(filelist_allmat(kk).folder,filelist_allmat(kk).name);
         if ~isempty(who('-file',matfilecheck,'Vg'))
             qq = qq + 1; 
             [storepath,file_EISCAThdf5] = mat2hdf5_vel(matfilecheck,datapath,addfigs,addnotes);
             EISCAThdf5file(qq,:) = file_EISCAThdf5;
             Storepath(qq,:) = storepath;
+            list_fortar = [list_fortar;{matfilecheck}];
         end
     end
 end
@@ -188,6 +198,10 @@ for rr = 1:length(pci)
             intper_mean = subsetmean(r_gfd.intper);
             intper_mean_str = num2str(round(intper_mean,3,'significant'));
         end
+        % put .gup in junkfortar
+        if exist(fullfile(matpath,'.gup'),'file')  
+            list_junkfortar = [list_junkfortar;{fullfile(matpath,'.gup')}];
+        end
     elseif exist(fullfile(matpath,'.gup'),'file')    
         load('-mat',fullfile(matpath,'.gup'));
         if exist('name_expr','var'),    matfile.metadata.software.gfd.name_expr      = {name_expr};           end
@@ -222,6 +236,7 @@ for rr = 1:length(pci)
             starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
             endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
         end
+        list_fortar = [list_fortar;{fullfile(matpath,'.gup')}];
     end
     
     if isempty(starttime) || size(starttime,1)>1
@@ -1063,7 +1078,7 @@ for rr = 1:length(pci)
     end
 
     mkdir(storepath);    
-    %save(matfilename,'matfile')
+    save(matfilename,'matfile')
 
     % Generate an HDF5-file from the MAT-file
     chunklim = 10;
@@ -1130,6 +1145,7 @@ for rr = 1:length(pci)
             [~,filename,ext] = fileparts(figurefile);
             if strcmp(ext,'.png')
                 image2hdf5(figurefile,hdffilename)
+                list_fortar = [{list_fortar};{figurefile}'];
             elseif strcmp(ext,'.pdf')
                 npdf = npdf + 1;
                 pdf_forHDF5(npdf) = {[filename ext]};          
@@ -1145,6 +1161,7 @@ for rr = 1:length(pci)
         for nn = 1:length(notesfiles)
             notesfile = fullfile(matpath,notesfiles(nn).name);
             note2hdf5(notesfile,EISCAThdf5file{1},nn)
+            list_fortar = [{list_fortar};{notesfile}'];
         end
     end
     

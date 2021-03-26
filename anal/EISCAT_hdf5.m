@@ -46,6 +46,11 @@ logs_files = [];
 logs_filename = [];
 targz_filecheck = [dir(fullfile(dirpath,'*tar.gz'));dir(fullfile(dirpath,'*tar'))];
 targz_files = [];
+junk_files = [dir(fullfile(dirpath,'*.txt'));dir(fullfile(dirpath,'*.log'))];
+junk_files = junk_files(~startsWith({junk_files.name},{'note'}));
+for utf = 1:length(junk_files)
+    junkfortar(utf,:) = {strjoin([{junk_files(utf).folder} {junk_files(utf).name}],'/')};
+end
 
 if ~isempty(targz_filecheck)
     n = 1; m = 1;
@@ -108,9 +113,11 @@ end
 
 figure_check = zeros(length(image_filelist),1);
 npdf = 0;
-
 for ii = 1:length(data_files)
     disp([newline 'Handling:' newline data_files{ii}])
+    list_fortar      = {};
+    list_linksfortar = {};
+    list_junkfortar  = junkfortar;
     if contains(data_files{ii},'.tar')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
@@ -153,7 +160,10 @@ for ii = 1:length(data_files)
             end
            
             if ~isempty(untar_filelist)
-                [storepath,EISCAThdf5file,nvecvel] = mat2hdf5(untarpath,datapath);
+                [storepath,EISCAThdf5file,nvecvel,fortar,junk_fortar,links_fortar] = mat2hdf5(untarpath,datapath);
+                list_linksfortar = [list_linksfortar;links_fortar];
+                list_junkfortar = [list_junkfortar; junk_fortar];
+                list_fortar = [links_fortar;fortar];
                 vecvel = zeros(length(EISCAThdf5file),1);
                 if nvecvel>0
                     vecvel(1:nvecvel) = ones(nvecvel,1); 
@@ -163,6 +173,7 @@ for ii = 1:length(data_files)
                 data_files = hdf5_allfiles(1);
                 disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
+                list_fortar = [links_fortar;data_files{ii}];
                 vecvel = zeros(length(EISCAThdf5file),1);
             elseif isempty(untar_filelist)
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is therefore ignored.' newline])
@@ -170,6 +181,7 @@ for ii = 1:length(data_files)
             end
         end
     else
+        list_fortar = [list_fortar;data_files{ii}];
         if contains(data_files{ii},'.ar')
             [storepath,EISCAThdf5file] = cedar2hdf5_vel(data_files{ii},datapath);
             vecvel = ones(length(EISCAThdf5file),1);
@@ -222,7 +234,7 @@ for ii = 1:length(data_files)
             if strcmp(ext,'.gz')
                 [~,figname,~] = fileparts(figname);
             end
-            
+         
             if nfiles > 1 || length(data_files) > 1
                 fig_pulse  = '';
                 fig_intper = '';
@@ -280,8 +292,10 @@ for ii = 1:length(data_files)
                             copyfile(figurefile,storepath{nnn})
                             [~,pdfname,ext] = fileparts(figurefile);
                             pdf_forHDF5(npdf) = {[pdfname ext]};
+                            list_linksfortar(length(list_linksfortar)+1,:) = {fullfile(storepath{nnn},[pdfname ext])};
                         else    
                             image2hdf5(figurefile,EISCAThdf5file{nnn})
+                            list_fortar(length(list_fortar)+1,:) = {figurefile};
                         end
                         figure_check(jj) = figure_check(jj) + 1;
                         nfigs_expr =  nfigs_expr +1;
@@ -302,6 +316,7 @@ for ii = 1:length(data_files)
                             copyfile(pdffile,storepath{nnn})
                             [~,pdfname,ext] = fileparts(pdffile);
                             pdf_forHDF5(npdf) = {[pdfname ext]};
+                            list_linksfortar(length(list_linksfortar)+1,:) = {fullfile(storepath{nnn},[pdfname ext])};
                             delete(pdffile,figurefile)
                             figure_check(jj) = figure_check(jj) + 1;
                             nfigs_expr =  nfigs_expr +1;
@@ -315,17 +330,19 @@ for ii = 1:length(data_files)
                         copyfile(figurefile,storepath{nnn})
                         [~,pdfname,ext] = fileparts(figurefile);
                         pdf_forHDF5(npdf) = {[pdfname ext]};
+                        list_linksfortar(length(list_linksfortar)+1,:) = {fullfile(storepath{nnn},[pdfname ext])};
                     else
                         image2hdf5(figurefile,EISCAThdf5file{nnn})
+                        list_fortar(length(list_fortar)+1,:) = {figurefile};
                     end
                     figure_check(jj) = figure_check(jj) + 1;
                     nfigs_expr =  nfigs_expr +1;
                 else
-                    saveplot = 1;
                     if strcmp(ext,'.gz')
                         try
                             epsfile = gunzip(figurefile);
                             figurefile = epsfile{1};
+                            saveplot = 1;
                         catch
                             warning([figurefile ' could not be unzipped.'])
                             saveplot = 0;
@@ -337,6 +354,7 @@ for ii = 1:length(data_files)
                         copyfile(pdffile,storepath{nnn})
                         [~,pdfname,ext] = fileparts(pdffile);
                         pdf_forHDF5(npdf) = {[pdfname ext]};
+                        list_linksfortar(length(list_linksfortar)+1,:) = {fullfile(storepath{nnn},[pdfname ext])};
                         delete(pdffile,figurefile)
                         figure_check(jj) = figure_check(jj) + 1;
                         nfigs_expr =  nfigs_expr +1;
@@ -352,21 +370,24 @@ for ii = 1:length(data_files)
 
         for nn = 1:length(notesfiles)
             notesfile = fullfile(dirpath,notesfiles(nn).name);
-            note2hdf5(notesfile,EISCAThdf5file{nnn},nn)
+            note2hdf5(notesfile,EISCAThdf5file{nnn},nn)  
+            list_fortar(length(list_fortar)+1,:) = {notesfile};       
         end
 
         for ll = 1:length(logs_filename)
             [~,data_filename,~] = fileparts(data_files{ii});
-            if strcmp(data_filename(1:8),logs_filename{ll}(1:8))
-                copyfile(logs_files{ll},storepath{nnn})
+            if strcmp(data_filename(1:8),logs_filename{ll}(1:8))  
                 strds2hdf5(EISCAThdf5file{nnn},'/metadata','logs_links',{logs_filename{ll}})
+                copyfile(logs_files{ll},storepath{nnn})
+                list_linksfortar(length(list_linksfortar)+1,:) = {fullfile(storepath{nnn},logs_filename{ll})};
             end
         end
 
-        for nn = 1:length(logfiles)
-            logfile = fullfile(dirpath,logfiles(nn).name);
-            copyfile(logfile,storepath{nnn})
-        end
+%         for nn = 1:length(logfiles)
+%             logfile = fullfile(dirpath,logfiles(nn).name);
+%             %copyfile(logfile,storepath{nnn})
+%             list_junkfortar{length(list_junkfortar)+1,:} = logfile;
+%         end
 
         % Check if metadata exist
         info = h5info(EISCAThdf5file{nnn},'/metadata/software');
@@ -512,8 +533,9 @@ for ii = 1:length(data_files)
                                     pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
                                     print('-dpng256',[plotfile '.png'])
                                     image2hdf5([plotfile '.png'],EISCAThdf5file{nnn});
+                                    list_fortar(length(list_fortar)+1,:) = {[plotfile '.png']};
+                                    list_linksfortar(length(list_linksfortar)+1,:) = {[plotfile '.pdf']};
                                     insert_exif(gcf,plotfile,{'pdf' 'png'})
-                                    delete([plotfile '.png'])
                                 end
                             end
                         end
@@ -534,8 +556,9 @@ for ii = 1:length(data_files)
                             pdf_forHDF5(npdf) = {[plotfilename '.pdf']};
                             print('-dpng256',[vfile '.png'])
                             image2hdf5([vfile '.png'],EISCAThdf5file{nnn});
+                            list_fortar(length(list_fortar)+1,:) = {[vfile '.png']};
+                            list_linksfortar(length(list_linksfortar)+1,:) = {[vfile '.pdf']};
                             insert_exif(gcf,vfile,{'pdf' 'png'})
-                            delete([vfile '.png'])
                         end
                     end
                     if npdf
@@ -567,12 +590,31 @@ for ii = 1:length(data_files)
                 newpng = [file '.png'];
                 newpdf = [file '.pdf'];
                 image2hdf5(newpng,EISCAThdf5file{nnn});
-                copyfile(newpdf,storepath{nnn})
-                [~,pdfname,ext]=fileparts(newpdf);
-                strds2hdf5(EISCAThdf5file{nnn},'/figures','figure_links',{[pdfname ext]})
+                movefile(newpng,storepath{nnn})
+                [~,figname] = fileparts(newpng);
+                list_fortar(length(list_fortar)+1,:) = {fullfile(storepath{nnn},[figname '.png'])};
+                strds2hdf5(EISCAThdf5file{nnn},'/figures','figure_links',{[figname '.pdf']})
+                list_linksfortar(length(list_linksfortar)+1,:) = {newpdf};
             end
         end  
-        copyfile(data_files{ii},storepath{nnn})
+        %copyfile(data_files{ii},storepath{nnn})
+    end
+    [~,foldername,~] = fileparts(storepath{nnn});
+    tar(fullfile(storepath{nnn},[foldername '.tar.gz']),list_fortar);
+    for dpng = 1:length(list_fortar)        % .pngs stored at storepath are deleted after being tared.
+        filepath = fileparts(list_fortar{dpng}); 
+        if strcmp(filepath,storepath{nnn})
+            delete(list_fortar{dpng})
+        end
+    end
+    if ~isempty(list_junkfortar)
+        tar(fullfile(storepath{nnn},[foldername '_suppl.tar.gz']),list_junkfortar);
+    end
+    if ~isempty(list_linksfortar)
+        tar(fullfile(storepath{nnn},[foldername '_linked.tar.gz']),list_linksfortar);
+        for dl= 1:length(list_linksfortar)
+             delete(list_linksfortar{dl})
+        end
     end
 end
 
