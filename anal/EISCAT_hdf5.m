@@ -599,8 +599,8 @@ for ii = 1:length(data_files)
         end  
         %copyfile(data_files{ii},storepath{nnn})
     end
-    [~,foldername,~] = fileparts(storepath{nnn});
-    tar(fullfile(storepath{nnn},[foldername '.tar.gz']),list_fortar);
+    pathparts = strsplit(storepath{nnn},filesep);
+    tar(fullfile(storepath{nnn},[pathparts{end} '.tar.gz']),list_fortar);
     for dpng = 1:length(list_fortar)        % .pngs stored at storepath are deleted after being tared.
         filepath = fileparts(list_fortar{dpng}); 
         if strcmp(filepath,storepath{nnn})
@@ -608,10 +608,10 @@ for ii = 1:length(data_files)
         end
     end
     if ~isempty(list_junkfortar)
-        tar(fullfile(storepath{nnn},[foldername '_suppl.tar.gz']),list_junkfortar);
+        tar(fullfile(storepath{nnn},[pathparts{end} '_suppl.tar.gz']),list_junkfortar);
     end
     if ~isempty(list_linksfortar)
-        tar(fullfile(storepath{nnn},[foldername '_linked.tar.gz']),list_linksfortar);
+        tar(fullfile(storepath{nnn},[pathparts{end} '_linked.tar.gz']),list_linksfortar);
         for dl= 1:length(list_linksfortar)
              delete(list_linksfortar{dl})
         end

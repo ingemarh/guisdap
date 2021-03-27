@@ -33,7 +33,7 @@ end
 
 % check if the folder 'datapath' is not empty (contains folders or files) and make error if matfile_lists is empty, in order to not overwrite already handled data.
 datapath_content = dir(datapath);
-datapath_content = datapath_content(~ismember({datapath_content.name},{'.','..'}))  % ignoring '.' and '..'
+datapath_content = datapath_content(~ismember({datapath_content.name},{'.','..'}));  % ignoring '.' and '..'
 if isempty(matfile_lists) && ~isempty(datapath_content)
     error(['There is content in ' datapath '. The routine is stopped in order to not delete/overwrite this content. Run command again with the "matfile_list" (found in ' datapath ') as input or empty/delete ' datapath '.'])
 end

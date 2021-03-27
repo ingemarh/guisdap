@@ -1,6 +1,6 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function [Storepath,EISCAThdf5file,nvecvel,list_fortar,list_junkfortar,list_linksfortar] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
+function [Storepath,EISCAThdf5file,nvecvel,list_fortar,list_supplfortar,list_linksfortar] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
 
 global path_GUP result_path name_ant hdf5ver
 
@@ -20,7 +20,7 @@ end
 software = 'https://git.eiscat.se/cvs/guisdap9';
 level2_link = '';
 list_fortar = {};
-list_junkfortar = {};
+list_supplfortar = {};
 list_linksfortar = {};
 
 if strcmp(matpath(end),'/')
@@ -43,7 +43,7 @@ list_fortar = [list_fortar;{filelist.fname}'];
 
 filelist_rest = filelist_all(~ismember({filelist_all.name},{'.','..','.gup'}) & ~endsWith({filelist_all.name},{'.mat'}));   % ignore '.' and '..' etc
 for utf = 1:length(filelist_rest)
-    list_junkfortar(utf,:) = {strjoin([{filelist_rest(utf).folder} {filelist_rest(utf).name}],'/')};
+    list_supplfortar(utf,:) = {strjoin([{filelist_rest(utf).folder} {filelist_rest(utf).name}],'/')};
 end
 
 qq = 0;
@@ -200,7 +200,7 @@ for rr = 1:length(pci)
         end
         % put .gup in junkfortar
         if exist(fullfile(matpath,'.gup'),'file')  
-            list_junkfortar = [list_junkfortar;{fullfile(matpath,'.gup')}];
+            list_supplfortar = [list_supplfortar;{fullfile(matpath,'.gup')}];
         end
     elseif exist(fullfile(matpath,'.gup'),'file')    
         load('-mat',fullfile(matpath,'.gup'));
