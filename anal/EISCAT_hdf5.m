@@ -115,9 +115,9 @@ figure_check = zeros(length(image_filelist),1);
 npdf = 0;
 for ii = 1:length(data_files)
     disp([newline 'Handling:' newline data_files{ii}])
-    list_fortar      = {};
-    list_linksfortar = {};
-    list_junkfortar  = junkfortar;
+    List_fortar      = {};
+    List_linksfortar = {};
+    List_junkfortar  = junkfortar;
     if contains(data_files{ii},'.tar')
         untarpath = fullfile(tempdir,'UntaredContent');
         if exist(untarpath)
@@ -161,9 +161,9 @@ for ii = 1:length(data_files)
            
             if ~isempty(untar_filelist)
                 [storepath,EISCAThdf5file,nvecvel,fortar,junk_fortar,links_fortar] = mat2hdf5(untarpath,datapath);
-                list_linksfortar = [list_linksfortar;links_fortar];
-                list_junkfortar = [list_junkfortar; junk_fortar];
-                list_fortar = [links_fortar;fortar];
+                List_linksfortar = [List_linksfortar;links_fortar];
+                List_junkfortar = [List_junkfortar; junk_fortar];
+                List_fortar = [List_fortar;fortar];
                 vecvel = zeros(length(EISCAThdf5file),1);
                 if nvecvel>0
                     vecvel(1:nvecvel) = ones(nvecvel,1); 
@@ -173,7 +173,7 @@ for ii = 1:length(data_files)
                 data_files = hdf5_allfiles(1);
                 disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
-                list_fortar = [links_fortar;data_files{ii}];
+                List_fortar = [links_fortar;data_files{ii}];
                 vecvel = zeros(length(EISCAThdf5file),1);
             elseif isempty(untar_filelist)
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is therefore ignored.' newline])
@@ -181,7 +181,7 @@ for ii = 1:length(data_files)
             end
         end
     else
-        list_fortar = [list_fortar;data_files{ii}];
+        List_fortar = [List_fortar;data_files{ii}];
         if contains(data_files{ii},'.ar')
             [storepath,EISCAThdf5file] = cedar2hdf5_vel(data_files{ii},datapath);
             vecvel = ones(length(EISCAThdf5file),1);
@@ -205,6 +205,11 @@ for ii = 1:length(data_files)
     nfiles = length(EISCAThdf5file);
 
     for nnn = 1:nfiles    
+        
+        list_fortar      = List_fortar;
+        list_linksfortar = List_linksfortar;
+        list_junkfortar  = List_junkfortar;
+        
         folders = regexp(storepath{nnn},filesep,'split');
         storefolder = char(folders(end));
         display([newline 'Generated:' newline EISCAThdf5file{nnn}])
@@ -597,25 +602,42 @@ for ii = 1:length(data_files)
                 list_linksfortar(length(list_linksfortar)+1,:) = {newpdf};
             end
         end  
-        %copyfile(data_files{ii},storepath{nnn})
-    end
-    pathparts = strsplit(storepath{nnn},filesep);
-    tar(fullfile(storepath{nnn},[pathparts{end} '.tar.gz']),list_fortar);
-    for dpng = 1:length(list_fortar)        % .pngs stored at storepath are deleted after being tared.
-        filepath = fileparts(list_fortar{dpng}); 
-        if strcmp(filepath,storepath{nnn})
-            delete(list_fortar{dpng})
+        
+        tar(fullfile(storepath{nnn},[storefolder '.tar.gz']),list_fortar);
+        for dpng = 1:length(list_fortar)        % .pngs stored at storepath are deleted after being tared.
+            filepath = fileparts(list_fortar{dpng}); 
+            if strcmp(filepath,storepath{nnn})
+                delete(list_fortar{dpng})
+            end
+        end
+        if ~isempty(list_junkfortar)
+            tar(fullfile(storepath{nnn},[storefolder '_suppl.tar.gz']),list_junkfortar);
+        end
+        if ~isempty(list_linksfortar)
+            tar(fullfile(storepath{nnn},[storefolder '_linked.tar.gz']),list_linksfortar);
+            for dl= 1:length(list_linksfortar)
+                 delete(list_linksfortar{dl})
+            end
         end
     end
-    if ~isempty(list_junkfortar)
-        tar(fullfile(storepath{nnn},[pathparts{end} '_suppl.tar.gz']),list_junkfortar);
-    end
-    if ~isempty(list_linksfortar)
-        tar(fullfile(storepath{nnn},[pathparts{end} '_linked.tar.gz']),list_linksfortar);
-        for dl= 1:length(list_linksfortar)
-             delete(list_linksfortar{dl})
-        end
-    end
+%     keyboard
+%     pathparts = strsplit(storepath{nnn},filesep);
+%     tar(fullfile(storepath{nnn},[pathparts{end} '.tar.gz']),list_fortar);
+%     for dpng = 1:length(list_fortar)        % .pngs stored at storepath are deleted after being tared.
+%         filepath = fileparts(list_fortar{dpng}); 
+%         if strcmp(filepath,storepath{nnn})
+%             delete(list_fortar{dpng})
+%         end
+%     end
+%     if ~isempty(list_junkfortar)
+%         tar(fullfile(storepath{nnn},[pathparts{end} '_suppl.tar.gz']),list_junkfortar);
+%     end
+%     if ~isempty(list_linksfortar)
+%         tar(fullfile(storepath{nnn},[pathparts{end} '_linked.tar.gz']),list_linksfortar);
+%         for dl= 1:length(list_linksfortar)
+%              delete(list_linksfortar{dl})
+%         end
+%     end
 end
 
 figure_check;

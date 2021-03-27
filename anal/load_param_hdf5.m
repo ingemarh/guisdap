@@ -211,7 +211,7 @@ if ii2d
     end   
     
 else
-    warning('No 2d-data in hdf5-file, bur 1d (or 0d) data put into par2D anyway.')
+    %No 2d-data in hdf5-file, but 1d (or 0d) data put into par2D anyway.')
     for ii = pars2d
         column = find(strcmp(matdata.metadata.par1d(1,:),ii));
         if isempty(column) && strcmp(ii,'h')                                        % if alt is empty, it is in par1d
@@ -219,7 +219,7 @@ else
             alt = matdata.data.par0d(column);                                
             par_tmp = alt*ones(n_tot,1);                                              % alt = [a] (0d) --> alt = [a a a ...] (1d)
         elseif isempty(column) && strcmp(ii,'range')                                % if range is empty, it is in par1d
-            column = find(strcmp(matdata.metadata.par1d(1,:),ii));
+            column = find(strcmp(matdata.metadata.par0d(1,:),ii));
             range = matdata.data.par0d(column);                              
             par_tmp = range*ones(n_tot,1);                                            % range = [a] (0d) --> range = [a a a ... ] (1d)
         elseif strcmp(ii,'Te') && isempty(column) 
