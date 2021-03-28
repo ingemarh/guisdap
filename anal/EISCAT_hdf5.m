@@ -602,7 +602,6 @@ for ii = 1:length(data_files)
                 list_linksfortar(length(list_linksfortar)+1,:) = {newpdf};
             end
         end  
-        keyboard
         tar(fullfile(storepath{nnn},[storefolder '.tar.gz']),list_fortar);
         for dpng = 1:length(list_fortar)        % .pngs stored at storepath are deleted after being tared.
             filepath = fileparts(list_fortar{dpng}); 

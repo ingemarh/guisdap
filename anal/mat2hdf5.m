@@ -1078,7 +1078,7 @@ for rr = 1:length(pci)
     end
 
     mkdir(storepath);    
-    save(matfilename,'matfile')
+   % save(matfilename,'matfile')
 
     % Generate an HDF5-file from the MAT-file
     chunklim = 10;
