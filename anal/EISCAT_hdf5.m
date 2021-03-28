@@ -602,7 +602,7 @@ for ii = 1:length(data_files)
                 list_linksfortar(length(list_linksfortar)+1,:) = {newpdf};
             end
         end  
-        
+        keyboard
         tar(fullfile(storepath{nnn},[storefolder '.tar.gz']),list_fortar);
         for dpng = 1:length(list_fortar)        % .pngs stored at storepath are deleted after being tared.
             filepath = fileparts(list_fortar{dpng}); 
@@ -611,6 +611,13 @@ for ii = 1:length(data_files)
             end
         end
         if ~isempty(list_junkfortar)
+            %c heck for duplicats and remove one if so (taring crashes otherwise)
+            for cfd = 1:length(list_junkfortar)
+                [~,fname,fext] = fileparts(list_junkfortar{cfd});
+                junkfiles{cfd} = [fname fext];
+            end
+            [~,uniind] = unique(junkfiles);
+            list_junkfortar = list_junkfortar(uniind);
             tar(fullfile(storepath{nnn},[storefolder '_suppl.tar.gz']),list_junkfortar);
         end
         if ~isempty(list_linksfortar)
@@ -620,24 +627,6 @@ for ii = 1:length(data_files)
             end
         end
     end
-%     keyboard
-%     pathparts = strsplit(storepath{nnn},filesep);
-%     tar(fullfile(storepath{nnn},[pathparts{end} '.tar.gz']),list_fortar);
-%     for dpng = 1:length(list_fortar)        % .pngs stored at storepath are deleted after being tared.
-%         filepath = fileparts(list_fortar{dpng}); 
-%         if strcmp(filepath,storepath{nnn})
-%             delete(list_fortar{dpng})
-%         end
-%     end
-%     if ~isempty(list_junkfortar)
-%         tar(fullfile(storepath{nnn},[pathparts{end} '_suppl.tar.gz']),list_junkfortar);
-%     end
-%     if ~isempty(list_linksfortar)
-%         tar(fullfile(storepath{nnn},[pathparts{end} '_linked.tar.gz']),list_linksfortar);
-%         for dl= 1:length(list_linksfortar)
-%              delete(list_linksfortar{dl})
-%         end
-%     end
 end
 
 figure_check;

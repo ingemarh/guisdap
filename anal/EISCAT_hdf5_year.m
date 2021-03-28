@@ -39,7 +39,7 @@ if isempty(matfile_lists) && ~isempty(datapath_content)
 end
 
 sitelist = dir(yearpath);
-sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
+sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd','jro','aro','son'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' etc 
 mm = 1;
 for ii = 1:length(sitelist)
     exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
