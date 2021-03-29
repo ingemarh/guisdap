@@ -609,8 +609,10 @@ for ii = 1:length(data_files)
                 delete(list_fortar{dpng})
             end
         end
+        
         if ~isempty(list_junkfortar)
             %c heck for duplicats and remove one if so (taring crashes otherwise)
+            junkfiles = {};
             for cfd = 1:length(list_junkfortar)
                 [~,fname,fext] = fileparts(list_junkfortar{cfd});
                 junkfiles{cfd} = [fname fext];

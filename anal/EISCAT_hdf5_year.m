@@ -58,7 +58,7 @@ else
     load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
    
     %check if new analysed experiments have been added 
-    List_allold = [List_2BHandled List_HandledOK List_Crashed'];
+    List_allold = [List_2BHandled List_HandledOK List_Crashed];
     List_check = [List_allold List_all];
     [Unika,~,X] = unique(List_check);
     Y = hist(X,unique(X));

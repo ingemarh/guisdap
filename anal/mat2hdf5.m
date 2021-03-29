@@ -1,13 +1,14 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
 
-function [Storepath,EISCAThdf5file,nvecvel,list_fortar,list_supplfortar,list_linksfortar] = mat2hdf5(matpath,datapath,addfigs,addnotes) 
+function [Storepath,EISCAThdf5file,nvecvel,list_fortar,list_supplfortar,list_linksfortar] = mat2hdf5(matpath,datapath,addfigs,addnotes,taring) 
 
 global path_GUP result_path name_ant hdf5ver
 
 name_ant = [];
 
+if nargin<5, taring = [];   else taring = 1;   end 
 if nargin<4, addnotes = []; else addnotes = 1; end 
-if nargin<3, addfigs = []; else addfigs = 1; end 
+if nargin<3, addfigs = [];  else addfigs = 1;  end 
 if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
 if nargin<1
     matpath  = result_path;
@@ -41,7 +42,7 @@ end
 filelist = getfilelist(matpath);
 list_fortar = [list_fortar;{filelist.fname}'];
 
-filelist_rest = filelist_all(~ismember({filelist_all.name},{'.','..','.gup'}) & ~endsWith({filelist_all.name},{'.mat'}));   % ignore '.' and '..' etc
+filelist_rest = filelist_all(~ismember({filelist_all.name},{'.','..','.gup'}) & ~endsWith({filelist_all.name},{'.mat','.png','.pdf'}) & ~startsWith({filelist_all.name},{'notes'})); 
 for utf = 1:length(filelist_rest)
     list_supplfortar(utf,:) = {strjoin([{filelist_rest(utf).folder} {filelist_rest(utf).name}],'/')};
 end
@@ -1078,7 +1079,7 @@ for rr = 1:length(pci)
     end
 
     mkdir(storepath);    
-   % save(matfilename,'matfile')
+    % save(matfilename,'matfile')
 
     % Generate an HDF5-file from the MAT-file
     chunklim = 10;
@@ -1145,10 +1146,11 @@ for rr = 1:length(pci)
             [~,filename,ext] = fileparts(figurefile);
             if strcmp(ext,'.png')
                 image2hdf5(figurefile,hdffilename)
-                list_fortar = [{list_fortar};{figurefile}'];
+                list_fortar = [list_fortar;{figurefile}];
             elseif strcmp(ext,'.pdf')
                 npdf = npdf + 1;
-                pdf_forHDF5(npdf) = {[filename ext]};          
+                pdf_forHDF5(npdf) = {[filename ext]};  
+                list_linksfortar = [list_linksfortar;{figurefile}];
             end
         end
         if npdf>0
@@ -1161,8 +1163,13 @@ for rr = 1:length(pci)
         for nn = 1:length(notesfiles)
             notesfile = fullfile(matpath,notesfiles(nn).name);
             note2hdf5(notesfile,EISCAThdf5file{1},nn)
-            list_fortar = [{list_fortar};{notesfile}'];
+            list_fortar = [list_fortar;{notesfile}];
         end
     end
     
+    if taring
+        tar(fullfile(storepath,[datafolder '.tar.gz']),list_fortar);
+        tar(fullfile(storepath,[datafolder '_linked.tar.gz']),list_linksfortar);
+        tar(fullfile(storepath,[datafolder '_suppl.tar.gz']),list_supplfortar);
+    end
 end
