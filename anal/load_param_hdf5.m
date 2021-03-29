@@ -169,8 +169,13 @@ if ii2d
                 par_tmp = matdata.data.par2d(:,column);
             end
         elseif strcmp(ii,'res') && isempty(column) 
+            keyboard
             column = find(strcmp(matdata.metadata.par2d(1,:),'res1'));
-            par_tmp = matdata.data.par2d(:,column);
+            if isempty(column)
+                par_tmp = NaN(ndata2d,1);
+            else
+                par_tmp = matdata.data.par2d(:,column);
+            end
         elseif isempty(column)
             column = find(strcmp(matdata.metadata.par1d(1,:),ii));
             if isempty(column)
@@ -377,6 +382,7 @@ par2D  = NaN(nh_alt,n_tot,npar2d);
 err2D  = NaN(nh_alt,n_tot,nerr2d);
 
 nhalt_tmp = 0;
+
 for ii = 1:n_tot
     altrange = (nhalt_tmp+1):(nhalt_tmp+nh(ii));
     par2D(1:nh(ii),ii,:) = par2d(altrange,:); 
