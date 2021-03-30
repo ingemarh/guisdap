@@ -33,13 +33,13 @@ end
 
 % check if the folder 'datapath' is not empty (contains folders or files) and make error if matfile_lists is empty, in order to not overwrite already handled data.
 datapath_content = dir(datapath);
-datapath_content = datapath_content(~ismember({datapath_content.name},{'.','..'}))  % ignoring '.' and '..'
+datapath_content = datapath_content(~ismember({datapath_content.name},{'.','..'}));  % ignoring '.' and '..'
 if isempty(matfile_lists) && ~isempty(datapath_content)
     error(['There is content in ' datapath '. The routine is stopped in order to not delete/overwrite this content. Run command again with the "matfile_list" (found in ' datapath ') as input or empty/delete ' datapath '.'])
 end
 
 sitelist = dir(yearpath);
-sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' 
+sitelist = sitelist(~ismember({sitelist.name},{'.','..','ssr','trd','srd','lrd','jro','aro','son','mlh'}));   % ignoring '.', '..', 'ssr', 'srd', 'trd' etc 
 mm = 1;
 for ii = 1:length(sitelist)
     exprlist = dir(fullfile(sitelist(ii).folder,sitelist(ii).name));
@@ -58,7 +58,7 @@ else
     load(matfile_lists)    % Should include *List_2BHandled, *List_HandledOK, and *List_Crashed
    
     %check if new analysed experiments have been added 
-    List_allold = [List_2BHandled List_HandledOK List_Crashed'];
+    List_allold = [List_2BHandled List_HandledOK List_Crashed];
     List_check = [List_allold List_all];
     [Unika,~,X] = unique(List_check);
     Y = hist(X,unique(X));

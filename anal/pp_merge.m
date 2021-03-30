@@ -2,6 +2,9 @@
 
 function [r_pprange_merged,r_pperr_merged,r_ppw_merged,r_pp_merged,r_pprofile_id] = pp_merge(r_pprange,r_pperr,r_ppw,r_pp,name_expr)
 
+% *pprange and ppw need to be in units of km
+% *output is also in km
+
 if nargin<2, error('Not enough input parameters.'); end
 
 if nargin<5, name_expr = []; end

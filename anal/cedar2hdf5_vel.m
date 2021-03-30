@@ -501,4 +501,3 @@ Vg = C*Vm;
 Vmv = diag(dVm.^2);
 Vgv = C*Vmv/C;
 
-end
