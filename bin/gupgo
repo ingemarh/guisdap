@@ -3,9 +3,9 @@
 #wd=`dirname $0`
 #wd=`dirname $wd`/webgup
 wd=/data/webgup
-wwwreq="anareg.txt"
+wwwreq="anareq.txt"
 locreq="anareq_done.txt"
-wwwsite="http://www.eiscat.se/schedule"
+wwwsite="http://portal.eiscat.se/db"
 export PATH=$PATH:/usr/local/bin
 export EISCATSITE=web
 

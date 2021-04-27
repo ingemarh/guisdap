@@ -7,7 +7,7 @@ function save_results
 global result_path name_expr name_site name_ant name_strategy
 global p_XMITloc p_RECloc sc_angle p_om0
 global d_time GUP_ver ch_az ch_el ch_Pt p_m0 p_N0 p_dtau v_lightspeed ch_fradar ch_gain
-global r_h r_spec r_om r_freq r_phasepush r_lag r_acf r_ace
+global r_h r_spec r_om r_freq r_phasepush r_lag r_acf r_ace r_Tsys
 global r_range r_param r_error r_res r_status r_dp r_Offsetppd r_w
 global r_apriori r_apriorierror r_sd
 global pp_range pp_sigma pp_err pp_w
@@ -40,7 +40,7 @@ if isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
   end
   START_TIME=[];
  end
- r_h=[];
+ r_Tsys=[];
 end
 if integr>1
  intstr=num2str(abs(a_integr(1)));
@@ -56,7 +56,7 @@ end
 %else
 % name_strategy=intstr;
 %end
-if isempty(r_h)
+if isempty(r_Tsys)
  if length(a_integr)>1
   name_strategy='scan';
  elseif a_integr==0
