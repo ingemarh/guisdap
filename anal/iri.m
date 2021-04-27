@@ -31,6 +31,7 @@ if isempty(loc), loc=[69.2 19.2]; end
 if isempty(tim), tim=[15552090 1996]; end
 if isempty(par), par=[1 4 3]; end
 nh=round(diff(h(1:2))/h(3))+1;
+h(2)=h(2)+0.001;
 
 if libisloaded('libiri')
 

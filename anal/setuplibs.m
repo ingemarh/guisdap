@@ -1,5 +1,7 @@
 function r=setuplibs(unload)
 global local path_GUP path_tmp
+if nargout, r=0; end
+if isempty(path_GUP), return, end
 res=0;
 libs={'libguisdap','libiri','libmsis','plwin','alt_decoder','clutter','cluttlp','onera_desp_lib'};
 ll=length(libs);

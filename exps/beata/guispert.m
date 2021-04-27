@@ -27,3 +27,7 @@ if name_site=='L'
  %     1181 1182 lpg_h(1182)];
  %gaincorrect(glp,grps)
 end
+if any(a_code>2)
+ a_pponly=1;
+ d_time=timeconv(timeconv(d_time(1,:),'utc2tai')+[min(a_code)-3;max(a_code)-2]*max(vc_penvo)/1e6,'tai2utc');
+end

@@ -60,6 +60,7 @@ struct pth {
 	ulong nr_samp;
 	ulong nr_pp;
 	ulong do_pp;
+	ulong nr_block;
 	ulong nr_clutter;
 	int notch;
 	int fft_clutter;
@@ -128,7 +129,13 @@ int decoder_6(ulong nbits,int *par,ulong fbits,float *fpar,DSPCMPLXSHORT *in,
 	pth.dl_short=par[17];
 	pth.dl_long=par[18];
 	pth.nr_dgates=par[19];
-	in+=par[20];
+	pth.nr_blk=pth.nr_pp;
+	if(par[20]>0)
+		pth.nr_blk+=par[20];
+	else
+		in+=par[20];
+	if(pth.debug>1)
+		printf("%ld %ld\n",pth.nr_blk,par[20]);
 	pth.do_pp=par[21];
 	pth.nr_clutter=par[22];
 	if(par[23]>-1) pth.notch=par[23];
@@ -195,7 +202,6 @@ int decoder_6(ulong nbits,int *par,ulong fbits,float *fpar,DSPCMPLXSHORT *in,
 		pth.pd=fftwf_plan_dft_1d(pth.fft_dlayer,pth.inf,pth.inf+pth.fft_dlayer,FFTW_FORWARD,FFTW_ESTIMATE|FFTW_DESTROY_INPUT);
 		pth.pdb=fftwf_plan_dft_1d(pth.fft_dlayer,pth.inf,pth.inf+pth.fft_dlayer,FFTW_BACKWARD,FFTW_ESTIMATE|FFTW_DESTROY_INPUT);
 	}
-	//pth.nr_clutter=0;
 	if(pth.nr_clutter>0) {
 		if(float_notch) nth_clutt=1;
 		else nth_clutt=pth.nth;
@@ -329,7 +335,7 @@ for(win=k1;win<k2;win++) {
 	out_t=pth->out_t+(th*pth->res_mult+win%pth->res_mult)*pth->nout;
 
 	for(k=win;k<pth->nr_rep;k+=pth->nr_win) {
-		in=pth->in+k*pth->nr_pp;
+		in=pth->in+k*pth->nr_blk;
 		ia=add+pth->lower_tail;
 		for(j=0;j<pth->nr_samp;j++) {
 			ia[j].re=in[j].re;
@@ -541,7 +547,7 @@ void *plwin_clutter(struct pth *pth)
 		for(j=pth->k1;j<pth->k2;j++)
 			for(win=0;win<pth->nr_win;win++) {
 				for(k=win;k<pth->nr_rep;k+=pth->nr_win) {
-					in=pth->in+k*pth->nr_pp+j;
+					in=pth->in+k*pth->nr_blk+j;
 					clx[k/pth->nr_win].re=in->re;
 					clx[k/pth->nr_win].im=in->im;
 				}
@@ -567,7 +573,7 @@ void *plwin_clutter(struct pth *pth)
 		for(j=pth->k1;j<pth->k2;j++)
 			for(win=0;win<pth->nr_win;win++) {
 				for(k=win;k<pth->nr_rep;k+=pth->nr_win) {
-					in=pth->in+k*pth->nr_pp+j;
+					in=pth->in+k*pth->nr_blk+j;
 					clx[k/pth->nr_win].re=in->re;
 					clx[k/pth->nr_win].im=in->im;
 				}
@@ -577,7 +583,7 @@ void *plwin_clutter(struct pth *pth)
 				memset(cly+pth->fft_clutter-notch,0,notch*sizeof(DSPCMPLX));
 				fftwf_execute_dft(pth->pcb,(fftwf_complex *)cly,(fftwf_complex *)clx);
 				for(k=win;k<pth->nr_rep;k+=pth->nr_win) {
-					in=pth->in+k*pth->nr_pp+j;
+					in=pth->in+k*pth->nr_blk+j;
 					in->re=rint(clx[k/pth->nr_win].re*clf);
 					in->im=rint(clx[k/pth->nr_win].im*clf);
 	}		}	}
