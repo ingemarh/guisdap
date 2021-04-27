@@ -30,7 +30,6 @@ end
 [~,matfolder] = fileparts(matpath);
 matpath = [matpath '/'];          % in order to make 'getfilelist.m' work
 
-% Chech for vector velocity data
 filelist_all = dir(matpath);
 filelist_allmat = filelist_all(endsWith({filelist_all.name},'.mat'));   % consider only .mat-files
 for jj = 1:length(filelist_allmat)
@@ -40,7 +39,9 @@ for jj = 1:length(filelist_allmat)
     end
 end
 filelist = getfilelist(matpath);
-list_fortar = [list_fortar;{filelist.fname}'];
+if ~isempty(filelist)
+    list_fortar = [list_fortar;{filelist.fname}'];
+end
 
 filelist_rest = filelist_all(~ismember({filelist_all.name},{'.','..','.gup'}) & ~endsWith({filelist_all.name},{'.mat','.png','.pdf'}) & ~startsWith({filelist_all.name},{'notes'})); 
 for utf = 1:length(filelist_rest)

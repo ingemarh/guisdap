@@ -173,7 +173,7 @@ for ii = 1:length(data_files)
                 data_files = hdf5_allfiles(1);
                 disp(['Handling:' newline data_files{ii} newline])
                 [storepath,EISCAThdf5file] = cedar2hdf5(data_files{ii},datapath);
-                List_fortar = [links_fortar;data_files{ii}];
+                List_fortar = [List_fortar;data_files{ii}];
                 vecvel = zeros(length(EISCAThdf5file),1);
             elseif isempty(untar_filelist)
                 warning(['Ooops ... ' data_files{ii} ' was untared but empty, and is therefore ignored.' newline])
@@ -343,11 +343,11 @@ for ii = 1:length(data_files)
                     figure_check(jj) = figure_check(jj) + 1;
                     nfigs_expr =  nfigs_expr +1;
                 else
+		    saveplot = 1;
                     if strcmp(ext,'.gz')
                         try
                             epsfile = gunzip(figurefile);
                             figurefile = epsfile{1};
-                            saveplot = 1;
                         catch
                             warning([figurefile ' could not be unzipped.'])
                             saveplot = 0;

@@ -169,7 +169,6 @@ if ii2d
                 par_tmp = matdata.data.par2d(:,column);
             end
         elseif strcmp(ii,'res') && isempty(column) 
-            keyboard
             column = find(strcmp(matdata.metadata.par2d(1,:),'res1'));
             if isempty(column)
                 par_tmp = NaN(ndata2d,1);
