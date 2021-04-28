@@ -29,5 +29,5 @@ if name_site=='L'
 end
 if any(a_code>2)
  a_pponly=1;
- d_time=timeconv(timeconv(d_time(1,:),'utc2tai')+[min(a_code)-3;max(a_code)-2]*max(vc_penvo)/1e6,'tai2utc');
+ d_time=timeconv(timeconv(d_time,'utc2tai')+[min(a_code)-3;max(lpg_code)-max(a_code)]*max(vc_penvo)/1e6,'tai2utc');
 end
