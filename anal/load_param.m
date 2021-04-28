@@ -39,7 +39,7 @@ n=length(list);
 Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];
 if n==0, return; end
 r_Tsys=[]; r_pp=[]; rres=[]; name_sig=''; name_strategy='';
-[r_param,r_error]=deal(zeros(0,max(myparams)));
+[r_param,r_error]=deal(zeros(0,max([max(myparams),5])));
 [r_status,r_res,r_range,r_h,r_dp]=deal(zeros(0,1));
 n_tot=n;
 memwarn=0;
