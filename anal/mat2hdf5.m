@@ -27,7 +27,9 @@ list_linksfortar = {};
 if strcmp(matpath(end),'/')
     matpath = matpath(1:end-1);   % remove last / in order to extract matfolder correctly
 end
-[~,matfolder] = fileparts(matpath);
+matpathparts = regexp(matpath,filesep,'split');
+matfolder = matpathparts{end};
+%[~,matfolder] = fileparts(matpath);
 matpath = [matpath '/'];          % in order to make 'getfilelist.m' work
 
 filelist_all = dir(matpath);
@@ -62,13 +64,16 @@ if length(filelist_allmat) > length(filelist)
         end
     end
 end
-nvecvel = qq;   % number vecvel-experiments
+nvecvel = qq;   % number of vecvel-experiments
 
 rec  = length(filelist);
 TT = []; intper_vec = []; pars_recs = []; h_sd = []; ntstamps_sd = [];
 for tt = 1:rec
     if exist('r_sd','var')
         clear('r_sd')
+    end
+    if exist('r_param','var')
+        clear('r_param')
     end
     try
         load(filelist(tt).fname)
@@ -78,7 +83,11 @@ for tt = 1:rec
     TT = [TT tt];
     intper_vec_rec = posixtime(datetime(r_time(2,1:6)))-posixtime(datetime(r_time(1,1:6)));
     intper_vec = [intper_vec; intper_vec_rec];
-    pars_recs = [pars_recs length(r_param(1,:))];
+    if exist('r_param','var')
+        pars_recs = [pars_recs size(r_param,2)];
+    else
+        pars_recs = [pars_recs NaN];
+    end
     if exist('r_sd','var')
         ntstamps_sd = [ntstamps_sd size(r_sd,1)];
         h_sd = [h_sd; r_sd];
@@ -86,7 +95,6 @@ for tt = 1:rec
         ntstamps_sd = [ntstamps_sd 0];
     end
 end
-
 if length(TT)<rec
     filelist = filelist(TT);       % matfile(s) that was(were) corrupt or could not be read is(are) removed 
 end
@@ -98,38 +106,44 @@ if isempty(filelist) || length(filelist) == 1    % Ignore if empty or if there i
     pars_recs = [];
 end
 
-% Remove isolated record(s) with another number of parameters in r_param
-% than the direct previous and direct subsequent record
-UUind = [];
-dpars_recs = diff(pars_recs);
-for hj = 1:length(pars_recs)
-    if hj == 1 
-        if dpars_recs(hj) ~= 0      % first record has another number of parameters than second
-            UUind = hj;
+if sum(isnan(pars_recs)) == rec
+    pci = length(filelist);    % if no r_param exist
+    params = false;
+else
+    % Remove isolated record(s) with another number of parameters in r_param
+    % than the direct previous and direct subsequent record
+    params = true;
+    UUind = [];
+    dpars_recs = diff(pars_recs);
+    for hj = 1:length(pars_recs)
+        if hj == 1 
+            if dpars_recs(hj) ~= 0      % first record has another number of parameters than second
+                UUind = hj;
+            end
+        elseif hj == length(pars_recs) 
+            if dpars_recs(hj-1) ~= 0    % last record has another number of parameters than second last
+                UUind = hj;
+            end
+        elseif dpars_recs(hj-1) ~= 0
+            if dpars_recs(hj) ~= 0
+                UUind = [UUind hj];
+            end
         end
-    elseif hj == length(pars_recs) 
-        if dpars_recs(hj-1) ~= 0    % last record has another number of parameters than second last
-            UUind = hj;
-        end
-    elseif dpars_recs(hj-1) ~= 0
-        if dpars_recs(hj) ~= 0
-            UUind = [UUind hj];
+    end 
+    filelist(UUind)  = [];
+    pars_recs(UUind) = [];
+    
+    % check where # of pars change + end index
+    pci = [find(diff(pars_recs) ~= 0) length(filelist)];
+    for d = 1:length(pci)
+        if d == 1
+            rec(d) = pci(d);
+        else
+            rec(d) = pci(d)-pci(d-1);
         end
     end
-end 
-filelist(UUind)  = [];
-pars_recs(UUind) = [];
-
-% check where # of pars change + end index
-pci = [find(diff(pars_recs) ~= 0) length(filelist)];
-for d = 1:length(pci)
-    if d == 1
-        rec(d) = pci(d);
-    else
-        rec(d) = pci(d)-pci(d-1);
-    end
+    if length(pci) == 1 && any(pci == [0,1]), pci = []; end 
 end
-if length(pci) == 1 && any(pci == [0,1]), pci = []; end 
 
 for rr = 1:length(pci)
     
@@ -276,18 +290,20 @@ for rr = 1:length(pci)
     end
 
     gg_sp = [];
-    for tt = 1:rec(rr)
-        load(Filelist(tt).fname)
-        loc(1:2) = [r_el r_az];
-        gg_rec = [];
-        for uu = 1:length(r_range)
-            loc(3) = r_range(uu);
-            gg_point = loc2gg(r_RECloc,loc);
-            gg_rec = [gg_rec; gg_point];
+    if exist('r_range','var')
+        for tt = 1:rec(rr)
+            load(Filelist(tt).fname)
+            loc(1:2) = [r_el r_az];
+            gg_rec = [];
+            for uu = 1:length(r_range)
+                loc(3) = r_range(uu);
+                gg_point = loc2gg(r_RECloc,loc);
+                gg_rec = [gg_rec; gg_point];
+            end
+            gg_sp = [gg_sp; gg_rec];
         end
-        gg_sp = [gg_sp; gg_rec];
     end
-
+    
     gg_sp_pp = [];
     if exist('r_pprange','var')
         for tt = 1:rec(rr)
@@ -324,6 +340,7 @@ for rr = 1:length(pci)
     else
         name_expr_more = [];
     end
+    
     ant = matfolder(dd(end)+1:end);
 
     if isempty(name_ant) 
@@ -464,9 +481,9 @@ for rr = 1:length(pci)
         if exist('r_m0','var')
             h_m0 = [h_m0; r_m0];
             if exist('r_param','var')        
-                if length(r_param(1,:)) == 5 && ~isempty(r_m0)     % if ion composition is missing in r_param
+                if size(r_param,2) == 5 && ~isempty(r_m0)     % if ion composition is missing in r_param
                     dpO = find(r_m0 == 16);
-                    if isempty(dpO) || ~exist('r_dp')
+                    if isempty(dpO) || ~exist('r_dp','var')
                         %display('No ion composition data available.')
                     else
                         if length(r_m0) < 3
@@ -513,9 +530,9 @@ for rr = 1:length(pci)
         if exist('r_gain','var')
             if length(unique(r_gain)) == 1, unicheck_gain(jj) = 1; end
                 if length(r_gain) < ngain
-                    r_gain(length(r_gain)+1:ngain) = NaN;          % if r_mo0 is shorter: fill it up
+                    r_gain(length(r_gain)+1:ngain) = NaN;          % if r_gain is shorter: fill it up
                 elseif length(r_gain) > ngain
-                    h_gain(:,ngain+1:length(r_gain)) = NaN;        % if r_mo0 is longer: fill up h_mo0
+                    h_gain(:,ngain+1:length(r_gain)) = NaN;        % if r_gain is longer: fill up h_gain
                     ngain = length(r_gain);
                 end
                 h_gain = [h_gain; row(r_gain)]; end
@@ -534,8 +551,9 @@ for rr = 1:length(pci)
         if exist('r_range','var'), h_range = [h_range; col(r_range)*1000]; end
         if exist('r_res','var'), h_res = [h_res; r_res]; end
         if exist('r_status','var')
-    %         if ~isempty(r_status) && length(r_status) ~= length(r_h), keyboard, end
-    %             r_status = 2*ones(size(r_h)); end    % put 'no fit' = 2 for whole record, because of wrong r_status record length
+            if ~isempty(r_status) && length(r_status) ~= length(r_h)
+                r_status = NaN(size(r_h));    % put NaN for whole record, because of wrong r_status record length
+            end
             h_status = [h_status; r_status]; end
         if exist('r_w','var')
             if size(r_w,2) == length(r_h), r_w = r_w'; end    
@@ -561,8 +579,11 @@ for rr = 1:length(pci)
         if exist('r_pp','var'), h_pp = [h_pp; r_pp]; end
         if exist('r_ppw','var'), h_ppw = [h_ppw; r_ppw*1000]; end
     end
-    if length(r_param(1,:)) == 5 && isempty(h_dp)
-        display('No ion composition data available.')
+    
+    if params
+        if size(r_param,2) == 5 && isempty(h_dp)
+            display('No ion composition data available.')
+        end
     end
         
     if ~any(unicheck_om0==0),    h_om0    = h_om0(:,1); end
@@ -573,7 +594,7 @@ for rr = 1:length(pci)
     if length(h_pperr) ~= length(h_pprange), h_pperr = []; end
     if length(h_ppw)   ~= length(h_pprange), h_ppw   = []; end
 
-    if exist('r_m0','var')
+    if exist('r_m0','var') && params
         if length(h_param(1,:)) > 5
             h_param        = [h_param(:,1:5) h_dp_first(:,1) h_param(:,6:end)];
             h_error        = [h_error(:,1:5) h_dp_first(:,2) h_error(:,6:end)];
@@ -831,8 +852,8 @@ for rr = 1:length(pci)
         end
     end
 
-    k = length(matfile.data.par2d(1,:));
-    n = length(matfile.data.par1d(1,:));
+    k = size(matfile.data.par2d,2);
+    n = size(matfile.data.par1d,2);
 
     index = [];
     pp = 0;
@@ -845,7 +866,9 @@ for rr = 1:length(pci)
         end
     end
     matfile.data.par2d(:,index)     = [];
-    matfile.metadata.par2d(:,index) = [];
+    if isfield(matfile.metadata,'par2d')
+        matfile.metadata.par2d(:,index) = [];
+    end
 
     n = length(matfile.data.par1d(1,:));    % now possibly a new length
     index = [];
@@ -985,22 +1008,24 @@ for rr = 1:length(pci)
     % im = 1 to plot the data and the corresponding box if there is a box
 
     im = 0;
-    [plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],im);
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);
-    matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = plonlat(:,2);
-    if ~isempty(PointInPol)
+    if ~isempty(gg_sp)
+        [plonlat,PointInPol] = polygonpoints([gg_sp(:,2) gg_sp(:,1)],im);
+        matfile.metadata.schemes.DataCite.GeoLocation.PolygonLon = plonlat(:,1);
+        matfile.metadata.schemes.DataCite.GeoLocation.PolygonLat = plonlat(:,2);
+    end    
+    if exist('PointInPol','var') && ~isempty(PointInPol)
         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLon = PointInPol(1);
         matfile.metadata.schemes.DataCite.GeoLocation.PointInPolygonLat = PointInPol(2);
     end
 
     if ~isempty(gg_sp_pp)
-        [plonlat,PointInPol] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
-        matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat(:,1);
-        matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat(:,2);
+        [plonlat_pp,PointInPol_pp] = polygonpoints([gg_sp_pp(:,2) gg_sp_pp(:,1)],im);
+        matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLon = plonlat_pp(:,1);
+        matfile.metadata.schemes.DataCite.GeoLocation_pp.PolygonLat = plonlat_pp(:,2);
     end
-    if ~isempty(PointInPol)
-        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = PointInPol(1);
-        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = PointInPol(2);
+    if exist('PointInPol_pp','var') && ~isempty(PointInPol_pp)
+        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLon = PointInPol_pp(1);
+        matfile.metadata.schemes.DataCite.GeoLocation_pp.PointInPolygonLat = PointInPol_pp(2);
     end
 
     if exist('name_sig')
