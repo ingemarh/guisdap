@@ -1,14 +1,33 @@
 % Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
+% After analysis and calibration of an experiment an HDF5 file with all data can
+% be made by calling the function mat2hdf5
+% datapath points to the data (MAT-files), metadata, figures and notes from
+%  the analysis and calibration of a certain experiment
+% resultpath set the path where a folder containing the generated HDF5 file,
+%  PDF:s of figures and a TAR file conaining all inputs is stored. The folder
+%  is named the same as HDF5 file itself (but without the extension obviously).
+%  For example, a file  EISCAT_yyyy_mm_dd_expr_intper@ant.hdf5 will be stored in
+%  /resultpath/EISCAT_yyyy_mm_dd_expr_intper@ant/ together with PDF(s) and the TAR file.
+% The inputs addfigs and addnotes  must be set non-empty (default) in order for
+%  the routine to store any figures and notes*.txt in the HDF5 file.
+% For multistatic experiments mat2hdf5 will call the function mat2hdf5_vel
+%  to create the corresponding EISCAT HDF5.
+%
+%function [Storepath,EISCAThdf5file,nvecvel,list_fortar,list_supplfortar,list_linksfortar]
+%            = mat2hdf5(matpath,datapath,addfigs,addnotes,taring)
 
-function [Storepath,EISCAThdf5file,nvecvel,list_fortar,list_supplfortar,list_linksfortar] = mat2hdf5(matpath,datapath,addfigs,addnotes,taring) 
+function [Storepath,EISCAThdf5file,nvecvel,list_fortar,list_supplfortar,list_linksfortar] = mat2hdf5(matpath,datapath,addfigs,addnotes,taring)
 
 global path_GUP result_path name_ant hdf5ver
 
 name_ant = [];
 
-if nargin<5, taring = [];   else taring = 1;   end 
-if nargin<4, addnotes = []; else addnotes = 1; end 
-if nargin<3, addfigs = [];  else addfigs = 1;  end 
+if nargin<5, taring = [];  end
+if nargin<4, addnotes = []; end
+if nargin<3, addfigs = []; end
+if isempty(taring), taring=1; end
+if isempty(addnotes), addnotes=1; end
+if isempty(addfigs), addfigs=1; end
 if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
 if nargin<1
     matpath  = result_path;

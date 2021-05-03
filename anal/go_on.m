@@ -13,7 +13,8 @@ if ~ishandle(bg)
   else
    load(bg,'-mat')
   end
- elseif ~isempty(a_gfd)
+ end
+ if ~isempty(a_gfd)
   name_expr=a_gfd.name_expr; expver=a_gfd.expver; siteid=a_gfd.siteid;
   data_path=a_gfd.data_path; result_path=a_gfd.result_path; intper=a_gfd.intper;
   t1=a_gfd.t1; t2=a_gfd.t2; rt=a_gfd.rt; figs=a_gfd.figs; extra=a_gfd.extra;
