@@ -6,7 +6,7 @@ if name_site=='V'
  ns=836; nl=30;
  lid=ns*nl-(nl-1)*nl/2;
  if d_date<datenum(2021,4,30,9,26,30) %bug in clutter.c
-  d=[12+(1:lid) 2*12+lid+(1:lid) 2*142769+(1:lid)];
+  d=[12+(1:lid) 2*12+lid+(1:lid) 142769+(1:lid)];
   d_data([d dr+d])=conj(d_data([d dr+d]));
  end
  for r=0:-1
