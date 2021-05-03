@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #wd=`dirname $0`
 #wd=`dirname $wd`/webgup
@@ -20,8 +20,29 @@ Enclosed you find the requested analysis.
 EISCAT
 !
 }
+trust() {
+	inhouse="@eiscat.se @eiscat.sgo.fi @eiscat.uit.no @esr.eiscat.no"
+	goodsites="@uit.no @ntu.ac.uk @stfc.ac.uk @nipr.ac.jp @bas.ac.uk"
+	goodguys="andkav@bas.ac.uk steve.crothers@stfc.ac.uk yogawa@nipr.ac.jp mike@eiscat.uit.no bjorn.gustavsson@uit.no"
 
-cd $wd
+	trusted=0
+	mh=`expr substr $resultpath $atpos 99`
+	for eis in $inhouse $goodsites
+	do
+	if [ "$eis" = "$mh" ]
+	then
+		trusted=1
+	fi
+	done 
+	for eis in $goodguys
+	do
+	if [ "$eis" = "$resultpath" ]
+	then
+		trusted=1
+	fi
+	done 
+}
+
 if [ "$1" ]
 then
  echo "Doing from command line"
@@ -37,6 +58,7 @@ then
  echo $extra
  echo $REMOTE_ADDR
 else
+ cd $wd
  if ! wget $wwwsite/$wwwreq -O $wwwreq 2>/dev/null
  then
  echo "Could not reach HQ"
@@ -61,16 +83,23 @@ else
  eval $QUERY_STRING
 fi
 
-
+maxsize=10000000
 atpos=`expr index "$resultpath" "@"`
 if [ -z $resultpath ] || [ $atpos -eq 0 ]
 then
  echo "Nowhere to send results"
- exit 1
-#else
-# echo "$resultpath"
+ mail=
+ trusted=1
+ cd $resultpath
+else
+ mail=1
+ trust
+ if [ $maxfsize ]
+ then
+  maxsize=$(($maxfsize*730000)) #uuencoding maxes file ~27% bigger 
+ fi
 fi
-#rundir=www$RANDOM
+
 rundir=`date +%y%m%dw%H%M`
 if [ -d $rundir ]
 then
@@ -78,27 +107,26 @@ then
 fi
 mkdir $rundir
 cd $rundir
-gfdfil=gfd.m
-for tar in $datapath
-do
- wget -O - "$tar" 2>/dev/null | tar xf -
-done
-ls | grep information | xargs rm -rf
-datapath=`ls`
+if [[ "$datapath" =~ .*"http".* ]]
+then
+ for tar in $datapath
+ do
+  wget -O - "$tar" 2>/dev/null | tar xf -
+ done
+ ls | grep information | xargs rm -r
+ datapath=`ls`
+ rmdata=1
+else
+ rmdata=
+fi
 if [ -z $datapath ]
 then
  echo "No data defined"
  exit 1
 fi
-touch $gfdfil
-maxsize=3000000
-if [ $maxfsize ]
-then
- maxsize=$(($maxfsize*730000)) #uuencoding maxes file ~27% bigger 
-fi
 
-ed $gfdfil 2>/dev/null <<!
-a
+gfdfil=gfd.m
+cat << EOF > $gfdfil
 name_expr='$name_expr';
 siteid=$siteid;
 data_path='$datapath';
@@ -110,67 +138,32 @@ intper=$intper;
 path_exps=[path_GUP '/exps/'];
 figs=[0 0 0 0 1];
 expver=$expver;
-extra='$extra';
-.
-w
-q
-!
+extra='analysis_HDF=1;#$extra';
+EOF
 #guisdap -tg $gfdfil " -c /opt/matlab7/etc/license.dat" >gupout.txt
 guisdap -tg $gfdfil >gupout.txt
-rm -rf $datapath $gfdfil
+rm $gfdfil
 gzip -9 gupout.txt
 filelist="gupout.txt.gz"
 resdir=`ls -d [12]* 2>/dev/null`
 if [ $resdir ]
 then
- nextfile=`ls $resdir/NCAR* 2>/dev/null`
- if [ $nextfile ]
+ if [ $rmdata ]
  then
-  mv $resdir/NCAR* .
-  bzip2 -9 NCAR*
+  rm -r $datapath
  fi
- inhouse="@eiscat.se @eiscat.sgo.fi @eiscat.uit.no @esr.eiscat.no"
- goodsites="@uit.no @ntu.ac.uk @stfc.ac.uk @nipr.ac.jp @bas.ac.uk"
- goodguys="andkav@bas.ac.uk steve.crothers@stfc.ac.uk yogawa@nipr.ac.jp mike@eiscat.uit.no bjorn.gustavsson@uit.no"
-
- trusted=0
- mh=`expr substr $resultpath $atpos 99`
- for eis in $inhouse $goodsites
- do
-  if [ "$eis" = "$mh" ]
+ Edir=`ls -d $resdir/EISCAT* 2>/dev/null`
+ if [ $Edir ]
+ then
+  mv $Edir/*.hdf5 .
+  gzip -9 *.hdf5
+  filelist="`ls *.hdf5.gz` $filelist"
+  mv $Edir/*.tar.gz .
+  if [ $trusted -eq 1 ]
   then
-   trusted=1
+   filelist="`ls *.tar.gz` $filelist"
   fi
- done 
- for eis in $goodguys
- do
-  if [ "$eis" = "$resultpath" ]
-  then
-   trusted=1
-  fi
- done 
- nextfile=`ls $resdir/*.png 2>/dev/null`
- if [ $nextfile ]
- then
-  mv $resdir/*.png $resdir/*.pdf .
-  filelist="`ls *.png` $filelist"
- elif [ $trusted -eq 0 ]
- then
-  trusted=2
  fi
- if [ $trusted -eq 1 ]
- then
-  #if [ $nextfile ]
-  #then
-  # bzip2 -9 *.eps
-  #fi
-  tar cf - $resdir | bzip2 -9c > $resdir.tar.bz2
- #elif [ $trusted -eq 0 ] && [ $nextfile ]
- #then
- # ps2pdf -sPAPERSIZE=a4 *.eps
- # filelist="$filelist `ls *.pdf`"
- fi
- filelist="$filelist `ls *.bz2`"
  rm -rf $resdir
 fi
 flist=""
@@ -190,7 +183,7 @@ matt=""
 for fil in $flist
 do
  fsiz $fil
- if [ $((nsiz+filesize)) -gt $maxsize ] && [ $nsiz -ne 0 ]
+ if [ $((nsiz+filesize)) -gt $maxsize ] && [ $nsiz -ne 0 ] && [ $mail ]
  then
   mail_it $matt -- $resultpath
   sleep 30
@@ -200,6 +193,11 @@ do
  matt="$matt -a $fil"
  nsiz=$((nsiz+filesize))
 done
-mail_it $matt -- $resultpath
+if [ $mail ]
+then
+ mail_it $matt -- $resultpath
+else
+ echo $filelist
+fi
 cd ..
 #rm -rf $rundir
