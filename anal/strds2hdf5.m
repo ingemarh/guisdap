@@ -48,11 +48,12 @@ h5_dims = fliplr(dims);
 h5_maxdims = h5_dims;
 
 space_id = H5S.create_simple(2,h5_dims,h5_maxdims);
-dcpl = 'H5P_DEFAULT';
+dcpl = H5P.create('H5P_DATASET_CREATE'); H5P.set_deflate(dcpl,9); H5P.set_chunk(dcpl,h5_dims);
 
 dset_id = H5D.create(gid(end),dsname,type_id,space_id,dcpl);
 
 H5D.write(dset_id,'H5ML_DEFAULT','H5S_ALL','H5S_ALL',plist,char(strdata) .'); 
+H5P.close(dcpl);
 H5S.close(space_id);
 H5D.close(dset_id);     
 H5T.close(type_id);

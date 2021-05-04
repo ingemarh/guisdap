@@ -1,39 +1,24 @@
-% %Function to read the plasma parameters from hdf5 files
-%clear
-% %data_path = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/03dec85/ForMadrigal/EISCAT_1985-12-03_cp1f@uhf.hdf5';
-% data_path = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/04dec85/ForMadrigal/EISCAT_1985-12-04_cp1f@kir.hdf5';
-% % data_path = '/home/rikard/matlab/Guisdap/hdf5/NCARtoHdf5/11dec85/ForMadrigal/EISCAT_1985-12-11_cp3c@sod.hdf5';
-
 function [Time,par2D,par1D,rpar2D,err2D,errs2d]=load_param_hdf5(hdf5file,pars1d,pars2d,do_rpar)
-
+% %Function to read the plasma parameters from hdf5 files
 % [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(hdf5file,pars1d,pars2d,do_rpar)
 % par2D: [Ran,Alt,Ne,Te,Ti,Vi,Coll,Comp,Res]
 % par1D: [Az,El,Pt,Tsys]
 % rpar2D: [ppRan,ppAlt,ppNe]
 % err2d_id  = {'var_Ne' 'var_Tr' 'var_Ti' 'var_Vi' 'var_Collf'};
-%
-% Note 1: 'Tr' as input will generate 'Te'. In this case 'Ti' is needed as input as well. 
-% Note 2: 'Te' will generate NaN...
-%
+%   Note 1: 'Tr' as input will generate 'Te'. In this case 'Ti' is needed as input as well.
+%   Note 2: 'Te' will generate NaN...
 % Input:
-% pars1d  = names of parameters wanted in par1D 
-% pars2d  = names of parameters wanted in par2D 
-% do_rpar = true/false (extract pp-data or not)
-% errs2d  = generated in function: those parameters in pars2d with corresponding variances in the
-% HDF5 file will be 
-%
+%   pars1d  = names of parameters wanted in par1D
+%   pars2d  = names of parameters wanted in par2D
+%   do_rpar = true/false (extract pp-data or not)
+%   errs2d  = generated in function: those parameters in pars2d with corresponding variances in the
+%     HDF5 file will be
 % Default (load_param_hdf5(hdf5file)) sets
-% pars1d  = {'az' 'el' 'Pt' 'Tsys'};   
-% par2d_id  = {'range' 'h' 'Ne' 'Tr' 'Ti' 'Vi' 'Collf' 'po+' 'res'};
-% do_rpars = true
-% errs2d_id  = {'var_Ne' 'var_Tr' 'var_Ti' 'var_Vi' 'var_Collf'}
+%   pars1d  = {'az' 'el' 'Pt' 'Tsys'};
+%   par2d_id  = {'range' 'h' 'Ne' 'Tr' 'Ti' 'Vi' 'Collf' 'po+' 'res'};
+%   do_rpars = true
+%   errs2d_id  = {'var_Ne' 'var_Tr' 'var_Ti' 'var_Vi' 'var_Collf'}
 
-% if nargin == 1
-%    
-% else
-%    if nargin<4, do_rpar = false; end
-%    if nargin<3, warning; end
-% end
 global name_ant name_expr r_RECloc path_GUP
 Time=[]; par2d=[]; par1D=[]; rpar2d=[]; err2d=[];
 
@@ -52,7 +37,7 @@ end
 
 if nargin == 1
     do_rpar = true;
-    pars1d  = {'az' 'el' 'Pt' 'Tsys'};   
+    pars1d  = {'az' 'el' 'Pt' 'Tsys'};
     errs1d  = {''};
     pars2d  = {'range' 'h' 'Ne' 'Te' 'Ti' 'Vi' 'Collf' 'po+' 'res'};
     errs2d  = {'var_Ne' 'var_Te' 'var_Ti' 'var_Vi' 'var_Collf'};

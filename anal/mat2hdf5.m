@@ -1127,19 +1127,15 @@ for rr = 1:length(pci)
     % save(matfilename,'matfile')
 
     % Generate an HDF5-file from the MAT-file
-    chunklim = 10;
+    chunklim = 1024;
     sFields = fieldnames(matfile);
     for sf = sFields.'
         group1 = ['/' char(sf)];
         tFields = fieldnames(matfile.(char(sf)));
         for tf = tFields.'
             if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)) || strcmp('acf',char(tf)) || strcmp('ace',char(tf)) || strcmp('lag',char(tf)) || strcmp('freq',char(tf)) || strcmp('spec',char(tf)) || strcmp('om',char(tf)))
-                npar  = length(matfile.data.(char(tf))(1,:));
-                ndata = length(matfile.data.(char(tf))(:,1));
-                if ge(ndata,chunklim) && ge(npar,chunklim), csize = [chunklim chunklim];
-                elseif ge(ndata,chunklim), csize = [chunklim npar];
-                elseif ge(npar,chunklim), csize = [ndata chunklim];
-                else csize = [ndata npar]; end    
+                csize=size(matfile.data.(char(tf)));
+                csize(find(csize>chunklim))=chunklim;
                 h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9,'Datatype','single');
                 h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
             elseif strcmp('metadata',char(sf)) 
@@ -1177,7 +1173,8 @@ for rr = 1:length(pci)
                     strds2hdf5(hdffilename,group1,dsname,strdata)
                 end
             else
-                h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))));
+                csize=size(matfile.(char(sf)).(char(tf)))
+                h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9);
                 h5write(hdffilename,['/' char(sf) '/' char(tf)],matfile.(char(sf)).(char(tf)));
             end
         end   
