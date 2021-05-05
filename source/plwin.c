@@ -60,7 +60,7 @@ struct pth {
 	ulong nr_samp;
 	ulong nr_pp;
 	ulong do_pp;
-	ulong nr_block;
+	ulong nr_blk;
 	ulong nr_clutter;
 	int notch;
 	int fft_clutter;
