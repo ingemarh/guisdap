@@ -44,23 +44,18 @@ for fn = 1: length(FieldnamesToChange)
     end
 end
 
-chunklim = 100;
+chunklim = 1024;
 if ~isempty(x)
-    xsize = size(x); 
-    nrow = xsize(1);
-    ncol = xsize(2);
-    if ge(nrow,chunklim) && ge(ncol,chunklim), csize = [chunklim chunklim 3];
-    elseif ge(nrow,chunklim), csize = [chunklim ncol 3];
-    elseif ge(ncol,chunklim), csize = [nrow chunklim 3];
-    else, csize = [nrow ncol 3]; 
-    end   
-    Desc(1) = {['imagedata: RGB truecolor image data, an ' num2str(nrow) '-by-' num2str(ncol) '-by-3 array.']};
-    h5create(hdf5file,['/figures' '/' figurename '/imagedata'],size(x),'ChunkSize',csize,'Deflate',9,'Datatype','uint8');
-    h5write(hdf5file, ['/figures' '/' figurename '/imagedata'],x); 
+    sx=size(x);
+    csize = sx;
+    csize(find(csize>chunklim)) = chunklim;
+    Desc(1) = {sprintf('imagedata: RGB truecolor image data, an %d-by-%d-by-%d array.',sx)};
+    h5create(hdf5file,['/figures/' figurename '/imagedata'],sx,'ChunkSize',csize,'Deflate',9,'Datatype','uint8');
+    h5write(hdf5file, ['/figures/' figurename '/imagedata'],x);
 end
 
 figfields = fieldnames(figinfo);
 for ii = 1:length(figfields)
-    strds2hdf5(hdf5file,['/figures' '/' figurename '/imagemeta'],figfields{ii},{figinfo.(figfields{ii})})
+    strds2hdf5(hdf5file,['/figures/' figurename '/imagemeta'],figfields{ii},{figinfo.(figfields{ii})})
 end
-strds2hdf5(hdf5file,['/figures' '/' figurename],'DataDescription',Desc)
+strds2hdf5(hdf5file,['/figures/' figurename],'DataDescription',Desc)

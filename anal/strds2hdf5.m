@@ -1,5 +1,5 @@
-function strds2hdf5_v2(hdffilename,group,dsname,strdata)
-% strds2hdf5_v2(hdffilename,group,dsname,strdata)
+function strds2hdf5(hdffilename,group,dsname,strdata)
+% strds2hdf5(hdffilename,group,dsname,strdata)
 %
 % Writes a dataset of string(s) to a given group in a given HDF5-file.
 %
@@ -42,20 +42,24 @@ else
     lchar = max(max(strlength(strdata)));
     H5T.set_size(type_id,lchar);
 end
-    
+
 dims = size(strdata);
 h5_dims = fliplr(dims);
 h5_maxdims = h5_dims;
 
 space_id = H5S.create_simple(2,h5_dims,h5_maxdims);
-dcpl = H5P.create('H5P_DATASET_CREATE'); H5P.set_deflate(dcpl,9); H5P.set_chunk(dcpl,h5_dims);
+if prod(dims) > 32
+ dcpl = H5P.create('H5P_DATASET_CREATE'); H5P.set_deflate(dcpl,9); H5P.set_chunk(dcpl,h5_dims);
+else
+ dcpl='H5P_DEFAULT';
+end
 
 dset_id = H5D.create(gid(end),dsname,type_id,space_id,dcpl);
 
-H5D.write(dset_id,'H5ML_DEFAULT','H5S_ALL','H5S_ALL',plist,char(strdata) .'); 
+H5D.write(dset_id,'H5ML_DEFAULT','H5S_ALL','H5S_ALL',plist,char(strdata) .');
 H5P.close(dcpl);
 H5S.close(space_id);
-H5D.close(dset_id);     
+H5D.close(dset_id);
 H5T.close(type_id);
 H5G.close(gid(end));
 H5F.close(fid);

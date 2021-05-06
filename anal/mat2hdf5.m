@@ -1173,7 +1173,7 @@ for rr = 1:length(pci)
                     strds2hdf5(hdffilename,group1,dsname,strdata)
                 end
             else
-                csize=size(matfile.(char(sf)).(char(tf)))
+                csize=size(matfile.(char(sf)).(char(tf)));
                 h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9);
                 h5write(hdffilename,['/' char(sf) '/' char(tf)],matfile.(char(sf)).(char(tf)));
             end
