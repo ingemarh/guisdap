@@ -141,7 +141,7 @@ for g_ind=1:length(a_adstart)
   % Forward only the variances (not covariances) to store_results
   if all(size(variance)>1), variance=diag(variance); end
   ralpha=real(alpha);
-  store_results(aa,measurement,variance,real(result),ralpha,chi2,status,kd2,...
+  store_results(aa,measurement,variance,real(result),ralpha,chi2,status,iter,kd2,...
           p_coeffg,small_f_womega,small_p_om,pldfvv,fb_womega,lpgs,r_ind,g_ind);
  end
 end

@@ -1134,11 +1134,17 @@ for rr = 1:length(pci)
         tFields = fieldnames(matfile.(char(sf)));
         for tf = tFields.'
             if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)) || strcmp('acf',char(tf)) || strcmp('ace',char(tf)) || strcmp('lag',char(tf)) || strcmp('freq',char(tf)) || strcmp('spec',char(tf)) || strcmp('om',char(tf)))
-                csize=size(matfile.data.(char(tf)));
-                csize(find(csize>chunklim))=chunklim;
-                h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9,'Datatype','single');
-                h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
+                %csize=size(matfile.data.(char(tf)));
+                %csize(find(csize>chunklim))=chunklim;
+                %h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9,'Datatype','single');
+                %h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
+		strds2hdf5(hdffilename,['/' char(sf)],char(tf),single(matfile.(char(sf)).(char(tf))))
             elseif strcmp('metadata',char(sf)) 
+		    %if exist(hdffilename)
+		    %    fid = H5F.open(hdffilename,'H5F_ACC_RDWR','H5P_DEFAULT');
+                    %else
+                    %     fid = H5F.create(hdffilename);
+                    % end
                 if isstruct(matfile.(char(sf)).(char(tf)))
                     group2 = [group1 '/' char(tf)];
                     uFields = fieldnames(matfile.(char(sf)).(char(tf)));
@@ -1154,24 +1160,29 @@ for rr = 1:length(pci)
                                         strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)).(char(wf));
                                         dsname = char(wf);
                                         strds2hdf5(hdffilename,group4,dsname,strdata)
+                                        %strds2hdf5(fid,group4,dsname,strdata)
                                     end
                                 else
                                     strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
                                     dsname = char(vf);
                                     strds2hdf5(hdffilename,group3,dsname,strdata)
+                                    %strds2hdf5(fid,group3,dsname,strdata)
                                 end
                             end
                         else
                             strdata = matfile.(char(sf)).(char(tf)).(char(uf));
                             dsname = char(uf);
                             strds2hdf5(hdffilename,group2,dsname,strdata)
+                            %strds2hdf5(fid,group2,dsname,strdata)
                         end
                     end
                 else
                     strdata = matfile.(char(sf)).(char(tf));
                     dsname = char(tf);
                     strds2hdf5(hdffilename,group1,dsname,strdata)
+                    %strds2hdf5(fid,group1,dsname,strdata)
                 end
+		%close(fid)
             else
                 csize=size(matfile.(char(sf)).(char(tf)));
                 h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9);
