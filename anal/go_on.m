@@ -11,6 +11,7 @@ if ~ishandle(bg)
   if strcmp(i,'.m')
    run(bg);
   else
+   if ~exist(bg), bg=[path_tmp '.gup']; end
    load(bg,'-mat')
   end
  end
@@ -20,7 +21,6 @@ if ~ishandle(bg)
   t1=a_gfd.t1; t2=a_gfd.t2; rt=a_gfd.rt; figs=a_gfd.figs; extra=a_gfd.extra;
   path_exps=a_gfd.path_exps;
  else
-  bg=NaN; load([path_tmp '.gup'],'-mat')
   if ~exist('extra','var'), extra=' '; end
   a_gfd.name_expr=name_expr; a_gfd.expver=expver; a_gfd.siteid=siteid;
   a_gfd.data_path=data_path; a_gfd.result_path=result_path; a_gfd.intper=intper;

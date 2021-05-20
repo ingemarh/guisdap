@@ -113,7 +113,7 @@ then
  do
   wget -O - "$tar" 2>/dev/null | tar xf -
  done
- ls | grep information | xargs rm -r
+ ls | grep information | xargs rm -rf
  datapath=`ls`
  rmdata=1
 else
