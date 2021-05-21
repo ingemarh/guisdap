@@ -52,7 +52,7 @@ if ~isempty(x)
     Desc(1) = {sprintf('imagedata: RGB truecolor image data, an %d-by-%d-by-%d array.',sx)};
     %h5create(hdf5file,['/figures/' figurename '/imagedata'],sx,'ChunkSize',csize,'Deflate',9,'Datatype','uint8');
     %h5write(hdf5file, ['/figures/' figurename '/imagedata'],x);
-    strds2hdf5(hdf5file,'/figures','imagedata',x)
+    strds2hdf5(hdf5file,['/figures/' figurename],'imagedata',x)
 end
 
 figfields = fieldnames(figinfo);

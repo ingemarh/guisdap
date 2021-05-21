@@ -460,7 +460,7 @@ for rr = 1:length(pci)
 
     [h_Magic_const, h_az, h_el, h_Pt, h_SCangle, h_XMITloc, h_RECloc, h_nrec, h_ppnrec, ...
     h_Tsys, h_code, h_om0, h_m0, h_phasepush, h_Offsetppd, h_gain, h_fradar, ...
-    h_h, h_range, h_param, h_error, h_apriori, h_apriorierror, h_status, h_dp_first, ...
+    h_h, h_range, h_param, h_error, h_apriori, h_apriorierror, h_status, h_iter, h_dp_first, ...
     h_dp, h_ddp, h_apr, h_aprerr, h_res, h_w, h_pprange, h_pp, h_pperr, h_ppw] = deal([]);
 
     unicheck_om0    = zeros(rec(rr),1);
@@ -564,18 +564,25 @@ for rr = 1:length(pci)
                     nfradar = length(r_fradar);
                 end
                 h_fradar = [h_fradar; row(r_fradar)]; end
+	nh=0;
         if exist('r_h','var')
-            h_nrec = [h_nrec; length(r_h)];
+            nh=length(r_h);
+            h_nrec = [h_nrec; nh];
             h_h = [h_h; col(r_h)*1000]; end
         if exist('r_range','var'), h_range = [h_range; col(r_range)*1000]; end
         if exist('r_res','var'), h_res = [h_res; r_res]; end
         if exist('r_status','var')
-            if ~isempty(r_status) && length(r_status) ~= length(r_h)
+            if ~isempty(r_status) && length(r_status) ~= nh
                 r_status = NaN(size(r_h));    % put NaN for whole record, because of wrong r_status record length
             end
             h_status = [h_status; r_status]; end
+        if exist('r_iter','var')
+            if ~isempty(r_iter) && length(r_iter) ~= nh
+                r_iter = zeros(size(r_h));    % put 0 for whole record, because of wrong r_status record length
+            end
+            h_iter = [h_iter; r_iter]; end
         if exist('r_w','var')
-            if size(r_w,2) == length(r_h), r_w = r_w'; end    
+            if size(r_w,2) == nh, r_w = r_w'; end
             h_w = [h_w; r_w*1000]; end
         if exist('r_param','var')
             h_param = [h_param; r_param]; end
@@ -638,7 +645,7 @@ for rr = 1:length(pci)
     matfile.data.par1d    = [h_Magic_const h_az h_el h_Pt h_SCangle h_XMITloc ...
         h_RECloc h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar h_nrec h_ppnrec];
     matfile.data.par2d    = [h_h h_range h_param h_error h_apriori...
-        h_apriorierror h_status h_res h_w];
+        h_apriorierror h_status h_iter h_res h_w];
     matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
 
 
@@ -648,7 +655,7 @@ for rr = 1:length(pci)
         'h_Offsetppd' 'h_gain' 'h_fradar' 'h_nrec' 'h_ppnrec'};
     % 2d parameters 
     parameters_2d = {'h_h' 'h_range' 'h_param' 'h_error' 'h_apriori'...
-        'h_apriorierror' 'h_status' 'h_res' 'h_w'};
+        'h_apriorierror' 'h_status' 'h_iter' 'h_res' 'h_w'};
     % 2d_pp parameters 
     parameters_2dpp = {'h_pprange' 'h_pp' 'h_pperr' 'h_ppw'};
 
@@ -1221,8 +1228,8 @@ for rr = 1:length(pci)
     end
     
     if taring
-        tar(fullfile(storepath,[datafolder '.tar.gz']),list_fortar);
-        tar(fullfile(storepath,[datafolder '_linked.tar.gz']),list_linksfortar);
-        tar(fullfile(storepath,[datafolder '_suppl.tar.gz']),list_supplfortar);
+	if ~isempty(list_fortar), tar(fullfile(storepath,[datafolder '.tar.gz']),list_fortar); end
+        if ~isempty(list_linksfortar), tar(fullfile(storepath,[datafolder '_linked.tar.gz']),list_linksfortar); end
+        if ~isempty(list_supplfortar), tar(fullfile(storepath,[datafolder '_suppl.tar.gz']),list_supplfortar); end
     end
 end
