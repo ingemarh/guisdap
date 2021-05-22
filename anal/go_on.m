@@ -46,7 +46,7 @@ elseif datenum(clock)<datenum(t2) & rt==0 & length(local.site)==1
  fprintf('Stop time is in future: Setting RT mode\n')
  if ishandle(bg), set(b(7),'value',1), end
  if figs(5)==1
-  figs(5)=2;
+  %figs(5)=2;
   if ishandle(bg), set(b(9),'string',num2str(figs)), end
  end
 elseif (datenum(clock)>datenum(t2) | length(local.site)~=1) & rt==1
