@@ -43,22 +43,22 @@ list_fortar = {};
 list_supplfortar = {};
 list_linksfortar = {};
 
-if strcmp(matpath(end),'/')
+if strcmp(matpath(end),filesep)
     matpath = matpath(1:end-1);   % remove last / in order to extract matfolder correctly
 end
 matpathparts = regexp(matpath,filesep,'split');
 matfolder = matpathparts{end};
 %[~,matfolder] = fileparts(matpath);
-matpath = [matpath '/'];          % in order to make 'getfilelist.m' work
+matpath = [matpath filesep];          % in order to make 'getfilelist.m' work
 
 filelist_all = dir(matpath);
 filelist_allmat = filelist_all(endsWith({filelist_all.name},'.mat'));   % consider only .mat-files
-for jj = 1:length(filelist_allmat)
-    [~,~,ext] = fileparts(filelist_allmat(jj).name);
-    if strcmp(ext,'.bz2')
-        unix(['bunzip2 ' fullfile(filelist_allmat(jj).folder,filelist_allmat(jj).name)]);
-    end
-end
+%for jj = 1:length(filelist_allmat)
+    %[~,~,ext] = fileparts(filelist_allmat(jj).name);
+    %if strcmp(ext,'.bz2')
+    %    unix(['bunzip2 ' fullfile(filelist_allmat(jj).folder,filelist_allmat(jj).name)]);
+    %end
+%end
 filelist = getfilelist(matpath);
 if ~isempty(filelist)
     list_fortar = [list_fortar;{filelist.fname}'];
@@ -66,7 +66,7 @@ end
 
 filelist_rest = filelist_all(~ismember({filelist_all.name},{'.','..','.gup'}) & ~endsWith({filelist_all.name},{'.mat','.png','.pdf'}) & ~startsWith({filelist_all.name},{'notes'})); 
 for utf = 1:length(filelist_rest)
-    list_supplfortar(utf,:) = {strjoin([{filelist_rest(utf).folder} {filelist_rest(utf).name}],'/')};
+    list_supplfortar(utf,:) = {strjoin([{filelist_rest(utf).folder} {filelist_rest(utf).name}],filesep)};
 end
 
 qq = 0;
@@ -95,7 +95,7 @@ for tt = 1:rec
         clear('r_param')
     end
     try
-        load(filelist(tt).fname)
+        load(canon(filelist(tt).fname,0))
     catch
         continue 
     end
@@ -346,7 +346,7 @@ for rr = 1:length(pci)
     minute = sprintf('%02d',r_time(1,5));
     second = sprintf('%02.f',r_time(1,6));
 
-    if strcmp(matpath(end),'/')
+    if strcmp(matpath(end),filesep)
         matpath = matpath(1:end-1);
     end
 
@@ -1145,7 +1145,7 @@ for rr = 1:length(pci)
                 %csize(find(csize>chunklim))=chunklim;
                 %h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9,'Datatype','single');
                 %h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
-		strds2hdf5(hdffilename,['/' char(sf)],char(tf),single(matfile.(char(sf)).(char(tf))))
+                strds2hdf5(hdffilename,['/' char(sf)],char(tf),single(matfile.(char(sf)).(char(tf))))
             elseif strcmp('metadata',char(sf)) 
 		    %if exist(hdffilename)
 		    %    fid = H5F.open(hdffilename,'H5F_ACC_RDWR','H5P_DEFAULT');
@@ -1191,9 +1191,10 @@ for rr = 1:length(pci)
                 end
 		%close(fid)
             else
-                csize=size(matfile.(char(sf)).(char(tf)));
-                h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9);
-                h5write(hdffilename,['/' char(sf) '/' char(tf)],matfile.(char(sf)).(char(tf)));
+                %csize=size(matfile.(char(sf)).(char(tf)));
+                %h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9);
+                %h5write(hdffilename,['/' char(sf) '/' char(tf)],matfile.(char(sf)).(char(tf)));
+                strds2hdf5(hdffilename,['/' char(sf)],char(tf),matfile.(char(sf)).(char(tf)))
             end
         end   
     end
@@ -1228,8 +1229,28 @@ for rr = 1:length(pci)
     end
     
     if taring
-	if ~isempty(list_fortar), tar(fullfile(storepath,[datafolder '.tar.gz']),list_fortar); end
-        if ~isempty(list_linksfortar), tar(fullfile(storepath,[datafolder '_linked.tar.gz']),list_linksfortar); end
-        if ~isempty(list_supplfortar), tar(fullfile(storepath,[datafolder '_suppl.tar.gz']),list_supplfortar); end
+	reltar(fullfile(storepath,[datafolder '.tar.gz']),list_fortar);
+        reltar(fullfile(storepath,[datafolder '_linked.tar.gz']),list_linksfortar);
+        reltar(fullfile(storepath,[datafolder '_suppl.tar.gz']),list_supplfortar); 
     end
+end
+
+function reltar(out,list)
+if ~isempty(list)
+ newlist=cell(size(list));
+ i=0;
+ for l=list'
+  [root,nl,ne]=fileparts(char(l));
+  i=i+1;
+  newlist{i}=[nl ne];
+ end
+ [op,d,e]=fileparts(out);
+ fullout=fullfile(what(op).path,[d e]);
+ [rp,d,e]=fileparts(root);
+ owd=pwd;
+ cd(rp)
+ try
+  tar(fullout,newlist,[d e])
+ catch, end
+ cd(owd)
 end
