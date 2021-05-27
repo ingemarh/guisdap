@@ -1241,16 +1241,16 @@ if ~isempty(list)
  i=0;
  for l=list'
   [root,nl,ne]=fileparts(char(l));
+  [rp,d,e]=fileparts(root);
   i=i+1;
-  newlist{i}=[nl ne];
+  newlist{i}=fullfile([d e],[nl ne]);
  end
  [op,d,e]=fileparts(out);
  fullout=fullfile(what(op).path,[d e]);
- [rp,d,e]=fileparts(root);
  owd=pwd;
- cd(rp)
+ if ~isempty(rp), cd(rp), end
  try
-  tar(fullout,newlist,[d e])
+  tar(fullout,newlist)
  catch, end
  cd(owd)
 end
