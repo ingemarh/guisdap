@@ -14,7 +14,7 @@ end
 
 plist='H5P_DEFAULT';
 if ~ischar(hdffilename)
-    fid=hdffilename
+    fid=hdffilename;
 elseif ~exist(hdffilename)
     fid = H5F.create(hdffilename);
 else

@@ -1,4 +1,3 @@
-
 function image2hdf5(figurefile,hdf5file)
 % function image2hdf5(figurefile,hdf5file)
 % store data from an image (figurefile) to and HDF5-file (hdf5file)
@@ -47,11 +46,7 @@ end
 chunklim = 1024;
 if ~isempty(x)
     sx=size(x);
-    %csize = sx;
-    %csize(find(csize>chunklim)) = chunklim;
     Desc(1) = {sprintf('imagedata: RGB truecolor image data, an %d-by-%d-by-%d array.',sx)};
-    %h5create(hdf5file,['/figures/' figurename '/imagedata'],sx,'ChunkSize',csize,'Deflate',9,'Datatype','uint8');
-    %h5write(hdf5file, ['/figures/' figurename '/imagedata'],x);
     strds2hdf5(hdf5file,['/figures/' figurename],'imagedata',x)
 end
 

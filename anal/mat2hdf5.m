@@ -52,36 +52,38 @@ matfolder = matpathparts{end};
 matpath = [matpath filesep];          % in order to make 'getfilelist.m' work
 
 filelist_all = dir(matpath);
-filelist_allmat = filelist_all(endsWith({filelist_all.name},'.mat'));   % consider only .mat-files
-%for jj = 1:length(filelist_allmat)
-    %[~,~,ext] = fileparts(filelist_allmat(jj).name);
-    %if strcmp(ext,'.bz2')
-    %    unix(['bunzip2 ' fullfile(filelist_allmat(jj).folder,filelist_allmat(jj).name)]);
-    %end
-%end
+filelist_allmat = filelist_all(contains({filelist_all.name},'.mat'));   % consider only .mat-files
 filelist = getfilelist(matpath);
 if ~isempty(filelist)
     list_fortar = [list_fortar;{filelist.fname}'];
 end
 
-filelist_rest = filelist_all(~ismember({filelist_all.name},{'.','..','.gup'}) & ~endsWith({filelist_all.name},{'.mat','.png','.pdf'}) & ~startsWith({filelist_all.name},{'notes'})); 
+filelist_rest = filelist_all(~ismember({filelist_all.name},{'.','..','.gup'}) & ~contains({filelist_all.name},{'.mat','.png','.pdf','notes'})); 
 for utf = 1:length(filelist_rest)
     list_supplfortar(utf,:) = {strjoin([{filelist_rest(utf).folder} {filelist_rest(utf).name}],filesep)};
 end
 
 qq = 0;
 % Chech for vector velocity data
-if length(filelist_allmat) > length(filelist)
-    for kk = 1:length(filelist_allmat)
-        matfilecheck = fullfile(filelist_allmat(kk).folder,filelist_allmat(kk).name);
-        if ~isempty(who('-file',matfilecheck,'Vg'))
-            qq = qq + 1; 
-            [storepath,file_EISCAThdf5] = mat2hdf5_vel(matfilecheck,datapath,addfigs,addnotes);
-            EISCAThdf5file(qq,:) = file_EISCAThdf5;
-            Storepath(qq,:) = storepath;
-            list_fortar = [list_fortar;{matfilecheck}];
-        end
-    end
+for fmata=filelist_allmat'
+ for fmat=filelist'
+  hit=1;
+  matfilecheck = fullfile(fmata.folder,fmata.name);
+  if contains(matfilecheck,fmat.fname)
+   hit=0; break
+  end
+ end
+ if hit
+  if ~isempty(who('-file',matfilecheck,'Vg'))
+       qq = qq + 1; 
+       [storepath,file_EISCAThdf5] = mat2hdf5_vel(matfilecheck,datapath,addfigs,addnotes);
+       EISCAThdf5file(qq,:) = file_EISCAThdf5;
+       Storepath(qq,:) = storepath;
+       list_fortar = [list_fortar;{matfilecheck}];
+  else
+       list_supplfortar = [list_supplfortar;{matfilecheck}];
+  end
+ end
 end
 nvecvel = qq;   % number of vecvel-experiments
 
@@ -1130,28 +1132,23 @@ for rr = 1:length(pci)
         end
     end
 
-    mkdir(storepath);    
+    mkdir(storepath);
     % save(matfilename,'matfile')
 
     % Generate an HDF5-file from the MAT-file
-    chunklim = 1024;
+    if exist(hdffilename)
+     hdfid = H5F.open(hdffilename,'H5F_ACC_RDWR','H5P_DEFAULT');
+    else
+     hdfid = H5F.create(hdffilename);
+    end
     sFields = fieldnames(matfile);
     for sf = sFields.'
         group1 = ['/' char(sf)];
         tFields = fieldnames(matfile.(char(sf)));
         for tf = tFields.'
             if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)) || strcmp('acf',char(tf)) || strcmp('ace',char(tf)) || strcmp('lag',char(tf)) || strcmp('freq',char(tf)) || strcmp('spec',char(tf)) || strcmp('om',char(tf)))
-                %csize=size(matfile.data.(char(tf)));
-                %csize(find(csize>chunklim))=chunklim;
-                %h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9,'Datatype','single');
-                %h5write(hdffilename,['/' char(sf) '/' char(tf)],single(matfile.(char(sf)).(char(tf))));
-                strds2hdf5(hdffilename,['/' char(sf)],char(tf),single(matfile.(char(sf)).(char(tf))))
+                strds2hdf5(hdfid,['/' char(sf)],char(tf),single(matfile.(char(sf)).(char(tf))))
             elseif strcmp('metadata',char(sf)) 
-		    %if exist(hdffilename)
-		    %    fid = H5F.open(hdffilename,'H5F_ACC_RDWR','H5P_DEFAULT');
-                    %else
-                    %     fid = H5F.create(hdffilename);
-                    % end
                 if isstruct(matfile.(char(sf)).(char(tf)))
                     group2 = [group1 '/' char(tf)];
                     uFields = fieldnames(matfile.(char(sf)).(char(tf)));
@@ -1166,35 +1163,27 @@ for rr = 1:length(pci)
                                     for wf = wFields.'
                                         strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)).(char(wf));
                                         dsname = char(wf);
-                                        strds2hdf5(hdffilename,group4,dsname,strdata)
-                                        %strds2hdf5(fid,group4,dsname,strdata)
+                                        strds2hdf5(hdfid,group4,dsname,strdata)
                                     end
                                 else
                                     strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
                                     dsname = char(vf);
-                                    strds2hdf5(hdffilename,group3,dsname,strdata)
-                                    %strds2hdf5(fid,group3,dsname,strdata)
+                                    strds2hdf5(hdfid,group3,dsname,strdata)
                                 end
                             end
                         else
                             strdata = matfile.(char(sf)).(char(tf)).(char(uf));
                             dsname = char(uf);
-                            strds2hdf5(hdffilename,group2,dsname,strdata)
-                            %strds2hdf5(fid,group2,dsname,strdata)
+                            strds2hdf5(hdfid,group2,dsname,strdata)
                         end
                     end
                 else
                     strdata = matfile.(char(sf)).(char(tf));
                     dsname = char(tf);
-                    strds2hdf5(hdffilename,group1,dsname,strdata)
-                    %strds2hdf5(fid,group1,dsname,strdata)
+                    strds2hdf5(hdfid,group1,dsname,strdata)
                 end
-		%close(fid)
             else
-                %csize=size(matfile.(char(sf)).(char(tf)));
-                %h5create(hdffilename,['/' char(sf) '/' char(tf)],size(matfile.(char(sf)).(char(tf))),'ChunkSize',csize,'Deflate',9);
-                %h5write(hdffilename,['/' char(sf) '/' char(tf)],matfile.(char(sf)).(char(tf)));
-                strds2hdf5(hdffilename,['/' char(sf)],char(tf),matfile.(char(sf)).(char(tf)))
+                strds2hdf5(hdfid,['/' char(sf)],char(tf),matfile.(char(sf)).(char(tf)))
             end
         end   
     end
@@ -1206,7 +1195,7 @@ for rr = 1:length(pci)
             figurefile = fullfile(matpath,image_filelist(ii).name);
             [~,filename,ext] = fileparts(figurefile);
             if strcmp(ext,'.png')
-                image2hdf5(figurefile,hdffilename)
+                image2hdf5(figurefile,hdfid)
                 list_fortar = [list_fortar;{figurefile}];
             elseif strcmp(ext,'.pdf')
                 npdf = npdf + 1;
@@ -1215,7 +1204,7 @@ for rr = 1:length(pci)
             end
         end
         if npdf>0
-            strds2hdf5(hdffilename,'/figures','figure_links',pdf_forHDF5');
+            strds2hdf5(hdfid,'/figures','figure_links',pdf_forHDF5');
         end
     end
 
@@ -1223,16 +1212,17 @@ for rr = 1:length(pci)
         notesfiles = dir(fullfile(matpath,'notes*txt'));
         for nn = 1:length(notesfiles)
             notesfile = fullfile(matpath,notesfiles(nn).name);
-            note2hdf5(notesfile,EISCAThdf5file{1},nn)
+            note2hdf5(notesfile,hd5id,nn)
             list_fortar = [list_fortar;{notesfile}];
         end
     end
+    close(hdfid)
+end
     
-    if taring
-	reltar(fullfile(storepath,[datafolder '.tar.gz']),list_fortar);
-        reltar(fullfile(storepath,[datafolder '_linked.tar.gz']),list_linksfortar);
-        reltar(fullfile(storepath,[datafolder '_suppl.tar.gz']),list_supplfortar); 
-    end
+if taring
+ reltar(fullfile(storepath,[datafolder '.tar.gz']),list_fortar);
+ reltar(fullfile(storepath,[datafolder '_linked.tar.gz']),list_linksfortar);
+ reltar(fullfile(storepath,[datafolder '_suppl.tar.gz']),list_supplfortar); 
 end
 
 function reltar(out,list)
