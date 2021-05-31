@@ -66,9 +66,9 @@ end
 qq = 0;
 % Chech for vector velocity data
 for fmata=filelist_allmat'
+ hit=1;
+ matfilecheck = fullfile(fmata.folder,fmata.name);
  for fmat=filelist'
-  hit=1;
-  matfilecheck = fullfile(fmata.folder,fmata.name);
   if contains(matfilecheck,fmat.fname)
    hit=0; break
   end
