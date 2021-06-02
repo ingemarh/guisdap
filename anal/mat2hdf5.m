@@ -66,9 +66,9 @@ end
 qq = 0;
 % Chech for vector velocity data
 for fmata=filelist_allmat'
+ hit=1;
+ matfilecheck = fullfile(fmata.folder,fmata.name);
  for fmat=filelist'
-  hit=1;
-  matfilecheck = fullfile(fmata.folder,fmata.name);
   if contains(matfilecheck,fmat.fname)
    hit=0; break
   end
@@ -1212,7 +1212,7 @@ for rr = 1:length(pci)
         notesfiles = dir(fullfile(matpath,'notes*txt'));
         for nn = 1:length(notesfiles)
             notesfile = fullfile(matpath,notesfiles(nn).name);
-            note2hdf5(notesfile,hd5id,nn)
+            note2hdf5(notesfile,hdfid,nn)
             list_fortar = [list_fortar;{notesfile}];
         end
     end
