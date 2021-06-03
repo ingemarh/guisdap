@@ -38,6 +38,11 @@ if isstring(datapath)
 end
 
 software = 'https://git.eiscat.se/cvs/guisdap9';
+GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
+[~,~,guisdappars]=xlsread(GuisdapParFile,1,['D2:D300']);
+guisdappars(cellfun(@(c) isnumeric(c), guisdappars))=[];
+guisdappars(cellfun(@(c) isequal(c,'N/A'), guisdappars))=[];
+guisdappars=char(strjoin(string(guisdappars)));
 level2_link = '';
 list_fortar = {};
 list_supplfortar = {};
@@ -90,12 +95,7 @@ nvecvel = qq;   % number of vecvel-experiments
 rec  = length(filelist);
 TT = []; intper_vec = []; pars_recs = []; h_sd = []; ntstamps_sd = [];
 for tt = 1:rec
-    if exist('r_sd','var')
-        clear('r_sd')
-    end
-    if exist('r_param','var')
-        clear('r_param')
-    end
+    clear('r_sd','r_param')
     try
         load(canon(filelist(tt).fname,0))
     catch
@@ -201,6 +201,7 @@ for rr = 1:length(pci)
     if exist('r_om0','var'),    nom0    = length(r_om0);    end
     if exist('r_fradar','var'), nfradar = length(r_fradar); end
     if exist('r_gain','var'),   ngain   = length(r_gain);   end
+    ymdhms=sprintf('%04d%02d%02d%02d%02d%02.f',r_time(2,:));
 
     s = [];
     starttime = [];  endtime = [];
@@ -310,44 +311,6 @@ for rr = 1:length(pci)
         end
     end
 
-    gg_sp = [];
-    if exist('r_range','var')
-        for tt = 1:rec(rr)
-            load(Filelist(tt).fname)
-            loc(1:2) = [r_el r_az];
-            gg_rec = [];
-            for uu = 1:length(r_range)
-                loc(3) = r_range(uu);
-                gg_point = loc2gg(r_RECloc,loc);
-                gg_rec = [gg_rec; gg_point];
-            end
-            gg_sp = [gg_sp; gg_rec];
-        end
-    end
-    
-    gg_sp_pp = [];
-    if exist('r_pprange','var')
-        for tt = 1:rec(rr)
-            load(Filelist(tt).fname)
-            loc(1:2) = [r_el r_az];
-            gg_rec = [];
-            for uu = 1:length(r_pprange)
-                loc(3) = r_pprange(uu);
-                gg_point = loc2gg(r_RECloc,loc);
-                gg_rec = [gg_rec; gg_point];
-            end
-            gg_sp_pp = [gg_sp_pp; gg_rec];
-        end
-    end
-
-    year = num2str(r_time(1,1));
-    month = sprintf('%02d',r_time(1,2));
-    day = sprintf('%02d',r_time(1,3));
-
-    hour   = sprintf('%02d',r_time(1,4));
-    minute = sprintf('%02d',r_time(1,5));
-    second = sprintf('%02.f',r_time(1,6));
-
     if strcmp(matpath(end),filesep)
         matpath = matpath(1:end-1);
     end
@@ -377,7 +340,7 @@ for rr = 1:length(pci)
         name_ant = lower(name_ant);
     end
 
-    datafolder = ['EISCAT_' year '-' month '-' day '_' name_expr '_' name_expr_more name_strategy '@' name_ant];
+    datafolder = sprintf('EISCAT_%04d-%02d-%02d_%s_%s%s@%s',r_time(1,1:3),name_expr,name_expr_more,name_strategy ,name_ant);
     storepath = fullfile(datapath,datafolder);
 
     while exist(storepath)
@@ -396,7 +359,6 @@ for rr = 1:length(pci)
     matfilename = fullfile(storepath,MatFile);
     Storepath(qq,:) = {storepath};
     EISCAThdf5file(qq,:) = {hdffilename};
-    GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 
     if exist(hdffilename)==2, delete(hdffilename); end
 
@@ -416,49 +378,8 @@ for rr = 1:length(pci)
         matfile.metadata.utime(:,ttt) = info';
     end
 
-    % UTC time
-    for jj = 1:rec(rr)
-         load(Filelist(jj).fname)
-         [utime_rec,leap] = timeconv([r_time(1,:);r_time(2,:)],'utc2unx');
-         matfile.data.utime = [matfile.data.utime;utime_rec'];
-         leaps = [leaps;leap'];
-    end
-
-    load(Filelist(jj).fname)
-   
-    nn = 0;
-    if exist('name_expr','var'); nn = nn + 1; 
-        infoname(1) = {'name_expr'};
-        infoname(2) = {name_expr};
-        a = find(strcmp('name_expr',parameters_list)==1);                
-        [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-        infoname(3) = infodesc;
-        matfile.metadata.names(:,nn) = infoname';
-    end
-    if exist('name_site','var'); nn = nn + 1; 
-        infoname(1) = {'name_site'};
-        infoname(2) = {name_site};
-        a = find(strcmp('name_site',parameters_list)==1);                
-        [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-        infoname(3) = infodesc;
-        matfile.metadata.names(:,nn) = infoname';
-    end
-    if exist('name_ant','var'); nn = nn + 1; 
-        infoname(1) = {'name_ant'};
-        infoname(2) = {lower(name_ant)};
-        a = find(strcmp('name_ant',parameters_list)==1); 
-        [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-        infoname(3) = infodesc;
-        matfile.metadata.names(:,nn) = infoname';
-    end
-    if exist('name_sig','var'); nn = nn + 1; 
-        infoname(1) = {'name_sig'};
-        infoname(2) = {name_sig};
-        a = find(strcmp('name_sig',parameters_list)==1);                
-        [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
-        infoname(3) = infodesc;
-        matfile.metadata.names(:,nn) = infoname';
-    end
+    gg_sp = [];
+    gg_sp_pp = [];
 
     [h_Magic_const, h_az, h_el, h_Pt, h_SCangle, h_XMITloc, h_RECloc, h_nrec, h_ppnrec, ...
     h_Tsys, h_code, h_om0, h_m0, h_phasepush, h_Offsetppd, h_gain, h_fradar, ...
@@ -470,7 +391,33 @@ for rr = 1:length(pci)
     unicheck_fradar = zeros(rec(rr),1);
 
     for jj = 1:rec(rr)
+	eval(['clear ' guisdappars])
         load(Filelist(jj).fname)
+
+        % UTC time
+        [utime_rec,leap] = timeconv([r_time(1,:);r_time(2,:)],'utc2unx');
+        matfile.data.utime = [matfile.data.utime;utime_rec'];
+        leaps = [leaps;leap'];
+
+        loc = [r_el r_az];
+        if exist('r_range','var')
+            h_range = [h_range; col(r_range)*1000];
+            gg_rec = zeros(length(r_range),3);
+            for uu = 1:length(r_range)
+                gg_rec(uu,:) = loc2gg(r_RECloc,[loc r_range(uu)]);
+            end
+            gg_sp = [gg_sp; gg_rec];
+        end
+        if exist('r_pprange','var')
+            h_ppnrec  = [h_ppnrec; length(r_pprange)];
+            h_pprange = [h_pprange; col(r_pprange)*1000];
+            gg_rec = zeros(length(r_pprange),3);
+            for uu = 1:length(r_pprange)
+                gg_rec(uu,:) = loc2gg(r_RECloc,[loc r_pprange(uu)]);
+            end
+            gg_sp_pp = [gg_sp_pp; gg_rec];
+        end
+
         if exist('r_Magic_const','var'), h_Magic_const = [h_Magic_const; r_Magic_const]; end
         if exist('r_az','var'), h_az = [h_az; col(r_az)]; end
         if exist('r_el','var'), h_el = [h_el; col(r_el)]; end
@@ -571,7 +518,6 @@ for rr = 1:length(pci)
             nh=length(r_h);
             h_nrec = [h_nrec; nh];
             h_h = [h_h; col(r_h)*1000]; end
-        if exist('r_range','var'), h_range = [h_range; col(r_range)*1000]; end
         if exist('r_res','var'), h_res = [h_res; r_res]; end
         if exist('r_status','var')
             if ~isempty(r_status) && length(r_status) ~= nh
@@ -600,9 +546,6 @@ for rr = 1:length(pci)
                 r_apriorierror = r_apriorierror(:,1:5);
             end
             h_apriorierror = [h_apriorierror; r_apriorierror]; end 
-        if exist('r_pprange','var')
-            h_ppnrec  = [h_ppnrec; length(r_pprange)];
-            h_pprange = [h_pprange; col(r_pprange)*1000]; end
         if exist('r_pperr','var'), h_pperr = [h_pperr; r_pperr]; end
         if exist('r_pp','var'), h_pp = [h_pp; r_pp]; end
         if exist('r_ppw','var'), h_ppw = [h_ppw; r_ppw*1000]; end
@@ -643,6 +586,40 @@ for rr = 1:length(pci)
     end
 
     h_error = h_error.^2;     % error --> variance
+
+    nn = 0;
+    if exist('name_expr','var'); nn = nn + 1; 
+        infoname(1) = {'name_expr'};
+        infoname(2) = {name_expr};
+        a = find(strcmp('name_expr',parameters_list)==1);                
+        [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+        infoname(3) = infodesc;
+        matfile.metadata.names(:,nn) = infoname';
+    end
+    if exist('name_site','var'); nn = nn + 1; 
+        infoname(1) = {'name_site'};
+        infoname(2) = {name_site};
+        a = find(strcmp('name_site',parameters_list)==1);                
+        [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+        infoname(3) = infodesc;
+        matfile.metadata.names(:,nn) = infoname';
+    end
+    if exist('name_ant','var'); nn = nn + 1; 
+        infoname(1) = {'name_ant'};
+        infoname(2) = {lower(name_ant)};
+        a = find(strcmp('name_ant',parameters_list)==1); 
+        [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+        infoname(3) = infodesc;
+        matfile.metadata.names(:,nn) = infoname';
+    end
+    if exist('name_sig','var'); nn = nn + 1; 
+        infoname(1) = {'name_sig'};
+        infoname(2) = {name_sig};
+        a = find(strcmp('name_sig',parameters_list)==1);                
+        [~,~,infodesc] = xlsread(GuisdapParFile,1,['B' num2str(a)]);
+        infoname(3) = infodesc;
+        matfile.metadata.names(:,nn) = infoname';
+    end
 
     matfile.data.par1d    = [h_Magic_const h_az h_el h_Pt h_SCangle h_XMITloc ...
         h_RECloc h_Tsys h_code h_om0 h_m0 h_phasepush h_Offsetppd h_gain h_fradar h_nrec h_ppnrec];
@@ -1020,7 +997,7 @@ for rr = 1:length(pci)
     strLength = 10;
     nums = randi(numel(symbols),[1 strLength]);
     randstr = symbols(nums);
-    PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
+    PID = ['doi://eiscat.se/3a/' ymdhms '/' randstr];
 
     matfile.metadata.schemes.DataCite.Identifier = {PID};
     matfile.metadata.schemes.DataCite.Creator = {lower(name_ant)};
