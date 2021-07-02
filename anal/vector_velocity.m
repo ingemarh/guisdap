@@ -311,10 +311,10 @@ else
  name_sig=[local.host ' ' local.user ' ' datestr(now)];
  save_noglobal([result_file '.mat'],Vdate,Vleap,Vpos,Vg,Vgv,V_area,name_exps,name_expr,name_ant,name_ants,name_sig,name_sigs,name_strategy,name_strategies,GUP_ver,Vinputs)
 
- fprintf('Making NCAR file...\n')
- NCAR_output
- NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))
- NCAR_output
+ %fprintf('Making NCAR file...\n')
+ %NCAR_output
+ %NCAR_output(result_file,[],fullfile(odir,['NCARv_' oname '.bin']))
+ %NCAR_output
 
 %  fprintf('Making EISCAT HDF5 file...\n')
 %  mat2hdf5_vel([result_file '.mat'],odir);
