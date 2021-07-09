@@ -15,7 +15,7 @@ if d_parbl(41)==3 && vs>1 %VHF
  if isempty(gate), gate=2; end
 elseif d_parbl(41)==8 %ESR plasma
  nfft=256; nint=1; ngates=1; nlag=0;
- freq=[-5.7 5.7]*1e6; dt=0.4e-6; invert=-1;
+ freq=[-5.3 5.3]*1e6; dt=0.4e-6; invert=-1;
  ran=[98.5 401.6]; fradar=499.7e6;
  maxe=2; ele=81.6; updown=0:1; nup_d=1;
  startad=20+(0:1)*276+1; gate=1; skip_if=0;

@@ -91,7 +91,7 @@ d=find(plm<0); plm(d)=0;
 
 %find pl peaks
 plpeak=ones(2,nfl,nfreq)*NaN;
-validpl=pl.f(find(isfinite(pl.f)));
+validpl=pl.s(find(isfinite(pl.s)));
 s=std(validpl(find(abs(validpl-median(validpl))<std(validpl))));
 for j=1:nfreq
  for i=1:nfl
