@@ -22,7 +22,7 @@ if strcmp(name_ant(1:3),'kir') & d_date>=datenum(2020,08,13,00,00,00) & d_date<d
 end
 
 if strcmp(name_ant(1:3),'kir') & d_date>=datenum(2021,08,11,00,00,00) & d_date<datenum(2021,08,19,00,00,00)
-  ch_range=ch_range/1000;
+  ch_range=d_parbl(42)/1000;
 % Incorrect value in the parameter block for the intersection range in Kiruna.
 end
 
