@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_Fortran_COMPILER gfortran)
-foreach(cver 6 7 8 9 5)
+foreach(cver 8 9 7 6 5)
 	find_program(gcc_EXECUTABLE gcc-${cver})
 	if(gcc_EXECUTABLE)
 		set(CMAKE_C_COMPILER gcc-${cver})
