@@ -15,11 +15,15 @@ if strcmp(name_ant(1:3),'vhf')
  end
 end
 
-if strcmp(name_ant(1:3),'kir') & d_date>=datenum(2020,08,13,00,00,00)
+if strcmp(name_ant(1:3),'kir') & d_date>=datenum(2020,08,13,00,00,00) & d_date<datenum(2020,08,26,00,00,00)
   ch_el=23.7;ch_az=346.3;
   warning('GUISDAP:guispert','Setting azimuth to 346.3 deg and elevation to 23.7 deg.')
 % Incorrect values in the data for the pointing direction in Kiruna.
-% An end date for this correction should be added when the problem is fixed.
+end
+
+if strcmp(name_ant(1:3),'kir') & d_date>=datenum(2021,08,11,00,00,00) & d_date<datenum(2021,08,19,00,00,00)
+  ch_range=ch_range/1000;
+% Incorrect value in the parameter block for the intersection range in Kiruna.
 end
 
 warning('off','GUISDAP:guispert')
