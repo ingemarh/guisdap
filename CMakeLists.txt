@@ -24,6 +24,6 @@ project(guisdap)
 
 add_subdirectory(models/iri2016)
 add_subdirectory(models/nrlmsis2.0)
-add_subdirectory(models/irbem-code/source)
-add_subdirectory(models/irbem-code)
+add_subdirectory(models/irbem/source)
+add_subdirectory(models/irbem)
 add_subdirectory(source)
