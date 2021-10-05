@@ -31,7 +31,7 @@ endif()
 add_library(plwin SHARED
 )
 target_sources(plwin PRIVATE
-	plwin.c
+	plwin.c get_tid.c
 )
 target_link_libraries(plwin PUBLIC fftw3f pthread)
 
@@ -39,7 +39,7 @@ target_link_libraries(plwin PUBLIC fftw3f pthread)
 add_library(alt_decoder SHARED
 )
 target_sources(alt_decoder PRIVATE
-	alt_decoder.c
+	alt_decoder.c get_tid.c
 )
 target_link_libraries(alt_decoder PUBLIC pthread)
 
@@ -47,7 +47,7 @@ target_link_libraries(alt_decoder PUBLIC pthread)
 add_library(clutter SHARED
 )
 target_sources(clutter PRIVATE
-	clutter.c
+	clutter.c get_tid.c
 )
 target_link_libraries(clutter PUBLIC fftw3f pthread)
 
