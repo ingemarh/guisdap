@@ -14,7 +14,11 @@ hdf5ver = '1.0.0';
 path_GUP=which('start_GUP','-all');
 if iscell(path_GUP), path_GUP=char(path_GUP(end)); end
 path_GUP=fileparts(fileparts(path_GUP));
-path_tmp=tempdir;
+path_tmp=getenv('TMP');
+if isempty(path_tmp)
+ path_tmp=fullfile(getenv('HOME'),'tmp');
+ if ~exist(path_tmp,'dir'), path_tmp=tempdir; end
+end
 path_exps=fullfile(path_GUP,'exps',filesep);
 result_path=fullfile(filesep,'analysis','results',filesep);
 data_path=fullfile(filesep,'data',filesep);

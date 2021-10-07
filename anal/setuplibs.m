@@ -3,14 +3,14 @@ global local path_GUP path_tmp
 if nargout, r=0; end
 if isempty(path_GUP), return, end
 res=0;
-libs={'libguisdap','libiri','libmsis','plwin','alt_decoder','clutter','cluttlp','onera_desp_lib'};
+libs={'libguisdap','libiri','libmsis','plwin','alt_decoder','clutter','onera_desp_lib'};
 ll=length(libs);
 thdir=fullfile(path_tmp,'gupthunk');
 mmodel=fullfile(path_GUP,'models_m');
 if nargin==0
  atmos=zeros(1,ll); atmos([2 3 end])=1; res_atmos=0;
- heads={'libgup','iri','msis','plwin','plwin','plwin','plwin','onera_desp_lib'};
- init={[],[],{'matface_' length(path_GUP)+12 fullfile(path_GUP,'share','msis',filesep)},[],[],[],[],[]};
+ heads={'libgup','iri','msis','plwin','plwin','plwin','onera_desp_lib'};
+ init={[],[],{'matface_' length(path_GUP)+12 fullfile(path_GUP,'share','msis',filesep)},[],[],[],[]};
  d=fullfile(path_GUP,'lib');
  if ~exist(thdir,'dir'), mkdir(thdir), end
  owd=pwd;
