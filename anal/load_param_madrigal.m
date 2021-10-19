@@ -1,4 +1,4 @@
-function [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,fileno,do_err)
+function [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal3(data_path,fileno,do_err)
 % Function to read the plasma parameters from madrigal NCAR files
 %
 % [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path,status)
@@ -20,8 +20,12 @@ if do_err
 else
  param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER POPL NEL TI TE VO VOBI PO%2B CO';
 end
-t2=clock;
-arg=sprintf('&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',t2(1),param);
+% t2=clock;
+% arg=sprintf('&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',t2(1),param)
+name=input("Your full name: ", 's');
+email=input("Your email address: ", 's');
+affil=input("Your affiliation: ", 's');
+arg=sprintf('&user_fullname=\"%s\"&user_email=%s&user_affiliation=\"%s\"&parms=%s',name, email, affil, param);
 
 if exist(data_path,'file')
  global path_GUP
@@ -57,8 +61,8 @@ if exist(data_path,'file')
   return
  end
 else
- website='http://portal.eiscat.se/madrigal/';
- ws=[website 'experiments/' data_path '/expTab.txt'];
+ website='https://madrigal.eiscat.se/madrigal/';
+ ws=[website 'static/experiments/' data_path '/expTab.txt'];
  [of,mad]=urlread(ws);
  if ~mad
   return
@@ -73,7 +77,7 @@ else
  end
  name_expr(strfind(name_expr,'_'))=[];
  name_expr(strfind(name_expr,' '))=[];
- ws=[website 'experiments/' data_path '/fileTab.txt'];
+ ws=[website 'static/experiments/' data_path '/fileTab.txt'];
  [of,mad]=urlread(ws);
  if ~mad
   return
@@ -86,7 +90,7 @@ else
  i=min(kinst-70,5);
  if i<1 || i>5
   r_RECloc=REClocs(1,:);
-  r_XMITloc=XMITlocs(i,:);
+  r_XMITloc=XMITlocs(1,:);
  else
   name_ant=char(antennas(i)); r_RECloc=REClocs(i,:); r_XMITloc=XMITlocs(i,:);
  end
@@ -103,7 +107,7 @@ else
   elseif strfind(filename,'42m'), name_ant='42m'; end
  end
  data_path=['/opt/madrigal/experiments/' data_path '/' filename];
- ws=[website 'cgi-bin/madDataDisplay?fileName='];
+ ws=[website 'isprintService.py?file='];
  hl=8;
  [of,mad]=urlread([ws data_path strrep(arg,' ','%20')]);
  if ~mad
