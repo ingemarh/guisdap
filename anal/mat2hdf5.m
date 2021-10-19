@@ -51,9 +51,9 @@ list_linksfortar = {};
 [~,text] = xlsread(GuisdapParFile);
 parameters_list = text(:,1);    % list that includes all Guisdap parameters and keep their positions from the excel arc
 
-[~,~,infos] = xlsread(GuisdapParFile,1,'A:E');
+[~,infos] = xlsread(GuisdapParFile,1,'A:E');
 infos(:,6:7) = compose('%g',[NaN(3,2);xlsread(GuisdapParFile,1,'F:G')]);
-[~,~,infodesc] = xlsread(GuisdapParFile,1,'B:B');
+[~,infodesc] = xlsread(GuisdapParFile,1,'B:B');
 parameters_sd = {'time_sd' 'lpg_sd' 'range_sd' 'power_sd'};
 
 if strcmp(matpath(end),filesep)
