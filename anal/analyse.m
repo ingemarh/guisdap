@@ -17,7 +17,7 @@ end
 sites='KSTVLXPQ';
 beg=sprintf('%04d %02d %02d  %02d %02d %02d',t1);
 to=sprintf('%04d %02d %02d  %02d %02d %02d',t2);
-if local.x & isempty(get(0,'UserData'))
+if local.x & isempty(get(0,'UserData')) & ~contains(local.host,'jupyter')
 global b
 figure(5)
 clf

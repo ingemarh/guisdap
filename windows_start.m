@@ -1,4 +1,4 @@
-% Script for starting GUISDAP on Windows.
+% Script for starting GUISDAP on Windows/Jupyter
 %
 % Usage:
 % Browse to this file from the file explorer
@@ -15,6 +15,9 @@ end
 if ~exist('start_GUP','file')
  addpath(fullfile(mypath,'anal'))
  cd(userpath)
+end
+if exist(fullfile(userpath,'gup','mygup'),'dir')
+ addpath(fullfile(userpath,'gup','mygup'))
 end
 try
  start_GUP
