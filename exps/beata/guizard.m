@@ -23,6 +23,9 @@ elseif name_site=='T'
  if ~isempty(a_code) | min(a_code)<1
   lpg_code(1:2)=a_code(1);
  end
+ if any(a_code)>2
+  a_pponly=1;
+ end
 elseif name_site=='L'
  lpgs=find(ismember(lpg_code,3:17));
  lpg_wom(lpgs,:)=lpg_wom(lpgs,:)/15;
@@ -45,6 +48,9 @@ elseif name_site=='L'
   if ~exist('analysis_code')
    a_code=[a_code a_code+17];
   end
+ end
+ if any(rem(a_code,17)>2)
+  a_pponly=1;
  end
 elseif (name_site=='K' | name_site=='S') & ld==3046
  lpg_rep(2)
