@@ -11,7 +11,20 @@ for i=d'
     td=timeconv(t','mat2tai')';
   end
 end
-if ~isunix | unix(['which ' prog ' >/dev/null'])
+testwin=0;
+testunix=0;
+if ispc
+    winexif=which('exiftool.exe');
+    if isempty(winexif)
+        testwin=1;
+    end
+elseif isunix
+    test=unix(['which ' prog ' >/dev/null']);
+    if isempty(test)
+        testunix=1;
+    end
+end
+if testwin | testunix
   warning('GUISDAP:vizu',[prog ' not found, please install'])
   prog='imwrite';
   f=imformats; lf=length(f); j=0;
@@ -52,7 +65,12 @@ if ~isempty(exif)
        disp(lasterror)
       end
      else
-      [i,i]=unix(sprintf('%s %s %s %s.%s',prog,flags,exif,file,char(ext)));
+        if ispc
+             TS=['"',winexif,'" ',flags,'',exif,' "',file,'.',char(ext),'"'];
+             [i,i]=system(TS);
+        else
+             [i,i]=unix(sprintf('%s %s %s %s.%s',prog,flags,exif,file,char(ext)));
+        end
      end
   end
 end
@@ -86,6 +104,9 @@ for f=1:length(ud)
 end
 for f=1:length(fd)
   i=get(fig,char(fd(f)));
+  if ispc
+    i=strrep(i,'\','/');
+  end
   if ~isempty(i)
    if isempty(tail)
     cmd=setfield(cmd,char(ftag(f)),i);
