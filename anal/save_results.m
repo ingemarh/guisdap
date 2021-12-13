@@ -32,12 +32,8 @@ if isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
   end
  end
  if di_figures(5)
-  vizu('new','rtgup')
-  if di_figures(5)>1
-    vizu('save',[],'print')
-  else
-    vizu('save')
-  end
+  vizu('new','rtgup',1)
+  vizu('save')
   START_TIME=[];
  end
  r_Tsys=[];

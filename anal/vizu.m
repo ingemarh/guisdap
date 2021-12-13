@@ -27,7 +27,7 @@ function [varargout]=vizu(varargin)
 % >> vizu new [action]
 
 global Time par2D par1D rpar2D name_expr name_ant name_strategy axs axc maxdy rres
-persistent hds OLD_WHICH
+persistent hds OLD_WHICH OLD_SCALE
 global height n_tot add_plot manylim plf_polen max_ppw vizufig
 global DATA_PATH LOCATION START_TIME END_TIME MESSAGE1 Y_TYPE
 global r_RECloc path_tmp path_GUP result_path webfile local owner allnames
@@ -46,15 +46,24 @@ if strcmp(action(naction,nvargin,varargin),'new')
 end
 if isempty(vizufig)
   axs=[]; axc=[];
-  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[]; OLD_WHICH=[]; allnames=[];
+  Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[]; OLD_WHICH=[]; allnames=[]; OLD_SCALE=[]; Y_TYPE=[];
 end
 REALT=0; manylim=1;
 Loc=local.site;
 if strcmp(action(naction,nvargin,varargin),'rtgup')
   global a_year a_start a_end a_realtime a_autodir
+  timespan=action(naction+1,nvargin,varargin);
+  nvargin=nvargin-1; varargin{naction+1}=[];
+  Alt2=800;
   if isempty(START_TIME)
     START_TIME=timeconv(a_start,'tai2utc');
-    END_TIME=timeconv(a_end,'tai2utc');
+    if timespan==1
+     END_TIME=timeconv(a_end,'tai2utc');
+    else
+     END_TIME=timeconv(a_start+timespan*3600,'tai2utc');
+     Y_TYPE='log';
+     Alt2=500;
+    end
     if isstruct(a_autodir) && any([START_TIME(1:3)~=END_TIME(1:3) ~a_realtime naction>1])
       START_TIME=[a_autodir.date 0 0 0];
       END_TIME=START_TIME+[0 0 0 24 0 0];
@@ -62,7 +71,7 @@ if strcmp(action(naction,nvargin,varargin),'rtgup')
     if ~isempty(vizufig)
       close(vizufig), vizufig=[]; axs=[]; axc=[];
     end
-    naction=nvargin+1; OLD_WHICH=[];
+    naction=nvargin+1; OLD_WHICH=[]; OLD_SCALE=[];
   else
     varargin{naction}='update';
   end
@@ -104,10 +113,19 @@ if isempty(act) || strcmp(lower(act),'verbose')
  end
  if ~isempty(axs), delete(axs), axs=[]; end
  if ~isempty(axc), delete(axc), axc=[]; end
- maxdy	=Inf;		% Max diff in y stretch data points
+ maxdy=Inf;		% Max diff in y stretch data points
 elseif strcmp(act,'update')
  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
- set(0,'currentfig',vizufig)
+ endtime=timeconv(END_TIME,'utc2mat');
+ if (~REALT | REALT & timespan~=1) & ~isempty(Time) & Time(1,end)>endtime
+  delete(axs); axs=[]; axc=[];
+  startime=timeconv(START_TIME,'utc2mat'); spantime=endtime-startime;
+  while Time(2,end)>endtime, endtime=endtime+spantime/3; end
+  START_TIME=timeconv(endtime-spantime,'mat2utc');
+  END_TIME=timeconv(endtime,'mat2utc');
+  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS);
+ end
+ %set(0,'currentfig',vizufig)
 elseif strcmpi(act,'print') || strcmpi(act,'save')
  fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
  if ~isempty(name_strategy), fig=sprintf('%s_%s',fig,name_strategy); end
@@ -224,7 +242,7 @@ height(2)=.03;		% Panel separation
 %% Individual experiment setup %%%%
 if REALT
  SCALE(6,:)=[-400 400];
- SCALE(2,:)=[80 800];
+ SCALE(2,:)=[80 Alt2];
 else
  if any(par1D(:,2)<75), SCALE(6,:)=[-500 500]; end
  if all(par1D(:,2)<35), SCALE(6,:)=[-1000 1000]; end
@@ -268,7 +286,7 @@ if strcmp(lower(act),'verbose')
  if isempty(START_TIME)
   START_TIME=floor(timeconv(Time(1,1),'mat2utc'));
   END_TIME=ceil(timeconv(Time(2,end),'mat2utc'));
-  Y_TYPE=Y_TYPE1;
+  if isempty(Y_TYPE), Y_TYPE=Y_TYPE1; end
  end
  START_TIME=minput('Start time',START_TIME);
  END_TIME=minput('  End time',END_TIME);
@@ -279,7 +297,7 @@ if strcmp(lower(act),'verbose')
   disp('Parameters: Ne Te Ti Vi AE TT LL Rs O+ Co Nr Lf L1 Ls Pf P1 TC')
   WHICH_PARAM=minput('Choose',WHICH_PARAM,1);
  end
-elseif ~REALT
+elseif ~REALT & ~strcmp(lower(act),'update')
  if strcmp(DATA_PATH(end),filesep)
   DATA_PATH=DATA_PATH(1:end-1);
  end
@@ -288,9 +306,9 @@ elseif ~REALT
  END_TIME=START_TIME+[0 0 0 24 0 0];
 end
 if strcmp(lower(act),'update') && ~isempty(OLD_WHICH)
- WHICH_PARAM=OLD_WHICH;
+ WHICH_PARAM=OLD_WHICH; SCALE=OLD_SCALE;
 end
-OLD_WHICH=WHICH_PARAM;
+OLD_WHICH=WHICH_PARAM; OLD_SCALE=SCALE;
 nameant=lower(name_ant(1:3));
 if strcmp(nameant,'32m') || strcmp(nameant,'42m') || strcmp(nameant,'esr')
  FIGURE_TITLE='EISCAT SVALBARD RADAR';
@@ -549,7 +567,7 @@ if option(13)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-xlabel('UNIVERSAL TIME')
+xlabel(axs(end),'UNIVERSAL TIME')
 drawnow
 if REALT && ~isempty(Loc) && a_realtime && isunix
  if local.x
@@ -636,7 +654,7 @@ if length(axc)<add_plot
  if ~isempty(zscale)
   set(ax,'CLim',zscale+5*eps*abs(zscale).*[-1 1]);
  end
- axc=[axc my_colorbar(Barlabel,lg)];
+ axc=[axc my_colorbar(Barlabel,lg,ax)];
 end
 return
 

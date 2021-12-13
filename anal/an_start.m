@@ -190,12 +190,8 @@ if ~isempty(a_addr)
     end
   end
   if di_figures(5)
-    vizu('new','rtgup')
-    if di_figures(5)>1
-      vizu('save',[],'print')
-    else
-      vizu('save')
-    end
+    vizu('new','rtgup',1)
+    vizu('save')
   end
   if a_HDF
     [~,EISCAThdf5file] = mat2hdf5(result_path,result_path,1);

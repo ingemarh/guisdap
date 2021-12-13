@@ -1,12 +1,12 @@
-function handle=my_colorbar(label,lg)
+function handle=my_colorbar(label,lg,h)
 
 if nargin<2 || isempty(lg), lg='linear'; end
-ax=[];
+if nargin<3, h=gca; end
 
 % Determine color limits by context.  If any axes child is an image
 % use scale based on size of colormap, otherwise use current CAXIS.
 
-ch=get(gca,'children');
+ch=get(h,'children');
 hasimage=0; t=[];
 for i=1:length(ch)
   if strcmp(get(ch(i),'type'),'image')
@@ -20,62 +20,55 @@ for i=1:length(ch)
   end
 end
 if hasimage
-  if isempty(t), t=[0.5 size(colormap,1)+0.5]; end
+  if isempty(t), t=[0.5 size(colormap(h),1)+0.5]; end
 else
-  t=caxis;
+  t=caxis(h);
 end
 
-h=gca;
+f=get(h,'parent');
 
 % Search for existing colorbar
-ch=get(gcf,'children'); ax=[];
-for i=1:length(ch),
+pos=get(h,'Position');
+ch=findobj(f,'type','axes'); ax=[];
+for i=1:length(ch)
   d=get(ch(i),'userdata');
-  if prod(size(d))==1 && d==h
+  if length(d)==length(pos) & d==pos
     ax=ch(i); break
   end
 end
 
-if strcmp(get(gcf,'NextPlot'),'replace'),
-  set(gcf,'NextPlot','add')
+if strcmp(get(f,'NextPlot'),'replace'),
+  set(f,'NextPlot','add')
 end
 
-
 if isempty(ax)
-  pos=get(h,'Position');
-% stripe=0.03; edge=0.08; 
-% [az,el]=view;
-% if all([az,el]==[0 90]), space=0.02; else, space=.1; end
-% set(h,'Position',[pos(1) pos(2) pos(3)*(1-stripe-edge-space) pos(4)])
-% rect=[pos(1)+(1-stripe-edge)*pos(3) pos(2) stripe*pos(3) pos(4)];
   rect=[pos(1)+1.02*pos(3) pos(2) .035*pos(3) pos(4)];
 
   % Create axes for stripe
-  ax=axes('Position', rect);
-else
-  axes(ax)
+  ax=axes(f,'Position', rect);
+%else
+%  axes(ax)
 end
 
 % Create color stripe
-n=size(colormap,1);
+n=size(colormap(f),1);
 if strcmp(lg,'log')
   tt=((0:n)-.5)'*diff(t)/(n-1)+t(1);
-  surface([0 1],10.^tt,[tt tt])
+  surface(ax,[0 1],10.^tt,[tt tt])
   set(ax,'CLim',t,'ylim',10.^t,'yscale','log','layer','top')
 else
-  image([0 1],t,[1:n]')
+  image(ax,[0 1],t,[1:n]')
 % set(ax,'TickDir','in')
   set(ax,'ylim',t,'Ydir','normal')
 % Justify color axis
 % set(ax,'yticklabel',strjust(get(ax,'yticklabel')))
 end
 
-set(ax,'userdata',h,'YaxisLocation','right','xtick',[])
+set(ax,'userdata',pos,'YaxisLocation','right','xtick',[])
 fs=get(ax,'fontsize');
 yt=get(ax,'ytick');
-ylabel(label,'Rotation',-90,'VerticalAlignment','baseline','fontsize',fs)
+ylabel(ax,label,'Rotation',-90,'VerticalAlignment','baseline','fontsize',fs)
 set(ax,'fontsize',fs,'ytick',yt)
-set(gcf,'CurrentAxes',h)
-set(gcf,'Nextplot','Replace')
+set(h,'Nextplot','Replace')
 
 if nargout>0, handle=ax; end

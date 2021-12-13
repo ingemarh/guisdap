@@ -43,17 +43,17 @@ else
   analysis_intfixforce=[NaN NaN NaN NaN 0];
   analysis_intallow=[.11 .11 1000 0 1];
  end
- if contains(data_path,'fixed42p')
-  if expver==4
-   analysis_lpf.par=load([path_expr 'ipy_lc.par4']);
-   analysis_lpf.lib='clutter';
-   analysis_lpf.raw=64*61;
-   analysis_lpf.data=30;
-   analysis_lpf.do=0;
-   analysis_lpf(2).par=load([path_expr 'ipy_lac.par4']);
-   analysis_lpf(2).lib='alt_decoder';
-   analysis_lpf(2).raw=64*61;
-   analysis_lpf(2).data=190;
+ if expver==4
+  analysis_lpf.par=load([path_expr 'ipy_lc.par4']);
+  analysis_lpf.lib='clutter';
+  analysis_lpf.raw=64*61;
+  analysis_lpf.data=30;
+  analysis_lpf.do=0;
+  analysis_lpf(2).par=load([path_expr 'ipy_lac.par4']);
+  analysis_lpf(2).lib='alt_decoder';
+  analysis_lpf(2).raw=64*61;
+  analysis_lpf(2).data=190;
+  if contains(data_path,'fixed42p')
    analysis_lpf(3)=analysis_lpf(1);
    analysis_lpf(3).raw=64*61*2+160*1600;
    analysis_lpf(3).data=30+10567;
