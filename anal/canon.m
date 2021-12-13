@@ -36,8 +36,13 @@ if strfind(fn,'.bz2')
         system([prog ' -ck ' fn ' >' local.tfile ext]);
         %system(['pbzip2 -cd ' fn ' >' local.tfile ext]);
    elseif ispc
-         %We run on Windows. adapt this path as needed
-        system(['"C:\Program Files\7-Zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']); 
+       winbzip=which('bzcat.exe');
+       if isempty(winbzip)
+          print('Bunzip is missing download from site: and extract under win folder');
+       end
+        TS=['"',winbzip,'" -k "',fn,'" > "',local.tfile,ext,'"'];
+        system(TS);
+        %system(['"C:\Program Files\7-Zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']); 
    end
 	fn=[local.tfile ext];
     
@@ -45,7 +50,13 @@ elseif strfind(fn,'.gz')
     if isunix
         system(['gunzip -c ' fn ' >' local.tfile ext]); 
     elseif ispc
-        system(['"C:\Program Files\7-zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']); 
+       wingzip=which('gzip.exe');
+       if isempty(wingzip)
+          print('gzip is missing download from site: and extract under win folder');
+       end
+        TS=['"',wingzip,'" -k "',fn,'" > "',local.tfile,ext,'"']; %%??? this needs to be tested...
+        system(TS);
+        %system(['"C:\Program Files\7-zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']); 
     end
 	fn=[local.tfile ext];
 end
