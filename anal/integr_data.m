@@ -176,8 +176,8 @@ while i<length(files)
   end
 
   secs=secs1;
-  if secs<file.tai | file.tai-secs>=1
-    fprintf('Filename %08d conflicts with time inside file: %.0f %d\n',file.file,timeconv(secs,'tai2gup')')
+  if (secs<file.tai | file.tai-secs>=1) & (isempty(d_raw) | a_lpf(1).do==0)
+    fprintf('Filename %08d conflicts with time inside file: %.0f %.3f\n',file.file,timeconv(secs,'tai2gup')')
   end
 
   if isreal(d_data) % change to complex
@@ -298,7 +298,7 @@ else
 end
 if ~jj
   if length(di_figures)>4 & di_figures(5)
-    try, vizu rtgup; catch, rethrow(lasterror), end
+    try, vizu('rtgup',di_figures(5)); catch, rethrow(lasterror), end
   end
   jj=1; send_www
 end

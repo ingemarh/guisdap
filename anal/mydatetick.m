@@ -13,10 +13,11 @@ if first
  end 
  fs=get(ax,'fontsize'); set(ax,'fontsize',fs/1.0) % To encourage more ticks
  datetick(ax,'x',tickform,'keeplimits')
+  set(ax,'xticklabelrotation',0)
  xticks=get(ax,'xtick'); lt=sum((xlim(1)<xticks) & (xticks<xlim(2)));
  if ~local.x && (isempty(xticks) || lt==0 || (lt<4 && td>.003))
    freduce=12.429; %Matlab bug...
- elseif lt<4
+ elseif lt<3
    freduce=2;
  else
    freduce=0;
@@ -24,6 +25,7 @@ if first
  if freduce
   set(ax,'fontsize',fs/freduce)
   datetick(ax,'x',tickform,'keeplimits')
+  set(ax,'xticklabelrotation',0)
   xticks=get(ax,'xtick');
  end
  set(ax,'fontsize',fs,'xlim',xlim)
@@ -56,4 +58,4 @@ try
   ax.XAxis.MinorTickValues=mt;
  end
 end
-set(ax,'fontsize',fs)
+set(ax,'fontsize',fs,'xticklabelrotation',0)
