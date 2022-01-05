@@ -31,7 +31,7 @@ for i=1:natd
   atd(:,i)=atd(:,i)+ac(:,j).*dr(i:nbit-1+i,j);
  end
 end
-if isempty(ind), [m,ind]=max(sum(abs(atd))), end
+if isempty(ind), [m,ind]=max(sum(abs(atd))); end
 ca=angle(atd(:,ind));
 t=rdt*((0:(nbit-1))'-(nbit-1)/2);
 

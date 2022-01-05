@@ -17,12 +17,13 @@ if site=='l'
  ch_adcint=[6 6 6];
  ch_filter={'b58d90.fir' 'b58d90.fir' 'b58d90.fir'};
  ch_f=[500.2 500.35 500.5];
+ if rc==1, ch_f=[-1 0 1]+499.75, end
  p_rep=90000;
 elseif site=='t'
  ch_adcint=[4 4 4];
  ch_filter={'b85d60.fir' 'b85d60.fir' 'b85d60.fir'};
- ch_f=[8 9 10];
- p_rep=720000;
+ ch_f=[5 10 14];
+ p_rep=96000;
 elseif site=='r'
  ch_adcint=[12 12];
  ch_filter={'b25d225.fir' 'b25d225.fir'};

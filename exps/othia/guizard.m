@@ -4,6 +4,6 @@
 % See also: GUISPERT GUIZARD
 %
 ld=length(d_data);
-if name_site=='V' || name_site=='L'
+if name_site=='V' || name_site=='L' && ld/2>=max(lpg_ra)+ADDR_SHIFT
   lpg_rep(2)
 end

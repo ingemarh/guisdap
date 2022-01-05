@@ -44,5 +44,5 @@ lp_dt=zeros(1,nlp);
 lp_nt=zeros(1,nlp);
 lp_vc=zeros(1,nlp);
 lp_ri=zeros(1,nlp);
-lp_bcs=zeros(1,nlp);
+lp_bcs=zeros(1,nlp,'int8');
 lp_code=zeros(1,nlp);
