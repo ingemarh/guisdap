@@ -72,7 +72,7 @@ else
  if str2num(data_path(1:4))>1999
   at=strfind(name_expr,'_');
   if at
-    name_expr=name_expr(1:at(end)-1);
+    name_expr=name_expr(at(1)+1:end);
   end
  end
  name_expr(strfind(name_expr,'_'))=[];
