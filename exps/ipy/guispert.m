@@ -24,3 +24,12 @@ end
 if exist('spear_count','var')
   spear_count=spear_count+(d_parbl(67)>1)
 end
+
+% 32m erroneously used instead of 42m for some time 2021-2022
+if (d_date>=datenum(2021,12,13,00,00,00) & d_date<=datenum(2022,01,27,15,23,00))
+    ch_gain=10^4.25;
+    calTemp=228;
+    ch_el=90;  % 32m parked at 90 degrees elevation during this period
+    name_ant='32m';
+    Magic_const=1.0;
+end
