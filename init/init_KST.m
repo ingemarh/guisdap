@@ -46,6 +46,9 @@ elseif name_site=='V'
 elseif name_site=='Q'
   ch_gain=10^4.1;
   ch_fradar=500e6;
+elseif name_site=='H'
+  ch_gain=10^4.3;
+  ch_fradar=450e6;
 end
 % For compatibility with the experiment design package define
 p_ND=1;
@@ -67,6 +70,9 @@ elseif name_site=='L' | name_site=='P'
   %p_RECloc=[78.15313 16.02875 0.445];
 elseif name_site=='Q'
   p_RECloc=[25.6381,103.7151,2.0448];
+  p_XMITloc=p_RECloc;
+elseif name_site=='H'
+  p_RECloc=[18.35,109.62,0.055];
   p_XMITloc=p_RECloc;
 end
 
@@ -101,7 +107,7 @@ for d_rcprog=B_rcprog:N_rcprog
   end  
 
   global td_am td_ch td_t1 td_t2 c_f
-  if name_site=='T' | name_site=='V' | name_site=='L' | name_site=='P' | name_site=='Q'
+  if name_site=='T' | name_site=='V' | name_site=='L' | name_site=='P' | name_site=='Q' | name_site=='H'
     load_PS(d_rcprog,N_rcprog)
   else
     load_PSrem

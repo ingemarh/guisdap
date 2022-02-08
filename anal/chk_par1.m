@@ -92,14 +92,13 @@ else
  if exist('analysis_rawdata','var')
   a_rawdata=analysis_rawdata;
  end
+ a_start=timeconv(analysis_start,'utc2tai'); % the programs uses internally TAI
+ a_end  =timeconv(analysis_end,'utc2tai');
+ a_year=analysis_start(1);
  if a_rawdata==1, % HDF5 format
   d_filelist=h5read(data_path,'/Time/MatlabTime');
   i=datevec(d_filelist(1));
   d_filelist=(d_filelist-datenum(i(1),1,1))*86400;
-  a_start=timeconv(analysis_start,'utc2tai'); % the programs uses internally only seconds,
-  a_end  =timeconv(analysis_end,'utc2tai');   % counted from the beginning of year
-  a_year=analysis_start(1);
-  a_ind=0;
  elseif name_site=='Q'
   % The data are binary Quijing files
   global a_timestamp qmeta
@@ -112,10 +111,6 @@ else
   if ~isempty(msg)
    error(msg)
   end
-  a_start=timeconv(analysis_start,'utc2tai');
-  a_end  =timeconv(analysis_end,'utc2tai');
-  a_year=analysis_start(1);
-  a_ind=0;
  else
   % The normal case where it is expeced the data are matlab files
   if ~a_realtime
@@ -132,14 +127,13 @@ else
   if ~isempty(msg)
    error(msg)
   end
-  a_start=timeconv(analysis_start,'utc2tai'); % the programs uses internally TAI
-  a_end  =timeconv(analysis_end,'utc2tai');
-  a_year=analysis_start(1);
-  d=cell2mat({d_filelist.file})';
-  d=num2cell(timeconv([a_year*ones(size(d)) d],'gup2tai'));
-  [d_filelist.tai]=d{:};
-  a_ind=0;
+  if ~isfield(d_filelist,'tai')
+    d=cell2mat({d_filelist.file})';
+    d=num2cell(timeconv([a_year*ones(size(d)) d],'gup2tai'));
+    [d_filelist.tai]=d{:};
+  end
  end
+ a_ind=0;
 end
 
 a_control=[-1 0.01 100 1];

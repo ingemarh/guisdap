@@ -38,7 +38,7 @@ end
 if ishandle(bg) | ~isnan(bg)
  save_noglobal([path_tmp '.gup'],name_expr,expver,siteid,data_path,result_path,t1,t2,rt,intper,path_exps,figs,extra)
 end
-sites='KSTVLLPQ'; name_site=sites(siteid);
+sites='KSTVLLPQH'; name_site=sites(siteid);
 if length(strfind(result_path,'AUTO'))>1
  error('"AUTO" result path do not work, please specify')
 elseif datenum(clock)<datenum(t2) & rt==0 & length(local.site)==1

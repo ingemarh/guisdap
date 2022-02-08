@@ -14,7 +14,7 @@ gfdfile=[path_tmp '.gup'];
 if exist(gfdfile)
  load(gfdfile,'-mat')
 end
-sites='KSTVLXPQ';
+sites='KSTVLXPQH';
 beg=sprintf('%04d %02d %02d  %02d %02d %02d',t1);
 to=sprintf('%04d %02d %02d  %02d %02d %02d',t2);
 if local.x & isempty(get(0,'UserData')) & ~contains(local.host,'jupyter')

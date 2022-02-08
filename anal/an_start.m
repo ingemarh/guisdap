@@ -26,10 +26,10 @@ nat_const
 get_ADDRSHIFT
 init_graphics
 spektri_init % Loads in plasma dispersion function table
-name_antennas={'32m' '42m' 'vhf' 'uhf' 'kir' 'sod' 'unk' '32p' 'quj'};
-radar_freqs=[500 500 224 930 930 930 NaN 500 500]*1e6;
-radar_gains=10.^[4.25 4.48 4.31 4.81 4.81 4.81 NaN 4.25 4.1];
-radar_effs=[.66 .68 .64 .66 .66 .66 NaN .66 .66];
+name_antennas={'32m' '42m' 'vhf' 'uhf' 'kir' 'sod' 'unk' '32p' 'quj' 'syi'};
+radar_freqs=[500 500 224 930 930 930 NaN 500 500 450]*1e6;
+radar_gains=10.^[4.25 4.48 4.31 4.81 4.81 4.81 NaN 4.25 4.3];
+radar_effs=[.66 .68 .64 .66 .66 .66 NaN .66 .66 .5];
 if analysis_start(1)>2011
   radar_freqs(5:6)=[224 224]*1e6;
   radar_gains(5:6)=10.^[3.54];
@@ -45,6 +45,8 @@ while ~EOF
   else
     if name_site=='Q'
       [OK,EOF,N_averaged,M_averaged]=integr_qujing;
+    elseif name_site=='H'
+      [OK,EOF,N_averaged,M_averaged]=integr_syisr;
     else
       [OK,EOF,N_averaged,M_averaged]=integr_data;
     end

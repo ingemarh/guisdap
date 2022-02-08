@@ -19,7 +19,7 @@
 function scale_data
 
 global lpg_ra lpg_ND lpg_cal lpg_bac lpg_bcs d_data d_var1 d_var2 ...
-  ADDR_SHIFT calTemp sysTemp a_code lpg_code
+  ADDR_SHIFT calTemp sysTemp a_code lpg_code lpg_lag
 
 %*************** SCALING BY CORRELATOR ALGORITHM FACTORS *****************
 data=d_data;
@@ -56,9 +56,10 @@ if ~isempty(calTemp)
  end
 elseif ~isempty(sysTemp)
 %*********************** OR BY BACKGROUND POWER ************************
- lpg_cal=lpg_bac;
- calibs=diff_val(lpg_bac(lpgs)); % find all different values
+ calibs=lpg_bac(find(lpg_lag(lpg_bac(lpgs))==0));
+ calibs=diff_val(calibs); % find all different values
  calibs=calibs(find(calibs>0));  % Accept non-zero values
+ lpg_cal=lpg_bac; % set the size
  for cal=calibs
   lpg_cal(find(lpg_code==lpg_code(cal)))=cal;
   bac=lpg_bac(cal);
@@ -68,7 +69,6 @@ elseif ~isempty(sysTemp)
 else
  error('GUISDAP:default','No calibration temperature')
 end
-
 for lpg=lpgs
  cal=lpg_cal(lpg);
  addr=lpg_addr(lpg)+ADDR_SHIFT; % To change from radar to Matlab addressing

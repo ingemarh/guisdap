@@ -6,7 +6,8 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal3(data_path,fileno,d
 % par1D [Az,El,Pt,Tsys]
 % rpar2D [Ran,Alt,Ne]
 
-global name_expr r_RECloc name_ant r_XMITloc allnames
+global name_expr r_RECloc name_ant r_XMITloc allnames local
+persistent userarg
 ask=0;
 Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];
 if nargin<2, fileno=[]; end
@@ -22,10 +23,13 @@ else
 end
 % t2=clock;
 % arg=sprintf('&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',t2(1),param)
-name=input("Your full name: ", 's');
-email=input("Your email address: ", 's');
-affil=input("Your affiliation: ", 's');
-arg=sprintf('&user_fullname=\"%s\"&user_email=%s&user_affiliation=\"%s\"&parms=%s',name, email, affil, param);
+if isempty(userarg)
+ name=minput('Your full name',local.user,1);
+ email=minput('Your email address',[local.user '@' local.host],1);
+ affil=minput('Your affiliation',local.site,1);
+ userarg=sprintf('&user_fullname=\"%s\"&user_email=%s&user_affiliation=\"%s\"',name,email,affil);
+end
+arg=sprintf('%s&parms=%s',userarg,param);
 
 if exist(data_path,'file')
  global path_GUP

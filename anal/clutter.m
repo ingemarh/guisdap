@@ -4,7 +4,7 @@ if ~libisloaded('clutter')
  libdir=fullfile(path_GUP,'lib');
  loadlibrary(fullfile(libdir,'clutter.so'),fullfile(libdir,'plwin.h'))
 end
-no=par(3);
+no=par(3)*par(8)-(par(8)-1)*par(8)/2;
 if par(8)==0, no=1; end
 oz=zeros(no,1);
 or=libpointer('doublePtr',oz); oi=libpointer('doublePtr',oz);
@@ -15,6 +15,7 @@ ir=libpointer('doublePtr',real(d_raw)); ii=libpointer('doublePtr',imag(d_raw));
 calllib('clutter','matface',par,nr,ir,ii,no,or,oi,up);
 if no>1
  dd_data=complex(or.value,oi.value);
+ max(imag(dd_data(1:par(3))));
 else
  dd_data=[];
 end

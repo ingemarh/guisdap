@@ -29,58 +29,60 @@ global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlimit a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
-global a_lpf
-persistent a_indold a_max secs a_nnold a_averold fileslist a_beam a_dir
+global a_lpf a_code
+persistent a_max secs a_nnold a_averold a_beam d_dir d_ran
 
-OK=0; EOF=0; jj=0; N_averaged=0; M_averaged=0;
-d_ExpInfo=[]; d_raw=[]; txdown=0;
+OK=0; EOF=0; N_averaged=0; M_averaged=0;
+d_ExpInfo=[]; d_raw=[];
 
-code_id=26;
-no_codes=1;
-no_beams=d_filelist.fil
-n_beam=size(d_filelist.codes,1);
+code_id=a_code(1);
+no_codes=length(a_code);
+n_beam=size(d_filelist.code,1);
+sy_norm=1e2;
 
 if isempty(a_beam)
  a_interval(2)=a_start;
  a_beam=0;
- d_dir=h5read(d_filelist.fname{d_filelist.fno(1,1)},'/Tx/Beams');
+ d_dir=h5read(d_filelist.fname{d_filelist.fno(1)},'/Tx/Beams');
+ d_ran=length(h5read(d_filelist.fname{d_filelist.fno(1)},'/Rx/RangeWindow'));
 end
 a_beam=a_beam+1;
 if a_beam>n_beam
  a_beam=1;
-end
-if a_beam==1
  a_interval=a_interval(2)+[0 a_integr];
 end
-a_ind=find(a_interval(1)<=d_filelist.tai(1,:) && a_interval(2)>d_filelist(1,:) && code_id==d_filelist.code(1,:))
-if a_interval(1)>a_end || a_interval(1)>d_filelist(1,end)
+a_ind=find(a_interval(1)<=d_filelist.tai(1,:) & a_interval(2)>d_filelist.tai(1,:) & code_id==d_filelist.code(1,:));
+if a_interval(1)>a_end || a_interval(1)>d_filelist.tai(1,end)
   EOF=1; return
 end
 
 i=0;
+d_data=zeros(0,1);
 for fid=a_ind
   i=i+1;
   i_averaged=1; i_var1=[]; i_var2=[]; d_raw=[];
   for j=0:no_codes-1
-    d_tx=h5read(d_filelist.fname{d_filelist.fno(fid,1)},'/Rx/DataWindow',[a_beam,d_filelist.fno(fid,2),1,1],[1,1,:,:]);
-    d_raw=[d_raw;complex(d_tx(:,1),d_tx(:,2))];
+    d_filelist.fname{d_filelist.fno(fid)};
+    d_rx=h5read(d_filelist.fname{d_filelist.fno(fid)},'/Rx/DataWindow',[1,1,a_beam,fid],[2,d_ran,1,1])/sy_norm;
+    d_raw=[d_raw;transpose(complex(d_rx(1,:,1,1),d_rx(2,:,1,1)))];
   end
   d_ExpInfo=sprintf('kst0 syisr%d',code_id);
-  lagprofiler()
-
   tvec=1:6;               % parameters holding time
   az=10; el=9;            % parameters for antenna pointing
   averaged=[8:10];        % parameters which are averaged
-  accumulated=[7 22];     % parameters which are accumulated
+  accumulated=[7];     % parameters which are accumulated
   inttime=7;              % parameter that holds integration time
   positive=[8];           % parameters which are positive
   non_negative=[9];       % parameters which are positive
-  d_parbl(tvec)=timeconv(d_filelist.tai(fid,a_beam)+0.016,'tai2utc')
+  d_parbl(tvec)=timeconv(d_filelist.tai(a_beam,fid)+0.016,'tai2utc');
   d_parbl(inttime)=0.016;
+  d_parbl(8)=2e6;
   d_parbl([az el])=d_dir(:,a_beam);
   d_parbl(41)=9;
-  d_parbl=d_parbl(:);
+  d_parbl(62)=0;
 
+  lagprofiler()
+ 
   secs1=timeconv(row(d_parbl(tvec)),'utc2tai');
   a_inttime=d_parbl(inttime);
   d=find(d_parbl(non_negative)<=0);
@@ -97,9 +99,6 @@ for fid=a_ind
   a_averold=d;
 
   secs=secs1;
-  if (secs<file.tai | file.tai-secs>=1) & (isempty(d_raw) | a_lpf(1).do==0)
-    fprintf('Filename %08d conflicts with time inside file: %.0f %.3f\n',file.file,timeconv(secs,'tai2gup')')
-  end
 
   dumpOK=1;
   if ~isempty(a_satch)
