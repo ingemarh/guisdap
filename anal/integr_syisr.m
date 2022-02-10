@@ -38,7 +38,6 @@ d_ExpInfo=[]; d_raw=[];
 code_id=a_code(1);
 no_codes=length(a_code);
 n_beam=size(d_filelist.code,1);
-sy_norm=1e2;
 
 if isempty(a_beam)
  a_interval(2)=a_start;
@@ -61,9 +60,9 @@ d_data=zeros(0,1);
 for fid=a_ind
   i=i+1;
   i_averaged=1; i_var1=[]; i_var2=[]; d_raw=[];
-  for j=0:no_codes-1
+  for j=-1:no_codes-2
     d_filelist.fname{d_filelist.fno(fid)};
-    d_rx=h5read(d_filelist.fname{d_filelist.fno(fid)},'/Rx/DataWindow',[1,1,a_beam,fid],[2,d_ran,1,1])/sy_norm;
+    d_rx=int16(round(h5read(d_filelist.fname{d_filelist.fno(fid)},'/Rx/DataWindow',[1,1,a_beam,fid+j],[2,d_ran,1,1])));
     d_raw=[d_raw;transpose(complex(d_rx(1,:,1,1),d_rx(2,:,1,1)))];
   end
   d_ExpInfo=sprintf('kst0 syisr%d',code_id);
@@ -78,7 +77,7 @@ for fid=a_ind
   d_parbl(inttime)=0.016;
   d_parbl(8)=2e6;
   d_parbl([az el])=d_dir(:,a_beam);
-  d_parbl(41)=9;
+  d_parbl(41)=10;
   d_parbl(62)=0;
 
   lagprofiler()

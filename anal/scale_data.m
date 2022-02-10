@@ -59,7 +59,7 @@ elseif ~isempty(sysTemp)
  calibs=lpg_bac(find(lpg_lag(lpg_bac(lpgs))==0));
  calibs=diff_val(calibs); % find all different values
  calibs=calibs(find(calibs>0));  % Accept non-zero values
- lpg_cal=lpg_bac; % set the size
+ lpg_cal=size(lpg_bac);
  for cal=calibs
   lpg_cal(find(lpg_code==lpg_code(cal)))=cal;
   bac=lpg_bac(cal);

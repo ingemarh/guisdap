@@ -26,8 +26,8 @@ if name_site=='Q'
  analysis_txpower=8;
  f_calTemp=[];
 elseif name_site=='H'
- f_ch_Pt=1e6;
- analysis_Tsys=100;
+ f_ch_Pt=2e6;
+ analysis_Tsys=200;
  analysis_txpower=8;
  f_calTemp=[];
 end

@@ -53,7 +53,7 @@ if ~isempty(a_code)
  nsp_no_use=nsp_no_use(lpf);
  sigma=sigma(lpf);
 end
-lpgused=lp; ii=0; sat_ran=[];
+lpgused=lp; ii=0; sat_ran=zeros(0,6);
 for i=lp
  j=j+1; ii=ii+1;
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
@@ -75,7 +75,7 @@ for i=lp
   eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb;'])
  end
  if ~isempty(th)
-  d_data(addr)=th;
+  if nsp_no_use(ii), d_data(addr)=th; end
   [x0max,ind]=max([x0max;x0]); pbmax=[pbmax;pb]; pbmax=pbmax(ind);
  end
  Nsat=Nsat+length(pb);
@@ -145,7 +145,7 @@ end
 
 %report the result
 OK=Nsat==0;
-if ~OK %| Nsatb>0
+if ~OK | Nsatb>0
  if a_satch.plot
   drawnow, gupfigure(a_satch.plot), set(gcf,'Name','Satellites detected')
   for i=1:j
@@ -171,7 +171,7 @@ if ~OK %| Nsatb>0
   end
   warning('GUISDAP:satch','%s %d ranges',msg,length(ad_sat))
   OK=1;
- else
+ elseif size(sat_ran,1)
   warning('GUISDAP:satch',[msg ' dump'])
  end
  if a_satch.store
