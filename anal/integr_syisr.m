@@ -30,27 +30,25 @@ global a_ind a_interval a_year a_start a_integr a_skip a_end
 global a_txlimit a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
 global a_lpf a_code
-persistent a_max secs a_nnold a_averold a_beam d_dir d_ran
+persistent a_max secs a_nnold a_averold a_beam d_dir d_ran d_profs d_beam
 
 OK=0; EOF=0; N_averaged=0; M_averaged=0;
 d_ExpInfo=[]; d_raw=[];
 
-code_id=a_code(1);
-no_codes=length(a_code);
-n_beam=size(d_filelist.code,1);
-
-if isempty(a_beam)
+if ~isempty(a_ind) & a_ind(1)==0
+ d_beam=size(d_filelist.code,1);
  a_interval(2)=a_start;
- a_beam=0;
- d_dir=h5read(d_filelist.fname{d_filelist.fno(1)},'/Tx/Beams');
- d_ran=length(h5read(d_filelist.fname{d_filelist.fno(1)},'/Rx/RangeWindow'));
+ a_beam=d_beam;
+ d_dir=h5read(d_filelist.fname{1},'/Tx/Beams');
+ d_ran=length(h5read(d_filelist.fname{1},'/Rx/RangeWindow'));
+ d_profs=[0;cumsum(d_filelist.profs)];
 end
 a_beam=a_beam+1;
-if a_beam>n_beam
+if a_beam>d_beam
  a_beam=1;
  a_interval=a_interval(2)+[0 a_integr];
 end
-a_ind=find(a_interval(1)<=d_filelist.tai(1,:) & a_interval(2)>d_filelist.tai(1,:) & code_id==d_filelist.code(1,:));
+a_ind=find(a_interval(1)<=d_filelist.tai(1,:) & a_interval(2)>d_filelist.tai(1,:) & a_code(1)==d_filelist.code(1,:));
 if a_interval(1)>a_end || a_interval(1)>d_filelist.tai(1,end)
   EOF=1; return
 end
@@ -60,12 +58,13 @@ d_data=zeros(0,1);
 for fid=a_ind
   i=i+1;
   i_averaged=1; i_var1=[]; i_var2=[]; d_raw=[];
-  for j=-1:no_codes-2
-    d_filelist.fname{d_filelist.fno(fid)};
-    d_rx=int16(round(h5read(d_filelist.fname{d_filelist.fno(fid)},'/Rx/DataWindow',[1,1,a_beam,fid+j],[2,d_ran,1,1])));
+  for j=0:length(a_code)-1
+    fno=find(fid+j<=d_profs(2:end),1);
+%[fid+j-d_iran(fno) fid j d_iran(fno) fno]
+    d_rx=int16(round(h5read(d_filelist.fname{fno},'/Rx/DataWindow',[1,1,a_beam,fid+j-d_profs(fno)],[2,d_ran,1,1])));
     d_raw=[d_raw;transpose(complex(d_rx(1,:,1,1),d_rx(2,:,1,1)))];
   end
-  d_ExpInfo=sprintf('kst0 syisr%d',code_id);
+  d_ExpInfo=sprintf('kst0 syisr%d',a_code(1));
   tvec=1:6;               % parameters holding time
   az=10; el=9;            % parameters for antenna pointing
   averaged=[8:10];        % parameters which are averaged

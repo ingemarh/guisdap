@@ -80,7 +80,6 @@ else
         if syisr
           tx.time=h5read(h5file,'/Tx/TransTime');
           tx.code=h5read(h5file,'/Tx/PulseCode');
-          %tx.dir=h5read(h5file,'/Tx/Beams');
           s=size(tx.time);
           if isempty(a_year), %hui hui
             tx.stamp=datevec(dir(h5file).date);
@@ -91,10 +90,10 @@ else
           tx.time=reshape(timeconv(td*86400+tx.time(:)-8*3600,'unx2tai'),s); %bei->tai
           fno=fno+1;
           list.fname(fno)={h5file};
-          if fno==1, list.tai=[]; list.code=[]; list.fno=[]; end
+          if fno==1, list.tai=[]; list.code=[]; list.profs=[]; end
           list.tai=[list.tai tx.time];
           list.code=[list.code tx.code];
-          list.fno=[list.fno;fno*[ones(s(2),1)]];
+          list.profs=[list.profs;s(2)];
         else
           h5d=h5info(h5file);
           h5d=struct2cell(h5d.Groups(1).Groups);

@@ -19,7 +19,7 @@ if length(d_time)>0 & a_save
   filename=sprintf('%08d.mat',fix(tosecs(d_time(2,:))));
 [i1,i2]=fileparts(result_path(1:end-1));
 integr=diff(datenum(d_time))*86400;
-if integr<1
+if integr<1 | name_site=='H'
  filename=sprintf('%012.3f.mat',tosecs(d_time(2,:)));
 end
 if isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
