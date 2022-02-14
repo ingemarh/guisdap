@@ -98,6 +98,8 @@ clutter_6 (ulong nbits, int *par, ulong fbits, float *fpar,
   pthread_t *thread = NULL;
   struct pth *ptth = NULL;
   nth = sysconf (_SC_NPROCESSORS_ONLN);
+  if (nth > 16) nth/=3;	/*for dual cpus, hui hui*/
+  else if (nth > 8) nth/=2;	/*for dual cpus, hui hui*/
   ncth = clutthreads;
   if (ncth > pth.nr_clutter)
     ncth = pth.nr_clutter;

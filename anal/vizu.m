@@ -337,7 +337,7 @@ elseif strcmp(nameant,'syi')
  fradar=450e6;
  stretchSecs=100;
 end
-if ~strcmp(nameant,'quj') && isempty(MESSAGE1)
+if ~strcmp(nameant,'quj') && ~strcmp(nameant,'syi') && isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);
 end
 S=size(par2D,2);
@@ -444,7 +444,7 @@ if isempty(vizufig)
       'Color',[.5 .5 .5],'VerticalAlignment','top','String',MESSAGE2)
  axs=[]; axc=[];
  %logo...
- if ~strcmp(nameant,'quj')
+ if ~strcmp(nameant,'quj') && ~strcmp(nameant,'syi')
   text(ti,'Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
       'FontWeight','bold','String','EISCAT Scientific Association','UserData','Copyright');
  %load(fullfile(path_GUP,'matfiles','logo'))
