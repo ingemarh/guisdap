@@ -56,14 +56,14 @@ if ~isempty(calTemp)
  end
 elseif ~isempty(sysTemp)
 %*********************** OR BY BACKGROUND POWER ************************
- calibs=lpg_bac(find(lpg_lag(lpg_bac(lpgs))==0));
+ calibs=lpgs(find(lpg_lag(lpgs)==0 & lpg_bcs=='b'));
  calibs=diff_val(calibs); % find all different values
  calibs=calibs(find(calibs>0));  % Accept non-zero values
  lpg_cal=size(lpg_bac);
  for cal=calibs
   lpg_cal(find(lpg_code==lpg_code(cal)))=cal;
-  bac=lpg_bac(cal);
-  bac_power=median_c(d_data(lpg_addr(bac)+ADDR_SHIFT));
+  %bac=lpg_bac(cal);
+  bac_power=median_c(d_data(lpg_addr(cal)+ADDR_SHIFT));
   scale(cal)=bac_power/sysTemp;
  end
 else

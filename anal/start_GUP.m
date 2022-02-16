@@ -19,6 +19,7 @@ if isempty(path_tmp)
  path_tmp=fullfile(getenv('HOME'),'tmp');
  if ~exist(path_tmp,'dir'), path_tmp=tempdir; end
 end
+path_tmp=fullfile(path_tmp,filesep);
 path_exps=fullfile(path_GUP,'exps',filesep);
 result_path=fullfile(filesep,'analysis','results',filesep);
 data_path=fullfile(filesep,'data',filesep);

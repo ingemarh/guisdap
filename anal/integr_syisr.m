@@ -30,7 +30,7 @@ global a_ind a_interval a_year a_start a_integr a_skip a_end
 global a_txlimit a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
 global a_lpf a_code
-persistent a_max secs a_nnold a_averold a_beam d_dir d_ran d_profs d_beam
+persistent a_max secs a_nnold a_beam d_dir d_ran d_profs d_beam d_ipp
 
 OK=0; EOF=0; N_averaged=0; M_averaged=0;
 d_ExpInfo=[]; d_raw=[];
@@ -42,13 +42,14 @@ if ~isempty(a_ind) & a_ind(1)==0
  d_dir=h5read(d_filelist.fname{1},'/Tx/Beams');
  d_ran=length(h5read(d_filelist.fname{1},'/Rx/RangeWindow'));
  d_profs=[0;cumsum(d_filelist.profs)];
+ d_ipp=median(diff(d_filelist.tai(:)));
 end
 a_beam=a_beam+1;
 if a_beam>d_beam
  a_beam=1;
  a_interval=a_interval(2)+[0 a_integr];
+ a_ind=find(a_interval(1)<=d_filelist.tai(1,:) & a_interval(2)>d_filelist.tai(1,:) & a_code(1)==d_filelist.code(1,:));
 end
-a_ind=find(a_interval(1)<=d_filelist.tai(1,:) & a_interval(2)>d_filelist.tai(1,:) & a_code(1)==d_filelist.code(1,:));
 if a_interval(1)>a_end || a_interval(1)>d_filelist.tai(1,end)
   EOF=1; return
 end
@@ -58,60 +59,49 @@ d_data=zeros(0,1);
 for fid=a_ind
   i=i+1;
   i_averaged=1; i_var1=[]; i_var2=[]; d_raw=[];
-  for j=0:length(a_code)-1
-    fno=find(fid+j<=d_profs(2:end),1);
-%[fid+j-d_iran(fno) fid j d_iran(fno) fno]
-    d_rx=int16(round(h5read(d_filelist.fname{fno},'/Rx/DataWindow',[1,1,a_beam,fid+j-d_profs(fno)],[2,d_ran,1,1])));
+  for j=a_code
+    jj=find(d_filelist.code(a_beam,fid:end)==j,1)-1;
+    fno=find(fid+jj<=d_profs(2:end),1);
+    d_rx=int16(round(h5read(d_filelist.fname{fno},'/Rx/DataWindow',[1,1,a_beam,fid+jj-d_profs(fno)],[2,d_ran,1,1])));
     d_raw=[d_raw;transpose(complex(d_rx(1,:,1,1),d_rx(2,:,1,1)))];
   end
   d_ExpInfo=sprintf('kst0 syisr%d',a_code(1));
   tvec=1:6;               % parameters holding time
   az=10; el=9;            % parameters for antenna pointing
-  averaged=[8:10];        % parameters which are averaged
   accumulated=[7];     % parameters which are accumulated
   inttime=7;              % parameter that holds integration time
-  positive=[8];           % parameters which are positive
   non_negative=[9];       % parameters which are positive
-  d_parbl(tvec)=timeconv(d_filelist.tai(a_beam,fid)+0.016,'tai2utc');
-  d_parbl(inttime)=0.016;
-  d_parbl(8)=2e6;
+  secs=d_ipp+d_filelist.tai(a_beam,fid+jj);
+  d_parbl(inttime)=secs-d_filelist.tai(a_beam,fid);
+  d_parbl(tvec)=timeconv(secs,'tai2utc');
+  d_parbl(8)=2e6; % hui hui
   d_parbl([az el])=d_dir(:,a_beam);
   d_parbl(41)=10;
   d_parbl(62)=0;
 
   lagprofiler()
  
-  secs1=timeconv(row(d_parbl(tvec)),'utc2tai');
   a_inttime=d_parbl(inttime);
   d=find(d_parbl(non_negative)<=0);
   if ~isempty(d)
    d_parbl(non_negative(d))=a_nnold(d);
   end
   a_nnold=d_parbl(non_negative);
-  d=d_parbl(averaged);
-  % At EISCAT we sample some parameters at the end of dump
-  tdiff=(round(secs1/a_inttime)-round(secs/a_inttime))*a_inttime;
-  if tdiff==a_inttime
-    d_parbl(averaged)=(d+a_averold)/2;
-  end
-  a_averold=d;
-
-  secs=secs1;
 
   dumpOK=1;
   if ~isempty(a_satch)
+    if ~isfield(a_satch,'prep'), a_satch.prep=a_inttime*1e6; end
     [dumpOK,ad_sat]=satch(d_parbl(el),secs,a_inttime);
   end
   if dumpOK
     if ~OK  % initialize with the first good dump
-      aver=0; data=zeros(size(d_data)); d_var1=data; d_var2=data; accum=0;
+      data=zeros(size(d_data)); d_var1=data; d_var2=data; accum=0;
       starttime=secs-a_inttime;    % calculate starttime of first dump
       OK=1;
     end
     % update with the following files
     accum=accum+d_parbl(accumulated);
     M_averaged(2)=max(i_averaged);
-    aver=aver+d_parbl(averaged)*M_averaged(2);
     use=(1:length(d_data))';
     if ~isempty(a_satch) & ~isempty(ad_sat)
       i_averaged=i_averaged.*ones(size(use));
@@ -137,7 +127,6 @@ end
 
 if OK, % if at least one good data dump was found
   % update parameter block, accept the last parameter block as starting point
-  d_parbl(averaged)=aver/M_averaged;
   d_parbl(accumulated)=accum;
   d_parbl(inttime)=timeconv(row(d_parbl(tvec)),'utc2tai')-starttime;
   d_data=data;
