@@ -1,12 +1,10 @@
-% integr_data: Integration program for EISCAT data stored as Matlab files
-% GUISDAP v1.81   03-01-27 Copyright EISCAT, Huuskonen&Lehtinen
+% integr_syisr: Integration program for SYISR data stored as hdf5 files
+% GUISDAP v9.2   22-02-15 Copyright EISCAT
 %
-% Integration program for radar data in Matlab files. The files may either contain
-% individual dumps or integrated dumps. The latter may or may not have 
-% the variance estimates of the data included.
+% Integration program for voltage data in hdf5 files.
 % Each call to this routine performs the integation for one integration period
 %
-% NOTE: This is a EISCAT specific function
+% NOTE: This is a SYISR specific function
 %
 % Input parameters (all global):
 % a_ind a_indold a_interval a_year a_start a_integr a_skip a_end 
@@ -20,17 +18,15 @@
 % d_data : the integrated data vector
 % d_var1 d_var2: data variances
 %
-% See also: an_start integrate
-% function  [OK,EOF]=integr_data
-function  [OK,EOF,N_averaged,M_averaged]=integr_data()
+% See also: an_start integr_data
+% function  [OK,EOF,N_averaged,M_averaged]=integr_syisr
+function  [OK,EOF,N_averaged,M_averaged]=integr_syisr(len_prof)
  
 global d_parbl d_data d_var1 d_var2 data_path d_filelist d_raw
 global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
-global a_txlimit a_realtime a_satch a_txpower
-global a_intfixed a_intallow a_intfixforce a_intfix
-global a_lpf a_code
-persistent a_max secs a_nnold a_beam d_dir d_ran d_profs d_beam d_ipp
+global a_satch a_code a_intfix
+persistent secs a_nnold a_beam d_dir d_ran d_profs d_beam d_ipp
 
 OK=0; EOF=0; N_averaged=0; M_averaged=0;
 d_ExpInfo=[]; d_raw=[];
@@ -41,6 +37,9 @@ if ~isempty(a_ind) & a_ind(1)==0
  a_beam=d_beam;
  d_dir=h5read(d_filelist.fname{1},'/Tx/Beams');
  d_ran=length(h5read(d_filelist.fname{1},'/Rx/RangeWindow'));
+ if d_ran~=len_prof
+  error(sprintf('Profile length read %d, expected %d\nPlease reinitialise',d_ran,len_prof))
+ end
  d_profs=[0;cumsum(d_filelist.profs)];
  d_ipp=median(diff(d_filelist.tai(:)));
 end
@@ -54,10 +53,8 @@ if a_interval(1)>a_end || a_interval(1)>d_filelist.tai(1,end)
   EOF=1; return
 end
 
-i=0;
 d_data=zeros(0,1);
 for fid=a_ind
-  i=i+1;
   i_averaged=1; i_var1=[]; i_var2=[]; d_raw=[];
   for j=a_code
     jj=find(d_filelist.code(a_beam,fid:end)==j,1)-1;
@@ -77,7 +74,7 @@ for fid=a_ind
   d_parbl(8)=2e6; % hui hui
   d_parbl([az el])=d_dir(:,a_beam);
   d_parbl(41)=10;
-  d_parbl(62)=0;
+  d_parbl(62)=0; % to clear all upars
 
   lagprofiler()
  

@@ -8,7 +8,7 @@ for lpf=a_lpf
  switch lpf.lib
  case 'plwin'
   lpf.nrep=lpf.par(6);
-  nsamp=lpf.par(7);
+  nsamp=lpf.par(7)+lpf.par(11);
   if isempty(lpf.p)
    lpf.p=[0 lpf.nrep-1];
   end

@@ -9,7 +9,11 @@
 ch_p=[];
 if iscell(ch_filter)
  for ind=1:length(ch_filter)
-  impulsen=get_impresp([path_expr char(ch_filter(ind))],p_dtau)';
+  if contains(char(ch_filter(ind)),'txt')
+   impulsen=get_impresp_dec([path_expr char(ch_filter(ind))],p_dtau);
+  else
+   impulsen=get_impresp([path_expr char(ch_filter(ind))],p_dtau)';
+  end
   l1=size(ch_p,1); l2=length(impulsen);
   if ind==1 | l1>=l2
    ch_p(:,ind)=[impulsen;zeros(l1-l2,1)];

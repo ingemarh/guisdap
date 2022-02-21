@@ -68,7 +68,9 @@ C 2016.03 02/17/16 GEODIP: add PI to CONST
 C 2016.04 07/07/17 IGRF: updated with newest 2010, 2015, 2015s coeff.
 C 2016.05 03/25/19 GEODIP,SPHCAR,GEOMAG: improved COMMENTS
 C 2020.01 03/05/20 Updating to IGRF-13 (2020)
-C 2020.02 09/08/20 Comment RECALC: IYR outside ............... P.Coisson
+C 2020.02 09/08/20 Comment RECALC: IYR outside (P. Coisson)
+C 2020.03 09/20/21 Corrected INTERVAL 1900-2025 in write statement
+C 2020.03 09/20/21 RECALC: DT=..2015, ..2020 (R. Panfili)
 c-----------------------------------------------------------------------        
 C 
         subroutine igrf_sub(xlat,xlong,year,height,
@@ -708,12 +710,11 @@ C                                 = -2, records out of order
 C                                 = FORTRAN run-time error number    
 C ===============================================================               
                                                                                 
-        CHARACTER  FSPEC*(*), FOUT*180
+        CHARACTER  FSPEC*(*), FOUT*180                                    
         DIMENSION       GH(196)
         LOGICAL		mess 
         character path*128
         common /iripath/path,lenpath
-
         COMMON/iounit/konsol,mess        
         do 1 j=1,196  
 1          GH(j)=0.0
@@ -726,7 +727,7 @@ C ---------------------------------------------------------------
  667    FORMAT(a,'/',A13)
 c-web-for webversion
 c 667    FORMAT('/var/www/omniweb/cgi/vitmo/IRI/',A13)
-        OPEN(IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,action='read')
+        OPEN(IU,FILE=FOUT,STATUS='OLD',IOSTAT=IER,ERR=999,action='read')     
         READ (IU, *, IOSTAT=IER, ERR=999)                            
         READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD, XMYEAR 
         nm=nmax*(nmax+2)                
@@ -3405,7 +3406,7 @@ C
       RETURN
 C
 999   FORMAT(/
-     * '   IGRF: GIVEN YEAR',I5,' IS OUT OF INTERVAL 1900-2015'/,
+     * '   IGRF: GIVEN YEAR',I5,' IS OUT OF INTERVAL 1900-2025'/,
      * '   *** CALCULATIONS WILL BE DONE FOR YEAR =',I5,' ***'/)
       END
 C
@@ -3632,13 +3633,13 @@ C  VALUES FOR THE NEAREST EPOCHS:
            G11=-1586.42*F1-1501.77*F2
            H11= 4944.26*F1+4795.99*F2
         ELSEIF (IY.LT.2020) THEN                        !2015-2020
-           F2=(FLOAT(IY)+FLOAT(IDAY)/365.-2010.)/5.
+           F2=(FLOAT(IY)+FLOAT(IDAY)/365.-2015.)/5.
            F1=1.D0-F2
            G10=29441.46*F1+29404.8*F2
            G11=-1501.77*F1-1450.9*F2
            H11= 4795.99*F1+4652.5*F2
-        ELSE                                            !2015-2020
-           DT=FLOAT(IY)+FLOAT(IDAY)/365.-2015.
+        ELSE                                            !2020-2025
+           DT=FLOAT(IY)+FLOAT(IDAY)/365.-2020.
            G10=29404.8-5.7*DT
            G11=-1450.9+7.4*DT
            H11= 4652.5-25.9*DT
@@ -3788,7 +3789,7 @@ C  AND  THEREFORE:
       A33=Z3
 
  10   FORMAT(/
-     * ' RECALC: GIVEN YEAR',I5,' IS OUT OF INTERVAL 1900-2010'/,
+     * ' RECALC: GIVEN YEAR',I5,' IS OUT OF INTERVAL 1900-2025'/,
      * '   *** CALCULATIONS WILL BE DONE FOR YEAR =',I5,' ***'/)
 
       RETURN

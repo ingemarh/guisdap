@@ -8,7 +8,11 @@ C year, month, day of month, day of year, or hour (UT or LT).
 C IRI_WEB requires IRI_SUB. Both subroutines require linking with the 
 c following files: IRIFUN.FOR, IRITEC.FOR, IRIDREG.FOR, 
 c IRIFLIP.FOR CIRA.FOR, IGRF.FOR
-c-----------------------------------------------------------------------        
+c
+c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+c!!!!!!!!!!!!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        
+c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+c
 c Programs using subroutine IRI_SUB need to include (see IRITEST.FOR):
 c
 c		call read_ig_rz
@@ -20,8 +24,10 @@ c       do i=1,100
 c          oar(i,1)=-1.0
 c          enddo
 c
+c Please also make sure to use the default setting for the switches jf
+c as noted in this comment section further down:
+c       jf(4,5,6,21,23,28,29,30,33,35,39,40,47)=.false. all others .true.
 c        
-c-----------------------------------------------------------------------        
 c Required i/o units:  
 c  KONSOL= 6 IRISUB: Program messages (used when jf(12)=.true. -> konsol)
 c  IUCCIR=10 IRISUB: CCIR and URSI coefficients (CCIR%%.ASC, %%=month+10)
@@ -31,7 +37,9 @@ c    is used to pass the value of KONSOL. If mess=false messages are turned off.
 c  UNIT=12 IRIFUN/TCON:  Solar/ionospheric indices IG12, R12 (IG_RZ.DAT) 
 c  UNIT=13 IRIFUN/APF..: Magnetic indices and F10.7 (APF107.DAT 
 c  UNIT=14 IGRF/GETSHC:  IGRF coeff. (DGRF%%%%.DAT or IGRF%%%%.DAT, %%%%=year)
-c-----------------------------------------------------------------------        
+c
+c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+C
 C CHANGES FROM  IRIS11.FOR  TO   IRIS12.FOR:
 C    - CIRA-1986 INSTEAD OF CIRA-1972 FOR NEUTRAL TEMPERATURE
 C    - 10/30/91 VNER FOR NIGHTTIME LAY-VERSION:  ABS(..)
@@ -51,6 +59,7 @@ C    -  1/ 4/95 DY for h>hmF2
 C    -  2/ 2/95 IG for foF2, topside; RZ for hmF2, B0_TAB, foF1, NmD
 C    -  2/ 2/95 winter no longer exclusive for F1 occurrrence
 C    -  2/ 2/95 RZ and IG incl as DATA statement; smooth annual var.
+C
 C CHANGES FROM  IRIS12.FOR  TO   IRIS13.FOR:
 C    - 10/26/95 incl year as input and corrected MODA; nrm for zmonth
 C    - 10/26/95 use TCON and month-month interpolation in foF2, hmF2
@@ -74,8 +83,8 @@ C    -  4/30/99 changed konsol-unit to 13 (12 is for IG_RZ).
 C    -  5/29/99 the limit for IG comp. from Rz12-input is 174 not 274
 C    - 11/08/99 jf(18)=t simple UT to LT conversion, otherwise UT_LT
 C    - 11/09/99 added COMMON/const1/humr,dumr also for CIRA86
+C
 C CHANGES FROM  IRIS13.FOR  TO   IRISUB.FOR:
-c-----------------------------------------------------------------------        
 C-Version-MM/DD/YY-Description (person reporting correction)
 C 2000.01 05/09/00 B0_98 replaces B0_TAB and B1: 1.9/day to 2.6/night
 C 2000.02 06/11/00 including new F1 and indermediate region
@@ -186,20 +195,25 @@ C 2016.23 08/27/18 3-h ap,kp available even if storm models are off
 C 2016.23 08/27/18 daily ap avail. even if F10.7din or F10.7_81in
 C 2016.24 08/29/18 user input for HNEA and HNEE if jf(45) jf(46)
 C 2016.25 06/11/19 comments for OARR and output incl HNEA and HNEE
+C
 C 2020.01 07/03/19 changed argmax to 87.3 (consistent with IDL)
 C 2020.01 07/03/19 itopn=1 now with PF10.7 correction
 C 2020.02 07/19/19 itopn=1 cor option, itopn=3 cor2 option
 C 2020.03 07/29/19 added 'endif' itopn=3 and declared a01(2,2)        
 C 2020.04 08/05/19 itopn=3 requires itopn=1, BLO11 change        
 C 2020.05 01/16/20 ion composition topside if h.ge.300km
-C 2020.06 06/15/20 Den_NO=0.0,rn=0.0 before CHEMION ---- M. Hausman
+C 2020.06 06/15/20 Den_NO=0.0,rn=0.0 before CHEMION .... M. Hausman
 C 2020.06 06/15/20 IF(..hcor1) after IF(itopn....) ..... M. Hausman 
-C 2020.07 08/24/20 changed if(sam_moye ...) ------------ A. Rodland
-C 2020.07 08/24/20 FELDCOF only when new date ---------- A. Rodland             
+C 2020.07 08/24/20 changed if(sam_moye ...) ............ A. Rodland
+C 2020.07 08/24/20 FELDCOF only when new date .......... A. Rodland             
 C 2020.08 09/16/20 added HPOL for topside COR2 option
 C 2020.08 09/16/20 not comp'd oarr variables: -1 or -100 for lati
 C 2020.08 09/16/20 jf(47) for CGM computation on/off; lati>25
-
+C 2020.09 01/03/21 Jf(19,20)=f no F1 -> C1=0, hmF1=0
+C 2020.09 01/03/21 f1_c1 call with ABSMDP
+C 2020.09 01/03/21 Intermediate region: hst 100<->hmF1(hmF2+hef)/2
+C 2020.09 01/03/21 Intermediate region: T calculated in XE_3
+C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
 C*****************************************************************
@@ -267,7 +281,7 @@ C   36    hmF2 w/out foF2_storm  with foF2-storm                     t
 C   37    topside w/out foF2-storm  with foF2-storm                  t
 C   38    turn WRITEs off in IRIFLIP   turn WRITEs on                t
 C   39    hmF2 (M3000F2)         new models                      false
-C   40    hmF2 AMTB-model        Shubin-COSMIC model                 t
+C   40    hmF2 AMTB-model        Shubin-COSMIC model             false
 C (39,40) = (t,t) hmF2-old, (f,t) AMTB, (f,f) Shubin, (t,f) not used
 C   41    Use COV=F10.7_365      COV=f(IG12) (IRI before Oct 2015)   t
 C   42    Te with PF10.7 dep.	 w/o PF10.7 dependance               t
@@ -275,7 +289,7 @@ C   43    B0 from model          B0 user input in OARR(10)           t
 C   44    B1 from model          B1 user input in OARR(35)           t
 C   45    HNEA=65/80km dya/night HNEA user input in OARR(89)         t
 C   46    HNEE=2000km 	         HNEE user input in OARR(90)         t
-C   47    CGM computation on 	 CGM computation off                 f
+C   47    CGM computation on 	 CGM computation off             false
 C      ....
 C   50    
 C   ------------------------------------------------------------------
@@ -420,8 +434,8 @@ c      CHARACTER FILNAM*53
      &  dnight,enight,fnight,fstorm_on,estorm_on,B0IN,B1IN,
      &  fof2ino,hmf2ino,f107in,f107ino,f107_81in,f107_81ino,
      &  sam_moye
-           character path*128
-           common /iripath/path,lenpath      
+      character path*128
+      common /iripath/path,lenpath
 
       COMMON /CONST/UMR,PI  /const1/humr,dumr   /ARGEXP/ARGMAX
      &   /IGRF1/ERA,AQUAD,BQUAD,DIMO
@@ -840,7 +854,7 @@ c
 9927    format('Ne, B1: provided by user.')
 9024    format('Ne, foF1: probability function used.')
 9025    format('Ne, foF1: L condition cases included.')
-2917    format('Ne, foF1: no F1 layer.')
+2917    format('Ne, foF1: w/o F1 layer.')
 9026    format('Ne, D: IRI1990')
 9027    format('Ne, D: FT2001; IRI-90, FT-01, DRS-95)')
 9028    format('Ne, foF2: Storm model turned off if foF2 or',
@@ -972,7 +986,6 @@ c
         	hour=hourut+longi/15.	 		 ! hour becomes LT
         	if(hour.gt.24.) hour=hour-24.
         endif
-        
         CALL CLCMLT(IYEAR,DAYNR,HOURUT,LATI,LONGI,XMLT)
 c
 c SEASON assumes equal length seasons (92 days) with spring 
@@ -1115,10 +1128,11 @@ C (ION COMPOSITION) AND TBT-2012 (ELECTRON TEMPERATURE)
         if(covsat.gt.188.) covsat=188
 
 C
-C CALCULATION OF SOLAR ZENITH ANGLE (XHI/DEG), SUN DECLINATION ANGLE 
-C (SUNDEC),SOLAR ZENITH ANGLE AT NOON (XHINON) AND TIME OF LOCAL 
-C SUNRISE/SUNSET (SAX, SUX; dec. hours) AT 80 KM (D-REGION), 110 KM
-C (E-REGION), 200 KM (F1-REGION), AND 300 KM (F-REGION AND TOPSIDE). 
+C CALCULATION OF SOLAR ZENITH ANGLE IN DEGREE FOR THE USER-SPECIFIED 
+C TIME (HOUR) AND FOR NOON, SUN DECLINATION ANGLE (SUNDEC), AND TIME 
+C OF LOCAL SUNRISE/SUNSET (SAX, SUX in DECIMAL HOURS) AT 80 KM (D-
+C REGION), 110 KM (E-REGION), 200 KM (F1-REGION), AND 300 KM (F-
+C REGION AND TOPSIDE). 
 C
 
 2910    continue
@@ -1525,12 +1539,14 @@ cnew!          IF (FNIGHT) GRAT = 0.91D0 - HMF2/4000.D0
         
 c
 c F1 layer height hmF1, critical frequency foF1, peak density NmF1
-c No F1 layer if jf(19) and jf(20) are false
+c No F1 layer if f1_ocpro=jf(19) and f1_l_cond=.not.jf(20) are false
 c
         if(.not.f1_ocpro.and.f1_l_cond) then 
         	F1REG=.false.
         	FOF1=-1.0
         	NMF1=-1.0
+        	hmF1=0.0
+        	c1=0.0
         	goto 2918
         	endif
         	
@@ -1544,11 +1560,13 @@ c
 c
 c F1 layer thickness parameter c1
 c
-        c1 = f1_c1(modip,hour,sax2,sux2)
+        c1 = f1_c1(absmdp,hour,sax2,sux2)
 c
-c F1 occurrence probability with Scotto et al. 1997 or Ducharme et al. 
-c if jf(19)=f1_ocpro=.true. or .false.
-c If .not.jf(20)=f1_l_cond=.true. then Scotto model with L-condition
+c F1 occurrence probability: jf(19), jf(20)
+c jf(19),jf(20)=t,t Scotto et al. 1997
+c jf(19),jf(20)=f,t Ducharme et al. 1973
+c jf(19),jf(20)=t,f Scotto et al. 1997 with L-condition 
+c jf(19),jf(20)=f,f no F1 layer 
 c
         if(f1_ocpro) then
         	call f1_prob(xhi3,mlat,rssn,f1pbw,f1pbl)
@@ -1670,8 +1688,9 @@ C
        if(LAYVER) goto 6153
        hmf1=0
        IF(.not.F1REG) GOTO 380
-
+c
 c omit F1 feature if nmf1*0.9 is smaller than nme
+c
        bnmf1=0.9*nmf1
        if(nmes.ge.bnmf1) goto 9427
 
@@ -1695,11 +1714,13 @@ c
 
 9427    if(mess) WRITE(KONSOL,11) 
 11      FORMAT(1X,'*NE* HMF1 IS NOT EVALUATED BY THE FUNCTION XE2'/
-     &        1X,'CORR.: NO F1 REGION, B1=3, C1=0.0')
+     &        1X,'CORR.: NO F1 REGION')
         HMF1=0.
         F1REG=.FALSE.
+        C1=0.0
 c        NMF1=0.
 c        C1=0.0
+
 c
 c Determine E-valley parameters if HEF was changed
 c
@@ -1710,12 +1731,12 @@ c
             IF(ENIGHT) DEPTH=-DEPTH
             CALL TAL(HDEEP,DEPTH,WIDTH,DLNDH,EXT,E)
             IF(.NOT.EXT) GOTO 380
-            if(mess) WRITE(KONSOL,650)
-            WIDTH=.0
-            hef=hme
-            hefold=hef
-            goto 9245
-            endif
+              if(mess) WRITE(KONSOL,650)
+              WIDTH=.0
+              hef=hme
+              hefold=hef
+              goto 9245
+              endif
 
 C
 C SEARCH FOR HST [NE3(HST)=NMEs] ......................................
@@ -1731,16 +1752,25 @@ C
             xf1=xe2(hf1)
         endif
 
-        hf2=hef
+c        hf2=hef
+        hf2=100.0
         xf2=xe3_1(hf2)
-        if(xf2.gt.nmes) goto 3885
-            
+        if(xf2.gt.nmes) then
+         	goto 3885
+         	endif
         CALL REGFA1(hf1,HF2,XF1,XF2,0.001,NMES,XE3_1,SCHALT,HST)
+c		if(HST.lt.HEF) then
+c			type*,hst,hef,hme
+c			goto 3885
+c			endif
         if(schalt) goto 3885
-
         HZ=(HST+HF1)/2.0
-        D=HZ-HST
-        T=D*D/(HZ-HEF-D)
+        xheit=123.2
+c        WRITE(KONSOL,9101) lati,hst,hef,hz,hmF2,B0,B1,XE_1(xheit),nmf2
+c     &        ,nmes
+c9101    FORMAT(F5.1,5F6.1,F5.2,3E10.4)      
+c        D=HZ-HST
+c        T=D*D/(HST-HEF)
         GOTO 4933
 
 c
@@ -2134,7 +2164,6 @@ c Danilov-Smirnova-1995 model and Danilov-Yaichnikov-1985 model (upper)
             RO2X=DION(6)
             RCLUST=DION(7)
       endif
-
 c
 c ion densities are given in percent of total electron density;
 c

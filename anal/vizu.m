@@ -334,7 +334,7 @@ elseif strcmp(nameant,'quj')
  stretchSecs=200;
 elseif strcmp(nameant,'syi')
  FIGURE_TITLE='SYISR RADAR';
- fradar=450e6;
+ fradar=440e6;
  stretchSecs=100;
 end
 if ~strcmp(nameant,'quj') && ~strcmp(nameant,'syi') && isempty(MESSAGE1)

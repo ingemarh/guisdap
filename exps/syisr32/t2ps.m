@@ -10,9 +10,9 @@ td_t2=t_to_ps(:,2)';
 td_am=t_to_ps(:,3)';
 td_ch=t_to_ps(:,4)';
 ch_adcint=[10];
-ch_filter=[10];
-ch_f=[450];
-p_rep=16000*82*32;
+ch_filter={'irf_100khz_sample_rate.txt'};
+ch_f=[440];
+p_rep=16000*32;
 for f=1:length(ch_f)
  d=find(td_ch==ch_f(f));
  td_ch(d)=f;

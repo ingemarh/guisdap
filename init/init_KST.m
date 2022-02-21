@@ -48,7 +48,7 @@ elseif name_site=='Q'
   ch_fradar=500e6;
 elseif name_site=='H'
   ch_gain=10^4.3;
-  ch_fradar=450e6;
+  ch_fradar=440e6;
 end
 % For compatibility with the experiment design package define
 p_ND=1;
