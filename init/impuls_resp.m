@@ -9,8 +9,10 @@
 ch_p=[];
 if iscell(ch_filter)
  for ind=1:length(ch_filter)
-  if contains(char(ch_filter(ind)),'txt')
-   impulsen=get_impresp_dec([path_expr char(ch_filter(ind))],p_dtau);
+  if contains(char(ch_filter(ind)),'CIC')
+   r=sscanf(char(ch_filter(ind)),'CIC_%g_%g_%g');
+   imp=CIC91_fir_comp_coeff(r(1),r(2),r(3));
+   impulsen=get_impresp_dec(imp,p_dtau,r(2)/1e6);
   else
    impulsen=get_impresp([path_expr char(ch_filter(ind))],p_dtau)';
   end
