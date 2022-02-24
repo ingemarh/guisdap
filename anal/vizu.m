@@ -115,17 +115,23 @@ if isempty(act) || strcmp(lower(act),'verbose')
  if ~isempty(axc), delete(axc), axc=[]; end
  maxdy=Inf;		% Max diff in y stretch data points
 elseif strcmp(act,'update')
- [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
- endtime=timeconv(END_TIME,'utc2mat');
- if (~REALT | REALT & timespan~=1) & ~isempty(Time) & Time(1,end)>endtime
-  delete(axs); axs=[]; axc=[];
-  startime=timeconv(START_TIME,'utc2mat'); spantime=endtime-startime;
-  while Time(2,end)>endtime, endtime=endtime+spantime/3; end
-  START_TIME=timeconv(endtime-spantime,'mat2utc');
-  END_TIME=timeconv(endtime,'mat2utc');
-  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS);
+ if isempty(a2)
+  [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS,1);
+  endtime=timeconv(END_TIME,'utc2mat');
+  if (~REALT | REALT & timespan~=1) & ~isempty(Time) & Time(1,end)>endtime
+   delete(axs); axs=[]; axc=[];
+   startime=timeconv(START_TIME,'utc2mat'); spantime=endtime-startime;
+   while Time(2,end)>endtime, endtime=endtime+spantime/3; end
+   START_TIME=timeconv(endtime-spantime,'mat2utc');
+   END_TIME=timeconv(endtime,'mat2utc');
+   [Time,par2D,par1D,rpar2D]=load_param(DATA_PATH,PLOT_STATUS);
+  end
+ else
+  if ischar(a2), a2=str2num(a2), end
+  while 1
+   vizu('update'), pause(a2)
+  end
  end
- %set(0,'currentfig',vizufig)
 elseif strcmpi(act,'print') || strcmpi(act,'save')
  fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
  if ~isempty(name_strategy), fig=sprintf('%s_%s',fig,name_strategy); end
@@ -333,9 +339,8 @@ elseif strcmp(nameant,'quj')
  fradar=500e6;
  stretchSecs=200;
 elseif strcmp(nameant,'syi')
- FIGURE_TITLE='SYISR RADAR';
+ FIGURE_TITLE='SANYA RADAR';
  fradar=440e6;
- stretchSecs=100;
 end
 if ~strcmp(nameant,'quj') && ~strcmp(nameant,'syi') && isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);
