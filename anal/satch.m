@@ -161,6 +161,8 @@ if ~OK | Nsatb>0
   end
   drawnow
  end
+end
+if ~OK
  msg=sprintf('Satellite detection (%d %.1f %.0f) -- skipping',Nsat,x0max,pbmax);
  if a_satch.cut
   for j=1:size(sat_ran,1)
