@@ -27,7 +27,7 @@ global di_figures di_results di_spectra
 global name_ant calTemp sysTemp r_Tsys
 global webfile local a_autodir, webfile=cell(1);
 
-global lpg_womscaled k_radar
+global lpg_womscaled k_radar lpg_s
 
 % global p_coeff0 p_coeffg f_womega
 

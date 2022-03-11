@@ -4,7 +4,7 @@
 % See also: GUISPERT GUIZARD
 %
 ld=length(d_data);
-if name_site=='P'
+if name_site=='P' || name_site=='T' && a_code==20
  lpg_ra=lpg_ra+a_freqband*82232;
 elseif name_site=='T'
  lpgs=find(ismember(lpg_code,3:16));

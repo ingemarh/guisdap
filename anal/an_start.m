@@ -118,7 +118,7 @@ while ~EOF
       ad_coeff_no_Pt=radar_eq(Ant_eff); % calculates the radar constant      
     end
     ch_PtM=ch_Pt./a_Magic_const; %compensate for any inaccuracies
-    for sig=find(lpg_bcs=='s')
+    for sig=find(ismember(lpg_bcs,lpg_s))
       lp=lpg_lp(sig); addr=ADDR_SHIFT+lpg_addr(sig);
       vc=min(lp_vc(lp(1)),length(ch_PtM));
       ad_coeff(addr)=ad_coeff_no_Pt(addr)*ch_PtM(vc);

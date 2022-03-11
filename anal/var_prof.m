@@ -2,7 +2,7 @@
 % GUISDAP v.8.2 03-05-27 Copyright EISCAT
 %
 function var_prof(N_averaged,M_averaged,N_avpref)
-global d_var1 d_var2 d_data lpg_ra lpg_ri lpg_nt lpg_bcs ADDR_SHIFT ad_coeff
+global d_var1 d_var2 d_data lpg_ra lpg_ri lpg_nt lpg_bcs ADDR_SHIFT ad_coeff lpg_s
 global a_code ad_code lpg_code lpg_lag lpg_ND
 
 addr=1:min(length(ad_coeff),length(d_data));
@@ -19,7 +19,7 @@ else
 end
 f0=ones(N0,1)/N0; L0=floor((N0-1)/2); R0=ceil((N0-1)/2);
 
-lpgs=find(lpg_bcs=='s' | lpg_bcs=='x');
+lpgs=find(ismember(lpg_bcs,[lpg_s 'x']));
 if ~isempty(a_code)
  lpgs=lpgs(find(ismember(lpg_code(lpgs),unique(a_code))));
 end

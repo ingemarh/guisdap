@@ -28,7 +28,7 @@ global vc_adcint vc_sampling vc_samplingend vc_ba bm_samples bm_next vc_mf
 global lp_t1 lp_t2 lp_h lp_ra lp_nfir lp_fir lp_dec lp_T lp_dt p_dtau
 global lp_nt lp_vc lp_ri lp_bcs lp_code lp_ind lp_indold ra_next ra_prev
 
-if (type~='s'),  error(' Unknown data type in COR_fdalt'), end  
+if (type~='s' & type~='o'),  error(' Unknown data type in COR_fdalt'), end
 
 % Store the first result memory address (calling program might need it)
 ra_prev=ra;

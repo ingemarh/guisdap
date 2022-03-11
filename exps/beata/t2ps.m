@@ -12,10 +12,6 @@ if site=='r'
   d=find(rem(t_to_ps(:,4),1)); t_to_ps(d,:)=[];
 end
 p_offsetppd=0;
-td_t1=t_to_ps(:,1)';
-td_t2=t_to_ps(:,2)';
-td_am=t_to_ps(:,3)';
-td_ch=t_to_ps(:,4)';
 if p
  ch_adcint=[.4];
  ch_filter={'b800d6.fir'};
@@ -39,14 +35,18 @@ elseif site=='t'
  ch_filter={'b35d150.fir' 'b35d150.fir'};
  ch_f=[12 12.1];
  p_rep=357120;
+ if rc==2
+  ch_adcint=[10 10 0.4];
+  ch_f=[8 8.1 99];
+  ch_filter={'b35d150.fir' 'b35d150.fir' 'b800d6.fir'};
+ end
 elseif site=='r'
  ch_adcint=[10];
  ch_filter={'b35d150.fir'};
  ch_f=[12];
  p_rep=357120;
  if rc==2
-  td_ch=t_to_ps(:,4)';
-  d=find(td_ch==4); td_ch(d)=12;
+  d=find(t_to_ps(:,4)==4); t_to_ps(d,4)=12;
   ch_adcint=[20];
   ch_filter={'b25d300.fir'};
  end
@@ -64,6 +64,10 @@ elseif site=='v'
 else
  error('giveup')
 end
+td_t1=t_to_ps(:,1)';
+td_t2=t_to_ps(:,2)';
+td_am=t_to_ps(:,3)';
+td_ch=t_to_ps(:,4)';
 for f=1:length(ch_f)
  d=find(td_ch==ch_f(f));
  td_ch(d)=f;

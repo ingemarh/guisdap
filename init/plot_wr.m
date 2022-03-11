@@ -158,7 +158,7 @@ end
 	end
 
 	%% Find the numbers of the signal lag profile groups ...
-	all_lpgs = find(lpg_bcs=='s' | lpg_bcs=='x')';
+	all_lpgs = find(lpg_bcs=='s' | lpg_bcs=='x' | lpg_bcs=='o')';
 
 	%% In case of mistakes in the  global variable  wr_NAME, the
 	%% user may wish to recreate the wr_NAME array, by including
@@ -183,8 +183,8 @@ end
 		 '(size(' wr_name ',2) < length(all_lpgs)) & '	...
 		 '(limit==0))'])
 		warning(['The global variable ' wr_name ' is possibly incomplete'])
-		replace = input('Do you want to create it afresh? (y=yes) ','s');
-		if (['strcmp(''' replace ''',''y'')'])
+		replace = minput('Do you want to create it afresh','n',1);
+		if strcmp(replace,'y')
 			disp(['Note: Clearing variable ' wr_name ' ...'])
 			eval([wr_name '=[];'])
 		end

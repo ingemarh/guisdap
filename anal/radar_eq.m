@@ -8,7 +8,7 @@
   global ch_fradar ch_gain ch_Pt ch_az ch_el p_XMITloc p_RECloc
   global v_lightspeed v_electronradius v_Boltzmann p_dtau p_R0 p_N0 
   global ad_range ad_w
-  global lpg_h lpg_w lpg_code lpg_bcs lp_vc vc_ch
+  global lpg_h lpg_w lpg_code lpg_bcs lp_vc vc_ch lpg_s
   global ADDR_SHIFT name_site 
   global sc_angle sc_R0 sc_R1 ch_range k_radar k_radar0
   global a_Offsetppd lpg_wr GUP_iniver
@@ -49,7 +49,7 @@ elseif GUP_iniver<1.71
   Veff=(pi/P)^1.5*(sc_R0^2*sc_R1^2)/sqrt(sc_R0^2+sc_R1^2)/sin(sc_angle);
 % fprintf(' Veff is %.4g\n',Veff)
   % Update range variables for the new geometry
-  ind=find(lpg_bcs=='s'); range=sc_R1/scale;
+  ind=find(ismember(lpg_bcs,lpg_s)); range=sc_R1/scale;
   lpg_h(ind)=range*ones(size(ind));
   lpg_w(ind)=(range/100)*ones(size(ind));
   ad=ADDR_SHIFT+lpg_addr(ind);
@@ -115,7 +115,7 @@ end
   vc=find(vc_ch>0); % These virtual channels in use
   p_coeff0=p_coeff0(vc_ch(vc))./(v_Boltzmann*Ap(vc,0)/(p_dtau*1e-6));
 
-for sig=find(lpg_bcs=='s')
+for sig=find(ismember(lpg_bcs,lpg_s))
   % Must find the virtual channel now
   %lp=lpg_lp(sig); vc=lp_vc(lp(1)); pcoeff=p_coeff0(vc);
   vc=lp_vc(lpg_lp(sig)); pcoeff=mean(p_coeff0(vc));

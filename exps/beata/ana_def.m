@@ -31,6 +31,11 @@ elseif name_site=='T' | name_site=='V'
   end
   if local.site=='T', d_saveint.dir='/analysis/integrated/AUTO'; end
 elseif name_site=='P'
+ if expver==2
+   name_site='T';
+   analysis_code=20;
+   lpg_s='o';
+ end
  display_spectra=1;
  a_satch.do=0;
  analysis_range=[105.75:3:400];

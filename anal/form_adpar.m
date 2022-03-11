@@ -14,7 +14,7 @@ function form_adpar
 
 global lpg_ra lpg_nt lpg_ri lpg_bcs lpg_h lpg_dt lpg_w lpg_code lpg_lag lpg_bac
 global ad_range ad_w ad_code ad_lpg ad_coeff ad_lag ad_bac ad_bcs ADDR_SHIFT
-global a_code lpg_bac lpg_cal
+global a_code lpg_bac lpg_cal lpg_s
 
 zl=zeros(1,max(lpg_ra+(lpg_nt-1).*lpg_ri)+1);
 ad_range=zl; ad_w=zl; ad_code=zl; ad_lpg=zl;
@@ -22,7 +22,7 @@ ad_coeff=zl; ad_lag=zl; ad_bac=zl;
 for lpgs=1:length(lpg_ra)
   addr=lpg_addr(lpgs)+ADDR_SHIFT; % To change from radar to Matlab addressing
   ol=ones(1,length(addr));
-  if lpg_bcs(lpgs)=='s'
+  if ismember(lpg_bcs(lpgs),lpg_s)
     ad_range(addr)=lpg_h(lpgs)+(0:lpg_nt(lpgs)-1)'*lpg_dt(lpgs);
     ad_w(addr)=lpg_w(lpgs)*ol;
   end

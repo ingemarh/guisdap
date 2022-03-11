@@ -6,7 +6,7 @@ function plot_specs(file,g,l)
 % Input: Result file name
 %
 % function plot_specs(file,gates)
-if nargin<3, lg=[]; end
+if nargin<3, l=[]; end
 if nargin<2, g=[]; end
 if nargin<1, file=[]; end
 nf=1; nlev=128;

@@ -15,7 +15,7 @@
 fprintf('\n Calculating the range ambiguity functions for signal lag profile groups:\n\n')
 lpg_wr=zeros(p_R0,length(lpg_ra));
 maxr=0;
-for i=find(lpg_bcs=='s' | lpg_bcs=='x')
+for i=find(lpg_bcs=='s' | lpg_bcs=='x' | lpg_bcs=='o')
   w=wrlpg(i); r=1:length(w); lpg_wr(r,i)=w;
   if maxr<length(w), maxr=length(w); end
   indw=find(abs(w)>0.065*max(w));   % main body of ambiguity function
@@ -36,6 +36,7 @@ for i=find(lpg_bcs=='s' | lpg_bcs=='x')
     fprintf(' (%.1f km) width %.1f us\n',ranges(1)*.15,lpg_w(i)*p_dtau)
   end
   plot(r*p_dtau,w)
+  xlabel('Range [\mus]')
   title(['range ambiguity function for lpg=' num2str(i)]), grid
   drawnow
 end

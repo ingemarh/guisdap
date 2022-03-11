@@ -5,7 +5,7 @@
 lpg_wom=zeros(length(lpg_bcs),length(p_om));
 fprintf('\n*\n* Calculating spectral ambiguity functions for signal lpg:s\n*\n*');
 
-for lpg=find(lpg_bcs=='s');
+for lpg=find(lpg_bcs=='s' | lpg_bcs=='o')
   fprintf(' %.0f',lpg),
   lpg_wom(lpg,:)=lpgwom(lpg);
 end  

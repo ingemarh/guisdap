@@ -1,4 +1,4 @@
-global iono_model fit_altitude a_satch a_Offsetppd d_saveint
+global iono_model fit_altitude a_satch a_Offsetppd d_saveint lpg_s
 fit_altitude=NaN*ones(9,8);
 
 first=75; last=2500; d1=3; d2=1; n1=10;
@@ -16,6 +16,7 @@ if name_site=='T' | name_site=='L' | name_site=='V' | name_site=='P' | name_site
 else
  analysis_range=(0:1)*1500;
 end
+lpg_s='s';
 
 if exist([path_expr 'ana_def.m'])==2
   run([path_expr 'ana_def'])

@@ -29,9 +29,9 @@ elseif a_classic
   ancodes=diff_val(lpg_code);
   if ~isempty(a_code), ancodes=intersect(ancodes,a_code); end
   for code=ancodes
-    lags=lpg_lag(find(lpg_code==code & lpg_bcs=='s'));
+    lags=lpg_lag(find(lpg_code==code & ismember(lpg_bcs,lpg_s)));
     if max(lags)>0,  % ACF data, analyze these
-      lpg=find(lpg_code==code & lpg_bcs=='s' & lpg_lag==max(lags));
+      lpg=find(lpg_code==code & ismember(lpg_bcs,lpg_s) & lpg_lag==max(lags));
       ranges=lpg_h(lpg)+(0:lpg_nt(lpg)-1)*lpg_dt(lpg);
       ranges=ranges(find(ranges>=minrange & ranges<=maxrange));
       lenr=length(ranges);
