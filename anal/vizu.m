@@ -432,10 +432,12 @@ if isempty(vizufig)
    'Name',['GUISDAP results from ',sdir])
 % set(gcf,'PaperType','A4','PaperUnits','centimeters','NumberTitle','off',...
 %  'defaultAxesColorOrder',[1 0 0;0 1 0;0 0 1;0 0 0;1 0 1;0 1 1;1 1 0])
- uimenu('label','Update','callback','vizu(''update'')');
- if isunix
-  uimenu('label','Save','callback','vizu(''save'')');
-  uimenu('label','Print','callback','vizu(''print'')');
+ if ~strcmp(Loc,'Hub')
+  uimenu('label','Update','callback','vizu(''update'')');
+  if isunix
+   uimenu('label','Save','callback','vizu(''save'')');
+   uimenu('label','Print','callback','vizu(''print'')');
+  end
  end
 
  ti=axes(vizufig,'Position',[0.0 0.87 0.95 0.08],'Visible','off');
