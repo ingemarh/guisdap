@@ -111,7 +111,8 @@ if [[ "$datapath" =~ .*"http".* ]]
 then
  for tar in $datapath
  do
-  wget -O - "$tar" 2>/dev/null | tar xf -
+  curl -o - "$tar" 2>/dev/null | tar xf -
+  #wget -O - "$tar" 2>/dev/null | tar xf -
  done
  ls | grep information | xargs rm -rf
  datapath=`ls`

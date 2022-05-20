@@ -11,9 +11,7 @@ clear all, clear global, clear functions
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local hdf5ver
 
 hdf5ver = '1.0.0';
-path_GUP=which('start_GUP','-all');
-if iscell(path_GUP), path_GUP=char(path_GUP(end)); end
-path_GUP=fileparts(fileparts(path_GUP));
+path_GUP=fileparts(fileparts(mfilename('fullpath')));
 path_tmp=getenv('TMP');
 if isempty(path_tmp)
  path_tmp=fullfile(getenv('HOME'),'tmp');
