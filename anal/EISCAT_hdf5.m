@@ -707,6 +707,6 @@ pngor = '820x580';
 gd=fullfile(matlabroot,'sys','ghostscript',filesep);
 gsbin=fullfile(gd,'bin',lower(computer),'gs');
 gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
-if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
+if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
 unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s%s </dev/null >/dev/null',gsbin,gsinc,pngor,epsfile,epsfile,ext));
 pdffile = [epsfile '.pdf'];

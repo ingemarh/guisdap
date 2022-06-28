@@ -232,7 +232,7 @@ elseif plots==0
     gd=fullfile(matlabroot,'sys','ghostscript',filesep);
     gsbin=fullfile(gd,'bin',lower(computer),'gs');
     gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
-    if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
+    if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
     print(gcf,'-opengl','-depsc2','-r600',[fname '.eps'])
     unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
     unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));

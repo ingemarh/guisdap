@@ -53,7 +53,7 @@ if [ -z "$mflags" ];then
 	mflags="-nodisplay"
 fi
 if [ "$*" != "" ];then
-	mflags=$*
+	mflags="$mflags $*"
 fi
 
 if [ ! -d $my ];then
@@ -71,9 +71,6 @@ case $sys in
 		unset `env | grep UTF | awk -F = '{ print $1 }'`
 		;;
 esac
-if [ -d /opt/madrigal/lib ]; then
-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/madrigal/lib
-fi
 
 #echo "$matlab $mflags $tail"
 export TMP MATLABPATH SHELL

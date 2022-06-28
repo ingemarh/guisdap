@@ -179,7 +179,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
     gd=fullfile(matlabroot,'sys','ghostscript',filesep);
     gsbin=fullfile(gd,'bin',lower(computer),'gs');
     gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
-    if ~exist(gsbin,'file'), gsbin='gs'; gsinc=[]; end
+    if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
     unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
     unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
     delete([file '.' ext])
@@ -315,6 +315,11 @@ if strcmp(lower(act),'update') && ~isempty(OLD_WHICH)
  WHICH_PARAM=OLD_WHICH; SCALE=OLD_SCALE;
 end
 OLD_WHICH=WHICH_PARAM; OLD_SCALE=SCALE;
+if size(allnames.ant,1)>1
+ if any(contains(string(allnames.ant(:,1:3)),'32m')) && any(contains(string(allnames.ant(:,1:3)),'42m'))
+  name_ant='esr';
+ end
+end
 nameant=lower(name_ant(1:3));
 if strcmp(nameant,'32m') || strcmp(nameant,'42m') || strcmp(nameant,'esr')
  FIGURE_TITLE='EISCAT SVALBARD RADAR';
