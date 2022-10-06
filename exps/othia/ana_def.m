@@ -3,6 +3,7 @@
 a_satch.cut=1;
 analysis_gating=1;
 analysis_ppshortlags=1;
+a_phasepush=-20;
 if strfind(data_path,'@32p')
  analysis_txpower=8;
  analysis_intfix(5:6)=47:48;

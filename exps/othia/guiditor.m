@@ -24,7 +24,6 @@ else
    phasepush((i-1)*4+j+12)=phasecorr(d_raw(col(ind)),vc_penv(:,vc21(j)),12,30,[],lo);
   end
  end
- phasepush
  phasepush=mean(phasepush);
 end
 if ~isempty(phasepush), r_phasepush=phasepush; end

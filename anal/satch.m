@@ -1,5 +1,5 @@
 function [OK,ad_sat]=satch(el,secs,inttime)
-global lpg_lag lpg_wr lpg_w lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h
+global lpg_lag lpg_wr lpg_w lpg_nt lpg_ri lpg_ra lpg_ND lpg_bcs lpg_dt lpg_bac vc_penvo lpg_code lpg_h p_dtau
 global d_data a_satch a_code local
 global ad_range ad_w ad_code ad_lag ad_bac ad_bcs
 global r_sd
@@ -57,7 +57,7 @@ lpgused=lp; ii=0; sat_ran=zeros(0,6);
 for i=lp
  j=j+1; ii=ii+1;
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
- N=lpg_ND(i)*inttime/(a_satch.prep*1e-6);
+ N=lpg_ND(i)*inttime/(p_dtau*a_satch.prep*1e-6);
  dat=real(d_data(addr));
  if isempty(lpg_wr)
   wr=[0;ones(round(lpg_w(i)),1);0];
