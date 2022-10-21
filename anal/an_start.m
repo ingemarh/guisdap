@@ -198,5 +198,7 @@ if ~isempty(a_addr)
   if a_HDF
     [~,EISCAThdf5file] = mat2hdf5(result_path,result_path,1);
   end
-  send_www
+  if a_realtime & isunix & ~isempty(local.site)
+    send_www
+  end
 end

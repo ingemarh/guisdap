@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_Fortran_COMPILER gfortran)
-foreach(cver 8 9 7 6 5)
+foreach(cver 8 9 11 7 6 5)
 	find_program(gcc_EXECUTABLE gcc-${cver})
 	if(gcc_EXECUTABLE)
 		set(CMAKE_C_COMPILER gcc-${cver})
@@ -22,7 +22,7 @@ string(APPEND CMAKE_Fortran_FLAGS " -fno-automatic -fno-align-commons -std=legac
 
 project(guisdap)
 
-add_subdirectory(models/iri2016)
+add_subdirectory(models/iri2020)
 add_subdirectory(models/nrlmsis2.0)
 add_subdirectory(models/irbem/source)
 add_subdirectory(models/irbem)
