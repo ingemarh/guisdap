@@ -69,7 +69,7 @@ if ~isempty(exif)
              TS=['"',winexif,'" ',flags,'',exif,' "',file,'.',char(ext),'"'];
              [i,i]=system(TS);
         else
-             [i,i]=unix(sprintf('%s %s %s %s.%s',prog,flags,exif,file,char(ext)));
+             [i,i]=gupsystem(sprintf('%s %s %s %s.%s',prog,flags,exif,file,char(ext)));
         end
      end
   end
