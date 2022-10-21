@@ -8,6 +8,7 @@ if strfind(data_path,'@32p')
  analysis_txpower=8;
  analysis_intfix(5:6)=47:48;
  analysis_plasmaline=1;
+ plasma_range=col(ones(2*1125,1)*(0:3)*2262+(1:2*1125)'*ones(1,4)+12);
 elseif name_site=='L'
  a_satch.clutter=[0 40];
  first=100; last=2000; d1=10; d2=5;
