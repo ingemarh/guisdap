@@ -19,7 +19,7 @@ elseif isunix & a_realtime | strfind(dirpath,'?')
   template=[row(col('\[0-9]')*ones(1,8)) '.mat\*'];
   dirpath(strfind(dirpath,'\'))=[]; % remove escapes
   cmd=sprintf('find %s -name %s%s -print 2>/dev/null',dirpath(1:end-1),template,i);
-  [status,d]=unix(cmd);
+  [status,d]=gupsystem(cmd);
   if status
     msg=['Error listing mat files in ' dirpath ' ' cmd];
   elseif length(d)

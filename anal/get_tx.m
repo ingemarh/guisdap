@@ -22,7 +22,7 @@ for j=1:lp
  fprintf('Found "%s" on position %d\n',dd,i(j))
 end
 
-unix(['cat ' filename ' | sed s/["\.":]/\ /g | sed s/,/./g >' local.tfile]);
+gupsystem(['cat ' filename ' | sed s/["\.":]/\ /g | sed s/,/./g >' local.tfile]);
 d=textread(local.tfile,'','headerlines',1);
 delete(local.tfile)
 if d_time(1)<2001

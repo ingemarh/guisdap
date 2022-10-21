@@ -56,7 +56,7 @@ if exist(data_path,'file')
  r_XMITloc=XMITlocs(i,:);
  hl=10;
  %arg=strrep(arg,'&','\&'); arg=strrep(arg,' ','\ ');
- [mad,of]=system([cmd4 data_path arg '''' cmd2]);
+ [mad,of]=gupsystem([cmd4 data_path arg '''' cmd2]);
  if mad
   return
  end

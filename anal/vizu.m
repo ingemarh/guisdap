@@ -172,7 +172,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   %end
   if strcmpi(act,'print') || strcmpi(a3,'print')
     if isempty(a2), dev=''; else, dev=['-d' a2 ' ']; end
-    unix(['lp -c ' dev file '.' ext ' >/dev/null 2>&1']);
+    gupsystem(['lp -c ' dev file '.' ext ' >/dev/null 2>&1']);
     if strcmpi(act,'print'), delete([file '.' ext]), end
   end
   if strcmpi(act,'save')
@@ -180,8 +180,8 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
     gsbin=fullfile(gd,'bin',lower(computer),'gs');
     gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
     if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
-    unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
-    unix(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
+    gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
+    gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
     delete([file '.' ext])
     fprintf('Created %s.pdf and .png\n',file)
     insert_exif(vizufig,file,{'pdf' 'png'})

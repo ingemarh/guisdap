@@ -155,7 +155,7 @@ for ii = 1:length(data_files)
             for jj = 1:length(untar_filelist)
                 [~,~,ext] = fileparts(untar_filelist(jj).name);
                 if strcmp(ext,'.bz2')
-                    unix(['bunzip2 ' fullfile(untar_filelist(jj).folder,untar_filelist(jj).name)]);
+                    gupsystem(['bunzip2 ' fullfile(untar_filelist(jj).folder,untar_filelist(jj).name)]);
                 end
             end
            
@@ -632,25 +632,29 @@ end
 
 figure_check;
 % Check if a figure was not copied and saved at all, or copied and saved more than once
-z1 = find(figure_check==0);
-z2 = find(figure_check>1);
-for z3 = 1:length(z1)
-    warning([image_filelist(z1(z3)).name ' was not copied or stored'])
+z1=find(figure_check==0);
+z2=find(figure_check>1);
+for z3=1:length(z1)
+  warning([image_filelist(z1(z3)).name ' was not copied or stored'])
 end
-for z3 = 1:length(z2)
-    warning([image_filelist(z2(z3)).name ' was copied or stored more than once'])
+for z3=1:length(z2)
+  warning([image_filelist(z2(z3)).name ' was copied or stored more than once'])
 end
 
 
 if ~isempty(showfigs)
-    for ii = 1:length(image_filelist)
-        cmd = ['display ' fullfile(dirpath,image_filelist(ii).name) ' &'];
-        system(cmd);
-    end
+  h=gupfigure; il=length(image_filelist);
+  i1=floor(sqrt(il)); i2=ceil(il/i1);
+  for ii=1:il
+    subplot(i1,i2,ii)
+    rgb=imread(fullfile(dirpath,image_filelist(ii).name));
+    image(rgb); axis image;
+    %cmd = ['display ' fullfile(dirpath,image_filelist(ii).name) ' &'];
+  end
 end
 
 if exist(fullfile(tempdir,'UntaredContent'))
-    rmdir(fullfile(tempdir,'UntaredContent'),'s')
+  rmdir(fullfile(tempdir,'UntaredContent'),'s')
 end
 
 
@@ -688,7 +692,6 @@ else
     return
 end
 
-
 function pdffile = eps2pdf(epsfile) 
 % Generating a pdf-file from an eps or ps file.
 
@@ -708,5 +711,5 @@ gd=fullfile(matlabroot,'sys','ghostscript',filesep);
 gsbin=fullfile(gd,'bin',lower(computer),'gs');
 gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
 if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
-unix(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s%s </dev/null >/dev/null',gsbin,gsinc,pngor,epsfile,epsfile,ext));
+gupsystem(sprintf('%s -I%sps_files -I%sfonts -dNOPAUSE -q -sDEVICE=pdfwrite -sPAPERSIZE=a4 -sOutputFile=%s.pdf %s%s </dev/null >/dev/null',gsbin,gsinc,pngor,epsfile,epsfile,ext));
 pdffile = [epsfile '.pdf'];

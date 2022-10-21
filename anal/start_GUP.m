@@ -23,7 +23,7 @@ result_path=fullfile(filesep,'analysis','results',filesep);
 data_path=fullfile(filesep,'data',filesep);
 d=1;
 if 0 & isunix
- [d,GUP_ver]=system(sprintf('echo -n `git -C %s describe --tags --long`-`git -C %s log --oneline | wc -l` 2>/dev/null',path_GUP,path_GUP));
+ [d,GUP_ver]=gupsystem(sprintf('echo -n `git -C %s describe --tags --long`-`git -C %s log --oneline | wc -l` 2>/dev/null',path_GUP,path_GUP));
 end
 if d
  GUP_ver=char(textread(fullfile(path_GUP,'.version'),'%s'));
