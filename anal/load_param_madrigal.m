@@ -1,4 +1,4 @@
-function [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal3(data_path,fileno,do_err)
+function [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal3(data_path,fileno,do_err,status)
 % Function to read the plasma parameters from madrigal NCAR files
 %
 % [Time,par2D,par1D,rpar2D]=load_param_madrigal(data_path,status)
@@ -12,14 +12,15 @@ ask=0;
 Time=[]; par2D=[]; par1D=[]; rpar2D=[]; err2D=[];
 if nargin<2, fileno=[]; end
 if nargin<3, do_err=0; end
+if nargin<4, status=[0 Inf]; end
 if isempty(fileno), ask=1; fileno=1; end
 
 REClocs=[67.863 20.44 .412;69.583 19.21 .030;67.367 26.65 .180;69.583 19.21 .030;78.153 16.029 .438];
 XMITlocs=[ones(4,1)*[69.583 19.21 .030];78.153 16.029 .438];
 if do_err
- param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER NEL DNEL TI DTI TE DTE VO DVO VOBI DVOBI PO%2B CO DCOL';
+ param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER NEL DNEL TI DTI TE DTE VO DVO VOBI DVOBI PO%2B CO DCOL GFIT';
 else
- param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER POPL NEL TI TE VO VOBI PO%2B CO';
+ param='UT1 UT2 GDALT RANGE AZM ELM GDLAT GLON CHISQ SYSTMP POWER POPL NEL TI TE VO VOBI PO%2B CO GFIT';
 end
 % t2=clock;
 % arg=sprintf('&startYear=1981&endYear=%d&startMonth=1&startDay=1&endMonth=12&endDay=31&parmlist=%s&header=f&assumed=0&badval=NaN&mxchar=9999&state=text',t2(1),param)
@@ -135,13 +136,19 @@ if do_err
   avec=[4 3 12 16 14 18 23 22 9];
 % evec=[15 17 19 21 13];
   evec=[13 17 15 19 23];
+  svec=[25 9];
 else
   %vec=[8 5 14];
   pvec=[4 3 12];
   data(:,12:13)=10.^data(:,12:13);
   evec=[];
+  svec=[20 9];
   pp=find(isfinite(data(:,pvec(3))));
 end
+d=find(data(:,svec(1))>status(1) | data(:,svec(2))>status(2));
+data(d,avec)=NaN;
+data(d,evec)=NaN;
+
 npar2D=length(avec);
 nrpar2D=3;
 nerr2D=npar2D-4;
