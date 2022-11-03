@@ -1,47 +1,18 @@
-!##############################################################################
+!#######################################################################
 ! MSIS® (NRL-SOF-014-1) SOFTWARE
-!
-! MSIS® is a registered trademark of the Government of the United States of 
-! America, as represented by the Secretary of the Navy. Unauthorized use of 
-! the trademark is prohibited. 
-!
-! The MSIS® Software (hereinafter Software) is property of the United States 
-! Government, as represented by the Secretary of the Navy. Methods performed
-! by this software are covered by U.S. Patent Number 10,641,925. The Government
-! of the United States of America, as represented by the Secretary of the Navy, 
-! herein grants a non-exclusive, non-transferable license to the Software for 
-! academic, non-commercial, purposes only. A user of the Software shall not: 
-! (i) use the Software for any non-academic, commercial purposes, (ii) make 
-! any modification or improvement to the Software, (iii) disseminate the 
-! Software or any supporting data to any other person or entity who will use 
-! the Software for any non-academic, commercial purposes, or (iv) copy the 
-! Software or any documentation related thereto except for (a) distribution 
-! among the user’s personal computer systems, archival, or emergency repair 
-! purposes, or (b) distribution for non-commercial, academic purposes, without 
-! first obtaining the written consent of IP Counsel for the Naval Research 
-! Laboratory. 
-!
-! As the owner of MSIS®, the United States, the United States Department of 
-! Defense, and their employees: (1) Disclaim any warranties, express, or 
-! implied, including but not limited to any implied warranties of 
-! merchantability, fitness for a particular purpose, title or non-infringement, 
-! (2) Do not assume any legal liability or responsibility for the accuracy, 
-! completeness, or usefulness of the software, (3) Do not represent that use of 
-! the software would not infringe privately owned rights, (4) Do not warrant 
-! that the software will function uninterrupted, that is error-free or that any 
-! errors will be corrected.
-!
-! BY USING THIS SOFTWARE YOU ARE AGREEING TO THE ABOVE TERMS AND CONDITIONS.  
-!##############################################################################
+! NRLMSIS® empirical atmospheric model software. Use is governed by the
+! Open Source Academic Research License Agreement contained in the file
+! nrlmsis2.1_license.txt, which is part of this software package. BY
+! USING OR MODIFYING THIS SOFTWARE, YOU ARE AGREEING TO THE TERMS AND
+! CONDITIONS OF THE LICENSE.  
+!#######################################################################
 
 !!! ===========================================================================
-!!! NRLMSIS 2.0:
+!!! NRLMSIS 2.1:
 !!! Neutral atmosphere empirical model from the surface to lower exosphere
-!!! John Emmert (john.emmert@nrl.navy.mil)
-!!! Doug Drob (douglas.drob@nrl.navy.mil)
 !!! ===========================================================================
 !!!
-!!! MSISCALC: New interface with re-ordered input arguments and output arrays.
+!!! MSISCALC: Interface with re-ordered input arguments and output arrays.
 !
 !     PREREQUISITES:
 !       Must first run MSISINIT to load parameters and set switches. The 
@@ -94,7 +65,7 @@
 !       DN(7)  Ar number density (m-3)
 !       DN(8)  N number density (m-3)
 !       DN(9)  Anomalous oxygen number density (m-3)
-!       DN(10) Not used in NRLMSIS 2.0 (will contain NO in future release)
+!       DN(10) NO number density (m-3)
 !       TEX    Exospheric temperature (K) (optional argument)
 !
 !     NOTES ON OUTPUT VARIABLES: 
@@ -121,11 +92,9 @@ contains
     use msis_gfn, only          : globe
     use msis_tfn, only          : tnparm, tfnparm, tfnx
     use msis_dfn, only          : dnparm, dfnparm, dfnx
+    use msis_utils, only        : alt2gph, bspline, dilog
 
     implicit none
-
-    real(8), external          :: alt2gph
-    real(kind=rp), external    :: dilog
 
     real(kind=rp), intent(in)  :: day
     real(kind=rp), intent(in)  :: utsec
@@ -252,146 +221,3 @@ contains
   end subroutine msiscalc
 
 end module msis_calc
-
-!==================================================================================================
-! BSPLINE: Returns array of nonzero b-spline values, for all orders up to specified order (max 6)
-!==================================================================================================
-subroutine bspline(x,nodes,nd,kmax,eta,S,i)
-
-  use msis_constants, only:  rp
-
-  implicit none
-
-  ! Input variables
-  real(kind=rp), intent(in)  :: x             !Location at which splines are to be evaluated
-  real(kind=rp), intent(in)  :: nodes(0:30)   !Spline node locations
-  integer, intent(in)        :: nd            !Number of spline nodes minus one (0:nd)
-  integer, intent(in)        :: kmax          !Maximum order (up to 6 allowed) of evaluated splines
-  real(kind=rp), intent(in)  :: eta(0:30,2:6) !Array of precomputed weights for recursion (reciprocals of node differences)
-  ! Ouput variables
-  real(kind=rp), intent(out) :: S(-5:0,2:6)   !Array of b-spline values (spline index relative to i (-5:0), spline order (2:6))
-  integer, intent(out)       :: i             !Index of last nonzero b-spline
-
-  ! Working variables
-  integer                    :: j, k, l
-  integer                    :: low, high
-  real(kind=rp)              :: w(-4:0) !Weights for recursion relation
- 
-  ! Initialize to zero
-  S(:,:) = 0.0_rp
-
-  ! Find index of last (rightmost) nonzero spline
-  if (x .ge. nodes(nd)) then
-    i = nd
-    return
-  endif
-  if (x .le. nodes(0)) then
-    i = -1
-    return
-  endif
-  low = 0
-  high = nd
-  i = (low + high)/2
-  do while (x .lt. nodes(i) .or. x .ge. nodes(i + 1))
-      if (x .lt. nodes(i)) then
-        high = i
-      else
-        low = i
-      endif
-      i = (low + high)/2
-  end do
-
-  ! Initialize with linear splines
-  S(0,2) = (x - nodes(i)) * eta(i,2)
-  if (i .gt. 0) S(-1,2) = 1 - S(0,2)
-  if (i .ge. nd-1) S(0,2) = 0.0_rp   !Reset out-of-bounds spline to zero
-
-  ! k = 3 (quadratic splines)
-  w(:) = 0.0_rp
-  w(0) = (x - nodes(i)) * eta(i,3)
-  if (i .ne. 0) w(-1) = (x - nodes(i-1)) * eta(i-1,3)
-  if (i .lt. (nd-2)) S(0,3) = w(0)*S(0,2)
-  if ( ((i-1) .ge. 0) .and. ((i-1) .lt. (nd-2)) ) &
-      S(-1,3) = w(-1) * S(-1,2) + (1.0_rp - w(0))*S(0,2)
-  if ((i-2) .ge. 0) S(-2,3) = (1.0_rp - w(-1))*S(-1,2)
-    
-  ! k = 4 (cubic splines)
-  do l = 0, -2, -1
-    j = i + l
-    if (j .lt. 0) exit  !Skip out-of-bounds splines
-    w(l) = (x - nodes(j)) * eta(j,4)
-  enddo
-  if (i .lt. (nd-3)) S(0,4) = w(0)*S(0,3)
-  do l = -1, -2, -1
-      if ( ((i+l) .ge. 0) .and. ((i+l) .lt. (nd-3)) ) &
-          S(l,4) = w(l)*S(l,3) + (1.0_rp - w(l+1))*S(l+1,3)
-  enddo
-  if ((i-3) .ge. 0) S(-3,4) = (1.0_rp - w(-2))*S(-2,3)
-  
-  ! k = 5
-  do l = 0, -3, -1
-    j = i + l
-    if (j .lt. 0) exit  !Skip out-of-bounds splines
-    w(l) = (x - nodes(j)) * eta(j,5)
-  enddo
-  if (i .lt. (nd-4)) S(0,5) = w(0)*S(0,4)
-  do l = -1, -3, -1
-      if ( ((i+l) .ge. 0) .and. ((i+l) .lt. (nd-4)) ) &
-          S(l,5) = w(l)*S(l,4) + (1.0_rp - w(l+1))*S(l+1,4)
-  enddo
-  if ((i-4) .ge. 0) S(-4,5) = (1.0_rp - w(-3))*S(-3,4)
-  if (kmax .eq. 5) return  !Exit if only 5th order spline is needed
-
-  ! k = 6
-  do l = 0, -4, -1
-    j = i + l
-    if (j .lt. 0) exit  !Skip out-of-bounds splines
-    w(l) = (x - nodes(j)) * eta(j,6)
-  enddo
-  if (i .lt. (nd-5)) S(0,6) = w(0)*S(0,5)
-  do l = -1, -4, -1
-    if ( ((i+l) .ge. 0) .and. ((i+l) .lt. (nd-5)) ) &
-        S(l,6) = w(l)*S(l,5) + (1.0_rp - w(l+1))*S(l+1,5)
-  enddo
-  if ((i-5) .ge. 0) S(-5,6) = (1.0_rp - w(-4))*S(-4,5)
-
-  return
-
-end subroutine bspline
-
-!==================================================================================================
-! DILOG: Calculate dilogarithm in the domain [0,1)
-! Retains terms up to order 3 in the expansion, which results in relative errors less than 1E-5.
-! Reference: 
-!   Ginsberg, E. S., and D. Zaborowski (1975), The Dilogarithm function of a real argument, 
-!   Commun. ACM, 18, 200–202.
-!==================================================================================================
-real(kind=rp) function dilog(x0)
-
-  use msis_constants, only     : rp, pi
-
-  implicit none
-
-  real(kind=rp), intent(in)   :: x0
-  real(kind=rp), parameter    :: pi2_6 = pi*pi / 6.0_rp
-  real(kind=rp)               :: x, xx, x4, lnx
-
-  x = x0
-  if (x .gt. 0.5_rp) then
-    lnx = log(x)
-    x = 1.0_rp - x          !Reflect argument into [0,0.5] range
-    xx = x*x
-    x4 = 4.0_rp*x
-    dilog = pi2_6 - lnx*log(x) &
-            - (4.0_rp*xx*(23.0_rp/16.0_rp + x/36.0_rp + xx/576.0_rp + xx*x/3600.0_rp) &
-                + x4 + 3.0_rp*(1.0_rp - xx)*lnx) / (1.0_rp + x4 + xx)
-  else
-    xx = x*x
-    x4 = 4.0_rp*x
-    dilog = (4.0_rp*xx*(23.0_rp/16.0_rp + x/36.0_rp + xx/576.0_rp + xx*x/3600.0_rp) &
-              + x4 + 3.0_rp*(1.0_rp - xx)*log(1.0_rp - x)) / (1.0_rp + x4 + xx)
-  endif
-
-  return
-
-end function dilog

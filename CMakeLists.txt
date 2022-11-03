@@ -23,7 +23,7 @@ string(APPEND CMAKE_Fortran_FLAGS " -fno-automatic -fno-align-commons -std=legac
 project(guisdap)
 
 add_subdirectory(models/iri2020)
-add_subdirectory(models/nrlmsis2.0)
+add_subdirectory(models/nrlmsis2.1)
 add_subdirectory(models/irbem/source)
 add_subdirectory(models/irbem)
 add_subdirectory(source)

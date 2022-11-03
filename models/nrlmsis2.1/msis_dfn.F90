@@ -1,44 +1,15 @@
-!##############################################################################
+!#######################################################################
 ! MSIS® (NRL-SOF-014-1) SOFTWARE
-!
-! MSIS® is a registered trademark of the Government of the United States of 
-! America, as represented by the Secretary of the Navy. Unauthorized use of 
-! the trademark is prohibited. 
-!
-! The MSIS® Software (hereinafter Software) is property of the United States 
-! Government, as represented by the Secretary of the Navy. Methods performed
-! by this software are covered by U.S. Patent Number 10,641,925. The Government
-! of the United States of America, as represented by the Secretary of the Navy, 
-! herein grants a non-exclusive, non-transferable license to the Software for 
-! academic, non-commercial, purposes only. A user of the Software shall not: 
-! (i) use the Software for any non-academic, commercial purposes, (ii) make 
-! any modification or improvement to the Software, (iii) disseminate the 
-! Software or any supporting data to any other person or entity who will use 
-! the Software for any non-academic, commercial purposes, or (iv) copy the 
-! Software or any documentation related thereto except for (a) distribution 
-! among the user’s personal computer systems, archival, or emergency repair 
-! purposes, or (b) distribution for non-commercial, academic purposes, without 
-! first obtaining the written consent of IP Counsel for the Naval Research 
-! Laboratory. 
-!
-! As the owner of MSIS®, the United States, the United States Department of 
-! Defense, and their employees: (1) Disclaim any warranties, express, or 
-! implied, including but not limited to any implied warranties of 
-! merchantability, fitness for a particular purpose, title or non-infringement, 
-! (2) Do not assume any legal liability or responsibility for the accuracy, 
-! completeness, or usefulness of the software, (3) Do not represent that use of 
-! the software would not infringe privately owned rights, (4) Do not warrant 
-! that the software will function uninterrupted, that is error-free or that any 
-! errors will be corrected.
-!
-! BY USING THIS SOFTWARE YOU ARE AGREEING TO THE ABOVE TERMS AND CONDITIONS.  
-!##############################################################################
+! NRLMSIS® empirical atmospheric model software. Use is governed by the
+! Open Source Academic Research License Agreement contained in the file
+! nrlmsis2.1_license.txt, which is part of this software package. BY
+! USING OR MODIFYING THIS SOFTWARE, YOU ARE AGREEING TO THE TERMS AND
+! CONDITIONS OF THE LICENSE.  
+!#######################################################################
 
 !!! ===========================================================================
-!!! NRLMSIS 2.0:
+!!! NRLMSIS 2.1:
 !!! Neutral atmosphere empirical model from the surface to lower exosphere
-!!! John Emmert (john.emmert@nrl.navy.mil)
-!!! Doug Drob (douglas.drob@nrl.navy.mil)
 !!! ===========================================================================
 
 !**************************************************************************************************
@@ -47,6 +18,7 @@
 module msis_dfn
 
   use msis_constants, only : rp, nl, nsplO1, nsplNO
+  use msis_utils, only     : bspline, dilog
 
   type dnparm
     sequence
@@ -94,8 +66,6 @@ module msis_dfn
     use msis_tfn, only         : tnparm
 
     implicit none
-
-    real(kind=rp), external  :: dilog
 
     integer, intent(in)       :: ispec          ! Species index
     real(kind=rp), intent(in) :: gf(0:maxnbf-1) ! Array of horizontal and temporal basis function terms   
@@ -280,6 +250,7 @@ module msis_dfn
       return !No further parameters needed for legacy anomalous oxygen profile
 
     ! Nitic Oxide ----------------------
+    ! Added geomag dependence 2/18/21
     case(10)
       ! Skip if parameters are not defined
       if (NO%beta(0,0) .eq. 0.0_rp) then
@@ -289,8 +260,10 @@ module msis_dfn
       ! Reference number density
       dpro%lnPhiF = 0.0_rp
       dpro%lndref = dot_product(NO%beta(0:mbf,0),gf(0:mbf))
+      dpro%lndref = dpro%lndref + geomag(NO%beta(cmag:cmag+nmag-1,0),gf(cmag:cmag+12),gf(cmag+13:cmag+26))
       dpro%zref = zetarefNO
-      dpro%zmin = nodesNO(3)
+      !dpro%zmin = nodesNO(3)
+      dpro%zmin = 72.5  !JTE 1/18/22 Cut off profile below 72.5 km, due to possible spline artefacts at edge of domain (70 km)
       dpro%zhyd = zetarefNO
       ! Effective mass
       dpro%zetaM = dot_product(NO%beta(0:mbf,1),gf(0:mbf))
@@ -298,6 +271,7 @@ module msis_dfn
       dpro%HMU   = dot_product(NO%beta(0:mbf,3),gf(0:mbf))
       ! Chapman correction
       dpro%C     = dot_product(NO%beta(0:mbf,4),gf(0:mbf))
+      dpro%C     = dpro%C + geomag(NO%beta(cmag:cmag+nmag-1,4),gf(cmag:cmag+12),gf(cmag+13:cmag+26))
       dpro%zetaC = dot_product(NO%beta(0:mbf,5),gf(0:mbf))
       dpro%HC    = dot_product(NO%beta(0:mbf,6),gf(0:mbf))
       ! Dynamical correction
@@ -307,6 +281,7 @@ module msis_dfn
       ! Unconstrained splines
       do izf = 0,nsplNO-1
           dpro%cf(izf) = dot_product(NO%beta(0:mbf,izf+10),gf(0:mbf))
+          dpro%cf(izf) = dpro%cf(izf) + geomag(NO%beta(cmag:cmag+nmag-1,izf+10),gf(cmag:cmag+12),gf(cmag+13:cmag+26))
       enddo
       ! Constrained splines calculated after case statement
 
@@ -328,18 +303,6 @@ module msis_dfn
     delM = tanh1 * (dpro%Mi(4) - dpro%Mi(0)) / 2.0_rp
     dpro%Mi(1) = dpro%Mi(2) - delM
     dpro%Mi(3) = dpro%Mi(2) + delM
-    !do i = 0, 4
-    !  i1 = i + 1
-    !  if (i .lt. 4) dpro%aMi(i) = (dpro%Mi(i1) - dpro%Mi(i)) / (dpro%zetaMi(i1) - dpro%zetaMi(i))
-    !  delz = dpro%zetaMi(i) - zetaB
-    !  if (dpro%zetaMi(i) .lt. zetaB) then
-    !    call bspline(dpro%zetaMi(i),nodesTN,nd+2,6,etaTN,Si,iz)
-    !    dpro%WMi(i) = dot_product(tpro%gamma(iz-5:iz),Si(:,6)) + tpro%cVS*delz + tpro%cWS
-    !  else
-    !    dpro%WMi(i) = (0.5_rp*delz*delz + dilog(tpro%b*exp(-tpro%sigma*delz))/tpro%sigmasq)/tpro%tex &
-    !                  + tpro%cVB*delz + tpro%cWB
-    !  endif
-    !end do
     do i = 0, 3
       dpro%aMi(i) = (dpro%Mi(i+1) - dpro%Mi(i)) / (dpro%zetaMi(i+1) - dpro%zetaMi(i))
     enddo
