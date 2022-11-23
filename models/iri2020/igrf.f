@@ -1461,7 +1461,7 @@ C  *********************************************************************
           sp = 1.
           ss = 1.
       if(sign(sp,pla).ne.sign(ss,cla)) then
-        write(7,2) pla,cla
+C       write(7,2) pla,cla
    2    format(/
      +  'WARNING - The CGM pole PLA = ',f6.2,' and station CLAT = ',
      +  f6.2,' are not in the same hemisphere: AZM_ANG is incorrect!')
