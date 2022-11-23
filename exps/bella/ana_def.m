@@ -23,6 +23,9 @@ elseif name_site=='T' | name_site=='V'
     analysis_maxwidth=1.5*analysis_maxwidth;
     if expver==1
       plasma_range=col(ones(5*75,1)*(0:3)*8087+(1:5*75)'*ones(1,4)+40114);
+      if datenum(analysis_start)>datenum(2022,4,20)
+        plasma_range=col(ones(5*75,1)*(0:1)*8087+(1:5*75)'*ones(1,2)+40114);
+      end
     end
   elseif name_site=='V'
     plasma_range=col(ones(5*75,1)*(0:1)*14473+(1:5*75)'*ones(1,2)+14098);
