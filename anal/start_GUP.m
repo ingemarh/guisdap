@@ -5,13 +5,16 @@
 % namely:   GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path 
 % If you want this to executed every time you invoke matlab,
 % add reference to start_GUP to your personal startup file
-
-clear all, clear global, clear functions
+if ~exist('gupclean','var')
+ clear all
+end
+clear global, clear functions
 
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local hdf5ver
 
 hdf5ver = '1.0.0';
-path_GUP=fileparts(fileparts(mfilename('fullpath')));
+d=which(mfilename,'-all');
+path_GUP=fileparts(fileparts(d(end)));
 path_tmp=getenv('TMP');
 if isempty(path_tmp)
  path_tmp=fullfile(getenv('HOME'),'tmp');

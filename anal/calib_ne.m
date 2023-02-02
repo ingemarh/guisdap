@@ -12,6 +12,7 @@ function mr2=calib_ne(F,alt,maxe,minel,folim,polen,fpplt,ipar)
 %         fpplt: Indices to display the parabolic fits of plfs
 %         ipar: Ionosonde data type, 1 for asymptotic fit to crit freq (default)
 %               or 2 for fmfe or fmxf (peak pfreq from NeXtYZ)
+%               or 3 for Tromso Digisonde
 % Output: mr2: [Density_ratio Error NoPointsUsed NewMagic_const]
 global fpp_plot plf_polen
 if nargin<8, ipar=[]; epar=[]; fpar=[];  end
@@ -31,15 +32,23 @@ if isempty(maxe), maxe=1; end
 if isempty(minel), minel=75; end
 if isempty(folim), folim=[1 30]; end
 if isempty(ipar), ipar=1; end
-if ipar == 1, epar='foE';, fpar='foF2';
-else epar='fmxe';, fpar='fmxf';
+sounder='Dynasonde';
+if ipar==2
+ epar='fmxe'; fpar='fmxf';
+elseif ipar==3
+ epar='foEs'; fpar='foF2'; stn='TR169'; sounder='Digisonde';
+else
+ epar='foE'; fpar='foF2';
 end
 fpp_plot=fpplt;
 plf_polen=polen;
 a=vizu('verbose',alt,'P1 AE');
 global Time axs par1D DATA_PATH START_TIME END_TIME r_Magic_const name_ant vizufig
 d=datevec(Time(1));
-[dd,fo,tsound]=get_fo(Time(1),Time(end),name_ant,epar,fpar);
+if ~exist('stn','var'),
+ stn=name_ant;
+end
+[dd,fo,tsound]=get_fo(Time(1),Time(end),stn,epar,fpar);
 t=[]; f=[];
 d=find(dd>datenum(START_TIME) & dd<datenum(END_TIME) & fo(:,F)>folim(1) & fo(:,F)<folim(2));
 dd=dd(d); fo=fo(d,:);
@@ -57,7 +66,7 @@ if ~isempty(dd)
  end
 end
 if isempty(t)
- fprintf('Could not find any valid dynasond foF2 for these times\n')
+ fprintf('Could not find any valid sounding parameters for these times\n')
  mr2=[];
 else
  fgup=fullfile(DATA_PATH,'.gup');
@@ -77,17 +86,17 @@ else
  nmc=Magic_const/mr2;
  rx=[0 ceil(max(col(f)))]; %rrx=((rx(1):.1:rx(2)));
  plot(axs(2),f(good,1),f(good,2),'o',f(bad,1),f(bad,2),'o',rx,rx*sqrt(mr2),'-',rx,rx,'-');
- FO={'foE','foF2'};
+ FO={epar,fpar};
  FD=FO;
- if ipar ~=1
+ if ipar==2
    FD={'fmxE','fmxF'};
  end
  ylabel(axs(2),sprintf('EISCAT %s (MHz)',char(FO(F))))
- xlabel(axs(2),sprintf('Dynasonde %s (MHz)',char(FD(F))))
+ xlabel(axs(2),sprintf('%s %s (MHz)',sounder,char(FD(F))))
  delete(findobj(vizufig,'UserData','Results'))
  sigma='\sigma'; % char(963)
  text(axs(2),rx(2)*1.05,rx(2)/2,...
-   sprintf('Density ratio=%.2f%s%.2f\nMagic const used=%g\n\nheight=%d-%d km\nelev > %g°\ndynasonde window=%g-%g MHz\ngreen circles > %g%s\n\nsuggested Magic const=%.2f',...
+   sprintf('Density ratio=%.2f%s%.2f\nMagic const used=%g\n\nheight=%d-%d km\nelev > %g°\nsounding window=%g-%g MHz\ngreen circles > %g%s\n\nsuggested Magic const=%.2f',...
    mr2,char(177),sr2,Magic_const,alt,minel,folim,maxe,sigma,nmc),'horiz','left','UserData','Results')
  axis(axs(2),'square')
  pos=get(axs(2),'position'); pos(3)=.5;
