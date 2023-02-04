@@ -2,13 +2,13 @@ function [day,fo,tsound]=get_fo(t1,t2,site,epar,fpar)
 %
 % Retrieve DSND data from database
 % Update 20160408: E and F layer parameters selectable by user for new
-% (SQL) data.  
+% (SQL) data.
 % Default: foE and foF2. 
 % Suggested: sometimes FMXE and FMXF are better.
 %  
 % Usage: [day,fo,tsound]=get_fo(t1,t2,site,epar,fpar)
 % t1, t2: Time interval as Matlab datenum. Empty: default today
-% site: empty: default Tromsø | '(tromso|uhf|vfh)' | '(svalbard|32m|42m)'
+% site: empty: default tromso | '(tromso|uhf|vhf)' | '(svalbard|32m|42m)'
 % epar: empty: default foE    |  1: FMXE           | '<parameter name>'
 % fpar: empty: default foF2   |  1: FMXF           | '<parameter name>'
 
@@ -21,22 +21,37 @@ if nargin<2, t2=[]; end
 if isempty(t2), t2=t1; end
 
 if nargin<3, site='tromso'; end
-if findstr(site(1),'TV'), site='tromso'; end
+if length(site)==1 && findstr(site(1),'TV'), site='tromso'; end
 if site(1)=='L', site='svalbard'; end
 site3=site(1:3);
 if strcmp(site3,'32m') | strcmp(site3,'42m') | strcmp(site3,'esr'), site='svalbard'; end 
 if strcmp(site3,'uhf') | strcmp(site3,'vhf'), site='tromso'; end 
 
 if nargin<4, epar='foE'; end
-if epar==1, epar='FMXE'; end
+if epar==1
+ if strcmp(site,'TR169')
+  epar='foEs'
+ else
+  epar='FMXE';
+ end
+end
 if isempty(epar), epar='foE'; end
 
 if nargin<5, fpar='foF2'; end
 if fpar==1, fpar='FMXF'; end
 if isempty(fpar), fpar='foF2'; end
-tsound=225;
+day=[]; fo=[]; tsound=[];
 
-if strcmp(site3,'quj')
+if strcmp(site,'TR169')
+ %foEs usually better
+ www='https://lgdc.uml.edu/common/DIDBGetValues';
+ fof2_link=sprintf('?ursiCode=%s&charName=%s,%s&fromDate=%04d/%02d/%02d+%02d:%02d:%02.0f&toDate=%04d/%02d/%02d+%02d:%02d:%02.0f',site,epar,fpar,datevec(t1),datevec(t2));
+ of=strrep(webread([www fof2_link]),'---','NaN');
+ form='%s%f%f%s%f%s';
+ d=textscan(of,form,'headerlines',21);
+ fo=[d{5} d{3}];
+ day=datenum(char(d{1}),'yyyy-mm-ddTHH:MM:SS.FFFZ');
+elseif strcmp(site3,'quj')
  ifile=minput('Enter ionosonde monthly foF2 table','KMG',1);
  fof2table=xlsread(ifile);
  %assumeing 00:00 01:00 ... 23:00, and local Kunming time (-7h)
@@ -47,15 +62,10 @@ if strcmp(site3,'quj')
  d=find(ti>t1-3599/86400 & ti<t2+3599/86400);
  day=ti(d); fo=[ones(length(d),1)*NaN fof2(d)];
  tsound=900;
- return
-end
-day=[]; fo=[];
-
-%get the foF2 data
-if t1>datenum(1995,07,12)
+elseif t1>datenum(1995,07,12)
  www='https://dynserv.eiscat.uit.no/';
  for t=fix(t1):fix(t2)
- tt=datevec(t); 
+  tt=datevec(t); 
   fof2_link=sprintf('DD/myque.php?q=select dDay,%s,%s from %s.resul%d_%02d_%02d where %s>0 or %s>0',epar,fpar,site,tt(1:3),epar,fpar);
   [of,i]=urlread([www strrep(fof2_link,' ','%20')]);
   if i
@@ -89,3 +99,4 @@ else
   day=day+datenum(y,1,1)-1;
  end
 end
+if isempty(tsound), tsound=min(diff(day)*86400); end
