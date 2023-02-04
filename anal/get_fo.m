@@ -26,6 +26,7 @@ if site(1)=='L', site='svalbard'; end
 site3=site(1:3);
 if strcmp(site3,'32m') | strcmp(site3,'42m') | strcmp(site3,'esr'), site='svalbard'; end 
 if strcmp(site3,'uhf') | strcmp(site3,'vhf'), site='tromso'; end 
+if strcmp(site3,'syi'), site='SA418'; end
 
 if nargin<4, epar='foE'; end
 if epar==1

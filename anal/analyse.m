@@ -21,8 +21,8 @@ if exist(gfdfile)
 end
 sites='KSTVLXPQH';
 tfor='%04d %02d %02d  %02d %02d %02d';
-beg=sprintf('tfor',t1);
-to=sprintf('tfor',t2);
+beg=sprintf(tfor,t1);
+to=sprintf(tfor,t2);
 if nargin<1 & local.x & isempty(get(0,'UserData'))
  global b
  figure(5)
@@ -33,7 +33,7 @@ if nargin<1 & local.x & isempty(get(0,'UserData'))
  guisdaplogo(1), text(-.4,-.6,'Press mouse to continue'), waitforbuttonpress
  clf
  x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=240; x3=40;
- bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','if strcmp(get(bg,''string''),''GO''),set(bg,''string'',''pause'',''fontsize'',10),else,waitforbuttonpress,end','fontsize',14);
+ bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','if strcmp(get(gcbo,''string''),''GO''),set(gcbo,''string'',''pause'',''fontsize'',10),else,waitforbuttonpress,end','fontsize',14);
  uicontrol('Style','pushbutton','string','?','position',[0 40 20 20],'callback',['web file:///' path_GUP '/doc/howto.html'],'tooltipstring','Get some help');
  uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
  uicontrol('Style','pushbutton','string','Save','position',[50 20 40 20],'callback','o=uiputfile;if o,save_setup(o);end','tooltipstring','Save setup in file');
