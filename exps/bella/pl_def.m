@@ -27,7 +27,5 @@ else
    startad=40114+(0:1)*8087+1;
   end
  end
-
-
- end
+end
 if isempty(gate), gate=2; end
