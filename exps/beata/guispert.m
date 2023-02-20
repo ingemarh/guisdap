@@ -28,5 +28,5 @@ if name_site=='L'
  %gaincorrect(glp,grps)
 end
 if a_pponly
- d_time=timeconv(timeconv(d_time,'utc2tai')+[min(a_code)-3;max(a_code)-max(lpg_code)]*max(vc_penvo)/1e6,'tai2utc');
+ d_time=timeconv(timeconv(d_time,'utc2tai')+[min(a_code)-3;max(a_code)-max(lpg_code(lpg_bcs=='s'))]*max(vc_penvo)*p_dtau/1e6,'tai2utc');
 end
