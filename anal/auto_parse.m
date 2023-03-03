@@ -108,7 +108,7 @@ else
   if set_b, set(b(2),'value',siteid), end
  end
  if isempty(scan)
- elseif strmatch(scan,{'cp2' 'cp3' 'cp4' 'lowelnorth2' 'fix2'},'exact')
+ elseif strmatch(scan,{'cp2' 'cp3' 'cp4' 'lowelnorth2' 'fix2' 'ip2'},'exact')
   intper=0;
  elseif [strfind(scan,'42') strmatch(scan,{'cp6' 'cp1' 'cp7' 'fixed' 'bore' 'lowel' 'zenith'},'exact')]
   intper=60;

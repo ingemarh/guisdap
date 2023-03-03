@@ -15,6 +15,7 @@ else
  extra='%Magic_const=1.1;';
 end
 result_path=fullfile(result_path,'AUTO');
+global gfdfile
 gfdfile=[path_tmp '.gup'];
 if exist(gfdfile)
  load(gfdfile,'-mat')
@@ -37,7 +38,7 @@ if nargin<1 & local.x & isempty(get(0,'UserData'))
  uicontrol('Style','pushbutton','string','?','position',[0 40 20 20],'callback',['web file:///' path_GUP '/doc/howto.html'],'tooltipstring','Get some help');
  uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
  uicontrol('Style','pushbutton','string','Save','position',[50 20 40 20],'callback','o=uiputfile;if o,save_setup(o);end','tooltipstring','Save setup in file');
- br=uicontrol('Style','pushbutton','string','Reset','position',[50 40 40 20],'callback','clf,if exist(gfdfile),delete(gfdfile),end,pause(1),analyse','tooltipstring','Reset to default');
+ br=uicontrol('Style','pushbutton','string','Reset','position',[50 40 40 20],'callback','global gfdfile,if exist(gfdfile,''file''),delete(gfdfile),end,analyse','tooltipstring','Reset to default');
  set(gca,'position',[0 0 1 1],'visible','off')
  text(0,ty(4),'Dsp expr')
  b(1)=uicontrol('Style','pushbutton','string',name_expr,'position',[x y(4) x1 yh],'value',0,'callback','o=uigetdir(path_exps);if o,[path_exps,name_expr]=fileparts(o);set(b(1),''string'',name_expr),end');
