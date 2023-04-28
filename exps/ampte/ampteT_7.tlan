@@ -1,0 +1,144 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                      %
+%%  ***  T A R L A N   P R O G R A M   F O R   T R O M S O  ***         %
+%%                                                                      %
+%%  TYPE: SPECIAL PROGRAM FOR THE AMPTE EXPERIMENT.                     %
+%%                                                                      %
+%%  FILE NAME: (EXP)SP-GE-AMPTE6-T:TLAN                                 %
+%%  TRANSMIT 4 18 USEC PULSES AT F7 AND F6 , AT TIMES 0 2 10 14 * 20 US.%
+%%  TRANSMIT 3 18 USEC PULSES AT F5 AMD F15 , AT TIMES 0 6 9 * 20 USEC.  %
+%%  RECEIVE THE 4 PULSES AT CH1 AND CH2, SAMPLING RATE 20 USEC,         %
+%%  92 SAMPLES, WHICH GIVES 78 LAGMATRIX ROWS AND 68 USABLE GATES,      %
+%%  RANGE 90-294 KM.                                                    %
+%%  RECEIVE THE 3 PULSES AT CH7 AND CH8, SAMPLING RATE 20 USEC,         %
+%%  87 SAMPLES, WHICH GIVES 78 LAGMATRIX ROWS AND 72 USABLE GATES,      %
+%%  RANGE 84-300 KM.                                                    %
+%%  WHILE RECEIVING MULTIPULSES, RECEIVE BACKGROUND                     %
+%%  AT CH3-CH6, 5*21=105 SAMPLES.                                       %
+%%  TRANSMIT PULSES OF 208 USEC (31.2 KM) AT F0 , F4, F2  AND F3.       %
+%%  TRANSMIT 58 USEC PULSES AT F7 AND AT F6 , TRANSMIT 18 USEC PULSES   %
+%%  AT F5 AND F15 .                                                      %
+%%  RECEIVE THE SHORT POW PROF AT CH7 AND CH8, SAMPLING RATE 20 USEC,   %
+%%  90 SAMPLES, RANGE 81-351 KM.                                        %
+%%  RECEIVE THE LONG POW PROF AT CH1 AND CH2, SAMPLING RATE 20 USEC,    %
+%%  90 SAMPLES, RANGE 162-432 KM.                                       %
+%%  RECEIVE LONGPULSES AT CH3-CH6, SAMPLING RATE 10 USEC,               %
+%%  22*21=462 SAMPLES, RANGE 162-855 KM.                                %
+%%  WHILE RECEIVING LONGPULSE, RECEIVE BACKGROUND AT CH1-CH2,           %
+%%  22 SAMPLES, GIVING 8 LAGMATRIX ROWS, AND AT CH7-CH8, 17 SAMPLES,    %
+%%  GIVING 8 LAGMATRIX ROWS, TOO.                                       %
+%%  RECEIVE CALIBRATION AT CH1-CH2, 22 SAMPLES,                         %
+%%                      AT CH3-CH6, 21 SAMPLES                          %
+%%                 AND  AT CH7-CH8, 17 SAMPLES                          %
+%%  IPP: 10989 USEC.  DUTY CYCLE: 12.5 % (BEAM ON)                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+      AT   1      TRANS,CHQPULS
+      AT   10     RXPROT,LOPROT
+      AT   40     BEAMON
+% TRANSMIT 4*18 USEC PULSES AT F7 AND F6 
+% TRANSMIT 3*18 USEC PULSES AT F5 AND F15 
+      AT   60     F15
+      AT   80     RFON
+      AT   98     RFOFF,F7
+      AT   100    RFON
+      AT   118    RFOFF,F6
+      AT   120    RFON
+      AT   138    RFOFF,F7
+      AT   140    RFON
+      AT   158    RFOFF,F6
+      AT   160    RFON
+      AT   178    RFOFF,F15 
+      AT   200    RFON
+      AT   218    RFOFF,F5 
+      AT   240    RFON
+      AT   258    RFOFF,F15
+      AT   260    RFON
+      AT   278    RFOFF,F7
+      AT   300    RFON
+      AT   318    RFOFF,F6
+      AT   320    RFON
+      AT   338    RFOFF,F5
+      AT   360    RFON
+      AT   378    RFOFF,F7
+      AT   380    RFON
+      AT   398    RFOFF,F6
+      AT   400    RFON
+      AT   418    RFOFF,F5
+      AT   420    RFON
+      AT   438    RFOFF,BEAMOFF
+%
+      AT   600    RXPOFF
+      AT   650    LOPOFF
+      AT   660    RECEV
+% RECEIVE  92 SAMPLES AT CH1-CH2, 87 SAMPLES AT CH7-CH8
+% RECEIVE 105 SAMPLES AT CH3-CH6, RATE 10 USEC
+      AT   670    CH8
+      AT   730    CH1
+      AT   750    CH2
+      AT   830    CH7
+      AT   1535   CH3,CH4,CH5,CH6
+      AT   2400   CH8OFF
+      AT   2560   CH1OFF,CH7OFF
+      AT   2580   CH3OFF,CH4OFF,CH5OFF,CH6OFF,CH2OFF
+% TRANSMIT 208 USEC PULSES AT F4, F2 , F3 AND F0 
+% TRANSMIT 58 USEC PULSE AT F7 AND F6 , 18 USEC PULSE AT F5 AND F15 
+      AT   3420   TRANS,CHQPULS
+      AT   3430   RXPROT,LOPROT
+      AT   3460   BEAMON
+%
+      AT   3480   F0 
+      AT   3500   RFON
+      AT   3708   RFOFF,F4
+      AT   3710   RFON
+      AT   3918   RFOFF,F2 
+      AT   3920   RFON
+      AT   4128   RFOFF,F3
+      AT   4130   RFON
+      AT   4338   RFOFF,F7
+      AT   4340   RFON
+      AT   4398   RFOFF,F6 
+      AT   4400   RFON
+      AT   4458   RFOFF,F5
+      AT   4460   RFON
+      AT   4478   RFOFF,F15 
+      AT   4480   RFON
+      AT   4498   RFOFF,BEAMOFF
+%
+      AT   4548   RXPOFF
+      AT   4598   LOPOFF
+% RECEIVE 462 SAMPLES AT CH3-CH6, SAMPLING RATE 10 USEC
+% RECEIVE 90 SAMPLES AT CH1-CH2, 90 SAMPLES AT CH7-CH8, RATE 20 USEC
+      AT   4600   RECEV
+      AT   4605   CH6
+      AT   4815   CH3
+      AT   4990   CH7
+      AT   5010   CH8
+      AT   5025   CH5
+      AT   5235   CH4
+      AT   5410   CH1
+      AT   5430   CH2
+      AT   6780   CH7OFF
+      AT   6800   CH8OFF
+      AT   7200   CH1OFF
+      AT   7220   CH2OFF
+      AT   9220   CH6OFF
+      AT   9430   CH3OFF
+      AT   9640   CH5OFF
+      AT   9850   CH4OFF
+% BACKGROUND AT CH1-CH2, 22 SAMPLES, AND AT CH7-CH8, 17 SAMPLES
+      AT   10020  CH1,CH2
+      AT   10120  CH7,CH8
+      AT   10450  CH1OFF,CH2OFF,CH7OFF,CH8OFF
+% CALIBRATION AT CH1-CH2, 22 SAMPLES, AND AT CH7-CH8, 17 SAMPLES
+%                                     AND AT CH3-CH4, 21 SAMPLES
+      AT   10900  CAL100
+      AT   11000  CH1,CH2
+      AT   11100  CH7,CH8
+      AT   11225  CH3,CH4,CH5,CH6
+      AT   11410  STC
+      AT   11430  ALLOFF
+      AT   11440  CAL0
+%
+      AT   11470  BUFLIP
+      AT   11494  REP

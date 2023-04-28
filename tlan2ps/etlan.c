@@ -176,6 +176,7 @@ int     n=0;
 
 fprintf(stdout,"countrcp :");
 fseek(fp,0L,0);
+strtok( NextLine(buff,BUFFLEN,fp)," ");
 while((cmd=NextTlanCmd(fp))!=NULL)
  if(strstr(cmd->name,"REP"))
  {

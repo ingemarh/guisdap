@@ -272,6 +272,10 @@ end
 if a_lpf(1).do
  chk_lagprofiling()
 end
+a_adjust=[];
+if exist('analysis_adjust','var')
+ a_adjust=analysis_adjust;
+end
 
 if exist('display_analysis_pars','var')
  empty_pars=[];

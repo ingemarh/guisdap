@@ -29,7 +29,7 @@ global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlimit a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
-global a_lpf
+global a_lpf a_adjust
 persistent a_antold a_max secs a_posold a_nnold a_averold fileslist
 
 OK=0; EOF=0; jj=0; N_averaged=0; M_averaged=0;
@@ -102,6 +102,9 @@ while i<length(files)
     [d_parbl,lpb]=nd2eros4(col(d_parbl));
   else
     d_parbl=d_parbl(:);
+  end
+  if ~isempty(a_adjust)
+   run(a_adjust)
   end
   tvec=1:6;                    % parameters holding time
   fixed=a_intfix;              % parameters which are not allowed to change

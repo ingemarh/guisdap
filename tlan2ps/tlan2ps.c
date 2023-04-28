@@ -110,7 +110,8 @@ float   if1n,bw,fn;
 Receiver *rec;
 /* First find the Receiver that match the first lo */
 for(rec=reclist;rec->type!=NULL;rec++)if(rec->lo1==lo1)break;
-if(rec->type==NULL)
+if(rec->type!=NULL) printf("%s \n",rec->type);
+else
 {
  fprintf(stderr,"Can't find receiver spec\n");
  exit(1);
@@ -424,13 +425,13 @@ FILE *psopen(char *exp_nam,int n)
 /*********************************/
 /****** FERMETURE FICHIERS *******/
 /*********************************/
-psclose(FILE *fp)
+void psclose(FILE *fp)
 {
  fprintf(fp,"%s",PSFOOT);
  fclose(fp);
 }
 
-end_main(FILE *elan,FILE *tlan)
+void end_main(FILE *elan,FILE *tlan)
 {
 fclose(elan);
 fclose(tlan);

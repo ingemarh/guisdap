@@ -1,0 +1,37 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                      %
+%%  ***  T A R L A N   P R O G R A M   F O R   R E M O T E  ***         %
+%%                                                                      %
+%%  TYPE: SPECIAL PROGRAM FOR THE AMPTE EXPERIMENT.                     %
+%%                                                                      %
+%%  FILE NAME: (CES)SP-GE-AMPTE4-R:TLAN                                 %
+%%  RECEIVE 4 X 208 US PULSES AT CH3-CH6,SAMPLING RATE 10 USEC,         %
+%%  30 SAMPLES. FREQUENCIES:                                            %
+%%     CH6 <> F10   CH3 <> F1   CH5 <> F14   CH4 <> F6                  %
+%%  RECEIVE BACKGROUND AT CH3-CH6, (18+15)*5=165 SAMPLES                %
+%%  RECEIVE CALIBRATION AT CH3-CH6, (18+15)*5=165 SAMPLES               %
+%%  IPP: 10989 USEC.                                                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+      AT   1      RECEV
+% RECEIVE LONGPULSE AT CH3-CH6, 30 SAMPLES
+      AT   3500   CH6
+      AT   3710   CH3
+      AT   3795   CH6OFF
+      AT   3920   CH5
+      AT   4005   CH3OFF
+      AT   4130   CH4
+      AT   4215   CH5OFF
+      AT   4425   CH4OFF
+% RECEIVE BACKGROUND AT CH3-CH6, 165 SAMPLES
+      AT   7455   CH3,CH4,CH5,CH6
+      AT   9100   CH3OFF,CH4OFF,CH5OFF,CH6OFF
+% RECEIVE CALBRATION AT CH3-CH6, 165 SAMPLES
+      AT   9150   CAL100
+      AT   9255   CH3,CH4,CH5,CH6
+      AT   10880  STC
+      AT   10900  CH3OFF,CH4OFF,CH5OFF,CH6OFF
+      AT   10920  CAL0
+%
+      AT   10940  BUFLIP
+      AT   11494  REP

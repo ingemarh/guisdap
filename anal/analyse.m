@@ -41,7 +41,7 @@ if nargin<1 & local.x & isempty(get(0,'UserData'))
  br=uicontrol('Style','pushbutton','string','Reset','position',[50 40 40 20],'callback','global gfdfile,if exist(gfdfile,''file''),delete(gfdfile),end,analyse','tooltipstring','Reset to default');
  set(gca,'position',[0 0 1 1],'visible','off')
  text(0,ty(4),'Dsp expr')
- b(1)=uicontrol('Style','pushbutton','string',name_expr,'position',[x y(4) x1 yh],'value',0,'callback','o=uigetdir(path_exps);if o,[path_exps,name_expr]=fileparts(o);set(b(1),''string'',name_expr),end');
+ b(1)=uicontrol('Style','pushbutton','string',name_expr,'position',[x y(4) x1 yh],'value',0,'callback','o=uigetdir(path_exps);if o,[path_exps,name_expr]=fileparts(o);set(gcbo,''string'',name_expr),end');
  text(0,ty(5),'Site')
  b(2)=uicontrol('Style','popupmenu','string',sites','position',[x y(5) x1 yh],'value',siteid);
  text(0,ty(1),'Data path')
@@ -52,7 +52,7 @@ if nargin<1 & local.x & isempty(get(0,'UserData'))
  b(5)=uicontrol('Style','edit','string',to,'position',[x y(3) x2 yh]);
  text(0,ty(6),'Result path')
  b(6)=uicontrol('Style','pushbutton','string',result_path,'position',[x y(6) x2 yh],'value',0,'callback',...
- '[f,p]=uiputfile(''*'',''Save data in'',result_path);if p,result_path=fullfile(p,f,filesep);if ~strcmp(f,''AUTO'') & ~exist(result_path),mkdir(p,f);end,else,result_path=path_tmp;end,set(b(6),''string'',result_path)');
+ '[f,p]=uiputfile(''*'',''Save data in'',result_path);if p,result_path=fullfile(p,f,filesep);if ~strcmp(f,''AUTO'') & ~exist(result_path),mkdir(p,f);end,else,result_path=path_tmp;end,set(gcbo,''string'',result_path)');
  text(0,ty(7),'Real time')
  b(7)=uicontrol('Style','togglebutton','string','RT','position',[x y(7) x1 yh],'value',rt);
  text(0,ty(8),'Integration time')

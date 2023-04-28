@@ -25,7 +25,7 @@ if strmatch('COR_pulsetopulse',vc_routine(lp_vc(lps)))
 end
 for lp=lps
   [w,r]=wr(lp_vc(lp),lp_t1(lp),lp_t2(lp),clash);
-  d=find(r<=0);
+  d=find(r+dummyrange<=0);
   if length(d)>0
     warning('Got negative ranges, ignoring')
     w(d)=[]; r(d)=[];
