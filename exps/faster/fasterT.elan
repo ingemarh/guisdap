@@ -1,0 +1,87 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   ***  E R O S   P R O G R A M M E   F O R   T R O M S O  ***
+%     File: (SW)SP-SW-FASTER-T:ELAN
+%
+% Written by Ingemar Haggstrom
+% IRF, Kiruna, Jan 1997
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WRITE-EXP-FILES
+CHANGE-REF-SITE TROMSO,,,,,
+POINT-REF-H 183.2,77.4,270
+SET-SIG-PATH ALLX
+LOAD-CORR SP-SW-FASTER-T:CCOD  % A special correlator program
+SYNC -60
+LOAD-RA-CON SP-SW-FASTER-T:TCOD
+TRANSFER-NOISE-CONT RADAR
+SET-LO1 812.0
+SET-FREQ 3,F0
+SET-FREQ 4,F9
+SET-FREQ 5,F6
+SET-FREQ 6,F10
+SET-SIG-ATT X,0
+SET-CH-ATT 3,2
+SET-CH-ATT 4,2
+SET-CH-ATT 5,3
+SET-CH-ATT 6,0
+SYNC 10
+SET-FILTER 3,LI,25.0,L
+SET-FILTER 4,LI,25.0,L
+SET-FILTER 5,LI,25.0,L
+SET-FILTER 6,LI,25.0,L
+SELECT-ALTERNATING-CODE 16  % 16 bit strong condition code used
+SET-COR-APB 15,15  % Max lag in the AC
+SET-COR-APB 14,101 % # gates in AC
+SET-COR-APB 13,66  % # 0lag points
+SET-COR-APB 12,10  % LPVOLIND
+SET-COR-APB 11,2   % # PP cal points
+SET-COR-APB 10,31  % # scans-1
+SET-COR-APB  9,28  % LPNOGAT
+SET-COR-APB  8,2   % Oversampling
+SET-COR-APB  7,15  % Gating PP cal
+SET-COR-APB  6,1   % # channels-1
+SET-COR-APB  5,0   % Channel counter
+SET-COR-APB  4,0   % Scan counter
+SET-COR-APB  0,1   % APBINCR
+SET-COR-APM 15,15   % # lags/gate in the AC
+SET-COR-APM 14,0    % AC sig data, 101*15=1515 points
+SET-COR-APM 13,4093 % PP sig data, 1 point
+SET-COR-APM 12,1980 % PP cal data, (2+2)/2=2 points
+SET-COR-APM 11,1982 % AC 0-lag data, 66*32=2112 points
+SET-COR-APM 10,66   % AC 0-lag step, 132/2 points
+SET-COR-APM  8,1515 % LP signal 28*16=448 points
+SET-COR-APM  7,1963 % LP sky 1*16 points
+SET-COR-APM  6,1979 % LP noise 1 points
+SET-COR-APM  4,4094 % Scancount address
+SET-COR-APM  0,1    % APMINCR
+SET-COR-DATAIO 4095 % 101*15+(28+1)*16+1+2+2112+1
+SYNC 10
+SET-ADC-INT 3,11
+SET-ADC-INT 4,11
+SET-ADC-INT 5,14
+SET-ADC-INT 6,14
+
+SET-BUF-MEM 3,0,3   % Signal     132 samples
+SET-BUF-MEM 4,132,3 % Calibration 60 samples
+SET-BUF-MEM 5,192,3 % LP signal  310 samples
+SET-BUF-MEM 6,502,3 % LP cal      80 samples
+
+SET-BUF-MEM 3,132,0
+SET-BUF-MEM 4,0,0
+SET-BUF-MEM 5,502,0
+SET-BUF-MEM 6,192,0
+                    % The last used address is 581
+HOLD 10             % Give time to load hardware up to here
+START-CORR
+ENABLE-DMA U,U
+SYNC 20
+START-RA-CON 8,1,2
+SYNC 10
+DOPPLER-CALIBRATION OFF
+DO -1
+  NEW-FILE
+  SYNC 1800
+ENDDO
+STOP-EXP,,,,
+E-O-E

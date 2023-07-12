@@ -1,0 +1,95 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   ***  E R O S   P R O G R A M M E   F O R   R E M O T E S  ***
+%
+%    S P - S W - F A S T E R
+%
+%    by Ingemar Haggstrom, IRF   Jan 1997
+%                  1X(16*22) us alternating code pulse per ipp
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WRITE-EXP-FILES
+SET-PARAMETER R1,270 % Define intersection altitudes
+SET-PARAMETER R2,180
+&K OFFSET-PPD -10
+&S OFFSET-PPD -21
+CHANGE-REF-SITE TROMSO,,,,,
+POINT-REF-H 183.2,77.4,R1
+SET-SIG-PAT ALLX
+&KSET-POLAR 94,-8      % Settings for the remote site volume at 270 km altitude
+&SSET-POLAR 107,-19
+LOAD-CORR SP-SW-FASTER-R:CCOD % Based on CP-1-K
+SYNC -60
+LOAD-RA SP-SW-FASTER-R:TCOD
+HOLD 10
+TRANSFER-NOISE RAD
+SET-FR 5,F0
+SET-FR 6,F9
+SET-FR 7,F6
+SET-FR 8,F10
+&KSET-SIG-ATT X,1
+&SSET-SIG-ATT X,1
+&KSET-CHAN-ATT 5,2
+&KSET-CHAN-ATT 6,1
+&KSET-CHAN-ATT 7,3
+&KSET-CHAN-ATT 8,0
+&SSET-CHAN-ATT 5,8
+&SSET-CHAN-ATT 6,4
+&SSET-CHAN-ATT 7,6
+&SSET-CHAN-ATT 8,5
+SYNC 10
+SET-FILT 5,LI,25,,
+SET-FILT 6,LI,25,,
+SET-FILT 7,LI,25,,
+SET-FILT 8,LI,25,,
+SELECT-ALTERNATING-CODE 16
+SET-CORR-APB 15,15 % ALTLAGMAX, Max lag in ac gates
+SET-CORR-APB 14, 9 % NACSG, # AC channel signal gates
+SET-CORR-APB 13, 2 % ACOS, AC oversampling
+SET-CORR-APB 11,70 % LPCALPROD, The number of products/lag in lpacf B,C
+SET-CORR-APB 10, 3 % NLPCG, # LPACF background+calibration gates
+SET-CORR-APB  9, 1 % NLPSG, # LPACF signal gates
+SET-CORR-APB  8,30 % LPLAGMAX, Max lag in LPACF
+SET-CORR-APB  7,31 % LPSIGSAMP, # signal samples used/ACF in LPACF
+SET-CORR-APB  6, 4 % LPMARGIN, Defines overlap in LPACF signal vector
+SET-CORR-APB  0, 1 % Increment
+
+SET-CORR-APM 15,15  % NOLAGS, # lags in a AC signal gate
+SET-CORR-APM 14,0   % ACSRES, AC signal ACF gates, 9*15=135 points
+SET-CORR-APM 13,135 % ACBRES, AC signal 39+31=70 points
+SET-CORR-APM 12,205 % ACCRES, AC background and calib 2*31+31=93 points
+SET-CORR-APM 11,30  % LPMAXLAG, The max lag of the LP ACFS
+SET-CORR-APM 10,298 % LPSRES, LPACF timing and signal gate, 39+31=70 points
+SET-CORR-APM  9,368 % LPBRES, LP background and calib, 2*31+31=93 points
+SET-CORR-APM  7,461 % Scancountaddress
+SET-CORR-APM  0,1   % Increment
+SET-CORR-DATAIO 462 % 9*15+2*(39+31+(2+1)*31)+1
+SYNC 10
+SET-BUF-MEM 5,  0,3 % 39 + 3*100
+SET-BUF-MEM 6,339,3 % 3*100
+SET-BUF-MEM 7,639,3 % 39 + 3*100
+SET-BUF-MEM 8,978,3 % 300  Last used address is 1277
+
+SET-BUF-MEM 5,339,0
+SET-BUF-MEM 6,  0,0
+SET-BUF-MEM 7,978,0
+SET-BUF-MEM 8,639,0
+
+SET-ADC-INT 5,11.
+SET-ADC-INT 6,11.
+SET-ADC-INT 7,10.
+SET-ADC-INT 8,10.
+HOLD 10
+START-CORR
+ENABLE-DMA U,U
+SYNC 10
+START-R-C 8,1,2
+SYNC 10
+DOPPLER-CALIBRATION OFF
+&KSET-POLAR 94,-8
+&SSET-POLAR 107,-19
+DO -1
+  NEW-FILE
+  SYNC 1800
+ENDDO
+STOP-EXP,,,,
+E-O-E

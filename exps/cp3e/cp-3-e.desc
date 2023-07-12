@@ -1,0 +1,102 @@
+ON PROGRAMME THREE VERSION E: EXPERIMENT DESCRIPTION FILE
+*************************************************************
+EXPERIMENT FILE (EXP)CP-3-E:DESC   VERSION 1986-01-12
+                                                02-02
+                                                31-03
+
+  PRELIMINARY VERSION. FOR DETAILS SEE ELAN/TLAN FILES
+
+ GENERAL:
+ =======
+ THIS VERSION OF CP-3 IS A 16-POSITION LATITUDINAL SCAN OVERHEAD
+ TROMSO AND KIRUNA WITH ONE BEAM SWING POSITION 20 DEG IN AZIMUTH       
+ TO THE NORTH-EAST OF SCAN TRAJECTORY.                            
+
+ TO KEEP THE ALTITUDE COVERAGE FOR ALL ANTENNA POSITIONS ROUGHLY,      
+ THE START RANGES AND PULSE LENGTHS FOR THE FIRST AND THE LAST 5
+ ELEVATIONS OF THE SCAN ARE ADJUSTED BY USING DIFFERENT RADAR CONTROLLER
+ PROGRAMMES. THE USED PULSE LENGTHS FOR LONG PULSE AND SHORT PULSE
+ IN MICROSECONDS AND THE START RANGES IN UNITS OF 100 M ARE RECORDED
+ IN THE PARAMETER BLOCK POSITION 121/122 AND 123/124. THESE
+ VALUES ARE ALSO AVAILABLE IN THE REMOTE SITE PARAMETER BLOCKS.
+ ADDITIONALLY THE CURRENT ANTENNA POSITION IS RECORDED AS NUMBER BETWEEN
+ 1 (BEAM SWINGING POSITION NORTH-EAST) AND 17 (LAST SCAN POSITION IN THE      
+ SOUTH) IN POSITION 125 OF THE PARAMETER BLOCK.                            
+
+ FOR FURTHER DETAILS SEE THE :ELAN FILE AND THE REPORT ON THE FAMILY OF 
+ CORRELATOR PROGRAMS "GEN" BY T.TURUNEN, AS CP-3-E IS BASED ON GEN-5 FOR 
+ TROMSO AND GEN-REMOTE FOR KIRUNA AND SODANKYLA.
+ 
+ THE FOLLOWING TWO TABLES CONTAIN USEFUL INFORMATION ABOUT VARIOUS           
+ PARAMETERS OF CP-3-E:
+
+ ---------------------------------------------------------------------------
+ PO RC AZIM   ELE  INV GEOG  GEOG  MOVE+ h-MIN h-MAX h-RES h-MIN h-MAX h-RES
+  #  #    T     T  LAT  LAT   LON  DWELL   ACF   ACF   ACF    PP    PP    PP
+(a) (b) (c)   (c)  (d)  (d)   (d)    (e)   (f)   (f)   (f)   (f)   (f)   (f)
+ ---------------------------------------------------------------------------
+  1  1   5.0 20.0 72.1 75.3 21.2  00+110   180   521  18.5    80   228
+  2  1 344.9 20.0 72.4 75.0 13.4  10+ 90   180   521  18.5    80   228
+  3  2 344.9 24.0 71.6 74.2 14.6  10+ 70   141   513  20.7    80   249
+  4  3 344.9 28.6 70.8 73.5 15.5  10+ 70   144   562  23.0    81   274 
+  5  4 344.9 34.7 70.0 72.7 16.3  10+ 70   143   618  25.6    69   292   
+  6  5 344.9 43.6 69.2 71.9 17.2  10+ 80   150   705  29.6    62   327  
+  7  6 344.9 55.0 68.4 71.2 17.9  10+ 80   165   804  34.4    62   371  
+  8  6 344.9 70.0 67.6 70.4 18.5  10+ 80   188   906  32.3    71   422 
+  9  6 ----- 90.0 66.8 69.6 19.2  20+110   200   956  42.0    75   447  
+ 10  6 164.9 77.0 66.2 69.1 19.6  20+ 70   195   935  40.9    73   436 
+ 11  6 164.9 64.0 65.6 68.5 20.0  20+ 70   180   871  37.7    68   405   
+ 12  6 164.9 52.7 65.0 67.9 20.4  20+130   160   784  33.4    60   361  
+ 13  5 164.9 42.0 64.2 67.1 20.9  10+ 90   146   687  28.8    61   318 
+ 14  4 164.9 34.0 63.4 66.3 21.4  10+ 90   140   609  25.2    68   288 
+ 15  3 164.9 28.0 62.6 65.5 21.8  10+ 90   141   553  22.5    79   269
+ 16  2 164.9 23.4 61.8 64.8 22.3  10+ 80   138   504  20.2    78   243
+ 17  1 164.9 19.7 61.0 64.0 22.6  20+ 80   178   516  18.2    79   216
+ ----------------------------------------------------------------------------
+
+
+ NOTES:
+ ======
+ (a) PO # IS THE ANTENNA POSITION NUMBER. THIS NUMBER IS IN THE PARAMETER
+     BLOK IN LOCATION # 125. IT CORRESPONDS TO THE INTEGER PARAMETER I20
+     WHICH IS SET IN THE ELAN PROGRAM.
+ (b) RC # IS THE RADAR CONTROLLER PROGRAM NUMBER USED FOR THIS POSITION OF
+     THE ANTENNA. THIS NUMBER IS IN THE PARAMETER BLOCK IN LOCATION # 92.
+     THERE ARE 6 R-C PROGRAMMES. THEY ARE DESCRIBED IN THE NEXT TABLE.
+ (c) AZIM T AND ELE T ARE THE AZIMUT AND ELEVATION OF THE TROMSO ANTENNA
+     CORRESPONDING TO EACH POSITION OF THE ANTENNA. SEE THE DESCRIPTION OF
+     THE PARAMETER BLOCK IN THE EISCAT GUIDE FOR A COMPLETE EXPLANATION OF
+     THE ANTENNA PARAMETERS SAVED IN THE PARAMETER BLOCK.
+ (d) INV LAT, GEOG LAT AND GEOG LON ARE THE INVARIANT AND GEOGRAPHATITUDE
+     RESPECTIVELY AND THE GEOGRAPHIC LONGITUDE OF THE TRISTATIC INTERSECTION
+     POINT AT 275 KM. THESE NUMBERS APPLY TO THE LONG PULSE MEASUREMENTS. 
+ (e) MOVE+DWELL ARE THE TIMES OF ANTENNA MOTION AND ANTENNA DWELL. THEY ARE
+     ROUNDED TO THE NEXT WHOLE DUMP TIME (10 SEC) OF THE MOVE TIME.
+
+
+ -------------------------+------+------+------+------+------+------+-----+
+ RADAR CONT. PROG. #      l   1  l   2  l   3  l   4  l   5  l   6  lNOTESl
+ -------------------------+------+------+------+------+------+------+-----+
+ PULSE LENGTH  usec (ACF) l  518 l  476 l  434 l  392 l  364 l  350 l     l 
+ MIN RANGE     km   (ACF) l  481 l  330 l  290 l  245 l  215 l  200 l     l
+ MAX RANGE     km   (ACF) l 1237 l 1086 l 1046 l 1001 l  971 l  956 l     l
+ RANGE INCREM. km   (ACF) l 31.5 l 31.5 l 31.5 l 31.5 l 31.5 l 31.5 l     l
+ RANGE RESOLU. km   (ACF) l   54 l   51 l   48 l   45 l   43 l   42 l (a) l
+                                                                           
+                                                                             
+ PULSE LENGTH  usec (PP ) l   98 l   98 l   91 l   84 l   77 l   70 l     l
+ MIN RANGE     km   (PP ) l  225 l  190 l  165 l  120 l   90 l   75 l     l
+ MAX RANGE     km   (PP ) l  597 l  562 l  537 l  492 l  462 l  447 l     l
+ RANGE INCREM. km   (PP ) l  2.1 l  2.1 l  2.1 l  2.1 l  2.1 l  2.1 l     l
+ RANGE RESOLU. km   (PP ) l 14.7 l 14.7 l 13.7 l 12.6 l 11.6 l 10.5 l (b) l    
+                          l      l      l      l      l      l      l     l   
+ R-C REP PERIOD    usec   l 23910l 22760l 20960l 19020l 17655l 16730l     l   
+ -------------------------+------+------+------+------+------+------+-----+   
+
+
+ NOTES
+ =====
+ (a) The range resolution is approximately at 75% of the volume             
+     contribution.
+ (b) The range resolution here is peak-to-peak.
+U

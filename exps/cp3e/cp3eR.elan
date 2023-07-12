@@ -1,0 +1,263 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  ***  E R O S   P R O G R A M M E	F O R   R E M O T E S  ***
+%%
+%%	  COMMON PROGRAM CP-3-E
+%%
+%%	  FILE: (EXP)CP-3-E-NR:ELAN
+%%
+%%	  EISCAT MARCH 1986		    
+%%							    
+%%	  CONTRIBUTORS: KIRKWOOD, LA HOZ, MARKKANEN,
+%%		          SCHMIDT, TURUNEN, VAN EYKEN.
+%%
+%%	  LAST ALTERED 31 MARCH 1986, C. LA HOZ	          
+%%
+%%	  IN 3. JUNE 1986 A NEW NOISE INJECTION CALIBRATION WAS
+%%	  ADDED AND THE CORRELATOR PROGRAM UPDATED.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+WRITE-EXP-HEAD
+%
+WRITE-FILE (EXP)CP-3-E-NR:ELAN
+WRITE-FILE (EXP)CP-3-E-NR:TLAN
+WRITE-FILE (EXP)CP-3-E:DESC
+WRITE-FILE (EXP)CP-3-E-NR-SUBR:LIST	 %VERSION MAY 1986 
+%
+SET-SIG-PATH ALLX
+%
+SET-PARAMETER R01,275.0
+%
+    OFFSET-PPD -270
+    CHANGE-REF-SITE TROMSO,,,,  % JUST TO MAKE SURE!
+    POINT-REF-HE   5.0,20.0,R01      
+&K  SET-POLARISER 90.0,0.0
+&S  SET-POLARISER 87.7,1.9
+%
+FETCH-CORRELATOR (EXP)CP-3-E-NR:CCOD
+%
+LOAD-CORR (EXP)CP-3-E-NR:CCOD    %MASTER PROGRAM GEN-REMOTE:CLAN
+%			   %VERSION MAY 1986
+HOLD 30
+SYNC -150
+%
+%
+LOAD-RADAR (EXP)CP-3-E-NR
+%
+TRANSF-NOISE-CONT RAD
+%
+TRACE-OFF		%% ALL NECESSARY INFORMATIONS ARE GIVEN
+%
+SET-LO1 1053.5
+%
+SET-SIG-ATT X,5
+%
+&KSET-CH-ATT 3,4
+&KSET-CH-ATT 4,7
+&KSET-CH-ATT 5,7
+&KSET-CH-ATT 6,2
+&SSET-CH-ATT 3,3	 %BALANCED 24.3.86	  CARDS 6AB
+&SSET-CH-ATT 4,11	 %BALANCED 24.3.86	         1,2
+&SSET-CH-ATT 5,7	 %BALANCED 24.3.86	        16AB
+&SSET-CH-ATT 6,2	 %BALANCED 24.3.86	 JM     17AB
+%		 NOTE:BALANCE THE CHANNELS 
+%		      BY CHECKING THE ATTENUATOR VALUES BEFORE THE EXPERIMENT.
+SET-LO2 3,94.0
+SET-LO2 4,93.5
+SET-LO2 5,93.0
+SET-LO2 6,92.5
+%
+SET-FILTER 3,BUT,25.0
+SET-FILTER 4,BUT,25.0
+SET-FILTER 5,BUT,25.0
+SET-FILTER 6,BUT,25.0
+%
+SET-CO-APB 15,-10      %MARGIN1 (OVERLAPPING)
+SET-CO-APB 14,30       %SIGSAMPLES1
+SET-CO-APB 13,20       %LAGMAX1
+SET-CO-APB 12,3        %CALGATES1
+SET-CO-APB 11,130      %CALPRODUCTS1
+SET-CO-APB 10,0    %MARGIN2      %REGISTER SET 2 USED ONLY IF REMOTE2
+SET-CO-APB  9,0        %SIGSAMPLES2  %CALLED IN THE USED PROGRAM VERSION
+SET-CO-APB  8,20       %LAGMAX2      %AS SHOWN IN CP-3-E-NR-SUR:LIST
+SET-CO-APB  7,3        %CALGATES2
+SET-CO-APB  6,130      %CALPRODUCTS2
+SET-CO-APB  2,5        %USERREG (NUMBER OF SIGGATES)
+SET-CO-APB  0,1        %APBINCR
+%
+%
+SET-CO-APM 15,0        %RESENTRY1, SIGNAL PART 2+1+2 ACFS, 21 LAGS, TRIANGLE
+SET-CO-APM 14,105      %RESENTRY2, CALIIBRATION ACFS (3), 21 LAGS, BOXCAR
+SET-CO-APM 13,168      %SCANCOUNTADDRESS
+%
+SET-CO-APM  3,20       %LPMAXLAG1
+SET-CO-APM  2,20       %LPMAXLAG2
+%
+SET-CO-APM  0,1        %APMINCR
+%
+%
+SET-CO-DATAIO 169
+%
+%	    INFORMATION FOR DISPLAY PROGRAMS:
+%
+%
+%		1) USE TROMSO VERSION OF THE RTGRAPH
+%		2)"DA" STATEMENT : NO STANDARD PROGRAM
+%			   START OF ACF= 1
+%			   NO OF ACFS = 8
+%			   NO OF LAGS = 21
+%			   NO EXTRA SAMPLES ETC
+%		3)"BO" STATEMENT : BOXCAR ACFS = YES
+%			   FIRST = 6, LAST = 8
+%			   SIGSAMPLES=30
+%			   NUMBER OF PRODUCTS = 260
+%		4)"SU" STATEMENT : ACFS 6 AND 7 MEANED AND SUBTRACTED
+%		5)"FT" STATEMENT : SIGNAL SHOULD BE IN THE THIRD ACF
+%			   FOR TIMING CHECK COMPARE ACFS 2 AND 4
+%
+%   NOTE:ALTHOUGH THE "TRUE" SIGSAMPLES =130 , THE VALUE 260 ARISES
+%	  BECAUSE TWO PERIODS WITH SIGSAMPLES 130 ARE ADDED TOGETHER IN
+%	  EVERY CHANNEL, SEE TLAN FILE FOR DETAILS.
+%
+%	    FOR FURTHER DETAILS SEE THE DESCRIPTION FILE
+%
+%
+SYNC 60
+%
+SET-BUF-M 3,0000
+SET-BUF-M 4,2020
+SET-BUF-M 5,1010
+SET-BUF-M 6,3030
+%
+SET-ADC-INT 3,10
+SET-ADC-INT 4,10
+SET-ADC-INT 5,10
+SET-ADC-INT 6,10
+%
+START-CORR
+SYNC 50
+START-RADAR 10,1,10
+%
+ENABLE-DMA
+%
+SYNC 10
+%
+DO -1
+%
+SET-PARAMETER I16,518	  %% LENGTH OF LONG PULSES
+SET-PARAMETER I17,98	  %% LENGTH OF SHORT PULSES
+SET-PARAMETER I18,4810	  %% START-RANGE FOR LONG PULSES
+SET-PARAMETER I19,2250	  %% START-RANGE FOR SHORT PULSES
+SET-PARAMETER I20,1	  %% POSITION COUNTER
+START-REC-DATA
+DISPLAY-PARAMETER I20,POSITION NO
+SYNC 110		  %%  0 +110 POSITION 1
+%
+POINT-R-H  344.9, 20.0, R01				 
+%SSET-POLARISER 88.4,1.0
+SET-PARAMETER I20,2
+DISPLAY-PARAMETER I20,POSITION NO
+SYNC 101		  %%  20+90   POSITION 2
+START-RADAR 0,2,10
+SYNC	9
+%
+OFFSET-PPD  -291		!!!!!!NEEDS INDEPENDENT CONFIRMATION
+POINT-R-H  344.9, 24.0, R01
+%SSET-POLARISER 87.8,1.0
+SET-PARAMETER I16,476
+SET-PARAMETER I17,98
+SET-PARAMETER I18,3300
+SET-PARAMETER I19,1900
+SET-PARAMETER I20,3
+DISPLAY-PARAMETER I20,POSITION NO
+SYNC 71		  %%  10+70  POSITION 3
+START-RADAR 0,3,10
+SYNC  9				     
+%
+OFFSET-PPD  -312
+POINT-R-H  344.9, 28.6, R01			      
+&SSET-POLARISER 86.8,0.0
+SET-PARAMETER I16,434
+SET-PARAMETER I17,91
+SET-PARAMETER I18,2900
+SET-PARAMETER I19,1650
+SET-PARAMETER I20,4
+DISPLAY-PARAMETER I20,POSITION NO
+SYNC 71		  %%  10+70  POSITION 4
+START-RADAR 0,4,10
+SYNC  9
+%
+OFFSET-PPD -333
+POINT-R-H  344.9, 34.7, R01			     
+&SSET-POLARISER 85.5,0.0
+SET-PARAMETER I16,392
+SET-PARAMETER I17,84
+SET-PARAMETER I18,2450
+SET-PARAMETER I19,1200
+SET-PARAMETER I20,5
+DISPLAY-PARAMETER I20,POSITION NO
+SYNC 71		  %%  10+70  POSITION 5
+START-RADAR 0,5,10
+SYNC  9
+%
+OFFSET-PPD -347
+POINT-R-H  344.9, 43.6, R01			     
+&KSET-POLARISER 90.0,-1.0
+&SSET-POLARISER 83.5,-1.0
+SET-PARAMETER I16,364
+SET-PARAMETER I17,77
+SET-PARAMETER I18,2150
+SET-PARAMETER I19,900
+SET-PARAMETER I20,6
+DISPLAY-PARAMETER I20,POSITION NO
+SYNC 81		  %%  10+80  POSITION 6
+START-RADAR 0,6,10
+SYNC  9
+%
+OFFSET-PPD -354
+POINT-R-H  344.9, 55.0, R01			     
+&KSET-POLARISER 90.0,-2.0
+&SSET-POLARISER 81.5,-4.0
+SET-PARAMETER I16,350
+SET-PARAMETER I17,70
+SET-PARAMETER I18,2000
+SET-PARAMETER I19,750
+SET-PARAMETER I20,7
+DISPLAY-PARAMETER I20,POSITION NO
+SYNC 90		  %%  10+80 POSITION 7
+%
+POINT-R-H  344.9, 70.0, R01			       
+&KSET-POLARISER 90.0,-4.0
+&SSET-POLARISER 81.4,-9.0
+SET-PARAMETER I20,8
+DISPLAY-PARAMETER I20,POSITION NO
+SYNC 90		  %%  20+70  POSITION 8
+%
+POINT-R-H   12.8, 89.99,R01	          
+&KSET-POLARISER 90.0,-7.0
+&SSET-POLARISER 90.4,-18.0
+SET-PARAMETER I20,9
+DISPLAY-PARAMETE0,POSITION NO
+? OVERHEAD POSITION TROMSO
+SYNC 130		  %%  20+110  POSITION 9
+%
+POINT-R-H  164.9, 77.0, R01			     
+&KSET-POLARISER 90.2,-9.0
+&SSET-POLARISER 105.1,-22.0
+SET-PARAMETER I20,10
+DISPLAY-PARAMETER I20,POSITION NO
+SYNC  90		  %%  20+70  POSITION 10
+%
+POINT-R-H  164.9, 64.0, R01
+&KSET-POLARISER 90.2,-9.0
+&SSET-POLARISER 123.2,-18.0
+SET-PARAMETER I20,11
+DISPLAY-PARAMETER I20,POSITION NO
+SYNC  90		  %%  20+70  POSITION 11
+%
+CHANGE-REF-SITE KIRUNA,,,,
+POINT-R-H 3.9,89.99,R01
+&KSET-POLARISER 79.4,-3.0
+&SSET-POLARISER 132.2,-7.0
+SET-PARAMETER I20,12
+SYNC 30		  %% ANTENNA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 

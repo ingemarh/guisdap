@@ -1,0 +1,107 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   ***  E R O S   P R O G R A M M E   F O R   T R O M S O  ***
+%     File: (SW)SP-SW-IONC4-T:ELAN
+%
+% Written by Ingemar Haggstrom
+% IRF, Kiruna, Dec 1994
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WRITE-EXP-FILES
+CHANGE-REF-SITE TROMSO,,,,,
+POINT-REF-H 183.2,77.4,270
+SET-SIG-PATH ALLX
+LOAD-CORR SP-SW-IONC4-T:CCOD  % A special correlator program
+SYNC -60
+LOAD-RA-CON SP-SW-IONC4-T:TCOD
+TRANSFER-NOISE-CONT RADAR
+SET-LO1 812.0
+SET-FREQ 3, F0
+SET-FREQ 4, F1
+SET-FREQ 5, F4
+%SET-FREQ 7, F11 % For plasmaline (VHF-corr) 3.5,5,5.5 MHz up
+%SET-LO2 8,141.5 % 4,4.5,6 MHz down
+SET-SIG-ATT X,0
+SET-CH-ATT 3,2
+SET-CH-ATT 4,2
+SET-CH-ATT 5,3
+SYNC 10
+SET-FILTER 3,LI,12.5,U
+SET-FILTER 4,LI,12.5,U
+SET-FILTER 5,LI,12.5,U
+%SET-FILTER 7,LI,25.0,U
+%SET-FILTER 8,LI,25.0,U
+SELECT-ALTERNATING-CODE 16  % 16 bit strong condition code used
+SET-COR-APB 15,15  % Max lag in the AC
+SET-COR-APB 14,117 % # gates in AC
+SET-COR-APB 13,73  % # 0lag points
+SET-COR-APB 11,2   % # PP cal points
+SET-COR-APB 10,31  % # scans-1
+SET-COR-APB  9,60  % Start of AC data in buf mem
+SET-COR-APB  8,2   % Oversampling
+SET-COR-APB  7,15  % Gating PP cal
+SET-COR-APB  6,2   % # channels-1
+SET-COR-APB  5,0   % Channel counter
+SET-COR-APB  4,0   % Scan counter
+SET-COR-APB  0,1   % APBINCR
+SET-COR-APM 15,15   % # lags/gate in the AC
+SET-COR-APM 14,0    % AC sig data, 117*15=1765 points
+SET-COR-APM 13,4093 % PP sig data, 1 point
+SET-COR-APM 12,1755 % PP cal data, (2+2)/2=2 points
+SET-COR-APM 11,1757 % AC 0-lag data, 73*32=2336 points
+SET-COR-APM 10,73   % AC 0-lag step, 146/2 points
+SET-COR-APM  4,4094 % Scancount address
+SET-COR-APM  0,1    % APMINCR
+SET-COR-DATAIO 4095 % 1755+2+2336+1+1
+SYNC 10
+SET-ADC-INT 3,11
+SET-ADC-INT 4,11
+SET-ADC-INT 5,11
+
+SET-BUF-MEM 3,60,3  % Signal     148 samples
+SET-BUF-MEM 4,0,3   % Calibration 60 samples
+SET-BUF-MEM 5,500,3 % Idle
+
+SET-BUF-MEM 3,500,2
+SET-BUF-MEM 4,60,2
+SET-BUF-MEM 5,0,2
+
+SET-BUF-MEM 3,0,0
+SET-BUF-MEM 4,500,0
+SET-BUF-MEM 5,60,0
+                    % The last used address is 207
+HOLD 10             % Give time to load hardware up to here
+START-CORR
+ENABLE-DMA U,U
+SYNC 20
+START-RA-CON 5,1,5
+SYNC 10
+DOPPLER-CALIBRATION OFF
+BLOCK 1
+CHANGE-REF-SITE TROMSO,,,,,
+POINT-REF-H 183.2,77.4,270
+START-RA-CON 5,1,5
+DO -1
+  NEW-FILE
+  SYNC 1800
+ENDDO
+STOP-EXP,,,,
+BLOCK 2
+CHANGE-REF-SITE TROMSO,,,,,
+POINT-REF-H 164.9,50,180
+START-RA-CON 5,2,5
+DO -1
+  NEW-FILE
+  SYNC 1800
+ENDDO
+STOP-EXP,,,,
+BLOCK 3
+CHANGE-REF-SITE KIRUNA,,,,,
+POINT-REF-H 344.9,89.99,120
+START-RA-CON 5,3,5
+DO -1
+  NEW-FILE
+  SYNC 1800
+ENDDO
+STOP-EXP,,,,
+E-O-E

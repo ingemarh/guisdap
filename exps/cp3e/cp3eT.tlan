@@ -1,0 +1,702 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  ***  T A R L A N   P R O G R A M M E   F O R   T R O M S O  ***
+%%
+%%       COMMON PROGRAM CP-3-E
+%%
+%%       FILE (EXP)CP-3-E-T:TLAN
+%%
+%%       C. LA HOZ, EISCAT TROMSO, OCT 1985
+%%
+%%       BASED ON GEN-5 BY TAUNO TURUNEN
+%%
+%%       LAST ALTERED 14 MAY 1986
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%                        P R O G R A M M E  #  O N E
+%
+AT 1 TRANS,CHQPULS
+AT 10 RXPROT,LOPROT
+AT 50 BEAMON
+AT 80 F0
+AT 100 RFON                         %%  518 US PULSE AT F0 FOR ACF AND REMOTE
+AT 618 RFOFF,F1                     %%
+AT 620 RFON                         %%  518             F1
+AT 1138 RFOFF,F4                    %%
+AT 1140 RFON                        %%   98 US PULSE AT F4 FPR POWER PROFILE
+AT 1238 RFOFF,F5                    %%
+AT 1240 RFON                        %%   98             F5  
+AT 1338 RFOFF,F6                    %%
+AT 1340 RFON                        %%   98             F6 
+AT 1438 RFOFF,F7                    %%
+AT 1440 RFON                        %%   98             F7
+AT 1538 RFOFF,BEAMOFF               %%
+AT 1900 RXPOFF                      %%
+AT 1950 LOPOFF                      %%
+AT 2000 RECEV                       %%
+                                    %%
+                                    %%
+AT 2682 CH1                         %%  START SAMPL SIG  PP AT RANGE 225 KM
+AT 2782 CH2                         %%  START                        225
+AT 2882 CH3                         %%  START                        225
+AT 2982 CH4                         %%  START                        225
+                                    %%
+AT 3271 CH5                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+AT 3791 CH6                         %%  START                        481 
+                                    %%
+AT 5195 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 5295 CH2OFF                      %%  STOP                      180
+AT 5395 CH3OFF                      %%  STOP                      180
+AT 5495 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 7910 CH7,CH8                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 8934 CH5OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 9454 CH6OFF                      %%  STOP                      405
+                                    %%
+AT 9460 CH1,CH2,CH3,CH4             %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 9790 ALLOFF,CAL100               %%  STOP             PP AFTER   24 SAMPLES
+                                    %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  ON  CAL NOISE INJECTION
+AT 9850 CH7,CH8                     %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 9900 CH1,CH2,CH3,CH4             %%  START            PP FOR THIS     PHASE
+AT 9980 CH1OFF,CH2OFF,CH3OFF,CH4OFF %%  STOP             PP AFTER    6 SAMPLES
+AT 10680 CH7OFF,CH8OFF,CAL0         %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+SETTCR 11952                        %%  END OF FIRST PHASE
+                                    %%
+                                    %%
+                                    %%
+                                    %%                  
+                                    %%
+AT 1  TRANS,CHQPULS                 %%  START OF SECOND PHASE
+AT 10 RXPROT,LOPROT                 %%
+AT 50 BEAMON                        %%
+AT 80 F2                            %%
+AT 100 RFON                         %%  518 US PULSE AT F2 FOR ACF AND REMOTE
+AT 618 RFOFF,F3                     %%
+AT 620 RFON                         %%  518             F3
+AT 1138 RFOFF,F4                    %%
+AT 1140 RFON                        %%   98 US PULSE AT F4 FPR POWER PROFILE
+AT 1238 RFOFF,F5                    %%
+AT 1240 RFON                    %%   98             F5  
+AT 1338 RFOFF,F6                    %%
+AT 1340 RFON                        %%   98             F6 
+AT 1438 RFOFF,F7                    %%
+AT 1440 RFON                        %%   98             F7
+AT 1538 RFOFF,BEAMOFF               %%
+AT 1900 RXPOFF                      %%
+AT 1950 LOPOFF                      %%
+AT 2000 RECEV                       %%
+                                    %%
+                                    %%
+AT 2682 CH1                         %%  START SAMPL SIG  PP AT RANGE 225 KM
+AT 2782 CH2                         %%  START                        225
+AT 2882 CH3                         %%  START                        225
+AT 2982 CH4                         %%  START                        225
+                                    %%
+AT 3271 CH7                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+AT 3791 CH8                         %%  START                        481 
+                                    %%
+AT 5195 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 5295 CH2OFF                      %%  STOP                      180
+AT 5395 CH3OFF                      %%  STOP                      180
+AT 5495 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 7910 CH5,CH6                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 8934 CH7OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 9454 CH8OFF                      %%  STOP                      405
+                                    %%
+AT 9460 CH1,CH2,CH3,CH4             %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 9790 ALLOFF,CAL100               %%  STOP             PP AFTER   24 SAMPLES
+                                    %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  ON  CAL NOISE INJECTION
+AT 9850 CH5,CH6                     %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 9900 CH1,CH2,CH3,CH4             %%  START            PP FOR THIS     PHASE
+AT 9980 CH1OFF,CH2OFF,CH3OFF,CH4OFF %%  STOP             PP AFTER    6 SAMPLES
+AT 10680 CH5OFF,CH6OFF,CAL0         %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+                                    %%  320 USEC GAP TO UNLOAD FAST ADC'S
+AT 11000 CH4                        %%  DUMMY SAMPLING TO START COMPUTE
+AT 11010 STC                        %%
+AT 11020 ALLOFF                     %%
+AT 11060 BUFLIP                     %%
+SETTCR 00000                        %%
+AT 23910 REP                        %%  BEAM-DUTY-CYCLE IS 12.45 %
+%
+%
+%                       P R O G R A M M E  #  T W O 
+%                                                
+%
+AT 1 TRANS,CHQPULS
+AT 10 RXPROT,LOPROT
+AT 50 BEAMON
+AT 80 F0
+AT 100 RFON                         %%  476 US PULSE AT F0 FOR ACF AND REMOTE
+AT 576 RFOFF,F1                     %%
+AT 578 RFON                         %%  476             F1
+AT 1054 RFOFF,F4                    %% 
+AT 1056 RFON                        %%   98 US PULSE AT F4 FPR POWER PROFILE
+AT 1154 RFOFF,F5                    %%
+AT 1156 RFON                        %%   98             F5  
+AT 1254 RFOFF,F6                    %%
+AT 1256 RFON                        %%   98             F6 
+AT 1354 RFOFF,F7                    %%
+AT 1356 RFON                        %%   98             F7
+AT 1454 RFOFF,BEAMOFF               %%
+AT 1800 RXPOFF                      %%
+AT 1850 LOPOFF                      %%
+AT 2100 RECEV                       %%
+                                    %%
+                                    %%
+AT 2243 CH5                         %%  START SAMPL SIG ACF AT RANGE 330 KM
+AT 2365 CH1                         %%  START SAMPL SIG  PP AT RANGE 190 KM
+AT 2465 CH2                         %%  START                        190
+AT 2565 CH3                         %%  START                        190
+AT 2665 CH4                         START                        190
+                                    %%
+AT 2721 CH6                         %%  START SAMPL SIG ACF AT RANGE 330 KM
+                                    %%
+AT 4878 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 4978 CH2OFF                      %%  STOP                      180
+AT 5078 CH3OFF                      %%  STOP                      180
+AT 5178 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 6500 CH7,CH8                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 7906 CH5OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 8380 CH7OFF,CH8OFF               %%  STOP        BAK     FOR PREVIOUS PHASE
+AT 8384 CH6OFF                      %%  STOP        SIG     AFTER 405 SAMPLES
+                                    %%  1006 USEC GAP TO EMPTY FAST ADC'S
+AT 9959 CH3
+AT 9960 CH1,CH2,CH4                 %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 10288 CH3OFF
+AT 10290 ALLOFF,CAL100              %%  STOP             PP AFTER   24 SAMPLES
+                                    %%  TURN  ON  CAL NOISE INJECTION
+AT 10370 CH7,CH8                    %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 10419 CH3
+AT 10420 CH1,CH2,CH4                %%  START            PP FOR THIS     PHASE
+AT 10500 CH1OFF,CH2OFF,CH3OFF,CH4OFF%%  STOP             PP AFTER    6 SAMPLES
+AT 11200 CH7OFF,CH8OFF,CAL0         %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+SETTCR 11280                        %%  END OF FIRST PHASE
+                                    %%
+                                    %%
+                                    %%
+                                    %%                  
+                                    %%
+AT 1  TRANS,CHQPULS                 %%  START OF SECOND PHASE
+AT 10 RXPROT,LOPROT                 %%
+AT 50 BEAMON                        %%
+AT 80 F2                            %%
+AT 100 RFON                         %%  476 US PULSE AT F2 FOR ACF AND REMOTE
+AT 576 RFOFF,F3                     %%
+AT 578 RFON                         %%  476             F1
+AT 1054 RFOFF,F4                    %% 
+AT 1056 RFON                        %%   98 US PULSE AT F4 FPR POWER PROFILE
+AT 1154 RFOFF,F5                    %%
+AT 1156 RFON                        %%   98             F5  
+AT 1254 RFOFF,F6                    %%
+AT 1256 RFON                        %%   98             F6 
+AT 1354 RFOFF,F7                    %%
+AT 1356 RFON                        %%   98             F7
+AT 1454 RFOFF,BEAMOFF               %%
+AT 1800 RXPOFF                      %%
+AT 1850 LOPOFF                      %%
+AT 2100 RECEV                       %%
+                                    %%
+                                    %%
+AT 2243 CH7                         %%  START SAMPL SIG ACF AT RANGE 330 KM
+AT 2365 CH1                         %%  START SAMPL SIG  PP AT RANGE 190 KM
+AT 2465 CH2                         %%  START                        190
+AT 2565 CH3                         %%  START                        190
+AT 2665 CH4                         %%  START                        190
+                                    %%
+AT 2721 CH8                         %%  START SAMPL SIG ACF AT RANGE 330 KM
+                                    %%
+AT 4878 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 4978 CH2OFF                      %%  STOP                      180
+AT 5078 CH3OFF                      %%  STOP                      180
+AT 5178 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 6500 CH5,CH6                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 7906 CH7OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 8380 CH5OFF,CH6OFF               %%  STOP        BAK     FOR PREVIOUS PHASE
+AT 8384 CH8OFF                  %%  STOP        SIG     AFTER 405 SAMPLES
+                                    %%  1006 USEC GAP TO EMPTY FAST ADC'S
+AT 9959 CH3
+AT 9960 CH1,CH2,CH4                 %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 10285 CH3OFF,CH4OFF              %%
+AT 10286 ALLOFF,CAL100              %%  STOP             PP AFTER   24 SAMPLES
+                                    %%  TURN  ON  CAL NOISE INJECTION
+                                    %%  80 USEC GAP TO UNLOAD FAST ADC'S
+AT 10300 CH5,CH6                    %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 10350 CH1,CH2,CH3,CH4            %%  START            PP FOR THIS     PHASE
+AT 10430 CH1OFF,CH2OFF,CH3OFF,CH4OFF%%  STOP             PP AFTER    6 SAMPLES
+AT 11130 CH5OFF,CH6OFF,CAL0         %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+AT 11410 CH4                        %%  DUMMY SAMPLE TO START COMPUTE
+AT 11420 STC                        %%
+AT 11430 ALLOFF                     %%
+AT 11470 BUFLIP                     %%
+SETTCR   000000                     %%                  
+AT 22760 REP                        %%  BEAM DUTY CYCLE IS 12.45 % 
+%
+%
+%
+%                       P R O G R A M M E  #  T H R E E
+%                                                
+%
+AT 1 TRANS,CHQPULS
+AT 10 RXPROT,LOPROT
+AT 50 BEAMON
+AT 80 F0
+AT 100 RFON                         %%  434 US PULSE AT F0 FOR ACF AND REMOTE
+AT 534 RFOFF,F1                     %%
+AT 536 RFON                         %%  434             F1
+AT 970 RFOFF,F4                     %%
+AT 972 RFON                         %%   91 US PULSE AT F4 FPR POWER PROFILE
+AT 1063 RFOFF,F5                    %%
+AT 1065 RFON                        %%   91             F5  
+AT 1156 RFOFF,F6                    %%
+AT 1158 RFON                        %%   91             F6 
+AT 1249 RFOFF,F7                    %%
+AT 1251 RFON                        %%   91             F7
+AT 1342 RFOFF,BEAMOFF               %%
+AT 1500 RXPOFF                      %%
+AT 1550 LOPOFF                      %%
+AT 1800 RECEV                       %%
+                                    %%
+                                    %%
+AT 1955 CH5                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+AT 2111 CH1                         %%  START SAMPL SIG  PP AT RANGE 225 KM
+AT 2204 CH2                         %%  START                        225
+AT 2297 CH3                         %%  START                        225
+AT 2390 CH4                         %%  START                        225
+                                    %%
+AT 2391 CH6                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+                                    %%
+AT 4624 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 4717 CH2OFF                      %%  STOP                      180
+AT 4818 CH3OFF                      %%  STOP                      180
+AT 4903 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 6170 CH7,CH8                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 7618 CH5OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 8050 CH7OFF,CH8OFF               %%  STOP        BAK     FOR PREVIOUS PHASE
+AT 8054 CH6OFF                      %%  STOP        SIG     AFTER 405 SAMPLES
+                                    %%  1006 USEC GAP TO EMPTY FAST ADC'S
+AT 9059 CH3
+AT 9060 CH1,CH2,CH4                 %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 9388 CH3OFF
+AT 9390 ALLOFF,CAL100               %%  STOP             PP AFTER   24 SAMPLES
+                                    %%  TURN  ON  CAL NOISE INJECTION
+AT 9470 CH7,CH8                     %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 9519 CH3
+AT 9520 CH1,CH2,CH4                 %%  START            PP FOR THIS     PHASE
+AT 9600 CH1OFF,CH2OFF,CH3OFF,CH4OFF %%  STOP             PP AFTER    6 SAMPLES
+AT 10300 CH7OFF,CH8OFF,CAL0         %%  STOP            AOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+SETTCR 10380                        %%  END OF FIRST PHASE
+                                    %%
+                                    %%
+                                    %%
+                                    %%                  
+                                    %%
+AT 1  TRANS,CHQPULS                 %%  START OF SECOND PHASE
+AT 10 RXPROT,LOPROT                 %%
+AT 50 BEAMON                        %%
+AT 80 F2                            %%
+AT 100 RFON                         %%  434 US PULSE AT F2 FOR ACF AND REMOTE
+AT 534 RFOFF,F3                     %%
+AT 536 RFON                         %%  434             F3
+AT 970 RFOFF,F4                     %%
+AT 972 RFON                         %%   91 US PULSE AT F4 FPR POWER PROFILE
+AT 1063 RFOFF,F5                    %%
+AT 1065 RFON                        %%   91             F5  
+AT 1156 RFOFF,F6                    %%
+AT 1158 RFON                        %%   91             F6 
+AT 1249 RFOFF,F7                    %%
+AT 1251 RFON                        %%   91             F7
+AT 1342 RFOFF,BEAMOFF               %%
+AT 1500 RXPOFF                      %%
+AT 1550 LOPOFF                      %%
+AT 1800 RECEV                       %%
+                                    %%
+                                    %%
+AT 1955 CH7                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+AT 2111 CH1                         %%  START SAMPL SIG  PP AT RANGE 225 KM
+AT 2204 CH2                         %%  START                        225
+AT 2297 CH3                         %%  START                        225
+AT 2390 CH4                         %%  START                        225
+                                    %%
+AT 2391 CH8                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+                                    %%
+AT 4624 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 4717 CH2OFF                      %%  STOP                      180
+AT 4818 CH3OFF                      %%  STOP                      180
+AT 4903 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 6170 CH5,CH6                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 7618 CH7OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 8050 CH5OFF,CH6OFF               %%  STOP        BAK     FOR PREVIOUS PHASE  
+AT 8054 CH8OFF                      %%  STOP        SIG     AFTER 405 SAMPLES
+                                    %%  1006 USEC GAP TO UNLOAD FAST ADC'S
+AT 9059 CH3
+AT 9060 CH1,CH2,CH4                 %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 9385 CH3OFF,CH4OFF               %%
+AT 9386 ALLOFF,CAL100               %%  STOP             PP AFTER   24 SAMPLES
+                                    %%  TURN  ON  CAL NOISE INJECTION
+                                    %%  80 USEC GAP TO UNLOAD FAST ADC'S
+AT 9400 CH5,CH6                     %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 9450 CH1,CH2,CH3,CH4             %%  START            PP FOR THIS     PHASE
+AT 9530 CH1OFF,CH2OFF,CH3OFF,CH4OFF %%  STOP             PP AFTER    6 SAMPLES
+AT 10230 CH5OFF,CH6OFF,CAL0         %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+AT 10510 CH4                        %%  DUMMY SAMPLE TO START COMPUTE
+AT 10520 STC                        %%
+AT 10530 ALLOFF                     %%
+AT 10570 BUFLIP                     %%
+SETTCR   000000                     %%                  
+AT 20960 REP                        %%  BEAM DUTY CYCLE IS 12.45 % 
+%
+%
+%                       P R O G R A M M E  #  F O U R  
+%                                                
+%
+AT 1 TRANS,CHQPULS
+AT 10 RXPROT,LOPROT
+AT 50 BEAMON
+AT 80 F0
+AT 100 RFON                         %%  392 US PULSE AT F0 FOR ACF AND REMOTE
+AT 492 RFOFF,F1                     %%
+AT 494 RFON                     %%  392             F1
+AT 886 RFOFF,F4                     %%
+AT 888 RFON                         %%   84 US PULSE AT F4 FPR POWER PROFILE
+AT 972  RFOFF,F5                    %%
+AT 974  RFON                        %%   84             F5  
+AT 1060 RFOFF,F6                    %%
+AT 1062 RFON                        %%   84             F6 
+AT 1146 RFOFF,F7                    %%
+AT 1148 RFON                        %%   84             F7
+AT 1232 RFOFF,BEAMOFF               %%
+AT 1400 RXPOFF                      %%
+AT 1450 LOPOFF                      %%
+AT 1500 RECEV                       %%
+                                    %%
+                                    %%
+AT 1634 CH5                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+AT 1723 CH1                         %%  START SAMPL SIG  PP AT RANGE 225 KM
+AT 1809 CH2                         %%  START                        225
+AT 1895 CH3                         %%  START                        225
+AT 1981 CH4                         %%  START                        225
+                                    %%
+AT 2028 CH6                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+                                    %%
+AT 4236 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 4322 CH2OFF                      %%  STOP                      180
+AT 4408 CH3OFF                      %%  STOP                      180
+AT 4494 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 5805 CH7,CH8                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 7297 CH5OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 7685 CH7OFF,CH8OFF               %%  STOP        BAK     FOR PREVIOUS PHASE
+AT 7691 CH6OFF                      %%  STOP        SIG     AFTER 405 SAMPLES
+                                    %%
+AT 8210 CH1,CH2,CH3,CH4             %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 8540 ALLOFF,CAL100               %%  STOP             PP AFTER   24 SAMPLES
+                                    %%  TURN  ON  CAL NOISE INJECTION
+AT 8620 CH7,CH8                     %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 8670 CH1,CH2,CH3,CH4             %%  START            PP FOR THIS     PHASE
+AT 8750 CH1OFF,CH2OFF,CH3OFF,CH4OFF %%  STOP             PP AFTER    6 SAMPLES
+AT 9450 CH7OFF,CH8OFF,CAL0          %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+SETTCR 9495                         %%  END OF FIRST PHASE
+                                    %%
+                                    %%
+                                    %%
+AT 1 TRANS,CHQPULS                  %%  START SECOND PHASE
+AT 10 RXPROT,LOPROT                 %%
+AT 50 BEAMON                        %%
+AT 80 F2                            %%
+AT 100 RFON                         %%  392 US PULSE AT F2 FOR ACF AND REMOTE
+AT 492 RFOFF,F3                     %%
+AT 494 RFON                         %%  392             F3
+AT 886 RFOFF,F4                     %%
+AT 888 RFON                         %%   84 US PULSE AT F4 FPR POWER PROFILE
+AT 972  RFOFF,F5                    %%
+AT 974  RFON                        %%   84             F5  
+AT 1060 RFOFF,F6                    %%
+AT 1062 RFON                        %%   84             F6 
+AT 1146 RFOFF,F7                    %%
+AT 1148 RFON                        %%   84             F7
+AT 1232 RFOFF,BEAMOFF               %%
+AT 1400 RXPOFF                      %%
+AT 1450 LOPOFF                      %%
+AT 1500 RECEV                       %%
+                                    %%
+                                    %%
+AT 1634 CH7                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+AT 1723 CH1                         %%  START SAMPL SIG  PP AT RANGE 225 KM
+AT 1809 CH2                         %%  START                        225
+AT 1895 CH3                         %%  START                        225
+AT 1981 CH4                     %%  START                        225
+                                    %%
+AT 2028 CH8                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+                                    %%
+AT 4236 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 4322 CH2OFF                      %%  STOP                      180
+AT 4408 CH3OFF                      %%  STOP                      180
+AT 4494 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 5805 CH5,CH6                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 7297 CH7OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 7685 CH5OFF,CH6OFF               %%  STOP        BAK     FOR PREVIOUS PHASE
+AT 7691 CH8OFF                      %%  STOP        SIG     AFTER 405 SAMPLES
+                                    %%  519 USEC GAP TO UNLOAD FAST ADC'S
+AT 8210 CH1,CH2,CH3,CH4             %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 8540 ALLOFF,CAL100               %%  STOP             PP AFTER   24 SAMPLES
+                                    %%  TURN  ON  CAL NOISE INJECTION
+                                    %%  80 USEC GAP TO UNLOAD FAST ADC'S
+AT 8620 CH5,CH6                     %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 8670 CH1,CH2,CH3,CH4             %%  START            PP FOR THIS     PHASE
+AT 8750 CH1OFF,CH2OFF,CH3OFF,CH4OFF %%  STOP             PP AFTER    6 SAMPLES
+AT 9450 CH5OFF,CH6OFF,CAL0          %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+AT 9456 CH4                         %%  DUMMY SAMPLE TO START COMPUTE
+AT 9465  STC                        %%
+AT 9475  ALLOFF                     %%
+AT 9515  BUFLIP                     %%
+SETTCR   000000                     %%                  
+AT 19020 REP                        %%  BEAM DUTY CYCLE IS 12.45 % 
+%
+%
+%                       P R O G R A M M E  #  F I V E  
+%                                                
+%
+AT 1 TRANS,CHQPULS
+AT 10 RXPROT,LOPROT
+AT 50 BEAMON
+AT 80 F0
+AT 100 RFON                         %%  364 US PULSE AT F0 FOR ACF AND REMOTE
+AT 464 RFOFF,F1                     %%
+AT 466 RFON                         %%  364             F1
+AT 830 RFOFF,F4                     %%
+AT 832 RFON                         %%   77 US PULSE AT F4 FPR POWER PROFILE
+AT 909  RFOFF,F5                    %%
+AT 911  RFON                        %%   77             F5  
+AT 988  RFOFF,F6                    %%
+AT 990  RFON                        %%   77             F6 
+AT 1067 RFOFF,F7                    %%
+AT 1069 RFON                        %%   77             F7
+AT 1146 RFOFF,BEAMOFF               %%
+AT 1300 RXPOFF                      %%
+AT 1350 LOPOFF                      %%
+AT 1400 RECEV                       %%
+                                    %%
+                                    %%
+AT 1420 CH5                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+AT 1464 CH1                         %%  START SAMPL SIG  PP AT RANGE 225 KM
+AT 1543 CH2                         %%  START                        225
+AT 1622 CH3                         %%  START                        225
+AT 1701 CH4                         %%  START                        225
+                                    %%
+AT 1786 CH6                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+                                    %%
+AT 3977 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 4056 CH2OFF                      %%  STOP                      180
+AT 4135 CH3OFF                      %%  STOP                      180
+AT 4214 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 5565 CH7,CH8                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 7083 CH5OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 7445 CH7OH8OFF               %%  STOP        BAK     FOR PREVIOUS PHASE
+AT 7449 CH6OFF                      %%  STOP        SIG     AFTER 405 SAMPLES
+                                    %%
+AT 7560 CH1,CH4,CH3,CH2             %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 7890 ALLOFF,CAL100               %%  STOP             PP AFTER   24 SAMPLES
+                                    %%  TURN  ON  CAL NOISE INJECTION
+AT 7970 CH7,CH8                     %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 8020 CH1,CH2,CH3,CH4             %%  START            PP FOR THIS     PHASE
+AT 8100 CH1OFF,CH2OFF,CH3OFF,CH4OFF %%  STOP             PP AFTER    6 SAMPLES
+AT 8800 CH7OFF,CH8OFF,CAL0          %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+SETTCR 8805                         %%  END OF FIRST PHASE
+                                    %%
+                                    %%
+                                    %%
+AT 1 TRANS,CHQPULS                  %%  START OF SECOND PHASE
+AT 10 RXPROT,LOPROT                 %%
+AT 50 BEAMON                        %%
+AT 80 F2                            %%
+AT 100 RFON                         %%  364 US PULSE AT F2 FOR ACF AND REMOTE
+AT 464 RFOFF,F3                     %%
+AT 466 RFON                         %%  364             F3
+AT 830 RFOFF,F4                     %%
+AT 832 RFON                         %%   77 US PULSE AT F4 FPR POWER PROFILE
+AT 909  RFOFF,F5                    %%
+AT 911  RFON                        %%   77             F5  
+AT 988  RFOFF,F6                    %%
+AT 990  RFON                        %%   77             F6 
+AT 1067 RFOFF,F7                    %%
+AT 1069 RFON                        %%   77             F7
+AT 1146 RFOFF,BEAMOFF               %%
+AT 1300 RXPOFF                      %%
+AT 1350 LOPOFF                      %%
+AT 1400 RECEV                       %%
+                                    %%
+                                    %%
+AT 1420 CH7                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+AT 1464 CH1                         %%  START SAMPL SIG  PP AT RANGE 225 KM
+AT 1543 CH2                         %%  START                        225
+AT 1622 CH3                         %%  START                        225
+AT 1701 CH4                         %%  START                        225
+                                    %%
+AT 1786 CH8                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+                                    %%
+AT 3977 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 4056 CH2OFF                      %%  STOP                      180
+AT 4135 CH3OFF                      %%  STOP                      180
+AT 4214 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 5565 CH5,CH6                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 7083 CH7OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 7445 CH5OFF,CH6OFF               %%  STOP        BAK     FOR PREVIOUS PHASE
+AT 7449 CH8OFF                      %%  STOP        SIG     AFTER 405 SAMPLES
+                                    %%  121 USEC GAP TO UNLOAD FAST ADC'S
+AT 7580 CH1,CH4,CH3,CH2             %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 7910 ALLOFF,CAL100               %%  STOP             PP AFTER   24 SAMPLES
+                                    %%  TURN  ON  CAL NOISE INJECTION
+                                    %%  40 USEC GAP TO UNLOAD FAST ADC'S
+AT 7930 CH5,CH6                     %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 7980 CH1,CH2,CH3,CH4             %%  START            PP FOR THIS     PHASE
+AT 8060 CH1OFF,CH2OFF,CH3OFF,CH4OFF %%  STOP             PP AFTER    6 SAMPLES
+AT 8760 CH5OFF,CH6OFF,CAL0          %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+AT 8781  CH4                        %%  DUMMY SAMPLE TO START COMPUTE
+AT 8790  STC                    %%
+AT 8800  ALLOFF                     %%
+AT 8840  BUFLIP                     %%  40 USEC GAP TO UNLOAD FAST ADC'S
+SETTCR   000000                     %%                  
+AT 17655 REP                        %%  BEAM DUTY CYCLE IS 12.45 % 
+%
+%
+%                       P R O G R A M M E  #  S I X    
+%                                                
+%
+AT 1 TRANS,CHQPULS
+AT 10 RXPROT,LOPROT
+AT 50 BEAMON
+AT 80 F0
+AT 100 RFON                         %%  350 US PULSE AT F0 FOR ACF AND REMOTE
+AT 450 RFOFF,F1                     %%
+AT 452 RFON                         %%  350             F1
+AT 802 RFOFF,F4                     %%
+AT 804 RFON                         %%   70 US PULSE AT F4 FPR POWER PROFILE
+AT 874  RFOFF,F5                    %%
+AT 876  RFON                        %%   70             F5  
+AT 946  RFOFF,F6                    %%
+AT 948  RFON                        %%   70             F6 
+AT 1018 RFOFF,F7                    %%
+AT 1020 RFON                        %%   70             F7
+AT 1090 RFOFF,BEAMOFF               %%
+AT 1200 RXPOFF                      %%
+AT 1250 LOPOFF                      %%
+AT 1300 RECEV                       %%
+                                    %%
+                                    %%
+AT 1313 CH5                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+AT 1346 CH1                         %%  START SAMPL SIG  PP AT RANGE 225 KM
+AT 1418 CH2                         %%  START                        225
+AT 1490 CH3                         %%  START                        225
+AT 1562 CH4                         %%  START                        225
+                                    %%
+AT 1665 CH6                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+                                    %%
+AT 3859 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 3931 CH2OFF                      %%  STOP                      180
+AT 4003 CH3OFF                      %%  STOP                      180
+AT 4075 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 5560 CH7,CH8                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 6976 CH5OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 7110 CH1,CH2,CH3,CH4             %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 7328 CH6OFF                      %%  STOP                      405
+                                    %%
+AT 7440 ALLOFF,CAL100               %%  STOP  SAMPL BAK  PP AFTER   24 SAMPLES
+                                    %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  ON  CAL NOISE INJECTION
+AT 7520 CH7,CH8                     %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 7570 CH1,CH2,CH3,CH4             %%  START            PP FOR THIS     PHASE
+AT 7650 CH1OFF,CH2OFF,CH3OFF,CH4OFF %%  STOP             PP AFTER    6 SAMPLES
+AT 8350 CH7OFF,CH8OFF,CAL0          %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+SETTCR 8355                         %%  END OF FIRST PHASE
+                                    %%
+                                    %%
+                                    %%
+AT 1 TRANS,CHQPULS                  %%  START OF SECOND PHASE
+AT 10 RXPROT,LOPROT                 %%
+AT 50 BEAMON                        %%
+AT 80 F2                            %%
+AT 100 RFON                         %%  350 US PULSE AT F2 FOR ACF AND REMOTE
+AT 450 RFOFF,F3                     %%
+AT 452 RFON                         %%  350             F3
+AT 802 RFOFF,F4                     %%
+AT 804 RFON                         %%   70 US PULSE AT F4 FPR POWER PROFILE
+AT 874  RFOFF,F5                    %%
+AT 876  RFON                        %%   70             F5  
+AT 946  RFOFF,F6                    %%
+AT 948  RFON                        %%   70             F6 
+AT 1018 RFOFF,F7                    %%
+AT 1020 RFON                    %%   70             F7
+AT 1090 RFOFF,BEAMOFF               %%
+AT 1200 RXPOFF                      %%
+AT 1250 LOPOFF                      %%
+AT 1300 RECEV                       %%
+                                    %%
+                                    %%
+AT 1313 CH7                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+AT 1346 CH1                         %%  START SAMPL SIG  PP AT RANGE 225 KM
+AT 1418 CH2                         %%  START                        225
+AT 1490 CH3                         %%  START                        225
+AT 1562 CH4                         %%  START                        225
+                                    %%
+AT 1665 CH8                         %%  START SAMPL SIG ACF AT RANGE 481 KM
+                                    %%
+AT 3859 CH1OFF                      %%  STOP  SAMPL SIG  PP AFTER 180 SAMPLES
+AT 3931 CH2OFF                      %%  STOP                      180
+AT 4003 CH3OFF                      %%  STOP                      180
+AT 4075 CH4OFF                      %%  STOP                      180
+                                    %%
+AT 5448 CH5,CH6                     %%  START SAMPL BAK ACF FOR PREVIOUS PHASE  
+                                    %%
+AT 6976 CH7OFF                      %%  STOP  SAMPL SIG ACF AFTER 405 SAMPLES
+AT 6998 CH1,CH2,CH3,CH4             %%  START SAMPL BAK  PP FOR THIS     PHASE
+AT 7328 ALLOFF,CAL100               %%  STOP        SIG ACF AFTER 405 SAMPLES
+                                    %%  STOP             PP AFTER  24 SAMPLES
+                                    %%  STOP        BAK ACF FOR PREVIOUS PHASE
+                                    %%  TURN  ON  CAL NOISE INJECTION
+                                    %%  152 USEC GAP TO UNLOAD FAST ADC'S
+AT 7480 CH5,CH6                     %%  START SAMPL CAL ACF FOR PREVIOUS PHASE
+AT 7530 CH1,CH2,CH3,CH4             %%  START            PP FOR THIS     PHASE
+AT 7610 CH1OFF,CH2OFF,CH3OFF,CH4OFF %%  STOP             PP AFTER    6 SAMPLES
+AT 8310 CH5OFF,CH6OFF,CAL0          %%  STOP            ACF FOR PREVIOUS PHASE
+                                    %%  TURN  OFF CAL NOISE INJECTION
+AT 8311 CH4                         %%  DUMMY SAMPLE TO START COMPUTE
+AT 8320  STC                        %%
+AT 8330  ALLOFF                     %%
+AT 8370  BUFLIP                     %%  40 USEC GAP TO UNLOAD FAST ADC'S
+SETTCR   000000                     %%                  
+AT 16730 REP                        %%  BEAM DUTY CYCLE IS 12.45 % 
+

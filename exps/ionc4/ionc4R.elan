@@ -1,0 +1,111 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   ***  E R O S   P R O G R A M M E   F O R   R E M O T E S  ***
+%
+%    S P - S W - I O N C 4
+%
+%    by Ingemar Haggstrom, IRF   Feb 1995
+%                  1X(16*22) us alternating code pulse per ipp
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WRITE-EXP-FILES
+SET-PARAMETER R1,270 % Define intersection altitudes
+SET-PARAMETER R2,180
+&K OFFSET-PPD -53
+&S OFFSET-PPD -21
+CHANGE-REF-SITE TROMSO,,,,,
+POINT-REF-H 183.2,77.4,R1
+SET-SIG-PAT ALLX
+&KSET-POLAR 94,-8      % Settings for the remote site volume at 270 km altitude
+&SSET-POLAR 107,-19
+LOAD-CORR SP-SW-IONC4-R:CCOD % Based on CP-1-K
+SYNC -60
+LOAD-RA SP-SW-IONC4-R:TCOD
+HOLD 10
+TRANSFER-NOISE RAD
+SET-FR 5,F0
+SET-FR 6,F1
+SET-FR 7,F4
+&KSET-SIG-ATT X,2
+&SSET-SIG-ATT X,1
+&KSET-CHAN-ATT 5,5
+&KSET-CHAN-ATT 6,0
+&KSET-CHAN-ATT 7,5
+&SSET-CHAN-ATT 5,8
+&SSET-CHAN-ATT 6,4
+&SSET-CHAN-ATT 7,6
+SYNC 10
+SET-FILT 5,LI,25,,
+SET-FILT 6,LI,25,,
+SET-FILT 7,LI,25,,
+SELECT-ALTERNATING-CODE 16
+SET-CORR-APB 15,15 % ALTLAGMAX, Max lag in ac gates
+SET-CORR-APB 14, 9 % NACSG, # AC channel signal gates
+SET-CORR-APB 13, 2 % ACOS, AC oversampling
+SET-CORR-APB 11,40 % LPCALPROD, The number of products/lag in lpacf B,C
+SET-CORR-APB 10, 3 % NLPCG, # LPACF background+calibration gates
+SET-CORR-APB  9, 1 % NLPSG, # LPACF signal gates
+SET-CORR-APB  8,30 % LPLAGMAX, Max lag in LPACF
+SET-CORR-APB  7,31 % LPSIGSAMP, # signal samples used/ACF in LPACF
+SET-CORR-APB  6, 4 % LPMARGIN, Defines overlap in LPACF signal vector
+SET-CORR-APB  0, 1 % Increment
+
+SET-CORR-APM 15,15  % NOLAGS, # lags in a AC signal gate
+SET-CORR-APM 14,0   % ACSRES, AC signal ACF gates, 9*15=135 points
+SET-CORR-APM 11,30  % LPMAXLAG, The max lag of the LP ACFS
+SET-CORR-APM 10,135 % LPSRES, LPACF timing and signal gate, 39+31=70 points
+SET-CORR-APM  9,205 % LPBRES, LP background, 2*31=62 points
+SET-CORR-APM  8,267 % LPCRES, LP calibration, 31 points
+SET-CORR-APM  7,298 % Scancountaddress
+SET-CORR-APM  0,1   % Increment
+SET-CORR-DATAIO 299 % 9*15+39+31+(2+1)*31+1
+SYNC 10
+SET-BUF-MEM 5,  0,3 % 39 + 3*70
+SET-BUF-MEM 6,249,3 % 210
+SET-BUF-MEM 7,459,3 % 210  Last used address is 668
+SET-BUF-MEM 5,459,2
+SET-BUF-MEM 6,  0,2
+SET-BUF-MEM 7,249,2
+SET-BUF-MEM 5,249,0
+SET-BUF-MEM 6,459,0
+SET-BUF-MEM 7,0,0
+SET-ADC-INT 5,11.
+SET-ADC-INT 6,11.
+SET-ADC-INT 7,11.
+HOLD 10
+START-CORR
+ENABLE-DMA U,U
+SYNC 10
+START-R-C 5,1,5
+SYNC 10
+DOPPLER-CALIBRATION OFF
+BLOCK 1
+CHANGE-REF-SITE TROMSO,,,,,
+POINT-REF-H 183.2,77.4,R1
+&KSET-POLAR 94,-8
+&SSET-POLAR 107,-19
+DO -1
+  NEW-FILE
+  SYNC 1800
+ENDDO
+STOP-EXP,,,,
+BLOCK 2
+CHANGE-REF-SITE TROMSO,,,,,
+POINT-REF-H 164.9,50,R2
+&KSET-POLAR 90,-19
+&SSET-POLAR 163,-14
+DO -1
+  NEW-FILE
+  SYNC 1800
+ENDDO
+STOP-EXP,,,,
+BLOCK 3
+CHANGE-REF-SITE KIRUNA,,,,,
+POINT-REF-H 344.9,89.99,120
+&KSET-POLAR 95,-22
+&SSET-POLAR 171,8
+DO -1
+  NEW-FILE
+  SYNC 1800
+ENDDO
+STOP-EXP,,,,
+E-O-E

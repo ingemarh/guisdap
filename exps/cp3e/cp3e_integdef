@@ -1,0 +1,37 @@
+ignore-status heater
+input-type raw-file
+output-type none
+var-est true
+par-merge (or,95) (average,96:99)
+integration-type summed
+debug-level 2
+status-messages y
+allow-vert-rot true
+data-source sodankyla
+input-names /geo/gmt/askoh/datat/861105/
+start-time 11:30:10 1986/11/05
+end-time 12:0:0 1986/11/05
+cycle-time 1800
+scan-pos move    0 110
+scan-pos move  110 100
+scan-pos move  210  80
+scan-pos move  290  80
+scan-pos move  370  80
+scan-pos move  450  90
+scan-pos move  540  90
+scan-pos move  630  90
+scan-pos move  720 130
+scan-pos move  850  90
+scan-pos move  940  90
+scan-pos move 1030 150
+scan-pos move 1180 100
+scan-pos move 1280 100
+scan-pos move 1380 100
+scan-pos move 1480  90
+scan-pos move 1570 100
+
+
+
+
+
+
