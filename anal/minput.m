@@ -23,6 +23,8 @@ if isempty(a) | iscell(D) & isempty(a{1})
 elseif nargin>2 || ~isempty(anan)
  r=a;
  r(anan)=[];
+elseif ndims(D)==2 && size(D,2)==2 && size(a,2)==2
+ r=a; 
 else
  r=D;
  r(1:length(a))=a;
