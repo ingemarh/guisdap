@@ -49,7 +49,7 @@ if isempty(vizufig)
   Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[]; OLD_WHICH=[]; allnames=[]; OLD_SCALE=[]; Y_TYPE=[];
 end
 REALT=0; manylim=1;
-Loc=local.site;
+Loc=local.user;
 if strcmp(action(naction,nvargin,varargin),'rtgup')
   global a_year a_start a_end a_realtime a_autodir
   timespan=action(naction+1,nvargin,varargin);
@@ -585,7 +585,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 xlabel(axs(end),'UNIVERSAL TIME')
 drawnow
-if REALT && ~isempty(Loc) && a_realtime && isunix
+if REALT && ~isempty(local.site) && a_realtime && isunix
  if local.x
   flag='-dpng'; flag2='-r0';
  else
