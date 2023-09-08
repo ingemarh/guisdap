@@ -3,7 +3,7 @@
 %
 % See also: GUISPERT GUIZARD
 %
-if a_code(1)==3
+if a_code(1)==3 || a_code(1)==4
  name_ant='42m'; calTemp=163;
  if d_date>datenum(2019,10,09)
   ch_el=82.1; ch_az=185.5;
