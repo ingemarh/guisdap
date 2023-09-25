@@ -28,12 +28,16 @@ if strfind(fn,'.bz2')
   gupsystem([prog ' -ck ' fn ' >' local.tfile ext]);
  elseif ispc
   winbzip=which('bzcat.exe');
-  if isempty(winbzip)
-   print('Bunzip is missing download from site: and extract under win folder');
+  if ~isempty(winbzip)
+   TS=['"',winbzip,'" -k "',fn,'" > "',local.tfile,ext,'"'];
+   system(TS);
+  else
+   if isfile("C:\Program Files\7-zip\7z.exe")
+    system(['"C:\Program Files\7-Zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']);
+   else
+    error('Make sure that 7-Zip is installed in the default location (C:\Program Files\7-zip\)')
+   end
   end
-  TS=['"',winbzip,'" -k "',fn,'" > "',local.tfile,ext,'"'];
-  system(TS);
-  %system(['"C:\Program Files\7-Zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']);
  end
  fn=[local.tfile ext];
 elseif strfind(fn,'.gz')
@@ -41,12 +45,16 @@ elseif strfind(fn,'.gz')
   gupsystem(['gunzip -c ' fn ' >' local.tfile ext]);
  elseif ispc
   wingzip=which('gzip.exe');
-  if isempty(wingzip)
-   print('gzip is missing download from site: and extract under win folder');
+  if ~isempty(wingzip)
+   TS=['"',wingzip,'" -k "',fn,'" > "',local.tfile,ext,'"']; %%??? this needs to be tested...
+   system(TS);
+  else
+   if isfile("C:\Program Files\7-zip\7z.exe")
+    system(['"C:\Program Files\7-zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']);
+   else
+    error('Make sure that 7-Zip is installed in the default location (C:\Program Files\7-zip\)')
+   end
   end
-  TS=['"',wingzip,'" -k "',fn,'" > "',local.tfile,ext,'"']; %%??? this needs to be tested...
-  system(TS);
-  %system(['"C:\Program Files\7-zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']);
  end
  fn=[local.tfile ext];
 end
