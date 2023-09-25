@@ -14,7 +14,7 @@ global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_
 
 hdf5ver = '1.0.0';
 d=which(mfilename,'-all');
-path_GUP=fileparts(fileparts(d(end)));
+path_GUP=fileparts(fileparts(char(d(end))));
 path_tmp=getenv('TMP');
 if isempty(path_tmp)
  path_tmp=fullfile(getenv('HOME'),'tmp');

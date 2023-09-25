@@ -315,7 +315,7 @@ if strcmp(lower(act),'update') && ~isempty(OLD_WHICH)
  WHICH_PARAM=OLD_WHICH; SCALE=OLD_SCALE;
 end
 OLD_WHICH=WHICH_PARAM; OLD_SCALE=SCALE;
-if size(allnames.ant,1)>1
+if ~isempty(allnames) && size(allnames.ant,1)>1
  if any(contains(string(allnames.ant(:,1:3)),'32m')) && any(contains(string(allnames.ant(:,1:3)),'42m'))
   name_ant='esr';
  end

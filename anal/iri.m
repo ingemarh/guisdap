@@ -67,7 +67,7 @@ ut=tim(1)/3600.+id*24;
 iy=round(tim(2));
 [outf,oarr,iri_m] = iri_m.IRI_SUB(JF,JMAG,loc(1),loc(2),iy,id-1,ut+25,h(1),h(2),h(3));
 m_iri=outf(par,:)';
-d=find(par==12); if length(d)==1, m_iri(:,d)=h(1)+h(3)*(0:nh-1)'; end
+d=find(par==12); if length(d)==1, m_iri(:,d)=h(1)+h(3)*(0:size(outf,2)-1)'; end
 d=find(m_iri==-1); if length(d), m_iri(d)=NaN; end
 
 end
