@@ -24,7 +24,7 @@ if strfind(fn,'.bz2')
  if isunix
  % should work on posix-compliant systems: linux, OSX, and even Cygwin
   prog='lbunzip2'; %faster
-  if unix(['which ' prog ' >/dev/null 2>&1']), prog='bunzip2'; end
+  if gupsystem(['which ' prog ' >/dev/null 2>&1']), prog='bunzip2'; end
   gupsystem([prog ' -ck ' fn ' >' local.tfile ext]);
  elseif ispc
   winbzip=which('bzcat.exe');

@@ -2,7 +2,7 @@ function send_www
 global webfile name_site
 l=length(webfile);
 if l>0 & isunix
- [i,d]=unix('ps | grep curl | grep -v grep');
+ [i,d]=gupsystem('ps | grep curl | grep -v grep');
  if i
   file=[];
   for i=1:l

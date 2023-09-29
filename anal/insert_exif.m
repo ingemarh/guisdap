@@ -19,7 +19,7 @@ if ispc
         testwin=1;
     end
 elseif isunix
-    test=unix(['which ' prog ' >/dev/null']);
+    test=gupsystem(['which ' prog ' >/dev/null']);
     if isempty(test)
         testunix=1;
     end

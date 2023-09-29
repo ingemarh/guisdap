@@ -154,7 +154,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
    set(vizufig,'PaperOrient','landscape','PaperPosition',ppos([2 1 4 3])+[0 s 0 -s])
    pngor='820x580';
   end
-  %[i,j]=unix('which addlogo.sh');
+  %[i,j]=gupsystem('which addlogo.sh');
   %i=i || local.matlabversion>8.3;
   %if ~i, set(hds(2:3),'visible','off'), end
   file=fullfile(dirs,fig);
@@ -168,7 +168,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   end
   %if ~i
   % set(hds(2:3),'visible','on')
-  % unix(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
+  % gupsystem(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
   %end
   if strcmpi(act,'print') || strcmpi(a3,'print')
     if isempty(a2), dev=''; else, dev=['-d' a2 ' ']; end
