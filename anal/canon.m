@@ -46,7 +46,7 @@ elseif strfind(fn,'.gz')
  elseif ispc
   wingzip=which('gzip.exe');
   if ~isempty(wingzip)
-   TS=['"',wingzip,'" -k "',fn,'" > "',local.tfile,ext,'"']; %%??? this needs to be tested...
+   TS=['"',wingzip,'" -kdc "',fn,'" > "',local.tfile,ext,'"'];
    system(TS);
   else
    if isfile("C:\Program Files\7-zip\7z.exe")
