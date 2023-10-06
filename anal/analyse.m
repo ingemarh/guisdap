@@ -36,7 +36,7 @@ if nargin<1 & local.x & isempty(get(0,'UserData'))
  x=100; yh=25; y=(9:-1:1)*yh+130; ty=y+yh/2; x1=60; x2=240; x3=40;
  bg=uicontrol('Style','pushbutton','string','GO','position',[0 0 40 30],'callback','if strcmp(get(gcbo,''string''),''GO''),set(gcbo,''string'',''pause'',''fontsize'',10),else,waitforbuttonpress,end','fontsize',14);
  uicontrol('Style','pushbutton','string','?','position',[0 40 20 20],'callback',['web file:///' path_GUP '/doc/howto.html'],'tooltipstring','Get some help');
- uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','quit');
+ uicontrol('Style','pushbutton','string','Quit','position',[50 0 40 20],'callback','gupquit');
  uicontrol('Style','pushbutton','string','Save','position',[50 20 40 20],'callback','o=uiputfile;if o,save_setup(o);end','tooltipstring','Save setup in file');
  br=uicontrol('Style','pushbutton','string','Reset','position',[50 40 40 20],'callback','global gfdfile,if exist(gfdfile,''file''),delete(gfdfile),end,analyse','tooltipstring','Reset to default');
  set(gca,'position',[0 0 1 1],'visible','off')

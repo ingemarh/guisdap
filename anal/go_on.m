@@ -106,7 +106,7 @@ if go_die
  catch
   disp(lasterr)
  end
- quit
+ gupquit
 else
  for i=1:size(extra,1),eval(extra(i,:));end
  an_start
