@@ -503,7 +503,7 @@ __user__i_deco (DECO * deco, DSPCMPLX * rawSA,	/* this points to the beginning o
   float *decofir;
 
   raw_profile = rawSA;		/* + deco->rawsa; */
-  rawproflen = deco->zprflen1;
+  rawproflen = deco->zprflen1-1; /* -1 as suggested by Yonghui Wang*/
   out_profile = dataSA + deco->rmsa;
 
   if (deco->decomode == DSP_TAILDECO)
@@ -1155,4 +1155,28 @@ matface (int *par, int *nin, double *in_r, double *in_i,
     }
   free (in);
   free (out);
+}
+
+typedef struct
+{
+  double re;
+  double im;
+} DSPCMPLXDBL;
+
+void
+pyface (int *par, int nin, DSPCMPLXDBL * in_r, DSPCMPLX * out)
+{
+  ulong nb = par[0] + par[4] * par[7];
+  float *fpar = NULL;
+  double *upar = NULL;
+  int i;
+  DSPCMPLXSHORT *in;
+  in = (DSPCMPLXSHORT *) malloc (nin * sizeof (DSPCMPLXSHORT));
+  for (i = 0; i < nin; i++)
+    {
+      in[i].re = in_r[i].re;
+      in[i].im = in_r[i].im;
+    }
+  alter_dec (nb, par, 0, fpar, in, out, upar);
+  free (in);
 }
