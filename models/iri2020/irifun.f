@@ -170,6 +170,9 @@ C 2020.10 04/23/22 TI -> BOOKER1, COMMON/BLOCK8 deleted
 C 2020.11 11/25/22 Changed unit to 15 for Shubin coefficients
 C 2020.11 11/28/22 Added gallden, ohzden, caaden, caadenet, tcor2cal
 C 2020.11 11/28/22 Improved XE1: argmax, COMMON
+C 2020.12 05/11/23 Corrected Gallden, CAADEN: log10Ne -> xlogNe
+C 2020.13 08/11/23 tcor2cal: SAX300,SUX300 -> srh,ssh        [P. Coisson]
+C 2020.14 10/03/23 tcor2cal: COMMON and hmF2 deleted
 C                  
 c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c IRI functions and subroutines:
@@ -221,7 +224,7 @@ C--------------------------------------------------------------
          y7=y6*exp(-(xl-2)/1.5)
          xlogNe=y1+y7
 		 if(abs(xlogNe).gt.38.0) xlogNe=sign(38.0,xlogNe)
-         gallden=10**(log10Ne+6.0)
+         gallden=10**(xlogNe+6.0)
        RETURN          
        END             
 C
@@ -260,7 +263,7 @@ C--------------------------------------------------------------
          y7=y6*exp(-(xl-2)/1.5)
          xlogNe=y1+y7
 		 if(abs(xlogNe).gt.38.0) xlogNe=sign(38.0,xlogNe)
-         caaden=10**(log10Ne+6.0)
+         caaden=10**(xlogNe+6.0)
        RETURN          
        END             
 C
@@ -285,7 +288,7 @@ C--------------------------------------------------------------
        END             
 C
 C
-      REAL FUNCTION TCOR2CAL(h,hmF2,hour,xmodip,pf107,srh,ssh)
+      REAL FUNCTION TCOR2CAL(h,hour,xmodip,pf107,srh,ssh)
 C--------------------------------------------------------------
 C Calculates correction factor TCOR2
 C    INPUT:  h   height in km
@@ -297,15 +300,13 @@ C            srh    Sunrise at height h in hours
 C            ssh    Sunrset at height h in hours
 C--------------------------------------------------------------
         DIMENSION a01(2,2)
-		COMMON /BLO15/hcor2,scahei
-		call tops_cor2(h,xmodip,a01)
-      	  tc2d=a01(1,1)+a01(2,1)*pf107
-          tc2n=a01(1,2)+a01(2,2)*pf107
-          tc2 = HPOL(HOUR,tc2d,tc2n,SAX300,SUX300,1.,1.)
-		  if(h.lt.hcor2) tc2=(exp((h-hmF2)/scahei)-1)*tc2
-		  TCOR2CAL = tc2
-       RETURN          
-       END             
+
+	call tops_cor2(h,xmodip,a01)
+      	tc2d=a01(1,1)+a01(2,1)*pf107
+        tc2n=a01(1,2)+a01(2,2)*pf107
+        TCOR2CAL = HPOL(HOUR,tc2d,tc2n,srh,ssh,1.,1.)
+        RETURN          
+        END             
 		  
 C
 C
@@ -9330,7 +9331,6 @@ C     PRINT TERMS OF SERIES
   130 FORMAT (1X,16E8.1)
       IF (IPRT .EQ. 1)  RETURN
   135 CONTINUE
-C  135 PRINT *, (BM(I),I=1,J)
       RETURN
       END
 C      
