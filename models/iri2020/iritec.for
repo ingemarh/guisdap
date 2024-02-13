@@ -2,7 +2,8 @@ c iritec.for, version number can be found at the end of this comment.
 c-----------------------------------------------------------------------        
 C
 C contains IRITEC, IONCORR subroutines to computed the 
-C total ionospheric electron content (TEC)
+C total ionospheric electron content (TEC) and the ionospheric 
+C correction caused by TEC, respectively.
 C
 c-----------------------------------------------------------------------        
 C Corrections
@@ -32,8 +33,9 @@ C 2012.00 10/05/11    array size change jf(50) outf(20,1000), oarr(100).
 C
 C 2020.00 03/15/23 Inclusion of plasmasphere 
 C 2020.00 03/15/23 Revised numerical integration and stepsizes
-C 2020.01 03/23/23 Revised IRIT13 to IRITEC, deleted iri_tec
+C 2020.01 03/23/23 Revised IRIT13 to IRITEC
 C 2020.02 05/10/23 Added JFF(50) 
+C 2020.02 12/04/23 Deleted subroutine iri_tec, no longer needed 
 C
 c-----------------------------------------------------------------------        
 C
@@ -145,133 +147,3 @@ c-----------------------------------------------------------------------
         end
 c
 c
-        subroutine iri_tec (jf,hstart,hend,istep,tectot,tectop,tecbot)
-c-----------------------------------------------------------------------        
-C subroutine to compute the total ionospheric content
-C INPUT:      
-C   hstart  altitude (in km) where integration should start
-C   hend    altitude (in km) where integration should end
-C   istep   =0 [fast, but higher uncertainty <5%]
-C           =1 [standard, recommended]
-C           =2 [stepsize of 1 km; best TEC, longest CPU time]
-C OUTPUT:
-C   tectot  total ionospheric content in tec-units (10^16 m^-2)
-C   tectop  topside content (in %)
-C   tecbot  bottomside content (in %)
-C
-C The boundaries for regions with different stepsizes are:
-C   h1=haa lower boundary of IRI
-c   h2=hmF2-50km
-c   h3=hmF2+50km 
-c   h4=2,000km upper boundary of standard IRI 
-c   h5=hpp plasmapause height, 
-c   h6=30,000km upper boundary for IRI with plasmaspheric
-c      extension
-C The stepsizes are
-c   istep   below h1   h1-h2  h2-h3   h3-h4   h4-h5   h5-h6
-C     0      1.0km    10.0km  5.0km  100km   1000km  2000km
-C     1      1.0km     5.0km  2.0km   50km    500km  1000km
-C     2      1.0km     1.0km  1.0km  1.0km    100km   500km   
-C
-c-----------------------------------------------------------------------        
-
-        dimension       step(6),hr(6)
-        logical     	jf(50)
-
-c turning off computations that are not needed for integration
-
-          jf(2)=.false.       ! f=no temperatures (t)
-          jf(3)=.false.       ! f=no ion composition (t)
-          jf(21)=.false.      ! t=ion drift computed f=not comp.(f)
-          jf(28)=.false.	  ! t=spread-F computed f=not comp. (f)
-          jf(33)=.false. 	  ! t=auroral boundary   f=off (f)
-          jf(34)=.false. 	  ! t=messages on f= off (t)
-          jf(35)=.false. 	  ! t=auroral E-storm model on f=off (f)
-          jf(47)=.false. 	  ! t=CGM on  f=CGM off (f)
-
-        iisect = int((hend-hstart)/1000.0)+1
-		
-        sumtop = 0.0
-        sumbot = 0.0
-		
-        do 2167 j=1,iisect
-        call IRI_SUB(JF,JMAG,ALATI,ALONG,IY,MD,HOUR,
-     &          abeg,aend,astp,OUTF,OARR)
-		
-2167		enddo
-C
-C find the starting and end point for the integration
-C        
-        ia=1
-		ie=1
-        do 2918 i=1,5 
-		    if (hstart.ge.hr(i)) ia=i+1
-2918        if (hend.gt.hr(i)) ie=i
-
-C
-C start the numerical integration
-C
-
-        h = hstart
-        ir=ia
-		if(ia.eq.1) then
-			h=hr(1)
-            ir=2
-			endif
-1       hu = hr(ir)
-		delx = step(ir)
-        h = h + delx
-        if (h.le.hu) then
-		  hx = h - delx/2.0
-          yne = XE_1(hx)
-          yyy = yne * delx/xnorm
-		  htop = h
-		else
-		  hdo = h - delx
-		  dhdo = hu - hdo
-		  hx = hu - dhdo/2.0
-          yne = XE_1(hx)
-          yyy = yne * dhdo/xnorm
-		  ir=ir+1
-		  htop=hu
-		  h=hu
-		endif
-        if (htop.le.hmf2) then
-                sumbot = sumbot + yyy
-        else
-                sumtop = sumtop + yyy
-		endif
-		if(ir.le.ie) goto 1
-C
-C Add the last contribution
-C		
-        hu=hr(ie)
-		delx = step(ie)
-111     h = h + delx
-        if (h.le.hend) then
-		  hx = h - delx/2.0
-          yne = XE_1(hx)
-          yyy = yne * delx/xnorm
-		  htop=h
-		else
-		  hdo = h - delx
-		  dhdo = hend - hdo
-		  hx = hend - dhdo/2.0
-          yne = XE_1(hx)
-          yyy = yne * dhdo/xnorm
-		  htop=hend
-		endif
-        if (htop.le.hmf2) then
-                sumbot = sumbot + yyy
-        else
-                sumtop = sumtop + yyy
-		endif
-		if(htop.lt.hend) goto 111
-
-        zzz = sumtop + sumbot
-        tectop = sumtop / zzz * 100.
-        tecbot = sumbot / zzz * 100.
-        tectot = zzz * xnmf2    
-
-      RETURN
-      END

@@ -11,7 +11,7 @@ function m_iri=iri(par,tim,loc,h,iripath)
 %   		8  O2+ density/m-3
 %   		9  NO+ density/m-3
 %              12  heights
-% tim date as [tsec year], default [15552090 1996]
+% tim date as [tsec year], default now
 % loc location, default [69.2 19.2]
 % h heights limits and step in km, default [100 590 0] max 100 heights
 %*********************************************
@@ -28,7 +28,7 @@ if nargin<1, par=[]; end
 if isempty(h), h=[100 590 0]; end
 if length(h)<3 || h(3)==0, h(3)=diff(h(1:2))/99; end
 if isempty(loc), loc=[69.2 19.2]; end
-if isempty(tim), tim=[15552090 1996]; end
+if isempty(tim), tim=fliplr(timeconv(now,'mat2gup')); end
 if isempty(par), par=[1 4 3]; end
 nh=round(diff(h(1:2))/h(3))+1;
 h(2)=h(2)+0.001;

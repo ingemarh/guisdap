@@ -1,6 +1,6 @@
 function [altitude,ne,te,ti,coll,cO,cM2,cH]=ionomodel(heights,modinfo)
 global d_time p_XMITloc path_GUP
-persistent iripath
+persistent iripath yshift
 if isempty(d_time)
  dtime=clock;
 else
@@ -12,15 +12,17 @@ else
  loc=p_XMITloc(1:2);
 end
 if modinfo
+ yshift=0;
  iripath=fullfile(path_GUP,'share','iri');
  [i1,i2,i3,i4]=textread(fullfile(iripath,'ig_rz.dat'),'%d,%d,%d,%d',1,'headerlines',2);
  i5=datenum(dtime);
  if i5>datenum(i4,i3,31) | i5<datenum(i2,i1,1)
-  error('Date is outside iri model time range, please update the iri model')
+  warning('GUISDAP:ionomodel','Date is outside iri model time range, please update the iri model')
+  yshift=-11;
  end
  fprintf('** The model uses the IRI model at the tx position (%.1f %.1f)**\n',loc)
 end
-[tsec,year]=tosecs(dtime);
+[tsec,year]=tosecs(dtime); year=year+yshift;
 hh=[min(heights)-1 max(heights)+1.1 1]; if hh(2)-hh(1)>100, hh(3)=0; end
 m_iri=iri([1 4 3 6 8 9 10 12],[tsec year],loc,hh,iripath);
 altitude=m_iri(:,8);
