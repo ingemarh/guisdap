@@ -29,11 +29,15 @@ spektri_init % Loads in plasma dispersion function table
 name_antennas={'32m' '42m' 'vhf' 'uhf' 'kir' 'sod' 'unk' '32p' 'quj' 'syi'};
 radar_freqs=[500 500 224 930 930 930 NaN 500 500 440]*1e6;
 radar_gains=10.^[4.25 4.48 4.31 4.81 4.81 4.81 NaN 4.25 4.1 4.3];
-radar_effs=[.66 .68 .64 .66 .66 .66 NaN .66 .66 .5];
+radar_effs=[.66 .68 .64 .66 .66 .66 NaN .66 .66 1.];
 if analysis_start(1)>2011
   radar_freqs(5:6)=[224 224]*1e6;
-  radar_gains(5:6)=10.^[3.54];
+  radar_gains(5:6)=10.^3.54;
   radar_effs(5:6)=[.58 .58];
+end
+if analysis_start(1)<2023
+  radar_gains(10)=10^4.3;
+  radar_effs(10)=.5;
 end
 old_rcprog=-1; old_point=[-1 -1];
 EOF=0;
@@ -46,7 +50,11 @@ while ~EOF
     if name_site=='Q'
       [OK,EOF,N_averaged,M_averaged]=integr_qujing;
     elseif name_site=='H'
-      [OK,EOF,N_averaged,M_averaged]=integr_syisr(len_prof);
+      if a_lpf(1).do
+        [OK,EOF,N_averaged,M_averaged]=integr_syisr(len_prof);
+      else
+        [OK,EOF,N_averaged,M_averaged]=integr_syisrw;
+      end
     else
       [OK,EOF,N_averaged,M_averaged]=integr_data;
     end

@@ -2,7 +2,7 @@ function [list,msg]=getfilelist(dirpath,newer)
 
 % [list,msg]= getfilelist(dirpath,newer)
 
-global a_realtime a_year
+global a_realtime a_year a_lpf
 
 list=[]; msg=''; dirlist=[];
 if nargin<2
@@ -69,31 +69,54 @@ else
       dirlist=dir(fullfile(dp,j.name,'*.hdf5'));
       if isempty(dirlist)
         syisr=1;
-        dirlist=dir(fullfile(dp,j.name,'*.h5'));
-        [~,d]=sortrows(cell2table({dirlist.name}'));
-        dirlist=dirlist(d);
+        if a_lpf(1).do
+          dirlist=dir(fullfile(dp,j.name,'*.h5'));
+          [~,d]=sortrows(cell2table({dirlist.name}'));
+          dirlist=dirlist(d);
+        else
+          dirlist=dir(fullfile(dp,j.name,'*F1T.h5'));
+          dirlen=length(dirlist);
+          l=repmat(struct('fname','','tai',0),[dirlen 1]);
+	  fname=cell2mat({dirlist.name}');
+	  tai=timeconv(str2num(fname(:,1:16))*1e-6-8*3600,'unx2tai'); % bei->tai
+          for i=1:dirlen
+            l(i).fname=fullfile(dp,j.name,dirlist(i).name);
+            l(i).tai=tai(i);
+          end
+          list=[list;l];
+	end
       else
         syisr=0;
       end
       for f=dirlist'
         h5file=fullfile(j.name,f.name);
         if syisr
-          tx.time=h5read(h5file,'/Tx/TransTime');
-          tx.code=h5read(h5file,'/Tx/PulseCode');
-          s=size(tx.time);
-          if isempty(a_year), %hui hui
-            tx.stamp=datevec(dir(h5file).date);
-          else
-            tx.stamp=a_year;
+          if a_lpf(1).do
+            tx.time=h5read(h5file,'/Tx/TransTime');
+            tx.code=h5read(h5file,'/Tx/PulseCode');
+            s=size(tx.time);
+            if isempty(a_year), %hui hui
+              tx.stamp=datevec(dir(h5file).date);
+            else
+              tx.stamp=a_year;
+            end
+            td=datenum(tx.stamp(1),1,1)-datenum(1970,1,1);
+            tx.time=reshape(timeconv(td*86400+tx.time(:)-8*3600,'unx2tai'),s); %bei->tai
+            fno=fno+1;
+            list.fname(fno)={h5file};
+            if fno==1, list.tai=[]; list.code=[]; list.profs=[]; end
+            list.tai=[list.tai tx.time];
+            list.code=[list.code tx.code];
+            list.profs=[list.profs;s(2)];
+	  %else
+          %  syhead_info = h5read(h5file, '/head');
+          %  sytime = double(syhead_info.dt) * 1e-6;      % us, added by wyh
+          %  sytai_time = timeconv(sytime, 'unx2tai');    % ut is bei, added by wyh
+          %  fno = fno + 1;
+          %  list(fno, 1).fname = h5file;                  % eiscat is array of struct, added by wyh
+          %  if fno == 1, list.tai = []; end
+          %  list(fno, 1).tai = sytai_time;
           end
-          td=datenum(tx.stamp(1),1,1)-datenum(1970,1,1);
-          tx.time=reshape(timeconv(td*86400+tx.time(:)-8*3600,'unx2tai'),s); %bei->tai
-          fno=fno+1;
-          list.fname(fno)={h5file};
-          if fno==1, list.tai=[]; list.code=[]; list.profs=[]; end
-          list.tai=[list.tai tx.time];
-          list.code=[list.code tx.code];
-          list.profs=[list.profs;s(2)];
         else
           h5d=h5info(h5file);
           h5d=struct2cell(h5d.Groups(1).Groups);

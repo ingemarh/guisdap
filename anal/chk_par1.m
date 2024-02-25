@@ -45,6 +45,10 @@ if ~isempty(d_saveint)
   d_saveint.var=1;
  end
 end
+a_lpf(1).do=0;
+if exist('analysis_lpf','var')
+ a_lpf=analysis_lpf;
+end
 
 % The first if-block tries to locate the data source and produces variables 
 % necessary for integration:
@@ -264,10 +268,6 @@ end
 a_ppcombine=0;
 if exist('analysis_ppcombine','var')
  a_ppcombine=analysis_ppcombine;
-end
-a_lpf(1).do=0;
-if exist('analysis_lpf','var')
- a_lpf=analysis_lpf;
 end
 if a_lpf(1).do
  chk_lagprofiling()

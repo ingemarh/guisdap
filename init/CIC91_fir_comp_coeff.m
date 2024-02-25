@@ -39,7 +39,7 @@
 %    CIC91_fir_comp_coeff(31,80e6,4e6,true);
 
 
-function [ht]=CIC91_fir_comp_coeff(L, Fs, Fc, p)
+function [ht]=CIC91_fir_comp_coeff(L, Fs, Fc, R, p)
 	%%%%%% User Parameters %%%%%%
 	% Check if Signal Processing Toolbox is in the Matlab installation
 	if (isempty(which('fir2')))
@@ -51,7 +51,8 @@ function [ht]=CIC91_fir_comp_coeff(L, Fs, Fc, p)
 	if(nargin < 1), L=[]; end
 	if(nargin < 2), Fs=[]; end
 	if(nargin < 3), Fc=[]; end
-	if(nargin < 4), p=0; end
+	if(nargin < 4), R=[]; end
+	if(nargin < 5), p=0; end
 
 	if isempty(L), L = 31; end
 	if mod(L,2) == 0
@@ -63,7 +64,9 @@ function [ht]=CIC91_fir_comp_coeff(L, Fs, Fc, p)
 	%%%%%% CIC filter parameters %%%%%%
 	M = 1;			%% Differential Delay
 	N = 5;			%% Number of Stages
-	R=round(Fs/Fc/5);% 5 due to software decimation
+	if isempty(R)
+		R=round(Fs/Fc/5),% 5 due to software decimation
+	end
 
 	Fo = R*Fc/Fs;           %% Normalized Cutoff freq; 0<Fo<=0.5/M;
 	if Fo>=1/4M
