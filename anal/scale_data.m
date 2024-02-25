@@ -56,7 +56,7 @@ if ~isempty(calTemp)
  end
 elseif ~isempty(sysTemp)
 %*********************** OR BY BACKGROUND POWER ************************
- calibs=lpgs(find(lpg_lag(lpgs)==0 & lpg_bcs=='b'));
+ calibs=lpgs(find(lpg_lag(lpgs)==0 & lpg_bcs(lpgs)=='b'));         % array size mismatch, added by wyh
  calibs=diff_val(calibs); % find all different values
  calibs=calibs(find(calibs>0));  % Accept non-zero values
  lpg_cal=size(lpg_bac);

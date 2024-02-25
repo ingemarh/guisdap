@@ -47,7 +47,8 @@ elseif name_site=='Q'
   ch_gain=10^4.1;
   ch_fradar=500e6;
 elseif name_site=='H'
-  ch_gain=10^4.3;
+  %ch_gain=10^4.3; %phase1
+  ch_gain=10^4.6; %phase2
   ch_fradar=440e6;
 end
 % For compatibility with the experiment design package define
@@ -104,7 +105,7 @@ for d_rcprog=B_rcprog:N_rcprog
      fprintf(' Starting from GUP 1.50 p_dtau is given in microseconds\n')
      fprintf(' change p_dtau to get rid of this message\n')
      for i=1:10,fprintf('*********\n');end
-  end  
+  end
 
   global td_am td_ch td_t1 td_t2 c_f
   if name_site=='T' | name_site=='V' | name_site=='L' | name_site=='P' | name_site=='Q' | name_site=='H'
