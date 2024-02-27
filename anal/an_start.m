@@ -64,8 +64,8 @@ while ~EOF
       else
         decodeparblock
       end
-      fprintf('\n%s-%s integrated\n',datestr(datenum(d_time(1,:)),0),...
-        datestr(datenum(d_time(2,:)),13))
+      fprintf('\n%s-%s integrated\n',datestr(datenum(d_time(1,:))+local.tz{2},0),...
+        datestr(datenum(d_time(2,:))+local.tz{2},13))
     end
   end
 

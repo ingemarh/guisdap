@@ -79,7 +79,7 @@ function plot_fit(arg1,  arg2,  arg3,  arg4,  arg5,  ...
 		  arg11, arg12, arg13, arg14, arg15, ...
 		  arg16, arg17, arg18, arg19, arg20)
 
-global r_param r_error r_dp r_status r_h ch_el d_time
+global r_param r_error r_dp r_status r_h ch_el d_time local
 
 gcf1=gcf;
 global name_expr name_site
@@ -612,6 +612,9 @@ if sum(get(gcf1,'UserData'))~=4
 end
 
 %% Put time string(s) in, indicating when dump was made ...
+if iscell(local.tz)
+ time=datevec(datenum(time)+local.tz{2});
+end
 axes('Units','Normal','Position',[0 0 1 1],'Visible','Off');
 if (use_ws & write_text)
 	fmt = ['%4d-%02d-%02d %02d%02d:%02.0f - '...
