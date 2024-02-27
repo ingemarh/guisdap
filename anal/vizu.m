@@ -288,14 +288,28 @@ elseif ~isempty(OLD_WHICH)
  WHICH_PARAM=OLD_WHICH;
 end
 %%%%%%%%%% Time scales %%%%%%%%%%%%%
+if ~iscell(local.tz)
+ local.tz=num2cell(local.tz,2);
+ if strcmp(local.tz{1},'CST')
+  local.tz{2}=8/24,
+ else
+  local.tz{2}=0,
+ end
+end
+
+if strcmp(local.tz{1},'CST')
+ ttext='CHINA STANDARD TIME';
+else
+ ttext='UNIVERSAL TIME';
+end
 if strcmp(lower(act),'verbose')
  if isempty(START_TIME)
   START_TIME=floor(timeconv(Time(1,1),'mat2utc'));
   END_TIME=ceil(timeconv(Time(2,end),'mat2utc'));
   if isempty(Y_TYPE), Y_TYPE=Y_TYPE1; end
  end
- START_TIME=minput('Start time',START_TIME);
- END_TIME=minput('  End time',END_TIME);
+ START_TIME=datevec(datenum(minput(sprintf('Start time [%s]',local.tz{1}),datevec(datenum(START_TIME)+local.tz{2})))-local.tz{2});
+ END_TIME=datevec(datenum(minput('End time',datevec(datenum(END_TIME)+local.tz{2})))-local.tz{2});
  if isempty(a2) && length(GATES)>1
   SCALE(2,:)=minput('Altitude scale',10*[floor(min(par2D(GATES(1),:,2))/10) ceil(max(par2D(GATES(end),:,2))/10)]);
  end
@@ -402,6 +416,8 @@ if n_tot>6, FS=8; height(2)=.02; TL=TL/2; end
 
 month_ix={'January','February','March','April','May','June',...
 	   'July','August','September','October','November','December'};
+START_TIME=datevec(datenum(START_TIME)+local.tz{2});
+END_TIME=datevec(datenum(END_TIME)+local.tz{2});
 endtime=datevec(datenum(END_TIME)-1/86400);
 if START_TIME(2)==endtime(2)
  if START_TIME(3)==endtime(3)
@@ -414,6 +430,8 @@ else
  t2=sprintf('%d %s - %d %s',START_TIME(3),char(month_ix(START_TIME(2))),endtime(3),char(month_ix(endtime(2))));
 end
 t2=sprintf('%s, %s, %s %d',name_ant,name_expr,t2,START_TIME(1));
+START_TIME=datevec(datenum(START_TIME)-local.tz{2});
+END_TIME=datevec(datenum(END_TIME)-local.tz{2});
 if ~isempty(MESSAGE1)
   t2=[MESSAGE1 ', ' t2];
 end 
@@ -583,7 +601,7 @@ if option(13)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-xlabel(axs(end),'UNIVERSAL TIME')
+xlabel(axs(end),ttext)
 drawnow
 if REALT && ~isempty(local.site) && a_realtime && isunix
  if local.x
@@ -621,7 +639,7 @@ if size(zparam,1)==1
  line_plot(s,zparam',zscale,Barlabel,[],lg);
  return
 end
-global Time axs axc add_plot maxdy Y_TYPE
+global Time axs axc add_plot maxdy Y_TYPE local
 add_plot=add_plot+1;
 if length(axs)<add_plot
  ax=setup_axes(yscale,YTitle);
@@ -649,7 +667,7 @@ for i=s
   for j=[d' length(zp)+1]
    jj=(jp+1):(j-1); jp=j; ljj=length(jj);
    if ljj
-    surface(ax,ones(ljj+1,1)*Time(:,i)',yp([jj jp])*o2,zp([jj jp-1])*o2)
+    surface(ax,ones(ljj+1,1)*(Time(:,i)+local.tz{2})',yp([jj jp])*o2,zp([jj jp-1])*o2)
    end
   end
  end
@@ -676,7 +694,7 @@ return
 
 %%%%% line_plot function %%%%%%%%%%
 function line_plot(s,yparam,yscale,YTitle,Clabel,lg)
-global Time axs add_plot
+global Time axs add_plot local
 add_plot=add_plot+1;
 if length(axs)<add_plot
  ax=setup_axes(yscale,YTitle);
@@ -704,7 +722,7 @@ if length(s)>1
  d=[find(Time(1,s(2:end))-Time(2,s(1:end-1))>0) length(s)];
  nc=size(yparam,2);
  for i=1:length(d)
-  line(ax,col(Time(:,s(d1:d(i)))),reshape(o2*row(yparam(s(d1:d(i)),:)),2*(d(i)-d1+1),nc))
+  line(ax,col(Time(:,s(d1:d(i)))+local.tz{2}),reshape(o2*row(yparam(s(d1:d(i)),:)),2*(d(i)-d1+1),nc))
   d1=d(i)+1;
  end
 else
@@ -713,11 +731,11 @@ end
 return
 
 function ax=setup_axes(yscale,YTitle)
-global axs height n_tot START_TIME END_TIME add_plot vizufig
+global axs height n_tot START_TIME END_TIME add_plot vizufig local
 ax=axes(vizufig,'Position',[.12 .06+(n_tot-add_plot)*sum(height) .7 height(1)]);
 axs=[axs ax];
 set(ax,'xgrid','on','ygrid','on')
-mydatetick(ax,[datenum(START_TIME) datenum(END_TIME)],length(axs)==1)
+mydatetick(ax,[datenum(START_TIME) datenum(END_TIME)]+local.tz{2},length(axs)==1)
 if ~isempty(yscale)
  set(ax,'YLim',yscale+5*eps*abs(yscale).*[-1 1])
 end

@@ -10,6 +10,7 @@ if nargin<3, l=[]; end
 if nargin<2, g=[]; end
 if nargin<1, file=[]; end
 nf=1; nlev=128;
+global local
 if isempty(file)
  global r_om r_spec p_om0 sc_angle r_h name_expr name_ant d_time r_freq
 else
@@ -23,6 +24,12 @@ else
 end
 if isempty(g), g=1:length(r_h); end
 if isempty(l), l='log'; end
+if iscell(local.tz)
+ d_time=datevec(datenum(d_time)+local.tz{2});
+ ltz=local.tz{1};
+else
+ ltz='UT';
+end
 lg=length(g);
 if lg>1
  r_h=r_h(g);
@@ -46,7 +53,7 @@ for ff=1:nf
    df=diff(f)/2;
    f=[f(1)-df(1);f(2:end)-df;f(end)+df(end)]'; s=[sp(jj,i)' sp(jj(end),i)];
    if nf>1
-    ss(ff,:,ig)=s; tt=[tt datenum(r_time)];
+    ss(ff,:,ig)=s; tt=[tt datenum(d_time)];
    elseif exist('h','var')
     surface(o2*f,h(i+[0 1]),o2*s)
    else
@@ -66,7 +73,7 @@ for ff=1:nf
    df=diff(f)/2;
    f=[f(1)-df(1);f(2:end)-df;f(end)+df(end)]'; s=[r_spec(jj,i)' r_spec(jj(end),i)];
    if nf>1
-    ss(ff,:,ig)=s; tt=[tt datenum(r_time)];
+    ss(ff,:,ig)=s; tt=[tt datenum(d_time)];
    elseif exist('h','var')
     surface(o2*f,h(i+[0 1]),o2*s)
    else
@@ -96,7 +103,7 @@ if nf>1
   ylabel('Frequency (kHz)')
   text('pos',[1 1],'string',sprintf('%.0f km',r_h(g(gg))),'units','normal','horiz','right','vertical','base')
  end
- xlabel('Time (UT)')
+ xlabel(sprintf('Time (%s)',ltz))
  subplot(lg,1,1)
  title(sprintf('%s@%s %s',name_expr,name_ant,datestr(tt(1,1),1)))
 else

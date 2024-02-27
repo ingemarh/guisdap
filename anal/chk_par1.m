@@ -98,6 +98,15 @@ else
  end
  a_start=timeconv(analysis_start,'utc2tai'); % the programs uses internally TAI
  a_end  =timeconv(analysis_end,'utc2tai');
+ if ~iscell(local.tz)
+  local.tz=num2cell(local.tz,2);
+  if strcmp(local.tz{1},'CST')
+   local.tz{2}=8/24;
+  else
+   local.tz{2}=0;
+  end
+ end
+ a_start=a_start-local.tz{2}*86400; a_end=a_end-local.tz{2}*86400;
  a_year=analysis_start(1);
  if a_rawdata==1, % HDF5 format
   d_filelist=h5read(data_path,'/Time/MatlabTime');

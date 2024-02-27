@@ -87,6 +87,8 @@ while i<length(files)
     syfdfile_name = sytdfile_name;
 
     sytd_head = h5read(sytdfile_name, '/head');
+    sytai_time = timeconv(double(sytd_head.dt)*1e-6-8*3600,'unx2tai');    % time is bei
+
     sytdlp_data = h5read(sytdfile_name, '/lag_profile');
     sytdlp_data = complex(double(sytdlp_data.r(:)), double(sytdlp_data.i(:)));
 
@@ -105,8 +107,9 @@ while i<length(files)
     inttime = 7;                % parameter that holds integration time
     non_negative = 9;         % parameters which are positive
 
-    sypreint_time = sytd_head.nipp * sytd_head.ipp * 1e-6;
-    secs = file.tai + double(sypreint_time);
+    sypreint_time = sytd_head.nipp * sytd_head.ipp * 1e-6; %correct? int32*int32
+    secs = sytai_time + double(sypreint_time);
+
     d_parbl(inttime) = sypreint_time;  % unit is s, added by wyh 
     d_parbl(tvec) = timeconv(secs, 'tai2utc');
 
