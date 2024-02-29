@@ -49,7 +49,7 @@ if isempty(vizufig)
   Time=[]; DATA_PATH=[]; START_TIME=[]; MESSAGE1=[]; OLD_WHICH=[]; allnames=[]; OLD_SCALE=[]; Y_TYPE=[];
 end
 REALT=0; manylim=1;
-Loc=local.user;
+Loc=local.site;
 if strcmp(action(naction,nvargin,varargin),'rtgup')
   global a_year a_start a_end a_realtime a_autodir
   timespan=action(naction+1,nvargin,varargin);
@@ -723,13 +723,16 @@ if length(s)>1
  nc=size(yparam,2);
  for i=1:length(d)
   l=line(ax,col(Time(:,s(d1:d(i)))+local.tz{2}),reshape(o2*row(yparam(s(d1:d(i)),:)),2*(d(i)-d1+1),nc));
-  if i>1 & local.matlabversion>23.1
+  if local.matlabversion>23.1
    j=num2cell(1:nc); [l.SeriesIndex]=j{:};
   end
   d1=d(i)+1;
  end
 else
- line(ax,Time(:,s),o2*yparam(s,:))
+ l=line(ax,Time(:,s),o2*yparam(s,:))
+ if local.matlabversion>23.1
+  j=num2cell(1:nc); [l.SeriesIndex]=j{:};
+ end
 end
 return
 

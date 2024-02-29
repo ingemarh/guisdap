@@ -96,7 +96,6 @@ switch local.site
   data_path='/data/';
  case 'Hub'
   local.user='Hub';
-  local.site=[];
  otherwise
   local.site=[];
 end
