@@ -18,7 +18,7 @@ C 12/14/00 jf(30),outf(20,100),oarr(50)
 C
 C Version-mm/dd/yy-Description (person reporting correction)
 C 2000.01 05/07/01 current version
-c 2000.02 10/28/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
+c 2000.02 10/28/02 replace TAB/6 blanks, enforce 72/line   [D. Simpson]
 c 2000.03 11/08/02 common block1 in iri_tec with F1reg
 c 2007.00 05/18/07 Release of IRI-2007
 c 2007.02 10/31/08 outf(.,100) -> outf(.,500)
@@ -35,7 +35,9 @@ C 2020.00 03/15/23 Inclusion of plasmasphere
 C 2020.00 03/15/23 Revised numerical integration and stepsizes
 C 2020.01 03/23/23 Revised IRIT13 to IRITEC
 C 2020.02 05/10/23 Added JFF(50) 
-C 2020.02 12/04/23 Deleted subroutine iri_tec, no longer needed 
+C 2020.02 12/04/23 Deleted subroutine iri_tec, no longer needed
+C 2020.03 03/03/24 if(iisect.. moved to after tecb=0         [R. Skantz] 
+C 2020.03 03/03/24 hmF2,xnmF2,xnorm defined for last segment [R. Skantz] 
 C
 c-----------------------------------------------------------------------        
 C
@@ -77,58 +79,61 @@ c
           jff(47)=.false. 	  ! t=CGM on  f=CGM off (f)
 		
         iisect = int(((hend-hbeg)/hstep)/1000.0)
-		if(iisect.lt.1) goto 2345
-		hsect = 1000.0 * hstep
-		hastep = hstep/2.0
+	hsect = 1000.0 * hstep
+	hastep = hstep/2.0
         tect= 0.
         tecb= 0.
+	if(iisect.lt.1) goto 2345
 c
 c calculate IRI densities from hbeg+hstep/2 to hend-hstep/2 
 c		
-		do j=1,iisect
-           abeg = hbeg + (j-1)* hsect + hastep
-           aend = abeg + hsect - hstep
-           call IRI_SUB(JFF,JMAG,ALATI,ALONG,IY,MD,HOUR,
-     &          abeg,aend,hstep,OUTF,OARR)
-	       if(j.lt.2) then
-		      hmF2=oarr(2)
-		      xnmF2=oarr(1)
-              xnorm = xnmF2/1000.
-			  endif
+	do j=1,iisect
+          abeg = hbeg + (j-1)* hsect + hastep
+          aend = abeg + hsect - hstep
+          call IRI_SUB(JFF,JMAG,ALATI,ALONG,IY,MD,HOUR,
+     &        abeg,aend,hstep,OUTF,OARR)
+	  if(j.lt.2) then
+            hmF2 = oarr(2)
+            xnmF2 = oarr(1)
+            xnorm = xnmF2/1000.
+            endif
 c
 c Numerical integration for each 1000 point segment.
 c (xnorm is divided by 1000 to account for heights in km)
 c
-		   hx = abeg + hastep 
-		   do jj=1,1000
-		      yyy = outf(1,jj) * hstep / xnorm
-			  if (hx.le.hmF2) then
-                tecb = tecb + yyy
-              else
-                tect = tect + yyy
-		      endif
-			  hx = hx + hstep
-              enddo
-		   enddo
+          hx = abeg + hastep 
+          do jj=1,1000
+            yyy = outf(1,jj) * hstep / xnorm
+            if (hx.le.hmF2) then
+              tecb = tecb + yyy
+            else
+              tect = tect + yyy
+            endif
+            hx = hx + hstep
+            enddo
+          enddo
 c
-c numerical integration for the last segment
+c Numerical integration for the last segment
 c
 2345    hlastbeg = hbeg + iisect * hsect
         ilast = int((hend-hlastbeg)/hstep)
-           abeg = hlastbeg + hastep
-           aend = hlastbeg + ilast * hstep - hastep
-           call IRI_SUB(JF,JMAG,ALATI,ALONG,IY,MD,HOUR,
-     &          abeg,aend,hstep,OUTF,OARR)
-		   hx = abeg + hastep 
-		   do jj=1,ilast
-		     yyy = outf(1,jj) * hstep / xnorm
-			 if (hx.le.hmF2) then
-                tecb = tecb + yyy
-             else
-                tect = tect + yyy
-		     endif
-			 hx = hx + hstep 
-             enddo
+        abeg = hlastbeg + hastep
+        aend = hlastbeg + ilast * hstep - hastep
+        call IRI_SUB(JF,JMAG,ALATI,ALONG,IY,MD,HOUR,
+     &        abeg,aend,hstep,OUTF,OARR)
+        hmF2 = oarr(2)
+        xnmF2 = oarr(1)
+        xnorm = xnmF2/1000.
+        hx = abeg + hastep 
+        do jj=1,ilast
+          yyy = outf(1,jj) * hstep / xnorm
+          if (hx.le.hmF2) then
+            tecb = tecb + yyy
+          else
+            tect = tect + yyy
+          endif
+          hx = hx + hstep 
+          enddo
 		   
         tecto = tect * xnmF2
         tecbo = tecb * xnmF2

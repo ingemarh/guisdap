@@ -248,6 +248,8 @@ C 2020.18 04/27/23 w/o plasmapause (fixpt:5000,10000,20000,30000km)
 C 2020.19 10/22/23 iri_web: added h_tec_min
 C 2020.19 10/22/23 added text if h<HNEA or h>HNEE
 C 2020.20 10/25/23 jf(50)=t/f without/with plasmapause
+C 2020.21 03/04/24 corrected: do 8429 kind=47,57,1.... J. Lilensten
+
 C
 C*****************************************************************
 C********* INTERNATIONAL REFERENCE IONOSPHERE (IRI). *************
@@ -528,7 +530,7 @@ C
         oarr(43)=-1.
         oarr(44)=9999.
         oarr(45)=-1.
-        do 8429 kind=45,57,1
+        do 8429 kind=47,57,1
 8429    	oarr(kind)=-1.
         oarr(49)=-99.
         oarr(53)=-99.
