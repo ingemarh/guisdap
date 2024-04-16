@@ -5,10 +5,10 @@ if nargin<1, bg=NaN; end
 
 if ~ishandle(bg)
  if isstr(bg) & exist(bg)
-  i=which(bg); if ~isempty(i), bg=i; end
-  [i,i,i]=fileparts(bg);
+  ii=which(bg); if ~isempty(ii), bg=ii; end
+  [ii,ii,ii]=fileparts(bg);
   expver=1; %Backward compability
-  if strcmp(i,'.m')
+  if strcmp(ii,'.m')
    run(bg);
   else
    if ~exist(bg), bg=[path_tmp '.gup']; end
@@ -95,8 +95,8 @@ if rt & isunix
 end
 if go_die
  try
-  for i=1:size(extra,1)
-   ex=extra(i,:);
+  for ii=1:size(extra,1)
+   ex=extra(ii,:);
    while ~isempty(ex)
     [ext,ex]=strtok(ex,'#'); eval(ext)
    end
@@ -108,6 +108,6 @@ if go_die
  end
  gupquit
 else
- for i=1:size(extra,1),eval(extra(i,:));end
+ for ii=1:size(extra,1),eval(extra(ii,:));end
  an_start
 end
