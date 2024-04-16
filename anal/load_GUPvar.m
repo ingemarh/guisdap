@@ -18,7 +18,7 @@ else
   temp=[path_expr name_expr name_site];
 end
 if exist('d_rcprog','var')
-  GUPvarfile=[temp '_' int2str(d_rcprog) 'GUPvar'];
+  GUPvarfile=[temp '_' num2str(d_rcprog) 'GUPvar'];
   GUPvarfil=canon(GUPvarfile,0);
 end
 if ~exist('GUPvarfil','var') | ~exist(GUPvarfil,'file')

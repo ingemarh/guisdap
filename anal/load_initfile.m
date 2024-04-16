@@ -18,7 +18,7 @@ else
   temp=[path_expr name_expr name_site];
 end
 if exist('d_rcprog','var')
-  initfile=[temp '_' int2str(d_rcprog) 'init'];
+  initfile=[temp '_' num2str(d_rcprog) 'init'];
   initfil=canon(initfile,0);
 end
 if ~exist('initfil','var') | ~exist(initfil,'file')
