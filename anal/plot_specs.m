@@ -109,5 +109,5 @@ if nf>1
 else
  xlabel('Frequency (kHz)'), ylabel('Altitude (km)')
  title(sprintf('%s@%s %s',name_expr,name_ant,datestr(d_time(2,:),31)))
- sminmax=caxis, caxis([0 sminmax(2)])
+ sminmax=caxis; caxis([0 sminmax(2)])
 end
