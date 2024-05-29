@@ -27,7 +27,7 @@ for lp=lpg_lp(lpg)
     end
   end
   if used_oldvalues==0
-    dt=t2-t1;
+    dt=gupround(t2-t1);
     [w,wx]=wl(vc,dt);
     ind=find(w==0); w(ind)=[]; wx(ind)=[];
     wnew=sum((w*ones(size(p_om))').*exp(wx*ff));

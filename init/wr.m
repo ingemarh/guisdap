@@ -18,14 +18,16 @@ if nargin<4, dumdum=0; end
 
 rt=wnz(vc_penvabs,vch);
 rt=[min(rt)-1;rt;max(rt)+1];
-len=length(rt); lenn=len-(t2-t1);
+dt=gupround(t2-t1);
+len=length(rt); lenn=len-dt;
 s=1;
 st=rt(1)-1;  % Origin for the part of penvabs used
-if st+t2-t1<0
-  st=t1-t2;
+if st+dt<0
+  st=dt;
 end
+%if abs(st-round(st))<eps('single'), st=round(st); end
 if dumdum>1
- s=fix(min([t1 t2])/dumdum)*dumdum+1; lenn=t1-vc_penvo(vch)-st; len=lenn+(t2-t1);
+  s=fix(min([t1 t2])/dumdum)*dumdum+1; lenn=t1-vc_penvo(vch)-st; len=lenn+dt;
 end
 %if abs(len-round(len))<eps('single'), len=round(len); end
 %if abs(lenn-round(lenn))<eps('single'), lenn=round(lenn); end
@@ -35,8 +37,7 @@ end
 if st+len>size(vc_penv,1)
   vc_penv=[vc_penv;zeros(st+len-size(vc_penv,1),size(vc_penv,2))];
 end
-%if abs(st-round(st))<eps('single'), st=round(st); end
-stt=s+t2-t1;
+stt=s+dt;
 %if abs(stt-round(stt))<eps('single'), stt=round(stt); end
 wwr=vc_penv(st+(s:lenn),vch).*vc_penv(st+(stt:len),vch);
 wwr=flipud(wwr);
@@ -48,8 +49,8 @@ if dumdum==1, % calculate support for two-dim. ambiguities
   if st+len>size(vc_penvabs,1)
     vc_penvabs=[vc_penvabs;zeros(st+len-size(vc_penvabs,1),size(vc_penvabs,2))];
   end
-  wwra=vc_penvabs(st+(1:lenn),vch).*vc_penvabs(st+(1+t2-t1:len),vch);
+  wwra=vc_penvabs(st+(1:lenn),vch).*vc_penvabs(st+(1+dt:len),vch);
   wwra=flipud(wwra);
   suppind=find(wwra~=0);
   wwr=wwr(suppind); r=r(suppind);
-end;
+end

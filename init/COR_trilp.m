@@ -14,25 +14,28 @@
 % N_gates : number of gates calculated
 % lags    : Lags for which output needed in us, e.g. 0:10:250;
 % code    : user specified code number
+% Sample_skip : Number of points skipped in the sample vector
+
 %
 % See also: CORR_trilp, COR_check, COR_caltemp, COR_status, pulse_times, sample_times
-%function COR_trilp(ra,ri,vc,type,gating,overlap,N_gates,lags,code)
- function COR_trilp(ra,ri,vc,type,gating,overlap,N_gates,lags,code)
+%function COR_trilp(ra,ri,vc,type,gating,overlap,N_gates,lags,code,Sample_skip)
+ function COR_trilp(ra,ri,vc,type,gating,overlap,N_gates,lags,code,Sample_skip)
 
 global vc_adcint vc_sampling vc_samplingend vc_ba bm_samples bm_next
 global lp_t1 lp_t2 lp_h lp_ra lp_nfir lp_fir  lp_dec lp_T lp_dt p_dtau
 global lp_nt lp_vc lp_ri lp_bcs lp_code lp_ind lp_indold ra_next ra_prev
 
-if (type~='b' & type~='c' & type~='s'),
+if (type~='b' & type~='c' & type~='s' & type~='o')
   error(' Unknown data type in COR_trilp')
-end  
+end
+if nargin<10, Sample_skip=0; end
 
 ra_prev=ra;
 
-adcint=vc_adcint(vc); lags=lags/p_dtau; 
+adcint=vc_adcint(vc); lags=gupround(lags/p_dtau);
 COR_check(lags,adcint)
 
-N_maxlag=(gating-1);
+N_maxlag=gating-1;
 if any(lags>N_maxlag*adcint);
   disp(lags(lags>N_maxlag*adcint));
   error('Lags longer than possible with this algorithm ')
@@ -45,7 +48,7 @@ lp_T(index)=COR_caltemp(type)*ones(1,N_lags);
 
 % find first when pulses are transmitted and samples are taken
 pulsetimes=pulse_times(vc);
-t1=sample_times(vc,type2ind(type));t1=t1(1);
+t1=sample_times(vc,type2ind(type));t1=t1(1)+Sample_skip*adcint;
 lp_t1(index)=t1*ones(1,N_lags);
 lp_h(index)=lp_t1(index)-pulsetimes(1);
 

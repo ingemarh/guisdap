@@ -3,9 +3,9 @@
 %
 % function res=cheq(x)
 function res=cheq(x)
-maxim=max(x);minim=min(x);
-%if((maxim-minim)<=1000*eps*max(abs([1,maxim,minim]))),
-if maxim==minim
+diffim=max(x)-min(x);
+ if abs(diffim-round(diffim))<eps('single'), diffim=round(diffim); end
+if ~diffim
   res=x(1);
 else
   fprintf(' The input values to cheq are not all equal\n')

@@ -59,7 +59,15 @@ if ishandle(bg)
 end
 
 analysis_start=t1; analysis_end=t2; analysis_integr=intper;
-analysis_realtime=rt; analysis_rcprog=expver;
+analysis_realtime=rt;
+% find highest subversion by default
+for subver=9:-1:1
+ d=[path_expr name_expr name_site '_' num2str(expver) '.' num2str(subver) 'init.mat*'];
+ if ~isempty(dir(d))
+  expver=expver+subver/10;
+  break
+ end
+end
 
 if isunix
  recurse=sprintf('%04d????_??',t1(1));
@@ -93,6 +101,7 @@ if rt & isunix
   fprintf('Waiting %.1f minutes for exp start...\n',now/60), pause(now)
  end
 end
+analysis_rcprog=expver;
 if go_die
  try
   for ii=1:size(extra,1)

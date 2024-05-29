@@ -156,7 +156,7 @@ for d_rcprog=B_rcprog:N_rcprog
   end
 
   fprintf('Time used in initialization:%8.2f min\n',etime(clock,Stime)/60)
-  apustr=apugot;
+  apustr=['_' num2str(d_rcprog)];
   save_GUPvar
   fprintf('Radar controller program %g ready\n',d_rcprog) 
 end

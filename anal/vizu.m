@@ -37,7 +37,7 @@ if strcmp(action(naction,nvargin,varargin),'myb')
   varargout(1)={myb(gcf,action(naction+1,nvargin,varargin),action(naction+2,nvargin,varargin))};
   return
 end
-vizufig=findobj('type','figure','userdata',6);
+vizufig=findobj('type','figure','UserData',6);
 if strcmp(action(naction,nvargin,varargin),'new')
   naction=naction+1;
   if ~isempty(vizufig)

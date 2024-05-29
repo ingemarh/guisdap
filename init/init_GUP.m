@@ -30,9 +30,10 @@ if exist('B_rcprog')~=1, B_rcprog=1; end
 for d_rcprog=B_rcprog:N_rcprog
   Stime=clock;
 
-  apustr=['_',int2str(d_rcprog)];
+  apustr=['_' num2str(d_rcprog)];
   load_GUPvar
 
+  apustr=['_' int2str(d_rcprog)];
   read_specpar
   constants
 
@@ -46,6 +47,7 @@ for d_rcprog=B_rcprog:N_rcprog
 
   plot(p_om,real(lpg_wom)), drawnow
   %lpg_tex
+  apustr=['_' num2str(d_rcprog)];
   if isempty(strfind(GUPvarfile,apustr)), apustr=''; end
   save_toinitfile
 

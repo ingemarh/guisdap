@@ -3,4 +3,4 @@
 % See also: eps
 function ar=gupround(a)
 ar=round(a);
-if max(abs(a-ar))>eps(1e3), ar=a; end
+if max(abs(a-ar))>eps('single'), ar=a; end

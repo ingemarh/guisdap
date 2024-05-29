@@ -34,7 +34,11 @@ for code=codes;
   % If no calibration data for a code, look for other codes, which
   % might be on the same real channel. If any is found, use their calibrations.
   if length(cal_gr)==0,
-    ch=diff_val(vc_ch(lp_vc(lpg_lp(sig_gr(1))))); % These are the real channels used
+    if isempty(sig_gr)
+      ch=diff_val(vc_ch(lp_vc(lpg_lp(off_gr(1))))); % These are the real channels used
+    else
+      ch=diff_val(vc_ch(lp_vc(lpg_lp(sig_gr(1))))); % These are the real channels used
+    end
     for other=codes(find(codes~=code))
       lpg_other=find(lpg_code==other);
       ch_other=diff_val(vc_ch(lp_vc(lpg_lp(lpg_other(1))))); % These are channels used
