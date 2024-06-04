@@ -50,7 +50,7 @@ end
 if isempty(expid), [dum,expid,ext]=fileparts(dum); end
 expid=[expid ext];
 [msg,pulse,scan,comment,owner,antenna]=expparts(expid);
-if ~isempty(msg) && ~strfind(msg,'missing')
+if ~isempty(msg) & ~strfind(msg,'missing')
 %try for hdf5 files, use the first found
  files=dir(fullfile(data_path,'*.hdf5'));
  nf=length(files);

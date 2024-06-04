@@ -17,7 +17,12 @@ if vs>=3.0
   ran=[41 248;113 320;185 392;257 464];
   if vs>=4.1
    freq=[-4.2 -6.6 4.2 6.6]*1e6; nup_d=2;
-   ran=[26 240;105 318;183 397;262 476];
+   if vs>=4.2
+    ngates=5;
+    ran=round(ones(ngates,1)*(127.1+[-1 1]*145.7/2)+(0:ngates-1)'*ones(1,2)*67.5);
+   else
+    ran=round(ones(ngates,1)*(131.6+[-1 1]*148.8/2)+(0:ngates-1)'*ones(1,2)*76.5);
+   end
    if d_date>datenum(2017,1,1) & d_date<datenum(2020,12,13)
     freq=[6.8 4.4 -6.8 -4.4]*1e6; clear uparfreq % Error in the elan-file
    elseif d_date>datenum(2021,08,01) 
@@ -31,6 +36,8 @@ if length(d_data)==2*ngates*nlag
   startad=(0:1)*ngates*nlag+1;
 elseif length(d_data)==4*ngates*nlag
   startad=(0:3)*ngates*nlag+1;
+elseif vs>=4.2
+  startad=(0:3)*105857+82*nlag+81*1152+21;
 elseif vs>=4.1
   startad=(0:3)*86627+67*nlag+66*1152+21;
 elseif vs>=4.0

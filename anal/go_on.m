@@ -60,14 +60,8 @@ end
 
 analysis_start=t1; analysis_end=t2; analysis_integr=intper;
 analysis_realtime=rt;
-% find highest subversion by default
-for subver=9:-1:1
- d=[path_expr name_expr name_site '_' num2str(expver) '.' num2str(subver) 'init.mat*'];
- if ~isempty(dir(d))
-  expver=expver+subver/10;
-  break
- end
-end
+% find subversions, take highest by default
+[~,expver]=find_apustr_file([path_expr name_expr name_site],expver,'init','mat',data_path);
 
 if isunix
  recurse=sprintf('%04d????_??',t1(1));

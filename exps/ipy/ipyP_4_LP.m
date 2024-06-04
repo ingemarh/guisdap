@@ -2,7 +2,7 @@ N_SCAN=64;
 
 %COR_init((8998+2)*N_SCAN,1800)
 if d_rcprog==4.1
-  COR_init((19604+2)*N_SCAN,2249)
+  COR_init((31874+2+17*75)*N_SCAN,2249)
   for vc=1:N_SCAN
     COR_fdalt(20,vc,'o',41,15,10,30,30,0,(0:1152)*.4,1)
     COR_pp(81377,1,vc,'o',1,5250,0,1)
@@ -17,7 +17,7 @@ if d_rcprog==4.1
     COR_pp(10,1,vc,'c',1,10,0,1)
   end
 elseif d_rcprog==4.2
-  COR_init((19604+2)*N_SCAN,2249)
+  COR_init((37981+2+15*75)*N_SCAN,2249)
   for vc=1:N_SCAN
     COR_fdalt(20,vc,'s',51,15,15,30,30,0,(0:1152)*.4,1)
     COR_pp(99857,1,vc,'s',1,6000,0,1)

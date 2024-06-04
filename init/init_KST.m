@@ -89,15 +89,13 @@ if exist('B_rcprog')~=1, B_rcprog=1; end
 for d_rcprog=B_rcprog:N_rcprog
   Stime=clock;
 
-  apustr=['_' int2str(d_rcprog)]; apugot=[];
-  [file,appu]=find_apustr_file([name_expr name_site],apustr,'_init','.m');
+  file=find_apustr_file([name_expr name_site],d_rcprog,'_init','m');
   for i=1:3,fprintf('\n'), end
   if isempty(file)
     disp('#Standard values will be used')
   else
     eval(file)
     fprintf(['# ',file, ' executed\n'])
-    apugot=appu;
   end
   if p_dtau<0.01;  % Due to change in p_dtau definition
      p_dtau=p_dtau*1e6;
@@ -121,11 +119,10 @@ for d_rcprog=B_rcprog:N_rcprog
   fprintf(' %.1f', ch_fradar/1e6), fprintf(' MHz\n')
 
   fprintf('# Defining virtual channels:\n#####\n')
-  [file,appu]=find_apustr_file([name_expr name_site],apustr,'vcinit','.m');
+  file=find_apustr_file([name_expr name_site],d_rcprog,'vcinit','m');
   if ~isempty(file)
     eval(file)
     fprintf(['# ' file ' executed\n'])
-    if ~isempty(appu), apugot=appu; end
   else
     fprintf('# Assuming virtual channels extending from 0 to REP (%.0f)\n',p_rep)
     vc_ch=diff_val(td_ch(td_ch~=0)); 
@@ -145,18 +142,19 @@ for d_rcprog=B_rcprog:N_rcprog
   clear td_am td_t1 td_t2 td_ch
   vc_arrange
 
-  [file,appu]=find_apustr_file([name_expr name_site],apustr,'_LP','.m');
+  file=find_apustr_file([name_expr name_site],d_rcprog,'_LP','m');
   if isempty(file)
     error('Stopping')
   else
     fprintf('Defining lag profiles by executing %s:\n',file)
     eval(file)
-    if ~isempty(appu), apugot=appu; end
     fprintf('...%s passed\n',file)
   end
 
   fprintf('Time used in initialization:%8.2f min\n',etime(clock,Stime)/60)
-  apustr=['_' num2str(d_rcprog)];
+  if d_rcprog~=1
+    apustr=['_' num2str(d_rcprog)];
+  end
   save_GUPvar
   fprintf('Radar controller program %g ready\n',d_rcprog) 
 end

@@ -14,14 +14,9 @@ global td_ch td_t1 td_t2 td_am p_rep ch_f ch_filter ch_adcint p_offsetppd
 
 if nargin==0, rcprog=1; Nrcprog=1; 
 elseif nargin==1, Nrcprog=1; end
-apustr=['_' num2str(rcprog)];
 
 create=0;
-PSfile=find_apustr_file([path_expr name_expr name_site],apustr,'pat_PS','.mat');
-if isempty(PSfile)
-  apustr=['_' int2str(rcprog)];
-  PSfile=find_apustr_file([path_expr name_expr name_site],apustr,'pat_PS','.mat');
-end
+PSfile=find_apustr_file([path_expr name_expr name_site],rcprog,'pat_PS','mat');
 if isempty(PSfile)
   warning('Did not find a pat_PS.mat file')
   create=1;
@@ -37,7 +32,7 @@ else
 end
 
 if create
-  [PSfile,apustr]=find_apustr_file([path_expr name_expr name_site],apustr,'pat_PS','.m');
+  PSfile=find_apustr_file([path_expr name_expr name_site],rcprog,'pat_PS','m');
   if isempty(PSfile)
     fprintf('\n')
     error('Please make a pat_PS.m with TLAN2PS or a pat_PS.mat file yourself')
@@ -64,6 +59,9 @@ if create
   if all(ch_f==-1) | all(td_ch~=0)
     %row(ch_f), row(td_ch) 
     error('The pat_PS.m file is not up-to-date. Create again with new version of TLAN2PS before proceeding')
+  end
+  if rcprog~=1
+    apustr=['_' num2str(rcprog)];
   end
   save_PS
 end
