@@ -1,4 +1,5 @@
 % Analysis defaults
+analysis_plasmaline=0;
 if name_site=='V'
   fit_altitude([2 3 5],1)=[120;350;100];
   first=50; last=600; d1=.45; d2=1; n1=100;
@@ -39,21 +40,29 @@ elseif name_site=='T'
    h1=310; h2=500;
   end
 elseif name_site=='L'
-  fit_altitude([2 3 5],1)=[100;130;90];
-  first=50; last=600; d1=.75; d2=1; n1=60;
-  h1=210; h2=370;
-  if fix(expver)==4
-    h1=[145 315]; h2=[240 500]; d1=.6; first=25; n1=115;
-  elseif expver>1
-    h1=[140 310]; h2=[270 460];
+  if strfind(data_path,'@32p')
+    analysis_txpower=8;
+    analysis_intfixforce=[NaN NaN NaN 50];
+    %analysis_intfix(5:6)=47:48;
+    analysis_plasmaline=1;
+    plasma_range=col(ones(2*10,1)*(0:3)*117460+(1:2*10)'*ones(1,4))+52500;
   else
+    fit_altitude([2 3 5],1)=[100;130;90];
+    first=50; last=600; d1=.75; d2=1; n1=60;
     h1=210; h2=370;
+    if fix(expver)==4
+      h1=[145 315]; h2=[240 500]; d1=.6; first=25; n1=115;
+    elseif expver>1
+      h1=[140 310]; h2=[270 460];
+    else
+      h1=210; h2=370;
+    end
+    a_satch.clutter=88;
+    a_satch.clutfac=10;
+    a_satch.sigma=3;
   end
-  a_satch.clutter=88;
-  a_satch.clutfac=10;
-  a_satch.sigma=3;
 end
-if name_site=='T' | name_site=='L' | name_site=='V'
+if (name_site=='T' | name_site=='L' | name_site=='V') & ~analysis_plasmaline
  a_satch.repair=63; % do not repair
  a_satch.skip=1;
  altd=[0 ones(1,n1)*d1 d1:d2:(sqrt((last-first)*2*d2))];

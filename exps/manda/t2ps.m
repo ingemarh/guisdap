@@ -27,6 +27,11 @@ if name_site=='L'
  if rc>1
   p_rep=160000;
  end
+elseif name_site=='P'
+ ch_f=500;
+ ch_filter={'b800d6.fir'};
+ p_rep=160000;
+ ch_adcint=.4;
 elseif name_site=='V'
  if rc==4
   d=find(rem(td_t1,1500)<1000);
