@@ -26,7 +26,7 @@ if nargin<4, plots=0; end
 %if isempty(plots), plots=0; end
 global Time par1D par2D axs r_Magic_const DATA_PATH local START_TIME END_TIME fpp_plot pl vizufig
 
-edge_dist=10; overlap=2;
+edge_dist_hz=1e5; overlap=2;
 
 %Get plasmaline data
 disp('Reading plasmaline data')
@@ -37,6 +37,7 @@ ogcf=gcf;
 set(0,'currentfigure',ogcf)
 if isempty(gate) | gate==0, gate=p.gate; end
 if isempty(gate), gate=1; end
+edge_dist=round(edge_dist_hz/abs(p.df));
 
 re=6370;
 %First guess of altitudes (Not very important)

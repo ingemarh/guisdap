@@ -9,6 +9,6 @@ d_date=datenum(row(d_parbl(1:6)));
 if length(d_data)==length(freq)*ngates*nlag
   startad=(0:3)*ngates*nlag+1;
 else
-  startad=(0:3)*117460+52500;
+  startad=(0:3)*117460+52500+1;
 end
-if isempty(gate), gate=1; end
+if isempty(gate), gate=2; end
