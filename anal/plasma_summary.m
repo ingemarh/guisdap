@@ -185,7 +185,7 @@ if plots
 elseif plots==0
  npanel=dgates*nfreq;
  height(2)=.03; height(1)=(0.85-(npanel-1)*height(2))/npanel;
- set(gcf,'Position',[200 30 587 807],'renderer','painters','PaperPosition',[0.4 0.7 20.65 28.4],'UserData',7)
+ set(gcf,'Position',[200 30 587 807],'PaperPosition',[0.4 0.7 20.65 28.4],'UserData',7)
 
  for g=1:dgates
   mmmsig=mean(max(max(plsig(g,:,:,:))));
@@ -229,21 +229,20 @@ elseif plots==0
   [dum,fname]=fileparts(pl_dir);
   fname=minput('Print file name (.pdf .png)',fullfile(printdir,[fname '_plasmaline']),1);
   if isunix & local.x
-    gd=fullfile(matlabroot,'sys','ghostscript',filesep);
-    gsbin=fullfile(gd,'bin',lower(computer),'gs');
-    gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
-    if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
-    print(gcf,'-opengl','-depsc2','-r600',[fname '.eps'])
-    gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
-    gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
-    delete([fname '.eps'])
-   %print(gcf,'-opengl','-dpdf','-r600',[fname '.pdf'])
-   %print(gcf,'-dpng256',[fname '.png'])
+   gd=fullfile(matlabroot,'sys','ghostscript',filesep);
+   gsbin=fullfile(gd,'bin',lower(computer),'gs');
+   gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
+   if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
+   print(gcf,'-depsc2','-r600',[fname '.eps'])
+   gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
+   gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
+   delete([fname '.eps'])
   else
-   print(gcf,'-dpdf',[fname '.pdf'])
-   print(gcf,'-dpng',[fname '.png'])
+   exportgraphics(gcf,[fname '.pdf'],'Resolution','600')
+   exportgraphics(gcf,[fname '.png'],'Resolution','70')
   end
   fprintf('%s.pdf and .png saved\n',fname);
   insert_exif(gcf,fname,{'pdf' 'png'})
  end
 end
+d
