@@ -181,7 +181,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
     gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
     if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
     gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
-    gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
+    gupsystem(sprintf('%s %s -r150 -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
     delete([file '.' ext])
     fprintf('Created %s.pdf and .png\n',file)
     insert_exif(vizufig,file,{'pdf' 'png'})

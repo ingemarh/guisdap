@@ -228,21 +228,20 @@ elseif plots==0
   if pl_dir=='.', pl_dir=pwd; end
   [dum,fname]=fileparts(pl_dir);
   fname=minput('Print file name (.pdf .png)',fullfile(printdir,[fname '_plasmaline']),1);
-  if isunix & local.x
+  if isunix
    gd=fullfile(matlabroot,'sys','ghostscript',filesep);
    gsbin=fullfile(gd,'bin',lower(computer),'gs');
    gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
    if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
-   print(gcf,'-depsc2','-r600',[fname '.eps'])
+   print(gcf,'-depsc2','-r600',[local.tfile '.eps'])
    gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
-   gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
-   delete([fname '.eps'])
+   gupsystem(sprintf('%s %s -r150-dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
+   delete([local.tfile '.eps'])
   else
    exportgraphics(gcf,[fname '.pdf'],'Resolution','600')
-   exportgraphics(gcf,[fname '.png'],'Resolution','70')
+   exportgraphics(gcf,[fname '.png'],'Resolution','150')
   end
   fprintf('%s.pdf and .png saved\n',fname);
   insert_exif(gcf,fname,{'pdf' 'png'})
  end
 end
-d
