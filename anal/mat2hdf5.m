@@ -333,7 +333,11 @@ for rr = 1:length(pci)
         name_expr_more = [];
     end
     
-    ant = matfolder(dd(end)+1:end);
+    if ~isempty(dd)
+        ant = matfolder(dd(end)+1:end);
+    else
+        ant = 'eis';
+    end
 
     if isempty(name_ant) 
        switch name_site

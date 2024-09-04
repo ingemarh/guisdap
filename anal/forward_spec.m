@@ -38,7 +38,7 @@ if di_spectra==-1
 else
  dt=median(diff(lag));
  if any(diff(lag)~=dt)
-  keyboard
+%  keyboard
  end
  l=find(err>mean(err)+3*abs(di_spectra)*std(err)); acf(l)=[]; lag(l)=[];
  if di_spectra>0
