@@ -21,9 +21,16 @@ do_err=nargout==5;
 
 if isempty(strfind(data_path,'*')) && ~isdir(data_path)
   [~,filename,ext] = fileparts(data_path); Leap=[];
-  if strcmp(ext,'.hdf5') && strcmp(filename(1:6),'EISCAT')
-    [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(data_path);
-    return
+  if strcmp(ext,'.hdf5')
+    try
+      check=h5info(data_path,'/metadata/software');
+      for j=1:length(check.Datasets)
+          if strcmp(check.Datasets(j).Name,'EISCAThdf5_ver')
+              [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(data_path);
+              return
+          end
+      end
+    end
   else
     [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,[],do_err,status);
     dt=diff(Time)*86400; name_strategy=sprintf('%.0f',median(dt));

@@ -23,9 +23,6 @@ global name_ant name_expr r_RECloc path_GUP
 Time=[]; par2d=[]; par1D=[]; rpar2d=[]; err2d=[];
 
 filename = hdf5file;
-[~,b] = fileparts(filename);
-a = strfind(b,'@');
-name_ant = b(a+1:end);
 
 inform  = h5info(filename,'/metadata');
 metavar = {inform.Datasets.Name}';
@@ -33,6 +30,8 @@ if ~isempty(find(strcmp(metavar,'names')))
     namesdata = h5read(filename,'/metadata/names');
     nnexpr = find(strcmp(deblank(namesdata(1,:)),'name_expr'));
     name_expr = deblank(namesdata{2,nnexpr});
+    nnant =  find(strcmp(deblank(namesdata(1,:)),'name_ant'));
+    name_ant = deblank(namesdata{2,nnant});
 end
 
 if nargin == 1
