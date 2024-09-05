@@ -10,6 +10,10 @@ clutter.c -- decodump routine for removing clutter via fft
 double get_tid (void);
 void print_tid_clutter (double diff_time, int ncth, int nlth, char *decoder);
 
+#ifndef __linux__
+typedef unsigned long ulong;
+#endif
+
 typedef struct
 {
   float re;

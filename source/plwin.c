@@ -11,6 +11,11 @@ plwin.c -- decodump routine for decoding fft
 void print_tid (double diff_time, int nth, char *decoder);
 double get_tid ();
 
+#ifndef __linux__
+typedef unsigned long ulong;
+#endif
+typedef unsigned long long hrtime_t;
+
 typedef struct
 {
   float re;

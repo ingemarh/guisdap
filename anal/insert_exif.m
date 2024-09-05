@@ -1,6 +1,7 @@
 function insert_exif(fig,file,exts)
+global local
 exif=''; td=[];
-prog='exiftool';
+prog=local.fn.exif;
 flags='-overwrite_original';
 ud={'Copyright' 'Experiment' 'Radar' 'Computer' 'Results'};
 fd={'Name'};
@@ -11,21 +12,7 @@ for i=d'
     td=timeconv(t','mat2tai')';
   end
 end
-testwin=0;
-testunix=0;
-if ispc
-    winexif=which('exiftool.exe');
-    if isempty(winexif)
-        testwin=1;
-    end
-elseif isunix
-    test=gupsystem(['which ' prog ' >/dev/null']);
-    if isempty(test)
-        testunix=1;
-    end
-end
-if testwin | testunix
-  warning('GUISDAP:vizu',[prog ' not found, please install'])
+if isempty(prog)
   prog='imwrite';
   f=imformats; lf=length(f); j=0;
   for i=1:lf

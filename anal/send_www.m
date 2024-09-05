@@ -1,9 +1,8 @@
 function send_www
-global webfile name_site
+global webfile name_site local
 l=length(webfile);
 if l>0 & isunix
- [i,d]=gupsystem('ps | grep curl | grep -v grep');
- if i
+ if ~isempty(local.fn.curl)
   file=[];
   for i=1:l
    if iscellstr(webfile(i))

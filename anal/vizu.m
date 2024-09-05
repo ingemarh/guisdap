@@ -176,12 +176,9 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
     if strcmpi(act,'print'), delete([file '.' ext]), end
   end
   if strcmpi(act,'save')
-    gd=fullfile(matlabroot,'sys','ghostscript',filesep);
-    gsbin=fullfile(gd,'bin',lower(computer),'gs');
-    gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
-    if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
-    gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
-    gupsystem(sprintf('%s %s -r150 -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',gsbin,gsinc,file,file,ext));
+    %gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
+    gupsystem(sprintf('%s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',local.fn.gs,file,file,ext));
+    gupsystem(sprintf('%s -r150 -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',local.fn.gs,file,file,ext));
     delete([file '.' ext])
     fprintf('Created %s.pdf and .png\n',file)
     insert_exif(vizufig,file,{'pdf' 'png'})

@@ -84,6 +84,7 @@ end
 if local.matlabversion>7.6 && local.matlabversion<7.9 && ~isempty(strfind(d,'64')) && ~strcmp(d,'SOL64')
  disp('Matlab-EISCAT fault detected'), quit
 end
+local.fn=helpers();
 clear matver d
 if ~isfield(local,'tfile'), local.tfile=tempname; end
 switch local.site

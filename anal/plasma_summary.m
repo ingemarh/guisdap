@@ -228,15 +228,13 @@ elseif plots==0
   if pl_dir=='.', pl_dir=pwd; end
   [dum,fname]=fileparts(pl_dir);
   fname=minput('Print file name (.pdf .png)',fullfile(printdir,[fname '_plasmaline']),1);
-  if isunix
-   gd=fullfile(matlabroot,'sys','ghostscript',filesep);
-   gsbin=fullfile(gd,'bin',lower(computer),'gs');
-   gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
-   if ~exist(gsbin,'file'), gsbin='LD_LIBRARY_PATH="" && gs'; gsinc=[]; end
-   print(gcf,'-depsc2','-r600',[local.tfile '.eps'])
-   gupsystem(sprintf('%s %s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
-   gupsystem(sprintf('%s %s -r150-dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.eps </dev/null >/dev/null',gsbin,gsinc,fname,fname));
-   delete([local.tfile '.eps'])
+  if ~isempty(local.fn.gs)
+   %gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
+   fneps=[local.tfile '.eps'];
+   print(gcf,'-depsc2','-r600',fneps)
+   gupsystem(sprintf('%s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.eps </dev/null >/dev/null',local.fn.gs,fname,fneps));
+   gupsystem(sprintf('%s -r150 -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.eps </dev/null >/dev/null',local.fn.gs,fname,fneps));
+   delete(fneps)
   else
    exportgraphics(gcf,[fname '.pdf'],'Resolution','600')
    exportgraphics(gcf,[fname '.png'],'Resolution','150')

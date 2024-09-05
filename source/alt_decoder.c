@@ -13,6 +13,11 @@ void print_tid (double diff_time, int nth, char *decode);
 #define         DSP_ACDECO      1
 #define         DSP_TAILDECO    2
 #define         MAX_NR_THREADS  4 
+
+#ifndef __linux__
+typedef unsigned long ulong;
+#endif
+
 typedef struct			/* Make a new internal data type */
 {
   float re;
