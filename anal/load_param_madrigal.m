@@ -35,7 +35,7 @@ arg=sprintf('%s&parms=%s',userarg,param);
 if exist(data_path,'file')
  global path_GUP
  cmd2=[' ' path_GUP '/bin/madDataDisplay 2>/dev/null'];
- if ~exist(cmd2(2:end-2)), return, end
+ if ~exist(cmd2(2:end-12)), return, end
  cmd4='QUERY_STRING=''fileName=';
  antennas={'kir' 'uhf' 'sod' 'vhf' 'esr' '32m' '42m'};
  [devnull,filename]=fileparts(data_path); ll=16;

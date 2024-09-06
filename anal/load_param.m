@@ -31,11 +31,10 @@ if isempty(strfind(data_path,'*')) && ~isdir(data_path)
           end
       end
     end
-  else
-    [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,[],do_err,status);
-    dt=diff(Time)*86400; name_strategy=sprintf('%.0f',median(dt));
-    if std(dt)>10, name_strategy='ant'; end
-    return
+  [Time,par2D,par1D,rpar2D,err2D]=load_param_madrigal(data_path,[],do_err,status);
+  dt=diff(Time)*86400; name_strategy=sprintf('%.0f',median(dt));
+  if std(dt)>10, name_strategy='ant'; end
+  return
   end
 end
 
