@@ -3,6 +3,6 @@ function [status,result]=gupsystem(cmd)
 if isunix
   b='LD_LIBRARY_PATH="" ' ;
 else
-  b=''
+  b='';
 end
 [status,result]=system([b cmd]);

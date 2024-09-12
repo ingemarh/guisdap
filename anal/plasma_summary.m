@@ -232,8 +232,8 @@ elseif plots==0
    %gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
    fneps=[local.tfile '.eps'];
    print(gcf,'-depsc2','-r600',fneps)
-   gupsystem(sprintf('%s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.eps </dev/null >/dev/null',local.fn.gs,fname,fneps));
-   gupsystem(sprintf('%s -r150 -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.eps </dev/null >/dev/null',local.fn.gs,fname,fneps));
+   gupsystem(sprintf('%s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s </dev/null >/dev/null',local.fn.gs,fname,fneps));
+   gupsystem(sprintf('%s -r150 -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s </dev/null >/dev/null',local.fn.gs,fname,fneps));
    delete(fneps)
   else
    exportgraphics(gcf,[fname '.pdf'],'Resolution','600')
