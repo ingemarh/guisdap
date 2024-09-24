@@ -186,15 +186,15 @@ end
 					error('Usage of (2)')
 				else
 					if eval(['isempty (arg' int2str(j) ')'])
-						c = pad(c,inf,inf);
+						c = gup_pad(c,inf,inf);
 					else
-						eval(['c=pad(c,arg' int2str(j) ''',NaN);'])
+						eval(['c=gup_pad(c,arg' int2str(j) ''',NaN);'])
 					end
 					j = j+1;
 					if eval(['isempty (arg' int2str(j) ')'])
-						t = pad(t,ones(2,1)*inf);
+						t = gup_pad(t,ones(2,1)*inf);
 					else
-						eval(['t=pad(t,arg' int2str(j) ''',NaN);'])
+						eval(['t=gup_pad(t,arg' int2str(j) ''',NaN);'])
 					end
 				end
 
@@ -396,7 +396,7 @@ end
 	end
 
 	%% If only start and end times are given, supply the rest.
-	%% If a times array is given which is padded out with NaNs
+	%% If a times array is given which is gup_padded out with NaNs
 	%% then timecheck will not detect that fact. So run all
 	%% time arrays through this loop..........................
 	tstore = times;
@@ -591,8 +591,8 @@ end
 				for k = 1 : c	%% For each chosen vc
 					ind     = find(anychange(:,k));
 					%% Padded with NaN's (see drawing stage)
-					trans_x = pad(trans_x,[stm(k); duprow(stm(k)+ind,2); stm(k)+r],NaN);
-					trans_y = pad(trans_y,[duprow(yaxis(k)+env(1,k),2); duprow(yaxis(k)+(0.35*env(ind,k)),2)],NaN);
+					trans_x = gup_pad(trans_x,[stm(k); duprow(stm(k)+ind,2); stm(k)+r],NaN);
+					trans_y = gup_pad(trans_y,[duprow(yaxis(k)+env(1,k),2); duprow(yaxis(k)+(0.35*env(ind,k)),2)],NaN);
 				end
 				%% Convert GUISDAP time units to us
 				trans_x = trans_x .* p_dtau;
@@ -706,7 +706,7 @@ end
 		if (use_vc)
 			%% NB. patch does not accept sparse matrices ....
 			%% Nor may there be extraneous 0's, and the presence
-			%% of NaNs (for padding) causes nothing to be plotted.
+			%% of NaNs (for gup_padding) causes nothing to be plotted.
 			for k = 1 : c	%% For each chosen virtual channel
 				x=full(trans_x(:,k)); x = x(~isnan(x));
 				y=full(trans_y(:,k)); y = y(~isnan(y));

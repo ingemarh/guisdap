@@ -896,7 +896,7 @@ for rr = 1:length(pci)
             if strcmp('time_sd',parameters_sd{ii})
                 [matfile.data.utime_sd,leaps_sd] = timeconv(h_Sd(:,1),'tai2unx');
                 matfile.metadata.utime_sd = infos(a,:)';
-                a = find(strcmp('leaps',parameters_list)==1);
+                a = find(strcmp('leaps_sd',parameters_list)==1);
                 if length(unique(leaps_sd)) == 1
                     nn0 = nn0 + 1;
                     matfile.data.par0d_sd(nn0) = leaps_sd(1);  

@@ -27,5 +27,9 @@ save(GUPvarfile,'GUP_iniver','ch_fradar','ch_gain','p_dtau','p_rep','p_ND',...
  'vc_sampling','lp_dec','lp_firsto','lp_nfir','lp_T','lp_bcs','lp_code',...
  'lp_dt','lp_h','lp_nt','lp_ra','lp_ri','lp_t1','lp_t2','lp_vc','-V7.3')
 
-gupsystem(['gzip -f9 ' GUPvarfile '.mat']);
+if isempty(local.fn.gzip)
+  gzip([GUPvarfile '.mat']);
+else
+  gupsystem([local.fn.gzip ' -f9 ' GUPvarfile '.mat']);
+end
 disp([GUPvarfile ' saved']);

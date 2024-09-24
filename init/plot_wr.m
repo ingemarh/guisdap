@@ -221,9 +221,9 @@ end
 				      ' out of ' int2str(total) ' .....'])
 				%% Takes forever if stored directly as a
 				%% sparse array, so store as a full one
-				%% instead (See documentation to pad.m)
+				%% instead (See documentation to gup_pad.m)
 				eval(['wr_' name_expr ...
-				      ' = pad(wr_' name_expr ',wrlpg(i),0);'])
+				      ' = gup_pad(wr_' name_expr ',wrlpg(i),0);'])
 			end
 			if (limit==0)	%% Full set of signal raf's ...
 				disp(['Note: saving range ambiguity functions '...
@@ -278,15 +278,15 @@ end
 					error('Usage of (2)')
 				else
 					if eval(['isempty (arg' int2str(j) ')'])
-						l = pad(l,inf,inf);
+						l = gup_pad(l,inf,inf);
 					else
-						eval(['l=pad(l,arg' int2str(j) ''',NaN);'])
+						eval(['l=gup_pad(l,arg' int2str(j) ''',NaN);'])
 					end
 					j = j+1;
 					if eval(['isempty (arg' int2str(j) ')'])
-						t = pad(t,ones(2,1)*inf);
+						t = gup_pad(t,ones(2,1)*inf);
 					else
-						eval(['t=pad(t,arg' int2str(j) ''',NaN);'])
+						eval(['t=gup_pad(t,arg' int2str(j) ''',NaN);'])
 					end
 				end
 
@@ -411,9 +411,9 @@ end
 					      ' out of ' int2str(total) ' .....'])
 					%% Takes forever if stored directly as a
 					%% sparse array, so store as a full one
-					%% instead (See documentation to pad.m)
+					%% instead (See documentation to gup_pad.m)
 					eval(['wr_' name_expr ...
-					      ' = pad(wr_' name_expr ',wrlpg(i),0);'])
+					      ' = gup_pad(wr_' name_expr ',wrlpg(i),0);'])
 				end
 			end
 		end
@@ -494,7 +494,7 @@ end
 	end
 
 	%% If only start and end times are given, supply the rest.
-	%% If a times array is given which is padded out with NaNs
+	%% If a times array is given which is gup_padded out with NaNs
 	%% then timecheck will not detect that fact. So run all
 	%% time arrays through this loop..........................
 	tstore = tlim;

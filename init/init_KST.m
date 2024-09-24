@@ -50,6 +50,12 @@ elseif name_site=='H'
   %ch_gain=10^4.3; %phase1
   ch_gain=10^4.6; %phase2
   ch_fradar=440e6;
+elseif name_site=='D'
+  ch_gain=10^4.4;
+  ch_fradar=440e6;
+elseif name_site=='W'
+  ch_gain=10^4.4;
+  ch_fradar=440e6;
 end
 % For compatibility with the experiment design package define
 p_ND=1;
@@ -73,8 +79,12 @@ elseif name_site=='Q'
   p_RECloc=[25.6381,103.7151,2.0448];
   p_XMITloc=p_RECloc;
 elseif name_site=='H'
-  p_RECloc=[18.35,109.62,0.055];
+  p_RECloc=[18.349,109.622,0.055];
   p_XMITloc=p_RECloc;
+elseif name_site=='D'
+  p_RECloc=[19.5,109.1,0.1]; %Danzho
+elseif name_site=='W'
+  p_RECloc=[19.6,110.8,0.1]; %Wenchang
 end
 
 % The calibration temperatures, which may be redefined during analysis

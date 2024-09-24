@@ -317,13 +317,13 @@ if (~use_ws)
 	name=[]; site=[];
 	for k = 1 : nfiles
 		load(canon(file(k,:),0))
-		param = pad(param,r_param,NaN);
+		param = gup_pad(param,r_param,NaN);
 		lr    = size(r_param,2);
-		err   = pad(err,r_error(:,1:lr),NaN);
-		status= pad(status,r_status,NaN);
-		h     = pad(h,r_h,NaN);
-		dp    = pad(dp,r_dp,NaN);
-		el    = pad(el,r_el,NaN);
+		err   = gup_pad(err,r_error(:,1:lr),NaN);
+		status= gup_pad(status,r_status,NaN);
+		h     = gup_pad(h,r_h,NaN);
+		dp    = gup_pad(dp,r_dp,NaN);
+		el    = gup_pad(el,r_el,NaN);
 		time  = [time;r_time];
 		name  = str2mat([name; name_expr]);
 		site  = str2mat([site; name_site]);

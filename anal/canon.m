@@ -20,41 +20,19 @@ end
 if output
  disp(['canon: ' fn])
 end
+ofn=[local.tfile ext];ifn=fn;
+if ispc
+ ofn=['"' ofn '"']; ifn=['"' ifn '"'];
+end
 if strfind(fn,'.bz2')
- if isunix
- % should work on posix-compliant systems: linux, OSX, and even Cygwin
-  prog='lbunzip2'; %faster
-  if gupsystem(['which ' prog ' >/dev/null 2>&1']), prog='bunzip2'; end
-  gupsystem([prog ' -ck ' fn ' >' local.tfile ext]);
- elseif ispc
-  winbzip=which('bzcat.exe');
-  if ~isempty(winbzip)
-   TS=['"',winbzip,'" -k "',fn,'" > "',local.tfile,ext,'"'];
-   system(TS);
-  else
-   if isfile("C:\Program Files\7-zip\7z.exe")
-    system(['"C:\Program Files\7-Zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']);
-   else
-    error('Make sure that 7-Zip is installed in the default location (C:\Program Files\7-zip\)')
-   end
-  end
+ if strcmp(local.fn.bunzip,'7z')
+  gupsystem([local.fn.bunzip ' e -so ',ifn,' > ',ofn]);
+ else
+  gupsystem([local.fn.bunzip ' -ck ' ifn ' >' ofn]);
  end
  fn=[local.tfile ext];
 elseif strfind(fn,'.gz')
- if isunix
-  gupsystem(['gunzip -c ' fn ' >' local.tfile ext]);
- elseif ispc
-  wingzip=which('gzip.exe');
-  if ~isempty(wingzip)
-   TS=['"',wingzip,'" -kdc "',fn,'" > "',local.tfile,ext,'"'];
-   system(TS);
-  else
-   if isfile("C:\Program Files\7-zip\7z.exe")
-    system(['"C:\Program Files\7-zip\7z.exe" e -so "',fn,'" > "',local.tfile,ext,'"']);
-   else
-    error('Make sure that 7-Zip is installed in the default location (C:\Program Files\7-zip\)')
-   end
-  end
- end
+ d=cell2mat(gunzip(fn,local.tfile));
  fn=[local.tfile ext];
+ movefile(d,fn)
 end
