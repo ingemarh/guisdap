@@ -67,7 +67,7 @@ else
     list=[]; fno=0;
     for j=dirs'
       dirlist=dir(fullfile(dp,j.name,'*.hdf5'));
-      if isempty(dirlist)
+      if isempty(dirlist) & ~isempty(a_lpf)
         syisr=1;
         if a_lpf(1).do
           dirlist=dir(fullfile(dp,j.name,'*.h5'));
@@ -77,14 +77,14 @@ else
           dirlist=dir(fullfile(dp,j.name,'*F1T.h5'));
           dirlen=length(dirlist);
           l=repmat(struct('fname','','tai',0),[dirlen 1]);
-	  fname=cell2mat({dirlist.name}');
-	  tai=timeconv(str2num(fname(:,1:16))*1e-6-8*3600,'unx2tai'); % bei->tai
+          fname=cell2mat({dirlist.name}');
+          tai=timeconv(str2num(fname(:,1:16))*1e-6-8*3600,'unx2tai'); % bei->tai
           for i=1:dirlen
             l(i).fname=fullfile(dp,j.name,dirlist(i).name);
             l(i).tai=tai(i);
           end
           list=[list;l];
-	end
+        end
       else
         syisr=0;
       end
