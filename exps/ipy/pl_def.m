@@ -11,13 +11,18 @@ end
 if d_date>datenum(2011,11,11)
  invert=1;
 end
-if vs>=3.0
+if vs>=4.3
+  nlag=90; ngates=4;
+  dt=(1/3)*1e-6; uparfreq=NaN;
+  ran=round(ones(ngates,1)*(136.1+[-1 1]*155.9/2)+(0:ngates-1)'*ones(1,2)*85.5);
+  freq=[-3.45 -6.35 3.45 6.35]; nup_d=2;
+elseif vs>=3.0
   nlag=75; ngates=4;
   dt=0.4e-6; uparfreq=NaN;
   ran=[41 248;113 320;185 392;257 464];
   if vs>=4.1
    freq=[-4.2 -6.6 4.2 6.6]*1e6; nup_d=2;
-   if vs>=4.2
+   if vs==4.2
     ngates=5;
     ran=round(ones(ngates,1)*(127.1+[-1 1]*145.7/2)+(0:ngates-1)'*ones(1,2)*67.5);
    else
@@ -36,6 +41,8 @@ if length(d_data)==2*ngates*nlag
   startad=(0:1)*ngates*nlag+1;
 elseif length(d_data)==4*ngates*nlag
   startad=(0:3)*ngates*nlag+1;
+elseif vs>=4.3
+  startad=(0:3)*126744+79*nlag+78*1440+21;
 elseif vs>=4.2
   startad=(0:3)*105857+82*nlag+81*1152+21;
 elseif vs>=4.1
