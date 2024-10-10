@@ -1,16 +1,8 @@
 function dum=t2ps(site,rc,p)
 if nargin<2, rc=0; end
 if nargin<3, p=0; end
-t2psfile='t_to_ps.txt';
-if rc==0
- apustr='';
-else
- apustr=['_' int2str(rc)];
-end
-t2psfile=['t_to_ps.txt' apustr '.' lower(site)];
-if p & rc<4
- t2psfile=['t_to_ps.txt_1.' lower(site)];
-end
+[t2psfile,apu]=find_apustr_file('t_to_ps.txt',rc,'',lower(site));
+t2psfile=['t_to_ps.txt_1.' lower(site)];
 t_to_ps=load(t2psfile,'-ascii');
 p_offsetppd=0;
 td_t1=t_to_ps(:,1)';
@@ -21,9 +13,12 @@ if p
  if rc<3
   ch_adcint=[.6];
   ch_filter={'w600d6.fir'};
- else
+ elseif rc<4.3
   ch_adcint=[.4];
   ch_filter={'b800d6.fir'};
+ else
+  ch_adcint=[1/3];
+  ch_filter={'b800d5.fir'};
  end
  ch_f=[499.85];
  sig=find(td_ch==ch_f & td_am==2 & rem(td_ch,3750)<1500);
@@ -50,4 +45,5 @@ for f=1:length(ch_f)
 end
 name_expr='ipy';
 name_site=upper(site);
+if apu, apustr=['_' num2str(rc)]; end
 save_PS

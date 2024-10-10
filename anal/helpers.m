@@ -23,7 +23,7 @@ for k=1:length(varargin)
   return
  end
 end
-if exist(routine)
+if isempty(routine) | exist(routine)
  helpers=varargin{1};
  for k=2:length(varargin), helpers=[helpers '|' varargin{k}]; end
  warning('GUISDAP:helper',[helpers ' not found, please install'])

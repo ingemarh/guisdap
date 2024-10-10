@@ -31,6 +31,21 @@ elseif d_rcprog==4.2
   for vc=2:2:N_SCAN
     COR_pp(10,1,vc,'c',1,10,0,1)
   end
+elseif d_rcprog==4.3
+  COR_init((47246+2+18*90)*N_SCAN,2699)
+  for vc=1:N_SCAN
+    COR_fdalt(24,vc,'s',48,15,15,30,30,0,(0:1440)/3,1)
+    COR_pp(119814,1,vc,'s',1,6930,0,1)
+    for skip=(0:17)*90
+      COR_trilp(119454,90,vc,'o',90,17*90,4,(0:89)/3,2,skip)
+    end
+  end
+  for vc=1:2:N_SCAN
+    COR_pp(0,1,vc,'b',1,12,0,1)
+  end
+  for vc=2:2:N_SCAN
+    COR_pp(12,1,vc,'c',1,12,0,1)
+  end
 end
-   
+
 COR_end

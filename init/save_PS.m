@@ -10,7 +10,7 @@ if ~exist('local','var')
 end
 
 if ~exist('apustr'), apustr=''; end
-PSfile=[path_expr name_expr name_site apustr 'pat_PS'];
+PSfile=[path_expr name_expr name_site apustr 'pat_PS.mat'];
 
 save(PSfile,'p_*','td_*','ch_*');
 disp([PSfile ' saved']);

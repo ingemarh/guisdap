@@ -18,10 +18,6 @@ vcg_penvabs=vc_penvabs(:,ind);
 
 if ~exist('apustr'), apustr=''; end
 initfile=[path_expr name_expr name_site apustr 'init.mat'];
-saveflag='';
-if local.matlabversion>=7
- saveflag='-v6';
-end
 
 global vc_routine
 lpg_wr=sparse(lpg_wr);
@@ -32,7 +28,7 @@ save(initfile,'GUP_iniver','ch_fradar','ch_gain','lp_vc','lpg_ND','lpg_T',...
  'lpg_cal','nameexpr','p_XMITloc','p_RECloc','p_D0','p_N0','p_R0','p_T0',...
  'p_dtau','p_m0','p_om','p_om0','vcg_penv','vcg_penvabs','vc_penvo',...
  'vc_ch','vcg_Aenv','vcg_Ap','vcg_Apenv','vc_group','lpg_wr','vc_routine',...
- saveflag);
+ '-v7.3');
 disp([initfile ' saved']);
 
 clear GUP_iniver nameexpr a ind vcg_Aenv vcg_Ap vcg_Apenv vcg_penv vcg_penvabs initfile

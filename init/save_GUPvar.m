@@ -28,8 +28,8 @@ save(GUPvarfile,'GUP_iniver','ch_fradar','ch_gain','p_dtau','p_rep','p_ND',...
  'lp_dt','lp_h','lp_nt','lp_ra','lp_ri','lp_t1','lp_t2','lp_vc','-V7.3')
 
 if isempty(local.fn.gzip)
-  gzip([GUPvarfile '.mat']);
+  gzip(GUPvarfile);
 else
-  gupsystem([local.fn.gzip ' -f9 ' GUPvarfile '.mat']);
+  gupsystem([local.fn.gzip ' -f9 ' GUPvarfile]);
 end
 disp([GUPvarfile ' saved']);

@@ -26,7 +26,7 @@ elseif vs>=3.0
     ngates=5;
     ran=round(ones(ngates,1)*(127.1+[-1 1]*145.7/2)+(0:ngates-1)'*ones(1,2)*67.5);
    else
-    ran=round(ones(ngates,1)*(131.6+[-1 1]*148.8/2)+(0:ngates-1)'*ones(1,2)*76.5);
+    ran=round(ones(ngates,1)*(148.8+[-1 1]*150.5/2)+(0:ngates-1)'*ones(1,2)*81);
    end
    if d_date>datenum(2017,1,1) & d_date<datenum(2020,12,13)
     freq=[6.8 4.4 -6.8 -4.4]*1e6; clear uparfreq % Error in the elan-file
