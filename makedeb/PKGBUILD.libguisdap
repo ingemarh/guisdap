@@ -1,0 +1,35 @@
+# Maintainer: Ingemar Häggström
+pkgname=libguisdap
+#pkgver=9.2
+#pkgrel=292
+pkgdesc="EISCAT Analysis Package"
+arch=(amd64)
+url="https:///www.eiscat.se"
+license=()
+#depends=('guisdap' 'libfftw3-bin' 'libgfortran5')
+depends=('libfftw3-bin' 'libgfortran5')
+#lcver=`dpkg -s libc6 | grep '^Version:' | cut -c 10-`
+#optdepends=('libc6 (=$lcver')
+optdepends=('libc6')
+makedepends=('cmake' 'gfortran' 'gcc' 'libfftw3-dev')
+if false
+then
+# source=("$pkgname::git+ssh://git@git.eiscat.se/cvs/guisdap9")
+  source=("$pkgname::git+https://megasen:glpat-cM1hQCJSThM9R7mEYGCP@git.eiscat.se/cvs/guisdap9.git")
+  sha512sums=('SKIP')
+  wd=$pkgname
+else
+  wd="../.."
+fi
+pkgver=`cd .. && git describe --tags | cut -d'-' -f 1 | sed 's/[a-z]//g;'` 
+pkgrel=`cd .. && git describe --tags | cut -d'-' -f 2`
+
+package() {
+  cd $wd
+  export PKG=dum
+  . ./libinstall.sh
+  for d in share/msis
+  do
+    find $d -type f -exec install -Dvm 644 {} ${destdir}/{} \;
+  done
+}

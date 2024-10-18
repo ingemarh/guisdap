@@ -1,0 +1,40 @@
+# Maintainer: Ingemar Häggström
+pkgname=guisdap
+#pkgver=9.2
+#pkgrel=292
+pkgdesc="EISCAT Analysis Package"
+arch=(all)
+url="https:///www.eiscat.se"
+license=()
+depends=('gzip' 'bzip2' 'ghostscript')
+optdepends=('libimage-exiftool-perl' 'curl' 'lbzip2')
+makedepends=()
+if false
+then
+# source=("$pkgname::git+ssh://git@git.eiscat.se/cvs/guisdap9")
+  source=("$pkgname::git+https://megasen:glpat-cM1hQCJSThM9R7mEYGCP@git.eiscat.se/cvs/guisdap9.git")
+  sha512sums=('SKIP')
+  wd=$pkgname
+else
+  wd="../.."
+fi
+pkgver=`cd .. && git describe --tags | cut -d'-' -f 1 | sed 's/[a-z]//g;'` 
+pkgrel=`cd .. && git describe --tags | cut -d'-' -f 2`
+
+package() {
+  cd $wd
+  for f in README .version
+  do
+    install -Dvm 644 "$f" -t "${pkgdir}/opt/guisdap"
+  done
+  for d in anal exps init matfiles models_m share/doc/[!acp]* share/doc/pdf share/iri/[!m]*
+  do
+    find $d -type f -exec install -Dvm 644 {} "${pkgdir}/opt/guisdap/"{} \;
+  done
+  for f in guisdap
+  do
+    install -Dvm 755 "bin/$f" -t "${pkgdir}/opt/guisdap/bin"
+    mkdir -p "${pkgdir}/usr/bin"
+    ln -sv "/opt/guisdap/bin/$f" "${pkgdir}/usr/bin/$f"
+  done
+}
