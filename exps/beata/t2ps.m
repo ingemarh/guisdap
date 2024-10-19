@@ -1,12 +1,8 @@
 function dum=t2ps(site,rc,p)
 if nargin<2, rc=0; end
 if nargin<3, p=0; end
-if rc==0
- apustr='';
-else
- apustr=['_' int2str(rc)];
-end
-t2psfile=['t_to_ps.txt' apustr '.' lower(site)];
+[t2psfile,apu]=find_apustr_file('t_to_ps.txt',rc,'',lower(site));
+t2psfile=[t2psfile '.' lower(site)];
 t_to_ps=load(t2psfile,'-ascii');
 if site=='r'
   d=find(rem(t_to_ps(:,4),1)); t_to_ps(d,:)=[];
@@ -39,6 +35,10 @@ elseif site=='t'
   ch_adcint=[10 10 0.4];
   ch_f=[8 8.1 99];
   ch_filter={'b35d150.fir' 'b35d150.fir' 'b800d6.fir'};
+ elseif rc==2.3
+  ch_adcint=[10 10 4/15];
+  ch_f=[8 8.1 99];
+  ch_filter={'b35d150.fir' 'b35d150.fir' 'b1230d4.fir'};
  end
 elseif site=='r'
  ch_adcint=[10];
@@ -74,4 +74,5 @@ for f=1:length(ch_f)
 end
 name_expr='beata';
 name_site=upper(site);
+if apu, apustr=['_' num2str(rc)]; end
 save_PS

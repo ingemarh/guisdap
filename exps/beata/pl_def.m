@@ -53,6 +53,12 @@ else
   ran=[47 221;128 302;209 383;290 464];
   startad=(0:1)*82232+108611+1;
   if length(d_data)==600; startad=(0:1)*200+1; end
+ elseif vs==2.3
+  dt=(4/15)*1e-6; nlag=75;
+  uparfreq=NaN; ngates=8; nup_d=1; freq=[-3.85]*1e6; updown=0;
+  ran=round(ones(ngates,1)*(143.5+[-1 1]*127.9/2)+(0:ngates-1)'*ones(1,2)*96.6);
+  startad=108611+1;
+  if length(d_data)==8*75; startad=1; end
  end
 end
 if length(d_data)==nup_d*length(updown)*ngates*nlag
