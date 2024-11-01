@@ -26,10 +26,10 @@ if exist('name_expr')==1
     eval(file)
   end
 end
-fprintf('Temperature scale is %.0f K\n', p_T0)
+fprintf('Temperature scale is %g K\n', p_T0)
 fprintf('Electron density scale is %.1e m^-3\n', p_N0)
 fprintf('Ion masses are [%s] u\n', num2str(p_m0,3))
-fprintf('Reference range is %.0f us\n', p_R0)
-fprintf('Frequency values in scaled units range from %.1f to %.1f\n',min(p_om),max(p_om))
+fprintf('Reference range is %g us\n', p_R0)
+fprintf('Frequency values in scaled units range from %g to %g\n',min(p_om),max(p_om))
 
 clear file

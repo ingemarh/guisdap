@@ -31,14 +31,15 @@ end
 if ~isempty(d_saveint)
  d=strfind(d_saveint.dir,'AUTO');
  if length(d)==1
-  d_saveint.dir=[d_saveint.dir(1:d-1) sprintf('%s_%s%d_%d@%s',datestr(analysis_start,29),name_expr,expver,floor(analysis_integr(1)),name_site)];
+  d_saveint.dir=[d_saveint.dir(1:d-1) sprintf('%s_%s%g_%d@%s',datestr(analysis_start,29),name_expr,expver,floor(analysis_integr(1)),name_site)];
   if isfield(d_saveint,'range')
    d_saveint.dir=[d_saveint.dir 'p'];
   end
  end
  d_saveint.dir=fullfile(d_saveint.dir,filesep);
  if ~exist(d_saveint.dir,'dir')
-  [i,j]=fileparts(d_saveint.dir(1:end-1));
+  [i,j,k]=fileparts(d_saveint.dir(1:end-1));
+  j=[j k];
   if isempty(i), mkdir(j), else, mkdir(i,j), end
  end
  if ~isfield(d_saveint,'var')
