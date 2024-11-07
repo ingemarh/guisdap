@@ -57,7 +57,7 @@ else
   dt=(4/15)*1e-6; nlag=75;
   uparfreq=NaN; ngates=8; nup_d=1; freq=[-3.85]*1e6; updown=0;
   ran=round(ones(ngates,1)*(143.5+[-1 1]*127.9/2)+(0:ngates-1)'*ones(1,2)*96.6);
-  startad=108611+1;
+  startad=304519+1;
   if length(d_data)==8*75; startad=1; end
  end
 end

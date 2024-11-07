@@ -125,8 +125,8 @@ for d_rcprog=B_rcprog:N_rcprog
     ch_fradar=ch_fradar*ones(size(ch_f));
     ch_gain=10^4.81*ones(size(ch_f));
   end
-  fprintf('# Basic time unit is %.1f us\n# Frequencies are',p_dtau)
-  fprintf(' %.1f', ch_fradar/1e6), fprintf(' MHz\n')
+  fprintf('# Basic time unit is %g us\n# Frequencies are',p_dtau)
+  fprintf(' %g', ch_fradar/1e6), fprintf(' MHz\n')
 
   fprintf('# Defining virtual channels:\n#####\n')
   file=find_apustr_file([name_expr name_site],d_rcprog,'vcinit','m');
