@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 tail=
 init=
 mex=
 my="$HOME/gup/mygup"
 mflags="-nodesktop -nosplash"
-usage="Usage: guisdap [-a] [-i] [-b] [-B script] [-x] [-t] [-m path] [-g file]"
+usage="Usage: guisdap [-h] [-a] [-i] [-b] [-B script] [-x] [-t] [-m path] [-g file]"
 if [ -z "$matlab" ]
 then
 	matlab="matlab"
@@ -25,7 +25,7 @@ GUP=`dirname $filename`
 GUP=`dirname $GUP`
 #echo $GUP
 
-while getopts aibB:xtm:g: flag
+while getopts haibB:xtm:g: flag
 do
 	case $flag in
 		a) tail="-r analyse";;
@@ -41,12 +41,14 @@ do
 		g) tail="-r go_on('$OPTARG')";;
 		m) my="$OPTARG";;
 		t) mflags=;;
-		x) mex=$GUP/mex:;;
+		h) echo $usage
+		   exit 0;;
 		?) echo $usage
 		   exit 2;;
 	esac
 done
 shift `expr $OPTIND - 1`
+
 
 if [ -z "$mflags" ];then
 	unset DISPLAY

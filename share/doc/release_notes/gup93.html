@@ -1,0 +1,38 @@
+<h1>Guisdap 9.3</h1>
+This release of guisdap contains new features and bugfixes, but everything is made compatible with older versions (hopefully). The package should be compatible with not too ancient Matlab versions (>2020), but there may (or may not) be some problems on specific platforms.
+<h2>Install</h2>
+Guisdap-9.3 is more-or-less platform independent, and is running on Linux/iOS/Windows. The software is available in
+<a href="https://sourceforge.net/projects/guisdap">https://sourceforge.net/projects/guisdap</a>, 
+either as a git repository or ready made deb packages, <b>deb [trusted=yes] https://sourceforge.net/projects/guisdap/files/deb-repo/ bookworm main</b>.
+The libraries contain up-to-date ionospheric, atmospheric and magntetic models and can either
+be installed as the .deb repo (libguisdap)
+, or made optimised for the hardware/software (tested on Linux
+and iOS) via <b>./libinstall.sh </b><br>
+Guisdap is then started via bin/guisdap (preferrably linked to a place on the path).<br>
+Provided is a searchpath to ~/gup/mygup where your personal and edited distribution files may go
+not to interfere with the distributed files.
+
+<h2>Running</h2>
+On a Unix system prompt, type <b>guisdap -h</b> to see all the switches available. Normal analysis is done running <b>guisdap -a</b> which will bring up a window with some entries to fill in. (Hopefully selfexplained) This is the same as <b>guisdap</b> and then <b>analyse</b>. When finished hit <b>GO</b>. A more detailed instruction can be found at <a href="https://www.eiscat.se/document/user-documentation/guisdap8-for-dummies/">here</a>.There is also a course <a href="https://www.eiscat.se/wp-content/uploads/2016/08/GUISDAP.pdf">presentation</a> describing how to initialise new experiments and some useful tips on more specialised analysis. The initialisation scripts are avaiable with <b>guisdap -i</b>.
+<br>
+For Windows or Matlab desktop there is a startup script <code>guisdap.m</code> available.
+<br>
+An updated Guisdap is also included in the <b>nirithil/etools</b> docker.
+
+<h2>New features</h2>
+
+<li> Docker notebook interfaces</li>
+<li> Added support for phased array radars, mainly <b>EISCAT_3D</b></li>
+<li> Added SYISR radar data analysis</li>
+<li> Inclusion of the <a href="https://github.com/ilkkavir/BAFIM">BAFIM</a> software for good ion composition estimates</li>
+<li> Support for iOS/Darwin compilation</li>
+<li> Fractional version numbers</li>
+<li> The hdf contents are saved compressed</li>
+<li> Use of system routines for improved performance</li>
+<li> New and updated experiemts initialisations</li>
+<li> Numerous bug fixes and updates</li>
+
+<h2>Contacts</h2>
+<a href="mailto: ingemar@gmx.se">Ingemar Häggström</a>,
+<a href="mailto: anders@eiscat.se">Anders Tjulin</a>,
+<a href="mailto: maria@eiscat.se">Maria Mihalikova</a>

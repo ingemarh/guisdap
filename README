@@ -1,40 +1,45 @@
-Guisdap 9.2
+﻿Guisdap 9.3
+This release of guisdap contains new features and bugfixes, but everything is
+made compatible with older versions (hopefully). The package should be
+compatible with not too ancient Matlab versions (>2020), but there may (or may
+not) be some problems on specific platforms. 
 
-This release of guisdap contains new features and bugfixes, but everything is made compatible
-with older versions (hopefully). The package should be compatible with not too ancient Matlab
-versions (>2016), but there may (or may not) be some problems on specific platforms.
 Install
-
-Guisdap-9.2 has been succesfully installed on linux. The software is available as a git repository,
-https://gitlab.com/eiscat/guisdap9, or as precompiled precompiled packages,
-https://cloud.eiscat.se/s/XGm8jnePJWCwP3A. For best performance it's adviced to compile the git scripts:
-
-cd into the guisdap directory
- . ./libinstall.sh
-make a link of bin/guisdap to a place on your path (ex /usr/local/bin)
-
-Provided is a searchpath to ~/gup/mygup where your personal and edited distribution files should go.
+Guisdap-9.3 is more-or-less platform independent, and is running on
+Linux/iOS/Windows. The software is available in
+https://sourceforge.net/projects/guisdap, either as a git repository or ready
+made deb packages, deb [trusted=yes]
+https://sourceforge.net/projects/guisdap/files/deb-repo/ bookworm main. The
+libraries contain up-to-date ionospheric, atmospheric and magntetic models and
+can either be installed as the .deb repo (libguisdap) , or made optimised for
+the hardware/software (tested on Linux and iOS) via ./libinstall.sh 
+Guisdap is then started via bin/guisdap (preferrably linked to a place on the
+path).
+Provided is a searchpath to ~/gup/mygup where your personal and edited
+distribution files may go not to interfere with the distributed files. 
 
 Running
-
-On a unix system prompt, type "guisdap --help" to see all the switches available. Normal analysis
-is done running "guisdap -a" which will bring up a window with some entries to fill in. (Hopefully
-selfexplained) This is the same as "guisdap" and then "analyse". When finished hit "GO". A more
-detailed instruction can be found at here.There is also a course presentation describing how to
-initialise new experiments and some useful tips on more specialised analysis. The initialisation
-scripts are avaiable with "guisdap -i".
-For Windows there is a startup script windows_start.m available that should be chosen as 'Run'
-with right-click.
+On a Unix system prompt, type guisdap -h to see all the switches available.
+Normal analysis is done running guisdap -a which will bring up a window with
+some entries to fill in. (Hopefully selfexplained) This is the same as guisdap
+and then analyse. When finished hit GO. A more detailed instruction can be found
+at here.There is also a course presentation describing how to initialise new
+experiments and some useful tips on more specialised analysis. The
+initialisation scripts are avaiable with guisdap -i. 
+For Windows or Matlab desktop there is a startup script guisdap.m available. 
+An updated Guisdap is also included in the nirithil/etools docker. 
 
 New features
+    • Docker notebook interfaces 
+    • Added support for phased array radars, mainly EISCAT_3D 
+    • Added SYISR radar data analysis 
+    • Inclusion of the BAFIM software for good ion composition estimates 
+    • Support for iOS/Darwin compilation 
+    • Fractional version numbers 
+    • The hdf contents are saved compressed 
+    • Use of system routines for improved performance 
+    • New and updated experiemts initialisations 
+    • Numerous bug fixes and updates 
 
-With version 9.2 the new HDF5 format for the result data is introduced.
-* There is a comprehensive document descriping the format: share/doc/pdf/EISCAT_Hdf5_data_format.pdf
-* There is a quicklook spreadsheet file for the format: matfiles/Guisdap_Parameters.xlsx
-* More rawdata taking experiments have been prepared for automatic lagprofiling and analysis
-* mainly to get sub-dump resolutions of data
-* The libraries have been rewritten to allow more compilers and be more matlab independent
-* Mex routines are now optional
-* The internal time format is now TAI to allow unique time stamps Numerous bugfixings and updates
-
-Contact: Ingemar Häggström
+Contacts
+Ingemar Häggström, Anders Tjulin, Maria Mihalikova
