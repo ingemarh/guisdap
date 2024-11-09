@@ -15,7 +15,7 @@ if name_site=='L'
     analysis_ppshortlags=1;
   end
 elseif name_site=='T' | name_site=='V'
-  a_satch.sigma=3;
+  a_satch.sigma=4;
   a_satch.cut=1;
   analysis_ppshortlags=1;
   if name_site=='T'
@@ -36,7 +36,7 @@ elseif name_site=='T' | name_site=='V'
   end
   if local.site=='T', d_saveint.dir='/analysis/integrated/AUTO'; end
 elseif name_site=='P'
- if expver==2
+ if expver>=2
    name_site='T';
    analysis_code=20;
    lpg_s='o';

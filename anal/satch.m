@@ -213,7 +213,8 @@ while d2>length(wr)
 end
 wr_dt=mean(reshape(wr(d1:d2),dt,[]))';
 L=length(wr_dt);
-wr_diff=diff(wr_dt)/max(wr_dt);
+wr_dt=wr_dt/max(wr_dt);
+wr_diff=diff(wr_dt);
 
 %convolve diff of profile with diff of pulse, find possible echoes
 con=conv(dat_s,flipud(wr_diff)/sqrt(sum(abs(wr_diff))));
