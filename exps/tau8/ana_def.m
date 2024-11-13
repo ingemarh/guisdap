@@ -4,7 +4,7 @@ if name_site=='V'
   a_satch.skip=40;
   a_satch.cut=1;
   a_satch.repair=Inf;
-  plasma_range=108678+(1:128*4);
+  plasma_range=108678+(1:128*4*2);
   analysis_ppshortlags=1;
 elseif name_site=='K'
   a_Offsetppd=-2043;
