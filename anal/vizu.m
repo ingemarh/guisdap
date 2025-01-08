@@ -474,7 +474,7 @@ if isempty(vizufig)
  %logo...
  if ~strcmp(nameant,'quj') && ~strcmp(nameant,'syi')
   text(ti,'Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
-      'FontWeight','bold','String','EISCAT Scientific Association','UserData','Copyright');
+      'FontWeight','bold','String','EISCAT AB','UserData','Copyright');
  %load(fullfile(path_GUP,'matfiles','logo'))
   eiscatlogo(axes(vizufig,'Position',[.07 .89 .1 .075]),.8)
  %axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')

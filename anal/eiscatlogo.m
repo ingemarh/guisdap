@@ -1,50 +1,93 @@
 function eiscatlogo(ax,linewidth)
 % AT guisdaplogo([ax,]linewidth)
 if nargin<2
-  linewidth=ax; ax=gca; 
+    linewidth=ax; ax=gca;
 end
 
-[x,y]=arc(0,0,10,0,360);stroke(ax,x,y,linewidth);
-axis(ax,'square')
-hold(ax,'on')
-[x,y]=arc(0,0,7.3,180,0);stroke(ax,x,y,linewidth);
-[x,y]=arc(0,0,7.5,234.3,305.7);stroke(ax,x,y,linewidth);
-[x,y]=arc(0,-14,9,44.81,135.5);stroke(ax,x,y,linewidth);
-[x,y]=arc(0,-11,6,20,160);[x,y]=scale(x,y,0.8,1);stroke(ax,x,y,linewidth);
-[x,y]=arc(0,-11,6,12.5,167.5);[x,y]=scale(x,y,0.4,1);stroke(ax,x,y,linewidth);
-[x,y]=arcto(7.37,0,1.3,0,3.8,1,0.2);stroke(ax,x,y,linewidth);
-[x,y]=arcto(3.8,1,5.4,1.75,0,1.75,0.2);stroke(ax,x,y,linewidth);
-[x,y]=arcto(0,1.75,-5.4,1.75,-3.8,1,0.2);stroke(ax,x,y,linewidth);
-[x,y]=arcto(-3.8,1,-1.3,0,-7.3,0,0.2);stroke(ax,x,y,linewidth);
-[x,y]=lineto(-7.3,0,-7.37,0);stroke(ax,x,y,linewidth);
-[x,y]=lineto(0,1.75,0,7.3);stroke(ax,x,y,linewidth);
-[x,y]=lineto(1.15,1.75,0.62,7.25);stroke(ax,x,y,linewidth);
-[x,y]=lineto(2.3,1.75,1.2,7.18);stroke(ax,x,y,linewidth);
-[x,y]=lineto(3.45,1.75,1.8,7.05);stroke(ax,x,y,linewidth);
-[x,y]=lineto(4.59,1.68,2.35,6.91);stroke(ax,x,y,linewidth);
-[x,y]=lineto(7.32,0,2.89,6.7);stroke(ax,x,y,linewidth);
-[x,y]=lineto(-1.15,1.75,-0.62,7.25);stroke(ax,x,y,linewidth);
-[x,y]=lineto(-2.3,1.75,-1.2,7.18);stroke(ax,x,y,linewidth);
-[x,y]=lineto(-3.45,1.75,-1.8,7.05);stroke(ax,x,y,linewidth);
-[x,y]=lineto(-4.66,1.68,-2.35,6.91);stroke(ax,x,y,linewidth);
-[x,y]=lineto(-7.32,0,-2.89,6.7);stroke(ax,x,y,linewidth);
-linewidth=0.3527785*linewidth;
-[x,y]=lineto(0,1.73,5,-8);stroke(ax,x,y,linewidth);
-[x,y]=lineto(0,1.73,-5,-8);stroke(ax,x,y,linewidth);
-[x,y]=lineto(0,1.73,0,-9.5);stroke(ax,x,y,linewidth);
-[x,y]=lineto(2,1.73,0,-9.3);stroke(ax,x,y,linewidth);
-[x,y]=lineto(0,-9.3,-2,1.73);stroke(ax,x,y,linewidth);
-[x,y]=lineto(-6,0,0,-6.8);stroke(ax,x,y,linewidth);
-[x,y]=lineto(6,0,0,-6.8);stroke(ax,x,y,linewidth);
-[x,y]=arc(-5,-8,0.2,0,360);strokefill(ax,x,y,linewidth);
-[x,y]=arc(0,-9.3,0.2,0,360);strokefill(ax,x,y,linewidth);
-[x,y]=arc(5,-8,0.2,0,360);strokefill(ax,x,y,linewidth);
-[x,y]=arc(0,-6.8,0.2,0,360);strokefill(ax,x,y,linewidth);
+if date<datetime([2025 01 01])
+    [x,y]=arc(0,0,10,0,360);stroke(ax,x,y,linewidth);
+    axis(ax,'square')
+    hold(ax,'on')
+    [x,y]=arc(0,0,7.3,180,0);stroke(ax,x,y,linewidth);
+    [x,y]=arc(0,0,7.5,234.3,305.7);stroke(ax,x,y,linewidth);
+    [x,y]=arc(0,-14,9,44.81,135.5);stroke(ax,x,y,linewidth);
+    [x,y]=arc(0,-11,6,20,160);[x,y]=scale(x,y,0.8,1);stroke(ax,x,y,linewidth);
+    [x,y]=arc(0,-11,6,12.5,167.5);[x,y]=scale(x,y,0.4,1);stroke(ax,x,y,linewidth);
+    [x,y]=arcto(7.37,0,1.3,0,3.8,1,0.2);stroke(ax,x,y,linewidth);
+    [x,y]=arcto(3.8,1,5.4,1.75,0,1.75,0.2);stroke(ax,x,y,linewidth);
+    [x,y]=arcto(0,1.75,-5.4,1.75,-3.8,1,0.2);stroke(ax,x,y,linewidth);
+    [x,y]=arcto(-3.8,1,-1.3,0,-7.3,0,0.2);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-7.3,0,-7.37,0);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(0,1.75,0,7.3);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(1.15,1.75,0.62,7.25);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(2.3,1.75,1.2,7.18);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(3.45,1.75,1.8,7.05);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(4.59,1.68,2.35,6.91);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(7.32,0,2.89,6.7);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-1.15,1.75,-0.62,7.25);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-2.3,1.75,-1.2,7.18);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-3.45,1.75,-1.8,7.05);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-4.66,1.68,-2.35,6.91);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-7.32,0,-2.89,6.7);stroke(ax,x,y,linewidth);
+    linewidth=0.3527785*linewidth;
+    [x,y]=lineto(0,1.73,5,-8);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(0,1.73,-5,-8);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(0,1.73,0,-9.5);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(2,1.73,0,-9.3);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(0,-9.3,-2,1.73);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-6,0,0,-6.8);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(6,0,0,-6.8);stroke(ax,x,y,linewidth);
+    [x,y]=arc(-5,-8,0.2,0,360);strokefill(ax,x,y,linewidth);
+    [x,y]=arc(0,-9.3,0.2,0,360);strokefill(ax,x,y,linewidth);
+    [x,y]=arc(5,-8,0.2,0,360);strokefill(ax,x,y,linewidth);
+    [x,y]=arc(0,-6.8,0.2,0,360);strokefill(ax,x,y,linewidth);
 
-outsidecircletext(ax,'EISCAT SCIENTIFIC ASSOCIATION',14,90,8.65);
+    outsidecircletext(ax,'EISCAT SCIENTIFIC ASSOCIATION',14,90,8.65);
 
-axis(ax,'off')
-hold(ax,'off')
+    axis(ax,'off')
+    hold(ax,'off')
+else
+    [x,y]=arc(0,0,9,0,360);stroke(ax,x,y,linewidth);
+    axis(ax,'square')
+    hold(ax,'on')
+    [x,y]=arc(0,0,7.3,360,0);stroke(ax,x,y,linewidth);
+    [x,y]=arc(0,0,5.5,230.13,309.87);stroke(ax,x,y,linewidth);
+    [x,y]=arc(0,-12.5,9,54.85,125.15);stroke(ax,x,y,linewidth);
+    [x,y]=arc(0,-9.5,6,34.31,145.69);[x,y]=scale(x,y,0.8,1);stroke(ax,x,y,linewidth);
+    [x,y]=arc(0,-9.5,6,24.95,155.05);[x,y]=scale(x,y,0.4,1);stroke(ax,x,y,linewidth);
+    [x,y]=arcto(7.37,0,1.3,0,3.8,1,0.2);stroke(ax,x,y,linewidth);
+    [x,y]=arcto(3.8,1,5.4,1.75,0,1.75,0.2);stroke(ax,x,y,linewidth);
+    [x,y]=arcto(0,1.75,-5.4,1.75,-3.8,1,0.2);stroke(ax,x,y,linewidth);
+    [x,y]=arcto(-3.8,1,-1.3,0,-7.3,0,0.2);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-7.3,0,-7.37,0);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(0,1.75,0,7.3);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(1.15,1.75,0.62,7.25);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(2.3,1.75,1.2,7.18);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(3.45,1.75,1.8,7.05);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(4.59,1.68,2.35,6.91);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(7.32,0,2.89,6.7);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-1.15,1.75,-0.62,7.25);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-2.3,1.75,-1.2,7.18);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-3.45,1.75,-1.8,7.05);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-4.66,1.68,-2.35,6.91);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-7.32,0,-2.89,6.7);stroke(ax,x,y,linewidth);
+    linewidth=0.3527785*linewidth;
+    [x,y]=lineto(0,1.73,4.2,-5.5);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(0,1.73,-4.2,-5.5);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(0,1.73,0,-6.8);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(2,1.73,0,-6.8);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(0,-6.8,-2,1.73);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(-6,0,0,-4.8);stroke(ax,x,y,linewidth);
+    [x,y]=lineto(6,0,0,-4.8);stroke(ax,x,y,linewidth);
+    [x,y]=arc(-4.2,-5.5,0.2,0,360);strokefill(ax,x,y,linewidth);
+    [x,y]=arc(0,-6.8,0.2,0,360);strokefill(ax,x,y,linewidth);
+    [x,y]=arc(4.2,-5.5,0.2,0,360);strokefill(ax,x,y,linewidth);
+    [x,y]=arc(0,-4.8,0.2,0,360);strokefill(ax,x,y,linewidth);
+
+    axis(ax,'tight')
+    axis(ax,'off')
+    hold(ax,'off')
+end
 
 function [X,Y]=arc(x,y,r,start,stop)
 p=linspace(start,stop,100)*pi/180;
@@ -53,7 +96,6 @@ Y=y+r*sin(p);
 return
 
 function [X,Y]=arcto(x0,y0,x1,y1,x2,y2,r)
-% Inte färdig än
 A=sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
 B=sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
 C=sqrt((x2-x0)*(x2-x0)+(y2-y0)*(y2-y0));

@@ -968,7 +968,8 @@ for rr = 1:length(pci)
     matfile.metadata.schemes.DataCite.Identifier = {PID};
     matfile.metadata.schemes.DataCite.Creator = {lower(name_ant)};
     matfile.metadata.schemes.DataCite.Title = {datafolder};
-    matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
+%    matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
+    matfile.metadata.schemes.DataCite.Publisher = {'EISCAT AB'};
     matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3a Ionosphere'};
     matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 

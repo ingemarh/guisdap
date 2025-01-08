@@ -118,7 +118,7 @@ if ~isempty(p)
    plotdescr='Electric field';
  end
   % suptitle=['\fontsize{24}EISCAT Scientific Association\fontsize{16}' char(10) 'Vector ion drift velocities'];
-  suptitle=['\fontsize{24}EISCAT Scientific Association\fontsize{16}' char(10) plotdescr];
+  suptitle=['\fontsize{24}EISCAT AB\fontsize{16}' char(10) plotdescr];
   vddt=vdd+[1;-1]/1440;
   t2=[datestr(vddt(2),'dd mmmm yyyy')];
   if t2(1)=='0', t2(1)=[]; end

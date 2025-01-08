@@ -437,7 +437,8 @@ PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
 matfile.metadata.schemes.DataCite.Identifier = {PID};
 matfile.metadata.schemes.DataCite.Creator = {name_ant};
 matfile.metadata.schemes.DataCite.Title = {['EISCAT_' filename]};
-matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
+%matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
+matfile.metadata.schemes.DataCite.Publisher = {'EISCAT AB'};
 matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 4a Derived ionospheric data'};
 matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 
