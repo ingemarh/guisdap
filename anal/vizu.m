@@ -727,7 +727,7 @@ if length(s)>1
   d1=d(i)+1;
  end
 else
- l=line(ax,Time(:,s),o2*yparam(s,:))
+ l=line(ax,Time(:,s),o2*yparam(s,:));
  if local.matlabversion>23.1
   j=num2cell(1:nc); [l.SeriesIndex]=j{:};
  end
