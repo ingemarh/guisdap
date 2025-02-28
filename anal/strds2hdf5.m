@@ -29,6 +29,8 @@ elseif isa(data,'double')
 	type_id = H5T.copy('H5T_NATIVE_DOUBLE');
 elseif isa(data,'uint8')
 	type_id = H5T.copy('H5T_NATIVE_UINT8');
+elseif isa(data,'uint32')
+	type_id = H5T.copy('H5T_NATIVE_UINT32');
 else %char
 	ch=1;
 	type_id = H5T.copy('H5T_C_S1');

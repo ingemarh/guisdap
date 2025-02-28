@@ -118,15 +118,14 @@ else
           %  list(fno, 1).tai = sytai_time;
           end
         else
-          h5d=h5info(h5file);
-          h5d=struct2cell(h5d.Groups(1).Groups);
-          dirlen=length(h5d); h5f=char(h5d(1,:));
-          l=repmat(struct('fname',h5file,'file',0),[dirlen 1]);
-          for i=dirlen:-1:1
-            l(i).file=sscanf(h5f(i,:),'/Data/%08d');
-            if ~isnumeric(l(i).file), l(i)=[]; end
-          end
-          list=[list;l],
+          t=h5read(h5file,'/Data/Time');
+	  fmt='yyyy-MM-dd''T''HH:mm:ss.SS''Z''';
+	  tai=num2cell(timeconv(mean(datenum(datetime(t','InputFormat',fmt)),2),'mat2tai'));
+          s=length(tai); idx=num2cell(1:s)';
+          l=repmat(struct('fname',h5file,'tai',0,'idx',0),[s 1]);
+          [l.tai]=tai{:};
+          [l.idx]=idx{:};
+          list=[list;l];
         end
       end
     end
@@ -139,6 +138,10 @@ end
 if ~isempty(list)
   if isfield(list,'file')
     [dum,d]=sort(cell2mat({list.file})); list=list(d);
+    global maxlend
+    if ~isempty(maxlend) & length(d)>maxlend, list=list(1:maxlend); end
+  elseif isfield(list,'tai')
+    [dum,d]=sort(cell2mat({list.tai})); list=list(d);
     global maxlend
     if ~isempty(maxlend) & length(d)>maxlend, list=list(1:maxlend); end
   end

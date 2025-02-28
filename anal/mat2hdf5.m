@@ -37,7 +37,7 @@ if isstring(datapath)
     datapath = char(datapath);    % need to be char class
 end
 
-software = 'https://git.eiscat.se/cvs/guisdap9';
+software = 'https://sourceforge.net/projects/guisdap';
 GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
 [~,~,guisdappars]=xlsread(GuisdapParFile,1,['D2:D300']);
 guisdappars(cellfun(@(c) isnumeric(c), guisdappars))=[];
@@ -217,6 +217,7 @@ for rr = 1:length(pci)
     if exist('r_gfd','var')
         gfd_Fields = fieldnames(r_gfd);
         for gf = gfd_Fields.'   
+	    cgf=char(gf);
             if strcmp(gf,'extra')
                 extra=r_gfd.extra;
                 for r = 1:size(extra,1)
@@ -232,10 +233,10 @@ for rr = 1:length(pci)
                 else
                     matfile.metadata.software.gfd.extra = {'None'};
                 end
-            elseif ~ischar(r_gfd.(char(gf)))
-                matfile.metadata.software.gfd.(char(gf)) = {num2str(r_gfd.(char(gf)))};
+            elseif ~ischar(r_gfd.(cgf))
+                matfile.metadata.software.gfd.(cgf) = {num2str(r_gfd.(cgf))};
             else
-                matfile.metadata.software.gfd.(char(gf)) = {r_gfd.(char(gf))};
+                matfile.metadata.software.gfd.(cgf) = {r_gfd.(cgf)};
             end
         end
         if length(pci) == 1
@@ -391,7 +392,7 @@ for rr = 1:length(pci)
     [h_Magic_const, h_az, h_el, h_Pt, h_SCangle, h_XMITloc, h_RECloc, h_nrec, h_ppnrec, ...
     h_Tsys, h_code, h_om0, h_m0, h_phasepush, h_Offsetppd, h_gain, h_fradar, ...
     h_h, h_range, h_param, h_error, h_apriori, h_apriorierror, h_status, h_iter, h_dp_first, ...
-    h_dp, h_ddp, h_apr, h_aprerr, h_res, h_w, h_pprange, h_pp, h_pperr, h_ppw] = deal([]);
+    h_dp, h_ddp, h_apr, h_aprerr, h_res, h_w, h_pprange, h_pp, h_pperr, h_ppw, L2resid] = deal([]);
 
     unicheck_om0    = zeros(rec(rr),1);
     unicheck_gain   = zeros(rec(rr),1);
@@ -556,6 +557,8 @@ for rr = 1:length(pci)
         if exist('r_pperr','var'), h_pperr = [h_pperr; r_pperr]; end
         if exist('r_pp','var'), h_pp = [h_pp; r_pp]; end
         if exist('r_ppw','var'), h_ppw = [h_ppw; r_ppw*1000]; end
+
+        if exist('d_resid','var'), L2resid = unique([L2resid d_resid]); end
     end
     
     if params
@@ -630,6 +633,7 @@ for rr = 1:length(pci)
         h_apriorierror h_status h_iter h_res h_w];
     matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
 
+    matfile.data.L2resid = L2resid';
 
     % 0d and 1d parameters 
     parameters_1d = {'h_Magic_const' 'h_az' 'h_el' 'h_Pt' 'h_SCangle'...
@@ -640,6 +644,8 @@ for rr = 1:length(pci)
         'h_apriorierror' 'h_status' 'h_iter' 'h_res' 'h_w'};
     % 2d_pp parameters 
     parameters_2dpp = {'h_pprange' 'h_pp' 'h_pperr' 'h_ppw'};
+    % resids 
+    parameters_resid = {'L2resid'};
 
     nn1 = 0;
     for ii = 1:length(parameters_1d)
@@ -784,6 +790,17 @@ for rr = 1:length(pci)
          matfile.metadata.par2d_pp(:,nn3) = [info infos(a,2:end)]';
     end
 
+    nn4 = 0;
+    for ii = 1:length(parameters_resid)
+         h_nameresid = char(parameters_resid(ii));
+         if isempty(eval(h_nameresid))
+             continue
+         end
+         nn4 = nn4 + 1;
+         a = find(strcmp(h_nameresid,parameters_list)==1);
+         info = {h_nameresid(3:end)};
+         matfile.metadata.L2resid(:,nn4) = [info infos(a,2:end)]';
+    end
 
     % find indices where the value is complex, and replace with NaN
     if ~isempty(find(any(imag(matfile.data.par1d) ~= 0) == 1, 1))
@@ -958,6 +975,9 @@ for rr = 1:length(pci)
     if isfield(matfile.metadata,'par1d_sd')
         aa = find(cellfun('isempty',matfile.metadata.par1d_sd(6,:))); matfile.metadata.par1d_sd(6,aa)= {'0'};
         aa = find(cellfun('isempty',matfile.metadata.par1d_sd(7,:))); matfile.metadata.par1d_sd(7,aa)= {'0'}; end
+    if isfield(matfile.metadata,'L2resid')
+        aa = find(cellfun('isempty',matfile.metadata.L2resid(6,:))); matfile.metadata.L2resid(6,aa)= {'0'};
+        aa = find(cellfun('isempty',matfile.metadata.L2resid(7,:))); matfile.metadata.L2resid(7,aa)= {'0'}; end
     
     symbols = ['a':'z' 'A':'Z' '0':'9'];
     strLength = 10;
@@ -968,7 +988,6 @@ for rr = 1:length(pci)
     matfile.metadata.schemes.DataCite.Identifier = {PID};
     matfile.metadata.schemes.DataCite.Creator = {lower(name_ant)};
     matfile.metadata.schemes.DataCite.Title = {datafolder};
-%    matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
     matfile.metadata.schemes.DataCite.Publisher = {'EISCAT AB'};
     matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3a Ionosphere'};
     matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
@@ -1015,10 +1034,12 @@ for rr = 1:length(pci)
     % Delete any empty fields from the structure
     sFields = fieldnames(matfile);
     for sf = sFields.' 
-        tFields = fieldnames(matfile.(char(sf)));
+	csf=char(sf);
+        tFields = fieldnames(matfile.(csf));
         for tf = tFields.'
-            if isempty(matfile.(char(sf)).(char(tf)))
-                matfile.(char(sf)) = rmfield(matfile.(char(sf)),char(tf));
+	    ctf=char(tf);
+            if isempty(matfile.(csf).(ctf))
+                matfile.(csf) = rmfield(matfile.(csf),(ctf));
             end
         end
     end
@@ -1087,47 +1108,52 @@ for rr = 1:length(pci)
     end
     sFields = fieldnames(matfile);
     for sf = sFields.'
-        group1 = ['/' char(sf)];
-        tFields = fieldnames(matfile.(char(sf)));
+        csf=char(sf);
+        group1 = ['/' csf];
+        tFields = fieldnames(matfile.(csf));
         for tf = tFields.'
-            if strcmp('data',char(sf)) && (strcmp('par0d',char(tf)) || strcmp('par1d',char(tf)) || strcmp('par2d',char(tf)) || strcmp('par2d_pp',char(tf)) || strcmp('acf',char(tf)) || strcmp('ace',char(tf)) || strcmp('lag',char(tf)) || strcmp('freq',char(tf)) || strcmp('spec',char(tf)) || strcmp('om',char(tf)))
-                strds2hdf5(hdfid,['/' char(sf)],char(tf),single(matfile.(char(sf)).(char(tf))))
-            elseif strcmp('metadata',char(sf)) 
-                if isstruct(matfile.(char(sf)).(char(tf)))
-                    group2 = [group1 '/' char(tf)];
-                    uFields = fieldnames(matfile.(char(sf)).(char(tf)));
+            ctf=char(tf);
+            if strcmp('data',csf) && any(strcmp({'par0d' 'par1d' 'par2d' 'par2d_pp' 'acf' 'ace' 'lag' 'freq' 'spec' 'om'},ctf))
+                strds2hdf5(hdfid,['/' csf],ctf,single(matfile.(csf).(ctf)))
+            elseif strcmp('metadata',csf) 
+                if isstruct(matfile.(csf).(ctf))
+                    group2 = [group1 '/' ctf];
+                    uFields = fieldnames(matfile.(csf).(ctf));
                     for uf = uFields.'
-                        if isstruct(matfile.(char(sf)).(char(tf)).(char(uf)))
-                            group3 = [group2 '/' char(uf)];
-                            vFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)));
+                        cuf=char(uf);
+                        if isstruct(matfile.(csf).(ctf).(cuf))
+                            group3 = [group2 '/' cuf];
+                            vFields = fieldnames(matfile.(csf).(ctf).(cuf));
                             for vf = vFields.'
-                                if isstruct(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)))
-                                    group4 = [group3 '/' char(vf)];
-                                    wFields = fieldnames(matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)));
+                                cvf=char(vf);
+                                if isstruct(matfile.(csf).(ctf).(cuf).(cvf))
+                                    group4 = [group3 '/' cvf];
+                                    wFields = fieldnames(matfile.(csf).(ctf).(cuf).(cvf));
                                     for wf = wFields.'
-                                        strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf)).(char(wf));
-                                        dsname = char(wf);
+                                        cwf=char(wf);
+                                        strdata = matfile.(csf).(ctf).(cuf).(cvf).(cwf);
+                                        dsname = cwf;
                                         strds2hdf5(hdfid,group4,dsname,strdata)
                                     end
                                 else
-                                    strdata = matfile.(char(sf)).(char(tf)).(char(uf)).(char(vf));
-                                    dsname = char(vf);
+                                    strdata = matfile.(csf).(ctf).(cuf).(cvf);
+                                    dsname = cvf;
                                     strds2hdf5(hdfid,group3,dsname,strdata)
                                 end
                             end
                         else
-                            strdata = matfile.(char(sf)).(char(tf)).(char(uf));
-                            dsname = char(uf);
+                            strdata = matfile.(csf).(ctf).(cuf);
+                            dsname = cuf;
                             strds2hdf5(hdfid,group2,dsname,strdata)
                         end
                     end
                 else
-                    strdata = matfile.(char(sf)).(char(tf));
-                    dsname = char(tf);
+                    strdata = matfile.(csf).(ctf);
+                    dsname = ctf;
                     strds2hdf5(hdfid,group1,dsname,strdata)
                 end
             else
-                strds2hdf5(hdfid,['/' char(sf)],char(tf),matfile.(char(sf)).(char(tf)))
+                strds2hdf5(hdfid,['/' csf],ctf,matfile.(csf).(ctf))
             end
         end   
     end

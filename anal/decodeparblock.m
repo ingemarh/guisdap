@@ -16,8 +16,8 @@ else
 end
 if exist('f_d_rcprog','var')
   d_rcprog=f_d_rcprog;
-%elseif lpb>56 & d_parbl(57)>0
-%  d_rcprog=d_parbl(57);
+elseif lpb==64 & d_parbl(57)>0
+  d_rcprog=d_parbl(57); % reformatted old parbl
 else
   d_rcprog=a_rcprog;
 end

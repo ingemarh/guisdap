@@ -25,7 +25,7 @@
 function  [OK,EOF,N_averaged,M_averaged]=integr_data()
  
 global d_parbl d_data d_var1 d_var2 data_path d_filelist d_raw
-global d_saveint
+global d_saveint d_resid
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_txlimit a_realtime a_satch a_txpower
 global a_intfixed a_intallow a_intfixforce a_intfix
@@ -71,7 +71,7 @@ if length(fileslist)~=length(d_filelist)
 end
 files=d_filelist(find(fileslist>a_interval(1) & fileslist<=a_interval(2)));
 if isempty(files) & a_integr<=0, EOF=1; return, end
-i=0;
+i=0; d_resid=zeros(0,1,'uint32');
 while i<length(files)
   i=i+1; file=files(i);
   i_averaged=1; i_var1=[]; i_var2=[];
@@ -84,13 +84,14 @@ while i<length(files)
     try, load(canon(file.fname,0))
     catch,end
   else %hdf5 files
-    d_parbl=h5read(file.fname,sprintf('/Data/%08d/Parameters',file.file));
-    d_data=h5read(file.fname,sprintf('/Data/%08d/L2',file.file));
-    d_data=complex(double(d_data.r(:)),double(d_data.i(:)));
+    d_parbl=double(h5read(file.fname,'/Data/ParBlock/ParBlock',[1,file.idx],[Inf,1]));
+    d_r=double(h5read(file.fname,'/Data/L2',[1,1,file.idx],[Inf,2,1]));
+    d_data=complex(d_r(:,1),d_r(:,2));
+    d_resid=unique([d_resid h5read(file.fname,'/DataBase/ResourceID')]);
     try
-      d_ExpInfo=['kst0 ' char(h5read(file.fname,'/MetaData/ExperimentName'))];
-      d_raw=h5read(file.fname,sprintf('/Data/%08d/L1',file.file));
-      d_raw=complex(d_raw.r(:),d_raw.i(:));
+      d_ExpInfo=char(h5read(file.fname,'/MetaData/ExpInfo'));
+      d_r=double(h5read(file.fname,'/Data/L1',[1,1,file.idx],[Inf,2,1]));
+      d_raw=complex(d_r(:,1),d_r(:,2));
     catch,end
   end
   if ~isempty(d_raw) && a_lpf(1).do
