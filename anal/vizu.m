@@ -715,10 +715,10 @@ else
 end
 
 o2=ones(2,1);
+nc=size(yparam,2);
 if length(s)>1
  d1=1;
  d=[find(Time(1,s(2:end))-Time(2,s(1:end-1))>0) length(s)];
- nc=size(yparam,2);
  for i=1:length(d)
   l=line(ax,col(Time(:,s(d1:d(i)))+local.tz{2}),reshape(o2*row(yparam(s(d1:d(i)),:)),2*(d(i)-d1+1),nc));
   if local.matlabversion>23.1
