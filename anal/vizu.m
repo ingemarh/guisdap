@@ -288,9 +288,9 @@ end
 if ~iscell(local.tz)
  local.tz=num2cell(local.tz,2);
  if strcmp(local.tz{1},'CST')
-  local.tz{2}=8/24,
+  local.tz{2}=8/24;
  else
-  local.tz{2}=0,
+  local.tz{2}=0;
  end
 end
 
@@ -332,6 +332,7 @@ if ~isempty(allnames) && size(allnames.ant,1)>1
  end
 end
 nameant=lower(name_ant(1:3));
+Owner=local.owner;
 if strcmp(nameant,'32m') || strcmp(nameant,'42m') || strcmp(nameant,'esr')
  FIGURE_TITLE='EISCAT SVALBARD RADAR';
  stretchSecs=65;
@@ -351,14 +352,22 @@ elseif strcmp(nameant,'kir') || strcmp(nameant,'sod')
   fradar=930e6;
  end
 elseif strcmp(nameant,'quj')
- FIGURE_TITLE='QUJING RADAR';
+ Owner='CRIRP';
+ FIGURE_TITLE='QuJing Radar';
  fradar=500e6;
  stretchSecs=200;
-elseif strcmp(nameant,'syi')
- FIGURE_TITLE='SANYA RADAR';
- fradar=440e6;
+elseif contains('san wen dan',nameant)
+ Owner={'Institute of Geology and Geophysics' 'Chinese Academy of Sciences'};
+ if strcmp(nameant,'san')
+  FIGURE_TITLE='SANYA RADAR';
+ elseif strcmp(nameant,'wen')
+  FIGURE_TITLE='WENCHANG RECEIVER';
+ elseif strcmp(nameant,'dan')
+  FIGURE_TITLE='DANZHOU RECEIVER';
+ end
+ fradar=430e6;
 end
-if ~strcmp(nameant,'quj') && ~strcmp(nameant,'syi') && isempty(MESSAGE1)
+if ~contains('quj san wen dan',nameant) && isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);
 end
 S=size(par2D,2);
@@ -472,15 +481,20 @@ if isempty(vizufig)
  end
  axs=[]; axc=[];
  %logo...
- if ~strcmp(nameant,'quj') && ~strcmp(nameant,'syi')
+ if iscell(Owner)
+  text(ti,'Position',[0.55,1.4],'VerticalAlignment','top','FontSize',16,...
+      'FontWeight','bold','String',Owner{1},'UserData','Copyright');
+  text(ti,'Position',[0.55,1.1],'VerticalAlignment','top','FontSize',16,...
+      'FontWeight','bold','String',Owner{2},'UserData','Copyright');
+ else
   text(ti,'Position',[0.55,1.3],'VerticalAlignment','top','FontSize',24,...
-      'FontWeight','bold','String','EISCAT AB','UserData','Copyright');
- %load(fullfile(path_GUP,'matfiles','logo'))
-  eiscatlogo(axes(vizufig,'Position',[.07 .89 .1 .075]),.8)
- %axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
- %hds(3)=get(gca,'children'); set(hds(3),'markersize',1)
- %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
+      'FontWeight','bold','String',Owner,'UserData','Copyright');
+  %load(fullfile(path_GUP,'matfiles','logo'))
+  %axes('Position',[.07 .9 .1 .075]); plot(y,x,'.k')
+  %hds(3)=get(gca,'children'); set(hds(3),'markersize',1)
+  %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
  end
+ eiscatlogo(axes(vizufig,'Position',[.07 .89 .1 .075]),0.8)
 else
  set(hds,'string',t2)
  ti=get(hds,'Parent');

@@ -8,7 +8,7 @@ function [Time,par2D,par1D,rpar2D,err2D]=load_param(data_path,status,update)
 %  or err2D[Ne,Te,Ti,Vi,Coll]
 %
 global name_expr r_RECloc name_ant name_strategy r_Magic_const myparams load_apriori rres ppres max_ppw r_XMITloc
-global allnames Leap
+global allnames Leap local
 persistent lastfile
 if nargin<3, lastfile=[]; end
 if nargin<2, status=[]; end
@@ -62,6 +62,8 @@ for i=1:n_tot
     rOff=r_Offsetppd;
   elseif exist('r_phasepush')
     rOff=r_phasepush;
+  elseif exist('r_baclevel')
+    rOff=log(r_baclevel);
   else
     rOff=[];
   end
@@ -76,7 +78,7 @@ for i=1:n_tot
     n_alt=size(r_param,1);
     par2D	=ones(n_alt,n_tot,npar2D)*NaN;
     par1D=zeros(n_tot,npar1D);
-    if do_rpar && any(strfind('TVLQ',name_site)) && ~isempty(r_pp)
+    if do_rpar && any(strfind('TVLQ3',name_site)) && ~isempty(r_pp)
       n_ralt=length(unique(round(r_pprange/ppres)));
       rpar2D=ones(n_ralt,n_tot,3)*NaN;
     else
@@ -89,6 +91,10 @@ for i=1:n_tot
       antennas=['uhf kir sod vhf esr'];
       i=(strfind('TKSVL',name_site)-1)*4+1;
       name_ant=antennas(i:i+2);
+    elseif contains('san wen dan',name_ant)
+      local.owner='IGGCAS';
+    elseif contains('quj',name_ant)
+      local.owner='CRIRP';
     end
     if exist('r_w','var')
       rres=ones(n_tot,1)*Inf;

@@ -10,7 +10,7 @@ global lp_t1 lp_t2 lp_dt lp_vc lp_nfir lp_fir
 global name_site
 global p_R0 p_dtau ipp vc_routine
 dummyrange=0;
-if name_site=='R',
+if name_site=='R'
 % dummyrange to avoid negative range, should maybe be > offsetppd
   dummyrange=ceil(p_R0/p_dtau);
 end

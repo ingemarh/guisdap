@@ -63,6 +63,7 @@ elseif ~isempty(sysTemp)
  for cal=calibs
   lpg_cal(find(lpg_code==lpg_code(cal)))=cal;
   %bac=lpg_bac(cal);
+  global bac_power
   bac_power=median_c(d_data(lpg_addr(cal)+ADDR_SHIFT));
   scale(cal)=bac_power/sysTemp;
  end

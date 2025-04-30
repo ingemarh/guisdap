@@ -14,7 +14,7 @@ global a_priori a_priorierror p_ND
 
 global ad_range ad_w ad_code ad_lpg ad_coeff ADDR_SHIFT
 
-global ch_az ch_el ch_f ch_Pt sc_angle ch_range
+global ch_az ch_el ch_f ch_Pt sc_angle ch_range ch_azT ch_elT
 
 global d_data d_parbl d_rcprog d_time d_filelist
 global d_var1 d_var2 % sig_var1 sig_var2

@@ -20,8 +20,8 @@ gfdfile=[path_tmp '.gup'];
 if exist(gfdfile)
  load(gfdfile,'-mat')
 end
-sites='KSTVLXPQH';
-tfor='%04d %02d %02d  %02d %02d %02d';
+sites='KSTVLXPQ3WD';
+tfor='%04d %02d %02d  %02d %02d %02g';
 beg=sprintf(tfor,t1);
 to=sprintf(tfor,t2);
 if nargin<1 & local.x & isempty(get(0,'UserData'))

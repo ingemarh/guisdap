@@ -136,6 +136,8 @@ elseif all(contains(cellstr(allnames.ant(:,1:3)),{'uhf' 'vhf'}))
  name_ant='tro';
 elseif all(contains(cellstr(allnames.ant(:,1:3)),{'uhf' 'vhf' 'kir' 'sod'}))
  name_ant='kst';
+elseif all(contains(cellstr(allnames.ant(:,1:3)),{'san' 'wen' 'dan'}))
+ name_ant='sy3';
 else
  name_ant='esa';
 end

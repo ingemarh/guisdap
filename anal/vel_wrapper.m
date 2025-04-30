@@ -23,8 +23,9 @@ ld=[]; uperr=[]; plots={'Vm'}; ptype='t'; ylim=[2000 2000]; dynavel=0;
 e=[90 100 107.5 112.5 117.5 122.5 130]; %from old cp1
 %e=90:10:130;
 f=[160 500];
+plotdefs=2;
 if isempty(scan)
- fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst cp3kstl ip3 cp1 cp1kst lowel cp2 cluster\n')
+ fprintf('Scans defined: ip2e ip2t ip2kst cp2kst cp3kst cp3kstl ip3 cp1 cp1kst lowel cp2 cluster sy11\n')
  scan=minput('Choose',[],1);
 end
 if isempty(dirs)
@@ -59,6 +60,9 @@ switch scan
   plots(2:length(alt)-3)={'Vg'}; plots([1 end+2])={[] 'Vm'};
  case 'cluster'
   alt=f; td=120; uperr=1; ld=50:.5:90; ptype='p';
+ case {'sy11'}
+  alt=[300 400]; td=1; ptype='t'; ld=0:1:30;
+  plotdefs=[0 1000 100 100 600/86400];
  otherwise
   alt=minput('Altitude ranges',[e f]);
   td=minput('Time interval',180);
@@ -96,7 +100,7 @@ else
 end
 for i=1:np
  subplot(npr,npc,np+1-i,'align')
- efield(r,[plots{ntp(i)} ptype],alt((0:1)+ntp(i)),[],2)
+ efield(r,[plots{ntp(i)} ptype],alt((0:1)+ntp(i)),[],plotdefs)
  if strcmp(ptype,'t')
   if i>1, delete(get(gca,'xlabel')), end
   set(gca,'ylim',ylim(1+(alt(ntp(i))<150))*[-1 1])

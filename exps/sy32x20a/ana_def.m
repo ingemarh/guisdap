@@ -1,0 +1,30 @@
+analysis_code=51+(0:63);
+if name_site=='3'
+ analysis_lpf.par=load('sy32ac_3a.par');
+ analysis_lpf.lib='plwin';
+ analysis_lpf.data=0;
+ analysis_lpf.raw=0;
+ analysis_lpf.do=1;
+ analysis_lpf.skip=21;
+ a_satch.clutter=10;
+ %a_satch.clutfac=1000000;
+ a_satch.sigma=2;
+ a_satch.cut=1;
+ %a_satch.plot=8;
+ analysis_ppshortlags=1;
+else
+ analysis_lpf.par=load('sy32ac_ra.par');
+ analysis_lpf.lib='plwin';
+ analysis_lpf.data=0;
+ analysis_lpf.raw=0;
+ analysis_lpf.skip=0;
+ analysis_lpf.do=1;
+ for i=2:3
+  analysis_lpf(i).par=load('sy32ac_rc.par');
+  analysis_lpf(i).lib='clutter';
+  analysis_lpf(i).data=287*3+286*64+(634+633)*(i-2);
+  analysis_lpf(i).raw=634*64*(i-1);
+  analysis_lpf(i).skip=634*(i-2);
+ end
+ a_Offsetppd=800-15;
+end

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-foreach(cver 9 10 11 12)
+foreach(cver 9 10 11 12 13 14)
 	find_program(gcc_EXECUTABLE gcc-${cver})
 	if(gcc_EXECUTABLE)
 		set(CMAKE_C_COMPILER gcc-${cver})

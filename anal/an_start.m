@@ -26,10 +26,10 @@ nat_const
 get_ADDRSHIFT
 init_graphics
 spektri_init % Loads in plasma dispersion function table
-name_antennas={'32m' '42m' 'vhf' 'uhf' 'kir' 'sod' 'unk' '32p' 'quj' 'syi'};
-radar_freqs=[500 500 224 930 930 930 NaN 500 500 440]*1e6;
-radar_gains=10.^[4.25 4.48 4.31 4.81 4.81 4.81 NaN 4.25 4.1 4.3];
-radar_effs=[.66 .68 .64 .66 .66 .66 NaN .66 .66 1.];
+name_antennas={'32m' '42m' 'vhf' 'uhf' 'kir' 'sod' 'unk' '32p' 'quj' 'san' 'wen' 'dan'};
+radar_freqs=[500 500 224 930 930 930 NaN 500 500 430 430 430]*1e6;
+radar_gains=10.^[4.25 4.48 4.31 4.81 4.81 4.81 NaN 4.25 4.1 4.6 4.3 4.3];
+radar_effs=[.66 .68 .64 .66 .66 .66 NaN .66 .66 1. 1. 1.];
 if analysis_start(1)>2011
   radar_freqs(5:6)=[224 224]*1e6;
   radar_gains(5:6)=10.^3.54;
@@ -49,9 +49,10 @@ while ~EOF
   else
     if name_site=='Q'
       [OK,EOF,N_averaged,M_averaged]=integr_qujing;
-    elseif name_site=='H'
+    elseif contains('3WD',name_site)
       if a_lpf(1).do
-        [OK,EOF,N_averaged,M_averaged]=integr_syisr(len_prof);
+        [OK,EOF,N_averaged,M_averaged]=integr_syisr;
+	%d_parbl(41)=strfind('3WD',name_site)+9; % hui hui
       else
         [OK,EOF,N_averaged,M_averaged]=integr_syisrw;
       end
@@ -75,7 +76,7 @@ while ~EOF
 
   if OK & a_do
     d_date=datenum(d_time(1,:));
-    if d_rcprog~=old_rcprog | ((name_site=='K' | name_site=='S') & any(fix((old_point-[ch_el(1) ch_az(1)])/.05)))
+    if d_rcprog~=old_rcprog | (contains('KSWD',name_site) & any(fix((old_point-[ch_el(1) ch_az(1)])/.05)))
       name_ant=char(name_antennas(ant_id));
       load_initfile
       read_antpar=[radar_freqs(ant_id) radar_gains(ant_id)];

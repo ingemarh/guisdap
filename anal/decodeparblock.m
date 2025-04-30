@@ -26,6 +26,10 @@ if ant_id==5
   p_RECloc=[67.863, 20.44, .412];
 elseif ant_id==6
   p_RECloc=[67.367, 26.65, .180];
+elseif ant_id==11
+  p_RECloc=[19.5982,110.7908,0.0249];
+elseif ant_id==12
+  p_RECloc=[19.5281,109.1322,0.0999];
 end
 
 % endtime of integration 
@@ -44,5 +48,8 @@ if lpb>41 & (ant_id==5 | ant_id==6) & d_parbl(42)
   ch_range=d_parbl(42)/1000;
 else
   ch_range=[];
+end
+if (ant_id==11 | ant_id==12)
+ ch_azT=d_parbl(62); ch_elT=d_parbl(61);
 end
 calTemp=d_parbl(21);

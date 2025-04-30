@@ -19,7 +19,7 @@ function [Time,par2D,par1D,rpar2D,err2D,errs2d]=load_param_hdf5(hdf5file,pars1d,
 %   do_rpars = true
 %   errs2d_id  = {'var_Ne' 'var_Tr' 'var_Ti' 'var_Vi' 'var_Collf'}
 
-global name_ant name_expr r_RECloc path_GUP
+global name_ant name_expr r_RECloc path_GUP local
 Time=[]; par2d=[]; par1D=[]; rpar2d=[]; err2d=[];
 
 filename = hdf5file;
@@ -32,6 +32,11 @@ if ~isempty(find(strcmp(metavar,'names')))
     name_expr = deblank(namesdata{2,nnexpr});
     nnant =  find(strcmp(deblank(namesdata(1,:)),'name_ant'));
     name_ant = deblank(namesdata{2,nnant});
+    if contains('san wen dan',name_ant)
+      local.owner='IGGCAS';
+    elseif contains('quj',name_ant)
+      local.owner='CRIRP';
+    end
 end
 
 if nargin == 1

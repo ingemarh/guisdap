@@ -11,7 +11,7 @@
   
 global vc_sampling vc_ch vc_t1 vc_t2 vc_envo vc_env
 global td_ch td_t1 td_t2 td_am p_rep 
-global name_site
+global name_site p_offsetppd
 
 s_ind=1;
 vc_sampling=zeros(1000,4);

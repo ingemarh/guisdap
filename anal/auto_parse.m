@@ -1,7 +1,7 @@
 function [intper,t1,t2,siteid,expver]=auto_parse(warn)
 global path_exps name_expr name_site data_path b owner local
 if nargin<1, warn=1; end
-sites='KSTVLLLL';
+sites='KSTVLLLLQ3WD';
 t1=[]; t2=[]; intper=[]; siteid=[]; expver=1;
 if warn==2
  o=uigetdir(data_path);
@@ -50,34 +50,25 @@ end
 if isempty(expid), [dum,expid,ext]=fileparts(dum); end
 expid=[expid ext];
 [msg,pulse,scan,comment,owner,antenna]=expparts(expid);
-if ~isempty(msg) & ~strfind(msg,'missing')
+if ~isempty(msg) & strfind(msg,'missing')
 %try for hdf5 files, use the first found
- files=dir(fullfile(data_path,'*.hdf5'));
+ files=dir(fullfile(data_path,'EISCAT*.hdf5'));
  nf=length(files);
  if ~nf
   warning('GUISDAP:parse',['Unable to parse directory name: ' msg])
  else
-  for i=1:nf
-   file=fullfile(data_path,files(i).name);
-   t=datenum(h5read(file,'/MetaData/StartTime'),'yyyy-mm-dd HH:MM:SS');
-   if isempty(t1) || t<t1, t1=t; end
-   t=datenum(h5read(file,'/MetaData/StopTime'),'yyyy-mm-dd HH:MM:SS');
-   if isempty(t2) || t>t2, t2=t; end
-  end
+  s=strsplit(files(1).name,'_');
+  expid=[strjoin(s(2:end-4),'_') '@' char(s(end-3))];
+  [msg,pulse,scan,comment,owner,antenna]=expparts(expid);
+  t1=datenum(sprintf('%s',strjoin(s(end-(2:-1:1)))),'yyyymmdd HHMMSS');
+  t2=fix(t1)+1;
   if set_b
-   set(b(4),'string',[datestr(t1,'yyyy mm dd') '  00 00 00'])
+   set(b(4),'string',datestr(t1,'yyyy mm dd  HH MM SS'))
    set(b(5),'string',datestr(t2,'yyyy mm dd  HH MM SS'))
   end
-  t1=datevec(fix(t1)); t2=datevec(t2);
-  name_expr=char(h5read(file,'/MetaData/DSPexp'));
-  if set_b, set(b(1),'string',name_expr), end
-  expver=h5read(file,'/MetaData/DSPver');
-  if set_b, set(b(11),'value',expver+1), end
-  siteid=strmatch(h5read(file,'/MetaData/Antenna'),{'kir' 'sod' 'uhf' 'vhf' '32m' '42m' '32p' 'esr'});
-  if set_b, set(b(11),'value',expver+1); end
-  return
+  t1=datevec(t1); t2=datevec(t2);
  end
-else
+end
  nameexpr=pulse(find(pulse~='_' & pulse~='-'));
  while ~exist(fullfile(path_exps,nameexpr))
   nameexpr=nameexpr(1:end-1);
@@ -127,7 +118,7 @@ else
  elseif set_b
   set(b(8),'string',num2str(intper))
  end
-end
+%end
 d=dir(fullfile(data_path,'*_*'));
 if ~isempty(d)
  dtmax=0;

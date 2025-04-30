@@ -2,7 +2,7 @@ function [list,msg]=getfilelist(dirpath,newer)
 
 % [list,msg]= getfilelist(dirpath,newer)
 
-global a_realtime a_year a_lpf
+global a_realtime a_year a_lpf name_site
 
 list=[]; msg=''; dirlist=[];
 if nargin<2
@@ -69,8 +69,10 @@ else
       dirlist=dir(fullfile(dp,j.name,'*.hdf5'));
       if isempty(dirlist) & ~isempty(a_lpf)
         syisr=1;
+	site=name_site; if name_site=='3', site='S'; end
         if a_lpf(1).do
-          dirlist=dir(fullfile(dp,j.name,'*.h5'));
+          dirlist=dir(fullfile(dp,j.name,['*' site '0.h5']));
+          %%dirlist=dir(fullfile(dp,j.name,['*.h5']));
           [~,d]=sortrows(cell2table({dirlist.name}'));
           dirlist=dirlist(d);
         else
@@ -92,22 +94,19 @@ else
         h5file=fullfile(j.name,f.name);
         if syisr
           if a_lpf(1).do
-            tx.time=h5read(h5file,'/Tx/TransTime');
-            tx.code=h5read(h5file,'/Tx/PulseCode');
-            s=size(tx.time);
-            if isempty(a_year), %hui hui
-              tx.stamp=datevec(dir(h5file).date);
-            else
-              tx.stamp=a_year;
-            end
-            td=datenum(tx.stamp(1),1,1)-datenum(1970,1,1);
-            tx.time=reshape(timeconv(td*86400+tx.time(:)-8*3600,'unx2tai'),s); %bei->tai
-            fno=fno+1;
-            list.fname(fno)={h5file};
-            if fno==1, list.tai=[]; list.code=[]; list.profs=[]; end
-            list.tai=[list.tai tx.time];
-            list.code=[list.code tx.code];
-            list.profs=[list.profs;s(2)];
+            head=h5read(h5file,'/head');
+            good=find(head.nd>=head.nw);
+            tai=num2cell(timeconv(double(head.dt(good))*1e-6,'unx2tai')); %beijing unix time!
+            code=num2cell(head.bc(good)+head.lc(good));
+            azel=num2cell(complex(head.az(good),head.el(good)));
+            hdx=num2cell(good);
+            s=length(tai);
+            l=repmat(struct('fname',h5file,'tai',0,'code',0,'azel',0,'hdx',0),[s 1]);
+            [l.tai]=tai{:};
+            [l.code]=code{:};
+            [l.azel]=azel{:};
+            [l.hdx]=hdx{:};
+            list=[list;l];
 	  %else
           %  syhead_info = h5read(h5file, '/head');
           %  sytime = double(syhead_info.dt) * 1e-6;      % us, added by wyh

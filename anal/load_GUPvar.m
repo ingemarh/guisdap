@@ -12,7 +12,7 @@
 if exist('p_RECloc','var') & ~isempty(p_RECloc)
   t_RECloc=p_RECloc;
 end
-if name_site=='K' | name_site=='S'
+if contains('KSWD',name_site)
   temp=[path_expr name_expr 'R'];
 else
   temp=[path_expr name_expr name_site];

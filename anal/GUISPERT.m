@@ -55,9 +55,16 @@ if strcmp(name_ant(1:3),'42m') & ~exist('ad_coeff_no_Pt','var')
 end
 
 % Range not always recorded
-if name_site=='K' | name_site=='S'
+if contains('KSWD',name_site)
  if isempty(ch_range)
   global v_lightspeed
+  if contains('WD',name_site)
+    [gintersect,dbeam]=beam_intersect(p_XMITloc,d_parbl([62 61]),p_RECloc,[ch_az ch_el]);
+    ch_height=gintersect(3);
+    if dbeam(1)>1
+       warning('GUISDAP:default',sprintf('Large distance between beams: %g km',dbeam(1)))
+    end
+  end
   if exist('ch_height','var')
     ch_range=height_to_range(ch_height,ch_el(1))*(v_lightspeed*p_dtau*1e-6/2/1e3);
   else
@@ -65,7 +72,7 @@ if name_site=='K' | name_site=='S'
     warning('GUISDAP:default','range is dummy!')
   end
  end
- if d_date>datenum(2013,1,1)
+ if contains('KS',name_site) & d_date>datenum(2013,1,1)
   ch_fradar(:)=radar_freqs(3);
  end
 end
@@ -80,14 +87,39 @@ end
 if name_site=='V' & d_date>datenum(2003,1,1)
  [ch_el ch_az ch_gain]=vhf_elaz(ch_el(1),0,10^4.31/2);
 end
-if name_site=='H'
- if d_date<datenum(2023,1,1)
-  ch_gain=10^4.3*sin(ch_el*pi/180)^1.6;
-  ch_Pt=2e6;
+if contains('3WD',name_site)
+ if name_site=='3'
+  if d_date<datenum(2023,1,1)
+   ch_gain=10^4.3*sin(ch_el*pi/180)^2.5;
+   ch_Pt=2e6;
+  else
+   ch_gain=10^4.6*sin(ch_el*pi/180)^2.5; %1 array + 1 element + 0.5 CETC
+   ch_Pt=4.75e6;
+  end
  else
-  ch_gain=10^4.6*sin(ch_el*pi/180)^1.6;
-  ch_Pt=4e6;
+  if name_site=='W'
+   dir_ant=[90-20 221.86]*pi/180;
+  else
+   dir_ant=[90-20 159.35]*pi/180;
+  end
+  [dx,dy,dz]=sph2cart(-dir_ant(2),dir_ant(1),1); dir_ant=[dx dy dz];
+  [dx,dy,dz]=sph2cart(-ch_az*pi/180,ch_el*pi/180,1); dir_beam=[dx dy dz];
+  antel=atan2(norm(cross(dir_ant,dir_beam)),dot(dir_ant,dir_beam));
+  ch_gain=10^4.3*sin(pi/2-antel)^2.5;
+  ch_Pt=4.75e6;
+  sysTemp=analysis_Tsys*(2-sin(ch_el*pi/180));
  end
+ Tsky=20;
+ [sun_az,sun_el]=solar_angle(p_RECloc(1),p_RECloc(2),d_date);
+ [dx,dy,dz]=sph2cart(-sun_az*pi/180,sun_el*pi/180,1); dir_ant=[dx dy dz];
+ [dx,dy,dz]=sph2cart(-ch_az*pi/180,ch_el*pi/180,1); dir_beam=[dx dy dz];
+ antsun=atan2(norm(cross(dir_ant,dir_beam)),dot(dir_ant,dir_beam))*180/pi;
+ antang=sqrt(2*pi/ch_gain)*180/pi;
+ Tsky=d_parbl(59);
+ Tsun=6000*exp(-(antsun/antang)^2);
+ Tground=300/2*cos(ch_el*pi/180);
+ sysTemp=analysis_Tsys+Tsky+Tsun+Tground;
+ %sysTemp=analysis_Tsys*(2-sin(ch_el*pi/180)); % empiric based on background levels
 end
 
 if strcmp(name_ant(1:3),'uhf')

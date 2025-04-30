@@ -12,6 +12,7 @@ function [varargout]=plasma_summary(pl_dir,printdir,expt,gates,plots)
 %            .t Time
 %            .s Spectra
 %            .f Freqeuencies
+global local
 if nargin<2, printdir=[]; end
 if nargin<3, expt=[]; end
 verbose=0;
@@ -211,14 +212,10 @@ elseif plots==0
  end
  [h,d]=strtok(d_ExpInfo);
  colormap(vizu('myb'))
- %load(fullfile(path_GUP,'matfiles','logo'))
- %axes('Position',[.07 .92 .08 .06]); plot(y,x,'.k')
- %set(get(gca,'child'),'markersize',1)
- %set(gca,'xlim',[0 202],'ylim',[0 202],'visible','off')
  axes('Position',[.07 .92 .08 .06]); eiscatlogo(.5)
  text('Position',[11 10],'VerticalAlignment','top','FontSize',16,...
   'HorizontalAlignment','Left','FontWeight','bold',...
-  'String','EISCAT AB','UserData','Copyright');
+  'String',local.owner,'UserData','Copyright');
  text('Position',[11 -8],'interpreter','none',...
   'String',sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)),'UserData','Experiment')
  text('Position',-[15 150],'String','Frequency offset [MHz]','Rotation',90,...

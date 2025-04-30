@@ -1,4 +1,4 @@
-% Generate an EISCAT HDF5-file from mat-files generated in a Guisdap analysis
+% Generate a GUISDAP HDF5-file from mat-files generated in an analysis
 % After analysis and calibration of an experiment an HDF5 file with all data can
 % be made by calling the function mat2hdf5
 % datapath points to the data (MAT-files), metadata, figures and notes from
@@ -11,14 +11,14 @@
 % The inputs addfigs and addnotes  must be set non-empty (default) in order for
 %  the routine to store any figures and notes*.txt in the HDF5 file.
 % For multistatic experiments mat2hdf5 will call the function mat2hdf5_vel
-%  to create the corresponding EISCAT HDF5.
+%  to create the corresponding HDF5.
 %
-%function [Storepath,EISCAThdf5file,nvecvel,list_fortar,list_supplfortar,list_linksfortar]
+%function [Storepath,GUISDAPhdf5file,nvecvel,list_fortar,list_supplfortar,list_linksfortar]
 %            = mat2hdf5(matpath,datapath,addfigs,addnotes,taring)
 
-function [Storepath,EISCAThdf5file,nvecvel,list_fortar,list_supplfortar,list_linksfortar] = mat2hdf5(matpath,datapath,addfigs,addnotes,taring)
+function [Storepath,GUISDAPhdf5file,nvecvel,list_fortar,list_supplfortar,list_linksfortar] = mat2hdf5(matpath,datapath,addfigs,addnotes,taring)
 
-global path_GUP result_path name_ant hdf5ver
+global path_GUP result_path name_ant hdf5ver local
 
 name_ant = [];
 
@@ -89,8 +89,8 @@ for fmata=filelist_allmat'
  if hit
   if ~isempty(who('-file',matfilecheck,'Vg'))
        qq = qq + 1; 
-       [storepath,file_EISCAThdf5] = mat2hdf5_vel(matfilecheck,datapath,addfigs,addnotes);
-       EISCAThdf5file(qq,:) = file_EISCAThdf5;
+       [storepath,file_GUISDAPhdf5] = mat2hdf5_vel(matfilecheck,datapath,addfigs,addnotes);
+       GUISDAPhdf5file(qq,:) = file_GUISDAPhdf5;
        Storepath(qq,:) = storepath;
        list_fortar = [list_fortar;{matfilecheck}];
   else
@@ -130,7 +130,7 @@ end
 
 if isempty(filelist) || length(filelist) == 1    % Ignore if empty or if there is only one(1) record
     qq = qq + 1;
-    EISCAThdf5file(qq,:) = {''};
+    GUISDAPhdf5file(qq,:) = {''};
     Storepath(qq,:) = {''};
     pars_recs = [];
 end
@@ -348,12 +348,21 @@ for rr = 1:length(pci)
            case 'S', name_ant = 'sod';
            case 'V', name_ant = 'vhf';
            case 'Q', name_ant = 'quj';
+           case '3', name_ant = 'san';
+           case 'W', name_ant = 'wen';
+           case 'D', name_ant = 'dan';
        end
     else
         name_ant = lower(name_ant);
     end
 
-    datafolder = sprintf('EISCAT_%04d-%02d-%02d_%s_%s%s@%s',r_time(1,1:3),name_expr,name_expr_more,name_strategy ,name_ant);
+    if contains('san wen dan',name_ant)
+       publisher='IGGCAS';
+    else
+       publisher=local.owner;
+    end
+
+    datafolder = sprintf('%s_%04d-%02d-%02d_%s_%s%s@%s',strtok(publisher),r_time(1,1:3),name_expr,name_expr_more,name_strategy ,name_ant);
     storepath = fullfile(datapath,datafolder);
 
     while exist(storepath)
@@ -371,7 +380,7 @@ for rr = 1:length(pci)
     hdffilename = fullfile(storepath,Hdf5File);
     matfilename = fullfile(storepath,MatFile);
     Storepath(qq,:) = {storepath};
-    EISCAThdf5file(qq,:) = {hdffilename};
+    GUISDAPhdf5file(qq,:) = {hdffilename};
 
     if exist(hdffilename)==2, delete(hdffilename); end
 
@@ -940,7 +949,7 @@ for rr = 1:length(pci)
     
     %%% Software
     matfile.metadata.software.software_link = {software};
-    matfile.metadata.software.EISCAThdf5_ver = {hdf5ver};
+    matfile.metadata.software.GUISDAPhdf5_ver = {hdf5ver};
     if exist('r_ver','var')
         matfile.metadata.software.GUISDAP_ver = {num2str(r_ver)};
     end
@@ -988,7 +997,7 @@ for rr = 1:length(pci)
     matfile.metadata.schemes.DataCite.Identifier = {PID};
     matfile.metadata.schemes.DataCite.Creator = {lower(name_ant)};
     matfile.metadata.schemes.DataCite.Title = {datafolder};
-    matfile.metadata.schemes.DataCite.Publisher = {'EISCAT AB'};
+    matfile.metadata.schemes.DataCite.Publisher = {publisher};
     matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 3a Ionosphere'};
     matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 

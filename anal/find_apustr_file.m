@@ -24,9 +24,9 @@ else
     file=sprintf('%s_%g%s',a,apu,b);
   elseif fix(apu)~=apu
     apu=fix(apu);
-    f=sprintf('%s_%d%s.%s',a,fix(apu),b,e);
+    f=sprintf('%s_%d%s.%s',a,fix(apu),b,e),
     if exist(f)==2 | exist([f '.gz'])==2 | exist([f '.bz2'])==2
-      file=sprintf('%s_%d%s',a,apu,b);
+      file=sprintf('%s_%d%s',a,apu,b),
     end
   end
   if isempty(file)

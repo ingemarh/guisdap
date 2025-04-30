@@ -8,10 +8,12 @@
 load_PS(d_rcprog,N_rcprog)
 % For remotes we must find transmission from Tromso files
 R_ch=td_ch; R_f=ch_f; % Store the necessary remote variables
-if ch_fradar>300e6
+if ch_fradar>500e6
  name_site='T';
-else
+elseif ch_fradar<400e6
  name_site='V';
+else
+ name_site='3';
 end
 load_PS(d_rcprog,N_rcprog)
 ind=[]; % ind will contain the lines containing transmission to remotes

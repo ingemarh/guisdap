@@ -1,10 +1,19 @@
 function eiscatlogo(ax,linewidth)
 % AT guisdaplogo([ax,]linewidth)
+global path_GUP local
 if nargin<2
     linewidth=ax; ax=gca;
 end
-
-if date<datetime([2025 01 01])
+if ~strcmp(strtok(local.owner),'EISCAT')
+    try
+       logo=imread(fullfile(path_GUP,'matfiles',[lower(local.owner) '.jpg']));
+       back=true(size(logo,1,2)); back(find(logo(:,:,1)==255))=false;
+       image(ax,logo,'AlphaData',back)
+       set(ax,'visible','off')
+    catch
+       guisdaplogo([],linewidth*4)
+    end
+elseif date<datetime([2025 01 01])
     [x,y]=arc(0,0,10,0,360);stroke(ax,x,y,linewidth);
     axis(ax,'square')
     hold(ax,'on')

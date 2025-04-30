@@ -91,7 +91,7 @@ if ~isempty(a_code)
       if len>0; acode(i,gates(ind))=ones(1,len); end
     end
     clear code temp ind gates codes i
-  elseif max(a_code)>max(lpg_code) & name_site~='H'
+  elseif max(a_code)>max(lpg_code) & ~contains('3DW',name_site)
     warning('GUISDAP:chkpar','Analysis_code variable not well defined and neglected')
     a_code=[];
   elseif length(name_ant)==3 & ~all(ismember(lpg_code,a_code))

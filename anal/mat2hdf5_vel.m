@@ -2,7 +2,7 @@
 
 function [Storepath,EISCAThdf5file] = mat2hdf5_vel(matfile_vel,datapath,addfigs,addnotes) 
 
-global path_GUP hdf5ver %result_path 
+global path_GUP hdf5ver local %result_path 
 % if nargin<4, addnotes = []; else addnotes = 1; end 
 % if nargin<3, addfigs = []; else addfigs = 1; end 
 % if nargin==1, error('Not enough input parameters, path to matfiles folder and path to datastore folder needed'); end
@@ -436,9 +436,8 @@ PID = ['doi://eiscat.se/3a/' year month day hour minute second '/' randstr];
 
 matfile.metadata.schemes.DataCite.Identifier = {PID};
 matfile.metadata.schemes.DataCite.Creator = {name_ant};
-matfile.metadata.schemes.DataCite.Title = {['EISCAT_' filename]};
-%matfile.metadata.schemes.DataCite.Publisher = {'EISCAT Scientific Association'};
-matfile.metadata.schemes.DataCite.Publisher = {'EISCAT AB'};
+matfile.metadata.schemes.DataCite.Title = {[strtok(local.owner) '_' filename]};
+matfile.metadata.schemes.DataCite.Publisher = {local.owner};
 matfile.metadata.schemes.DataCite.ResourceType.Dataset = {'Level 4a Derived ionospheric data'};
 matfile.metadata.schemes.DataCite.Date.Collected = {[starttime '/' endtime]};
 

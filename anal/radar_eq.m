@@ -5,7 +5,7 @@
 
   function ad_coeff=radar_eq(eff)
 
-  global ch_fradar ch_gain ch_Pt ch_az ch_el p_XMITloc p_RECloc
+  global ch_fradar ch_gain ch_Pt ch_az ch_el p_XMITloc p_RECloc ch_elT
   global v_lightspeed v_electronradius v_Boltzmann p_dtau p_R0 p_N0 
   global ad_range ad_w
   global lpg_h lpg_w lpg_code lpg_bcs lp_vc vc_ch lpg_s
@@ -68,11 +68,19 @@ else
 %     Note: the following assumes that we do not cut the volume in pieces
   Aeff=Cbeam*eff*(4*pi*sc_R0^2)./ch_gain;
   Veff=Aeff*scale;%*1.9853; 
-  opening_angle=0.6*pi/180*(1+sin(sc_angle)^2);
-  if ch_fradar(1)<300e6
-   opening_angle=2.7*pi/180*(1+sin(sc_angle)^2);
-   ch_gain0=10^4.31/2.; %VHF tx half antenna
+  if isempty(a_Offsetppd)
+    ppdoff=0;
+  else
+    ppdoff=a_Offsetppd/p_dtau;
   end
+  if ch_fradar(1)<300e6 %VHF tristatic
+   ch_gain0=10^4.31/2.; %VHF tx half antenna
+  elseif ch_fradar(1)<450e6 %SYISR tristatic
+   ch_gain0=10^4.6*sin(ch_elT*pi/180)^2.5;
+   ppdoff=ppdoff-(sc_R0+sc_R1)/scale/2;
+  end
+  opening_angle=sqrt(2*pi/ch_gain(1))*(1+sin(sc_angle)^2);
+
   %rx beam width   opening_angle*range*sc_angle_factor/pulse_speed
   range_cover=round(opening_angle*sc_R1/sin(sc_angle)/scale);
   %rise time: intersection + squewing
@@ -97,11 +105,6 @@ else
   % Update now the radar k 
   k_radar=k_radar0*sin(sc_angle/2);
   if issparse(lpg_wr), lpg_wr=full(lpg_wr); end
-  if isempty(a_Offsetppd)
-    ppdoff=0;
-  else
-    ppdoff=a_Offsetppd/p_dtau;
-  end
 end
 
 % Single electron cross section at the beam intersection for unit power

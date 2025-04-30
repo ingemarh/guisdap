@@ -63,12 +63,12 @@ r_iter(r_ind,:)=iter;
 r_apriori(r_ind,:)=scaled_to_real(a_priori(g_ind,:));
 r_apriorierror(r_ind,:)=scaled_to_real(a_priorierror(g_ind,:));
 
-if di_figures(3) | name_site=='K' | name_site=='S'
+if di_figures(3) | contains('KSWD',name_site)
   theo=dirthe(result,p_coeffg,f_womega,kd2,p_om,pldfvv,p_m0,fb_womega);
   indr=1:len/2;
   sig_err=sqrt(var);
   sig_r=meas(indr); err_r=sig_err(indr); fitted_r=theo(indr);
-  if name_site=='K' | name_site=='S'
+  if contains('KSWD',name_site)
     sigc=conv(sig_r,flipud(fitted_r)); [ii,jj]=max(sigc);
     iii=conv(err_r,abs(flipud(fitted_r)));
     if ii/iii(jj)>1 & ~status
@@ -152,7 +152,7 @@ if di_figures(3)
          [indr;indr],[sig_r-err_r,sig_r+err_r]','r-',...
          [indi;indi],[sig_i-err_i,sig_i+err_i]','b-')
     set(get(gca,'Children'),'MarkerSize',4)
-    if name_site=='K' | name_site=='S'
+    if contains('KSWD',name_site)
       title(sprintf('Data (o) and fit (-) results  Offset: %.0f \\mus',r_Offsetppd(r_ind)))
     else
       title('Data (o) and fit results (solid line)')

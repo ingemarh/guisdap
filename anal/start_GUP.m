@@ -33,7 +33,7 @@ if d
  GUP_ver=char(textread(fullfile(path_GUP,'.version'),'%s'));
 end
 
-fprintf('GUISDAP vs. %s by EISCAT, Lehtinen&Huuskonen\n',GUP_ver)
+fprintf('GUISDAP vs. %s by EISCAT, Haggstrom&Lehtinen&Huuskonen\n',GUP_ver)
 
 format compact
 format short g
@@ -60,6 +60,7 @@ local.site=getenv('EISCATSITE');
 local.host=getenv('HOSTNAME'); if isempty(local.host), local.host=getenv('COMPUTERNAME'); end
 local.user=getenv('USER'); if isempty(local.user), local.user=getenv('USERNAME'); end
 local.tz={'UT' 0};
+local.owner='EISCAT AB';
 if strcmp(local.host,'medusa'), local.site='Hub'; end
 local.x=prod(get(0,'ScreenSize'))-1;
 local.x=~usejava('jvm') || feature('ShowFigureWindows');

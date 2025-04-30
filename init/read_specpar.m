@@ -19,7 +19,7 @@ p_om=2*sinh(-3:0.05:3.001)'; % Positive values shown below
 p_R0=1000;
 
 if exist('name_expr')==1
-  file=find_apustr_file([name_expr name_site],apustr,'_specpar','.m');
+  file=find_apustr_file([name_expr name_site],apustr,'_specpar','m');
   if isempty(file)
     fprintf('    Hard coded values for scale parameters will be used\n')
   else

@@ -19,6 +19,7 @@
 % See also VECTOR_VELOCITY VEL_WRAPPER
 %
 function [varargout]=efield(vfile,p,alt,lat,verbose)
+global local
 if nargin<2, p=[]; end
 if nargin<3, alt=[]; end
 if nargin<4, lat=[]; end
@@ -30,7 +31,7 @@ if isempty(verbose)
  verbose=0;
 elseif verbose(1)==2
  minlat=60; scale=500; maxv=5000; maxverr=500; St=600/86400;
-elseif verbose(1)~=1
+elseif verbose~=1
  minlat=verbose(1); scale=verbose(4); maxv=verbose(2); maxverr=verbose(3); St=verbose(5);
 end
 load(vfile)
@@ -112,13 +113,13 @@ if ~isempty(p)
   ax=gca;
   pos=get(gcf,'defaultaxespos'); xp=pos(1); yp=sum(pos([2 4]));
   axes('Position',[xp yp pos(3) 1-yp],'visible','off');
- if strfind(p, 'V')
-  plotdescr='Ion drift velocities';
- else
+  if strfind(p, 'V')
+   plotdescr='Ion drift velocities';
+  else
    plotdescr='Electric field';
- end
+  end
   % suptitle=['\fontsize{24}EISCAT Scientific Association\fontsize{16}' char(10) 'Vector ion drift velocities'];
-  suptitle=['\fontsize{24}EISCAT AB\fontsize{16}' char(10) plotdescr];
+  suptitle=['\fontsize{24}' local.owner '\fontsize{16}' char(10) plotdescr];
   vddt=vdd+[1;-1]/1440;
   t2=[datestr(vddt(2),'dd mmmm yyyy')];
   if t2(1)=='0', t2(1)=[]; end

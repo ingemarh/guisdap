@@ -28,10 +28,19 @@ glob_initKST
 original_path=pwd;
 fprintf('\n\nChdir to the experiment directory: %s\n',path_expr)
 cd(path_expr)
-
+if name_site=='R'
+  for txrem='TV3 '
+    dd=[path_expr name_expr txrem '*'];
+    if ~isempty(dir(dd))
+      break
+    end
+  end
+else
+  txrem=' ';
+end
 % These values will be used if not redefined later
 p_dtau=1;
-if name_site=='T' | name_site=='K' | name_site=='S' | name_site=='R'
+if name_site=='T' | name_site=='K' | name_site=='S' | txrem=='T'
   ch_gain=10^4.81;
   ch_fradar=927e6;
 elseif name_site=='L' | name_site=='P'
@@ -43,19 +52,19 @@ elseif name_site=='V'
 % ch_gain=10^4.01; % half antenna?
 % ch_gain=10^4.60; full antenna?
   ch_fradar=224e6;
+elseif txrem=='V'
+  ch_gain=10^3.54;
+  ch_fradar=224e6;
 elseif name_site=='Q'
   ch_gain=10^4.1;
   ch_fradar=500e6;
-elseif name_site=='H'
+elseif name_site=='3'
   %ch_gain=10^4.3; %phase1
   ch_gain=10^4.6; %phase2
-  ch_fradar=440e6;
-elseif name_site=='D'
-  ch_gain=10^4.4;
-  ch_fradar=440e6;
-elseif name_site=='W'
-  ch_gain=10^4.4;
-  ch_fradar=440e6;
+  ch_fradar=430e6;
+elseif name_site=='D' | name_site=='W' | txrem=='3'
+  ch_gain=10^4.3;
+  ch_fradar=430e6;
 end
 % For compatibility with the experiment design package define
 p_ND=1;
@@ -68,7 +77,7 @@ if name_site=='T' | name_site=='V'
 elseif name_site=='K'
   p_RECloc=[67.863 20.44 .412];
   %p_RECloc=[67.860658 20.435222 0.4179];
-elseif name_site=='S' | name_site=='R'
+elseif name_site=='S' | txrem=='T'
   p_RECloc=[67.367 26.65 .180];
   %p_RECloc=[67.363683 26.627081 0.1973];
 elseif name_site=='L' | name_site=='P'
@@ -78,13 +87,15 @@ elseif name_site=='L' | name_site=='P'
 elseif name_site=='Q'
   p_RECloc=[25.6381,103.7151,2.0448];
   p_XMITloc=p_RECloc;
-elseif name_site=='H'
-  p_RECloc=[18.349,109.622,0.055];
+elseif name_site=='3'
+  p_RECloc=[18.3492,109.6222,0.055];
   p_XMITloc=p_RECloc;
 elseif name_site=='D'
-  p_RECloc=[19.5,109.1,0.1]; %Danzho
-elseif name_site=='W'
-  p_RECloc=[19.6,110.8,0.1]; %Wenchang
+  p_XMITloc=[18.3492,109.6222,0.055];
+  p_RECloc=[19.5281,109.1322,0.0999]; %Danzho
+elseif name_site=='W' | txrem=='3'
+  p_XMITloc=[18.3492,109.6222,0.055];
+  p_RECloc=[19.5982,110.7908,0.0249]; %Wenchang
 end
 
 % The calibration temperatures, which may be redefined during analysis
@@ -116,7 +127,7 @@ for d_rcprog=B_rcprog:N_rcprog
   end
 
   global td_am td_ch td_t1 td_t2 c_f
-  if name_site=='T' | name_site=='V' | name_site=='L' | name_site=='P' | name_site=='Q' | name_site=='H'
+  if name_site=='T' | name_site=='V' | name_site=='L' | name_site=='P' | name_site=='Q' | name_site=='3'
     load_PS(d_rcprog,N_rcprog)
   else
     load_PSrem
