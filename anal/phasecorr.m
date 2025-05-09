@@ -14,7 +14,7 @@ if nargin<6, lo=[]; end
 if nargin<5, ind=[]; end
 
 ncod=size(penv,2);
-dr=reshape(draw,[],ncod);
+dr=reshape(double(draw),[],ncod);
 txsam=size(dr,1);
 rdt=dt*p_dtau*1e-6;
 phd=[]; phdd=[];

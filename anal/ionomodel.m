@@ -154,8 +154,8 @@ if nargout>1
  apriorierror(:,par)=apriorierror(:,par).*apriori(:,par);
 %apriori([1 end],:)
 %apriorierror([1 end],:)
-end 
-apriorimodel=['apriorimodel_' iono_model];
-if exist([apriorimodel '.m'])
+ apriorimodel=['apriorimodel_' iono_model];
+ if exist([apriorimodel '.m'])
   [apriori,apriorierror] = feval(apriorimodel,apriori,apriorierror,heights,fit_altitude);
+ end
 end

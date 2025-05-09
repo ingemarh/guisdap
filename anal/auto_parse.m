@@ -2,6 +2,7 @@ function [intper,t1,t2,siteid,expver]=auto_parse(warn)
 global path_exps name_expr name_site data_path b owner local
 if nargin<1, warn=1; end
 sites='KSTVLLLLQ3WD';
+antennas={'kir' 'sod' 'uhf' 'vhf' '32m' '42m' '32p' 'esr' 'quj' 'san' 'wen' 'dan'};
 t1=[]; t2=[]; intper=[]; siteid=[]; expver=1;
 if warn==2
  o=uigetdir(data_path);
@@ -55,7 +56,23 @@ if ~isempty(msg) & strfind(msg,'missing')
  files=dir(fullfile(data_path,'EISCAT*.hdf5'));
  nf=length(files);
  if ~nf
-  warning('GUISDAP:parse',['Unable to parse directory name: ' msg])
+  %try for syisr hdf5 files, use the first found
+  files=dir(fullfile(data_path,'*0.h5'));
+  nf=length(files);
+  if ~nf
+   warning('GUISDAP:parse',['Unable to parse directory name: ' msg])
+  else
+   [s,n]=textscan(files(1).name,'%016.0f%c%01d%c0.h5');
+   if n==23
+    t1=timeconv(fix(s{1}*1e-6/3600)*3600,'unx2mat'); t2=t1+2;
+    antenna=antennas{9+strfind('SWD',s{4})};
+    if set_b
+     set(b(4),'string',datestr(t1,'yyyy mm dd  HH MM SS'))
+     set(b(5),'string',datestr(t2,'yyyy mm dd  HH MM SS'))
+    end
+    t1=datevec(t1); t2=datevec(t2);
+   end
+  end
  else
   s=strsplit(files(1).name,'_');
   expid=[strjoin(s(2:end-4),'_') '@' char(s(end-3))];
@@ -89,13 +106,13 @@ end
  if isempty(antenna)
   antenna='   '; dum=[];
  else
-  dum=strmatch(antenna(1:3),{'kir' 'sod' 'uhf' 'vhf' '32m' '42m' '32p' 'esr'});
+  dum=strmatch(antenna(1:3),antennas);
  end
  if isempty(dum)
   warning('GUISDAP:parse','Unable to set the site, please specify')
  else
   name_site=sites(dum);
-  siteid=strfind(sites(1:5),name_site);
+  siteid=strfind(sites,name_site);
   if set_b, set(b(2),'value',siteid), end
  end
  if isempty(scan)

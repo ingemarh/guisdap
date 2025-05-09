@@ -329,7 +329,7 @@ plwin_lp (struct pth *pth)
 }
 
 void
-matface (int *par, int *nin, double *in_r, double *in_i,
+matface (int *par, int *nin, short *in_r, short *in_i,
 	 int *nout, double *out_r, double *out_i, double *upar)
 {
   ulong nb = 8;

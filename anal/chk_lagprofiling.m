@@ -13,7 +13,7 @@ for lpf=a_lpf
  i=i+1;
  if isempty(lpf.skip), lpf.skip=0; end
  if isempty(lpf.data), lpf.data=0; end
- if isempty(lpf.raw), lpf.raw=0; end
+ %if isempty(lpf.raw), lpf.raw=0; end
  switch lpf.lib
  case 'plwin'
   lpf.nrep=lpf.par(6);
@@ -69,7 +69,9 @@ for lpf=a_lpf
  case 'resampler'
   nsamp=[];
  end
- lpf.raw=lpf.raw+(lpf.p(1)*nsamp+1:(lpf.p(2)+1)*nsamp);
+ if ~isempty(lpf.raw)
+  lpf.raw=lpf.raw+(lpf.p(1)*nsamp+1:(lpf.p(2)+1)*nsamp);
+ end
  a_lpf(i)=lpf;
 end
 

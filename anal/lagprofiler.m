@@ -1,14 +1,17 @@
 function lagprofiler()
 global d_data d_raw d_parbl a_lpf
 for lpf=a_lpf
+ if ~isempty(lpf.raw)
+  dd_raw=d_raw(lpf.raw);
+ end
  switch lpf.lib
  case 'plwin'
-  [dd_data,upar]=plwin(lpf.par,d_parbl,d_raw(lpf.raw));
+  [dd_data,upar]=plwin(lpf.par,d_parbl,dd_raw);
   d_parbl(42+(1:20))=upar;
  case 'alt_decoder'
-  [dd_data]=alt_decoder(lpf.par,d_parbl,d_raw(lpf.raw));
+  [dd_data]=alt_decoder(lpf.par,d_parbl,dd_raw);
  case 'clutter'
-  [dd_data,upar,dd_raw]=clutter(lpf.par,d_parbl,d_raw(lpf.raw));
+  [dd_data,upar,dd_raw]=clutter(lpf.par,d_parbl,dd_raw);
   d_parbl(42+(1:20))=upar;
   d_raw(lpf.raw)=dd_raw;
  case 'resampler' % par(1-5)=[decimation ntx nsig ncal calmode ncodes]

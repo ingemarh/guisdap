@@ -20,7 +20,7 @@ gfdfile=[path_tmp '.gup'];
 if exist(gfdfile)
  load(gfdfile,'-mat')
 end
-sites='KSTVLXPQ3WD';
+sites='KSTVLXPLQ3WD';
 tfor='%04d %02d %02d  %02d %02d %02g';
 beg=sprintf(tfor,t1);
 to=sprintf(tfor,t2);

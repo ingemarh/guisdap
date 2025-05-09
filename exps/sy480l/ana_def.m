@@ -11,15 +11,23 @@ analysis_lpf(2).skip=1018;
 [analysis_lpf.loop]=deal(60); % ~1s dumps
 
 analyis_control(4)=1;
-analysis_code=26;
+analysis_code=73;
+if datenum(analysis_start)<datenum([2023 2 26])
+ analysis_code=26;
+end
 
-altd=[0 20:10:1500];
+altd=[0 10:5:1500];
 analysis_altit=100+cumsum(altd);
-analysis_maxwidth=2*diff(analysis_altit);
+%analysis_maxwidth=2*diff(analysis_altit);
+analysis_maxwidth=Inf;
 
-a_satch.sigmab=100;
+a_satch.sigmab=10;
 a_satch.sigma=3;
 %a_satch.skip=0;
 a_satch.cut=1;
 a_satch.prep=14000;
 
+fit_altitude(6,1:2)=[300 Inf]; % Fit for H+
+if contains('3WD',data_path(end))
+ [analysis_lpf.do]=deal(0); % integrated data
+end

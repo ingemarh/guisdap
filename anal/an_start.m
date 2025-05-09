@@ -49,10 +49,9 @@ while ~EOF
   else
     if name_site=='Q'
       [OK,EOF,N_averaged,M_averaged]=integr_qujing;
-    elseif contains('3WD',name_site)
+    elseif contains('3WD',name_site) & analysis_lpf(1).do==1
       if a_lpf(1).do
         [OK,EOF,N_averaged,M_averaged]=integr_syisr;
-	%d_parbl(41)=strfind('3WD',name_site)+9; % hui hui
       else
         [OK,EOF,N_averaged,M_averaged]=integr_syisrw;
       end

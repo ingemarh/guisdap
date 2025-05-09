@@ -82,6 +82,9 @@ while i<length(files)
       pause(1)
     end
     try, load(canon(file.fname,0))
+      if ~isempty(d_raw)
+	d_raw=complex(int16(real(d_raw)),int16(imag(d_raw)));
+      end
     catch,end
   else %hdf5 files
     d_parbl=double(h5read(file.fname,'/Data/ParBlock/ParBlock',[1,file.idx],[Inf,1]));
@@ -90,7 +93,7 @@ while i<length(files)
     d_resid=unique([d_resid h5read(file.fname,'/DataBase/ResourceID')]);
     try
       d_ExpInfo=char(h5read(file.fname,'/MetaData/ExpInfo'));
-      d_r=double(h5read(file.fname,'/Data/L1',[1,1,file.idx],[Inf,2,1]));
+      d_r=h5read(file.fname,'/Data/L1',[1,1,file.idx],[Inf,2,1]);
       d_raw=complex(d_r(:,1),d_r(:,2));
     catch,end
   end

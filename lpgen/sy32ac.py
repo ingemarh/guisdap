@@ -20,7 +20,7 @@ def myexp(site):
 	dlong=0
 	nr_pulses=1		#Number of pulses to correlate
 	ion_frac=2
-	ion_lag=64		#Maxlag for the ion line
+	ion_lag=63		#Maxlag for the ion line
 	mthread=20
 	dshort=0
 	ipp=15000	#IPP length in us
@@ -43,10 +43,10 @@ def myexp(site):
 		#plasma_frac=80		#Plasma frac
 	if version==1:
 		start_samp=int(99.981/0.15)	#When to start sampling
-		isamp=1268/2
+		isamp=1000
 		nr_loop=1		#Number of loops to get wanted integration time 
 		ipp=14000	#IPP length in us
-		nr_cal=isamp
+		nr_cal=1268-isamp
 	calstop=ipp-1
 	tails=lowtail+toptail
 	samp_speed=baud_len/ion_frac
@@ -67,12 +67,24 @@ def myexp(site):
 	if version!=1:
 		dspexp=(dspexp+'_%d')%version
 	exp_name=dspexp+'_'+site	#Name of experiment
-	if site=='3':
-		isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code,nr_cal)+nr_cal
-		print(isamp,clutts)
-		par_gen.t2ps(cal_samp,samp_speed,loops,baud_len,ac_code,code_len,code_tx,start_tx,ipp,trx_frq,site,dspexp,start_samp,isamp,calstop)
-	elif site=='r':
-		isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code,0)
-		print(isamp,clutts)
-		par_gen.cluttgen(exp_name,loops,nr_loop,isamp,clutts,ion_frac)
-		par_gen.t2ps(cal_samp,samp_speed,loops,baud_len,ac_code,0,0,start_tx,ipp,trx_frq,site,dspexp,start_samp,isamp,calstop)
+	if 0:
+		if site=='3':
+			isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code,nr_cal)+nr_cal
+			print(isamp,clutts)
+			par_gen.t2ps(cal_samp,samp_speed,loops,baud_len,ac_code,code_len,code_tx,start_tx,ipp,trx_frq,site,dspexp,start_samp,isamp,calstop)
+		elif site=='r':
+			isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code,0)
+			print(isamp,clutts)
+			par_gen.cluttgen(exp_name,loops,nr_loop,isamp,clutts,ion_frac)
+			par_gen.t2ps(cal_samp,samp_speed,loops,baud_len,ac_code,0,0,start_tx,ipp,trx_frq,site,dspexp,start_samp,isamp,calstop)
+	else:
+		if site=='3':
+			par_gen.cluttgen(exp_name,loops,nr_loop,isamp+nr_cal,clutts,1)
+			par_gen.acdecgen(exp_name,ac_code,code_tx,nr_loop,loops,isamp,ion_frac,ion_lag)
+			print(isamp,nr_cal,clutts)
+			par_gen.t2ps(cal_samp,samp_speed,loops,baud_len,ac_code,code_len,code_tx,start_tx,ipp,trx_frq,site,dspexp,start_samp,isamp,calstop)
+		elif site=='r':
+			isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code,0)
+			print(isamp,clutts)
+			par_gen.cluttgen(exp_name,loops,nr_loop,isamp,clutts,ion_frac)
+			par_gen.t2ps(cal_samp,samp_speed,loops,baud_len,ac_code,0,0,start_tx,ipp,trx_frq,site,dspexp,start_samp,isamp,calstop)

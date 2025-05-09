@@ -1,0 +1,25 @@
+%expinfo is 'syisr3 sy1x480'
+%pp/timing
+psig=0;
+psamp=1000;
+plen=480e-6;
+pdt=10e-6;
+prange0=(d_parbl(60)+180)*1e-6;
+%noise
+back=1000*48-47*48/2;
+cal=NaN;
+bsamp=1280-1018;
+csamp=0;
+loopc=fix(d_parbl(7)/14e-3);
+%sigspec
+sig=psig;
+siglen=plen;
+sigdt=pdt;
+sigtyp={'long'};
+maxlag=47;
+sigsamp=psamp;
+srange0=prange0;
+%backspec
+bacspec=back;
+maxlagb=maxlag;
+backsamp=bsamp;

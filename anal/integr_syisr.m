@@ -25,7 +25,7 @@ function  [OK,EOF,N_averaged,M_averaged]=integr_syisr()
 global d_parbl d_data d_var1 d_var2 data_path d_filelist d_raw
 global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
-global a_satch a_code a_intfix a_lpf any_start
+global a_satch a_code a_intfix a_lpf any_start a_rcprog
 persistent secs a_nnold fileslist filescode filesbeam beams a_beam lraw a_loop alpf ncode
 
 OK=0; EOF=0; N_averaged=0; M_averaged=0;
@@ -91,7 +91,7 @@ for aind=0:ll:laind-1;
    end
    a_loop=loop;
   end
-  d_raw=NaN(lraw,1); draw=[];
+  d_raw=int16(zeros(lraw,1)); draw=[];
   for lop=0:loop-1
    fid=a_ind(innerloop(1)+lop+1);
    for j=a_code
@@ -105,6 +105,7 @@ for aind=0:ll:laind-1;
     d_rx=h5read(file.fname,'/data',double(head.di+1),double(head.nd));
     tsky=tsky+head.tsky;
     draw=complex(double(d_rx.r),double(d_rx.i));
+    draw=complex(d_rx.r,d_rx.i);
     for lpf=a_lpf
      len_prof=length(lpf.raw)/ncode/loop;
      if head.nd<len_prof+lpf.skip
@@ -131,6 +132,7 @@ for aind=0:ll:laind-1;
    site=file.fname(end-4);
    d_parbl(41)=9+strfind('SWD',site);
    d_parbl(43:62)=0; % to clear upars
+   d_parbl(57)=a_rcprog;
    d_parbl(60:62)=[double(head.ws);head.et;head.at];
 
    d_data=NaN(0,1);
@@ -200,7 +202,7 @@ if OK, % if at least one good data dump was found
    file=[d_saveint.dir sprintf('%08d.mat',fix(d(2)))];
    disp(file)
    if d_saveint.var
-    save_noglobal(file,d_ExpInfo,d_parbl,d_data,d_raw,i_var1,i_var2,i_averaged)
+    save_noglobal(file,d_ExpInfo,d_parbl,d_data,i_var1,i_var2,i_averaged)
    else
     if isfield(d_saveint,'range'), d_data=d_data(d_saveint.range); end
     save_noglobal(file,d_ExpInfo,d_parbl,d_data)
