@@ -212,7 +212,8 @@ elseif plots==0
  end
  [h,d]=strtok(d_ExpInfo);
  colormap(vizu('myb'))
- axes('Position',[.07 .92 .08 .06]); eiscatlogo(.5)
+ axlogo=axes('Position',[.05 .91 .09 .09]); eiscatlogo(axlogo,.5)
+ axtext=axes('Position',[.07 .92 .08 .06]);axis(axtext,[-10,10,-10,10]);axis(axtext,'off')
  text('Position',[11 10],'VerticalAlignment','top','FontSize',16,...
   'HorizontalAlignment','Left','FontWeight','bold',...
   'String',local.owner,'UserData','Copyright');
