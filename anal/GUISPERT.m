@@ -113,10 +113,11 @@ if contains('3WD',name_site)
  [sun_az,sun_el]=solar_angle(p_RECloc(1),p_RECloc(2),d_date);
  [dx,dy,dz]=sph2cart(-sun_az*pi/180,sun_el*pi/180,1); dir_ant=[dx dy dz];
  [dx,dy,dz]=sph2cart(-ch_az*pi/180,ch_el*pi/180,1); dir_beam=[dx dy dz];
- antsun=atan2(norm(cross(dir_ant,dir_beam)),dot(dir_ant,dir_beam))*180/pi;
- antang=sqrt(2*pi/ch_gain)*180/pi;
+ antsun=atan2(norm(cross(dir_ant,dir_beam)),dot(dir_ant,dir_beam));
+ antang=sqrt(2*pi/ch_gain);
  Tsky=d_parbl(59);
- Tsun=6000*exp(-(antsun/antang)^2);
+ Tsun=6000*exp(-(antsun/(2*antang))^2);
+ Tsun=6000/cosh(antsun/(3*antang));
  Tground=300/2*cos(ch_el*pi/180);
  sysTemp=analysis_Tsys+Tsky+Tsun+Tground;
  %sysTemp=analysis_Tsys*(2-sin(ch_el*pi/180)); % empiric based on background levels

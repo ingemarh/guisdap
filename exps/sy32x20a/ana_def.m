@@ -42,3 +42,7 @@ else
  a_Offsetppd=800-15;
 end
 analysis_lpf(1).do=1;
+
+if contains('3WD',data_path(end))
+ [analysis_lpf.do]=deal(0); % integrated data
+end

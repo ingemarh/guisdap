@@ -366,6 +366,8 @@ elseif contains('san wen dan',nameant)
   FIGURE_TITLE='DANZHOU RECEIVER';
  end
  fradar=430e6;
+ TITLE1{5}='Background level (%)';
+ par1D(:,5)=par1D(:,5)/max(par1D(:,5))*100;
 end
 if ~contains('quj san wen dan',nameant) && isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);

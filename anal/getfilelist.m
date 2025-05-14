@@ -2,7 +2,7 @@ function [list,msg]=getfilelist(dirpath,newer)
 
 % [list,msg]= getfilelist(dirpath,newer)
 
-global a_realtime a_year a_lpf name_site
+global a_realtime a_lpf name_site
 
 list=[]; msg=''; dirlist=[];
 if nargin<2
@@ -69,7 +69,7 @@ else
       dirlist=dir(fullfile(dp,j.name,'*.hdf5'));
       if isempty(dirlist) & ~isempty(a_lpf)
         syisr=1;
-	site=name_site; if name_site=='3', site='S'; end
+        site=name_site; if name_site=='3', site='S'; end
         if a_lpf(1).do
           dirlist=dir(fullfile(dp,j.name,['*' site '0.h5']));
           %%dirlist=dir(fullfile(dp,j.name,['*.h5']));

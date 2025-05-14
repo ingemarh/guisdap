@@ -66,7 +66,7 @@ function [apriori2,apriorierror2] = apriorimodel_bafim(apriori,apriorierror,heig
 %           step (0 if the fit is ok)
 % d_time    timestap from the raw data
     
-    global r_param r_error r_res r_status d_time path_GUP result_path v_Boltzmann v_amu
+    global r_param r_error r_res r_status d_time path_GUP result_path v_Boltzmann v_amu result_file
     
     % We need to pass some variables from one timestep to another
     persistent d_time_prev aprioriprev apriorierrorprev filename istep
@@ -389,7 +389,11 @@ function [apriori2,apriorierror2] = apriorimodel_bafim(apriori,apriorierror,heig
     apriorierrorprev = apriorierror2;
 
     % update the output file name for the next integration period
-    filename=sprintf('%08d.mat',fix(tosecs(d_time(2,:))));
+    if ~isempty(result_file)
+        filename=result_file;
+    else
+        filename=sprintf('%08d.mat',fix(tosecs(d_time(2,:))));
+    end
 
     % increment the step counter
     istep = istep + 1;

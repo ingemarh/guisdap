@@ -151,5 +151,16 @@ if isempty(a_addr) & isempty(d_saveint)
   end
 end
 
+if a_save
+ integr=diff(datenum(d_time))*86400;
+ if integr<1 | contains('3WD',name_site)
+  result_file=sprintf('%012.3f.mat',tosecs(d_time(2,:)));
+ else
+  result_file=sprintf('%08d.mat',fix(tosecs(d_time(2,:))));
+ end
+else
+ result_file='00000000.mat';
+end
+
 %clear fac minrange maxrange code codes lags lpg ranges 
 %clear lenr len diffran gate gates addr ind1 ind i temp

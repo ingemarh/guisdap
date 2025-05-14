@@ -1,16 +1,22 @@
 c igrf.for, version number can be found at the end of this comment.
 c-----------------------------------------------------------------------        
 C
-C Subroutines to compute IGRF parameters for IRI and all functions and 
-C subroutines required for this computation, including:
-C 	IGRF_SUB, IGRF_DIP, FINDB0, SHELLG, STOER, FELDG, FELDCOF, GETSHC, 
-C 	INTERSHC, EXTRASHC, GEODIP, fmodip
+C FIELDG: Using a the POGO 68/10 mgnetic field model with coefficients 
+C         valid for 1973 used in an early version of IRI. Can be selected 
+C         with JF(18)=.false.
 C
-C CGM coordinates : GEOCGM01, OVL_ANG, CGMGLA, CGMGLO, DFR1DR, 
-C   AZM_ANG, MLTUT, MFC, FTPRNT, GEOLOW, CORGEO, GEOCOR, SHAG, RIGHT, 
-C   IGRF, RECALC, SPHCAR, BSPCAR, GEOMAG, MAGSM, SMGSM
+C IGRF subroutines and functions: 
+C    IGRF_SUB, IGRF_DIP, FINDB0, SHELLG, STOER, FELDG, FELDCOF, GETSHC, 
+C    INTERSHC, EXTRASHC, GEODIP, fmodip
 C
-C MLT: CLCMLT, DPMTRX
+C CGM coordinates: GEOCGM01, OVL_ANG, CGMGLA, CGMGLO, DFR1DR, 
+C    AZM_ANG, MLTUT, MFC, FTPRNT, GEOLOW, CORGEO, GEOCOR, SHAG, RIGHT, 
+C    IGRF, RECALC, SPHCAR, BSPCAR, GEOMAG, MAGSM, SMGSM
+C
+C MLT computation: CLCMLT, DPMTRX
+C
+C CONVER for computation of Corrected Geomagnetic Coordinates is in 
+C    IRIFUN.FOR
 c- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 c Required i/o units:  
 c  KONSOL= 6 Program messages (used when jf(12)=.true. -> konsol)
@@ -57,8 +63,8 @@ C 2012.01 12/17/12 igrf_dip: Add magnetic declination as output parameter
 C 2012.02 07/20/14 igrf_dip,FTPRNT,RECALC: ASIN(x): abs(x)>1.0 x=sign(1.,x)
 C 2012.03 07/24/14 COMMON/iounit: added 'mess' 
 C 2012.04 02/10/15 Updating to IGRF-12 (2015)
-C 2012.05 07/12/15 use mess,konsol in IGRF and RECALC
-C 2012.06 04/16/18 Versioning now based on year of major releases
+C 2012.05 04/16/15 Versioning now based on year of major releases
+C 2012.06 07/12/15 use mess,konsol in IGRF and RECALC
 C 2016.01 08/23/15 initialization of Earth constants moved to IRI_SUB
 C 2016.02 10/14/15 CLCMLT,DPMTRX <--- IRIFUN.FOR
 C 2016.02 10/14/15 RECALC: update with IGRF-12 until 2020
@@ -67,12 +73,132 @@ C 2016.02 10/14/15 FELDCOF,SHELLG: DIMO to COMMON/IGRF1/
 C 2016.03 02/17/16 GEODIP: add PI to CONST
 C 2016.04 07/07/17 IGRF: updated with newest 2010, 2015, 2015s coeff.
 C 2016.05 03/25/19 GEODIP,SPHCAR,GEOMAG: improved COMMENTS
-C 2020.01 03/05/20 Updating to IGRF-13 (2020)
+C 2020.01 03/05/20 FELDCOF:updated to IGRF-13 (2020)
 C 2020.02 09/08/20 Comment RECALC: IYR outside (P. Coisson)
 C 2020.03 09/20/21 Corrected INTERVAL 1900-2025 in write statement
 C 2020.03 09/20/21 RECALC: DT=..2015, ..2020 (R. Panfili)
+C 2020.04 04/04/24 Moved FIELDG from IRIFUN.FOR to this file
+C 2020.05 02/05/25 FELDCOF, RECALC: updated to IGRF-14 (2025)
+C 2020.06 02/17/25 IGRF: to IGRF-14 & corr. 2020 and 2015 coeff.
 c-----------------------------------------------------------------------        
-C 
+C
+C
+      SUBROUTINE FIELDG(DLAT,DLONG,ALT,X,Y,Z,F,DIP,DEC,SMODIP)                  
+C THIS IS A SPECIAL VERSION OF THE POGO 68/10 MAGNETIC FIELD                    
+C LEGENDRE MODEL. TRANSFORMATION COEFF. G(144) VALID FOR 1973.                  
+C INPUT: DLAT, DLONG=GEOGRAPHIC COORDINATES/DEG.(-90/90,0/360),                 
+C        ALT=ALTITUDE/KM.                          
+C OUTPUT: F TOTAL FIELD (GAUSS), Z DOWNWARD VERTICAL COMPONENT                  
+C        X,Y COMPONENTS IN THE EQUATORIAL PLANE (X TO ZERO LONGITUDE).          
+C        DIP INCLINATION ANGLE(DEGREE). SMODIP RAWER'S MODFIED DIP.             
+C SHEIK,1977.         
+      DIMENSION H(144),XI(3),G(144),FEL1(72),FEL2(72)
+      COMMON/CONST/UMR,PI                           
+      DATA FEL1/0.0, 0.1506723,0.0101742, -0.0286519, 0.0092606,                
+     & -0.0130846, 0.0089594, -0.0136808,-0.0001508, -0.0093977,                
+     & 0.0130650, 0.0020520, -0.0121956, -0.0023451, -0.0208555,                
+     & 0.0068416,-0.0142659, -0.0093322, -0.0021364, -0.0078910,                
+     & 0.0045586,  0.0128904, -0.0002951, -0.0237245,0.0289493,                 
+     & 0.0074605, -0.0105741, -0.0005116, -0.0105732, -0.0058542,               
+     &0.0033268, 0.0078164,0.0211234, 0.0099309, 0.0362792,                     
+     &-0.0201070,-0.0046350,-0.0058722,0.0011147,-0.0013949,                    
+     & -0.0108838,  0.0322263, -0.0147390,  0.0031247, 0.0111986,               
+     & -0.0109394,0.0058112,  0.2739046, -0.0155682, -0.0253272,                
+     &  0.0163782, 0.0205730,  0.0022081, 0.0112749,-0.0098427,                 
+     & 0.0072705, 0.0195189, -0.0081132, -0.0071889, -0.0579970,                
+     & -0.0856642, 0.1884260,-0.7391512, 0.1210288, -0.0241888,                 
+     & -0.0052464, -0.0096312, -0.0044834, 0.0201764,  0.0258343,               
+     &0.0083033,  0.0077187/                       
+      DATA FEL2/0.0586055,0.0102236,-0.0396107,    
+     & -0.0167860, -0.2019911, -0.5810815,0.0379916,  3.7508268,                
+     & 1.8133030, -0.0564250, -0.0557352, 0.1335347, -0.0142641,                
+     & -0.1024618,0.0970994, -0.0751830,-0.1274948, 0.0402073,                  
+     &  0.0386290, 0.1883088,  0.1838960, -0.7848989,0.7591817,                 
+     & -0.9302389,-0.8560960, 0.6633250, -4.6363869, -13.2599277,               
+     & 0.1002136,  0.0855714,-0.0991981, -0.0765378,-0.0455264,                 
+     &  0.1169326, -0.2604067, 0.1800076, -0.2223685, -0.6347679,               
+     &0.5334222, -0.3459502,-0.1573697,  0.8589464, 1.7815990,                  
+     &-6.3347645, -3.1513653, -9.9927750,13.3327637, -35.4897308,               
+     &37.3466339, -0.5257398,  0.0571474, -0.5421217,  0.2404770,               
+     & -0.1747774,-0.3433644, 0.4829708,0.3935944, 0.4885033,                   
+     &  0.8488121, -0.7640999, -1.8884945, 3.2930784,-7.3497229,                
+     & 0.1672821,-0.2306652, 10.5782146, 12.6031065, 8.6579742,                 
+     & 215.5209961, -27.1419220,22.3405762,1108.6394043/                        
+      K=0             
+      DO 10 I=1,72    
+      K=K+1           
+      G(K)=FEL1(I)    
+10    G(72+K)=FEL2(I)                              
+      RLAT=DLAT*UMR   
+      CT=SIN(RLAT)    
+      ST=COS(RLAT)    
+      NMAX=11         
+      D=SQRT(40680925.0-272336.0*CT*CT)            
+      RLONG=DLONG*UMR                              
+      CP=COS(RLONG)   
+      SP=SIN(RLONG)   
+      ZZZ=(ALT+40408589.0/D)*CT/6371.2             
+      RHO=(ALT+40680925.0/D)*ST/6371.2             
+      XXX=RHO*CP      
+      YYY=RHO*SP      
+      RQ=1.0/(XXX*XXX+YYY*YYY+ZZZ*ZZZ)             
+      XI(1)=XXX*RQ    
+      XI(2)=YYY*RQ    
+      XI(3)=ZZZ*RQ    
+      IHMAX=NMAX*NMAX+1                            
+      LAST=IHMAX+NMAX+NMAX                         
+      IMAX=NMAX+NMAX-1                             
+      DO 100 I=IHMAX,LAST                          
+100   H(I)=G(I)       
+      DO 200 K=1,3,2  
+      I=IMAX          
+      IH=IHMAX        
+300   IL=IH-I         
+      F1=2./(I-K+2.)  
+      X1=XI(1)*F1     
+      Y1=XI(2)*F1     
+      Z1=XI(3)*(F1+F1)                             
+      I=I-2           
+      IF((I-1).LT.0) GOTO 400                      
+      IF((I-1).EQ.0) GOTO 500                      
+      DO 600 M=3,I,2  
+      H(IL+M+1)=G(IL+M+1)+Z1*H(IH+M+1)+X1*(H(IH+M+3)-H(IH+M-1))-                
+     &Y1*(H(IH+M+2)+H(IH+M-2))                     
+      H(IL+M)=G(IL+M)+Z1*H(IH+M)+X1*(H(IH+M+2)-H(IH+M-2))+                      
+     &Y1*(H(IH+M+3)+H(IH+M-1))                     
+600   CONTINUE        
+500   H(IL+2)=G(IL+2)+Z1*H(IH+2)+X1*H(IH+4)-Y1*(H(IH+3)+H(IH))                  
+      H(IL+1)=G(IL+1)+Z1*H(IH+1)+Y1*H(IH+4)+X1*(H(IH+3)-H(IH))                  
+400   H(IL)=G(IL)+Z1*H(IH)+2.0*(X1*H(IH+1)+Y1*H(IH+2))                          
+700   IH=IL           
+      IF(I.GE.K) GOTO 300                          
+200   CONTINUE        
+      S=0.5*H(1)+2.0*(H(2)*XI(3)+H(3)*XI(1)+H(4)*XI(2))                         
+      XT=(RQ+RQ)*SQRT(RQ)                          
+      X=XT*(H(3)-S*XXX)                            
+      Y=XT*(H(4)-S*YYY)                            
+      Z=XT*(H(2)-S*ZZZ)                            
+      F=SQRT(X*X+Y*Y+Z*Z)                          
+      BRH0=Y*SP+X*CP  
+      Y=Y*CP-X*SP     
+      X=Z*ST-BRH0*CT  
+      Z=-Z*CT-BRH0*ST 
+        zdivf=z/f
+        IF(ABS(zdivf).GT.1.) zdivf=SIGN(1.,zdivf)
+      DIP=ASIN(zdivf)
+        ydivs=y/sqrt(x*x+y*y)  
+        IF(ABS(ydivs).GT.1.) ydivs=SIGN(1.,ydivs)
+      DEC=ASIN(ydivs)
+        dipdiv=DIP/SQRT(DIP*DIP+ST)
+        IF(ABS(dipdiv).GT.1.) dipdiv=SIGN(1.,dipdiv)
+      SMODIP=ASIN(dipdiv)
+      DIP=DIP/UMR     
+      DEC=DEC/UMR     
+      SMODIP=SMODIP/UMR                            
+      RETURN          
+      END   
+c
+c
         subroutine igrf_sub(xlat,xlong,year,height,
      &          xl,icode,dipl,babs)
 c-----------------------------------------------------------------------        
@@ -588,11 +714,11 @@ C
 c-----------------------------------------------------------------------        
 C  DETERMINES COEFFICIENTS AND DIPOL MOMENT FROM IGRF MODELS
 C
-C       INPUT:  YEAR    DECIMAL YEAR FOR WHICH GEOMAGNETIC FIELD IS TO
+C       INPUT:  YEAR  DECIMAL YEAR FOR WHICH GEOMAGNETIC FIELD IS TO
 C                       BE CALCULATED
-C        				COMMON/IGRF1/ERAD,AQUAD,BQUAD,DIMO /CONST/UMR,PI
-C       OUTPUT:         COMMON/MODEL/NMAX,TIME,GH1,FIL1
-C        				COMMON/DIPOL/GHI1,GHI2,GHI3
+C                     COMMON/IGRF1/ERAD,AQUAD,BQUAD,DIMO /CONST/UMR,PI
+C       OUTPUT:       COMMON/MODEL/NMAX,TIME,GH1,FIL1
+C                     COMMON/DIPOL/GHI1,GHI2,GHI3
 C
 C THE GEOMAGNETIC DIPOL MOMENT (DIMO) IN GAUSS (NORMALIZED TO EARTH'S 
 C RADIUS) AT THE TIME (YEAR) IS COMPUTED BUT NOT USED.
@@ -604,28 +730,30 @@ C 02/26/2010 update to IGRF-11 (2010) (###)
 C 10/05/2011 added COMMON/DIPOL/ for MLT computation in DPMTRX (IRIFUN)
 C 02/10/2015 update to IGRF-12 (2015) (###)
 C 03/05/2020 update to IGRF-13 (2020) (###)
+C 02/05/2025 update to IGRF-14 (2025) (###)
 c-----------------------------------------------------------------------        
         CHARACTER*13    FILMOD, FIL1, FIL2           
 C ### FILMOD, DTEMOD array-size is number of IGRF maps
-        DIMENSION       GH1(196),GH2(196),GHA(196),FILMOD(17)
-        DIMENSION		DTEMOD(17)
-        DOUBLE PRECISION X,F0,F 
-        COMMON/MODEL/   NMAX,TIME,GH1,FIL1
-        COMMON/IGRF1/   ERAD,AQUAD,BQUAD,DIMO /CONST/UMR,PI
-        COMMON/DIPOL/	GHI1,GHI2,GHI3
+        DIMENSION       GH1(196),GH2(196),GHA(196),FILMOD(18),DTEMOD(18)
+        DOUBLE PRECISION X,F0,F
+ 
+        COMMON/MODEL/NMAX,TIME,GH1,FIL1
+        COMMON/IGRF1/ERAD,AQUAD,BQUAD,DIMO /CONST/UMR,PI
+        COMMON/DIPOL/GHI1,GHI2,GHI3
+
 C ### updated coefficient file names and corresponding years
         DATA  FILMOD   / 'dgrf1945.dat','dgrf1950.dat','dgrf1955.dat',           
      1    'dgrf1960.dat','dgrf1965.dat','dgrf1970.dat','dgrf1975.dat',
      2    'dgrf1980.dat','dgrf1985.dat','dgrf1990.dat','dgrf1995.dat',
      3    'dgrf2000.dat','dgrf2005.dat','dgrf2010.dat','dgrf2015.dat',
-     4    'igrf2020.dat','igrf2020s.dat'/
+     4    'dgrf2020.dat','igrf2025.dat','igrf2025s.dat'/
         DATA  DTEMOD / 1945., 1950., 1955., 1960., 1965.,           
      1   1970., 1975., 1980., 1985., 1990., 1995., 2000.,2005.,
-     2   2010., 2015., 2020., 2025./      
+     2   2010., 2015., 2020., 2025.,2030./      
 C
 C ### numye is number of IGRF coefficient files minus 1
 C
-        NUMYE=16
+        NUMYE=17
 C
 C  IS=0 FOR SCHMIDT NORMALIZATION   IS=1 GAUSS NORMALIZATION
 C  IU  IS INPUT UNIT NUMBER FOR IGRF COEFFICIENT SETS
@@ -660,7 +788,7 @@ C-- DETERMINE MAGNETIC DIPOL MOMENT AND COEFFIECIENTS G
         DO 1234 J=1,3
            F = GHA(J) * 1.D-5
            F0 = F0 + F * F
-1234    CONTINUE
+1234       CONTINUE
         DIMO = DSQRT(F0)
         GHI1=GHA(1)                                         
         GHI2=GHA(2)                                         
@@ -986,18 +1114,19 @@ C  Output parameters:
 C     DAT(5,i)=rbm apex of the magnetic field line in Re (Re=6371.2 km)
 C            (this parameter approximately equals the McIlwain L-value)
 C     DAT(6,i)=btr IGRF Magnetic field H (nT)
-C     DAT(7,i)=brr IGRF Magnetic field D (deg)
-C     DAT(8,i)=ovl oval_angle as the azimuth to "magnetic north":
+C     DAT(7,i)=bfr IGRF Magnetic field D (deg)
+C     DAT(8,i)=brr IGRF Magnetic field Z 
+C     DAT(9,i)=ovl oval_angle as the azimuth to "magnetic north":
 C                + east in Northern Hemisphere
 C                + west in Southern Hemisphere
-C     DAT(9,i)=azm meridian_angle as the azimuth to the CGM pole:
+C     DAT(10,i)=azm meridian_angle as the azimuth to the CGM pole:
 C                + east in Northern Hemisphere
 C                + west in Southern Hemisphere
-C     DAT(10,i)=utm magnetic local time (MLT) midnight in UT hours
+C     DAT(11,i)=utm magnetic local time (MLT) midnight in UT hours
 C     		 i=1	for the start point
 C     		 i=2	for the conjugate point of the start point (slac, sloc)
-C			 i=3    for the footprint at 1-Re of the start point (slaf,slof)
-C			 i=4    for the conjugate footprint at 1-Re of the start point
+C		 i=3    for the footprint at 1-Re of the start point (slaf,slof)
+C		 i=4    for the conjugate footprint at 1-Re of the start point
 C     PLA(1)	geocentric latitude of the CGM pole in the Northern hemisphere
 C     PLO(1)	geocentric longitude of the CGM pole in the Northern hemisphere
 C     PLA(2)	geocentric latitude of the CGM pole in the Southern hemisphere
@@ -1056,31 +1185,31 @@ C  middle latitudes
 
       IF (ICOR.EQ. 1) THEN
 
-                SLAR = DAT(1,1)
-                SLOR = DAT(2,1)
-                IF (ABS(SLAR).EQ.90.) SLOR = 360.
-          CALL GEOCOR(SLAR,SLOR,RH,DLA,DLO,CLAR,CLOR,PMR)
-            DAT(3,1) = CLAR
-            DAT(4,1) = CLOR
+         SLAR = DAT(1,1)
+         SLOR = DAT(2,1)
+         IF (ABS(SLAR).EQ.90.) SLOR = 360.
+         CALL GEOCOR(SLAR,SLOR,RH,DLA,DLO,CLAR,CLOR,PMR)
+         DAT(3,1) = CLAR
+         DAT(4,1) = CLOR
 
-	                ELSE
+      ELSE
 
 C  Computation of geocentric coordinates from CGM ones at high- and
 C  middle latitudes
 
-                CLAR = DAT(3,1)
-                CLOR = DAT(4,1)
-        IF (ABS(CLAR).EQ.90.) CLOR = 360.
-          CALL CORGEO(SLAR,SLOR,RH,DLA,DLO,CLAR,CLOR,PMR)
-            DAT(1,1) = SLAR
-            DAT(2,1) = SLOR
+         CLAR = DAT(3,1)
+         CLOR = DAT(4,1)
+         IF (ABS(CLAR).EQ.90.) CLOR = 360.
+         CALL CORGEO(SLAR,SLOR,RH,DLA,DLO,CLAR,CLOR,PMR)
+         DAT(1,1) = SLAR
+         DAT(2,1) = SLOR
 
-	ENDIF
+      ENDIF
 
 C  PMI is L-shell parameter for the magnetic field line; limit to 16 Re
 
         IF(PMR.GE.16.) PMR = 999.99
-            DAT(5,1) = PMR
+        DAT(5,1) = PMR
 
 C  Check if CGM_Lat has been calculated, then go for the conjugate point
 
@@ -1090,39 +1219,39 @@ C  CGM_Lat has NOT been calculated, call GEOLOW for computation of the
 C  CGM coordinates at low latitudes using the CBM approach (see the
 C  reference in GEOLOW)
 
-        CALL GEOLOW(SLAR,SLOR,RH,CLAR,CLOR,RBM,SLAC,SLOC)
-            DAT(3,1) = CLAR
-            DAT(4,1) = CLOR
-        IF(RBM.GE.16.) RBM = 999.99
-            DAT(5,1) = RBM
+           CALL GEOLOW(SLAR,SLOR,RH,CLAR,CLOR,RBM,SLAC,SLOC)
+           DAT(3,1) = CLAR
+           DAT(4,1) = CLOR
+           IF(RBM.GE.16.) RBM = 999.99
+           DAT(5,1) = RBM
 
 C  Conjugate point coordinates at low latitudes
 
-          WRITE(STR,'(2F6.2)') SLAC,SLOC
-          READ (STR,'(2F6.2)') SLAC,SLOC
-            DAT(1,2) = SLAC
-            DAT(2,2) = SLOC
-                CALL GEOCOR(SLAC,SLOC,RH,DAA,DOO,CLAC,CLOC,RBM)
-          IF(CLAC.GT.999.)
-     +    CALL GEOLOW(SLAC,SLOC,RH,CLAC,CLOC,RBM,SLAL,SLOL)
-            DAT(3,2) = CLAC
-            DAT(4,2) = CLOC
-            DAT(5,2) = RBM
+           WRITE(STR,'(2F6.2)') SLAC,SLOC
+           READ (STR,'(2F6.2)') SLAC,SLOC
+           DAT(1,2) = SLAC
+           DAT(2,2) = SLOC
+           CALL GEOCOR(SLAC,SLOC,RH,DAA,DOO,CLAC,CLOC,RBM)
+           IF(CLAC.GT.999.)
+     +       CALL GEOLOW(SLAC,SLOC,RH,CLAC,CLOC,RBM,SLAL,SLOL)
+           DAT(3,2) = CLAC
+           DAT(4,2) = CLOC
+           DAT(5,2) = RBM
 
-                         ELSE
+       ELSE
 
 C  Computation of the magnetically conjugated point at high- and
 C  middle latitudes
 
-                CLAC = -CLAR
-                CLOC =  CLOR
-            DAT(3,2) = CLAC
-            DAT(4,2) = CLOC
-        CALL CORGEO(SLAC,SLOC,RH,DAA,DOO,CLAC,CLOC,PMC)
-            DAT(1,2) = SLAC
-            DAT(2,2) = SLOC
-        IF(PMC.GE.16.) PMC = 999.99
-            DAT(5,2) = PMC
+           CLAC = -CLAR
+           CLOC =  CLOR
+           DAT(3,2) = CLAC
+           DAT(4,2) = CLOC
+           CALL CORGEO(SLAC,SLOC,RH,DAA,DOO,CLAC,CLOC,PMC)
+           DAT(1,2) = SLAC
+           DAT(2,2) = SLOC
+           IF(PMC.GE.16.) PMC = 999.99
+           DAT(5,2) = PMC
 
       ENDIF
 
@@ -1461,7 +1590,7 @@ C  *********************************************************************
           sp = 1.
           ss = 1.
       if(sign(sp,pla).ne.sign(ss,cla)) then
-C       write(7,2) pla,cla
+        write(7,2) pla,cla
    2    format(/
      +  'WARNING - The CGM pole PLA = ',f6.2,' and station CLAT = ',
      +  f6.2,' are not in the same hemisphere: AZM_ANG is incorrect!')
@@ -1522,7 +1651,7 @@ C  *********************************************************************
        sp = 1.
        ss = 1.
       if(sign(sp,pla).ne.sign(ss,cla)) then
-        write(7,2) pla,cla
+c       write(7,2) pla,cla
    2    format(/
      +  'WARNING - The CGM pole PLA = ',f6.2,' and station CLAT = ',
      +  f6.2,' are not in the same hemisphere: MLTMN is incorrect!')
@@ -2409,6 +2538,12 @@ C     BY V. PAPITASHVILI, January 2011
 C
 C     MODIFIED TO IGRF-12 WITH YEARS THROUGH 2020
 C     BY D. Bilitza, July 2017
+
+C     MODIFIED TO IGRF-13 WITH YEARS THROUGH 2025
+C     BY D. Bilitza, July 2021
+
+C     MODIFIED TO IGRF-14 WITH YEARS THROUGH 2030
+C     BY D. Bilitza, February 2025
 C  *********************************************************************
 
       SAVE MA,IYR,G,H,REC
@@ -2418,6 +2553,7 @@ C  *********************************************************************
      * G1930(66),G1935(66),G1940(66),G1945(66),G1950(66),G1955(66),
      * G1960(66),G1965(66),G1970(66),G1975(66),G1980(66),G1985(66),
      * G1990(66),G1995(66),G2000(66),G2005(66),G2010(66),G2015(66),
+     * G2020(66),G2025(66),H2020(66),H2025(66),
      * H1900(66),H1905(66),H1910(66),H1915(66),H1920(66),H1925(66),
      * H1930(66),H1935(66),H1940(66),H1945(66),H1950(66),H1955(66),
      * H1960(66),H1965(66),H1970(66),H1975(66),H1980(66),H1985(66),
@@ -3004,50 +3140,95 @@ C  *********************************************************************
 
 
       DATA G2015/
-     *      0.0,-29442.0, -1501.0,  -2445.1,  3012.9,  1676.7,  1350.7,
-     *  -2352.3,  1225.6,   582.0,    907.6,   813.7,   120.4,  -334.9,
-     *     70.4,  -232.6,   360.1,    192.4,  -140.9,  -157.5,     4.1,
-     *     70.0,    67.7,    72.7,   -129.9,   -28.9,    13.2,   -70.9,
-     *     81.6,   -76.1,    -6.8,     51.8,    15.0,     9.4,    -2.8,
-     *      6.8,    24.2,     8.8,    -16.9,    -3.2,   -20.6,    13.4,
-     *     11.7,   -15.9,    -2.0,      5.4,     8.8,     3.1,    -3.3,
-     *      0.7,   -13.3,    -0.1,      8.7,    -9.1,   -10.5,    -1.9,
-     *     -6.3,     0.1,     0.5,     -0.5,     1.8,    -0.7,     2.1,
-     *      2.4,    -1.8,    -3.6/
+     *      0.0,-29441.5, -1501.8, -2445.9,  3012.2,  1676.3,  1350.3,
+     *  -2352.3,  1225.8,   581.7,   907.4,   813.7,   120.5,  -334.9,
+     *     70.4,  -232.9,   360.1,   192.4,  -140.9,  -157.4,     4.3,
+     *     69.6,    67.6,    72.8,  -129.9,   -28.9,    13.1,   -70.8,
+     *     81.3,   -76.0,    -6.8,    51.8,    15.1,     9.3,    -2.9,
+     *      6.6,    24.0,     8.9,   -16.8,    -3.2,   -20.6,    13.3,
+     *     11.8,   -16.0,    -2.0,     5.3,     8.8,     3.0,    -3.2,
+     *      0.7,   -13.2,    -0.1,     8.7,    -9.1,   -10.5,    -2.0,
+     *     -6.3,     0.2,     0.6,    -0.6,     1.7,    -0.7,     2.1,
+     *      2.3,    -1.8,    -3.6/
   
 
       DATA H2015/
-     *      0.0,     0.0,  4797.1,      0.0, -2845.6,  -641.9,     0.0,
-     *   -115.3,   244.9,  -538.4,      0.0,   283.3,  -188.7,   180.9,
-     *   -329.5,     0.0,    47.3,    197.0,  -119.3,    16.0,   100.2,
-     *      0.0,   -20.8,    33.2,     58.9,   -66.7,     7.3,    62.6,
-     *      0.0,   -54.1,   -19.5,      5.7,    24.4,     3.4,   -27.4,
-     *     -2.2,     0.0,    10.1,    -18.3,    13.3,   -14.6,    16.2,
-     *      5.7,    -9.1,     2.1,      0.0,   -21.6,    10.8,    11.8,
-     *     -6.8,    -6.9,     7.8,      1.0,    -4.0,     8.4,     0.0,
-     *      3.2,    -0.4,     4.6,      4.4,    -7.9,    -0.6,    -4.2,
-     *     -2.8,    -1.2,    -8.7/
+     *      0.0,     0.0,  4796.0,     0.0, -2845.4,  -642.2,     0.0,
+     *   -115.3,   245.0,  -538.7,     0.0,   283.5,  -188.4,   180.9,
+     *   -329.2,     0.0,    47.0,   197.0,  -119.1,    16.0,   100.1,
+     *      0.0,   -20.6,    33.3,    58.7,   -66.6,     7.3,    62.4,
+     *      0.0,   -54.3,   -19.5,     5.6,    24.5,     3.3,   -27.5,
+     *     -2.3,     0.0,    10.0,   -18.3,    13.2,   -14.6,    16.2,
+     *      5.7,    -9.1,     2.3,     0.0,   -21.8,    10.8,    11.7,
+     *     -6.7,    -6.9,     7.8,     1.0,    -3.9,     8.4,     0.0,
+     *      3.3,    -0.4,     4.6,     4.4,    -7.9,    -0.6,    -4.2,
+     *     -2.8,    -1.1,    -8.7/
 
+      DATA G2020/
+     *      0.0,-29403.4, -1451.4, -2499.8,  2982.0,  1676.8,  1363.0,
+     *  -2380.8,  1236.1,   525.6,   902.8,   809.5,    86.2,  -309.5,
+     *     47.4,  -234.4,   363.3,   187.9,  -140.7,  -151.2,    14.0,
+     *     66.0,    65.6,    73.0,  -121.6,   -36.1,    13.6,   -64.8,
+     *     80.5,   -76.6,    -8.2,    56.5,    15.8,     6.3,    -7.2,
+     *      9.8,    23.7,     9.7,   -17.5,    -0.5,   -21.1,    15.3,
+     *     13.6,   -16.6,    -0.3,     5.0,     8.4,     2.8,    -1.5,
+     *     -1.1,   -13.2,     1.1,     8.8,    -9.2,   -11.9,    -1.8,
+     *     -6.2,    -0.1,     1.7,    -0.9,     0.6,    -0.9,     1.9,
+     *      1.4,    -2.4,    -3.8/
+
+      DATA H2020/
+     *      0.0,     0.0,  4653.4,     0.0, -2991.7,  -734.6,     0.0,
+     *    -82.0,   241.8,  -542.5,     0.0,   282.1,  -158.5,   199.8,
+     *   -350.3,     0.0,    47.5,   208.4,  -121.4,    32.1,    99.1,
+     *      0.0,   -19.2,    25.0,    52.8,   -64.4,     9.0,    68.0,
+     *      0.0,   -51.5,   -16.9,     2.4,    23.6,    -2.2,   -27.2,
+     *     -1.9,     0.0,     8.4,   -15.2,    12.8,   -11.8,    14.9,
+     *      3.6,    -6.9,     2.9,     0.0,   -23.4,    11.0,     9.9,
+     *     -5.1,    -6.2,     7.8,     0.4,    -1.4,     9.6,     0.0,
+     *      3.4,    -0.2,     3.5,     4.9,    -8.6,    -0.1,    -4.3,
+     *     -3.4,    -0.1,    -8.8/
+
+      DATA G2025/
+     *      0.0,-29350.0, -1410.3, -2556.2,  2950.9,  1648.7,  1360.9,
+     *  -2404.2,  1243.8,   453.4,   894.7,   799.6,    55.8,  -281.1,
+     *     12.0,  -232.9,   369.0,   187.2,  -138.7,  -141.9,    20.9,
+     *     64.3,    63.8,    76.7,  -115.7,   -40.9,    14.9,   -60.8,
+     *     79.6,   -76.9,    -8.8,    59.3,    15.8,     2.5,   -11.2,
+     *     14.3,    23.1,    10.9,   -17.5,     2.0,   -21.8,    16.9,
+     *     14.9,   -16.8,     1.0,     4.7,     8.0,     3.0,    -0.2,
+     *     -2.5,   -13.1,     2.4,     8.6,    -8.7,   -12.8,    -1.3,
+     *     -6.4,     0.2,     2.0,    -1.0,    -0.5,    -0.9,     1.5,
+     *      0.9,    -2.6,    -3.9/
+
+      DATA H2025/
+     *      0.0,     0.0,  4545.5,     0.0, -3133.6,  -814.2,     0.0,
+     *    -56.9,   237.6,  -549.6,     0.0,   278.6,  -134.0,   212.0,
+     *   -375.4,     0.0,    45.3,   220.0,  -122.9,    42.9,   106.2,
+     *      0.0,   -18.4,    16.8,    48.9,   -59.8,    10.9,    72.8,
+     *      0.0,   -48.9,   -14.4,    -1.0,    23.5,    -7.4,   -25.1,
+     *     -2.2,     0.0,     7.2,   -12.6,    11.5,    -9.7,    12.7,
+     *      0.7,    -5.2,     3.9,     0.0,   -24.8,    12.1,     8.3,
+     *     -3.4,    -5.3,     7.2,    -0.6,     0.8,     9.8,     0.0,
+     *      3.3,     0.1,     2.5,     5.4,    -9.0,     0.4,    -4.2,
+     *     -3.8,     0.9,    -9.0/
 
       DATA DG/
-     *      0.0,    10.3,    18.1,     -8.7,    -3.3,     2.1,     3.4,
-     *     -5.5,    -0.7,   -10.1,     -0.7,     0.2,    -9.1,     4.1,
-     *     -4.3,    -0.2,     0.5,     -1.3,    -0.1,     1.4,     3.9,
-     *     -0.3,    -0.1,    -0.7,      2.1,    -1.2,     0.3,     1.6,
-     *      0.3,    -0.2,    -0.5,      1.3,     0.1,    -0.6,    -0.8,
-     *      0.2,     0.2,     0.0,     -0.6,     0.5,    -0.2,     0.4,
-     *      0.1,    -0.4,     0.3/
-
+     *      0.0,    12.6,    10.0,   -11.2,    -5.3,    -8.3,    -1.5,
+     *     -4.4,     0.4,   -15.6,    -1.7,    -2.3,    -5.8,     5.4,
+     *     -6.8,     0.6,     1.3,     0.0,     0.7,     2.3,     1.0,
+     *     -0.2,    -0.3,     0.8,     1.2,    -0.8,     0.4,     0.9,
+     *     -0.1,    -0.1,    -0.1,     0.5,    -0.1,    -0.8,    -0.8,
+     *      0.9,    -0.1,     0.2,     0.0,     0.4,    -0.1,     0.3,
+     *      0.1,     0.0,     0.3/ 
 
       DATA DH/
-     *      0.0,     0.0,   -26.6,      0.0,   -27.4,   -14.1,     0.0,
-     *      8.2,    -0.4,     1.8,      0.0,    -1.3,     5.3,     2.9,
-     *     -5.2,     0.0,     0.6,      1.7,    -1.2,     3.4,     0.0,
-     *      0.0,     0.0,    -2.1,     -0.7,     0.2,     0.9,     1.0,
-     *      0.0,     0.8,     0.4,     -0.2,    -0.3,    -0.6,     0.1,
-     *     -0.2,     0.0,    -0.3,      0.3,     0.1,     0.5,    -0.2,
-     *     -0.3,     0.3,     0.0/
-
+     *      0.0,     0.0,   -21.5,     0.0,   -27.3,   -11.1,     0.0,
+     *      3.8,    -0.2,    -3.9,     0.0,    -1.3,     4.1,     1.6,
+     *     -4.1,     0.0,    -0.5,     2.1,     0.5,     1.7,     1.9,
+     *      0.0,     0.3,    -1.6,    -0.4,     0.8,     0.7,     0.9,
+     *      0.0,     0.6,     0.5,    -0.7,     0.0,    -0.9,     0.5,
+     *     -0.3,     0.0,    -0.3,     0.4,    -0.3,     0.4,    -0.5,
+     *     -0.6,     0.3,     0.2/ 
 c
 c
       DATA MA,IYR/0,0/
@@ -3066,7 +3247,7 @@ C
 C
 30    IYR=IY
       IF (IYR.LT.1900) IYR=1900
-      IF (IYR.GT.2020) IYR=2020
+      IF (IYR.GT.2030) IYR=2030
       IF (IY.NE.IYR.AND.mess) WRITE (konsol,999)IY,IYR
 
 c	include 'igrf_goto.h'
@@ -3093,13 +3274,15 @@ c	include 'igrf_goto.h'
       IF (IYR .LT. 2005) GOTO 2000      !INTERPOLATE BETWEEN 2000 - 2005
       IF (IYR .LT. 2010) GOTO 2005      !INTERPOLATE BETWEEN 2005 - 2010
       IF (IYR .LT. 2015) GOTO 2010      !INTERPOLATE BETWEEN 2010 - 2015
+      IF (IYR .LT. 2020) GOTO 2015      !INTERPOLATE BETWEEN 2015 - 2020
+      IF (IYR .LT. 2025) GOTO 2020      !INTERPOLATE BETWEEN 2020 - 2025
 C
-C       EXTRAPOLATE BEYOND 2015:
+C       EXTRAPOLATE BEYOND 2025:
 C
-      DT=FLOAT(IYR)-2015.
+      DT=FLOAT(IYR)-2025.
       DO 40 N=1,66
-         G(N)=G2015(N)
-         H(N)=H2015(N)
+         G(N)=G2025(N)
+         H(N)=H2025(N)
          IF (N.GT.45) GOTO 40
          G(N)=G(N)+DG(N)*DT
          H(N)=H(N)+DH(N)*DT
@@ -3315,6 +3498,24 @@ C INTERPOLATE BETWEEN 2010 - 2015:
       ENDDO
       GOTO 300
 
+C INTERPOLATE BETWEEN 2015 - 2020:
+2015  F2=(IYR-2015)/5.
+      F1=1.-F2
+      DO N=1,66
+         G(N)=G2015(N)*F1+G2020(N)*F2
+         H(N)=H2015(N)*F1+H2020(N)*F2
+      ENDDO
+      GOTO 300
+
+C INTERPOLATE BETWEEN 2020 - 2025:
+2020  F2=(IYR-2020)/5.
+      F1=1.-F2
+      DO N=1,66
+         G(N)=G2020(N)*F1+G2025(N)*F2
+         H(N)=H2020(N)*F1+H2025(N)*F2
+      ENDDO
+      GOTO 300
+
 C   COEFFICIENTS FOR A GIVEN YEAR HAVE BEEN CALCULATED; NOW MULTIPLY
 C   THEM BY SCHMIDT NORMALIZATION FACTORS:
 
@@ -3436,15 +3637,13 @@ C  September 1992
 C
 C  Modified to accept years up to year 2000 and updated IGRF coeficients
 C     from 1945 (updated by V. Papitashvili, February 1995)
-C
 C  Modified to accept years up to 2005 (V. Papitashvili, January 2001)
-C
 C  Modified to accept years from 1900 through 2010 using the DGRF & 
 C     IGRF-10 coeficients (updated by V. Papitashvili, November 2005)
-C
 C  Modified to accept years up to 2015 (V. Papitashvili, January 2011)
-C
 C  Modified to accept years up to 2020 (D. Bilitza, October 2015)
+C  Modified to accept years up to 2025 (D. Bilitza, October 2020)
+C  Modified to accept years up to 2030 (D. Bilitza, February 2025) (***)
 C
 C   OTHER SUBROUTINES CALLED BY THIS ONE: SUN
 C
@@ -3483,7 +3682,8 @@ C  IYE AND IDE ARE THE CURRENT VALUES OF YEAR AND DAY NUMBER
       IF(IY.LT.1900) IY=1900
 c      IF(IY.GT.2015) IY=2015
 c      IF(IY.GT.2020) IY=2020
-      IF(IY.GT.2025) IY=2025
+c***   IF(IY.GT.2025) IY=2025
+      IF(IY.GT.2030) IY=2030
 
 C  IF IYR IS OUTSIDE THE TIME INTERVAL COVERED BY THE CURRENT IGRF, THE
 C  SUBROUTINE GIVES A WARNING (BUT DOES NOT REPEAT IT AT THE NEXT CALLS)
@@ -3492,7 +3692,7 @@ C  SUBROUTINE GIVES A WARNING (BUT DOES NOT REPEAT IT AT THE NEXT CALLS)
       IYE=IY
 
 C  LINEAR INTERPOLATION OF THE GEODIPOLE MOMENT COMPONENTS BETWEEN THE
-C  VALUES FOR THE NEAREST EPOCHS:
+C  VALUES FOR THE NEAREST EPOCHS (***):
 
        IF (IY.LT.1905) THEN                             !1900-1905
            F2=(FLOAT(IY)+FLOAT(IDAY)/365.-1900.)/5.
@@ -3635,14 +3835,20 @@ C  VALUES FOR THE NEAREST EPOCHS:
         ELSEIF (IY.LT.2020) THEN                        !2015-2020
            F2=(FLOAT(IY)+FLOAT(IDAY)/365.-2015.)/5.
            F1=1.D0-F2
-           G10=29441.46*F1+29404.8*F2
-           G11=-1501.77*F1-1450.9*F2
-           H11= 4795.99*F1+4652.5*F2
-        ELSE                                            !2020-2025
-           DT=FLOAT(IY)+FLOAT(IDAY)/365.-2020.
-           G10=29404.8-5.7*DT
-           G11=-1450.9+7.4*DT
-           H11= 4652.5-25.9*DT
+           G10=29441.46*F1+29403.4*F2
+           G11=-1501.77*F1-1451.4*F2
+           H11= 4795.99*F1+4653.3*F2
+        ELSEIF (IY.LT.2025) THEN                        !2020-2025
+           F2=(FLOAT(IY)+FLOAT(IDAY)/365.-2020.)/5.
+           F1=1.D0-F2
+           G10=29403.41*F1+29350.0*F2
+           G11=-1451.37*F1-1410.3*F2
+           H11= 4653.35*F1+4545.5*F2
+        ELSE                                            !2025-2030
+           DT=FLOAT(IY)+FLOAT(IDAY)/365.-2025.
+           G10=29350.0-12.6*DT
+           G11=-1410.3+10.0*DT
+           H11= 4545.5-21.5*DT
         ENDIF
 
 C  NOW CALCULATE THE COMPONENTS OF THE UNIT VECTOR EzMAG IN GEO COORD
@@ -3789,7 +3995,7 @@ C  AND  THEREFORE:
       A33=Z3
 
  10   FORMAT(/
-     * ' RECALC: GIVEN YEAR',I5,' IS OUT OF INTERVAL 1900-2025'/,
+     * ' RECALC: GIVEN YEAR',I5,' IS OUT OF INTERVAL 1900-2030'/,
      * '   *** CALCULATIONS WILL BE DONE FOR YEAR =',I5,' ***'/)
 
       RETURN
@@ -3990,14 +4196,11 @@ C      Output:
 C             MLT..magnetic local time in decimal hours
 C      Required subroutines: DPMTRX
 C--------------------------------------------------------------------
-       INTEGER IYYYY,DDD
-       REAL UTHR,GLAT,GLON,MLT
-       REAL DTOR,PI,XG,YG,ZG
-       REAL XXM(3),YYM(3),ZZM(3)
-       INTEGER IHOUR,MIN,ISEC
-       REAL GST,SLONG,SRASN,SDEC
-       REAL BE,CAL,SA(3),S,C,SG(3),SM(3)
-       REAL LAM,LAMS,DELLAM 
+       INTEGER  IYYYY,DDD,IHOUR,MIN,ISEC
+       REAL     UTHR,GLAT,GLON,MLT,DTOR,PI,XG,YG,ZG
+       REAL     XXM(3),YYM(3),ZZM(3),GST,SLONG,SRASN,SDEC
+       REAL     BE,CAL,SA(3),S,C,SG(3),SM(3),LAM,LAMS,DELLAM
+ 
        COMMON /CONST/DTOR,PI
        
        XG=COS(GLAT*DTOR)*COS(GLON*DTOR)
@@ -4053,18 +4256,15 @@ C      MX(N),MY(N),MZ(N)..coordinates of the B vector in geographic system
 C                for years stored in YR(N)
 C      N..number of elements of arrays MX,MY,MZ and YR
 C--------------------------------------------------------------------------
-       INTEGER IYYYY,DDD
-       REAL XM(3),YM(3),ZM(3)
-       REAL YR(10),MX(10),MY(10),MZ(10)
-       REAL INTERP,YEAR
-       REAL M,MXI,MYI,MZI,ZM12
-       INTEGER N
+       INTEGER IYYYY,DDD,N
+       REAL XM(3),YM(3),ZM(3),YR(10),MX(10),MY(10),MZ(10)
+       REAL INTERP,YEAR,M,MXI,MYI,MZI,ZM12
 
        COMMON /DIPOL/ GHI1,GHI2,GHI3
 
        DATA N/10/
 
-c IGRF coefficients (dipole) calculated in FELDCOF in IGRF.FOR
+c IGRF coefficients (dipole) calculated in subroutine FELDCOF 
        MXI = -GHI2
        MYI = -GHI3
        MZI = -GHI1

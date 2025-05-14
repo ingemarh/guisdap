@@ -129,7 +129,7 @@ for aind=0:ll:laind-1;
    d_parbl(tvec)=timeconv(secs,'tai2utc');
    d_parbl(8)=4.7e6; % dummy hui hui
    d_parbl([az el])=[real(file.azel) imag(file.azel)];
-   site=file.fname(end-4);
+   site=file.fname(end-4); %hui hui
    d_parbl(41)=9+strfind('SWD',site);
    d_parbl(43:62)=0; % to clear upars
    d_parbl(57)=a_rcprog;
@@ -199,7 +199,7 @@ if OK, % if at least one good data dump was found
     i_averaged=N_averaged; i_var1=real(d_var1); i_var2=d_var2;
    end
    d=timeconv(secs,'tai2gup');
-   file=[d_saveint.dir sprintf('%08d.mat',fix(d(2)))];
+   file=[d_saveint.dir sprintf('%012.3f.mat',d(2))];
    disp(file)
    if d_saveint.var
     save_noglobal(file,d_ExpInfo,d_parbl,d_data,i_var1,i_var2,i_averaged)

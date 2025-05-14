@@ -4,7 +4,7 @@
 % function save_results
 function save_results
 
-global result_path name_expr name_site name_ant name_strategy
+global result_path name_expr name_site name_ant name_strategy result_file
 global p_XMITloc p_RECloc sc_angle p_om0
 global d_time GUP_ver ch_az ch_el ch_Pt p_m0 p_N0 p_dtau v_lightspeed ch_fradar ch_gain
 global r_h r_spec r_om r_freq r_phasepush r_lag r_acf r_ace r_Tsys
@@ -17,12 +17,8 @@ global a_autodir di_figures START_TIME a_Magic_const a_code
 global bac_power
 
 if length(d_time)>0 & a_save
- filename=sprintf('%08d.mat',fix(tosecs(d_time(2,:))));
  [i1,i2]=fileparts(result_path(1:end-1));
  integr=diff(datenum(d_time))*86400;
- if integr<1 | contains('3WD',name_site)
-  filename=sprintf('%012.3f.mat',tosecs(d_time(2,:)));
- end
  if isstruct(a_autodir) & any(d_time(1,1:3)-a_autodir.date)
   if a_NCAR
    NCAR_output
@@ -80,8 +76,6 @@ if length(d_time)>0 & a_save
    save_setup([result_path 'gfd_setup.m']);
   end
  end
-else
- filename='00000000.mat';
 end
 s2km=p_dtau*1e-6*v_lightspeed/2/1000;
 
@@ -119,7 +113,7 @@ if ~di_results
  fprintf(' %.1fMW %.0f/%.0f %.0fK\n',r_Pt/1e6,r_az,r_el,median(r_Tsys));
 end
 
-file=[result_path filename];
+file=[result_path result_file];
 disp(file)
 name_sig=[local.host ' ' local.user ' ' datestr(now)];
 if ~isempty(local.site), name_sig=[local.site ' ' name_sig]; end

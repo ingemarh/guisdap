@@ -63,8 +63,7 @@ for i=1:n_tot
   elseif exist('r_phasepush')
     rOff=r_phasepush;
   elseif exist('r_baclevel')
-    rOff=log(r_baclevel);
-    %rOff=r_baclevel*1e-6;
+    rOff=r_baclevel;
   else
     rOff=[];
   end
