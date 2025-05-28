@@ -10,7 +10,7 @@ oz=zeros(no,1);
 or=libpointer('doublePtr',oz); oi=libpointer('doublePtr',oz);
 %up=libpointer('doublePtr',zeros(20,1)); up.value=d_parbl((1:20)+42);
 up=libpointer('doublePtr',d_parbl((1:20)+42));
-nr=length(d_raw);
+nr=numel(d_raw);
 ir=libpointer('int16Ptr',real(d_raw)); ii=libpointer('int16Ptr',imag(d_raw));
 calllib('clutter','matface',par,nr,ir,ii,no,or,oi,up);
 if no>1

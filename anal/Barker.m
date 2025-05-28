@@ -3,8 +3,8 @@
 %
 % function to give various Barker codes
 %
-% function code=Barker(Nbits);
-function code=Barker(Nbits);
+% function code=Barker(Nbits)
+function code=Barker(Nbits)
 
 if Nbits==3
   code=[1 1 -1]';

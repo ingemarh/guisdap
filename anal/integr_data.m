@@ -184,7 +184,7 @@ while i<length(files)
 
   secs=secs1;
   if (secs<file.tai | file.tai-secs>=1) & (isempty(d_raw) | a_lpf(1).do==0)
-    fprintf('Filename %08d conflicts with time inside file: %.0f %.3f\n',file.file,timeconv(secs,'tai2gup')')
+    warning('guisdap:integr_data',sprintf('Filename %08d conflicts with time inside file: %g %.3f',file.file,timeconv(secs,'tai2gup')'))
   end
 
   if isreal(d_data) % change to complex

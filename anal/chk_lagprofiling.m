@@ -63,11 +63,18 @@ for lpf=a_lpf
   %if lpf.loop>1, lpf.par(2)=lpf.par(2)*lpf.loop; end
   lpf.nrep=lpf.par(2);
   nsamp=lpf.par(3);
-  if isempty(lpf.p)
-   lpf.p=[0 lpf.nrep-1];
-  end
  case 'resampler'
-  nsamp=[];
+  nsamp=lpf.par(1);
+  lpf.nrep=lpf.par(2);
+ case 'fir'
+  nsamp=lpf.par(1);
+  lpf.nrep=lpf.par(2);
+ case 'pulse2pulse'
+  nsamp=lpf.par(1);
+  lpf.nrep=lpf.par(2);
+ end
+ if isempty(lpf.p)
+  lpf.p=[0 lpf.nrep-1];
  end
  if ~isempty(lpf.raw)
   lpf.raw=lpf.raw+(lpf.p(1)*nsamp+1:(lpf.p(2)+1)*nsamp);
@@ -99,9 +106,18 @@ for lpf=a_lpf
   nsamp=lpf.par(3);
   lpf.p=[0 lpf.nrep-1];
  case 'resampler'
-  nsamp=[];
+  lpf.nrep=lpf.par(2)*loop;
+  nsamp=lpf.par(1);
+ case 'fir'
+  lpf.nrep=lpf.par(2)*loop;
+  nsamp=lpf.par(1);
+ case 'pulse2pulse'
+  lpf.nrep=lpf.par(2)*loop;
+  nsamp=lpf.par(1);
  end
- lpf.raw=(lpf.raw(1)-1)*loop+(1:lpf.nrep*nsamp);
+ if ~isempty(lpf.raw)
+  lpf.raw=(lpf.raw(1)-1)*loop+(1:lpf.nrep*nsamp);
+ end
  a_lpf(i)=lpf;
 end
 

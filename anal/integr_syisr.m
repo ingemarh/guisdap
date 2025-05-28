@@ -136,7 +136,10 @@ for aind=0:ll:laind-1;
    d_parbl(60:62)=[double(head.ws);head.et;head.at];
 
    d_data=NaN(0,1);
+%  figure(9),subplot(3,1,1),plot(real(d_raw))
    lagprofiler()
+%  figure(9),subplot(3,1,2),plot(real(d_raw))
+%  figure(9),subplot(3,1,3),plot(real(d_data)),drawnow
  
    a_inttime=d_parbl(inttime);
    d=find(d_parbl(non_negative)<=0);
