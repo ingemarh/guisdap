@@ -19,7 +19,7 @@ elseif warn==0
  if isempty(siteid)
   siteid=1;
  else
-  d=dir(data_path); td=zeros(size(d));
+  d=dir(data_path), td=zeros(size(d));
   if isempty(d)
    return
   else
@@ -51,6 +51,27 @@ end
 if isempty(expid), [dum,expid,ext]=fileparts(dum); end
 expid=[expid ext];
 [msg,pulse,scan,comment,owner,antenna]=expparts(expid);
+if ~isempty(msg) & strfind(msg,'Illegal')
+ %try for integrated files
+ s=strsplit(expid,'_');
+ if length(s)==3
+  try
+   t1=datenum(s{1}); t2=t1+2;
+   if set_b
+    set(b(4),'string',datestr(t1,'yyyy mm dd  HH MM SS'))
+    set(b(5),'string',datestr(t2,'yyyy mm dd  HH MM SS'))
+   end
+   t1=datevec(t1); t2=datevec(t2);
+   de=dir(path_exps);
+   try
+    pulse=validatestring(s{2}(1:end-1),{de.name});
+    comment=s{2}(end);
+    antenna=antennas{strfind(sites,s{3}(end))};
+    scan=s{3}(1); intper=str2num(scan);
+   catch,end
+  catch,end
+ end
+end
 if ~isempty(msg) & strfind(msg,'missing')
 %try for hdf5 files, use the first found
  files=dir(fullfile(data_path,'EISCAT*.hdf5'));
@@ -66,6 +87,16 @@ if ~isempty(msg) & strfind(msg,'missing')
    if n==23
     t1=timeconv(fix(s{1}*1e-6/3600)*3600,'unx2mat'); t2=t1+2;
     antenna=antennas{9+strfind('SWD',s{4})};
+    h=h5read(fullfile(data_path,files(1).name),'/head',1,1);
+    if h.pw==h.bw
+     syexpr=sprintf('sy%d',h.bw);
+    else
+     syexpr=sprintf('sy%dx%d',h.pw/h.bw,h.bw);
+    end
+    de=dir(path_exps);
+    try
+     pulse=validatestring(syexpr,{de.name});
+    catch,end
     if set_b
      set(b(4),'string',datestr(t1,'yyyy mm dd  HH MM SS'))
      set(b(5),'string',datestr(t2,'yyyy mm dd  HH MM SS'))
@@ -87,8 +118,11 @@ if ~isempty(msg) & strfind(msg,'missing')
  end
 end
  nameexpr=pulse(find(pulse~='_' & pulse~='-'));
- while ~exist(fullfile(path_exps,nameexpr))
-  nameexpr=nameexpr(1:end-1);
+ if ~isempty(nameexpr)
+  de=dir(path_exps);
+  try
+   nameexpr=validatestring(nameexpr,{de.name});
+  catch,end
  end
  if isempty(nameexpr)
   warning('GUISDAP:parse','Unable to set the Dsp experiment, please specify')

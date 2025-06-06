@@ -61,8 +61,9 @@ switch scan
  case 'cluster'
   alt=f; td=120; uperr=1; ld=50:.5:90; ptype='p';
  case {'sy11'}
-  alt=[300 400]; td=1; ptype='t'; ld=0:1:30;
+  alt=[300 400]; td=660.72; ptype='t'; ld=0:1:30; uperr=100;
   plotdefs=[0 1000 100 100 600/86400];
+  ylim=[200 200];
  otherwise
   alt=minput('Altitude ranges',[e f]);
   td=minput('Time interval',180);

@@ -45,4 +45,7 @@ analysis_lpf(1).do=1;
 
 if contains('3WD',data_path(end))
  [analysis_lpf.do]=deal(0); % integrated data
+ fit_altitude(6,1:2)=[350 Inf]; % Fit for H+
+ fit_altitude(7,1:2)=[130 250]; % Fit for NO+
+ fit_altitude(2,1)=[250]; % Fit Ti above F
 end

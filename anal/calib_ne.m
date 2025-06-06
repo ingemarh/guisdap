@@ -91,8 +91,9 @@ else
  if ipar==2
    FD={'fmxE','fmxF'};
  end
- ylabel(axs(2),sprintf('EISCAT %s (MHz)',char(FO(F))))
- xlabel(axs(2),sprintf('%s %s (MHz)',sounder,char(FD(F))))
+ hy=ylabel(axs(2),sprintf('EISCAT %s (MHz)',char(FO(F))));
+ hx=xlabel(axs(2),sprintf('%s %s (MHz)',sounder,char(FD(F))));
+ set(hx,'color','red'), set(hy,'color','green')
  delete(findobj(vizufig,'UserData','Results'))
  sigma='\sigma'; % char(963)
  text(axs(2),rx(2)*1.05,rx(2)/2,...

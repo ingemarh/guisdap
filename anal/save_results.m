@@ -14,7 +14,7 @@ global pp_range pp_sigma pp_err pp_w
 global di_results sysTemp a_NCAR a_realtime path_tmp NCAR_fid a_integr
 global webfile a_save local a_gfd
 global a_autodir di_figures START_TIME a_Magic_const a_code
-global bac_power
+global r_baclevel
 
 if length(d_time)>0 & a_save
  [i1,i2]=fileparts(result_path(1:end-1));
@@ -104,7 +104,6 @@ r_code=a_code;
 r_gfd=a_gfd;
 r_fradar=ch_fradar;
 r_gain=ch_gain;
-r_baclevel=bac_power;
 
 if ~isempty(r_sd), r_sd(:,3)=r_sd(:,3)*s2km; end
 

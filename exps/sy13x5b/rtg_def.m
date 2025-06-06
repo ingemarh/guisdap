@@ -4,7 +4,7 @@ psig=0;
 psamp=300;
 plen=65e-6;
 pdt=5e-6;
-prange0=d_parbl(60)*1e-6;
+prange0=(d_parbl(60)+340/4+6*5)*1e-6;
 %noise
 back=psamp;
 cal=NaN;

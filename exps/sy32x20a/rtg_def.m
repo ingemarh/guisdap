@@ -6,7 +6,7 @@ if site==10
  psamp=1000;
  plen=640e-6;
  pdt=10.0e-6;
- prange0=d_parbl(60)*1e-6;
+ prange0=(d_parbl(60)+21*10)*1e-6;
 %noise
  back=1000;
  cal=NaN;

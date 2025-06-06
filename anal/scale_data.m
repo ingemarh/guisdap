@@ -16,7 +16,7 @@
 % modified to use scaler calibration temperature derived from the
 % parameter block entry
 
-function scale_data
+function scale_data(M_averaged)
 
 global lpg_ra lpg_ND lpg_cal lpg_bac lpg_bcs d_data d_var1 d_var2 ...
   ADDR_SHIFT calTemp sysTemp a_code lpg_code lpg_lag
@@ -63,9 +63,11 @@ elseif ~isempty(sysTemp)
  for cal=calibs
   lpg_cal(find(lpg_code==lpg_code(cal)))=cal;
   %bac=lpg_bac(cal);
-  global bac_power
+  global a_loop r_baclevel
   bac_power=median_c(d_data(lpg_addr(cal)+ADDR_SHIFT));
   scale(cal)=bac_power/sysTemp;
+  r_baclevel=bac_power/lpg_ND(cal)/M_averaged; %to save
+  if ~isempty(a_loop), r_baclevel=bac_power/a_loop; end
  end
 else
  error('GUISDAP:default','No calibration temperature')

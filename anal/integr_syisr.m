@@ -25,8 +25,8 @@ function  [OK,EOF,N_averaged,M_averaged]=integr_syisr()
 global d_parbl d_data d_var1 d_var2 data_path d_filelist d_raw
 global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
-global a_satch a_code a_intfix a_lpf any_start a_rcprog
-persistent secs a_nnold fileslist filescode filesbeam beams a_beam lraw a_loop alpf ncode
+global a_satch a_code a_intfix a_lpf any_start a_rcprog a_loop
+persistent secs a_nnold fileslist filescode filesbeam beams a_beam lraw alpf ncode
 
 OK=0; EOF=0; N_averaged=0; M_averaged=0;
 d_ExpInfo=[]; d_raw=[];
@@ -117,7 +117,11 @@ for aind=0:ll:laind-1;
   end
   if dumpOK
    i_averaged=1; i_var1=[]; i_var2=[];
-   d_ExpInfo=sprintf('syisr3 sy%dx%d',head.pw/head.bw,head.bw);
+   if head.pw==head.bw
+    d_ExpInfo=sprintf('syisr3 sy%d',head.bw);
+   else
+    d_ExpInfo=sprintf('syisr3 sy%dx%d',head.pw/head.bw,head.bw);
+   end
    tvec=1:6;               % parameters holding time
    az=10; el=9;            % parameters for antenna pointing
    averaged=[59];     % parameters which are averaged (tsky)
