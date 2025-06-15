@@ -39,13 +39,13 @@ else
   analysis_lpf(i).raw=634*64*(i-1);
   analysis_lpf(i).skip=634*(i-2);
  end
- a_Offsetppd=800-15;
+ analysis_Offsetppd=800-15;
 end
 analysis_lpf(1).do=1;
 
-if contains('3WD',data_path(end))
+if contains('3',data_path(end))
  [analysis_lpf.do]=deal(0); % integrated data
  fit_altitude(6,1:2)=[350 Inf]; % Fit for H+
- fit_altitude(7,1:2)=[130 250]; % Fit for NO+
- fit_altitude(2,1)=[250]; % Fit Ti above F
+ %fit_altitude(7,1:2)=[130 250]; % Fit for NO+
+ %fit_altitude(2,1)=[250]; % Fit Ti above F
 end

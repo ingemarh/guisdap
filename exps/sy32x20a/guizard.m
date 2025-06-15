@@ -1,6 +1,8 @@
-if d_parbl(60)~=666
- rdiff=d_parbl(60)-666; %diff from init
+rdiff=d_parbl(60)-666; %diff from init
+if site=='3'
  lpg_h=lpg_h+rdiff;
+else
+ a_Offsetppd=analysis_Offsetppd+rdiff;
 end
 if strcmp(iono_model,'bafim')
 fit_altitude(1:6,1:4)=[  0 Inf 0.1  2e11 ;
@@ -19,5 +21,5 @@ fit_altitude(1:6,1:4)=[ 0 Inf 0.01  3e12 ;
  a_satch.cut=0;
  analysis_altit(find(analysis_altit>500))=[];
 else
- fit_altitude(6,1:2)=[360 Inf]; % Fit for H+
+ %fit_altitude(6,1:2)=[360 Inf]; % Fit for H+
 end

@@ -1,5 +1,7 @@
 lpg_code(:)=a_code;
-if d_parbl(60)~=553
- rdiff=d_parbl(60)-553; %diff from init
+rdiff=d_parbl(60)-553; %diff from init
+if name_site=='3'
  lpg_h=lpg_h+rdiff;
+else
+ a_Offsetppd=analysis_Offsetppd+rdiff;
 end

@@ -7,10 +7,11 @@
 
 if ~exist('local','var')
  global local
-end
+end 
+global path_exps
 
 if ~exist('apustr'), apustr=''; end
-PSfile=[path_expr name_expr name_site apustr 'pat_PS.mat'];
+PSfile=fullfile(path_exps,name_expr,[name_expr name_site apustr 'pat_PS.mat']);
 
 save(PSfile,'p_*','td_*','ch_*');
 disp([PSfile ' saved']);
