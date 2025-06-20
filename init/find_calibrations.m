@@ -20,8 +20,8 @@ codes(find(diff(codes)==0))=[]; % find all different values
 
 % lpg_bac stores the background lag profile group number  (0 means no background)
 % lpg_cal stores the calibration lag profile group number
-lpg_bac=zeros(1,length(lpg_ra));
-lpg_cal=zeros(1,length(lpg_ra));
+lpg_bac=zeros(1,length(lpg_ra),'int32');
+lpg_cal=zeros(1,length(lpg_ra),'int32');
 for code=codes;
 
   % First we look for background and calibration measurements with the same code number

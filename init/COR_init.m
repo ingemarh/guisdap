@@ -26,23 +26,15 @@ if nargin<2, nfir=1; end
 lp_t1=zeros(1,nlp);
 lp_t2=zeros(1,nlp);
 lp_h=zeros(1,nlp);
-lp_ra=zeros(1,nlp);
-lp_nfir=zeros(1,nlp);
-try
- lp_fir=zeros(nfir,nlp);
-catch
- if local.matlabversion>=7
-  lp_fir=zeros(nfir,nlp,'int8');
- else
-  lp_fir=repmat(int8(zeros(1,nlp)),nfir,1);
- end
- warning('Too large matrix -- trying with integer fir coeffs')
-end
-lp_dec=zeros(1,nlp);
+lp_ra=zeros(1,nlp,'int32');
+lp_nfir=zeros(1,nlp,'int32');
+lp_fir=zeros(nfir,nlp,'int8');
+warning('guisdap:COR_init','Assuming integer fir coeffs (1|-1)')
+lp_dec=zeros(1,nlp,'int32');
 lp_T=zeros(1,nlp);
-lp_dt=zeros(1,nlp);
-lp_nt=zeros(1,nlp);
-lp_vc=zeros(1,nlp);
-lp_ri=zeros(1,nlp);
-lp_bcs=zeros(1,nlp,'int8');
-lp_code=zeros(1,nlp);
+lp_dt=zeros(1,nlp,'int32');
+lp_nt=zeros(1,nlp,'int32');
+lp_vc=zeros(1,nlp,'int32');
+lp_ri=zeros(1,nlp,'int32');
+lp_bcs=zeros(1,nlp,'uint8');
+lp_code=zeros(1,nlp,'uint8');

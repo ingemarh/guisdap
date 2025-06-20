@@ -55,7 +55,7 @@ if ~isempty(a_code)
 end
 lpgused=lp; ii=0; sat_ran=zeros(0,6);
 for i=lp
- j=j+1; ii=ii+1;
+ j=j+1; ii=ii+1; dt=double(lpg_dt(i));
  addr=(skip:lpg_nt(i)-1)*lpg_ri(i)+lpg_ra(i)+1;
  N=lpg_ND(i)*inttime/(p_dtau*a_satch.prep*1e-6);
  dat=real(d_data(addr));
@@ -64,12 +64,12 @@ for i=lp
  else
   wr=full(lpg_wr(:,i))/lpg_ND(i);
  end
- [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,wr,lpg_dt(i),dat,N,C,[nclutter(ii) a_satch.clutfac]);
+ [pb,th,L,x0]=sat_check(sigma(ii),n_echo,min_v,wr,dt,dat,N,C,[nclutter(ii) a_satch.clutfac]);
  ind=find(pb<=length(dat)-L+1+nsp_no_use(ii));
  pb=pb(ind)+L/2; x0=x0(ind);
  if ind>0
-   sat_ran=[sat_ran;[lpg_h(i)+(pb-1)*lpg_dt(i)...
-           ones(size(pb))*[2*lpg_w(i)-lpg_dt(i) L*lpg_dt(i) lpg_code(i) i] x0]];
+   sat_ran=[sat_ran;[lpg_h(i)+(pb-1)*dt...
+           ones(size(pb))*[2*lpg_w(i)-dt L*dt double(lpg_code(i)) i] x0]];
  end
  if a_satch.plot
   eval(['dat' num2str(j) '=[dat th]; pc' num2str(j) '=pb;'])
@@ -199,9 +199,9 @@ Le=floor(5/C/.15/p_dtau/(pi/2));
 if Le>1
  wr=conv(wr,ones(Le,1)/Le);
 end
-d=find(wr>min_v); d1=d(1)-dt; d2=d(end)+dt; d=rem(d2-d1+1,dt);
+d=find(wr>min_v); d1=max(d(1)-dt,1); d2=d(end)+dt; d=rem(d2-d1+1,dt);
 if d
- if d<dt/2
+ if d<dt/2 | d1<dt/2
   d1=d1+fix(d/2); d2=d2-fix((d+1)/2);
  else
   d=dt-d;

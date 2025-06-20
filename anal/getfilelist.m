@@ -117,9 +117,10 @@ else
           %  list(fno, 1).tai = sytai_time;
           end
         else
-          t=h5read(h5file,'/Data/Time');
+          t=h5read(h5file,'/Data/EndTime');
+          it=h5read(h5file,'/Data/IntegrationTime');
 	  fmt='yyyy-MM-dd''T''HH:mm:ss.SS''Z''';
-	  tai=num2cell(timeconv(mean(datenum(datetime(t','InputFormat',fmt)),2),'mat2tai'));
+	  tai=num2cell(timeconv(datenum(datetime(t,'InputFormat',fmt)),'mat2tai')-it/2);
           s=length(tai); idx=num2cell(1:s)';
           l=repmat(struct('fname',h5file,'tai',0,'idx',0),[s 1]);
           [l.tai]=tai{:};

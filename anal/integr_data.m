@@ -90,9 +90,9 @@ while i<length(files)
     d_parbl=double(h5read(file.fname,'/Data/ParBlock/ParBlock',[1,file.idx],[Inf,1]));
     d_r=double(h5read(file.fname,'/Data/L2',[1,1,file.idx],[Inf,2,1]));
     d_data=complex(d_r(:,1),d_r(:,2));
-    d_resid=unique([d_resid h5read(file.fname,'/DataBase/ResourceID')]);
+    d_resid=unique([d_resid h5read(file.fname,'/PortalDBReference/ResourceID')]);
     try
-      d_ExpInfo=char(h5read(file.fname,'/MetaData/ExpInfo'));
+      d_ExpInfo=char(h5read(file.fname,'/PortalDBReference/ExperimentName'));
       d_r=h5read(file.fname,'/Data/L1',[1,1,file.idx],[Inf,2,1]);
       d_raw=complex(d_r(:,1),d_r(:,2));
     catch,end

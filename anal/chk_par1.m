@@ -110,11 +110,7 @@ else
  end
  a_start=a_start-local.tz{2}*86400; a_end=a_end-local.tz{2}*86400;
  a_year=analysis_start(1);
- if a_rawdata==1, % HDF5 format
-  d_filelist=h5read(data_path,'/Time/MatlabTime');
-  i=datevec(d_filelist(1));
-  d_filelist=(d_filelist-datenum(i(1),1,1))*86400;
- elseif name_site=='Q'
+ if name_site=='Q'
   % The data are binary Quijing files
   global a_timestamp qmeta
   a_timestamp=[3.9 6.2];
@@ -127,7 +123,7 @@ else
    error(msg)
   end
  else
-  % The normal case where it is expeced the data are matlab files
+  % The normal case where it is expeced the data are matlab or hdf files
   if ~a_realtime
     recurse(strfind(recurse,'?'))='*';
   end
@@ -289,6 +285,11 @@ end
 a_adjust=[];
 if exist('analysis_adjust','var')
  a_adjust=analysis_adjust;
+end
+a_screen=[];
+if exist('analysis_screen','var')
+ a_screen=analysis_screen; %complex(ax,el)
+ if length(a_screen)==1, a_screen(2)=0; end
 end
 
 if exist('display_analysis_pars','var')

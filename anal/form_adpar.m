@@ -21,16 +21,16 @@ ad_range=zl; ad_w=zl; ad_code=zl; ad_lpg=zl;
 ad_coeff=zl; ad_lag=zl; ad_bac=zl;
 for lpgs=1:length(lpg_ra)
   addr=lpg_addr(lpgs)+ADDR_SHIFT; % To change from radar to Matlab addressing
-  ol=ones(1,length(addr));
+  la=length(addr);
   if ismember(lpg_bcs(lpgs),lpg_s)
     ad_range(addr)=lpg_h(lpgs)+(0:lpg_nt(lpgs)-1)'*lpg_dt(lpgs);
-    ad_w(addr)=lpg_w(lpgs)*ol;
+    ad_w(addr)=repmat(lpg_w(lpgs),1,la);
   end
-  ad_code(addr)=lpg_code(lpgs)*ol;
-  ad_lpg(addr)=lpgs*ol;
-  ad_lag(addr)=lpg_lag(lpgs)*ol;
-  ad_bac(addr)=lpg_bac(lpgs)*ol;
-  ad_bcs(addr)=lpg_bcs(lpgs)*ol;
+  ad_code(addr)=repmat(lpg_code(lpgs),1,la);
+  ad_lpg(addr)=repmat(lpgs,1,la);
+  ad_lag(addr)=repmat(lpg_lag(lpgs),1,la);
+  ad_bac(addr)=repmat(lpg_bac(lpgs),1,la);
+  ad_bcs(addr)=repmat(lpg_bcs(lpgs),1,la);
 end
 
 if ~isempty(a_code)

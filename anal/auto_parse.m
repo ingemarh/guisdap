@@ -85,7 +85,7 @@ if ~isempty(msg) & strfind(msg,'missing')
   else
    [s,n]=textscan(files(1).name,'%016.0f%c%01d%c0.h5');
    if n==23
-    t1=timeconv(fix(s{1}*1e-6/3600)*3600,'unx2mat'); t2=t1+2;
+    t1=timeconv(fix(s{1}*1e-6/3600)*3600,'unx2mat'), t2=t1+2;
     antenna=antennas{9+strfind('SWD',s{4})};
     h=h5read(fullfile(data_path,files(1).name),'/head',1,1);
     if h.pw==h.bw
@@ -106,7 +106,7 @@ if ~isempty(msg) & strfind(msg,'missing')
   end
  else
   s=strsplit(files(1).name,'_');
-  expid=[strjoin(s(2:end-4),'_') '@' char(s(end-3))];
+  expid=[strjoin(s(2:end-4),'_') '_' char(s(end-3))];
   [msg,pulse,scan,comment,owner,antenna]=expparts(expid);
   t1=datenum(sprintf('%s',strjoin(s(end-(2:-1:1)))),'yyyymmdd HHMMSS');
   t2=fix(t1)+1;
@@ -147,7 +147,7 @@ end
  else
   name_site=sites(dum);
   siteid=strfind(sites,name_site);
-  if set_b, set(b(2),'value',siteid), end
+  if set_b, set(b(2),'value',siteid(1)), end
  end
  if isempty(scan)
  elseif strmatch(scan,{'cp2' 'cp3' 'cp4' 'lowelnorth2' 'fix2' 'ip2'},'exact')

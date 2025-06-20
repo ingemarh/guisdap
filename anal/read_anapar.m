@@ -32,3 +32,4 @@ end
 if exist([path_expr 'ana_def.m'])==2
   run([path_expr 'ana_def'])
 end
+lpg_s=uint8(lpg_s);

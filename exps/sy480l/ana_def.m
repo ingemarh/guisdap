@@ -22,17 +22,20 @@ if name_site=='3'
  %analysis_maxwidth=2*diff(analysis_altit);
  analysis_maxwidth=Inf;
 
- a_satch.sigmab=10;
- a_satch.sigma=3;
- %a_satch.skip=0;
- a_satch.cut=1;
- a_satch.prep=14000;
  fit_altitude(6,1:2)=[340 Inf]; % Fit for H+
 else
  analysis_lpf(1).skip=0;
  analysis_Offsetppd=800+20;
 end
 
+a_satch.sigmab=10;
+a_satch.sigma=3;
+%a_satch.skip=0;
+a_satch.cut=1;
+a_satch.prep=14000;
+
 if contains('3WD',data_path(end))
  [analysis_lpf.do]=deal(0); % integrated data
 end
+
+analysis_screen=complex([360 10],[45 5])

@@ -31,11 +31,11 @@ for lp=lps
     w(d)=[]; r(d)=[];
   end
   if length(r)>0
-    maxr=r(end)+(lp_nfir(lp)-1)*lp_dt(lp)+dummyrange;
+    maxr=int32(ceil(r(end))+dummyrange)+(lp_nfir(lp)-1)*lp_dt(lp);
     %if abs(maxr-round(maxr))<eps(2), maxr=round(maxr); end
     if length(wsum)<maxr, wsum(ceil(maxr),1)=0; end;
     for ind=1:lp_nfir(lp)
-      R=round(r+(ind-1)*lp_dt(lp)+dummyrange);
+      R=int32(round(r)+dummyrange)+(ind-1)*lp_dt(lp);
       wsum(R)=wsum(R)+double(lp_fir(ind,lp))*w;
     end
   else

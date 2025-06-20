@@ -25,7 +25,7 @@ function  [OK,EOF,N_averaged,M_averaged]=integr_syisr()
 global d_parbl d_data d_var1 d_var2 data_path d_filelist d_raw
 global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
-global a_satch a_code a_intfix a_lpf any_start a_rcprog a_loop
+global a_satch a_code a_intfix a_lpf any_start a_rcprog a_loop a_screen
 persistent secs a_nnold fileslist filescode filesbeam beams a_beam lraw alpf ncode
 
 OK=0; EOF=0; N_averaged=0; M_averaged=0;
@@ -39,7 +39,11 @@ if ~isempty(a_ind) & a_ind(1)==0
     a_start=fileslist(find(a_code(1)==filescode,1));
   end
   a_interval=a_start+[0 a_integr];
-  beams=unique(filesbeam);
+  beams=unique(filesbeam),
+  if ~isempty(a_screen)
+    d=beams-a_screen(1); d=abs([real(d);imag(d)]);
+    beams(find(d(1,:)>real(a_screen(2)) | d(2,:)>imag(a_screen(2))))=[];
+  end
   a_beam=1;
   lraw=0;
   for lpf=a_lpf

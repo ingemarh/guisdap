@@ -11,11 +11,11 @@
 fprintf(['\n\nProducing the lag profile groups: ...\n\n'])
 lpg_ra=diff_val(lp_ra); % find all different values
 len=length(lpg_ra);
-lpg_lag=zeros(1,len);lpg_dt=zeros(1,len);lpg_ND=zeros(1,len);lpg_T=zeros(1,len);
-lpg_ri=zeros(1,len); lpg_nt=zeros(1,len);lpg_h=zeros(1,len);lpg_w=zeros(1,len);
-lpg_bcs=zeros(1,len);lpg_code=zeros(1,len);
-lpg_lpdata=zeros(1,len); lpg_lpind=0;
-lpg_lpstart=zeros(1,len); lpg_lpend=zeros(1,len);
+lpg_lag=zeros(1,len,'int32');lpg_dt=zeros(1,len,'int32');lpg_ND=zeros(1,len);lpg_T=zeros(1,len);
+lpg_ri=zeros(1,len,'int32'); lpg_nt=zeros(1,len,'int32');lpg_h=zeros(1,len);lpg_w=zeros(1,len);
+lpg_bcs=zeros(1,len,'uint8');lpg_code=zeros(1,len,'uint8');
+lpg_lpdata=zeros(1,len,'int32'); lpg_lpind=0;
+lpg_lpstart=zeros(1,len,'int32'); lpg_lpend=zeros(1,len,'int32');
 ad_lpg=[];
 for ind=1:length(lpg_ra),
   lpg=find(lp_ra==lpg_ra(ind));
