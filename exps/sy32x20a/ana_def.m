@@ -28,6 +28,12 @@ if name_site=='3'
  a_satch.cut=1;
  %a_satch.plot=8;
  analysis_ppshortlags=1;
+ analysis_fullwidth=1;
+ if expver==2
+  fit_altitude(6,1:2)=[350 Inf]; % Fit for H+
+ %fit_altitude(7,1:2)=[130 250]; % Fit for NO+
+ %fit_altitude(2,1)=[250]; % Fit Ti above F
+ end
 else
  analysis_lpf.par=load('sy32ac_ra.par');
  analysis_lpf.lib='plwin';
@@ -41,11 +47,9 @@ else
  end
  analysis_Offsetppd=800-15;
 end
-analysis_lpf(1).do=1;
 
-if contains('3',data_path(end))
+if contains('3WD',data_path(end))
  [analysis_lpf.do]=deal(0); % integrated data
- fit_altitude(6,1:2)=[350 Inf]; % Fit for H+
- %fit_altitude(7,1:2)=[130 250]; % Fit for NO+
- %fit_altitude(2,1)=[250]; % Fit Ti above F
+else
+ [analysis_lpf.do]=deal(1); % raw data
 end

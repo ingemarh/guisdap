@@ -1,4 +1,4 @@
-COR_init
+COR_init(95360,61)
 nocal=1;
 for vc=1:64
  if false

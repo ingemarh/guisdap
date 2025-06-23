@@ -33,7 +33,6 @@ for d_rcprog=B_rcprog:N_rcprog
   apustr=['_' num2str(d_rcprog)];
   load_GUPvar
 
-  apustr=['_' int2str(d_rcprog)];
   read_specpar
   constants
 

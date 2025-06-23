@@ -111,7 +111,15 @@ end
 bad_var=0;
 diffran=diff(a_range);
 for gate=find(diffran>0)
-  addr=find(ad_range>a_range(gate)-a_overlap & ad_range<=a_range(gate+1)+a_overlap);
+  d=ad_range-a_range(gate);
+  if exist('analysis_fullwidth')
+    d1=(analysis_fullwidth*diffran(gate)-ad_w)/2;
+    addr=find(d>-d1 & d<d1+diffran(gate));
+  else
+    addr=find(d>-a_overlap & d<diffran(gate)+a_overlap);
+    % Remove too narrow or too broad responses 
+    addr=addr(find(ad_w(addr)>a_minwidth(gate) & ad_w(addr)<a_maxwidth(gate)));
+  end
   if ~isempty(addr)
     % Select suitable codes 
     if length(acode)>0
@@ -123,9 +131,18 @@ for gate=find(diffran>0)
     elseif ~isempty(a_code)
       addr=addr(find(ismember(ad_code(addr),a_code)));
     end
-    % Remove too narrow or too broad responses 
-    ind1=find(ad_w(addr)>a_minwidth(gate) & ad_w(addr)<a_maxwidth(gate));
-    addr=addr(ind1);
+  end
+  if ~isempty(addr)
+    % Select suitable codes 
+    if length(acode)>0
+      ind1=[];
+      for code=find(acode(:,gate)==1)';
+        ind1=[ind1,find(ad_code(addr)==code)];
+      end
+      addr=addr(ind1);
+    elseif ~isempty(a_code)
+      addr=addr(find(ismember(ad_code(addr),a_code)));
+    end
   end
   if a_control(4)==1
     % Remove addresses for which variance have not been determined

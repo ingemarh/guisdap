@@ -19,7 +19,7 @@ else
 end
 f0=ones(N0,1)/N0; L0=floor((N0-1)/2); R0=ceil((N0-1)/2);
 
-lpgs=find(ismember(lpg_bcs,[lpg_s 'x']));
+lpgs=find(ismember(lpg_bcs,uint8([lpg_s 'x'])));
 if ~isempty(a_code)
  lpgs=lpgs(find(ismember(lpg_code(lpgs),unique(a_code))));
 end

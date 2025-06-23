@@ -39,7 +39,7 @@ if ~isempty(a_ind) & a_ind(1)==0
     a_start=fileslist(find(a_code(1)==filescode,1));
   end
   a_interval=a_start+[0 a_integr];
-  beams=unique(filesbeam),
+  beams=unique(filesbeam);
   if ~isempty(a_screen)
     d=beams-a_screen(1); d=abs([real(d);imag(d)]);
     beams(find(d(1,:)>real(a_screen(2)) | d(2,:)>imag(a_screen(2))))=[];
@@ -64,6 +64,9 @@ end
 
 if a_integr==0
   a_ind=find(a_interval(1)<=fileslist & a_code(1)==filescode);
+  if ~isempty(a_screen)
+    a_ind(1:find(ismember(filesbeam(a_ind),beams),1)-1)=[];
+  end
   nextmove=find(filesbeam(a_ind)~=filesbeam(a_ind(1)),1);
   if isempty(nextmove)
     EOF=1;

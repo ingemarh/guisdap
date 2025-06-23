@@ -37,4 +37,4 @@ lp_nt=zeros(1,nlp,'int32');
 lp_vc=zeros(1,nlp,'int32');
 lp_ri=zeros(1,nlp,'int32');
 lp_bcs=zeros(1,nlp,'uint8');
-lp_code=zeros(1,nlp,'uint8');
+lp_code=zeros(1,nlp,'int32');

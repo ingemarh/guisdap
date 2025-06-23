@@ -17,12 +17,14 @@ if datenum(analysis_start)<datenum([2023 2 26])
 end
 
 if name_site=='3'
- altd=[0 10:5:1500];
+ altd=[0 10:5:150];
  analysis_altit=100+cumsum(altd);
- %analysis_maxwidth=2*diff(analysis_altit);
- analysis_maxwidth=Inf;
 
- fit_altitude(6,1:2)=[340 Inf]; % Fit for H+
+ if expver==2
+  fit_altitude(6,1:2)=[340 Inf]; % Fit for H+
+ end
+ %analysis_screen=complex([360 10],[45 5])
+ analysis_fullwidth=2;
 else
  analysis_lpf(1).skip=0;
  analysis_Offsetppd=800+20;
@@ -37,5 +39,3 @@ a_satch.prep=14000;
 if contains('3WD',data_path(end))
  [analysis_lpf.do]=deal(0); % integrated data
 end
-
-analysis_screen=complex([360 10],[45 5])
