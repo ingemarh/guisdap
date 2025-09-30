@@ -19,6 +19,7 @@ elseif warn==0
  if isempty(siteid)
   siteid=1;
  else
+  siteid=siteid(1);
   d=dir(data_path), td=zeros(size(d));
   if isempty(d)
    return
