@@ -7,7 +7,7 @@ arch=(all)
 url="https:///www.eiscat.se"
 license=()
 depends=('gzip' 'bzip2' 'ghostscript')
-optdepends=('libimage-exiftool-perl' 'curl' 'lbzip2' 'python3 python3-astropy python3-h5py python3-numpy python3-dateutil)
+optdepends=('libimage-exiftool-perl' 'curl' 'lbzip2' 'python3' 'python3-astropy' 'python3-h5py' 'python3-numpy' 'python3-dateutil')
 makedepends=()
 if false
 then
@@ -27,7 +27,7 @@ package() {
   do
     install -Dvm 644 "$f" -t "${pkgdir}/opt/guisdap"
   done
-  for d in anal exps init matfiles models_m share/doc/[!acp]* share/doc/pdf share/iri/[!m]*
+  for d in anal exps init matfiles models_m pygup share/doc/[!acp]* share/doc/pdf share/iri/[!m]*
   do
     find $d -type f -exec install -Dvm 644 {} "${pkgdir}/opt/guisdap/"{} \;
   done
