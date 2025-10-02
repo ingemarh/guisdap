@@ -9,7 +9,7 @@
 % See also: init_GUP
 %
 fprintf('\n\nGrouping the virtual channels in virtual channel groups.\n')
-vc_group=zeros(size(vc_ch));
+vc_group=zeros(size(vc_ch),'int32');
 
 group=1;
 vcs=find(vc_ch~=0); % These channels are in use

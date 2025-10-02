@@ -33,7 +33,7 @@ if nargin==0
       loadlibrary(cl,h,'thunkfilename',th)
       if ~isempty(init{i})
        ii=[char(libs(i)) init{i}];
-       feval('calllib',ii{:})
+       feval('calllib',ii{:});
       end
       res=res+1;
       res_atmos=res_atmos+atmos(i);

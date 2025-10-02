@@ -73,6 +73,13 @@ else
         if a_lpf(1).do
           dirlist=dir(fullfile(dp,j.name,['*' site '0.h5']));
           %%dirlist=dir(fullfile(dp,j.name,['*.h5']));
+	  if isempty(dirlist)
+            dirlist=dir(fullfile(dp,j.name,[site '*_*_*_*_*_*_*.dat*-*-*']));
+	    if isempty(dirlist)
+              dirlist=dir(fullfile(dp,j.name,['*_*_*_*_*_*.dat*-*-*'])); %syisr1
+	    end
+            syisr=2;
+          end
           [~,d]=sortrows(cell2table({dirlist.name}'));
           dirlist=dirlist(d);
         else
@@ -94,19 +101,24 @@ else
         h5file=fullfile(j.name,f.name);
         if syisr
           if a_lpf(1).do
-            head=h5read(h5file,'/head');
-            good=find(head.nd>=head.nw);
-            tai=num2cell(timeconv(double(head.dt(good))*1e-6,'unx2tai')); %beijing unix time!
-            code=num2cell(head.bc(good)+head.lc(good));
-            azel=num2cell(complex(head.az(good),head.el(good)));
-            hdx=num2cell(good);
-            s=length(tai);
-            l=repmat(struct('fname',h5file,'tai',0,'code',0,'azel',0,'hdx',0),[s 1]);
-            [l.tai]=tai{:};
-            [l.code]=code{:};
-            [l.azel]=azel{:};
-            [l.hdx]=hdx{:};
-            list=[list;l];
+	    if syisr==1
+              head=h5read(h5file,'/head');
+              good=find(head.nd>=head.nw);
+              tai=num2cell(timeconv(double(head.dt(good))*1e-6,'unx2tai')); %beijing unix time!
+              code=num2cell(head.bc(good)+head.lc(good));
+              azel=num2cell(complex(head.az(good),head.el(good)));
+              hdx=num2cell(good);
+              s=length(tai);
+              l=repmat(struct('fname',h5file,'tai',0,'code',0,'azel',0,'hdx',0),[s 1]);
+              [l.tai]=tai{:};
+              [l.code]=code{:};
+              [l.azel]=azel{:};
+              [l.hdx]=hdx{:};
+              list=[list;l];
+	    else
+	      l=syisr_bin('flist',h5file);
+              list=[list;l];
+	    end
 	  %else
           %  syhead_info = h5read(h5file, '/head');
           %  sytime = double(syhead_info.dt) * 1e-6;      % us, added by wyh

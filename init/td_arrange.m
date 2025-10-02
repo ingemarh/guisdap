@@ -20,7 +20,7 @@ p_rep=gupround(p_rep/p_dtau);
 % Produce another set of td-variables by adding p_rep to all  
 % This increases flexibility in the virtual channel definition AH 94-04-20
 %if any(vc_t1>p_rep) | any(vc_t2>p_rep)
- td_ch=[td_ch,td_ch];
+ td_ch=int32([td_ch,td_ch]);
  td_am=[td_am,td_am];
  td_t1=[td_t1,td_t1+p_rep];
  td_t2=[td_t2,td_t2+p_rep];

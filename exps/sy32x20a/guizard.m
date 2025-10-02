@@ -1,5 +1,5 @@
 rdiff=d_parbl(60)-666; %diff from init
-if site=='3'
+if name_site=='3'
  lpg_h=lpg_h+rdiff;
 else
  a_Offsetppd=analysis_Offsetppd+rdiff;

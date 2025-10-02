@@ -71,7 +71,7 @@ for i=1:n_tot
     d=find(r_ppw<max_ppw);
     r_pp=r_pp(d); r_pprange=r_pprange(d); r_pperr=r_pperr(d);
   end
-  par1=[r_az r_el r_Pt/10000 median(r_Tsys) rOff]; %10kW
+  par1=[r_az r_el r_Pt/10000 min(r_Tsys) rOff]; %10kW
   npar1=length(par1);
   if i==1
     npar1D=npar1;

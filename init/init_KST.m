@@ -151,6 +151,7 @@ for d_rcprog=B_rcprog:N_rcprog
     vc_t2=p_rep*ones(size(vc_ch));
     vc_mf=zeros(size(vc_ch));
   end
+  vc_ch=int32(vc_ch);
   fprintf('### Virtual channels defined \n')
 
   td_arrange

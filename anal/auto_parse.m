@@ -82,7 +82,26 @@ if ~isempty(msg) & strfind(msg,'missing')
   files=dir(fullfile(data_path,'*0.h5'));
   nf=length(files);
   if ~nf
-   warning('GUISDAP:parse',['Unable to parse directory name: ' msg])
+   %try for syisr bin files, use the first found
+   files=dir(fullfile(data_path,'*_*_*_*_*_*.dat*-*-*'));
+   nf=length(files);
+   if ~nf
+    warning('GUISDAP:parse',['Unable to parse directory name: ' msg])
+   else
+    s=syisr_bin('guess',fullfile(data_path,files(1).name))
+    t1=timeconv(fix(s.unx),'unx2mat'); t2=t1+2;
+    antenna=antennas{9+strfind('SWD',s.site)};
+    if contains(s.mode,'Scan'), scan='cp3'; end
+    de=dir(path_exps);
+    try
+     pulse=validatestring(s.exp,{de.name});
+    catch,end
+    if set_b
+     set(b(4),'string',datestr(t1,'yyyy mm dd  HH MM SS'))
+     set(b(5),'string',datestr(t2,'yyyy mm dd  HH MM SS'))
+    end
+    t1=datevec(t1); t2=datevec(t2);
+   end
   else
    [s,n]=textscan(files(1).name,'%016.0f%c%01d%c0.h5');
    if n==23
@@ -151,7 +170,7 @@ end
   if set_b, set(b(2),'value',siteid(1)), end
  end
  if isempty(scan)
- elseif strmatch(scan,{'cp2' 'cp3' 'cp4' 'lowelnorth2' 'fix2' 'ip2'},'exact')
+ elseif strmatch(scan,{'cp2' 'cp3' 'cp4' 'lowelnorth2' 'fix2' 'ip2' 'ip3'},'exact')
   intper=0;
  elseif [strfind(scan,'42') strmatch(scan,{'cp6' 'cp1' 'cp7' 'fixed' 'bore' 'lowel' 'zenith'},'exact')]
   intper=60;

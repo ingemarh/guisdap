@@ -109,13 +109,14 @@ if contains('3WD',name_site)
   ch_Pt=4.75e6;
   sysTemp=analysis_Tsys*(2-sin(ch_el*pi/180));
  end
+ if d_parbl(58)>0, ch_fradar=d_parbl(58); end
  Tsky=20;
  [sun_az,sun_el]=solar_angle(p_RECloc(1),p_RECloc(2),d_date);
  [dx,dy,dz]=sph2cart(-sun_az*pi/180,sun_el*pi/180,1); dir_ant=[dx dy dz];
  [dx,dy,dz]=sph2cart(-ch_az*pi/180,ch_el*pi/180,1); dir_beam=[dx dy dz];
  antsun=atan2(norm(cross(dir_ant,dir_beam)),dot(dir_ant,dir_beam));
  antang=sqrt(2*pi/ch_gain);
- Tsky=d_parbl(59);
+ Tsky=d_parbl(59)*(408e6/ch_fradar)^2.7;
  Tsun=6000*exp(-(antsun/(2*antang))^2);
  Tsun=6000/cosh(antsun/(3*antang));
  Tground=300/2*cos(ch_el*pi/180);

@@ -32,6 +32,14 @@ OK=0; EOF=0; N_averaged=0; M_averaged=0;
 d_ExpInfo=[]; d_raw=[];
 
 if ~isempty(a_ind) & a_ind(1)==0
+  lraw=0;
+  for lpf=a_lpf
+    if lraw<max(lpf.raw), lraw=max(lpf.raw); end
+  end
+  if isfield(d_filelist,'nd')
+    bad=find(cell2mat({d_filelist.nd})<lraw/a_lpf(1).nrep);
+    d_filelist(bad)=[];
+  end
   fileslist=cell2mat({d_filelist.tai});
   filescode=cell2mat({d_filelist.code});
   filesbeam=cell2mat({d_filelist.azel});
@@ -45,10 +53,6 @@ if ~isempty(a_ind) & a_ind(1)==0
     beams(find(d(1,:)>real(a_screen(2)) | d(2,:)>imag(a_screen(2))))=[];
   end
   a_beam=1;
-  lraw=0;
-  for lpf=a_lpf
-    if lraw<max(lpf.raw), lraw=max(lpf.raw); end
-  end
   ncode=length(a_code);
   a_loop=a_lpf(1).nrep/ncode;
   alpf=a_lpf;
@@ -85,7 +89,7 @@ loop=a_lpf(1).loop; laind=length(a_ind);
 
 if ~laind, return; end
 ll=laind/ceil(laind/loop);
-tsky=0;
+t408=0; skys=[];
 for aind=0:ll:laind-1;
   dumpOK=1;
   innerloop=fix([aind aind+ll-1]);
@@ -108,11 +112,19 @@ for aind=0:ll:laind-1;
     end
     file=d_filelist(fid+jj-1);
     if isempty(draw), tfirst=file.tai; end
-    head=h5read(file.fname,'/head',file.hdx,1);
-    d_rx=h5read(file.fname,'/data',double(head.di+1),double(head.nd));
-    tsky=tsky+head.tsky;
-    draw=complex(double(d_rx.r),double(d_rx.i));
-    draw=complex(d_rx.r,d_rx.i);
+    if isfield(file,'nd')
+     [head,draw]=syisr_bin('dump',file.fname,file.hdx);
+     head.nd=file.nd;
+     site=head.st;
+     skys=[skys;fid+jj-1];
+    else
+     head=h5read(file.fname,'/head',file.hdx,1);
+     d_rx=h5read(file.fname,'/data',double(head.di+1),double(head.nd));
+     t408=t408+head.tsky;
+     draw=complex(double(d_rx.r),double(d_rx.i));
+     draw=complex(d_rx.r,d_rx.i);
+     site=file.fname(end-4); %hui hui
+    end
     for lpf=a_lpf
      len_prof=length(lpf.raw)/ncode/loop;
      if head.nd<len_prof+lpf.skip
@@ -124,27 +136,30 @@ for aind=0:ll:laind-1;
   end
   if dumpOK
    i_averaged=1; i_var1=[]; i_var2=[];
-   if head.pw==head.bw
+   if isfield(head,'ex')
+    d_ExpInfo=['syisr3 ' head.ex];
+    rf=double(head.rf);
+   elseif head.pw==head.bw
     d_ExpInfo=sprintf('syisr3 sy%d',head.bw);
+    rf=440e6;
    else
     d_ExpInfo=sprintf('syisr3 sy%dx%d',head.pw/head.bw,head.bw);
    end
-   tvec=1:6;               % parameters holding time
-   az=10; el=9;            % parameters for antenna pointing
-   averaged=[59];     % parameters which are averaged (tsky)
-   accumulated=[7];     % parameters which are accumulated
-   inttime=7;              % parameter that holds integration time
-   non_negative=[9];       % parameters which are positive
+   tvec=1:6;          % parameters holding time
+   az=10; el=9;       % parameters for antenna pointing
+   averaged=[59];     % parameters which are averaged (t408)
+   accumulated=[7];   % parameters which are accumulated
+   inttime=7;         % parameter that holds integration time
+   non_negative=[9];  % parameters which are positive
    secs=double(head.ipp)*1e-6+file.tai;
    d_parbl(inttime)=secs-tfirst;
    d_parbl(tvec)=timeconv(secs,'tai2utc');
    d_parbl(8)=4.7e6; % dummy hui hui
    d_parbl([az el])=[real(file.azel) imag(file.azel)];
-   site=file.fname(end-4); %hui hui
    d_parbl(41)=9+strfind('SWD',site);
    d_parbl(43:62)=0; % to clear upars
    d_parbl(57)=a_rcprog;
-   d_parbl(60:62)=[double(head.ws);head.et;head.at];
+   d_parbl(58:62)=[rf;0;double(head.ws);head.et;head.at];
 
    d_data=NaN(0,1);
 %  figure(9),subplot(3,1,1),plot(real(d_raw))
@@ -200,8 +215,17 @@ end
 
 if OK, % if at least one good data dump was found
   % update parameter block, accept the last parameter block as starting point
+  if ~isempty(skys)
+    if isfield(file,'t408')
+     t408=sum(cell2mat({d_filelist(skys).t408}));
+    else
+     tu=round(timeconv(fileslist(skys),'tai2unx')/3)*3; [~,ia,ib]=unique(tu); %3sec resolution
+     t408u=skytemp(site,tu(ia),real(filesbeam(skys(ia))),imag(filesbeam(skys(ia))));
+     t408=sum(t408u(ib));
+    end
+  end
   d_parbl(accumulated)=accum;
-  d_parbl(averaged)=tsky/laind/ncode;
+  d_parbl(averaged)=t408/laind/ncode;
   d_parbl(inttime)=timeconv(row(d_parbl(tvec)),'utc2tai')-starttime;
   d_data=data;
   M_averaged(1)=max(N_averaged);
