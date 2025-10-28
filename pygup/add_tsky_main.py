@@ -30,10 +30,10 @@ class ParallelAddTsky:
 
     def process_input(self, site, ut, az, el):
         """
-        Process a single HDF5 file to add the Tsky field.
+        Process vectors of ut,az,el and get Tsky.
 
         Parameters:
-        - h5_fp: Path to the HDF5 file
+        - site code and vectors of ut,az,el
         """
         return self.add_tsky.get_tsky(site,ut,az,el)
 

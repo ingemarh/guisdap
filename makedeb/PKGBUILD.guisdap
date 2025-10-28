@@ -7,7 +7,7 @@ arch=(all)
 url="https:///www.eiscat.se"
 license=()
 depends=('gzip' 'bzip2' 'ghostscript')
-optdepends=('libimage-exiftool-perl' 'curl' 'lbzip2' 'python3' 'python3-astropy' 'python3-h5py' 'python3-numpy' 'python3-dateutil')
+optdepends=('libimage-exiftool-perl' 'curl' 'lbzip2' 'python3' 'python3-astropy' 'python3-h5py' 'python3-numpy' 'python3-healpy' 'python3-matplotlib')
 makedepends=()
 if false
 then

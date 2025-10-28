@@ -6,7 +6,8 @@ import os
 
 class syisr_header(Structure):
     _fields_ = [
-        ('Pad0'              , c_uint16*6 ),
+        ('begflag'           , c_uint32   ),
+        ('Pad0'              , c_uint16*4 ),
         ('month'             , c_uint8    ),
         ('year'              , c_uint8    ),
         ('hour'              , c_uint8    ),
@@ -89,14 +90,24 @@ class hdfdata(Structure):
         ('r' , c_int16 ),
 ]
 
+def searchhead(f,fsize):
+    FrameBegFlagUint=0xAAAA5555;
+    while f.read(sizeof(c_uint32))==FrameBegFlagUint and f.tell()<fsize:
+        f.seek(sizeof(c_uint32),1)
+    f.seek(-sizeof(c_uint32),1)
+    return gethead(f)
+
 def gethead(f):
     if type(f)==str: f=open(f,'rb')
+    FrameBegFlagUint=0xAAAA5555;
     FrameEndFlagUint=0xAA5555AA;
     head=syisr_header()
-    f.readinto(head)==sizeof(head)
-    endflag=head.endflag
-    if endflag!=FrameEndFlagUint:
-        exit('dont read to end flag');
+    if f.readinto(head)!=sizeof(head):
+        return('eof suddenly');
+    elif head.begflag!=FrameBegFlagUint:
+        return('beg flag not read');
+    elif head.endflag!=FrameEndFlagUint:
+        return('end flag not read');
     #print(head.month,head.year)
     return head
 
@@ -122,6 +133,16 @@ def flist(f):
     f.seek(ftell)
     while ftell<fsize:
         h=gethead(f)
+        while type(h)==str:
+            print(h+'--search from %d'%ftell)
+            if h[:3]=='eof':
+                return tid,code,az,el,hdx,nd
+            elif h[:3]=='beg':
+                f.seek(-sizeof(syisr_header)+sizeof(c_int32),1)
+                h=searchhead(f,fsize)
+            elif h[:3]=='end':
+                f.seek(-sizeof(syisr_header)+sizeof(c_int32),1)
+                h=searchhead(f,fsize)
         #print(h.month,h.year,h.endflag)
         TotalIQ = (h.WaveGateWidthV-0) * 2
         #print(TotalIQ)

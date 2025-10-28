@@ -60,9 +60,11 @@ if length(d_time)>0 & a_save
    name_strategy=intstr;
   end
   if strcmp(i2,'AUTO') | isstruct(a_autodir)
-   a_autodir.date=d_time(2,1:3);
-   result_dir=sprintf('%d-%02d-%02d_%s_%s@%s%s',a_autodir.date,name_expr,name_strategy,name_ant,filesep);
-   result_path=fullfile(i1,result_dir,filesep);
+   a_autodir.date=d_time(2,1:3); nver=0;
+   while exist(result_path,'dir') | nver==0
+    result_dir=sprintf('%d-%02d-%02d_%s_%02d_%s@%s%s',a_autodir.date,name_expr,nver_name_strategy,name_ant,filesep);
+    result_path=fullfile(i1,result_dir,filesep); nver=nver+1;
+   end
   end
   if ~exist(result_path,'dir')
    [i1,i2,i3]=fileparts(result_path(1:end-1));

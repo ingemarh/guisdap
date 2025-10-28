@@ -2,7 +2,6 @@
 from datetime import datetime, timezone
 
 import astropy.units as u
-import h5py
 import numpy as np
 from astropy.coordinates import EarthLocation
 from numpy.lib import recfunctions as rfn
@@ -48,7 +47,7 @@ class AddTskyToH5:
 
     def get_tsky(self, site, unixt, az, el):
         """
-        Add the Tsky field to the structured array in the HDF5 file.
+        return Tsky for vectors of ut,az,el
         """
 
         # Convert observation time to ISO format (example implementation)
@@ -73,6 +72,7 @@ class AddTskyToH5:
         """
         Add the Tsky field to the structured array in the HDF5 file.
         """
+        import h5py
         with h5py.File(h5_file_path, "r+") as h5_file:
             # Read the dataset
             head = h5_file["/head"][...]
