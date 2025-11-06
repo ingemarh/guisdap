@@ -76,7 +76,7 @@ for lpf=a_lpf
  if isempty(lpf.p)
   lpf.p=[0 lpf.nrep-1];
  end
- if ~isempty(lpf.raw)
+ if ~isempty(lpf.raw) && length(lpf.raw)<2
   lpf.raw=lpf.raw+(lpf.p(1)*nsamp+1:(lpf.p(2)+1)*nsamp);
  end
  a_lpf(i)=lpf;
@@ -115,7 +115,7 @@ for lpf=a_lpf
   lpf.nrep=lpf.par(2)*loop;
   nsamp=lpf.par(1);
  end
- if ~isempty(lpf.raw)
+ if ~isempty(lpf.raw) && length(lpf.raw)<2
   lpf.raw=(lpf.raw(1)-1)*loop+(1:lpf.nrep*nsamp);
  end
  a_lpf(i)=lpf;

@@ -22,11 +22,11 @@ ncode=max(lpg_code);
 nch=max(vc_ch);
 
 n1=(0:n-1);
-s=reshape((lpg_bac>0).'*(n1*nlpg),1,[]);
+s=cast(reshape((lpg_bac>0).'*(n1*nlpg),1,[]),'like',lpg_bac);
 lpg_bac=repmat(lpg_bac,1,n)+s;
-s=reshape((lpg_cal>0).'*(n1*nlpg),1,[]);
+s=cast(reshape((lpg_cal>0).'*(n1*nlpg),1,[]),'like',lpg_cal);
 lpg_cal=repmat(lpg_cal,1,n)+s;
-s=reshape(ones(nlpg,1)*n1,1,[]);
+s=cast(reshape(ones(nlpg,1)*n1,1,[]),'like',lpg_code);
 lpg_code=repmat(lpg_code,1,n)+s*ncode;
 lpg_ra=repmat(lpg_ra,1,n)+s*nsh;
 s=s*nlp;
@@ -45,10 +45,10 @@ lpg_wr=repmat(lpg_wr,1,n);
 lpg_wom=repmat(lpg_wom,n,1);
 lpg_womscaled=repmat(lpg_womscaled,n,1);
 
-s=reshape(ones(nlp,1)*n1,1,[]);
+s=cast(reshape(ones(nlp,1)*n1,1,[]),'like',lp_vc);
 lp_vc=repmat(lp_vc,1,n)+s*nvc;
 lpg_lpdata=repmat(lpg_lpdata,1,n)+s*nlp;
-s=reshape(ones(nvc,1)*n1,1,[]);
+s=cast(reshape(ones(nvc,1)*n1,1,[]),'like',vc_ch);
 vc_ch=repmat(vc_ch,1,n)+s*nch;
 vc_Ap=repmat(vc_Ap,1,n);
 
