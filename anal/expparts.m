@@ -77,7 +77,7 @@ types={'CP','FI','FR','GE','NO','NI','SW','UK','EI','3P','SP','AA','IPY'};
 [type_msg,type] = check_type(ant_str,types);
 % the last part was not TYPE, but it still could be either
 % COMMENT or SCAN, so this it not an error (yet).
-if isempty(type_msg) || length(ant_str)==2
+if isempty(type_msg) || length(ant_str)>=2
   % we found TYPE at the end of s, chop it from s
   s=s(1:K(end)-1);
   K=find(s=='_');

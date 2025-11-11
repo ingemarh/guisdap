@@ -4,11 +4,15 @@ for lpf=a_lpf
  if ~isempty(lpf.raw)
   dd_raw=d_raw(lpf.raw);
   raw1=lpf.raw(1);
+ else
+  dd_raw=d_raw;
+  d_raw=[];
+  raw1=0;
  end
  switch lpf.lib
  case 'plwin'
   [dd_data,upar]=plwin(lpf.par,d_parbl,dd_raw);
-  dd_data=[];
+  %d_data=[];
   d_parbl(42+(1:20))=upar;
  case 'alt_decoder'
   [dd_data]=alt_decoder(lpf.par,d_parbl,dd_raw);
@@ -35,6 +39,13 @@ for lpf=a_lpf
    draw=reshape(dd_raw,lpf.par(1),[]);
    acf=ifft(abs(fft(draw(1:lpf.par(3),:),[],2)).^2,[],2);
    dd_data=reshape(acf(:,1:lpf.par(4)),[],1)/size(acf,2);
+  end
+ case 'pow'
+  dd_raw=reshape(dd_raw,lpf.par(1),lpf.par(2),[]);
+  pow=transpose(sum(dd_raw.*conj(dd_raw),3));
+  dd_data=[];
+  for j=1:lpf.par(2)
+   dd_data=[dd_data,pow(j,:)];
   end
  end
  fac=(diff(lpf.p)+1)/lpf.nrep;

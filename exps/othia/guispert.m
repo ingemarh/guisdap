@@ -31,3 +31,8 @@ if name_site=='V'
   voff(:,r)=e;
  end
 end
+
+if name_site=='L' && d_date<datenum(2025,10,08,12,00,00) % Problems with channel 3 at ESR ion line
+    fa=(median(d_data((-25:-1)+887))+median(d_data((-25:-1)+63479)))/2/median(d_data((1:875)+301631));
+    d_data(301620:364481)=fa*d_data(301620:364481);
+end
