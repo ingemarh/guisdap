@@ -27,22 +27,22 @@ if isempty(prog)
     return
   end
 end
-if strcmp(prog,'exiv2')
+if contains(prog,'exiv2')
   tags={' -M"set Exif.Image.Copyright ' ' -M"set Exif.Image.ImageDescription ' ' -M"set Exif.Image.DocumentName ' ' -"set Exif.Image.HostComputer ' ' -M"set Exif.Photo.UserComment '};
   ftags={' -M"set Exif.Image.ImageID '};
   exif=cmdline(fig,ud,tags,td,fd,ftags,'"');
-elseif strcmp(prog,'exiftool')
+elseif contains(prog,'exiftool')
   tags={' -copyright="' ' -description="' ' -title="' ' -author="' ' -comment="'};
   ftags={' -source="'};
   exif=cmdline(fig,ud,tags,td,fd,ftags,'"');
-elseif strcmp(prog,'imwrite')
+elseif contains(prog,'imwrite')
   tags={'Copyright' 'Description' 'Title' 'Author' 'Comment'};
   ftags={'Source'};
   exif=cmdline(fig,ud,tags,td,fd,ftags,[]);
 end
 if ~isempty(exif)
   for ext=exts
-     if strcmp(prog,'imwrite')
+     if contains(prog,'imwrite')
       try
        [x,map]=imread(file,char(ext));
        ex=''; for f=fieldnames(exif)', ex=[ex ',''' char(f) ''', getfield(exif,''' char(f) ''')' ]; end
