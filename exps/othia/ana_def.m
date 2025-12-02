@@ -11,20 +11,18 @@ if strfind(data_path,'@32p')
  plasma_range=col(ones(2*1125,1)*(0:3)*2262+(1:2*1125)'*ones(1,4)+12);
 elseif name_site=='L'
  a_satch.clutter=[0 40];
- first=100; last=2000; d1=10; d2=5;
- altd=[0 d1:d2:(sqrt((last-first)*2*d2))];
- analysis_altit=first+cumsum(altd);
- clear analysis_maxwidth
+ altd=[0 5 5 10:5:150];
+ analysis_altit=110+cumsum(altd);
+ analysis_fullwidth=2;
+ fit_altitude([2 3 5],1)=[120;130;120];
 elseif name_site=='V'
+ altd=[0 5 5 10:5:150];
+ analysis_altit=100+cumsum(altd);
+ analysis_fullwidth=2;
  a_satch.clutter=[0 12];
- first=100; last=2000; d1=10; d2=5;
- altd=[0 d1:d2:(sqrt((last-first)*2*d2))];
- analysis_altit=first+cumsum(altd);
- clear analysis_maxwidth
 elseif name_site=='T'
+ altd=[0 5 5 10:5:150];
+ analysis_altit=90+cumsum(altd);
+ analysis_fullwidth=2;
  a_satch.clutter=[0 33];
- first=90; last=2000; d1=10; d2=5;
- altd=[0 0 d1:d2:(sqrt((last-first)*2*d2))];
- analysis_altit=first+cumsum(altd);
- clear analysis_maxwidth
 end

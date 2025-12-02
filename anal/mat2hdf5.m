@@ -280,26 +280,26 @@ for rr = 1:length(pci)
             end        
         end
         if length(pci) == 1
-            starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
+            starttime = datestr(t1,'yyyy-mm-ddTHH:MM:SS'),
             endtime   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
         end
         list_fortar = [list_fortar;{fullfile(matpath,'.gup')}];
     end
     
-    if isempty(starttime) || size(starttime,1)>1
+    try
         load(Filelist(1).fname)
         starttime = datestr(r_time(1,:),'yyyy-mm-ddTHH:MM:SS');
         if length(pci) > 1
             matfile.metadata.software.gfd.t1 = {num2str([r_time(1,1:5) round(r_time(1,end))])};
         end
-    end
-    if isempty(endtime) || size(endtime,1)>1
+    catch,end
+    try
         load(Filelist(end).fname)
         endtime = datestr(r_time(2,:),'yyyy-mm-ddTHH:MM:SS');
         if length(pci) > 1
             matfile.metadata.software.gfd.t2 = {num2str([r_time(2,1:5) round(r_time(2,end))])};
         end
-    end
+    catch,end
     
     if isempty(intper_mean)
         intper_mean = subsetmean(Intper_vec);
@@ -362,7 +362,7 @@ for rr = 1:length(pci)
        publisher=local.owner;
     end
 
-    datafolder = sprintf('%s_%04d-%02d-%02d_%s_%s%s@%s',strtok(publisher),r_time(1,1:3),name_expr,name_expr_more,name_strategy ,name_ant);
+    datafolder = sprintf('%s_%04d-%02d-%02d_%s_%s%s@%s',strtok(publisher),r_time(2,1:3),name_expr,name_expr_more,name_strategy ,name_ant);
     storepath = fullfile(datapath,datafolder);
 
     while exist(storepath)
