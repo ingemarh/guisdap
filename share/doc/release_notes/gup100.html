@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<style type="text/css">
+		h2.cjk { font-family: "Noto Serif CJK SC" }
+		h2.ctl { font-family: "FreeSans" }
+		code.cjk { font-family: "Noto Sans Mono CJK SC", monospace }
+	</style>
+</head>
+<body lang="en-GB" dir="ltr"><h1>Guisdap 10.0</h1>
+<p>This release of guisdap contains new features and bugfixes, but
+everything is made compatible with older versions (hopefully). The
+package should be compatible with not too ancient Matlab versions
+(&gt;2023), but there may (or may not) be some problems on specific
+platforms. 
+</p>
+<h2 class="western">Install</h2>
+<p>Guisdap-10.0 is more-or-less platform independent, and is running
+on Linux/iOS/Windows. The software is available in
+<a href="https://github.com/ingemarh/guisdap">https://github.com/ingemarh/guisdap</a>,
+either as a git repository or ready made deb packages, <b>deb
+[trusted=yes]
+https://sourceforge.net/projects/guisdap/files/deb-repo/ bookworm
+main</b>. The libraries contain up-to-date ionospheric, atmospheric
+and magnetic models and can either be installed as the .deb repo
+(libguisdap) , or made optimised for the hardware/software (tested on
+Linux and iOS) via <b>./libinstall.sh </b><br/>
+Guisdap is then
+started via bin/guisdap (preferrably linked to a place on the
+path).<br/>
+Provided is a searchpath to ~/gup/mygup where your
+personal and edited distribution files may go not to interfere with
+the distributed files. 
+</p>
+<h2 class="western">Running</h2>
+<p>On a unix system prompt, type <b>guisdap --help</b> to see all the
+switches available. Normal analysis is done running <b>guisdap -a</b>
+which will bring up a window with some entries to fill in. (Hopefully
+selfexplained) This is the same as <b>guisdap</b> and then <b>analyse</b>.
+When finished hit <b>GO</b>. A more detailed instruction can be found
+at <a href="https://www.eiscat.se/document/user-documentation/guisdap8-for-dummies/">here</a>.There
+is also a course <a href="https://www.eiscat.se/wp-content/uploads/2016/08/GUISDAP.pdf">presentation</a>
+describing how to initialise new experiments and some useful tips on
+more specialised analysis. The initialisation scripts are avaiable
+with <b>guisdap -i</b>. <br/>
+For Windows there is a startup script
+<code class="western">guisdap.m</code> available that should be
+chosen as 'Run' with right-click. <br/>
+An updated Guisdap is also
+included in the <b>nirithil/etools</b> docker. 
+</p>
+<h2 class="western">New features</h2>
+<ul>
+	<li><p style="margin-bottom: 0cm">Git lfs system used for reduced size  
+	</p></li>
+</ul>
+<ul>
+	<li><p style="margin-bottom: 0cm">Result files are updated to include source file ID for better provenance
+	</p></li>
+</ul>
+<ul>
+	<li><p style="margin-bottom: 0cm">Improved support for the phased array radars 
+	</p></li>
+</ul>
+<ul>
+	<li><p style="margin-bottom: 0cm">Python routines for sky noise calculation
+	</p></li>
+</ul>
+<ul>
+	<li><p style="margin-bottom: 0cm">New gating procedure mainly for long pulse type experiments
+	</p></li>
+</ul>
+<ul>
+	<li><p style="margin-bottom: 0cm">New and updated experiemts
+	initialisations 
+	</p></li>
+</ul>
+<ul>
+	<li><p>Numerous bugfixings and updates 
+	</p></li>
+</ul>
+<h2 class="western">Contacts</h2>
+<p><a href="mailto:%20ingemar@gmx.se">Ingemar Häggström</a>, <a href="mailto:%20anders@eiscat.se">Anders
+Tjulin</a>, <a href="mailto:%20maria@eiscat.se">Maria Mihalikova</a></p>
+</body>
+</html>
