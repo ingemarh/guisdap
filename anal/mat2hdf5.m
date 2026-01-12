@@ -643,11 +643,11 @@ for rr = 1:length(pci)
     matfile.data.par2d_pp = [h_pprange h_pp h_pperr h_ppw];
 
     if contains(local.owner,'EISCAT') & isempty(L2resid) %try via portal
-	maxtdiff=65; tdiff=find(matfile.data.utime(1,2:end)-matfile.data.utime(2,1:end-1)>maxtdiff);
-	ut=[matfile.data.utime(1,[1,tdiff+1]);matfile.data.utime(2,[tdiff end])];
+        maxtdiff=65; tdiff=find(matfile.data.utime(2:end,1)-matfile.data.utime(1:end-1,2)>maxtdiff)
+        ut=[matfile.data.utime([1,tdiff+1],1);matfile.data.utime([tdiff end],2)];
         tsequence=sprintf('&se=%014.3f_%014.3f',row(ut'));
-	wo=weboptions; wo.Timeout=10*length(ut)+wo.Timeout;
-        L2resid=str2num(webwrite('https://portal.eiscat.se/getresid',sprintf('exp_name=%s&ant=%s%s',name_expr,name_ant(1:3),tsequence),wo));
+        wo=weboptions; wo.Timeout=10*length(ut)+wo.Timeout;
+        L2resid=str2num(webwrite('https://portaldev.eiscat.se/getresid',sprintf('exp_name=%s&ant=%s%s',name_expr,name_ant(1:3),tsequence),wo));
     end
 
     matfile.data.L2resid = L2resid';
