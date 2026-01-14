@@ -19,9 +19,15 @@ else
   vc21=vc2(i):9:36;
   for j=1:4
    ind=(i-1+3*(j-1))*ntx(1)+(1:ntx(1));
-   phasepush((i-1)*4+j)=phasecorr(d_raw(col(ind)),vc_penv(:,vc11(j)),12,1*30,[],lo);
+   ph=phasecorr(d_raw(col(ind)),vc_penv(:,vc11(j)),12,1*30,[],lo);
+   if ~isempty(ph)
+      phasepush((i-1)*4+j)=ph;
+   end
    ind=ntx(1)*12+(i-1+3*(j-1))*ntx(2)+(1:ntx(2));
-   phasepush((i-1)*4+j+12)=phasecorr(d_raw(col(ind)),vc_penv(:,vc21(j)),12,30,[],lo);
+   ph=phasecorr(d_raw(col(ind)),vc_penv(:,vc21(j)),12,30,[],lo);
+   if ~isempty(ph)
+    phasepush((i-1)*4+j+12)=ph;
+   end
   end
  end
  phasepush=mean(phasepush);
