@@ -12,7 +12,8 @@ clear global, clear functions
 
 global GUP_ver path_GUP path_exps path_tmp name_expr name_site data_path result_path local hdf5ver
 
-hdf5ver = '1.0.0';
+[d(1),d(2),d(3)]=H5.get_libversion;
+hdf5ver=sprintf('%d.%d.%d',d);
 d=which(mfilename,'-all');
 path_GUP=fileparts(fileparts(char(d(end))));
 path_tmp=getenv('TMP');

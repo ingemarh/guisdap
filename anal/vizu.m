@@ -139,6 +139,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
  if ~isempty(a2), fig=sprintf('%s_%s',fig,a2); end
  fig=sprintf('%s@%s',fig,name_ant);
  file=fullfile(dirs,fig);
+ if local.matlabversion>25, origtheme=get(vizufig,'theme'); set(vizufig,'theme','light'), end
  if isempty(axs)
   disp('Nothing to print!')
  elseif isunix
@@ -191,6 +192,7 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
   fprintf('Created %s.pdf and .png\n',file)
   insert_exif(vizufig,file,{'pdf' 'png'})
  end
+ if local.matlabversion>25, set(vizufig,'theme',origtheme), end
  if strcmpi(act,'save') && nargout==1
   varargout(1)={file};
  end
@@ -224,7 +226,8 @@ SCALE =[50 900		% Range km
 	-200 200	% Vi m/s
 	10.^[0 5]	% collision freq Hz
 	0 1		% Comp
-	.1 10]; 	% Res
+	.1 10	 	% Res
+	0 2]; 		% Tr
 Y_TYPE1	='linear';	% Y scale type
 PLF_SCALE	=[0 10];	% Langmuir freq MHz
 TEC_SCALE	=[0 10];	% TEC scale
@@ -386,7 +389,7 @@ if strcmp(act,'VERBOSE')
   screen=minput('AzEl screen values',screen);
   s=find(par1D(s,1)>screen(1) & par1D(s,1)<screen(2) & par1D(s,2)>screen(3) & par1D(s,2)<screen(4))';
  end
- SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res)',SCALE')';
+ SCALE=minput('Scales (Ran Alt Ne Te Ti Vi Coll Comp Res Tr)',SCALE')';
  if [findstr(WHICH_PARAM,'P') findstr(WHICH_PARAM,'L')]
   PLF_SCALE=minput('Scale (plf)',PLF_SCALE);
  end
@@ -415,6 +418,7 @@ if findstr(WHICH_PARAM,'Ls'), option(14)=option(14)+4; end
 if findstr(WHICH_PARAM,'Pf'), option(16)=option(16)+1; end
 if findstr(WHICH_PARAM,'P1'), option(16)=option(16)+2; end
 if findstr(WHICH_PARAM,'TC'), option(16)=option(16)+4; end
+if findstr(WHICH_PARAM,'Tr'), option(17)=1; end
 if findstr(WHICH_PARAM,'Co'), option(7)=1; end
 if findstr(WHICH_PARAM,'Nr') & ~isempty(rpar2D), option(15)=1; end
 n_tot=sum(rem(option,2)+fix(option/2)-fix(option/4));
@@ -550,6 +554,10 @@ for i=[4 5 8]
  if option(i)
   surf_plot(s,y_param(GATES,:),par2D(GATES,:,i),SCALE(i,:),Yscale,YTitle,TITLE(i),[])
  end
+end
+if option(17)
+ d=par2D(GATES,:,4)./par2D(GATES,:,5);
+ surf_plot(s,y_param(GATES,:),d,SCALE(10,:),Yscale,YTitle,'Temperature ratio',[])
 end
 if option(6)
  if length(GATES)==1

@@ -90,12 +90,13 @@ class hdfdata(Structure):
         ('r' , c_int16 ),
 ]
 
-def searchhead(f,fsize):
+def searchhead(f,fsize,d):
     FrameBegFlagUint=0xAAAA5555;
-    while f.read(sizeof(c_uint32))==FrameBegFlagUint and f.tell()<fsize:
-        f.seek(sizeof(c_uint32),1)
+    while d!=FrameBegFlagUint:
+        print('%x'%d)
+        d=np.fromfile(f,dtype='uint32',count=1)[0]
     f.seek(-sizeof(c_uint32),1)
-    return gethead(f)
+    return gethead(f),f.tell()
 
 def gethead(f):
     if type(f)==str: f=open(f,'rb')
@@ -103,12 +104,12 @@ def gethead(f):
     FrameEndFlagUint=0xAA5555AA;
     head=syisr_header()
     if f.readinto(head)!=sizeof(head):
-        return('eof suddenly');
+        return None
     elif head.begflag!=FrameBegFlagUint:
-        return('beg flag not read');
+        return head.begflag
     elif head.endflag!=FrameEndFlagUint:
-        return('end flag not read');
-    #print(head.month,head.year)
+        return head.begflag
+    #print('%x %x'%(head.begflag,head.endflag))
     return head
 
 def getheadm(f):
@@ -121,6 +122,7 @@ def getIQ(f,TotalIQ):
     return IQ
 
 def flist(f):
+    extra_samples=1
     if type(f)==str: f=open(f,'rb')
     tid=[]
     code=[]
@@ -133,18 +135,13 @@ def flist(f):
     f.seek(ftell)
     while ftell<fsize:
         h=gethead(f)
-        while type(h)==str:
-            print(h+'--search from %d'%ftell)
-            if h[:3]=='eof':
-                return tid,code,az,el,hdx,nd
-            elif h[:3]=='beg':
-                f.seek(-sizeof(syisr_header)+sizeof(c_int32),1)
-                h=searchhead(f,fsize)
-            elif h[:3]=='end':
-                f.seek(-sizeof(syisr_header)+sizeof(c_int32),1)
-                h=searchhead(f,fsize)
+        if h==None:
+          return tid,code,az,el,hdx,nd
+        while type(h)==int:
+          f.seek(-sizeof(syisr_header)+sizeof(c_int32),1)
+          h,ftell=searchhead(f,fsize,h)
         #print(h.month,h.year,h.endflag)
-        TotalIQ = (h.WaveGateWidthV-0) * 2
+        TotalIQ=(h.WaveGateWidthV+extra_samples)*2
         #print(TotalIQ)
         if h.WaveGateWidthV>=0:
             btime=datetime.datetime(h.year+2000,h.month,h.day,h.hour,h.minute,h.second,h.fracOfSecond*25)
@@ -221,7 +218,7 @@ def getcodes(h):
     BandWidthC=[0.05,4,0.1,0.3,1.,20.,16.,0.]
     DetectModeC=['Zenith','S-N Scan','W-E Scan','All Sky Scan','Other']
     c=syisr_codes()
-    c.DetectMode=DetectModeC[min(h.ModeOfDetect,5)]
+    c.DetectMode=DetectModeC[min(h.ModeOfDetect,4)]
     c.BandWidth=BandWidthC[min(h.Pad4_BandWidthC//16,6)]
     c.SampleRate=SampleRateC[min(h.SampleRate_WaveType&15,6)]
     c.WaveType=WaveTypeC[min(h.SampleRate_WaveType//16,8)]

@@ -121,7 +121,7 @@ for aind=0:ll:laind-1;
      head=h5read(file.fname,'/head',file.hdx,1);
      d_rx=h5read(file.fname,'/data',double(head.di+1),double(head.nd));
      t408=t408+head.tsky;
-     draw=complex(double(d_rx.r),double(d_rx.i));
+     %draw=complex(double(d_rx.r),double(d_rx.i));
      draw=complex(d_rx.r,d_rx.i);
      site=file.fname(end-4); %hui hui
     end
@@ -136,12 +136,12 @@ for aind=0:ll:laind-1;
   end
   if dumpOK
    i_averaged=1; i_var1=[]; i_var2=[];
+   rf=440e6;
    if isfield(head,'ex')
     d_ExpInfo=['syisr3 ' head.ex];
     rf=double(head.rf);
    elseif head.pw==head.bw
     d_ExpInfo=sprintf('syisr3 sy%d',head.bw);
-    rf=440e6;
    else
     d_ExpInfo=sprintf('syisr3 sy%dx%d',head.pw/head.bw,head.bw);
    end

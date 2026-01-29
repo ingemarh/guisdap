@@ -6,7 +6,7 @@ for lpf=a_lpf
   raw1=lpf.raw(1);
  else
   dd_raw=d_raw;
-  d_raw=[];
+  %d_raw=[];
   raw1=0;
  end
  switch lpf.lib

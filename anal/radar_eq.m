@@ -76,7 +76,8 @@ else
   if ch_fradar(1)<300e6 %VHF tristatic
    ch_gain0=10^4.31/2.; %VHF tx half antenna
   elseif ch_fradar(1)<450e6 %SYISR tristatic
-   ch_gain0=10^4.6*sin(ch_elT*pi/180)^2.5;
+   global a_gainfactor
+   ch_gain0=10^4.6*sin(ch_elT*pi/180)^a_gainfactor;
    ppdoff=ppdoff-(sc_R0+sc_R1)/scale/2;
   end
   opening_angle=sqrt(2*pi/ch_gain(1))*(1+sin(sc_angle)^2);
