@@ -55,6 +55,7 @@ if isempty(dynavel), dynavel=0; end
 %%%%%%%%%%%%%%%%%
 global r_RECloc allnames r_XMITloc Leap
 Data1D=[]; Data2D=[]; dirind=0; loc=[]; allnames=[]; Leap=[];
+name_ants=[];name_exps=[];name_sigs=[];name_strategies=[];
 for d1=1:ndir
  if dirs{d1}=='.'; dirs{d1}=pwd; end
  fprintf('Reading %s...\n',dirs{d1})
@@ -75,6 +76,10 @@ for d1=1:ndir
  if td(1)==d1
   timint=mean(Time)-median(diff(Time));
  end
+ name_ants=[name_ants,string(allnames.ant)];
+ name_exps=[name_exps,string(allnames.expr)];
+ if isfield(allnames,'sig'), name_sigs=[name_sigs,string(allnames.sig)];end
+ if isfield(allnames,'strategy'), name_strategies=[name_strategies,string(allnames.strategy)];end
 end
 dirind=cumsum(dirind);
 r_time=timeconv(mean(Data1D(:,1)),'tai2utc');
@@ -121,28 +126,26 @@ else
  td(1)=median(diff(timint));
 end
 %%%%%%%%%%%%%%%%%
-name_ants=allnames.ant; nant=size(allnames.ant,1);
-name_exps=allnames.expr;
-name_sigs=[];
-if isfield(allnames,'sig'), name_sigs=allnames.sig; end
-name_strategies=[];
-if isfield(allnames,'strategy'), name_strategies=allnames.strategy; end
+name_ants=unique(name_ants); nant=length(name_ants);
+name_exps=unique(name_exps);
+name_sigs=unique(name_sigs);
+name_strategies=unique(name_strategies);
 
 if nant==1
- name_ant=allnames.ant; name_ants=[];
-elseif all(contains(cellstr(allnames.ant(:,1:3)),{'32m' '42m'}))
+ name_ant=char(name_ants); name_ants=[];
+elseif all(contains(name_ants,{'32m' '42m'}))
  name_ant='esr';
-elseif all(contains(cellstr(allnames.ant(:,1:3)),{'uhf' 'vhf'}))
+elseif all(contains(name_ants,{'uhf' 'vhf'}))
  name_ant='tro';
-elseif all(contains(cellstr(allnames.ant(:,1:3)),{'uhf' 'vhf' 'kir' 'sod'}))
+elseif all(contains(name_ants,{'uhf' 'vhf' 'kir' 'sod'}))
  name_ant='kst';
-elseif all(contains(cellstr(allnames.ant(:,1:3)),{'san' 'wen' 'dan'}))
+elseif all(contains(name_ants,{'san' 'wen' 'dan'}))
  name_ant='sy3';
 else
  name_ant='esa';
 end
-if size(allnames.expr,1)==1
- nexp=['_' name_exps]; name_expr=name_exps; name_exps=[];
+if length(name_exps)==1
+ nexp=['_' char(name_exps)]; name_expr=char(name_exps); name_exps=[];
 else
  nexp=[]; name_expr=[];
 end

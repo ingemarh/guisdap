@@ -1,6 +1,6 @@
-function [Time,par2D,par1D,rpar2D,err2D,errs2d]=load_param_hdf5(hdf5file,pars1d,pars2d,do_rpar)
+function [Time,par2D,par1D,rpar2D,err2D,errs2d]=load_param_hdf5(hdf5file,status,pars1d,pars2d,do_rpar)
 % %Function to read the plasma parameters from hdf5 files
-% [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(hdf5file,pars1d,pars2d,do_rpar)
+% [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(hdf5file,status,pars1d,pars2d,do_rpar)
 % par2D: [Ran,Alt,Ne,Te,Ti,Vi,Coll,Comp,Res]
 % par1D: [Az,El,Pt,Tsys]
 % rpar2D: [ppRan,ppAlt,ppNe]
@@ -8,6 +8,7 @@ function [Time,par2D,par1D,rpar2D,err2D,errs2d]=load_param_hdf5(hdf5file,pars1d,
 %   Note 1: 'Tr' as input will generate 'Te'. In this case 'Ti' is needed as input as well.
 %   Note 2: 'Te' will generate NaN...
 % Input:
+%   status  = limit the output based on the status and residue 
 %   pars1d  = names of parameters wanted in par1D
 %   pars2d  = names of parameters wanted in par2D
 %   do_rpar = true/false (extract pp-data or not)
@@ -19,7 +20,7 @@ function [Time,par2D,par1D,rpar2D,err2D,errs2d]=load_param_hdf5(hdf5file,pars1d,
 %   do_rpars = true
 %   errs2d_id  = {'var_Ne' 'var_Tr' 'var_Ti' 'var_Vi' 'var_Collf'}
 
-global name_ant name_expr r_RECloc path_GUP local
+global name_ant name_expr r_RECloc path_GUP local r_XMITloc allnames rres Leap
 Time=[]; par2d=[]; par1D=[]; rpar2d=[]; err2d=[];
 
 filename = hdf5file;
@@ -32,14 +33,19 @@ if ~isempty(find(strcmp(metavar,'names')))
     name_expr = deblank(namesdata{2,nnexpr});
     nnant =  find(strcmp(deblank(namesdata(1,:)),'name_ant'));
     name_ant = deblank(namesdata{2,nnant});
+    nnsig =  find(strcmp(deblank(namesdata(1,:)),'name_sig'));
+    name_sig = deblank(namesdata{2,nnsig});
     if contains('san wen dan',name_ant)
       local.owner='IGGCAS';
     elseif contains('quj',name_ant)
       local.owner='CRIRP';
     end
+    allnames.ant=name_ant(1:3);
+    allnames.expr=name_expr;
+    allnames.sig=name_sig;
 end
 
-if nargin == 1
+if nargin <= 2
     do_rpar = true;
     pars1d  = {'az' 'el' 'Pt' 'Tsys'};
     errs1d  = {''};
@@ -50,8 +56,8 @@ if nargin == 1
     Te_id  = 94;
     dTe_id = 95;
 else
-    if nargin<4, do_rpar = false; end
-    if nargin<3, pars2d = {''}; end
+    if nargin<5, do_rpar = false; end
+    if nargin<4, pars2d = {''}; end
     GuisdapParFile = fullfile(path_GUP,'matfiles','Guisdap_Parameters.xlsx'); % path to the .xlsx file
     [~,text] = xlsread(GuisdapParFile);
     parameters_list = text(:,1);    % list that includes all parameters and keep their positions from the excel arc 
@@ -86,11 +92,11 @@ if do_rpar
 end
 
 matdata.metadata.par0d    = deblank(h5read(filename,'/metadata/par0d'));
-matdata.data.par0d        = h5read(filename,'/data/par0d');
+matdata.data.par0d        = double(h5read(filename,'/data/par0d'));
 matdata.metadata.par1d    = deblank(h5read(filename,'/metadata/par1d'));
-matdata.data.par1d        = h5read(filename,'/data/par1d');
+matdata.data.par1d        = double(h5read(filename,'/data/par1d'));
 matdata.metadata.utime    = deblank(h5read(filename,'/metadata/utime'));
-matdata.data.utime        = h5read(filename,'/data/utime');
+matdata.data.utime        = double(h5read(filename,'/data/utime'));
 
 % Time
 tcolumn1 = find(strcmp(matdata.metadata.utime(1,:),'time1')); 
@@ -101,17 +107,66 @@ Time = datenum(datetime(matdata.data.utime(:,[tcolumn1 tcolumn2]),'ConvertFrom',
 rcolumn1 = find(strcmp(matdata.metadata.par0d(1,:),'RECloc1'));
 rcolumn2 = find(strcmp(matdata.metadata.par0d(1,:),'RECloc2'));
 rcolumn3 = find(strcmp(matdata.metadata.par0d(1,:),'RECloc3'));
-r_RECloc = matdata.data.par0d([rcolumn1 rcolumn2 rcolumn3]);
+r_RECloc = double(matdata.data.par0d([rcolumn1 rcolumn2 rcolumn3]));
+r_RECloc(3) = r_RECloc(3)/1000;
+
+% Transmitter location
+xcolumn1 = find(strcmp(matdata.metadata.par0d(1,:),'XMITloc1'));
+xcolumn2 = find(strcmp(matdata.metadata.par0d(1,:),'XMITloc2'));
+xcolumn3 = find(strcmp(matdata.metadata.par0d(1,:),'XMITloc3'));
+r_XMITloc = double(matdata.data.par0d([xcolumn1 xcolumn2 xcolumn3]));
+r_XMITloc(3) = r_XMITloc(3)/1000;
 
 ii2d = 0;
 if ~isempty(find(strcmp(metavar,'par2d')))
     ii2d = 1;
     matdata.metadata.par2d    = deblank(h5read(filename,'/metadata/par2d'));
-    matdata.data.par2d        = h5read(filename,'/data/par2d');
+    matdata.data.par2d        = double(h5read(filename,'/data/par2d'));
     column = find(strcmp(matdata.metadata.par2d(1,:),'Ne'));
     if isempty(column), column = find(strcmp(matdata.metadata.par2d(1,:),'h')); end
     if isempty(column), column = find(strcmp(matdata.metadata.par2d(1,:),'range')); end
     ndata2d =  length(matdata.data.par2d(:,column));
+end
+
+% Filter out data based on status and res
+thestatus=[];
+theres=[];
+if nargin>1
+	if isfield(matdata.metadata,'par2d')
+	        column = find(strcmp(matdata.metadata.par2d(1,:),'status'));
+		if ~isempty(column)
+                	thestatus=matdata.data.par2d(:,column);
+	        end
+	        column = find(strcmp(matdata.metadata.par2d(1,:),'res1'));
+		if ~isempty(column)
+			theres=matdata.data.par2d(:,column);
+		end
+		baddata=find(thestatus>status(1) | theres>status(2));
+		for col=1:size(matdata.data.par2d,2)
+			if ~strcmp(matdata.metadata.par2d(1,col),'h') & ~strcmp(matdata.metadata.par2d(1,col),'range')
+				matdata.data.par2d(baddata,col)=NaN;
+			end
+		end
+	else
+                column = find(strcmp(matdata.metadata.par1d(1,:),'status'));
+                if ~isempty(column)
+                        thestatus=matdata.data.par1d(:,column);
+		else
+			item=find(strcmp(matdata.metadata.par0d(1,:),'status'));
+			thestatus=matdata.data.par0d(item)*ones(size(matdata.data.par1d,1),1);
+                end
+                column = find(strcmp(matdata.metadata.par1d(1,:),'res1'));
+                if ~isempty(column)
+                        theres=matdata.data.par1d(:,column);
+                end
+                baddata=find(thestatus>status(1) | theres>status(2));
+                for col=1:size(matdata.data.par1d,2)
+                        if ~strcmp(matdata.metadata.par1d(1,col),'el') & ~strcmp(matdata.metadata.par1d(1,col),'az')
+                                matdata.data.par1d(baddata,col)=NaN;
+                        end
+                end
+
+	end
 end
 
 if do_rpar
@@ -201,8 +256,8 @@ if ii2d
         end
         err2d = [err2d par_tmp];
         par_tmp = [];
-    end   
-    
+    end
+
 else
     %No 2d-data in hdf5-file, but 1d (or 0d) data put into par2D anyway.')
     for ii = pars2d
@@ -378,7 +433,7 @@ for ii = 1:n_tot
     nhalt_tmp = nhalt_tmp + nh(ii);
 end
 
-if nargin == 1
+if nargin <= 2
     par2D(:,:,1:2) = par2D(:,:,1:2)/1000;       % range, alt --> km
     par1D(:,3) = par1D(:,3)/10000;              % W --> 10 kW
 end
@@ -470,7 +525,7 @@ if do_rpar
         rpar2D(:,:,2) = NaN;
         warning(['Needs "el" in pars1d or pars2d in order to calculate pph (altitude) from pprange.'])
     end
-    if nargin > 1
+    if nargin > 2
         rpar2D(:,:,1:2) = rpar2D(:,:,1:2)*1000;     % km --> m
     end
 else
@@ -478,3 +533,17 @@ else
 end
 
 Time = Time';
+
+if isfield(matdata.metadata,'par2d')
+	column = find(strcmp(matdata.metadata.par2d(1,:),'w3'));
+	if ~isempty(column)
+		rres=double(max(matdata.data.par2d(:,column))/1000);
+	end
+else
+	column = find(strcmp(matdata.metadata.par1d(1,:),'w3'));
+        if ~isempty(column)
+                rres=double(max(matdata.data.par1d(:,column))/1000);
+        end
+end
+[~,Leap]=timeconv(Time(1,1),'mat2mat');
+Leap=Leap*ones(size(Time));

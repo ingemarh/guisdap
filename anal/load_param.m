@@ -25,8 +25,8 @@ if isempty(strfind(data_path,'*')) && ~isdir(data_path)
     try
       check=h5info(data_path,'/metadata/software');
       for j=1:length(check.Datasets)
-          if strcmp(check.Datasets(j).Name,'EISCAThdf5_ver')
-              [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(data_path);
+          if strcmp(check.Datasets(j).Name,'EISCAThdf5_ver') | strcmp(check.Datasets(j).Name,'GUISDAPhdf5_ver')
+              [Time,par2D,par1D,rpar2D,err2D]=load_param_hdf5(data_path,status);
               return
           end
       end
@@ -88,7 +88,7 @@ for i=1:n_tot
       err2D	=ones(n_alt,n_tot,nerr2D)*NaN;
     end
     if isempty(name_ant)
-      antennas=['uhf kir sod vhf esr'];
+      antennas=['uhf kir sod vhf esr 32m 42m'];
       i=(strfind('TKSVL',name_site)-1)*4+1;
       name_ant=antennas(i:i+2);
     elseif contains('san wen dan',name_ant)
