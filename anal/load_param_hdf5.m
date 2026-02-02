@@ -47,7 +47,7 @@ end
 
 if nargin <= 2
     do_rpar = true;
-    pars1d  = {'az' 'el' 'Pt' 'Tsys'};
+    pars1d  = {'az' 'el' 'Pt' 'Tsys' 'Offsetppd'};
     errs1d  = {''};
     pars2d  = {'range' 'h' 'Ne' 'Te' 'Ti' 'Vi' 'Collf' 'po+' 'res'};
     errs2d  = {'var_Ne' 'var_Te' 'var_Ti' 'var_Vi' 'var_Collf'};
@@ -132,41 +132,40 @@ end
 thestatus=[];
 theres=[];
 if nargin>1
-	if isfield(matdata.metadata,'par2d')
-	        column = find(strcmp(matdata.metadata.par2d(1,:),'status'));
-		if ~isempty(column)
-                	thestatus=matdata.data.par2d(:,column);
-	        end
-	        column = find(strcmp(matdata.metadata.par2d(1,:),'res1'));
-		if ~isempty(column)
-			theres=matdata.data.par2d(:,column);
-		end
-		baddata=find(thestatus>status(1) | theres>status(2));
-		for col=1:size(matdata.data.par2d,2)
-			if ~strcmp(matdata.metadata.par2d(1,col),'h') & ~strcmp(matdata.metadata.par2d(1,col),'range')
-				matdata.data.par2d(baddata,col)=NaN;
-			end
-		end
-	else
-                column = find(strcmp(matdata.metadata.par1d(1,:),'status'));
-                if ~isempty(column)
-                        thestatus=matdata.data.par1d(:,column);
-		else
-			item=find(strcmp(matdata.metadata.par0d(1,:),'status'));
-			thestatus=matdata.data.par0d(item)*ones(size(matdata.data.par1d,1),1);
-                end
-                column = find(strcmp(matdata.metadata.par1d(1,:),'res1'));
-                if ~isempty(column)
-                        theres=matdata.data.par1d(:,column);
-                end
-                baddata=find(thestatus>status(1) | theres>status(2));
-                for col=1:size(matdata.data.par1d,2)
-                        if ~strcmp(matdata.metadata.par1d(1,col),'el') & ~strcmp(matdata.metadata.par1d(1,col),'az')
-                                matdata.data.par1d(baddata,col)=NaN;
-                        end
-                end
-
-	end
+    if isfield(matdata.metadata,'par2d')
+        column = find(strcmp(matdata.metadata.par2d(1,:),'status'));
+        if ~isempty(column)
+            thestatus=matdata.data.par2d(:,column);
+        end
+        column = find(strcmp(matdata.metadata.par2d(1,:),'res1'));
+        if ~isempty(column)
+            theres=matdata.data.par2d(:,column);
+        end
+        baddata=find(thestatus>status(1) | theres>status(2));
+        for col=1:size(matdata.data.par2d,2)
+            if ~strcmp(matdata.metadata.par2d(1,col),'h') & ~strcmp(matdata.metadata.par2d(1,col),'range')
+                matdata.data.par2d(baddata,col)=NaN;
+            end
+        end
+    else
+        column = find(strcmp(matdata.metadata.par1d(1,:),'status'));
+        if ~isempty(column)
+            thestatus=matdata.data.par1d(:,column);
+        else
+            item=find(strcmp(matdata.metadata.par0d(1,:),'status'));
+            thestatus=matdata.data.par0d(item)*ones(size(matdata.data.par1d,1),1);
+        end
+        column = find(strcmp(matdata.metadata.par1d(1,:),'res1'));
+        if ~isempty(column)
+            theres=matdata.data.par1d(:,column);
+        end
+        baddata=find(thestatus>status(1) | theres>status(2));
+        for col=1:size(matdata.data.par1d,2)
+            if ~strcmp(matdata.metadata.par1d(1,col),'el') & ~strcmp(matdata.metadata.par1d(1,col),'az')
+                matdata.data.par1d(baddata,col)=NaN;
+            end
+        end
+    end
 end
 
 if do_rpar
@@ -328,12 +327,20 @@ if azno2d
     par2d(:,azno2d)=mod(par2d(:,azno2d)+360,360);
 end
 
+roff=0;
 for ii = pars1d
     if strcmp(ii,'Tsys')
         column = find(contains(matdata.metadata.par1d(1,:),'Tsys'));  % check for Tsys or (Tsys1, Tsys2 ...)
     elseif strcmp(ii,'Te ') && isempty(column)
         Tr2Te_1d = 1;
         column = find(contains(matdata.metadata.par1d(1,:),'Tr'));
+    elseif strcmp(ii,'Offsetppd')
+        column = find(contains(matdata.metadata.par1d(1,:),'Offsetppd'));
+        if isempty(column)
+            column = find(contains(matdata.metadata.par1d(1,:),'phasepush'));
+        else
+            roff=1;
+        end
     else
         column = find(strcmp(matdata.metadata.par1d(1,:),ii));
     end
@@ -346,6 +353,13 @@ for ii = pars1d
                 column = find(contains(matdata.metadata.par0d(1,:),'Tr'));
             else
                 clear(Tr2Te_1d)
+            end
+        elseif strcmp(ii,'Offsetppd')
+            column = find(contains(matdata.metadata.par0d(1,:),'Offsetppd'));
+            if isempty(column)
+                column = find(contains(matdata.metadata.par0d(1,:),'phasepush'));
+            else
+                roff=1;
             end
         else
             column = find(strcmp(matdata.metadata.par0d(1,:),ii));
@@ -374,6 +388,10 @@ for ii = pars1d
     par1D = [par1D par_tmp];
     par_tmp = [];   
 end   
+if roff
+    ind=find(strcmp(pars1d,'Offsetppd'));
+    par1D(:,ind)=par1D(:,ind)*1e6;
+end
 
 % 1d: Cast azimuth and elevation into range 0-360 and 0-90 degrees
 % respectively:
@@ -384,7 +402,6 @@ if elno1d
     par1D(d,elno1d)=180-par1D(d,elno1d);
     if azno1d
         par1D(d,azno1d)=par1D(d,azno1d)+180; 
-        
     end
 end
 if azno1d
