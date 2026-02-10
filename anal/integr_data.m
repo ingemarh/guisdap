@@ -87,7 +87,7 @@ while i<length(files)
       end
     catch,end
   else %hdf5 files
-    d_parbl=double(h5read(file.fname,'/Data/ParBlock/ParBlock',[1,file.idx],[Inf,1]));
+    d_parbl=double(h5read(file.fname,'/Data/ParBlock/ParBlock',[1,file.idx],[Inf,1])).';
     d_r=double(h5read(file.fname,'/Data/L2',[1,1,file.idx],[Inf,2,1]));
     d_data=complex(d_r(:,1),d_r(:,2));
     d_resid=unique([d_resid h5read(file.fname,'/PortalDBReference/ResourceID')]);

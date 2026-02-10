@@ -2,7 +2,7 @@ function lagprofiler()
 global d_data d_raw d_parbl a_lpf
 for lpf=a_lpf
  if ~isempty(lpf.raw)
-  dd_raw=d_raw(lpf.raw);
+  dd_raw=double(d_raw(lpf.raw));
   raw1=lpf.raw(1);
  else
   dd_raw=d_raw;
