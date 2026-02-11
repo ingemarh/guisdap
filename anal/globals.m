@@ -24,7 +24,7 @@ global a_NCAR a_save a_code a_intfixed a_intfix a_intallow a_intfixforce a_saves
 global a_ppshortlags a_ppcombine a_rcprog
 global a_year a_start a_integr a_integdeffile a_skip a_end a_realtime a_txlimit
 global di_figures di_results di_spectra
-global name_ant calTemp sysTemp r_Tsys
+global name_ant calTemp sysTemp r_Tsys a_gainfactor
 global webfile local a_autodir, webfile=cell(1);
 
 global lpg_womscaled k_radar lpg_s

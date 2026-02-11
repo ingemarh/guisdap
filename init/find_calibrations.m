@@ -33,7 +33,7 @@ for code=codes;
   all_gr=[bac_gr, cal_gr, sig_gr, xxx_gr, off_gr];
   % If no calibration data for a code, look for other codes, which
   % might be on the same real channel. If any is found, use their calibrations.
-  if length(cal_gr)==0,
+  if isempty(cal_gr) & isempty(bac_gr)
     if isempty(sig_gr)
       ch=diff_val(vc_ch(lp_vc(lpg_lp(off_gr(1))))); % These are the real channels used
     else
@@ -82,7 +82,7 @@ for code=codes;
           lpg_bac(1,lpg)=off_gr(len);
         elseif lenbac==0 & lpg_lag(lpg)>0
           % Multipulse experiments do not have background for non-zero lags
-          fprintf(' No background for lpg %3.0f, lag value %3.0f us\n',lpg,lpg_lag(lpg)*p_dtau)
+          fprintf(' No background for lpg %3.0f, lag value %g us\n',lpg,single(lpg_lag(lpg))*p_dtau)
         elseif lenbac==0 & lpg_lag(lpg)==0  % Something in error in the background measurement
           fprintf('\nERROR: No background measurement found for lpg %3.0f\n',lpg)
           fprintf(' The lag value of this lpg is zero and\n therefore data will be regarded as garbage \n\n')

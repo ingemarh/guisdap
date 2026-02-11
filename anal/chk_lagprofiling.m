@@ -9,6 +9,7 @@ if ~isfield(a_lpf,'skip'), [a_lpf.skip]=deal(0); end
 if ~isfield(a_lpf,'data'), [a_lpf.data]=deal(0); end
 if ~isfield(a_lpf,'raw'), [a_lpf.raw]=deal(0); end
 if ~isfield(a_lpf,'loop'), [a_lpf.loop]=deal(1); end
+if ~isfield(a_lpf,'coderow'), [a_lpf.coderow]=deal(1); end
 for lpf=a_lpf
  i=i+1;
  if isempty(lpf.skip), lpf.skip=0; end
@@ -76,6 +77,7 @@ for lpf=a_lpf
  if isempty(lpf.p)
   lpf.p=[0 lpf.nrep-1];
  end
+ %if ~isempty(lpf.raw)
  if ~isempty(lpf.raw) && length(lpf.raw)<2
   lpf.raw=lpf.raw+(lpf.p(1)*nsamp+1:(lpf.p(2)+1)*nsamp);
  end
@@ -115,7 +117,7 @@ for lpf=a_lpf
   lpf.nrep=lpf.par(2)*loop;
   nsamp=lpf.par(1);
  end
- if ~isempty(lpf.raw) && length(lpf.raw)<2
+ if ~isempty(lpf.raw)
   lpf.raw=(lpf.raw(1)-1)*loop+(1:lpf.nrep*nsamp);
  end
  a_lpf(i)=lpf;

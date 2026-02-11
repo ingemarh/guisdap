@@ -36,7 +36,7 @@ for ind=1:length(lpg_ra),
   lpg_code(ind)=cheq(lp_code(lpg));
 
   fprintf('lpg=%d code=%d type=%c',ind,lpg_code(ind),lpg_bcs(ind));
-  fprintf(' lag=%.0f dt=%.0f',p_dtau*lpg_lag(ind),p_dtau*lpg_dt(ind));
+  fprintf(' lag=%g dt=%g',p_dtau*single(lpg_lag(ind)),p_dtau*single(lpg_dt(ind)));
   fprintf(' ND=%d h=%5.0f',lpg_ND(ind),p_dtau*lpg_h(ind));
   fprintf(' T=%.0f nt=%3d',lpg_T(ind),lpg_nt(ind));
   fprintf(' ra=%d ri=%d\n',lpg_ra(ind),lpg_ri(ind));

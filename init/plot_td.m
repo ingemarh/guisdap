@@ -14,7 +14,7 @@
 %
 %	td_variables		vc_variables
 %	============		============
-%	glob_EISCAT		glob_GUP
+%	glob_initKST		glob_GUP
 %	name_expr='NAME'	name_expr='NAME'
 %	name_site='X'		name_site='X'
 %	load_PS			load_GUPvar
@@ -95,7 +95,7 @@ function plot_td(arg1,  arg2,  arg3,  arg4,  arg5,  ...
 
 	%% Global variables  to be used with both
 	global  p_rep p_dtau
-if get(gcf,'color')==[1 1 1]
+if sum(get(gcf,'color'))>2.5
  white='k';
 else
  white='w';
@@ -551,6 +551,7 @@ end
 				calib_x = [t1 t2 t2 t1]' .* p_dtau;
 				calib_y = dupcol([min(cindex) min(cindex) max(cindex)+1 max(cindex)+1]',length(index));
 			else
+				calib_x = []; calib_y = [];
 				disp(['Note: No calibration intervals in panel ' int2str(i) ' ...'])
 			end
 	
@@ -614,6 +615,7 @@ end
 				calib_x = [t1' t2' t2' t1']' .* p_dtau;
 				calib_y = dupcol([min(cindex) min(cindex) max(cindex)+1 max(cindex)+1]',length(index));
 			else
+				calib_x = []; calib_y = [];
 				disp('Note: No calibration intervals ...')
 			end
 	
@@ -701,8 +703,8 @@ end
 		%% Draw the patches in first as they are opaque ...
 		patch(calib_x,calib_y,[.9 .9 .9],'EdgeColor',white)
 		patch(recep_x,recep_y,[.5 .5 .5],'EdgeColor',white)
-%		patch(calib_x,calib_y,'y','EdgeColor',white)
 %		patch(recep_x,recep_y,'m','EdgeColor',white)
+%		patch(calib_x,calib_y,'y','EdgeColor',white)
 		if (use_vc)
 			%% NB. patch does not accept sparse matrices ....
 			%% Nor may there be extraneous 0's, and the presence
@@ -713,7 +715,7 @@ end
 				patch(x,y,white,'EdgeColor','None')
 			end
 		else
-			patch(trans_x,trans_y,white,'EdgeColor',white)
+			patch(reshape(trans_x,[],size(trans_y,2)),trans_y,white,'EdgeColor',white)
 		end
 
 		%% Draw in horizontal lines which represent channels ...

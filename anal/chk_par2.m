@@ -76,7 +76,7 @@ acode=[];
 gates=[];
 codes=[];
 if ~isempty(a_code)
-  if length(a_code)==length(a_range)
+  if length(a_code(:))==length(a_range)
     temp=a_code;
     while any(temp>0)
       code=rem(temp,10);
@@ -88,10 +88,10 @@ if ~isempty(a_code)
     for i=1:max(codes)
       ind=find(codes==i);
       len=length(ind);
-      if len>0; acode(i,gates(ind))=ones(1,len); end
+      if len>0, acode(i,gates(ind))=ones(1,len); end
     end
     clear code temp ind gates codes i
-  elseif max(a_code)>max(lpg_code) & ~contains('3DW',name_site)
+  elseif max(a_code(:))>max(lpg_code) & ~contains('3DW',name_site)
     warning('GUISDAP:chkpar','Analysis_code variable not well defined and neglected')
     a_code=[];
   elseif length(name_ant)==3 & ~all(ismember(lpg_code,a_code))
@@ -124,7 +124,7 @@ for gate=find(diffran>0)
     % Select suitable codes 
     if length(acode)>0
       ind1=[];
-      for code=find(acode(:,gate)==1)';
+      for code=find(acode(:,gate)==1)'
         ind1=[ind1,find(ad_code(addr)==code)];
       end
       addr=addr(ind1);

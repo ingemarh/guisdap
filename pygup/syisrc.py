@@ -93,10 +93,11 @@ class hdfdata(Structure):
 def searchhead(f,fsize,d):
     FrameBegFlagUint=0xAAAA5555;
     while d!=FrameBegFlagUint:
-        print('%x'%d)
+        #print('%x'%d)
         d=np.fromfile(f,dtype='uint32',count=1)[0]
     f.seek(-sizeof(c_uint32),1)
-    return gethead(f),f.tell()
+    ftell=f.tell()
+    return gethead(f),ftell
 
 def gethead(f):
     if type(f)==str: f=open(f,'rb')
@@ -121,8 +122,7 @@ def getIQ(f,TotalIQ):
     IQ=np.fromfile(f,dtype='int32',count=TotalIQ)
     return IQ
 
-def flist(f):
-    extra_samples=1
+def flist(f,extra_samples=0):
     if type(f)==str: f=open(f,'rb')
     tid=[]
     code=[]
@@ -130,18 +130,23 @@ def flist(f):
     el=[]
     hdx=[]
     nd=[]
+    nex=extra_samples
     ftell=f.tell()
     fsize=f.seek(0,os.SEEK_END)
     f.seek(ftell)
     while ftell<fsize:
+        fpos=ftell
         h=gethead(f)
         if h==None:
           return tid,code,az,el,hdx,nd
         while type(h)==int:
           f.seek(-sizeof(syisr_header)+sizeof(c_int32),1)
           h,ftell=searchhead(f,fsize,h)
+          if extra_samples==0:
+              nex=(ftell-fpos)//(2*sizeof(c_int32))
+              print('Found %d extra IQ sample, adjusting size'%nex)
         #print(h.month,h.year,h.endflag)
-        TotalIQ=(h.WaveGateWidthV+extra_samples)*2
+        TotalIQ=(h.WaveGateWidthV+nex)*2
         #print(TotalIQ)
         if h.WaveGateWidthV>=0:
             btime=datetime.datetime(h.year+2000,h.month,h.day,h.hour,h.minute,h.second,h.fracOfSecond*25)
@@ -163,7 +168,7 @@ def struct2dict(s):
 def exp(head):
     CodeWidth=head.CodeWidthV+1
     if head.PulseWidthV==CodeWidth:
-        exp='sy%dx'%head.PulseWidthV
+        exp='sy%d'%head.PulseWidthV
     else:
         exp='sy%dx%d'%(head.PulseWidthV/CodeWidth,CodeWidth)
     return exp
@@ -260,7 +265,7 @@ def main():
 
     tid,code,az,el,hdx,nd=flist(f)
     print(len(tid),type(tid))
-    f.seek(0,0)
+    f.seek(hdx[0],0)
     head=gethead(f)
     printstr(head)
     c=getcodes(head)

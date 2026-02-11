@@ -8,8 +8,9 @@ py.importlib.reload(py.importlib.import_module('syisrc'));
 %file='/media/mop/datamop/syisr/bin/20250822/SY_2025_08_19_22_05_11.dat1-1-134';
 
 if strcmp(type,'flist')
- raw=[];
- flist=cell(getbin.flist(file));
+ raw=[]; extra_samples=0;
+ if nargin>2, extra_samples=hdx; end
+ flist=cell(getbin.flist(file,int32(extra_samples)));
  tai=num2cell(timeconv(double(flist{1})','unx2tai'));
  code=num2cell(uint16(flist{2}));
  azel=num2cell(complex(single(flist{3}),single(flist{4})));

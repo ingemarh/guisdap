@@ -59,9 +59,13 @@ elseif ~isempty(sysTemp)
  calibs=lpgs(find(lpg_lag(lpgs)==0 & lpg_bcs(lpgs)=='b'));         % array size mismatch, added by wyh
  calibs=diff_val(calibs); % find all different values
  calibs=calibs(find(calibs>0));  % Accept non-zero values
- lpg_cal=size(lpg_bac);
+ %lpg_cal=zeros(size(lpg_bac),'int32');
  for cal=calibs
-  lpg_cal(find(lpg_code==lpg_code(cal)))=cal;
+  if length(calibs)==1
+    lpg_cal(:)=cal; %hui hui
+  else
+    lpg_cal(find(lpg_code==lpg_code(cal)))=cal;
+  end
   %bac=lpg_bac(cal);
   global a_loop r_baclevel
   bac_power=median_c(d_data(lpg_addr(cal)+ADDR_SHIFT));

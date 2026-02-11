@@ -36,10 +36,10 @@ if ~isempty(a_ind) & a_ind(1)==0
   for lpf=a_lpf
     if lraw<max(lpf.raw), lraw=max(lpf.raw); end
   end
-  if isfield(d_filelist,'nd')
-    bad=find(cell2mat({d_filelist.nd})<lraw/a_lpf(1).nrep);
-    d_filelist(bad)=[];
-  end
+  %if isfield(d_filelist,'nd')
+  %  bad=find(cell2mat({d_filelist.nd})<lraw/a_lpf(1).nrep);
+  %  d_filelist(bad)=[];
+  %end
   fileslist=cell2mat({d_filelist.tai});
   filescode=cell2mat({d_filelist.code});
   filesbeam=cell2mat({d_filelist.azel});
@@ -53,7 +53,7 @@ if ~isempty(a_ind) & a_ind(1)==0
     beams(find(d(1,:)>real(a_screen(2)) | d(2,:)>imag(a_screen(2))))=[];
   end
   a_beam=1;
-  ncode=length(a_code);
+  ncode=size(a_code,2);
   a_loop=a_lpf(1).nrep/ncode;
   alpf=a_lpf;
 elseif a_integr==0
@@ -105,18 +105,21 @@ for aind=0:ll:laind-1;
   d_raw=int16(zeros(lraw,1)); draw=[];
   for lop=0:loop-1
    fid=a_ind(innerloop(1)+lop+1);
-   for j=a_code
+   for jrow=1:ncode, for jcol=1:size(a_code,1)
+    j=a_code(jcol,jrow);
     jj=find(filescode(fid:end)==j,1);
     if isempty(jj)
      dump_OK=0; break
+    else
+     fid=fid+jj-1;
     end
-    file=d_filelist(fid+jj-1);
+    file=d_filelist(fid);
     if isempty(draw), tfirst=file.tai; end
     if isfield(file,'nd')
      [head,draw]=syisr_bin('dump',file.fname,file.hdx);
      head.nd=file.nd;
      site=head.st;
-     skys=[skys;fid+jj-1];
+     skys=[skys;fid];
     else
      head=h5read(file.fname,'/head',file.hdx,1);
      d_rx=h5read(file.fname,'/data',double(head.di+1),double(head.nd));
@@ -125,14 +128,16 @@ for aind=0:ll:laind-1;
      draw=complex(d_rx.r,d_rx.i);
      site=file.fname(end-4); %hui hui
     end
-    for lpf=a_lpf
+    for lpf=a_lpf(find([a_lpf.coderow]==jcol))
      len_prof=length(lpf.raw)/ncode/loop;
      if head.nd<len_prof+lpf.skip
       error('guisdap:integr_data',sprintf('Need %d data points, got %d',len_prof+lpf.skip,head.nd))
      end
-     d_raw(lpf.raw((j-a_code(1)+lop*ncode)*len_prof+(1:len_prof)))=draw(lpf.skip+(1:len_prof));
+     %[j jj (jrow-1+lop*ncode)*len_prof+[1 len_prof]]
+     d_raw(lpf.raw((jrow-1+lop*ncode)*len_prof+(1:len_prof)))=draw(lpf.skip+(1:len_prof));
     end
-   end
+    fid=fid+1;
+   end, end
   end
   if dumpOK
    i_averaged=1; i_var1=[]; i_var2=[];
