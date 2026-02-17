@@ -116,7 +116,7 @@ for aind=0:ll:laind-1;
     file=d_filelist(fid);
     if isempty(draw), tfirst=file.tai; end
     if isfield(file,'nd')
-     [head,draw]=syisr_bin('dump',file.fname,file.hdx);
+     [head,draw]=syisr_bin('dump',file.fname,file.hdx,file.nd);
      head.nd=file.nd;
      site=head.st;
      skys=[skys;fid];
@@ -133,7 +133,7 @@ for aind=0:ll:laind-1;
      if head.nd<len_prof+lpf.skip
       error('guisdap:integr_data',sprintf('Need %d data points, got %d',len_prof+lpf.skip,head.nd))
      end
-     %[j jj (jrow-1+lop*ncode)*len_prof+[1 len_prof]]
+     %[j jj (jrow-1+lop*ncode)*len_prof+[1 len_prof] lpf.skip len_prof]
      d_raw(lpf.raw((jrow-1+lop*ncode)*len_prof+(1:len_prof)))=draw(lpf.skip+(1:len_prof));
     end
     fid=fid+1;

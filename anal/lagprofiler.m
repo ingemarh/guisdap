@@ -2,12 +2,12 @@ function lagprofiler()
 global d_data d_raw d_parbl a_lpf
 for lpf=a_lpf
  if ~isempty(lpf.raw)
-  dd_raw=d_raw(lpf.raw);
   raw1=lpf.raw(1);
- %else
- % dd_raw=d_raw;
- % d_raw=[];
- % raw1=0;
+  if length(lpf.raw)>1
+   raw1=raw1-1;
+   dd_raw=d_raw(lpf.raw);
+  end
+%else use previous dd_raw,raw1
  end
  switch lpf.lib
  case 'plwin'
@@ -25,7 +25,7 @@ for lpf=a_lpf
  case 'resampler' % par(1)=[nsamp nrep decimation] boxcar!
   lraw=fix(numel(dd_raw)/lpf.nrep/lpf.par(3))*lpf.par(3);
   dd_raw=reshape(dd_raw,lpf.par(1),lpf.nrep); %reshape into single profiles
-  dd_raw=sum(reshape(dd_raw(1:lraw,:),lpf.par(3),[]),1);
+  dd_raw=int16(sum(reshape(double(dd_raw(1:lraw,:)),lpf.par(3),[]),1)/lpf.par(3));
   d_raw(raw1+(1:numel(dd_raw)))=dd_raw(:);
   dd_data=[];
  case 'fir' % par=[nsamp nrep fir]
@@ -41,8 +41,8 @@ for lpf=a_lpf
    dd_data=reshape(acf(:,1:lpf.par(4)),[],1)/size(acf,2);
   end
  case 'pow'
-  dd_raw=reshape(dd_raw,lpf.par(1),lpf.par(2),[]);
-  pow=transpose(sum(dd_raw.*conj(dd_raw),3));
+  draw=reshape(double(dd_raw),lpf.par(1),lpf.par(2),[]);
+  pow=transpose(sum(draw.*conj(draw),3));
   dd_data=[];
   for j=1:lpf.par(2)
    dd_data=[dd_data,pow(j,:)];

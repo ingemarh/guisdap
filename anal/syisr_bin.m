@@ -1,4 +1,4 @@
-function [h,raw]=syisr_bin(type,file,hdx)
+function [h,raw]=syisr_bin(type,file,hdx,nd)
 %function [h,raw]=syisr_bin(type,file,hdx)
 % Input: type flist|guess|dump|disp
 global path_GUP
@@ -26,7 +26,7 @@ elseif strcmp(type,'guess')
  raw=[];
  h=py2mat(struct(getbin.guess(file)));
 elseif strcmp(type,'dump')
- dump=cell(getbin.gethdfmat(file,uint32(hdx)));
+ dump=cell(getbin.gethdfmat(file,uint32(hdx),uint32(nd)));
  h=struct(dump{1});
  h.dt=uint64(h.dt); h.ipp=uint16(h.ipp); h.ws=uint16(h.ws); h.ex=char(h.ex); h.st=char(h.st);
  iq=int16(dump{2}); raw=complex(iq(2:2:end),iq(1:2:end));

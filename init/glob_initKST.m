@@ -4,7 +4,7 @@
 %
 % See also: init_EISCAT, globals, glob_GUP, start_GUP
 
-global ch_f ch_p ch_adcint ch_filter ch_fradar ch_gain
+global ch_f ch_p ch_adcint ch_filter ch_fradar ch_gain ch_decimation
 
 global lp_t1 lp_t2 lp_dt lp_nt lp_vc lp_ra lp_ri lp_T lp_code lp_bcs lp_h lp_ind 
 global lp_nfir lp_fir lp_dec 

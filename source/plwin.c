@@ -221,7 +221,7 @@ decoder_6 (ulong nbits, int *par, ulong fbits, float *fpar,
 
 
   /* ew: calculate length of output from calculations */
-  pth.fft_dlayer = 2 * (pth.dl_long + 1) * (pth.dl_short + 1);
+  pth.fft_dlayer = 2 * pth.nr_rep;
   pth.fft_clutter = pth.nr_rep / pth.nr_win;	/* ew: This is the number of repetitions of the transmitted pulse-group */
   pth.nex = pth.fft_len - pth.win_len * pth.frac;
   pth.nr_virtsamp = pth.nr_samp + pth.lower_tail + pth.upper_tail;

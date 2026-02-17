@@ -13,7 +13,7 @@ if ~isfield(a_lpf,'coderow'), [a_lpf.coderow]=deal(1); end
 for lpf=a_lpf
  i=i+1;
  if isempty(lpf.skip), lpf.skip=0; end
- if isempty(lpf.data), lpf.data=0; end
+ %if isempty(lpf.data), lpf.data=0; end
  %if isempty(lpf.raw), lpf.raw=0; end
  switch lpf.lib
  case 'plwin'
@@ -106,10 +106,10 @@ for lpf=a_lpf
   lpf.nrep=lpf.nrep*loop;
   lpf.par(2)=lpf.nrep;
   nsamp=lpf.par(3);
-  lpf.p=[0 lpf.nrep-1];
  case 'resampler'
   lpf.nrep=lpf.par(2)*loop;
   nsamp=lpf.par(1);
+  lpf.p=[0 lpf.nrep-1];
  case 'fir'
   lpf.nrep=lpf.par(2)*loop;
   nsamp=lpf.par(1);

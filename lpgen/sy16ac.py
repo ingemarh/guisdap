@@ -16,7 +16,6 @@ def myexp(site):
 	plasma_frac=5		#Plasma frac
 	ndgat=0
 	dlong=0
-	dlong=0
 	nr_pulses=1		#Number of pulses to correlate
 	ion_frac=3
 	ion_lag=47		#Maxlag for the ion line
@@ -25,7 +24,7 @@ def myexp(site):
 	ipp=16000	#IPP length in us
 	baud_len=30	#Baud length in us
 	start_tx=0	#When to start transmitting in us
-	trx_frq=440	#Transmit frequency used
+	trx_frq=430	#Transmit frequency used
 	start_samp=int(90/0.15)	#When to start sampling
 	calstop=ipp
 	if site=='r':
@@ -38,6 +37,21 @@ def myexp(site):
 		toptail=0
 		nr_fullgates=int(2*guard/baud_len+1)
 		calstop=ipp-50
+	elif site=='d3':
+		site='3'
+		baud_len=3	#Baud length in us
+		ipp=1250	#IPP length in us
+		ion_frac=2
+		ion_lag=ion_frac*16		#Maxlag for the ion line
+		dspexp='sy16x3a'
+		isamp=(4188-288)/6
+		start_samp=53	#When to start sampling
+		tails=code_tx-2
+		ndgat=200
+		dshort=nr_codes-1
+		lowtail=tails
+		toptail=0
+		nr_pulses=2		#Number of pulses to correlate
 	else:
 		site='h'
 		isamp=740
@@ -57,10 +71,14 @@ def myexp(site):
 		nr_fullgates=2*guard/baud_len+1
 	else:
 		clutts=0	#Clutter window us
-	print(isamp,clutts)
+	print(isamp,clutts,nr_fullgates)
 	ac_code=par_gen.acgen(code_len,code_tx,nr_codes,'b')
-	isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code,nr_cal)+nr_cal
-	print(isamp,clutts)
+	if baud_len==3:
+		ac_code=par_gen.acgen(code_len,code_tx,nr_codes)
+		isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code)
+	else:
+		isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code,nr_cal)+nr_cal
 
-	par_gen.acdecgen(exp_name,ac_code,code_tx,nr_loop,loops,isamp,ion_frac,ion_lag)
+		par_gen.acdecgen(exp_name,ac_code,code_tx,nr_loop,loops,isamp,ion_frac,ion_lag)
+	print(isamp,clutts)
 	par_gen.t2ps(cal_samp,samp_speed,loops,baud_len,ac_code,code_len,code_tx,start_tx,ipp,trx_frq,site,dspexp,start_samp,isamp,calstop)

@@ -70,7 +70,7 @@ end
 vc_env(lenmax(1)+1:maxlen,:)=[];
 vc_p(lenmax(2)+1:maxlen,:)=[];
 
-plot((0:lenmax(2)-1)*p_dtau,vc_p),title('Filter impulse responses')
+plot((0:lenmax(2)-1)*p_dtau,vc_p),title('Filter impulse responses'),drawnow
 
 clear Nvc maxlen vc ind start_env i alku loppu alku_c loppu_f env ii
 clear len impresp adcint temp enve envel lenmax maxi vc

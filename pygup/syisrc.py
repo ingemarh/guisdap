@@ -140,11 +140,12 @@ def flist(f,extra_samples=0):
         if h==None:
           return tid,code,az,el,hdx,nd
         while type(h)==int:
-          f.seek(-sizeof(syisr_header)+sizeof(c_int32),1)
+          f.seek(-sizeof(syisr_header)-2*sizeof(c_int32),1)
           h,ftell=searchhead(f,fsize,h)
           if extra_samples==0:
               nex=(ftell-fpos)//(2*sizeof(c_int32))
               print('Found %d extra IQ sample, adjusting size'%nex)
+              if len(nd)==1: nd[0]+=nex
         #print(h.month,h.year,h.endflag)
         TotalIQ=(h.WaveGateWidthV+nex)*2
         #print(TotalIQ)
@@ -155,7 +156,7 @@ def flist(f,extra_samples=0):
             az.append(h.Azi*0.005493164)
             el.append(h.Ele*0.005493164)
             hdx.append(ftell)
-            nd.append(h.WaveGateWidthV)
+            nd.append(h.WaveGateWidthV+nex)
             f.seek(TotalIQ*sizeof(c_int32),1)
         else:
             print(h.WaveGateWidthV,h.WaveGateFrontV,h.PRTV)
@@ -173,14 +174,13 @@ def exp(head):
         exp='sy%dx%d'%(head.PulseWidthV/CodeWidth,CodeWidth)
     return exp
 
-def gethdf(f,hdx):
+def gethdf(f,hdx,nd):
     if type(f)==str: f=open(f,'rb')
     f.seek(hdx,0)
     h=gethead(f)
     hh=hdfhead()
     btime=datetime.datetime(h.year+2000,h.month,h.day,h.hour,h.minute,h.second,h.fracOfSecond*25)
     hh.dt=int(1e6*(btime.timestamp()-8*3600))
-    TotalIQ=h.WaveGateWidthV*2
     hh.ex=exp(h)
     hh.ipp=h.PRTV
     hh.ws=h.WaveGateFrontV
@@ -189,7 +189,8 @@ def gethdf(f,hdx):
     hh.rf=h.RadarFre*0.2+430e6
     hh.st=os.path.basename(f.name)[0]
     if hh.st=='2': hh.st='S'
-    TotalIQ=h.WaveGateWidthV*2
+    #TotalIQ=h.WaveGateWidthV*2
+    TotalIQ=nd*2
     s2=1.414213562
     #IQ32//=np.array(2,dtype='i4')
     IQ32=(getIQ(f,TotalIQ)/np.array(s2)).round()
@@ -238,8 +239,8 @@ def getheadmat(f):
     c=dict((field, getattr(s,field)) for field,_ in s._fields_)
     return h,c
 
-def gethdfmat(f,i):
-    s,iq=gethdf(f,i)
+def gethdfmat(f,i,n):
+    s,iq=gethdf(f,i,n)
     h=dict((field, getattr(s,field)) for field,_ in s._fields_)
     return h,iq
 
@@ -272,7 +273,7 @@ def main():
     printstr(c)
     f.seek(0,0)
     print(guess(f))
-    hh,IQ=gethdf(f,hdx[0])
+    hh,IQ=gethdf(f,hdx[0],nd[0])
     printstr(hh)
     print(struct2dict(hh))
     print(len(IQ)/2)

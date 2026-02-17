@@ -5,7 +5,7 @@ if name_site=='V'
 else
     analysis_lpf.par=[20000 128*5 15];
 end
-analysis_lpf.raw=[];
+analysis_lpf.raw=0;
 
 analysis_lpf(2).par=load([path_expr 'leo_u.par']);
 analysis_lpf(2).lib='plwin';

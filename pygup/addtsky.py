@@ -51,6 +51,10 @@ class AddTskyToH5:
         """
 
         # Convert observation time to ISO format (example implementation)
+        if np.isscalar(unixt):
+            unixt=[unixt]
+            az=[az]
+            el=[el]
         obs_dt = [datetime.fromtimestamp(ut, tz=timezone.utc) for ut in unixt]
 
         obs_loc = self.loc[site]

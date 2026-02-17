@@ -42,3 +42,9 @@ else
  end
  clear filtertype BW ind channels
 end
+if ~isempty('ch_decimation')
+ %same boxcar on all channels sofar
+ boxc=zeros(prod(ch_decimation)-1,1); boxc(1:ch_decimation(2):end)=1;
+ ch_p=conv2(ch_p,boxc/ch_decimation(1),'full');
+ clear boxc
+end

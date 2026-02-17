@@ -10,7 +10,7 @@
   function load_PS(rcprog, Nrcprog)
 
 global path_exps name_expr name_site 
-global td_ch td_t1 td_t2 td_am p_rep ch_f ch_filter ch_adcint p_offsetppd
+global td_ch td_t1 td_t2 td_am p_rep ch_f ch_filter ch_adcint p_offsetppd ch_decimation
 
 if nargin==0, rcprog=1; Nrcprog=1; 
 elseif nargin==1, Nrcprog=1; end
