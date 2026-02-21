@@ -19,7 +19,7 @@
 function scale_data(M_averaged)
 
 global lpg_ra lpg_ND lpg_cal lpg_bac lpg_bcs d_data d_var1 d_var2 ...
-  ADDR_SHIFT calTemp sysTemp a_code lpg_code lpg_lag
+  ADDR_SHIFT calTemp sysTemp a_code lpg_code lpg_lag a_bfrac
 
 %*************** SCALING BY CORRELATOR ALGORITHM FACTORS *****************
 data=d_data;
@@ -68,7 +68,7 @@ elseif ~isempty(sysTemp)
   end
   %bac=lpg_bac(cal);
   global a_loop r_baclevel
-  bac_power=median_c(d_data(lpg_addr(cal)+ADDR_SHIFT));
+  bac_power=median_c(d_data(lpg_addr(cal)+ADDR_SHIFT),a_bfrac);
   scale(cal)=bac_power/sysTemp;
   r_baclevel=bac_power/lpg_ND(cal)/M_averaged; %to save
   if ~isempty(a_loop), r_baclevel=bac_power/a_loop; end

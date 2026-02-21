@@ -8,7 +8,8 @@
 %function subr_backgr
 function subr_backgr
 
-global d_data d_var1 d_var2 lpg_bac lpg_nt lpg_background ADDR_SHIFT a_code lpg_bcs lpg_code
+global d_data d_var1 d_var2 lpg_bac lpg_nt lpg_background ADDR_SHIFT a_code ...
+  lpg_bcs lpg_code a_bfrac
 
 data=d_data;
 var1=d_var1;
@@ -26,7 +27,7 @@ bacs=diff_val(bacs);  % find all different values
 
 for bac=bacs
   addr=lpg_addr(bac)+ADDR_SHIFT; % To change from radar to Matlab addressing
-  background=median_c(data(addr));
+  background=median_c(data(addr),a_bfrac);
   nt=double(lpg_nt(bac));
   variance1=mean(var1(addr))/nt;
   variance2=mean(var2(addr))/nt;

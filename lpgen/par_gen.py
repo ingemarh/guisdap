@@ -26,7 +26,7 @@ def AC_Trx(Baud_Len,Code,t_start,t_to_ps,frq):
 		t1=t2
 		j=j+length
 
-def acgen(code_len,code_tx,nr_codes,version='a'):
+def acgen(code_len,code_tx,nr_codes,version='a',ran_order=0):
 	ac_code=[]
 	code_fil='m%d.%sc'%(code_len,version)	#File with transmit codes
 	random_code='+' * code_len
@@ -35,6 +35,9 @@ def acgen(code_len,code_tx,nr_codes,version='a'):
 			random_code='++--+-++++--+----+--+-+++---+-++'	#Code for randomisation
 		elif code_len==256:
 			random_code='++++---+-+-+++--+-+-+-+-----+++---+--+++--+-+++----------++-+--++-+---+---++-+++-+-+-+++--+-+-++++++-+++++++++-+++++--++++++++--+-+--+++++++---+--+++-+-+-+++++++--+++++++----++++------++--+-+--+-+++++-++-+--++---++-+-++-+--+-++---+++++-++--++--+++-+-+-+-++'
+	elif version=='c':
+		if code_len==64:
+			random_code='+-+--++---+--++-++-+++++--+-+-+-++-++-+-+-+-++-+--++++-+--++++-+'	#Code for randomisation
 	ac_code=[]
 	try:
 		lines=open(code_fil,'r').readlines()
@@ -42,9 +45,10 @@ def acgen(code_len,code_tx,nr_codes,version='a'):
 		import lpgen.lp
 		lines=open(lpgen.lp.lpath()+'/'+code_fil,'r').readlines()
 	ll=range(len(lines))
-	import numpy
-	numpy.random.seed(0)
-	lll=numpy.random.permutation(ll)
+	if ran_order:
+		import numpy
+		numpy.random.seed(0)
+		ll=numpy.random.permutation(ll)
 	for l in ll:
 		line=lines[l]
 		i=0

@@ -44,10 +44,10 @@ def myexp(site):
 		ion_frac=2
 		ion_lag=ion_frac*16		#Maxlag for the ion line
 		dspexp='sy16x3a'
-		isamp=(4188-288)/6
+		isamp=(4188-1020)/6
 		start_samp=53	#When to start sampling
 		tails=code_tx-2
-		ndgat=200
+		ndgat=100
 		dshort=nr_codes-1
 		lowtail=tails
 		toptail=0
@@ -74,7 +74,6 @@ def myexp(site):
 	print(isamp,clutts,nr_fullgates)
 	ac_code=par_gen.acgen(code_len,code_tx,nr_codes,'b')
 	if baud_len==3:
-		ac_code=par_gen.acgen(code_len,code_tx,nr_codes)
 		isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code)
 	else:
 		isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code,nr_cal)+nr_cal

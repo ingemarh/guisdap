@@ -291,6 +291,10 @@ if exist('analysis_screen','var')
  a_screen=analysis_screen; %complex(ax,el)
  if length(a_screen)==1, a_screen(2)=0; end
 end
+a_bfrac=[];
+if exist('analysis_bfrac','var')
+ a_bfrac=analysis_bfrac;
+end
 
 if exist('display_analysis_pars','var')
  empty_pars=[];

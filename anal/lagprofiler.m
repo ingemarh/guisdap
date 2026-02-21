@@ -12,7 +12,6 @@ for lpf=a_lpf
  switch lpf.lib
  case 'plwin'
   [dd_data,upar]=plwin(lpf.par,d_parbl,dd_raw);
-  %d_data=[];
   d_parbl(42+(1:20))=upar;
  case 'alt_decoder'
   [dd_data]=alt_decoder(lpf.par,d_parbl,dd_raw);
@@ -25,7 +24,7 @@ for lpf=a_lpf
  case 'resampler' % par(1)=[nsamp nrep decimation] boxcar!
   lraw=fix(numel(dd_raw)/lpf.nrep/lpf.par(3))*lpf.par(3);
   dd_raw=reshape(dd_raw,lpf.par(1),lpf.nrep); %reshape into single profiles
-  dd_raw=int16(sum(reshape(double(dd_raw(1:lraw,:)),lpf.par(3),[]),1)/lpf.par(3));
+  dd_raw=col(int16(sum(reshape(double(dd_raw(1:lraw,:)),lpf.par(3),[]),1)/lpf.par(3)));
   d_raw(raw1+(1:numel(dd_raw)))=dd_raw(:);
   dd_data=[];
  case 'fir' % par=[nsamp nrep fir]
@@ -48,8 +47,13 @@ for lpf=a_lpf
    dd_data=[dd_data,pow(j,:)];
   end
  end
- fac=(diff(lpf.p)+1)/lpf.nrep;
- d_data(lpf.data+(1:numel(dd_data)))=dd_data/fac;
+ nd=numel(dd_data);
+ if nd>0
+  fac=(diff(lpf.p)+1)/lpf.nrep;
+  if ~isempty(lpf.data), ldata=lpf.data; end
+  d_data(ldata+(1:nd))=dd_data/fac;
+  ldata=ldata+nd;
+ end
 end
 endt=d_parbl(7)*(lpf.nrep-lpf.p(2)-1)/lpf.nrep;
 d_parbl(1:6)=datevec(datenum(d_parbl(1:6))-endt/86400);

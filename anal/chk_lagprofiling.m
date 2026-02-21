@@ -106,6 +106,7 @@ for lpf=a_lpf
   lpf.nrep=lpf.nrep*loop;
   lpf.par(2)=lpf.nrep;
   nsamp=lpf.par(3);
+  lpf.p=[0 lpf.nrep-1];
  case 'resampler'
   lpf.nrep=lpf.par(2)*loop;
   nsamp=lpf.par(1);
