@@ -1,5 +1,5 @@
 function t408=skytemp(site,t,az,el)
-% function t408=tempsky(site,unixt,az,el) at 408MHz
+% function t408=skytemp(site,unixt,az,el) at 408MHz
 % Input: site (3|W|D|T|V|L, arrays of time,az,el
 global path_GUP
 insert(py.sys.path,int32(0),fullfile(path_GUP,'pygup'))

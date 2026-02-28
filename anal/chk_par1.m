@@ -288,7 +288,7 @@ if exist('analysis_adjust','var')
 end
 a_screen=[];
 if exist('analysis_screen','var')
- a_screen=analysis_screen; %complex(ax,el)
+ a_screen=analysis_screen*pi/180; %complex(ax,el)
  if length(a_screen)==1, a_screen(2)=0; end
 end
 a_bfrac=[];

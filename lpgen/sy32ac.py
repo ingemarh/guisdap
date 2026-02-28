@@ -29,10 +29,17 @@ def myexp(site):
 	trx_frq=430	#Transmit frequency used
 	start_samp=int(100.05/0.15)	#When to start sampling
 	isamp=240
+	nr_loop=1		#Number of loops to get wanted integration time 
+	start_samp=int(99.981/0.15)	#When to start sampling
+	if len(site)>1:
+		version=int(site[1])
+		site=site[0]
 	if site=='r':
 		#ion_lag=63
 		lowtail=0
 		toptail=0
+		if version==9:
+			start_samp=6	#When to start sampling
 	else:
 		site='3'
 		lowtail=code_tx-2
@@ -42,11 +49,13 @@ def myexp(site):
 		#plasma_pulses=1		#Number of pulses to correlate
 		#plasma_frac=80		#Plasma frac
 	if version==1:
-		start_samp=int(99.981/0.15)	#When to start sampling
 		isamp=1000
-		nr_loop=1		#Number of loops to get wanted integration time 
 		ipp=14000	#IPP length in us
 		nr_cal=1268-isamp
+	elif version==9:
+		ipp=2000	#IPP length in us
+		isamp=182
+		if site=='3': isamp=100 #dummy
 	calstop=ipp-1
 	tails=lowtail+toptail
 	samp_speed=baud_len/ion_frac
@@ -59,9 +68,8 @@ def myexp(site):
 	if site=='r':
 		clutts=0
 	else:
-		clutts=150	#Clutter window us
-		if version==1:
-			clutts=0	#Clutter window us
+		#clutts=150	#Clutter window us
+		clutts=0	#Clutter window us
 	print(isamp,clutts)
 	ac_code=par_gen.acgen(code_len,code_tx,nr_codes,'b')
 	if version!=1:
@@ -84,7 +92,7 @@ def myexp(site):
 			print(isamp,nr_cal,clutts)
 			par_gen.t2ps(cal_samp,samp_speed,loops,baud_len,ac_code,code_len,code_tx,start_tx,ipp,trx_frq,site,dspexp,start_samp,isamp,calstop)
 		elif site=='r':
-			isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code,0)
+			isamp=par_gen.plwingen(nr_pulses,plasma_pulses,plasma_frac,code_tx,nr_fullgates,dspexp,site,ion_frac,tails,mthread,nr_codes,nr_loop,dshort,dlong,ndgat,clutts,toptail,lowtail,loops,ac_code,0,0)
 			print(isamp,clutts)
 			par_gen.cluttgen(exp_name,loops,nr_loop,isamp,clutts,ion_frac)
 			par_gen.t2ps(cal_samp,samp_speed,loops,baud_len,ac_code,0,0,start_tx,ipp,trx_frq,site,dspexp,start_samp,isamp,calstop)

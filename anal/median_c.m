@@ -5,10 +5,9 @@
 function m=median_c(x,d)
 if nargin<2, d=[]; end
 if isempty(d)
-  m=median(real(x))+i*median(imag(x));
+  m=complex(median(real(x)),median(imag(x)));
 else
-  xr=sort(real(x));
-  xi=sort(imag(x));
-  k=ceil(length(xr)/d);
-  m=median(xr(1:k))+i*median(xi(1:k));
+  [~,l]=sort(abs(x));
+  k=l(1:ceil(length(l)/d));
+  m=complex(median(real(x(k))),median(imag(x(k))));
 end

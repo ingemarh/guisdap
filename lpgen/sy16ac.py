@@ -44,7 +44,7 @@ def myexp(site):
 		ion_frac=2
 		ion_lag=ion_frac*16		#Maxlag for the ion line
 		dspexp='sy16x3a'
-		isamp=(4188-1020)/6
+		isamp=(4188-516)/6
 		start_samp=53	#When to start sampling
 		tails=code_tx-2
 		ndgat=100

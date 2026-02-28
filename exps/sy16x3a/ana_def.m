@@ -1,4 +1,4 @@
-analysis_lpf.skip=1020;
+analysis_lpf.skip=516;
 analysis_lpf.par=[4188-analysis_lpf.skip 32 6]; %decimation
 analysis_lpf.raw=0;
 analysis_lpf.lib='resampler';
@@ -14,7 +14,6 @@ analysis_lpf(3).data=[];
 analysis_lpf(4).par=load([path_expr 'sy16x3a_3b.par']);
 analysis_lpf(4).raw=[];
 analysis_lpf(4).lib='plwin';
-%analysis_lpf(4).data=9420+analysis_lpf(1).par(1)/6+100*(31+1);
 analysis_lpf(4).data=[];
 [analysis_lpf.loop]=deal(25); %~1s dumps
 [analysis_lpf.do]=deal(1);
@@ -28,9 +27,9 @@ analysis_bfrac=5;
 %analysis_maxwidth=2*diff(analysis_altit);
 %analysis_maxwidth=Inf;
 
-%a_satch.sigmab=100;
-%a_satch.sigma=2;
-%a_satch.clutter=7;
+a_satch.sigmab=Inf;
+a_satch.sigma=100;
+a_satch.clutter=70;
 %a_satch.cut=0;
 a_satch.prep=1250;
 %a_satch.do=0;

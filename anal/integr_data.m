@@ -71,7 +71,7 @@ if length(fileslist)~=length(d_filelist)
 end
 files=d_filelist(find(fileslist>a_interval(1) & fileslist<=a_interval(2)));
 if isempty(files) & a_integr<=0, EOF=1; return, end
-i=0; d_resid=zeros(0,1,'uint32');
+i=0; d_resid=zeros(0,1,'uint32'); skys=[];
 while i<length(files)
   i=i+1; file=files(i);
   i_averaged=1; i_var1=[]; i_var2=[];
@@ -119,9 +119,15 @@ while i<length(files)
   inttime=7;                   % parameter that holds integration time
   positive=[8 65];             % parameters which are positive
   non_negative=[9 42 63];      % parameters which are positive
+  secs1=timeconv(row(d_parbl(tvec)),'utc2tai');
   if lpb>40 & d_parbl(41)==3   % for vhf antenna
    non_negative=[9 10 42 63];
    averaged=[8:10 42 63 70 75];
+  elseif find(d_parbl(41)==10:12) % for syisr
+   averaged=[8:10 42 59];
+   if ~isfinite(d_parbl(59))
+    skys=[skys;[sec1s-d_parbl(inttime)/2 row(d_parbl([az el]))]];
+   end
   end
   % do not work on unavailable parameters
   averaged(find(averaged>lpb))=[];
@@ -131,7 +137,6 @@ while i<length(files)
   positive(find(positive>lpb))=[];
   non_negative(find(non_negative>lpb))=[];
 
-  secs1=timeconv(row(d_parbl(tvec)),'utc2tai');
   a_inttime=d_parbl(inttime);
   d=find(d_parbl(positive)<0);
   if ~isempty(d)
@@ -268,6 +273,10 @@ end
 if OK, % if at least one good data dump was found
   % update parameter block, accept the last parameter block as starting point
   d_parbl(averaged)=aver/M_averaged;
+  if ~isfinite(d_parbl(59))
+   sites='KSTVLLLLQ3WD';
+   d_parbl(59)=mean(skytemp(sites(d_parbl(41)),timeconv(skys(:,1),'tai2unx'),skys(:,2),skys(:,3)));
+  end
   d_parbl(accumulated)=accum;
   d_parbl(inttime)=timeconv(row(d_parbl(tvec)),'utc2tai')-starttime;
   d_data=data;

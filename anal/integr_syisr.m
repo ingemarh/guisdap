@@ -26,6 +26,7 @@ global d_parbl d_data d_var1 d_var2 data_path d_filelist d_raw
 global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_satch a_code a_intfix a_lpf any_start a_rcprog a_loop a_screen
+global d_beam
 persistent secs a_nnold fileslist filescode filesbeam beams a_beam lraw alpf ncode
 
 OK=0; EOF=0; N_averaged=0; M_averaged=0;
@@ -48,9 +49,14 @@ if ~isempty(a_ind) & a_ind(1)==0
   end
   a_interval=a_start+[0 a_integr];
   beams=unique(filesbeam);
+  d_beam=filesbeam(find(diff(filescode),1)+(1:length(beams))); %for remote scanning
   if ~isempty(a_screen)
-    d=beams-a_screen(1); d=abs([real(d);imag(d)]);
-    beams(find(d(1,:)>real(a_screen(2)) | d(2,:)>imag(a_screen(2))))=[];
+    [dx,dy,dz]=sph2cart(real(a_screen(1)),imag(a_screen(1)),1); d2=[dx dy dz];
+    for j=length(beams):-1:1
+      b=beams(j)/180*pi;
+      [dx,dy,dz]=sph2cart(real(b),imag(b),1); d1=[dx dy dz];
+      if atan2(norm(cross(d1,d2)),dot(d1,d2))>a_screen(2), beams(j)=[]; end
+    end
   end
   a_beam=1;
   ncode=size(a_code,2);
@@ -71,7 +77,8 @@ if a_integr==0
   if ~isempty(a_screen)
     a_ind(1:find(ismember(filesbeam(a_ind),beams),1)-1)=[];
   end
-  nextmove=find(filesbeam(a_ind)~=filesbeam(a_ind(1)),1);
+  beam=filesbeam(a_ind(1));
+  nextmove=find(filesbeam(a_ind)~=beam,1);
   if isempty(nextmove)
     EOF=1;
   else
@@ -79,7 +86,8 @@ if a_integr==0
     a_ind(nextmove:end)=[];
   end
 else
-  a_ind=find(a_interval(1)<=fileslist & a_interval(2)>fileslist & a_code(1)==filescode & beams(a_beam)==filesbeam);
+  beam=beams(a_beam);
+  a_ind=find(a_interval(1)<=fileslist & a_interval(2)>fileslist & a_code(1)==filescode & beam==filesbeam);
 end
 
 if a_interval(1)>a_end || a_interval(1)>fileslist(end)
@@ -107,19 +115,17 @@ for aind=0:ll:laind-1;
    fid=a_ind(innerloop(1)+lop+1);
    for jrow=1:ncode, for jcol=1:size(a_code,1)
     j=a_code(jcol,jrow);
-    jj=find(filescode(fid:end)==j,1);
+    jj=find(filescode(fid:end)==j & beam==filesbeam(fid:end),1);
     if isempty(jj)
      dump_OK=0; break
-    else
-     fid=fid+jj-1;
     end
-    file=d_filelist(fid);
+    file=d_filelist(fid+jj-1);
     if isempty(draw), tfirst=file.tai; end
     if isfield(file,'nd')
      [head,draw]=syisr_bin('dump',file.fname,file.hdx,file.nd);
      head.nd=file.nd;
      site=head.st;
-     skys=[skys;fid];
+     skys=[skys;fid+jj-1];
     else
      head=h5read(file.fname,'/head',file.hdx,1);
      d_rx=h5read(file.fname,'/data',double(head.di+1),double(head.nd));
@@ -224,9 +230,13 @@ if OK, % if at least one good data dump was found
     if isfield(file,'t408')
      t408=sum(cell2mat({d_filelist(skys).t408}));
     else
-     tu=round(timeconv(fileslist(skys),'tai2unx')/3)*3; [~,ia,ib]=unique(tu); %3sec resolution
-     t408u=skytemp(site,tu(ia),real(filesbeam(skys(ia))),imag(filesbeam(skys(ia))));
-     t408=sum(t408u(ib));
+     try
+      tu=round(timeconv(fileslist(skys),'tai2unx')/3)*3; [~,ia,ib]=unique(tu); %3sec resolution
+      t408u=skytemp(site,tu(ia),real(filesbeam(skys(ia))),imag(filesbeam(skys(ia))));
+      t408=sum(t408u(ib));
+     catch
+      t408=NaN; %do it later
+     end
     end
   end
   d_parbl(accumulated)=accum;

@@ -4,7 +4,9 @@ if ~libisloaded('plwin')
  libdir=fullfile(path_GUP,'lib');
  loadlibrary(fullfile(libdir,'plwin.so'),fullfile(libdir,'plwin.h'))
 end
-nout=((par(3)+1)*par(9)+par(3)*par(2)/2+par(4)*par(9))*par(10)+(par(7)+par(11))*par(10)+par(20)*(par(18)+par(19)+1);
+nout=((par(3)+1)*par(9)+par(3)*par(2)/2+par(4)*par(9))*par(10)+...
+	(par(7)+par(11))*par(10)*par(22)+...
+	par(20)*(par(18)+par(19)+1);
 if par(21)<0, par(21)=0; end
 oz=zeros(nout,1);
 or=libpointer('doublePtr',oz); oi=libpointer('doublePtr',oz);

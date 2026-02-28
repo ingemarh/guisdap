@@ -34,6 +34,19 @@ if name_site=='3'
  %fit_altitude(7,1:2)=[130 250]; % Fit for NO+
  %fit_altitude(2,1)=[250]; % Fit Ti above F
  end
+elseif expver==9
+ analysis_bfrac=2;
+ analysis_lpf.par=load('sy32ac_9_ra.par');
+ analysis_lpf.lib='plwin';
+ analysis_lpf.skip=0;
+ for i=2:3
+  analysis_lpf(i).par=load('sy32ac_9_rc.par');
+  analysis_lpf(i).lib='clutter';
+  analysis_lpf(i).data=[];
+  analysis_lpf(i).raw=[];
+ end
+ analysis_Offsetppd=10-15;
+ analysis_screen=[complex(265,70) 15];
 else
  analysis_lpf.par=load('sy32ac_ra.par');
  analysis_lpf.lib='plwin';
@@ -48,7 +61,7 @@ else
  analysis_Offsetppd=800-15;
 end
 
-if contains('3WD',data_path(end))
+if regexp(data_path,'@[3WD]$')
  [analysis_lpf.do]=deal(0); % integrated data
 else
  [analysis_lpf.do]=deal(1); % raw data
