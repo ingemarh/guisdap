@@ -15,7 +15,7 @@ analysis_lpf(4).par=load([path_expr 'sy16x3a_3b.par']);
 analysis_lpf(4).raw=[];
 analysis_lpf(4).lib='plwin';
 analysis_lpf(4).data=[];
-[analysis_lpf.loop]=deal(25); %~1s dumps
+[analysis_lpf.loop]=deal(60); %~2s dumps
 [analysis_lpf.do]=deal(1);
 
 analysis_code=48+[0:31];

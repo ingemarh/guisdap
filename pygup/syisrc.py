@@ -145,7 +145,7 @@ def flist(f,extra_samples=0):
           if extra_samples==0:
               nex=(ftell-fpos)//(2*sizeof(c_int32))
               print('Found %d extra IQ sample, adjusting size'%nex)
-              if len(nd)==1: nd[0]+=nex
+              nd[len(nd)-1]+=nex
         #print(h.month,h.year,h.endflag)
         TotalIQ=(h.WaveGateWidthV+nex)*2
         #print(TotalIQ)
