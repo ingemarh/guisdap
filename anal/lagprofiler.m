@@ -1,5 +1,6 @@
 function lagprofiler()
 global d_data d_raw d_parbl a_lpf
+persistent storage
 for lpf=a_lpf
  if ~isempty(lpf.raw)
   raw1=lpf.raw(1);
@@ -46,6 +47,11 @@ for lpf=a_lpf
   for j=1:lpf.par(2)
    dd_data=[dd_data,pow(j,:)];
   end
+ case 'store' % par = length of chunk in d_data to store for later
+  storage=d_data(lpf.data+(1:lpf.par));
+  dd_data=[];
+ case 'restore'
+  dd_data=storage;
  end
  nd=numel(dd_data);
  if nd>0
