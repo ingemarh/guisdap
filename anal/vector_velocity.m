@@ -155,6 +155,7 @@ if isfinite(uperr(1)), name_strategy=[name_strategy ' Model']; end
 if dynavel, name_strategy=[name_strategy ' Dynasond']; end
 name_strategy=[name_strategy sprintf(' %d',round(td(1)))];
 nstrat=regexp(name_strategy,'[A-Z0-9]');
+name_ants=char(name_ants(:));name_exps=char(name_exps(:));name_sigs=char(name_sigs(:));name_strategies=char(name_strategies(:));
 oname=sprintf('%d-%02d-%02d%s_V%d%s@%s',r_time(1:3),nexp,nant,lower(name_strategy(nstrat)),name_ant);
 result_file=fullfile(odir,oname);
 if tfile
