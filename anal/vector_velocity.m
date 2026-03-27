@@ -76,10 +76,10 @@ for d1=1:ndir
  if td(1)==d1
   timint=mean(Time)-median(diff(Time));
  end
- name_ants=[name_ants,string(allnames.ant)];
- name_exps=[name_exps,string(allnames.expr)];
- if isfield(allnames,'sig'), name_sigs=[name_sigs,string(allnames.sig)];end
- if isfield(allnames,'strategy'), name_strategies=[name_strategies,string(allnames.strategy)];end
+ name_ants=[name_ants,string(allnames.ant(end,:))];
+ name_exps=[name_exps,string(allnames.expr(end,:))];
+ if isfield(allnames,'sig'), name_sigs=[name_sigs,string(allnames.sig(end,:))];end
+ if isfield(allnames,'strategy'), name_strategies=[name_strategies,string(allnames.strategy(end,:))];end
 end
 dirind=cumsum(dirind);
 r_time=timeconv(mean(Data1D(:,1)),'tai2utc');

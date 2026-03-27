@@ -11,7 +11,7 @@ if name_site=='V'
         freq=5; % The transmit frequency
         lowtail=59; % Size of lower tail
         hightail=59; % Size of upper tail
-        t0=73; % Start of trasnmission, µs
+        t0=73; % Start of transmission, µs
         cal0=1473.4; % Start of calibration signal, µs
         cal1=1497; % Stop of calibration signal, µs
         s0=343; % Start of signal sampling, µs
@@ -19,6 +19,8 @@ if name_site=='V'
         c0=1485; % Start of calibration sampling, µs
         c1=1497; % End of calibration sampling, µs
         nl=25; % Number of times running through the code in on data dump
+    else
+        return
     end
 else
     return
@@ -59,8 +61,10 @@ par0 = [24;
     0;];
 par1=[par0;col((44-char(ac))')];
 fid=fopen(append(expname,'_',lower(name_site),'a.par'),'w'); fprintf(fid,'%d\n',par1); fclose(fid);
-par2=[par0;col((44-char(ac([end,1:end-1])))')];
+par2=[par0;col((44-char(ac([end,1:end-1])))')];par2(22)=0;
 fid=fopen(append(expname,'_',lower(name_site),'b.par'),'w'); fprintf(fid,'%d\n',par2); fclose(fid);
+par3=[par0;col((44-char(ac([end-1:end,1:end-2])))')];par3(22)=0;
+fid=fopen(append(expname,'_',lower(name_site),'c.par'),'w'); fprintf(fid,'%d\n',par3); fclose(fid);
 
 fprintf('ns=%d nc=%d\n',ns,nc)
 
