@@ -22,7 +22,7 @@
 % function  [OK,EOF,N_averaged,M_averaged]=integr_syisr
 function  [OK,EOF,N_averaged,M_averaged]=integr_syisr()
  
-global d_parbl d_data d_var1 d_var2 data_path d_filelist d_raw
+global d_parbl d_data d_var1 d_var2 data_path d_filelist d_raw d_filename
 global d_saveint
 global a_ind a_interval a_year a_start a_integr a_skip a_end 
 global a_satch a_code a_intfix a_lpf any_start a_rcprog a_loop a_screen
@@ -122,7 +122,7 @@ for aind=0:ll:laind-1;
     file=d_filelist(fid+jj-1);
     if isempty(draw), tfirst=file.tai; end
     if isfield(file,'nd')
-     [head,draw]=syisr_bin('dump',file.fname,file.hdx,file.nd);
+     [head,draw]=syisr_bin('dump',d_filename{file.fno},file.hdx,file.nd);
      head.nd=file.nd;
      site=head.st;
      skys=[skys;fid+jj-1];

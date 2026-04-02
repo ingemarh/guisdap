@@ -62,8 +62,8 @@ local.host=getenv('HOSTNAME'); if isempty(local.host), local.host=getenv('COMPUT
 local.user=getenv('USER'); if isempty(local.user), local.user=getenv('USERNAME'); end
 local.tz={'UT' 0};
 local.owner='EISCAT AB';
+local.gup=fullfile(getenv('HOME'),'gup');
 if strcmp(local.host,'medusa'), local.site='Hub'; end
-if strcmp(local.user,'analyst'), local.site='HQ'; end
 local.x=prod(get(0,'ScreenSize'))-1;
 local.x=~usejava('jvm') || feature('ShowFigureWindows');
 matver=ver('matlab');
@@ -101,8 +101,6 @@ switch local.site
   data_path='/data/';
  case 'Hub'
   local.user='Hub';
- case 'HQ'
-  local.user='HQ';
  otherwise
   local.site=[];
 end

@@ -10,18 +10,22 @@ py.importlib.reload(py.importlib.import_module('syisrc'));
 if strcmp(type,'flist')
  raw=[]; extra_samples=0;
  if nargin>2, extra_samples=hdx; end
+ if nargin>3, fno=nd; end
  flist=cell(getbin.flist(file,int32(extra_samples)));
  tai=num2cell(timeconv(double(flist{1})','unx2tai'));
  code=num2cell(uint16(flist{2}));
  azel=num2cell(complex(single(flist{3}),single(flist{4})));
  hdx=num2cell(uint32(flist{5}));
  nd=num2cell(uint16(flist{6}));
- h=repmat(struct('fname',file,'tai',0,'code',0,'azel',0,'hdx',0,'nd',0),[length(tai) 1]);
+ h=repmat(struct('fno',fno,'tai',0,'code',0,'azel',0,'hdx',0,'nd',0),[length(tai) 1]);
  [h.tai]=tai{:};
  [h.code]=code{:};
  [h.azel]=azel{:};
  [h.hdx]=hdx{:};
  [h.nd]=nd{:};
+elseif strcmp(type,'filelist')
+ if nargin<3, hdx='S'; end
+ h=char(getbin.filelist(file,hdx));
 elseif strcmp(type,'guess')
  raw=[];
  h=py2mat(struct(getbin.guess(file)));

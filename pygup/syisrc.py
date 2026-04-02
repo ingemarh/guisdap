@@ -1,8 +1,10 @@
+#!/bin/env python3
 from ctypes import *
 import numpy as np
 import time
 import datetime
 import os
+import sys
 
 class syisr_header(Structure):
     _fields_ = [
@@ -254,14 +256,60 @@ def guess(f):
     s=getcodes(h)
     return dict(unx=dt,exp=exp(h),site=site,mode=s.DetectMode)
 
+def filelist(dir,site='S',tsky=False,savedir=None):
+    import re,scipy
+    filen=[]
+    l=np.empty((0,7))
+    pattern=r'^%s._\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}\.dat\d{1}-\d{1}-\d+$'%site
+    pattern_sy1=r'^\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}\.dat\d{1}-\d{1}-\d+$'
+    for f in os.listdir(dir):
+        if re.match(pattern,f) or re.match(pattern_sy1,f):
+            tid,code,az,el,hdx,nd=flist(os.path.join(dir,f))
+            filen+=[f]
+            fno=[len(filen)]*len(tid)
+            fl=np.c_[fno,tid,code,az,el,hdx,nd]
+            l=np.concatenate((l,fl),axis=0)
+        #else: print(f)
+    if tsky:
+        sp=sys.path[0]
+        sys.path.append(sp)
+        import add_tsky_main
+        tid=l[:,1]
+        az=l[:,3]
+        el=l[:,4]
+        t408=add_tsky_main.matface(os.path.join(sp,'..','matfiles'),site,tid,az,el)
+        l=np.c_[l,t408]
+    #print(l.shape)
+    
+    fname=dir.replace(os.sep,'__')
+    if savedir==None:
+        if os.access(dir,os.W_OK):
+            savedir=dir
+            fname='filelist'+site+'.mat'
+        else:
+            savedir=os.path.join(os.path.expanduser('~'),'gup','mydata','filelist')
+            fname=dir.replace(os.sep,'__')+site+'.mat'
+            if not os.path.isdir(savedir): os.makedirs(savedir)
+    outf=os.path.join(savedir,fname)
+    listf=l[l[:,1].argsort()]
+    #print(list[0,:],lsort[0,:])
+    scipy.io.savemat(outf,{'folder':dir,'fname':filen,'flist':listf},do_compression=True)
+    return outf
+
 def main():
-    import sys
-    if len(sys.argv)!=2:
+    if len(sys.argv)<2:
         print("Usage: python script.py <binary file>")
         filename='/media/mop/datamop/syisr/bin/20250822/SY_2025_08_19_22_05_11.dat1-1-134'
         #sys.exit(1)
     else:
         filename=sys.argv[1]
+    if os.path.isdir(filename):
+        site='S'
+        t408=False
+        if len(sys.argv)>2: site=sys.argv[2]
+        if len(sys.argv)>3: t408=sys.argv[3]
+        filelist(filename,site,t408)
+        exit(0)
     f=open(filename,'rb')
 
     tid,code,az,el,hdx,nd=flist(f)

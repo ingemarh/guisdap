@@ -2,9 +2,9 @@ function [list,msg]=getfilelist(dirpath,newer)
 
 % [list,msg]= getfilelist(dirpath,newer)
 
-global a_realtime a_lpf name_site
+global a_realtime a_lpf name_site d_filename local
 
-list=[]; msg=''; dirlist=[];
+list=[]; msg=''; dirlist=[]; syisr=0;
 if nargin<2
  newer=[];
 end
@@ -71,17 +71,51 @@ else
         syisr=1;
         site=name_site; if name_site=='3', site='S'; end
         if a_lpf(1).do
-          dirlist=dir(fullfile(dp,j.name,['*' site '0.h5']));
+	  listfile=fullfile(dp,j.name);
+          dirlist=dir(fullfile(listfile,['*' site '0.h5']));
           %%dirlist=dir(fullfile(dp,j.name,['*.h5']));
 	  if isempty(dirlist)
-            dirlist=dir(fullfile(dp,j.name,[site '*_*_*_*_*_*_*.dat*-*-*']));
+            dirlist=dir(fullfile(listfile,[site '*_*_*_*_*_*_*.dat*-*-*']));
 	    if isempty(dirlist)
-              dirlist=dir(fullfile(dp,j.name,['*_*_*_*_*_*.dat*-*-*'])); %syisr1
+              dirlist=dir(fullfile(listfile,['*_*_*_*_*_*.dat*-*-*'])); %syisr1
+	    end
+	    if ~isempty(dirlist)
+	      if exist(fullfile(listfile,['filelist' site '.mat']))
+		folde=listfile;
+	        listfile=fullfile(listfile,['filelist' site '.mat']);
+	      else
+	        listfile=fullfile(local.gup,'mydata','filelist',[strrep(listfile,filesep,'__') site '.mat']);
+	      end
+	      if exist(listfile)
+		disp(sprintf('Using existing listfile: %s',listfile))
+	      else
+                listfile=syisr_bin('filelist',fullfile(dp,j.name),site),
+	      end
+	      load(listfile), dirlist=[]; if exist('folde','var'), folder=folde; end
+	      if size(flist,2)>7
+		st=struct('fno',0,'tai',0,'code',0,'azel',0,'hdx',0,'nd',0,'t408',0);
+	      else
+		st=struct('fno',0,'tai',0,'code',0,'azel',0,'hdx',0,'nd',0);
+	      end
+	      list=repmat(st,[size(flist,1) 1]);
+              flist(:,2)=timeconv(flist(:,2),'unx2tai');
+	      ll=num2cell(flist(:,[1:3 6:end]));
+              [list.fno]=ll{:,1};
+              [list.tai]=ll{:,2};
+              [list.code]=ll{:,3};
+              azel=num2cell(complex(flist(:,4),flist(:,5)));
+              [list.azel]=azel{:};
+              [list.hdx]=ll{:,4};
+              [list.nd]=ll{:,5};
+	      if size(flist,2)>7
+                [list.t408]=ll{:,6};
+	      end
+	      d_filename=cellstr([ones(size(fname,1),1)*[folder filesep] fname]);
 	    end
             syisr=2;
           end
-          [~,d]=sortrows(cell2table({dirlist.name}'));
-          dirlist=dirlist(d);
+          %[~,d]=sortrows(cell2table({dirlist.name}'));
+          %dirlist=dirlist(d);
         else
           dirlist=dir(fullfile(dp,j.name,'*F1T.h5'));
           dirlen=length(dirlist);
@@ -94,10 +128,9 @@ else
           end
           list=[list;l];
         end
-      else
-        syisr=0;
       end
       for f=dirlist'
+	fno=fno+1;
         h5file=fullfile(j.name,f.name);
         if syisr
           if a_lpf(1).do
@@ -116,7 +149,8 @@ else
               [l.hdx]=hdx{:};
               list=[list;l];
 	    else
-	      l=syisr_bin('flist',h5file);
+	      d_filename{fno}=h5file;
+	      l=syisr_bin('flist',h5file,0,fno);
               list=[list;l];
 	    end
 	  %else
@@ -149,11 +183,13 @@ else
 end
 if ~isempty(list)
   if isfield(list,'file')
-    [dum,d]=sort(cell2mat({list.file})); list=list(d);
+    [~,d]=sort(cell2mat({list.file})); list=list(d);
     global maxlend
     if ~isempty(maxlend) & length(d)>maxlend, list=list(1:maxlend); end
   elseif isfield(list,'tai')
-    [dum,d]=sort(cell2mat({list.tai})); list=list(d);
+    if syisr<2
+      [~,d]=sort(cell2mat({list.tai})); list=list(d);
+    end
     global maxlend
     if ~isempty(maxlend) & length(d)>maxlend, list=list(1:maxlend); end
   end
