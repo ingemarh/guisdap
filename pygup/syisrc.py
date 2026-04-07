@@ -92,18 +92,21 @@ class hdfdata(Structure):
         ('r' , c_int16 ),
 ]
 
-def searchhead(f,fsize,d):
-    FrameBegFlagUint=0xAAAA5555;
-    while d!=FrameBegFlagUint:
-        #print('%x'%d)
-        d=np.fromfile(f,dtype='uint32',count=1)[0]
-    f.seek(-sizeof(c_uint32),1)
+FrameBegFlagUint=0xAAAA5555;
+
+def searchhead(f,fsize,ns):
+    d=[0]
+    c=1
+    while not FrameBegFlagUint in d and c>0:
+        c=min(ns,(fsize-f.tell())//sizeof(c_int32))
+        d=np.fromfile(f,dtype='uint32',count=c)
+        ns*=2
+    if c>0: f.seek(-sizeof(c_uint32)*(c-np.where(d==FrameBegFlagUint)[0][0]),1)
     ftell=f.tell()
     return gethead(f),ftell
 
 def gethead(f):
     if type(f)==str: f=open(f,'rb')
-    FrameBegFlagUint=0xAAAA5555;
     FrameEndFlagUint=0xAA5555AA;
     head=syisr_header()
     if f.readinto(head)!=sizeof(head):
@@ -126,6 +129,7 @@ def getIQ(f,TotalIQ):
 
 def flist(f,extra_samples=0):
     if type(f)==str: f=open(f,'rb')
+    fend=f.name.split('-')[-1]
     tid=[]
     code=[]
     az=[]
@@ -136,34 +140,46 @@ def flist(f,extra_samples=0):
     ftell=f.tell()
     fsize=f.seek(0,os.SEEK_END)
     f.seek(ftell)
+    mess=''
+    nadj=nIQ=TotalIQ=0
     while ftell<fsize:
         fpos=ftell
         h=gethead(f)
-        if h==None:
-          return tid,code,az,el,hdx,nd
         while type(h)==int:
-          f.seek(-sizeof(syisr_header)-2*sizeof(c_int32),1)
-          h,ftell=searchhead(f,fsize,h)
-          if extra_samples==0:
-              nex=(ftell-fpos)//(2*sizeof(c_int32))
-              print('Found %d extra IQ sample, adjusting size'%nex)
-              nd[len(nd)-1]+=nex
+            ns=(TotalIQ-1)*sizeof(c_int32)+sizeof(syisr_header)
+            f.seek(-ns,1)
+            h,ftell=searchhead(f,fsize,ns)
+        if h==None: ftell=fsize
+        nex1=(ftell-fpos)//(2*sizeof(c_int32))
+        if nex1>nIQ*10:
+            mess=' corrupt'
+            continue
+        if nex1!=0:
+            nex+=nex1
+            if nd: nd[-1]+=nex1
+            nadj+=1
+            mess=' '
+        if h==None:
+            mess=' EOF'
+            break
         #print(h.month,h.year,h.endflag)
-        TotalIQ=(h.WaveGateWidthV+nex)*2
+        nIQ=h.WaveGateWidthV
+        TotalIQ=nIQ+nex
         #print(TotalIQ)
-        if h.WaveGateWidthV>=0:
+        if nIQ>=0:
             btime=datetime.datetime(h.year+2000,h.month,h.day,h.hour,h.minute,h.second,h.fracOfSecond*25)
             tid.append(btime.timestamp()-8*3600)
             code.append(h.BigCode+h.LittleCode)
             az.append(h.Azi*0.005493164)
             el.append(h.Ele*0.005493164)
             hdx.append(ftell)
-            nd.append(h.WaveGateWidthV+nex)
-            f.seek(TotalIQ*sizeof(c_int32),1)
+            nd.append(TotalIQ)
+            f.seek(TotalIQ*2*sizeof(c_int32),1)
         else:
             print(h.WaveGateWidthV,h.WaveGateFrontV,h.PRTV)
         ftell=f.tell()
-    return tid,code,az,el,hdx,nd
+    if nadj>0: print('%s: Adjusted size %d/%d times, last %+d%s'%(fend,nadj,len(nd),nex,mess))
+    return tid,code,az,el,hdx,nd,nex,mess
 
 def struct2dict(s):
     return dict((field, getattr(s,field)) for field,_ in s._fields_)
@@ -256,20 +272,29 @@ def guess(f):
     s=getcodes(h)
     return dict(unx=dt,exp=exp(h),site=site,mode=s.DetectMode)
 
-def filelist(dir,site='S',tsky=False,savedir=None):
+def filelist(dir,site='S',tsky=False,seq_no='\\d',savedir=None):
     import re,scipy
     filen=[]
+    nex=0
+    mess=''
     l=np.empty((0,7))
-    pattern=r'^%s._\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}\.dat\d{1}-\d{1}-\d+$'%site
-    pattern_sy1=r'^\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}\.dat\d{1}-\d{1}-\d+$'
-    for f in os.listdir(dir):
+    pattern=r'^%s._\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}\.dat\d{1}-\d{1}-%s+$'%(site,seq_no)
+    #print(pattern)
+    pattern_sy1=r'^\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}\.dat\d{1}-\d{1}-%s+$'%seq_no
+    for f in sorted(os.listdir(dir)):
         if re.match(pattern,f) or re.match(pattern_sy1,f):
-            tid,code,az,el,hdx,nd=flist(os.path.join(dir,f))
+            if len(mess)>1: nex=0
+            tid,code,az,el,hdx,nd,nex,mess=flist(os.path.join(dir,f),nex)
             filen+=[f]
             fno=[len(filen)]*len(tid)
             fl=np.c_[fno,tid,code,az,el,hdx,nd]
             l=np.concatenate((l,fl),axis=0)
+            if not mess: print('.',end='',flush=True)
         #else: print(f)
+    print()
+    if not filen:
+        print('No data files found')
+        return
     if tsky:
         sp=sys.path[0]
         sys.path.append(sp)
@@ -306,9 +331,11 @@ def main():
     if os.path.isdir(filename):
         site='S'
         t408=False
+        seq_no='\\d'
         if len(sys.argv)>2: site=sys.argv[2]
-        if len(sys.argv)>3: t408=sys.argv[3]
-        filelist(filename,site,t408)
+        if len(sys.argv)>3: t408=sys.argv[3].lower() in ("true","t","yes","y","1")
+        if len(sys.argv)>4: seq_no=sys.argv[4]
+        filelist(filename,site,t408,seq_no)
         exit(0)
     f=open(filename,'rb')
 

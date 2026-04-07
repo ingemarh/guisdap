@@ -42,6 +42,8 @@ if ~isempty(a_ind) & a_ind(1)==0
   %  d_filelist(bad)=[];
   %end
   fileslist=cell2mat({d_filelist.tai});
+  d=find(fileslist>=a_start & filelist<a_end);
+  fileslist=fileslist(d); d_filelist=d_filelist(d);
   filescode=cell2mat({d_filelist.code});
   filesbeam=cell2mat({d_filelist.azel});
   if ~isempty(any_start)

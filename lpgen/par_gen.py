@@ -27,7 +27,6 @@ def AC_Trx(Baud_Len,Code,t_start,t_to_ps,frq):
 		j=j+length
 
 def acgen(code_len,code_tx,nr_codes,version='a',ran_order=0):
-	ac_code=[]
 	code_fil='m%d.%sc'%(code_len,version)	#File with transmit codes
 	random_code='+' * code_len
 	if version=='a':
@@ -49,6 +48,11 @@ def acgen(code_len,code_tx,nr_codes,version='a',ran_order=0):
 		import numpy
 		numpy.random.seed(0)
 		ll=numpy.random.permutation(ll)
+		if version=='c' and code_len==64:
+			ll=[45, 29, 43, 61, 34, 33, 31, 40, 26, 62, 22,  2, 11, 28, 54,  4, 10,
+				35, 52, 46, 30,  7, 14, 27, 63, 55, 41, 42, 58, 18, 60, 32, 15,  5,
+				16, 20, 56,  8, 13, 25, 37, 17, 48, 51, 57, 38,  1, 12, 49, 24,  6,
+				23, 36, 50, 21, 19,  9, 39, 59,  3,  0, 53, 47, 44]
 	for l in ll:
 		line=lines[l]
 		i=0
