@@ -27,7 +27,11 @@ if ~ishandle(bg)
   a_gfd.t1=t1; a_gfd.t2=t2; a_gfd.rt=rt; a_gfd.figs=figs; a_gfd.extra=extra;
   a_gfd.path_exps=path_exps;
  end
- if nargin>0, go_die=1; end
+ if nargin>0 & strcmp(getenv('EISCATSITE'),'HQ') 
+   go_die=2;
+ elseif nargin>0
+   go_die=1;
+ end
 else
  while strcmp(get(bg,'string'),'GO')
   pause(1)
@@ -96,6 +100,7 @@ if rt & isunix
  end
 end
 analysis_rcprog=expver;
+%go_die
 if go_die
  try
   for ii=1:size(extra,1)
@@ -109,7 +114,9 @@ if go_die
  catch
   disp(lasterr)
  end
- gupquit
+ if go_die==1
+  gupquit
+ end
 else
  for ii=1:size(extra,1),eval(extra(ii,:));end
  an_start

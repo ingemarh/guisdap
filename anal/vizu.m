@@ -324,6 +324,16 @@ elseif ~REALT & ~strcmp(lower(act),'update')
  [d,dpath]=fileparts(DATA_PATH);
  START_TIME=timeconv(median(Time(:)),'mat2utc'); START_TIME(4:6)=[0 0 0];
  END_TIME=START_TIME+[0 0 0 24 0 0];
+ if MESSAGE1 == 'Online Analysis'
+  st=floor(timeconv(Time(1,1),'mat2utc'));
+  et=ceil(timeconv(Time(2,end),'mat2utc'));
+  START_TIME = [st(1) st(2) st(3) st(4) 0 0];
+  if et(4)+1 <=24
+    END_TIME = [et(1) et(2) et(3) et(4)+1 0 0];
+  else
+    END_TIME = [et(1) et(2) et(3) 24 0 0];
+  end
+ end
 end
 if strcmp(lower(act),'update') && ~isempty(OLD_WHICH)
  WHICH_PARAM=OLD_WHICH; SCALE=OLD_SCALE;
