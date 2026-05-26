@@ -20,8 +20,8 @@ if p
  td_t2(sig)=td_t2(sig)-.2;
  site='P';
 elseif site=='l'
- ch_adcint=[5 5];
- ch_filter={'b70d75.fir' 'b70d75.fir'};
+ ch_adcint=[25 25]/3;
+ ch_filter={'b45d125.fir' 'b45d125.fir'};
  ch_f=[499.75 500.25];
 else
  error('giveup')

@@ -2,7 +2,7 @@
 %
 % See also: GUISPERT GUIZARD
 %
-if length(d_data)==2*230405
+if length(d_data)==2*87891
   calTemp=[163 163 228 228];
   if all(ch_gain==ch_gain(1))
     if isempty(a_code)
