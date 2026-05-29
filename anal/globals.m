@@ -21,7 +21,7 @@ global d_var1 d_var2 % sig_var1 sig_var2
 
 global a_addr a_adstart a_adend a_control a_ind a_Magic_const a_lpf a_adjust a_screen
 global a_NCAR a_save a_code a_intfixed a_intfix a_intallow a_intfixforce a_savespec a_txpower a_gating
-global a_ppshortlags a_ppcombine a_rcprog
+global a_ppshortlags a_ppcombine a_rcprog a_plasmaline
 global a_year a_start a_integr a_integdeffile a_skip a_end a_realtime a_txlimit
 global di_figures di_results di_spectra
 global name_ant calTemp sysTemp r_Tsys a_gainfactor a_bfrac

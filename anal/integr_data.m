@@ -305,7 +305,7 @@ if OK, % if at least one good data dump was found
 end
 
 function [EOF,jj]=update_filelist(EOF,jj)
-global di_figures data_path b d_filelist a_end a_year
+global di_figures data_path b d_filelist a_end a_year a_plasmaline
 j=0;
 if ~isempty(b) & ishandle(b(7))
  a_max_rtwait=a_end-d_filelist(end).tai; mrw=30;
@@ -314,7 +314,15 @@ else
 end
 if ~jj
   if length(di_figures)>4 & di_figures(5)
-    try, vizu('rtgup',di_figures(5)); catch, rethrow(lasterror), end
+    try
+      if a_plasmaline
+        figure(di_figures(5))
+        global d_saveint
+        plasma_summary(d_saveint.dir,[],[],[],-2)
+      else
+        vizu('rtgup',di_figures(5));
+      end
+    catch, rethrow(lasterror), end
   end
   jj=1; send_www
 end

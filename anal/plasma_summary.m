@@ -24,7 +24,7 @@ end
 gate=[];
 if nargin<5, plots=0; end
 %if isempty(plots), plots=0; end
-if plots~=-1, clf(findobj('type','figure','userdata',7)), plots=0; end
+if plots~=-1, clf(findobj('type','figure','userdata',7)), if plots>-2, plots=0; end, end
 if isempty(expt)
  [i,expt]=fileparts(pl_dir);
  if isempty(expt), [i,expt]=fileparts(i); end
@@ -34,7 +34,7 @@ global path_exps path_GUP local
 [fl,msg]=getfilelist(fullfile(pl_dir,filesep));
 if msg, error(msg), end
 nfl=length(fl);
-load(canon(fl(1).fname))
+load(canon(fl(1).fname,plots>=0))
 
 exps=dir(path_exps); pldef='pl_def'; pdefs=[];
 for i=1:length(exps)
@@ -106,7 +106,7 @@ for i=1:nfl
   upar(:,i)=d_parbl(upar0+(1:nfreq));
  end
 end
-if plots
+if plots>0
  imagesc(reshape(plspec(gate,:,:,:),nfft*nfreq,nfl)), pause
 end
 plsig=zeros(size(plspec));
@@ -128,7 +128,7 @@ for band=1:length(bands)
    d=unique([dd;du+1]); jd=jj; jd(d+wrap)=[];
    filt_shape(:,i)=interp1(jd,fsh(jd+wrap,i),1:nfft,'spline');
   end
-  if plots
+  if plots>0
    plot([filt_shape spec_shape]), pause
   end
   interf_spec=spec_shape-filt_shape;
@@ -151,7 +151,7 @@ for band=1:length(bands)
   %plsig(g,:,:,b)=plsig(g,:,:,b)./reshape(nplspec,1,nfft,nfreq,lb);
  end
 end
-if plots
+if plots>0
  imagesc(reshape(plsig(gate,:,:,:),nfft*nfreq,[])), pause
 end
  
@@ -180,13 +180,14 @@ for i=1:nfl
  plsig(:,:,:,i)=plsig(:,:,forder(:,i),i);
  plfreq(:,:,i)=plfreq(:,forder(:,i),i);
 end
-if plots
+if plots>0
  plot(plfreq(:,:,round(nfl/2)),reshape(plsig(gate,:,:,round(nfl/2)),nfft,nfreq))
  pause
-elseif plots==0
+elseif plots==0 | plots==-2
  npanel=dgates*nfreq;
  height(2)=.03; height(1)=(0.85-(npanel-1)*height(2))/npanel;
- set(gcf,'Position',[200 30 587 807],'PaperPosition',[0.4 0.7 20.65 28.4],'UserData',7)
+ if plots==0, set(gcf,'Position',[200 30 587 807]), end
+ set(gcf,'PaperPosition',[0.4 0.7 20.65 28.4],'UserData',7)
 
  for g=1:dgates
   mmmsig=mean(max(max(plsig(g,:,:,:))));

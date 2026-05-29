@@ -22,7 +22,8 @@ path_GUP=fullfile(path_GUP,filesep);
 path_exps=fullfile(path_exps,filesep);
 path_tmp=fullfile(path_tmp,filesep);
 if exist('analysis_plasmaline','var') & analysis_plasmaline
- display_figures(2:5)=[];
+ a_plasmaline=analysis_plasmaline;
+ display_figures(2:4)=0;
  analysis_do=0;
  d_saveint.var=0;
  d_saveint.dir=result_path;
