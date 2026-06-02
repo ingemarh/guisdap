@@ -16,7 +16,7 @@ global ad_range ad_w ad_code ad_lpg ad_coeff ADDR_SHIFT
 
 global ch_az ch_el ch_f ch_Pt sc_angle ch_range ch_azT ch_elT
 
-global d_data d_parbl d_rcprog d_time d_filelist
+global d_data d_parbl d_rcprog d_time d_filelist d_beam
 global d_var1 d_var2 % sig_var1 sig_var2
 
 global a_addr a_adstart a_adend a_control a_ind a_Magic_const a_lpf a_adjust a_screen

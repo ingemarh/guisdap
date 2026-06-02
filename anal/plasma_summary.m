@@ -185,41 +185,45 @@ if plots>0
  pause
 elseif plots==0 | plots==-2
  npanel=dgates*nfreq;
- height(2)=.03; height(1)=(0.85-(npanel-1)*height(2))/npanel;
+ height(2)=.01; height(1)=(0.87-(npanel-1)*height(2))/npanel;
  if plots==0, set(gcf,'Position',[200 30 587 807]), end
  set(gcf,'PaperPosition',[0.4 0.7 20.65 28.4],'UserData',7)
 
  for g=1:dgates
   mmmsig=mean(max(max(plsig(g,:,:,:))));
   for j=1:nfreq
-   pn=((g-1)*nfreq+j-1);
+   pn=(g-1)*nfreq+j-1;
    plfreqj=reshape(([plfreq(:,j,:);plfreq(end,j,:)+df]-df/2)/1e6,nfft+1,nfl);
-   axes('Position',[.12 .06+pn*sum(height) .85 height(1)])
+   axes('Position',[.12 .06+pn*sum(height) .84 height(1)])
    for i=1:nfl
     surface(p_time(:,i),plfreqj(:,i),[plsig(g,:,j,i) plsig(g,end,j,i)]'*ones(1,2))
    end
    shading flat, caxis([0 mmmsig])
-   ymax=max(max(plfreqj));
-   if pn==0, xlabel('Time [UT]'), end
+   ymin=min(plfreqj(:)); ymax=max(plfreqj(:));
    mydatetick(gca,p_time([1 end]),pn==0)
-   set(gca,'ylim',[min(min(plfreqj)) ymax],'box','on','tickdir','out','xgrid','on','ygrid','on')
-   if j==1
-    text('Position',[p_time(end) ymax],'VerticalAlignment','bottom','FontSize',12,...
-    'HorizontalAlignment','Right','String',sprintf('Range %.0f-%.0f km',ran(gates(g),:)))
+   if pn==0
+    xlabel('Time [UT]')
    else
     set(gca,'xticklabel',[])
+   end
+   if pn==0, xlabel('Time [UT]'), end
+   set(gca,'ylim',[ymin ymax],'box','on','tickdir','out','xgrid','on','ygrid','on')
+   if j==1
+    text('Position',[p_time(end) ymin],'VerticalAlignment','top',...
+     'FontSize',12,'HorizontalAlignment','Left','Rotation',90,...
+     'String',sprintf('Range %.0f-%.0f km',ran(gates(g),:)))
    end
   end
  end
  [h,d]=strtok(d_ExpInfo);
+ title(sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)),...
+  'interpreter','none','UserData','Experiment','VerticalAlignment','bottom')
  colormap(vizu('myb'))
  axlogo=axes('Position',[.05 .91 .09 .09]); eiscatlogo(axlogo,.5)
  axtext=axes('Position',[.07 .92 .08 .06]);axis(axtext,[-10,10,-10,10]);axis(axtext,'off')
- text('Position',[11 10],'VerticalAlignment','top','FontSize',16,...
+ text('Position',[11 11],'VerticalAlignment','top','FontSize',16,...
   'HorizontalAlignment','Left','FontWeight','bold',...
   'String',local.owner,'UserData','Copyright');
- text('Position',[11 -8],'interpreter','none',...
-  'String',sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)),'UserData','Experiment')
  text('Position',-[15 150],'String','Frequency offset [MHz]','Rotation',90,...
   'VerticalAlignment','middle','HorizontalAlignment','center')
  if ~isempty(printdir)

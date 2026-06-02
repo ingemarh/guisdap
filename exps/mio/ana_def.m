@@ -1,6 +1,6 @@
 % Analysis defaults
 a_satch.clutter=64;
-a_satch.plot=8;
+%a_satch.plot=8;
 a_satch.repair=[Inf];
 a_satch.cut=1;
 analysis_ppshortlags=1;

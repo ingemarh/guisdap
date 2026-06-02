@@ -317,8 +317,17 @@ if ~jj
     try
       if a_plasmaline
         figure(di_figures(5))
-        global d_saveint
+        global d_saveint local path_tmp
         plasma_summary(d_saveint.dir,[],[],[],-2)
+	drawnow
+        if local.x
+          flag='-dpng'; flag2='-r0';
+        else
+          flag='-dpng256'; flag2=[];
+        end
+        pngfile=sprintf('%sGup_32p.png',path_tmp);
+        print(di_figures(5),flag,flag2,pngfile)
+        webfile(1)=cellstr(pngfile);
       else
         vizu('rtgup',di_figures(5));
       end
