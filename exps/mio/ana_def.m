@@ -1,10 +1,4 @@
 % Analysis defaults
-a_satch.clutter=64;
-%a_satch.plot=8;
-a_satch.repair=[Inf];
-a_satch.cut=1;
-analysis_ppshortlags=1;
-analysis_altit(find(analysis_altit>850))=1000;
 if strfind(data_path,'@32p')
  analysis_txpower=8;
  analysis_intfix(5:6)=47:48;
@@ -19,6 +13,13 @@ if strfind(data_path,'@32p')
   plasma_range=24+col(ones(4*75,1)*(0:3)*425895+(1:4*75)'*ones(1,4)+175*75+174*2304);
  end
 else
+ a_satch.clutter=64;
+ %a_satch.plot=8;
+ a_satch.repair=[Inf];
+ a_satch.cut=1;
+ analysis_ppshortlags=1;
+ analysis_altit(find(analysis_altit>850))=1000;
+ 
  analysis_lpf.par=load([path_expr 'mio_lc.par']);
  analysis_lpf.lib='clutter';
  analysis_lpf.raw=128*186;

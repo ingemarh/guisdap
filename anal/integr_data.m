@@ -317,7 +317,7 @@ if ~jj
     try
       if a_plasmaline
         figure(di_figures(5))
-        global d_saveint local path_tmp
+        global d_saveint local path_tmp webfile
         plasma_summary(d_saveint.dir,[],[],[],-2)
 	drawnow
         if local.x
