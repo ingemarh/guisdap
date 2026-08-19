@@ -31,7 +31,7 @@ if strcmp(site3,'syi'), site='SA418'; end
 if nargin<4, epar='foE'; end
 if epar==1
  if strcmp(site,'TR169')
-  epar='foEs'
+  epar='foEs';
  else
   epar='FMXE';
  end
@@ -45,12 +45,12 @@ day=[]; fo=[]; tsound=[];
 
 if strcmp(site,'TR169')
  %foEs usually better
- www='https://lgdc.uml.edu/common/DIDBGetValues';
+ www='https://lgdc.uml.edu/fastchar/getbest';
  fof2_link=sprintf('?ursiCode=%s&charName=%s,%s&fromDate=%04d/%02d/%02d+%02d:%02d:%02.0f&toDate=%04d/%02d/%02d+%02d:%02d:%02.0f',site,epar,fpar,datevec(t1),datevec(t2));
  of=strrep(webread([www fof2_link]),'---','NaN');
  form='%s%f%f%s%f%s';
  d=textscan(of,form,'headerlines',21);
- fo=[d{5} d{3}];
+ fo=[d{3} d{5}];
  day=datenum(char(d{1}),'yyyy-mm-ddTHH:MM:SS.FFFZ');
 elseif strcmp(site3,'quj')
  ifile=minput('Enter ionosonde monthly foF2 table','KMG',1);
