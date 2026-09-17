@@ -167,7 +167,8 @@ end
  else
   name_site=sites(dum);
   siteid=strfind(sites,name_site);
-  if set_b, set(b(2),'value',siteid(1)), end
+  siteid=siteid(1);
+  if set_b, set(b(2),'value',siteid), end
  end
  if isempty(scan)
  elseif strmatch(scan,{'cp2' 'cp3' 'cp4' 'lowelnorth2' 'fix2' 'ip2' 'ip3'},'exact')
