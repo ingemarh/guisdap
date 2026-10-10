@@ -68,12 +68,18 @@ function [apriori2,apriorierror2] = apriorimodel_bafim_flipchem(apriori,apriorie
     
     global r_param r_error r_res r_status d_time path_GUP result_path v_Boltzmann v_amu p_XMITloc
     global v_lightspeed v_Boltzmann v_epsilon0 v_elemcharge sc_angle k_radar
+    global bafim_flipchem_model_error
 
     % merge outputs in one large file if true, set to false for the normal guisdap output files
     merge_output_files = false;
 
     % flipchem model error standar deviation
-    flipchem_modErr_std = .1;
+    if isempty(bafim_flipchem_model_error)
+        flipchem_modErr_std = .1;
+    else
+        flipchem_modErr_std = bafim_flipchem_model_error;
+    end
+    disp(['Setting flipchem_modErr_std = ', num2str(flipchem_modErr_std)])
 
     % step length in finite difference gradient calculations
     dx = .001;
@@ -119,8 +125,10 @@ function [apriori2,apriorierror2] = apriorimodel_bafim_flipchem(apriori,apriorie
     tsOp = fit_altitude(6,4);
 
     % limits for plasma parameters, these are more strict than those in fit_altitude(:,7:8)
-    paramlims = [1e9 50 .1 1 -1e4 0 ; 1e13 1e4 10 1e9 1e4 1];
-    
+    %paramlims = [1e9 50 .1 1 -1e4 0 ; 1e13 1e4 10 1e9 1e4 1];
+    % a bit wider limits to enable EISCAT VHF analysis
+    paramlims = [1e8 50 .1 .1 -1e4 0 ; 1e13 1e4 10 1e9 1e4 1];    
+
     % r_param is empty on the first iteration. Initialize d_time_prev, add the guisdap init directory to the path, and copy this file to the result directory.
     if size(r_param,1)==0
         d_time_prev = d_time(1,:);
@@ -283,193 +291,196 @@ function [apriori2,apriorierror2] = apriorimodel_bafim_flipchem(apriori,apriorie
         % call flipchem directly from the python module
         %
 
-
-        % initialize flipchem for the measurement time
-        timetmp = datetime(d_time(2,:));
-        pydate = py.datetime.datetime(int32(timetmp.Year),int32(timetmp.Month),int32(timetmp.Day),int32(timetmp.Hour),int32(timetmp.Minute));
-        glat = p_XMITloc(1);
-        glon = p_XMITloc(2);
-        fc = py.flipchem.Flipchem(pydate);
         O2p = r_param(:,1).*NaN;
         NOp = r_param(:,1).*NaN;
         NO  = r_param(:,1).*NaN;
 
-        % fms options...
-        fms_opts = optimset('fminsearch');
-        % fms_opts.Display = 'off';
-        % fms_opts.MaxFunEvals=1e4;
-        % fms_opts.MaxIter=1e6;
-        % fms_opts.TolFun=1e-8;
-        % fms_opts.TolX=1e-8;
-
-        % update the parameters using flipchem at each altitude
-        for hind = 1:nhei
-
-            % altitude
-            galt = heights(hind);
-
-            % correct only if we fit composition in this gate
-            if heights(hind)>hlimOp(1) & heights(hind)<hlimOp(2)
-
-                r_param_s_copy = r_param_s(hind,:);
-                r_param_copy = r_param(hind,:);
-                r_error_s_copy = r_error_s(hind,:);
-                r_error_copy = r_error(hind,:);
-                % skip the composition update if something fails
-                try
+        % flipchem_modErr_std>0 indicates that flipchem should be used
+        if flipchem_modErr_std>0
+        
+            % initialize flipchem for the measurement time
+            timetmp = datetime(d_time(2,:));
+            pydate = py.datetime.datetime(int32(timetmp.Year),int32(timetmp.Month),int32(timetmp.Day),int32(timetmp.Hour),int32(timetmp.Minute));
+            glat = p_XMITloc(1);
+            glon = p_XMITloc(2);
+            fc = py.flipchem.Flipchem(pydate);
+            
+            % fms options...
+            fms_opts = optimset('fminsearch');
+            % fms_opts.Display = 'off';
+            % fms_opts.MaxFunEvals=1e4;
+            % fms_opts.MaxIter=1e6;
+            % fms_opts.TolFun=1e-8;
+            % fms_opts.TolX=1e-8;
+            
+            % update the parameters using flipchem at each altitude
+            for hind = 1:nhei
+                
+                % altitude
+                galt = heights(hind);
+                
+                % correct only if we fit composition in this gate
+                if heights(hind)>hlimOp(1) & heights(hind)<hlimOp(2)
                     
-                    % the error covariance matrix from previous time step (in scaled units)
-                    covmat = vec2covm(r_error_s(hind,:));
-                    
-                    % the parameters that were actually fitted
-                    fitpar = diag(covmat) ~= 0;
-                    ifitpar = find(fitpar);
-
-                    % the model error with additional scaling by height above 150 km (the std is doubled at every 350 km, because the model is less reliable at heigher altitudes)
-                    fcStd = max(1,exp((heights(hind)-150)/(350/log(2)))) * flipchem_modErr_std;
-
-                    % a new fit with penalty from deviation from flipchem
-                    [x,fval,exitflag,output] = fminsearch( @(p) SS_flipchem( p , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc ) , r_param_orig_cleaned_s(hind,fitpar) , fms_opts);
-                    
-                    % update the parameter vector
-                    r_param_s(hind,fitpar) = x;
-                    r_param(hind,:) = scaled_to_real(r_param_s(hind,:));
-                    
-                    
-                    %%%%%%%%%%%%%%%%%%%%
-                    % error estimation %
-                    %%%%%%%%%%%%%%%%%%%%
-                    
-                    % number of parameters we actually fit
-                    nparam = sum(fitpar);
-                    
-                    % initialize the Hessian matrix
-                    Hess = zeros(nparam,nparam);
-                    
-                    % sum of squares at the iteration convergence point
-                    SS0 = SS_flipchem( r_param_s(hind,fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc);
-                    
-                    % Diagonal of the hessian
-                    for k=1:nparam
+                    r_param_s_copy = r_param_s(hind,:);
+                    r_param_copy = r_param(hind,:);
+                    r_error_s_copy = r_error_s(hind,:);
+                    r_error_copy = r_error(hind,:);
+                    % skip the composition update if something fails
+                    try
                         
-                        % +dx
-                        r_param_tmp = r_param_s(hind,:);
-                        r_param_tmp(ifitpar(k)) = r_param_tmp(ifitpar(k)) + dx;
-                        Hess(k,k) = Hess(k,k) + SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc); 
+                        % the error covariance matrix from previous time step (in scaled units)
+                        covmat = vec2covm(r_error_s(hind,:));
                         
-                        % -dx
-                        r_param_tmp = r_param_s(hind,:);
-                        r_param_tmp(ifitpar(k)) = r_param_tmp(ifitpar(k)) - dx;
-                        Hess(k,k) = Hess(k,k) + SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc);
+                        % the parameters that were actually fitted
+                        fitpar = diag(covmat) ~= 0;
+                        ifitpar = find(fitpar);
                         
-                        % the centre and scaling
-                        Hess(k,k) = (Hess(k,k) - 2*SS0) / dx^2;
+                        % the model error with additional scaling by height above 150 km (the std is doubled at every 350 km, because the model is less reliable at heigher altitudes)
+                        fcStd = max(1,exp((heights(hind)-150)/(350/log(2)))) * flipchem_modErr_std;
                         
-                    end
-                    
-                    % the off-diagonal elements
-                    for k=1:(nparam-1)
+                        % a new fit with penalty from deviation from flipchem
+                        [x,fval,exitflag,output] = fminsearch( @(p) SS_flipchem( p , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc ) , r_param_orig_cleaned_s(hind,fitpar) , fms_opts);
                         
-                        for l=(k+1):nparam
+                        % update the parameter vector
+                        r_param_s(hind,fitpar) = x;
+                        r_param(hind,:) = scaled_to_real(r_param_s(hind,:));
+                        
+                        
+                        %%%%%%%%%%%%%%%%%%%%
+                        % error estimation %
+                        %%%%%%%%%%%%%%%%%%%%
+                        
+                        % number of parameters we actually fit
+                        nparam = sum(fitpar);
+                        
+                        % initialize the Hessian matrix
+                        Hess = zeros(nparam,nparam);
+                        
+                        % sum of squares at the iteration convergence point
+                        SS0 = SS_flipchem( r_param_s(hind,fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc);
+                        
+                        % Diagonal of the hessian
+                        for k=1:nparam
                             
-                            % +dx+dx
+                            % +dx
                             r_param_tmp = r_param_s(hind,:);
                             r_param_tmp(ifitpar(k)) = r_param_tmp(ifitpar(k)) + dx;
-                            r_param_tmp(ifitpar(l)) = r_param_tmp(ifitpar(l)) + dx;
-                            Hess(k,l) = Hess(k,l) + SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc); 
+                            Hess(k,k) = Hess(k,k) + SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc); 
                             
-                            % +dx-dx
-                            r_param_tmp = r_param_s(hind,:);
-                            r_param_tmp(ifitpar(k)) = r_param_tmp(ifitpar(k)) + dx;
-                            r_param_tmp(ifitpar(l)) = r_param_tmp(ifitpar(l)) - dx;
-                            Hess(k,l) = Hess(k,l) - SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc); 
-                            
-                            % -dx+dx
+                            % -dx
                             r_param_tmp = r_param_s(hind,:);
                             r_param_tmp(ifitpar(k)) = r_param_tmp(ifitpar(k)) - dx;
-                            r_param_tmp(ifitpar(l)) = r_param_tmp(ifitpar(l)) + dx;
-                            Hess(k,l) = Hess(k,l) - SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc); 
+                            Hess(k,k) = Hess(k,k) + SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc);
                             
-                            % -dx-dx
-                            r_param_tmp = r_param_s(hind,:);
-                            r_param_tmp(ifitpar(k)) = r_param_tmp(ifitpar(k)) - dx;
-                            r_param_tmp(ifitpar(l)) = r_param_tmp(ifitpar(l)) - dx;
-                            Hess(k,l) = Hess(k,l) + SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc); 
-                            
-                            Hess(k,l) = Hess(k,l)/(4*dx^2);
-                            Hess(l,k) = Hess(k,l);
+                            % the centre and scaling
+                            Hess(k,k) = (Hess(k,k) - 2*SS0) / dx^2;
                             
                         end
-                    end
-                    
-                    % regularize a bit if there are unrealistic values (this happens very rarely but would crash the analysis)
-                    while any(diag(Hess)<=0)
-                        %                    disp('negative in Hess matrix diagonal')
-                        Hess = Hess + eye(nparam);
-                    end
-                    
-                    % inverse of the Hessian matrix
-                    invhess = inv(Hess);
-                    
-                    % The diagonal should be positive, regularize if it is not (again, very rare)
-                    while(any(diag(invhess)<=0))
-                        %                    disp('negative in covariance matrix diagonal')
-                        Hess = Hess + eye(nparam);
+                        
+                        % the off-diagonal elements
+                        for k=1:(nparam-1)
+                            
+                            for l=(k+1):nparam
+                                
+                                % +dx+dx
+                                r_param_tmp = r_param_s(hind,:);
+                                r_param_tmp(ifitpar(k)) = r_param_tmp(ifitpar(k)) + dx;
+                                r_param_tmp(ifitpar(l)) = r_param_tmp(ifitpar(l)) + dx;
+                                Hess(k,l) = Hess(k,l) + SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc); 
+                                
+                                % +dx-dx
+                                r_param_tmp = r_param_s(hind,:);
+                                r_param_tmp(ifitpar(k)) = r_param_tmp(ifitpar(k)) + dx;
+                                r_param_tmp(ifitpar(l)) = r_param_tmp(ifitpar(l)) - dx;
+                                Hess(k,l) = Hess(k,l) - SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc); 
+                                
+                                % -dx+dx
+                                r_param_tmp = r_param_s(hind,:);
+                                r_param_tmp(ifitpar(k)) = r_param_tmp(ifitpar(k)) - dx;
+                                r_param_tmp(ifitpar(l)) = r_param_tmp(ifitpar(l)) + dx;
+                                Hess(k,l) = Hess(k,l) - SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc); 
+                                
+                                % -dx-dx
+                                r_param_tmp = r_param_s(hind,:);
+                                r_param_tmp(ifitpar(k)) = r_param_tmp(ifitpar(k)) - dx;
+                                r_param_tmp(ifitpar(l)) = r_param_tmp(ifitpar(l)) - dx;
+                                Hess(k,l) = Hess(k,l) + SS_flipchem( r_param_tmp(fitpar) , fitpar , r_param_orig_cleaned_s(hind,:) , covmat, fcStd , glat , glon , galt , fc); 
+                                
+                                Hess(k,l) = Hess(k,l)/(4*dx^2);
+                                Hess(l,k) = Hess(k,l);
+                                
+                            end
+                        end
+                        
+                        % regularize a bit if there are unrealistic values (this happens very rarely but would crash the analysis)
+                        while any(diag(Hess)<=0)
+                            %                    disp('negative in Hess matrix diagonal')
+                            Hess = Hess + eye(nparam);
+                        end
+                        
+                        % inverse of the Hessian matrix
                         invhess = inv(Hess);
+                        
+                        % The diagonal should be positive, regularize if it is not (again, very rare)
+                        while(any(diag(invhess)<=0))
+                            %                    disp('negative in covariance matrix diagonal')
+                            Hess = Hess + eye(nparam);
+                            invhess = inv(Hess);
+                        end
+                        
+                        % covariance matrix of all parameters
+                        covmat2 = covmat;
+                        
+                        % error covariance = inv(2*Hess), the remaining elements of covmat2 are not affected
+                        covmat2(fitpar,fitpar) = invhess*2;
+                        
+                        % convert the covariance matrix into the vector format used in guisdap
+                        r_error_s(hind,:) = covm2vec(covmat2);
+                        
+                        % the vector format in physical units
+                        r_error(hind,:) = scaled_to_real(r_error_s(hind,:));
+                        
+                        % final check that everything is ok after the flipchem fit
+                        if any(any(isnan(covmat2)))
+                            error('NaN in covariance matrix, skipping the flipchem fit.');
+                        end
+                        if any(any(diag(covmat2)<0))
+                            error('Negative variance, skipping the flipchem fit.');
+                        end
+                        if any(isnan(r_error(hind,:)))
+                            error('NaN standard deviation, skipping the flipchem fit.');
+                        end
+                        if any(r_error(hind,1:6)<0)
+                            error('Negative standard deviation, skipping the flipchem fit.');
+                        end
+                        
+                        % if the flipchem fit fails we continue with the guisdap fit results
+                    catch me
+                        disp(me.message);
+                        r_param_s(hind,:) = r_param_s_copy;
+                        r_param(hind,:) = r_param_copy;
+                        r_error_s(hind,:) = r_error_s_copy;
+                        r_error(hind,:) = r_error_copy;
                     end
                     
-                    % covariance matrix of all parameters
-                    covmat2 = covmat;
-                    
-                    % error covariance = inv(2*Hess), the remaining elements of covmat2 are not affected
-                    covmat2(fitpar,fitpar) = invhess*2;
-                    
-                    % convert the covariance matrix into the vector format used in guisdap
-                    r_error_s(hind,:) = covm2vec(covmat2);
-
-                    % the vector format in physical units
-                    r_error(hind,:) = scaled_to_real(r_error_s(hind,:));
-
-                    % final check that everything is ok after the flipchem fit
-                    if any(any(isnan(covmat2)))
-                        error('NaN in covariance matrix, skipping the flipchem fit.');
+                end
+                
+                try
+                    % the molecular ions and neutral NO
+                    outputs = fc.get_point(glat,glon,galt,r_param(hind,1),r_param(hind,2)*r_param(hind,3),r_param(hind,2));
+                    O2p(hind) = outputs{5}/r_param(hind,1);
+                    NOp(hind) = outputs{6}/r_param(hind,1);
+                    NO(hind) = outputs{9};
+                    if isnan(O2p(hind)) | isnan(NOp(hind))
+                        error('NaN composition, skipping the flipchem fit.');
                     end
-                    if any(any(diag(covmat2)<0))
-                        error('Negative variance, skipping the flipchem fit.');
-                    end
-                    if any(isnan(r_error(hind,:)))
-                        error('NaN standard deviation, skipping the flipchem fit.');
-                    end
-                    if any(r_error(hind,1:6)<0)
-                        error('Negative standard deviation, skipping the flipchem fit.');
-                    end
-
-                    % if the flipchem fit fails we continue with the guisdap fit results
                 catch me
                     disp(me.message);
-                    r_param_s(hind,:) = r_param_s_copy;
-                    r_param(hind,:) = r_param_copy;
-                    r_error_s(hind,:) = r_error_s_copy;
-                    r_error(hind,:) = r_error_copy;
                 end
-
+                
             end
-            
-            try
-                % the molecular ions and neutral NO
-                outputs = fc.get_point(glat,glon,galt,r_param(hind,1),r_param(hind,2)*r_param(hind,3),r_param(hind,2));
-                O2p(hind) = outputs{5}/r_param(hind,1);
-                NOp(hind) = outputs{6}/r_param(hind,1);
-                NO(hind) = outputs{9};
-                if isnan(O2p(hind)) | isnan(NOp(hind))
-                    error('NaN composition, skipping the flipchem fit.');
-                end
-            catch me
-                disp(me.message);
-            end
-            
         end
-
 
 
 

@@ -27,14 +27,16 @@ for group=diff_val(vc_group)
   Aenv=autocorr(env);
   len=ceil(length(Aenv)/2);
   vc_Aenv(1:len,vcs)=Aenv(len:2*len-1)*ones(size(vcs));
-  plot((-(len-1):len-1)*p_dtau,Aenv); title(' ACF of X-mission envelope')
-  drawnow
+  if ~exist('LPgen')
+    plot((-(len-1):len-1)*p_dtau,Aenv); title(' ACF of X-mission envelope')
+    drawnow
+  end
 
   Ap=autocorr(imp);
   len=ceil(length(Ap)/2);
   vc_Ap(1:len,vcs)=Ap(len:2*len-1)*ones(size(vcs));
 %  plot((-(len-1):len-1)*p_dtau,Ap), title(' ACF of filter impulse response')
-  drawnow
+%  drawnow
 
   penv=conv(imp,env);
   Apenv=autocorr(penv);

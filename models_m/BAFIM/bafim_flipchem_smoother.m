@@ -208,9 +208,9 @@ function bafim_flipchem_smoother( datadir , mergedfile , newoutfile)
                 Pk = vec2covm(r_error_rcorr_s(ihei,:));
                 % select the parameters we actually fit
                 Pkf = Pk([1 2 3 5 6],[1 2 3 5 6]);
-                % inverse of predicted covariance for step k+1 (the prior covariances are diagonal in guisdap)
-                %Pk1p = diag(r_apriorierror_next_s(ihei,:).^2);
-                %Pk1pf = Pk1p([1 2 3 5 6],[1 2 3 5 6]);
+                % the predicted covariance for step k+1 and its inverse (the prior covariances are diagonal in guisdap)
+                Pk1p = diag(r_apriorierror_next_s(ihei,:).^2);
+                Pk1pf = Pk1p([1 2 3 5 6],[1 2 3 5 6]);
                 %Pk1pfi = inv(Pk1pf);
                 Pk1pfi = diag(1./(r_apriorierror_next_s(ihei,[1 2 3 5 6]).^2));
                 % covariance for step k+1 after smoothing
@@ -223,12 +223,12 @@ function bafim_flipchem_smoother( datadir , mergedfile , newoutfile)
                 r_param_rcorr_smooth_s(ihei,[1 2 3 5 6]) = r_param_rcorr_s(ihei,[1 2 3 5 6])' + G * (r_param_rcorr_smooth_next_s(ihei,[1 2 3 5 6])' - r_apriori_next_s(ihei,[1 2 3 5 6])');
 
                 % covariance of the smoothed parameters
-                Pksf = Pkf + G*( Pk1sf - Pk1pfi ) * G';
+                Pksf = Pkf + G*( Pk1sf - Pk1pf ) * G';
                 % Put the covariances to corresponding elements of the full error covariance matrix
                 Pksmooth = Pk;
                 Pksmooth([1 2 3 5 6],[1 2 3 5 6]) = Pksf;
                 % convert the error covariance to GUISDAP vector format
-                r_error_rcorr_s(ihei,:) = covm2vec(Pksmooth);
+                r_error_rcorr_smooth_s(ihei,:) = covm2vec(Pksmooth);
                 
                 
             end
@@ -312,6 +312,8 @@ function bafim_flipchem_smoother( datadir , mergedfile , newoutfile)
         % points with std <= 1e-3 are points fixed to model values, put the model values in these points
         r_param_smooth(r_error_filter(:,1:6)<=1e-3) = r_param_filter(r_error_filter(:,1:6)<=1e-3);
         r_param_rcorr_smooth(r_error_rcorr(:,1:6)<=1e-3) = r_param_rcorr(r_error_rcorr(:,1:6)<=1e-3);
+        r_error_smooth(r_error_filter(:,1:6)<=1e-3) = r_error_filter(r_error_filter(:,1:6)<=1e-3);
+        r_error_rcorr_smooth(r_error_rcorr(:,1:6)<=1e-3) = r_error_rcorr(r_error_rcorr(:,1:6)<=1e-3);
 
 
         % store values needed for the next iteration step

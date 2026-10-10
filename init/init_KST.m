@@ -21,7 +21,7 @@
 %
 % See also: design glob_EISCAT td_arrange envcalc find_sampling vc_arrange
 %
-clf, hold off
+if ~exist('LPgen'),clf,hold off,end
 glob_initKST
 
 % Chdir to the experiment directory, store the present path as a return address
@@ -126,11 +126,13 @@ for d_rcprog=B_rcprog:N_rcprog
      for i=1:10,fprintf('*********\n');end
   end
 
-  global td_am td_ch td_t1 td_t2 c_f
-  if name_site=='T' | name_site=='V' | name_site=='L' | name_site=='P' | name_site=='Q' | name_site=='3'
+  if ~exist('td_am')
+   global td_am td_ch td_t1 td_t2 c_f
+   if name_site=='T' | name_site=='V' | name_site=='L' | name_site=='P' | name_site=='Q' | name_site=='3'
     load_PS(d_rcprog,N_rcprog)
-  else
+   else
     load_PSrem
+   end
   end
   if length(ch_f)~=length(ch_fradar)
     ch_fradar=ch_fradar*ones(size(ch_f));
@@ -164,13 +166,17 @@ for d_rcprog=B_rcprog:N_rcprog
   clear td_am td_t1 td_t2 td_ch
   vc_arrange
 
-  file=find_apustr_file([name_expr name_site],d_rcprog,'_LP','m');
-  if isempty(file)
-    error('Stopping')
+  if exist('LPgen')
+   for LP=LPgen,eval(char(LP)),end
   else
+   file=find_apustr_file([name_expr name_site],d_rcprog,'_LP','m');
+   if isempty(file)
+    error('Stopping')
+   else
     fprintf('Defining lag profiles by executing %s:\n',file)
     eval(file)
     fprintf('...%s passed\n',file)
+   end
   end
 
   fprintf('Time used in initialization:%8.2f min\n',etime(clock,Stime)/60)

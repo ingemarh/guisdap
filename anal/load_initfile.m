@@ -29,7 +29,11 @@ if exist(initfil,'file')
   disp(initfile)
   load(initfil)
 else
-  error(['File ' initfile '.mat not found'])
+  try
+    lp_init(lpinit(find([lpinit{:,3}]==d_rcprog),:))
+  catch
+    error(['File ' initfile '.mat not found'])
+  end
 end
 if GUP_iniver<1.52
   error(sprintf('Files produced by GUP vs %.2f not usable: Reinitialise!',GUP_iniver))

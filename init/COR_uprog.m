@@ -26,6 +26,7 @@ if (type~='b' & type~='c' & type~='s' & type~='o' & type~='x'),
   error([' Unknown data type in COR_uprog: ' type])
 end  
 
+if isempty(ra), ra=ra_next; end
 ra_prev=ra;
 
 adcint=vc_adcint(vc); lags=gupround(lags/p_dtau);

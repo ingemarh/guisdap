@@ -244,8 +244,8 @@ end
 	%% Subsets of the arrays lpg_dt, lpg_nt and lpg_h corresponding
 	%% to the signal lag profile groups. We will use these to determine
 	%% the natural time limits ...
-	master_dt = lpg_dt(all_lpgs);
-	master_nt = lpg_nt(all_lpgs);
+	master_dt = double(lpg_dt(all_lpgs));
+	master_nt = double(lpg_nt(all_lpgs));
 	master_h  = lpg_h(all_lpgs);
 
 	%% Time limits of plot. Units are not in us till multiplied by p_dtau

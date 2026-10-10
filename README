@@ -11,12 +11,12 @@ Guisdap-10.0 is more-or-less platform independent, and is running on
 Linux/iOS/Windows. The software is available in
 https://github.com/ingemarh/guisdap or https://gitlab.com/ingemarh/guisdap,
 as git repositories with the large file system (lfs). To get it, install git
-and git-lfs on linux or mac. For windows, https://gitforwindows.org is a good
+and git-lfs on Linux or macOS. For Windows, https://gitforwindows.org is a good
 option. Guisdap is also available as ready made deb packages,
 deb [trusted=yes] https://sourceforge.net/projects/guisdap/files/deb-repo/ bookworm main
 The libraries contain up-to-date ionospheric, atmospheric and magnetic models
 and can either be installed as the .deb repo (libguisdap) , or made optimised
-for the hardware/software (tested on Linux and iOS) via ./libinstall.sh
+for the hardware/software (tested on Linux and Darwin/macOS) via ./libinstall.sh
 Guisdap is then started via bin/guisdap (preferrably linked to a place on the
 path).
 Provided is a searchpath to ~/gup/mygup where your personal and edited
