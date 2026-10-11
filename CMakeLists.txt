@@ -26,8 +26,8 @@ string(APPEND CMAKE_Fortran_FLAGS " -fno-automatic -fno-align-commons -std=legac
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(SHARE_DIRECTORY ${CMAKE_BINARY_DIR}/share)
 
-add_subdirectory(models/iri2020)
-add_subdirectory(models/nrlmsis2.1)
-add_subdirectory(models/irbem/source)
-add_subdirectory(models/irbem)
-add_subdirectory(source)
+add_subdirectory(models/iri2026)
+#add_subdirectory(models/nrlmsis2.1)
+#add_subdirectory(models/irbem/source)
+#add_subdirectory(models/irbem)
+#add_subdirectory(source)

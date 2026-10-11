@@ -16,6 +16,7 @@ C 2012.03 07/17/14 COP4S: NPLUS=0; PR(13)=0.0 ------------------------- A Shaban
 C 2016.01 09/08/16 Main: NEWTON replaced by iteration procedure ------- B Gustavsson
 C 2016.02 05/07/18 Added array PRV11 to DATA statement ---------------- K. Knight
 C 2020.01 03/05/24 SECIPRD: added IMAX=0 at beginning ----------------- I. Alexeyevich
+C 2020.07 07/22/25 SCOLUM: IF(Y.GE.8) ERFY2=F/(G+Y) instead of GT ----- K. Johnston
 C****************************************************************************************
 C subroutines for IDC model
 C
@@ -1842,7 +1843,7 @@ C.... the MSIS model at grazing incidence
         Y=SQRT(0.5*XP)*ABS(COS(CHI))
         IF(Y.GT.100.0) WRITE(6,100) I,Z/1.0E5,CHI*57.3,TNJ,EM,M(I),GR,RP
  100    FORMAT('WARNING, Y IN COLUMN(I) > 100',I4,1P,9E10.2)
-        IF(Y.GT.8) ERFY2=F/(G+Y)
+        IF(Y.GE.8) ERFY2=F/(G+Y)
         IF(Y.LT.8) ERFY2=(A+B*Y)/(C+D*Y+Y*Y)
 
  4      IF(CHI.GT.1.5708)GO  TO 2

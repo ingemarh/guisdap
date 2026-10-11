@@ -2,6 +2,7 @@ function r=setuplibs(unload)
 global local path_GUP path_tmp
 if nargout, r=0; end
 if isempty(path_GUP), return, end
+iripath=fullfile(path_GUP,'share','iri');
 res=0;
 libs={'libguisdap','libiri','libmsis','plwin','alt_decoder','clutter','onera_desp_lib'};
 ll=length(libs);
@@ -10,7 +11,8 @@ mmodel=fullfile(path_GUP,'models_m');
 if nargin==0
  atmos=zeros(1,ll); atmos([2 3 end])=1; res_atmos=0;
  heads={'libgup','iri','msis','plwin','plwin','plwin','onera_desp_lib'};
- init={[],[],{'matface_' length(path_GUP)+12 fullfile(path_GUP,'share','msis',filesep)},[],[],[],[]};
+ init={[],{'irinit_',int32(iripath),length(iripath)},...
+  {'matface_' length(path_GUP)+12 fullfile(path_GUP,'share','msis',filesep)},[],[],[],[]};
  d=fullfile(path_GUP,'lib');
  if ~exist(thdir,'dir'), mkdir(thdir), end
  owd=pwd;

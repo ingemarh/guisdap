@@ -38,6 +38,9 @@ C 2020.02 05/10/23 Added JFF(50)
 C 2020.02 12/04/23 Deleted subroutine iri_tec, no longer needed
 C 2020.03 03/03/24 if(iisect.. moved to after tecb=0         [R. Skantz] 
 C 2020.03 03/03/24 hmF2,xnmF2,xnorm defined for last segment [R. Skantz] 
+C 2020.03 03/25/25 ******** released on irimodel.org *************
+C 2020.04 09/22/25 IRITEC: deleting JFF                     [M.-Y. Chou] 
+C 2020.04 09/25/25 ******** released on irimodel.org *************
 C
 c-----------------------------------------------------------------------        
 C
@@ -61,22 +64,7 @@ C                       and above hmF2 (tect)
 c-----------------------------------------------------------------------        
 
         dimension       outf(20,1000),oarr(100)
-        logical         jf(50),jff(50)
-
-c
-c turning off computations that are not needed for integration
-c
-
-          do 2938 i=1,50
-2938         jff(i) = jf(i)
-          jff(2)=.false.       ! f=no temperatures (t)
-          jff(3)=.false.       ! f=no ion composition (t)
-          jff(21)=.false.      ! t=ion drift computed f=not comp.(f)
-          jff(28)=.false.	  ! t=spread-F computed f=not comp. (f)
-          jff(33)=.false. 	  ! t=auroral boundary   f=off (f)
-          jff(34)=.false. 	  ! t=messages on f= off (t)
-          jff(35)=.false. 	  ! t=auroral E-storm model on f=off (f)
-          jff(47)=.false. 	  ! t=CGM on  f=CGM off (f)
+        logical         jf(50)
 		
         iisect = int(((hend-hbeg)/hstep)/1000.0)
 	hsect = 1000.0 * hstep
@@ -90,7 +78,7 @@ c
 	do j=1,iisect
           abeg = hbeg + (j-1)* hsect + hastep
           aend = abeg + hsect - hstep
-          call IRI_SUB(JFF,JMAG,ALATI,ALONG,IY,MD,HOUR,
+          call IRI_SUB(JF,JMAG,ALATI,ALONG,IY,MD,HOUR,
      &        abeg,aend,hstep,OUTF,OARR)
 	  if(j.lt.2) then
             hmF2 = oarr(2)
@@ -137,7 +125,6 @@ c
 		   
         tecto = tect * xnmF2
         tecbo = tecb * xnmF2
-
         return
         end
 c

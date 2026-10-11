@@ -1,4 +1,4 @@
-function m_iri=iri(par,tim,loc,h,iripath)
+function m_iri=iri(par,tim,loc,h)
 % function m_iri=iri(par,tim,loc,h)
 % par parameter list, default [1 4 3]
 %   	 fields 1  electron density/m-3
@@ -20,7 +20,6 @@ function m_iri=iri(par,tim,loc,h,iripath)
 %* temperatures            120 km    3000 km *
 %* ion densities           100 km    1000 km *
 %*********************************************
-if nargin<5, global path_GUP, iripath=fullfile(path_GUP,'share','iri'); end
 if nargin<4, h=[]; end
 if nargin<3, loc=[]; end
 if nargin<2, tim=[]; end
@@ -36,7 +35,8 @@ h(2)=h(2)+0.001;
 if libisloaded('libiri')
 
 jf=libpointer('int32Ptr',ones(50,1));
-jf.value([4 5 21 23 28:30 33:35 39])=0;
+%jf.value([4 5 21 23 28:30 33:35 39])=0;
+jf.value([4 5 23 29 30 33 35 39 40 45 46])=0;
 id=fix(-tim(1)/86400);
 ut=tim(1)/3600+id*24;
 iy=round(tim(2));
@@ -44,8 +44,6 @@ if nh>500, error('Max 500 heights'), end
 outf=libpointer('singlePtr',zeros(20,1000));
 oarr=libpointer('singlePtr',zeros(100,1));
 
-calllib('libiri','read_ig_rz_',int32(iripath),length(iripath));
-calllib('libiri','readapf107_');
 calllib('libiri','iri_sub_',jf,0,loc(1),loc(2),iy,id-1,ut+25,h(1),h(2),h(3),outf,oarr);
 
 m_iri=double(outf.value(par,1:nh)');

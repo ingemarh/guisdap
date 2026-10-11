@@ -33,6 +33,7 @@ C  1/27/92 Adopted to IGRF-91 coeffcients model
 C  2/05/92 Reduce variable names: INTER(P)SHC,EXTRA(P)SHC,INITI(ALI)ZE
 C  8/08/95 Updated to IGRF-45-95; new coeff. DGRF90, IGRF95, IGRF95S
 C  5/31/00 Updated to IGRF-45-00; new coeff.: IGRF00, IGRF00s
+
 C-Version-mm/dd/yy-Description (Person reporting the correction)
 C 2000.01 05/07/01 initial version
 C 2000.02 07/11/01 replace feldi(xi,h) by feldi (P. Wilkinson)
@@ -40,17 +41,20 @@ C 2000.02 07/11/01 variables EGNR, AGNR,OGNR not used (P. Wilkinson)
 c 2000.01 10/28/02 replace TAB/6 blanks, enforce 72/line (D. Simpson)
 C 2000.02 11/08/02 change unit for coefficients to 14
 C 2000.03 06/05/03 correct DIPL computation (V. Truhlik)
+C 2005.00 03/24/05 Updated to IGRF-45-10; new coeff.: IGRF05, IGRF05s
 C 2005.00 04/25/05 CALL FELDI and DO 1111 I=1,7 (Alexey Petrov)
 C 2005.01 11/10/05 added igrf_dip and geodip (MLAT) 
 C 2005.02 11/10/05 FELDCOF: updated to IGRF-10 version
 C 2005.03 12/21/06 GH2(120) -> GH2(144)
 C 2007.00 05/18/07 Release of IRI-2007
+C 2007.01 07/22/09 SHELLG: NMAX=13 for DGRF00, IGRF05; H/G-arrays(195)
 C 2007.08 07/30/09 SHELLG,STOER,FELDG,FELDCOF: NMAX=13; H/G-arrays(195) 
 C 2007.10 02/26/10 FELDCOF: updated to IGRF-11; DGRF05, IGRF10, IGRF10S
 C 2007.11 04/27/10 RECALC: updated to IGRF-11
 C 2007.11 04/27/10 Make all arrays(195) to arrays(196) 
 C 2007.11 04/27/10 FELDCOF: corrected Filmod and also IGRF10.DAT
 C 2007.11 04/29/10 New files dgrf%%%%.asc; new GETSHC; char*12 to 13
+C 2007.11 04/29/10 H/H-arrays(196); FELDCOF: corr. IGRF00 and .00S
 C
 C 2012.00 10/05/11 IRI-2012: bottomside B0 B1 model (SHAMDB0D, SHAB1D),
 C 2012.00 10/05/11    bottomside Ni model (iriflip.for), auroral foE
@@ -221,7 +225,6 @@ c-----------------------------------------------------------------------
       
       lati=xlat
       longi=xlong
-c      CALL FELDCOF(YEAR,DIMO)
       CALL FELDG(LATI,LONGI,HEIGHT,BNORTH,BEAST,BDOWN,BABS)
       CALL SHELLG(LATI,LONGI,HEIGHT,XL,ICODE,BAB1)
       DIPL=ATAN(BDOWN/2.0/sqrt(BNORTH*BNORTH+BEAST*BEAST))/umr
@@ -249,7 +252,6 @@ c-----------------------------------------------------------------------
 	  xlati = xlat
 	  xlongi = xlong
 	  h = height
-c      CALL FELDCOF(YEAR,DIMO)
       CALL FELDG(XLATI,XLONGI,H,BNORTH,BEAST,BDOWN,BABS)
           DECARG=BEAST/SQRT(BEAST*BEAST+BNORTH*BNORTH)
           IF(ABS(DECARG).GT.1.) DECARG=SIGN(1.,DECARG)
@@ -269,30 +271,7 @@ c       DIPL1=ATAN(0.5*TAN(DIP))/UMR
       END
 c
 c
-C SHELLIG.FOR
-C
-C 11/01/91 SHELLG: lowest starting point for B0 search is 2  
-C  1/27/92 Adopted to IGRF-91 coeffcients model
-C  2/05/92 Reduce variable-names: INTER(P)SHC,EXTRA(P)SHC,INITI(ALI)ZE
-C  8/08/95 Updated to IGRF-45-95; new coeff. DGRF90, IGRF95, IGRF95S
-C  5/31/00 Updated to IGRF-45-00; new coeff.: IGRF00, IGRF00s
-C  3/24/05 Updated to IGRF-45-10; new coeff.: IGRF05, IGRF05s
-C  4/25/05 ENTRY FELDI(XI,H) and  DO 1111 I=1,7 [Alexey Petrov]
-C  7/22/09 SHELLG: NMAX=13 for DGRF00 and IGRF05; H/G-arrays(195)
-C  2/26/10 FELDCOF: Updated IGRF45-15; new coeff: DGRF05, IGRF10, IGRF10S
-C  4/29/10 H/H-arrays(196); FELDCOF: corrected IGRF00 and ..00S
-C  4/29/10 Change to new files dgrf%%%%.asc; new GETSHC; char*12 to 13
-C
-C*********************************************************************
-C  SUBROUTINES SHELLG, STOER, FELDG, FELDCOF, GETSHC,                *
-C       INTERSHC, EXTRASHC                                           *
-C*********************************************************************
-C*********************************************************************
-C
-C
-C
       SUBROUTINE SHELLG(GLAT,GLON,ALT,FL,ICODE,B0)
-c      SUBROUTINE SHELLG(GLAT,GLON,ALT,DIMO,FL,ICODE,B0)
 c-----------------------------------------------------------------------        
 C CALCULATES L-VALUE FOR SPECIFIED GEODAETIC COORDINATES, ALTITUDE
 C AND GEMAGNETIC FIELD MODEL.
@@ -1651,7 +1630,7 @@ C  *********************************************************************
        sp = 1.
        ss = 1.
       if(sign(sp,pla).ne.sign(ss,cla)) then
-c       write(7,2) pla,cla
+        write(7,2) pla,cla
    2    format(/
      +  'WARNING - The CGM pole PLA = ',f6.2,' and station CLAT = ',
      +  f6.2,' are not in the same hemisphere: MLTMN is incorrect!')
