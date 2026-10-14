@@ -24,7 +24,7 @@ if modinfo
 end
 [tsec,year]=tosecs(dtime); year=year+yshift;
 hh=[min(heights)-1 max(heights)+1.1 1]; if hh(2)-hh(1)>100, hh(3)=0; end
-m_iri=iri([1 4 3 6 8 9 10 12],[tsec year],loc,hh,iripath);
+m_iri=iri([1 4 3 6 8 9 10 12],[tsec year],loc,hh);
 altitude=m_iri(:,8);
 tn=msis(altitude*1e3,[tsec/86400 rem(tsec,86400)],loc);
 d=find(isnan(m_iri(:,2)) & altitude<150);
