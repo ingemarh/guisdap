@@ -78,7 +78,7 @@ for i=1:n_tot
     n_alt=size(r_param,1);
     par2D	=ones(n_alt,n_tot,npar2D)*NaN;
     par1D=zeros(n_tot,npar1D);
-    if do_rpar && any(strfind('TVLQ3',name_site)) && ~isempty(r_pp)
+    if do_rpar && any(strfind('TVLQ3N',name_site)) && ~isempty(r_pp)
       n_ralt=length(unique(round(r_pprange/ppres)));
       rpar2D=ones(n_ralt,n_tot,3)*NaN;
     else
@@ -88,8 +88,8 @@ for i=1:n_tot
       err2D	=ones(n_alt,n_tot,nerr2D)*NaN;
     end
     if isempty(name_ant)
-      antennas=['uhf kir sod vhf esr 32m 42m'];
-      i=(strfind('TKSVL',name_site)-1)*4+1;
+      antennas=['uhf kir sod vhf esr 32m 42m ski kai kar'];
+      i=(strfind('TKSVLNIO',name_site)-1)*4+1;
       name_ant=antennas(i:i+2);
     elseif contains('san wen dan',name_ant)
       local.owner='IGGCAS';

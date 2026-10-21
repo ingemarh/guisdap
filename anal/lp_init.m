@@ -20,14 +20,20 @@ if nargin==1
 else
  name_expr=expr; name_site=upper(site);
 end
+if contains('IO',name_site)
+ nsite=name_site;
+ name_site='R'; txrem='N';
+end
 if ~exist('init_KST')
  addpath(fullfile(path_GUP,'init'))
 end
 
-p_offsetppd=0; %hui hui
-t_to_ps=[tx 1 1;rx 2 1;bac 2 1];
+p_offsetppd=offp;
+t_to_ps=[tx 1 1;rx+offp 2 1;bac+offp 2 1];
 if ~isempty(cal)
- t_to_ps=[t_to_ps;cal 2 0;cal 2 1];
+ t_to_ps=[t_to_ps;cal+offp 1 0;cal+offp 2 1];
+else
+ nocal=1;
 end
 td_t1=t_to_ps(:,1)';
 td_t2=t_to_ps(:,2)';
@@ -46,9 +52,19 @@ end
 ch_f=freq;
 cwd=pwd;
 %save_PS
-LPgen={sprintf('COR_init(%d,1)',(mlag+1)*2+1),...
+if ~isempty(cal)
+ LPgen={sprintf('COR_init(%d,1)',(mlag+1)*2+1),...
 	sprintf('COR_uprog(0,1,1,''s'',1,%.0f,(0:%d)*%d,0,1)',diff(rx)/adc,mlag,adc),...
-	sprintf('COR_uprog([],1,1,''b'',1,%.0f,(0:%d)*%d,0,1)',diff(bac)/adc,mlag,adc),...
+	sprintf('COR_uprog([],1,1,''b'',1,%.0f,(0:%d)*%d,0,1)',diff(bac)/adc,mlag,adc)...
 	sprintf('COR_pp([],1,1,''c'',1,%.0f,0,1)',diff(cal)/adc)};
-N_rcprog=vers;B_rcprog=vers;evalc('init_KST');evalc('init_GUP');
+else
+ LPgen={sprintf('COR_init(%d,1)',(mlag+1)*2),...
+	sprintf('COR_uprog(0,1,1,''s'',1,%.0f,(0:%d)*%d,0,1)',diff(rx)/adc,mlag,adc),...
+	sprintf('COR_uprog([],1,1,''b'',1,%.0f,(0:%d)*%d,0,1)',diff(bac)/adc,mlag,adc)};
+end
+N_rcprog=vers;B_rcprog=vers;initplots=0;evalc('init_KST');evalc('init_GUP');
+%N_rcprog=vers;B_rcprog=vers;init_KST;init_GUP;
 chdir(cwd)
+if exist('nsite')
+ name_site=nsite;
+end

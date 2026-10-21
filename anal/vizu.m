@@ -12,11 +12,8 @@ function [varargout]=vizu(varargin)
 % >> vizu dir exp_type antenna
 % To update the plot with new files:
 % >> vizu update
-% To send the figure to the default printer:
-% >> vizu print [printer]
 % To save the current figure in .eps and .png formats:
 % >> vizu save [extra tail]
-% >> vizu Save [extra tail] for large plots
 % To get more selection possibilities
 % >> vizu verbose
 % To get even more selection possibilities
@@ -132,7 +129,7 @@ elseif strcmp(act,'update')
    vizu('update'), pause(a2)
   end
  end
-elseif strcmpi(act,'print') || strcmpi(act,'save')
+elseif strcmpi(act,'save')
  fig=sprintf('%d-%02d-%02d_%s',START_TIME(1:3),name_expr);
  if ~isempty(name_strategy), fig=sprintf('%s_%s',fig,name_strategy); end
  if ~isdir(DATA_PATH), dirs=path_tmp(1:end-1); else, dirs=DATA_PATH; end
@@ -142,55 +139,17 @@ elseif strcmpi(act,'print') || strcmpi(act,'save')
  if local.matlabversion>25, origtheme=get(vizufig,'theme'); set(vizufig,'theme','light'), end
  if isempty(axs)
   disp('Nothing to print!')
- elseif isunix
-  if strcmpi(act,'print')
-    [dirs,fig]=fileparts(local.tfile); ext='ps';
-  else
-    ext='eps';
-  end
-  rotate=0; pngor='580x820'; if length(axs)==1, rotate=1; end
-  if [strfind(act,'R') strfind(act,'V')], rotate=1-rotate; end
-  if rotate
-   ppos=get(vizufig,'PaperPosition'); s=3.4;
-   set(vizufig,'PaperOrient','landscape','PaperPosition',ppos([2 1 4 3])+[0 s 0 -s])
-   pngor='820x580';
-  end
-  %[i,j]=gupsystem('which addlogo.sh');
-  %i=i || local.matlabversion>8.3;
-  %if ~i, set(hds(2:3),'visible','off'), end
-  file=fullfile(dirs,fig);
-  if strcmp(act(1),'S')
-   print(vizufig,['-d' ext 'c'],'-r600',[file '.' ext]);
-  else
-   print(vizufig,['-d' ext 'c'],[file '.' ext]);
-  end
-  if rotate
-   set(vizufig,'PaperOrient','portrait','PaperPosition',ppos)
-  end
-  %if ~i
-  % set(hds(2:3),'visible','on')
-  % gupsystem(sprintf('addlogo.sh %s %s %s >/dev/null 2>&1',dirs,fig,ext));
-  %end
-  if strcmpi(act,'print') || strcmpi(a3,'print')
-    if isempty(a2), dev=''; else, dev=['-d' a2 ' ']; end
-    gupsystem(['lp -c ' dev file '.' ext ' >/dev/null 2>&1']);
-    if strcmpi(act,'print'), delete([file '.' ext]), end
-  end
-  if strcmpi(act,'save')
-    %gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
-    gupsystem(sprintf('%s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s.%s </dev/null >/dev/null',local.fn.gs,file,file,ext));
-    gupsystem(sprintf('%s -r150 -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s.%s </dev/null >/dev/null',local.fn.gs,file,file,ext));
-    delete([file '.' ext])
-    fprintf('Created %s.pdf and .png\n',file)
-    insert_exif(vizufig,file,{'pdf' 'png'})
-  end
- elseif strcmpi(act,'print')
-  print(vizufig,'-dwinc');
  else
+  rotate=0; if length(axs)==1, rotate=1; end
+  ppos=get(vizufig,'PaperPosition'); s=3.4;
+  set(vizufig,'PaperOrient','landscape','PaperPosition',ppos([2 1 4 3])+[0 s 0 -s])
   print(vizufig,'-dpdf',[file '.pdf']);
   print(vizufig,'-dpng256',[file '.png']);
   fprintf('Created %s.pdf and .png\n',file)
   insert_exif(vizufig,file,{'pdf' 'png'})
+  if rotate
+   set(vizufig,'PaperOrient','portrait','PaperPosition',ppos)
+  end
  end
  if local.matlabversion>25, set(vizufig,'theme',origtheme), end
  if strcmpi(act,'save') && nargout==1
@@ -381,6 +340,11 @@ elseif contains('san wen dan',nameant)
  fradar=430e6;
  TITLE1{5}='Background level (%)';
  par1D(:,5)=par1D(:,5)/max(par1D(:,5))*100;
+elseif contains('ski kai kar',nameant)
+ FIGURE_TITLE='EISCAT\_3D RADAR';
+ fradar=234e6;
+ TITLE1{5}='Background level (%)';
+ par1D(:,5)=par1D(:,5)/max(par1D(:,5))*100;
 end
 if ~contains('quj san wen dan',nameant) && isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);
@@ -480,7 +444,6 @@ if isempty(vizufig)
   uimenu('label','Update','callback','vizu(''update'')');
   if isunix
    uimenu('label','Save','callback','vizu(''save'')');
-   uimenu('label','Print','callback','vizu(''print'')');
   end
  end
 

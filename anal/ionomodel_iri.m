@@ -1,6 +1,6 @@
 function [altitude,ne,te,ti,coll,cO,cM2,cH]=ionomodel(heights,modinfo)
 global d_time p_XMITloc path_GUP
-persistent iripath yshift
+persistent yshift
 if isempty(d_time)
  dtime=clock;
 else

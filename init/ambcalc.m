@@ -27,7 +27,7 @@ for group=diff_val(vc_group)
   Aenv=autocorr(env);
   len=ceil(length(Aenv)/2);
   vc_Aenv(1:len,vcs)=Aenv(len:2*len-1)*ones(size(vcs));
-  if ~exist('LPgen')
+  if ~exist('initplots')
     plot((-(len-1):len-1)*p_dtau,Aenv); title(' ACF of X-mission envelope')
     drawnow
   end

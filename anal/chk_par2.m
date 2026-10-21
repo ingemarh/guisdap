@@ -132,18 +132,6 @@ for gate=find(diffran>0)
       addr=addr(find(ismember(ad_code(addr),a_code)));
     end
   end
-  if ~isempty(addr)
-    % Select suitable codes 
-    if length(acode)>0
-      ind1=[];
-      for code=find(acode(:,gate)==1)';
-        ind1=[ind1,find(ad_code(addr)==code)];
-      end
-      addr=addr(ind1);
-    elseif ~isempty(a_code)
-      addr=addr(find(ismember(ad_code(addr),a_code)));
-    end
-  end
   if a_control(4)==1
     % Remove addresses for which variance have not been determined
     if any(~real(d_var1(addr))) & ~bad_var
@@ -170,7 +158,7 @@ end
 
 if a_save
  integr=diff(datenum(d_time))*86400;
- if integr<1 | contains('3WD',name_site)
+ if integr<1 | contains('3WDNIO',name_site)
   result_file=sprintf('%012.3f.mat',tosecs(d_time(2,:)));
  else
   result_file=sprintf('%08d.mat',fix(tosecs(d_time(2,:))));

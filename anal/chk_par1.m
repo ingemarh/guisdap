@@ -182,7 +182,7 @@ if exist('analysis_code','var')
 end
 
 di_figures=[0 0 0 0 0]; di_results=0; di_spectra=0;
-if contains('KSWD',name_site), di_results=1; end
+if contains('KSWDIO',name_site), di_results=1; end
 if exist('display_figures','var')
  di_figures(1:length(display_figures))=display_figures;
 end

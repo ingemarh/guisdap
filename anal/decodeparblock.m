@@ -30,6 +30,12 @@ elseif ant_id==11
   p_RECloc=[19.5982,110.7908,0.0249];
 elseif ant_id==12
   p_RECloc=[19.5281,109.1322,0.0999];
+elseif ant_id==13
+  error('Skibotn not defined yet')
+elseif ant_id==14
+  p_RECloc=[68.267143 19.447805 0.4];
+elseif ant_id==15
+  error('Karesuando not defined yet')
 end
 
 % endtime of integration 
@@ -49,7 +55,7 @@ if lpb>41 & (ant_id==5 | ant_id==6) & d_parbl(42)
 else
   ch_range=[];
 end
-if (ant_id==11 | ant_id==12)
+if (ant_id==11 | ant_id==12 | ant_id==14 | ant_id==15)
  ch_azT=d_parbl(62); ch_elT=d_parbl(61);
 end
 calTemp=d_parbl(21);

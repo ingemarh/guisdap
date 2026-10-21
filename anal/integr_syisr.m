@@ -42,7 +42,7 @@ if ~isempty(a_ind) & a_ind(1)==0
   %  d_filelist(bad)=[];
   %end
   fileslist=cell2mat({d_filelist.tai});
-  d=find(fileslist>=a_start & filelist<a_end);
+  d=find(fileslist>=a_start & fileslist<a_end);
   fileslist=fileslist(d); d_filelist=d_filelist(d);
   filescode=cell2mat({d_filelist.code});
   filesbeam=cell2mat({d_filelist.azel});
@@ -169,10 +169,14 @@ for aind=0:ll:laind-1;
    d_parbl(tvec)=timeconv(secs,'tai2utc');
    d_parbl(8)=4.7e6; % dummy hui hui
    d_parbl([az el])=[real(file.azel) imag(file.azel)];
-   d_parbl(41)=9+strfind('SWD',site);
+   d_parbl(41)=9+strfind('SWDNIO',site);
    d_parbl(43:62)=0; % to clear upars
    d_parbl(57)=a_rcprog;
    d_parbl(58:62)=[rf;0;double(head.ws);head.et;head.at];
+   if contains('NIO',site)
+    d_parbl(8)=1e6; % dummy hui hui
+    d_ExpInfo=strrep(d_ExpInfo,'syisr3','e3d');
+   end
 
    d_data=NaN(0,1);
 %  figure(9),subplot(3,1,1),plot(real(d_raw))

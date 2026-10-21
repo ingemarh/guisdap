@@ -29,6 +29,7 @@ class AddTskyToH5:
             "V": EarthLocation(lat=69.863 * u.deg, lon=19.21 * u.deg, height=30 * u.m),
             "T": EarthLocation(lat=69.863 * u.deg, lon=19.21 * u.deg, height=30 * u.m),
             "L": EarthLocation(lat=78.153 * u.deg, lon=16.029 * u.deg, height=438 * u.m),
+            "I": EarthLocation(lat=68.267143 * u.deg, lon=19.447805 * u.deg, height=438 * u.m),
         }
 
     def calculate_tsky(self, az, el, obs_time, obs_loc):

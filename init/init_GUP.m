@@ -17,7 +17,7 @@
 %
 % See also: findlpg find_vcgroups find_calibrations ambcalc lpgwrcalc lpgwomcalc
 
-if ~exist('LPgen'),clf, hold off,end
+if ~exist('initplots'),clf, hold off,end
 glob_GUP
 
 fprintf('\nChdir to the experiment directory: %s\n',path_expr)
@@ -44,7 +44,7 @@ for d_rcprog=B_rcprog:N_rcprog
   lpgwrcalc
   lpgwomcalc
 
-  if ~exist('LPgen'), plot(p_om,real(lpg_wom)), drawnow, end
+  if ~exist('initplots'), plot(p_om,real(lpg_wom)), drawnow, end
   %lpg_tex
   apustr=['_' num2str(d_rcprog)];
   if isempty(strfind(GUPvarfile,apustr)), apustr=''; end

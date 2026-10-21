@@ -2,7 +2,7 @@ function [list,msg]=getfilelist(dirpath,newer)
 
 % [list,msg]= getfilelist(dirpath,newer)
 
-global a_realtime a_lpf name_site d_filename local
+global a_realtime a_lpf name_site d_filename local name_ant
 
 list=[]; msg=''; dirlist=[]; syisr=0;
 if nargin<2
@@ -77,7 +77,11 @@ else
 	  if isempty(dirlist)
             dirlist=dir(fullfile(listfile,[site '*_*_*_*_*_*_*.dat*-*-*']));
 	    if isempty(dirlist)
-              dirlist=dir(fullfile(listfile,['*_*_*_*_*_*.dat*-*-*'])); %syisr1
+	      if contains('NIO',site)
+		dirlist=dir(fullfile(listfile,[name_ant '*.ph'])); %e3d
+	      else
+		dirlist=dir(fullfile(listfile,['*_*_*_*_*_*.dat*-*-*'])); %syisr1
+	      end
 	    end
 	    if ~isempty(dirlist)
 	      if exist(fullfile(listfile,['filelist' site '.mat']))
@@ -89,7 +93,7 @@ else
 	      if exist(listfile)
 		disp(sprintf('Using existing listfile: %s',listfile))
 	      else
-                listfile=syisr_bin('filelist',fullfile(dp,j.name),site),
+                listfile=syisr_bin('filelist',fullfile(dp,j.name),site);
 	      end
 	      load(listfile), dirlist=[]; if exist('folde','var'), folder=folde; end
 	      if size(flist,2)>7

@@ -21,7 +21,7 @@
 %
 % See also: design glob_EISCAT td_arrange envcalc find_sampling vc_arrange
 %
-if ~exist('LPgen'),clf,hold off,end
+if ~exist('initplots'),clf,hold off,end
 glob_initKST
 
 % Chdir to the experiment directory, store the present path as a return address
@@ -29,10 +29,12 @@ original_path=pwd;
 fprintf('\n\nChdir to the experiment directory: %s\n',path_expr)
 cd(path_expr)
 if name_site=='R'
-  for txrem='TV3 '
-    dd=[path_expr name_expr txrem '*'];
-    if ~isempty(dir(dd))
-      break
+  if ~exist('txrem')
+    for txrem='TV3N '
+      dd=[path_expr name_expr txrem '*'];
+      if ~isempty(dir(dd))
+        break
+      end
     end
   end
 else
@@ -40,6 +42,7 @@ else
 end
 % These values will be used if not redefined later
 p_dtau=1;
+txrem
 if name_site=='T' | name_site=='K' | name_site=='S' | txrem=='T'
   ch_gain=10^4.81;
   ch_fradar=927e6;
@@ -65,6 +68,9 @@ elseif name_site=='3'
 elseif name_site=='D' | name_site=='W' | txrem=='3'
   ch_gain=10^4.3;
   ch_fradar=430e6;
+elseif name_site=='I' | name_site=='O' | txrem=='N'
+  ch_gain=10^3.14;
+  ch_fradar=224e6;
 end
 % For compatibility with the experiment design package define
 p_ND=1;
@@ -96,6 +102,9 @@ elseif name_site=='D'
 elseif name_site=='W' | txrem=='3'
   p_XMITloc=[18.3492,109.6222,0.055];
   p_RECloc=[19.5982,110.7908,0.0249]; %Wenchang
+elseif name_site=='I' | txrem=='N'
+  %p_XMITloc=[69.583 19.21 .030]; for now
+  p_RECloc=[68.267143 19.447805 0.4]; %Kaiseniemi
 end
 
 % The calibration temperatures, which may be redefined during analysis

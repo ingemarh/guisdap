@@ -1,14 +1,20 @@
 function [h,raw]=syisr_bin(type,file,hdx,nd)
 %function [h,raw]=syisr_bin(type,file,hdx)
 % Input: type flist|guess|dump|disp
-global path_GUP
+global path_GUP name_site
+sites='NIO';
+if contains(sites,name_site)
+ pyro='e3d';
+else
+ pyro='syisrc';
+end
 insert(py.sys.path,int32(0),fullfile(path_GUP,'pygup'))
-getbin=py.importlib.import_module('syisrc');
-py.importlib.reload(py.importlib.import_module('syisrc'));
+getbin=py.importlib.import_module(pyro);
+py.importlib.reload(py.importlib.import_module(pyro));
 %file='/media/mop/datamop/syisr/bin/20250822/SY_2025_08_19_22_05_11.dat1-1-134';
-
+raw=[];
 if strcmp(type,'flist')
- raw=[]; extra_samples=0;
+ extra_samples=0;
  if nargin>2, extra_samples=hdx; end
  if nargin>3, fno=nd; end
  flist=cell(getbin.flist(file,int32(extra_samples)));
@@ -27,13 +33,20 @@ elseif strcmp(type,'filelist')
  if nargin<3, hdx='S'; end
  h=char(getbin.filelist(file,hdx));
 elseif strcmp(type,'guess')
- raw=[];
  h=py2mat(struct(getbin.guess(file)));
 elseif strcmp(type,'dump')
  dump=cell(getbin.gethdfmat(file,uint32(hdx),uint32(nd)));
- h=struct(dump{1});
- h.dt=uint64(h.dt); h.ipp=uint16(h.ipp); h.ws=uint16(h.ws); h.ex=char(h.ex); h.st=char(h.st);
- iq=int16(dump{2}); raw=complex(iq(2:2:end),iq(1:2:end));
+ h=struct(dump{1}); iq=int16(dump{2});
+ h.dt=uint64(h.dt); h.ipp=uint16(h.ipp); h.ws=uint16(h.ws);
+ if pyro=='e3d'
+  [~,fname,~]=fileparts(file);
+  h.ex=sprintf('ed%d',h.pw); h.st=sites(fix(h.st/1000)+1);
+  iq(2:2:end)=iq(2:2:end)-mean(iq(2:2:end));
+  iq(1:2:end)=iq(1:2:end)-mean(iq(1:2:end));
+ else
+  h.ex=char(h.ex); h.st=char(h.st);
+ end
+ raw=complex(iq(2:2:end),iq(1:2:end));
 elseif strcmp(type,'disp')
  head=cell(getbin.getheadmat(file));
  h=struct(head{1}); raw=struct(head{2});
@@ -46,7 +59,7 @@ end
 function s=py2mat(s)
 for field=fieldnames(s)'
  f=field{1};
- if strcmp(f(1:3),'Pad')
+ if strcmp(f(1:2),'Pa')
   s=rmfield(s,f);
  else
   v=s.(f);

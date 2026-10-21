@@ -35,7 +35,7 @@ for i=find(lpg_bcs=='s' | lpg_bcs=='x' | lpg_bcs=='o')
     fprintf('Lpg %d: range %.0fus',i,ranges(1))
     fprintf(' (%.1f km) width %.1f us\n',ranges(1)*.15,lpg_w(i)*p_dtau)
   end
-  if ~exist('LPgen')
+  if ~exist('initplots')
     plot(r*p_dtau,w)
     xlabel('Range [\mus]')
     title(['range ambiguity function for lpg=' num2str(i)]), grid

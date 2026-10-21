@@ -1,8 +1,8 @@
 function [intper,t1,t2,siteid,expver]=auto_parse(warn)
 global path_exps name_expr name_site data_path b owner local
 if nargin<1, warn=1; end
-sites='KSTVLLLLQ3WD';
-antennas={'kir' 'sod' 'uhf' 'vhf' '32m' '42m' '32p' 'esr' 'quj' 'san' 'wen' 'dan'};
+sites='KSTVLLLLQ3WDNIO';
+antennas={'kir' 'sod' 'uhf' 'vhf' '32m' '42m' '32p' 'esr' 'quj' 'san' 'wen' 'dan' 'ski' 'kai' 'kar'};
 t1=[]; t2=[]; intper=[]; siteid=[]; expver=1;
 if warn==2
  o=uigetdir(data_path);

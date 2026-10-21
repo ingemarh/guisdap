@@ -28,6 +28,10 @@ elseif contains('3WD',name_site)
  analysis_Tsys=120; %manufacturer
  analysis_txpower=8;
  f_calTemp=[];
+elseif contains('NIO',name_site)
+ analysis_Tsys=190; %Assar
+ analysis_txpower=8;
+ f_calTemp=[];
 end
 if exist([path_expr 'ana_def.m'])==2
   run([path_expr 'ana_def'])
