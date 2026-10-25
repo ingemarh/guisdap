@@ -140,16 +140,24 @@ elseif strcmpi(act,'save')
  if isempty(axs)
   disp('Nothing to print!')
  else
-  rotate=0; if length(axs)==1, rotate=1; end
-  ppos=get(vizufig,'PaperPosition'); s=3.4;
-  set(vizufig,'PaperOrient','landscape','PaperPosition',ppos([2 1 4 3])+[0 s 0 -s])
-  print(vizufig,'-dpdf',[file '.pdf']);
-  print(vizufig,'-dpng256',[file '.png']);
-  fprintf('Created %s.pdf and .png\n',file)
-  insert_exif(vizufig,file,{'pdf' 'png'})
-  if rotate
-   set(vizufig,'PaperOrient','portrait','PaperPosition',ppos)
+  %if length(axs)==1
+  % ppos=get(vizufig,'PaperPosition'); s=3.4;
+  % set(vizufig,'PaperOrient','landscape','PaperPosition',ppos([2 1 4 3])+[0 s 0 -s])
+  %end
+  exportgraphics(vizufig,[file '.png'],'Resolution','150');
+  ext={'png'};
+  fprintf('Created %s.png',file)
+  if local.x
+   exportgraphics(vizufig,[file '.pdf'],'Resolution','600');
+   ext(2)={'pdf'};
+   fprintf(' and .pdf\n')
+  else
+   fprintf('\n')
   end
+  insert_exif(vizufig,file,ext)
+  %if length(axs)==1
+  % set(vizufig,'PaperOrient','portrait','PaperPosition',ppos)
+  %end
  end
  if local.matlabversion>25, set(vizufig,'theme',origtheme), end
  if strcmpi(act,'save') && nargout==1
@@ -332,6 +340,8 @@ elseif contains('san wen dan',nameant)
  Owner={'Institute of Geology and Geophysics' 'Chinese Academy of Sciences'};
  if strcmp(nameant,'san')
   FIGURE_TITLE='SANYA RADAR';
+  par1D(:,5)=par1D(:,5)/max(par1D(:,5))*100;
+  TITLE1{5}='Background level (%)';
  elseif strcmp(nameant,'wen')
   FIGURE_TITLE='WENCHANG RECEIVER';
  elseif strcmp(nameant,'dan')
@@ -339,12 +349,13 @@ elseif contains('san wen dan',nameant)
  end
  fradar=430e6;
  TITLE1{5}='Background level (%)';
- par1D(:,5)=par1D(:,5)/max(par1D(:,5))*100;
 elseif contains('ski kai kar',nameant)
  FIGURE_TITLE='EISCAT\_3D RADAR';
  fradar=234e6;
- TITLE1{5}='Background level (%)';
- par1D(:,5)=par1D(:,5)/max(par1D(:,5))*100;
+ if strcmp(nameant,'ski')
+  TITLE1{5}='Background level (%)';
+  par1D(:,5)=par1D(:,5)/max(par1D(:,5))*100;
+ end
 end
 if ~contains('quj san wen dan',nameant) && isempty(MESSAGE1)
  MESSAGE1=minput('Type of experiment','CP',1);
@@ -599,13 +610,8 @@ end
 xlabel(axs(end),ttext)
 drawnow
 if REALT && ~isempty(local.site) && a_realtime && isunix
- if local.x
-  flag='-dpng'; flag2='-r0';
- else
-  flag='-dpng256'; flag2=[];
- end
  pngfile=sprintf('%sGup_%s.png',path_tmp,name_ant(1:3));
- print(vizufig,flag,flag2,pngfile)
+ exportgraphics(vizufig,pngfile)
  webfile(1)=cellstr(pngfile);
 end
 if nargout

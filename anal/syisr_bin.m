@@ -41,12 +41,11 @@ elseif strcmp(type,'dump')
  if pyro=='e3d'
   [~,fname,~]=fileparts(file);
   h.ex=sprintf('ed%d',h.pw); h.st=sites(fix(h.st/1000)+1);
-  iq(2:2:end)=iq(2:2:end)-mean(iq(2:2:end));
-  iq(1:2:end)=iq(1:2:end)-mean(iq(1:2:end));
+  raw=complex(iq(1:2:end)-mean(iq(1:2:end)),iq(2:2:end)-mean(iq(2:2:end)));
  else
   h.ex=char(h.ex); h.st=char(h.st);
+  raw=complex(iq(2:2:end),iq(1:2:end));
  end
- raw=complex(iq(2:2:end),iq(1:2:end));
 elseif strcmp(type,'disp')
  head=cell(getbin.getheadmat(file));
  h=struct(head{1}); raw=struct(head{2});

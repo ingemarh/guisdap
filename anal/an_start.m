@@ -49,13 +49,10 @@ while ~EOF
   else
     if name_site=='Q'
       [OK,EOF,N_averaged,M_averaged]=integr_qujing;
-    elseif contains('3WDNIO',name_site)
-      if a_lpf(1).do
-        [OK,EOF,N_averaged,M_averaged]=integr_syisr;
-      else
-        [OK,EOF,N_averaged,M_averaged]=integr_syisrw;
-      end
+    elseif contains('3WDNIO',name_site) && a_lpf(1).do
+      [OK,EOF,N_averaged,M_averaged]=integr_syisr;
     else
+      %[OK,EOF,N_averaged,M_averaged]=integr_syisrw;
       [OK,EOF,N_averaged,M_averaged]=integr_data;
     end
     if OK
