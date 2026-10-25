@@ -231,17 +231,8 @@ elseif plots==0 | plots==-2
   if pl_dir=='.', pl_dir=pwd; end
   [dum,fname]=fileparts(pl_dir);
   fname=minput('Print file name (.pdf .png)',fullfile(printdir,[fname '_plasmaline']),1);
-  if ~isempty(local.fn.gs)
-   %gsinc=sprintf('-I%sps_files -I%sfonts',gd,gd);
-   fneps=[local.tfile '.eps'];
-   print(gcf,'-depsc2','-r600',fneps)
-   gupsystem(sprintf('%s -dNOPAUSE -dFitPage -q -sDEVICE=pdfwrite -sOutputFile=%s.pdf %s </dev/null >/dev/null',local.fn.gs,fname,fneps));
-   gupsystem(sprintf('%s -r150 -dNOPAUSE -dFitPage -q -sDEVICE=png256 -sOutputFile=%s.png %s </dev/null >/dev/null',local.fn.gs,fname,fneps));
-   delete(fneps)
-  else
-   exportgraphics(gcf,[fname '.pdf'],'Resolution','600')
-   exportgraphics(gcf,[fname '.png'],'Resolution','150')
-  end
+  exportgraphics(gcf,[fname '.pdf'],'Resolution','600')
+  exportgraphics(gcf,[fname '.png'],'Resolution','150')
   fprintf('%s.pdf and .png saved\n',fname);
   insert_exif(gcf,fname,{'pdf' 'png'})
  end

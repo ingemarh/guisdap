@@ -296,7 +296,7 @@ while counter<=length(d)
     end
 end
 pol=polyshape(X,Y);
-h=plot(ax,pol,'linestyle','none','facecolor','black','facealpha',1);
+h=plot(ax,pol,'linestyle','none','facecolor',[0 0 .4],'facealpha',1);
 return
 
 function d=Split(D)

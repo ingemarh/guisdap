@@ -121,8 +121,8 @@ if strcmp(ptype,'p') || np>1
   if ~isempty(gl), set(gl,'pos',get(gl,'pos')+[.1 0 0 0]), end
  end
 end
-print('-dpdf',r)
-print('-dpng256',r)
+exportgraphics(gcf,[r '.pdf'])
+exportgraphics(gcf,[r '.png'])
 insert_exif(gcf,r,{'pdf' 'png'})
 if strcmp(ptype,'p') || np>1
  for i=1:length(gc)

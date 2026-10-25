@@ -320,13 +320,8 @@ if ~jj
         global d_saveint local path_tmp webfile
         plasma_summary(d_saveint.dir,[],[],[],-2)
 	drawnow
-        if local.x
-          flag='-dpng'; flag2='-r0';
-        else
-          flag='-dpng256'; flag2=[];
-        end
         pngfile=sprintf('%sGup_32p.png',path_tmp);
-        print(di_figures(5),flag,flag2,pngfile)
+        exportgraphics(di_figures(5),pngfile)
         webfile(1)=cellstr(pngfile);
       else
         vizu('rtgup',di_figures(5));
