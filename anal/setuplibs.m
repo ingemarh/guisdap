@@ -4,15 +4,15 @@ if nargout, r=0; end
 if isempty(path_GUP), return, end
 iripath=fullfile(path_GUP,'share','iri');
 res=0;
-libs={'libguisdap','libiri','libmsis','plwin','alt_decoder','clutter','onera_desp_lib'};
+libs={'libguisdap','libiri','libmsis','plwin','alt_decoder','clutter','plwin_f','alt_decoder_f','clutter_f','onera_desp_lib'};
 ll=length(libs);
 thdir=fullfile(path_tmp,'gupthunk');
 mmodel=fullfile(path_GUP,'models_m');
 if nargin==0
  atmos=zeros(1,ll); atmos([2 3 end])=1; res_atmos=0;
- heads={'libgup','iri','msis','plwin','plwin','plwin','onera_desp_lib'};
+ heads={'libgup','iri','msis','plwin','plwin','plwin','plwin_f','plwin_f','plwin_f','onera_desp_lib'};
  init={[],{'irinit_',int32(iripath),length(iripath)},...
-  {'matface_' length(path_GUP)+12 fullfile(path_GUP,'share','msis',filesep)},[],[],[],[]};
+  {'matface_' length(path_GUP)+12 fullfile(path_GUP,'share','msis',filesep)},[],[],[],[],[],[],[]};
  d=fullfile(path_GUP,'lib');
  if ~exist(thdir,'dir'), mkdir(thdir), end
  owd=pwd;

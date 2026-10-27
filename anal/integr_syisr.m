@@ -113,6 +113,7 @@ for aind=0:ll:laind-1;
    a_loop=loop;
   end
   d_raw=int16(zeros(lraw,1)); draw=[];
+  global name_site, if contains('NIO',name_site), d_raw=single(zeros(lraw,1)); end
   for lop=0:loop-1
    fid=a_ind(innerloop(1)+lop+1);
    for jrow=1:ncode, for jcol=1:size(a_code,1)

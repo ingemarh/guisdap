@@ -25,11 +25,17 @@ typedef struct			/* Make a new internal data type */
 }
 DSPCMPLX;
 
+#ifdef FLOATIN
+#define DSPCMPLXSHORT DSPCMPLX
+#define IN float
+#else
 typedef struct			/* Make a new internal data type */
 {
-  int16_t re;
-  int16_t im;
+  float re;
+  float im;
 } DSPCMPLXSHORT;
+#define IN short
+#endif
 
 typedef struct
 {
@@ -1137,7 +1143,7 @@ __user__decoder_int_thread (DECO * calc)
 }
 
 void
-matface (int *par, int *nin, short *in_r, short *in_i,
+matface (int *par, int *nin, IN *in_r, IN *in_i,
 	 int *nout, double *out_r, double *out_i, double *upar)
 {
   ulong nb = 7 + par[0] * par[6];

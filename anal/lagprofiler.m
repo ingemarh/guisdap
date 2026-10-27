@@ -24,8 +24,10 @@ for lpf=a_lpf
   end
  case 'resampler' % par(1)=[nsamp nrep decimation] boxcar!
   lraw=fix(numel(dd_raw)/lpf.nrep/lpf.par(3))*lpf.par(3);
+  rawtype=class(d_raw);
   dd_raw=reshape(dd_raw,lpf.par(1),lpf.nrep); %reshape into single profiles
-  dd_raw=col(int16(sum(reshape(double(dd_raw(1:lraw,:)),lpf.par(3),[]),1)/lpf.par(3)));
+  dd_raw=sum(reshape(double(dd_raw(1:lraw,:)),lpf.par(3),[]),1)/lpf.par(3);
+  dd_raw=eval(sprintf('col(%s(dd_raw))',rawtype));
   d_raw(raw1+(1:numel(dd_raw)))=dd_raw(:);
   dd_data=[];
  case 'fir' % par=[nsamp nrep fir]

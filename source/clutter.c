@@ -20,11 +20,17 @@ typedef struct
   float im;
 } DSPCMPLX;
 
+#ifdef FLOATIN
+#define DSPCMPLXSHORT DSPCMPLX
+#define IN float
+#else
 typedef struct
 {
-  int16_t re;
-  int16_t im;
+  float re;
+  float im;
 } DSPCMPLXSHORT;
+#define IN short
+#endif
 
 #include <fftw3.h>
 #define CPU_SPEED 1.e9
@@ -329,7 +335,7 @@ plwin_lp (struct pth *pth)
 }
 
 void
-matface (int *par, int *nin, short *in_r, short *in_i,
+matface (int *par, int *nin, IN *in_r, IN *in_i,
 	 int *nout, double *out_r, double *out_i, double *upar)
 {
   ulong nb = 8;

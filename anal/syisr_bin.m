@@ -36,7 +36,7 @@ elseif strcmp(type,'guess')
  h=py2mat(struct(getbin.guess(file)));
 elseif strcmp(type,'dump')
  dump=cell(getbin.gethdfmat(file,uint32(hdx),uint32(nd)));
- h=struct(dump{1}); iq=int16(dump{2});
+ h=struct(dump{1}); iq=single(dump{2}); %iq=int16(dump{2});
  h.dt=uint64(h.dt); h.ipp=uint16(h.ipp); h.ws=uint16(h.ws);
  if pyro=='e3d'
   [~,fname,~]=fileparts(file);

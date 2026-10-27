@@ -36,7 +36,22 @@ add_library(clutter SHARED)
 target_sources(clutter PRIVATE clutter.c get_tid.c)
 target_link_libraries(clutter PUBLIC FFTW::Float pthread)
 
-SET_TARGET_PROPERTIES(plwin clutter alt_decoder PROPERTIES PREFIX "")
+add_library(plwin_f SHARED)
+target_sources(plwin_f PRIVATE plwin.c get_tid.c)
+target_link_libraries(plwin_f PUBLIC FFTW::Float pthread)
+
+add_library(alt_decoder_f SHARED)
+target_sources(alt_decoder_f PRIVATE alt_decoder.c get_tid.c)
+target_link_libraries(alt_decoder_f PUBLIC pthread)
+
+add_library(clutter_f SHARED)
+target_sources(clutter_f PRIVATE clutter.c get_tid.c)
+target_link_libraries(clutter_f PUBLIC FFTW::Float pthread)
+
+target_compile_definitions(plwin_f PRIVATE FLOATIN)
+target_compile_definitions(alt_decoder_f PRIVATE FLOATIN)
+target_compile_definitions(clutter_f PRIVATE FLOATIN)
+SET_TARGET_PROPERTIES(plwin plwin_f clutter clutter_f alt_decoder alt_decoder_f PROPERTIES PREFIX "")
 #set_target_properties(plwin clutter alt_decoder guisdap PROPERTIES LIBRARY_OUTPUT_DIRECTORY lib)
 file(GLOB PUBLIC_H "[a-z]*.h")
 file(INSTALL ${PUBLIC_H} DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
