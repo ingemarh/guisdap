@@ -18,7 +18,7 @@ if ~isfield(a_satch,'filled')
  if ~isfield(a_satch,'clutter'), a_satch.clutter=0; end	% no clutter red points
  if ~isfield(a_satch,'clutfac'), a_satch.clutfac=1000; end% amount of clutter
  if ~isfield(a_satch,'repair'), a_satch.repair=0; end	% for alt codes
- if ~isfield(a_satch,'prep'), a_satch.prep=max([vc_penvo(:);lpg_h(:)); end% p_rep
+ if ~isfield(a_satch,'prep'), a_satch.prep=max([vc_penvo(:);lpg_h(:)]); end% p_rep
  if ~isfield(a_satch,'plot'), a_satch.plot=0; end	% plot window
  if ~isfield(a_satch,'lpg_skip'), a_satch.lpg_skip=[]; end% lpg to skip
  if ~isfield(a_satch,'cut'), a_satch.cut=0; end		% cut or trash
