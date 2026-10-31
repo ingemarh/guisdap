@@ -131,7 +131,8 @@ def flist(f,extra_samples=0):
     if type(f)==str: f=open(f,'rb')
     fend=f.name.split('-')[-1]
     tid=[]
-    code=[]
+    bc=[]
+    lc=[]
     az=[]
     el=[]
     hdx=[]
@@ -167,9 +168,10 @@ def flist(f,extra_samples=0):
         TotalIQ=nIQ+nex
         #print(TotalIQ)
         if nIQ>=0:
-            btime=datetime.datetime(h.year+2000,h.month,h.day,h.hour,h.minute,h.second,h.fracOfSecond*25)
+            btime=datetime.datetime(h.year+2000,h.month,h.day,h.hour,h.minute,h.second,h.fracOfSecond*25,datetime.timezone.utc)
             tid.append(btime.timestamp()-8*3600)
-            code.append(h.BigCode+h.LittleCode)
+            bc.append(h.BigCode)
+            lc.append(h.LittleCode)
             az.append(h.Azi*0.005493164)
             el.append(h.Ele*0.005493164)
             hdx.append(ftell)
@@ -179,7 +181,7 @@ def flist(f,extra_samples=0):
             print(h.WaveGateWidthV,h.WaveGateFrontV,h.PRTV)
         ftell=f.tell()
     if nadj>0: print('%s: Adjusted size %d/%d times, last %+d%s'%(fend,nadj,len(nd),nex,mess))
-    return tid,code,az,el,hdx,nd,nex,mess
+    return tid,bc,lc,az,el,hdx,nd,nex,mess
 
 def struct2dict(s):
     return dict((field, getattr(s,field)) for field,_ in s._fields_)
@@ -197,7 +199,7 @@ def gethdf(f,hdx,nd):
     f.seek(hdx,0)
     h=gethead(f)
     hh=hdfhead()
-    btime=datetime.datetime(h.year+2000,h.month,h.day,h.hour,h.minute,h.second,h.fracOfSecond*25)
+    btime=datetime.datetime(h.year+2000,h.month,h.day,h.hour,h.minute,h.second,h.fracOfSecond*25,datetime.timezone.utc)
     hh.dt=int(1e6*(btime.timestamp()-8*3600))
     hh.ex=exp(h)
     hh.ipp=h.PRTV
@@ -207,28 +209,24 @@ def gethdf(f,hdx,nd):
     hh.rf=h.RadarFre*0.2+430e6
     hh.st=os.path.basename(f.name)[0]
     if hh.st=='2': hh.st='S'
-    #TotalIQ=h.WaveGateWidthV*2
     TotalIQ=nd*2
-    s2=1.414213562
-    #IQ32//=np.array(2,dtype='i4')
-    IQ32=(getIQ(f,TotalIQ)/np.array(s2)).round()
-    IQ=IQ32.astype(c_int16)
-    nflow=0
-    nmflow=-1
-    for i in range(TotalIQ):
-        if IQ32[i]>32767:
-            IQ[i]=32767
-            nmflow=i
-            nflow+=1
-            mIQ=IQ32[i]
-        elif IQ32[i]<-32768:
-            IQ[i]=-32768
-            nmflow=i
-            nflow+=1
-            mIQ=-IQ32[i]
-    #IQ=getIQ(f,TotalIQ).astype(c_int16)
-    if nmflow>nflow*s2 and mIQ/s2>32767:
-        print('Large overflow:',nflow,nmflow,mIQ)
+    ##IQ=IQ32.astype(c_int16)
+    ##nflow=0
+    ##nmflow=-1
+    ##for i in range(TotalIQ):
+    ##    if IQ32[i]>32767:
+    ##        IQ[i]=32767
+    ##        nmflow=i
+    ##        nflow+=1
+    ##        mIQ=IQ32[i]
+    ##    elif IQ32[i]<-32768:
+    ##        IQ[i]=-32768
+    ##        nmflow=i
+    ##        nflow+=1
+    ##        mIQ=-IQ32[i]
+    ##if nmflow>nflow*s2 and mIQ/s2>32767:
+    ##    print('Large overflow:',nflow,nmflow,mIQ)
+    IQ=getIQ(f,TotalIQ).astype(c_float)
     return hh,IQ
 
 def printstr(s):
@@ -265,7 +263,7 @@ def gethdfmat(f,i,n):
 def guess(f):
     if type(f)==str: f=open(f,'rb')
     h=gethead(f)
-    btime=datetime.datetime(h.year+2000,h.month,h.day,h.hour,h.minute,h.second,h.fracOfSecond*25)
+    btime=datetime.datetime(h.year+2000,h.month,h.day,h.hour,h.minute,h.second,h.fracOfSecond*25,datetime.timezone.utc)
     dt=btime.timestamp()-8*3600
     site=os.path.basename(f.name)[0]
     if site=='2': site='S'
@@ -277,17 +275,17 @@ def filelist(dir,site='S',tsky=False,seq_no='\\d',savedir=None):
     filen=[]
     nex=0
     mess=''
-    l=np.empty((0,7))
+    l=np.empty((0,8))
     pattern=r'^%s._\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}\.dat\d{1}-\d{1}-%s+$'%(site,seq_no)
     #print(pattern)
     pattern_sy1=r'^\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}\.dat\d{1}-\d{1}-%s+$'%seq_no
     for f in sorted(os.listdir(dir)):
         if re.match(pattern,f) or re.match(pattern_sy1,f):
             if len(mess)>1: nex=0
-            tid,code,az,el,hdx,nd,nex,mess=flist(os.path.join(dir,f),nex)
+            tid,bc,lc,az,el,hdx,nd,nex,mess=flist(os.path.join(dir,f),nex)
             filen+=[f]
             fno=[len(filen)]*len(tid)
-            fl=np.c_[fno,tid,code,az,el,hdx,nd]
+            fl=np.c_[fno,tid,bc,lc,az,el,hdx,nd]
             l=np.concatenate((l,fl),axis=0)
             if not mess: print('.',end='',flush=True)
         #else: print(f)
@@ -339,7 +337,7 @@ def main():
         exit(0)
     f=open(filename,'rb')
 
-    tid,code,az,el,hdx,nd=flist(f)
+    tid,bc,lc,az,el,hdx,nd,nex,mess=flist(f)
     print(len(tid),type(tid))
     f.seek(hdx[0],0)
     head=gethead(f)

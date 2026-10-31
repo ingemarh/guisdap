@@ -3,6 +3,9 @@ function [h,raw]=syisr_bin(type,file,hdx,nd)
 % Input: type flist|guess|dump|disp
 global path_GUP name_site
 sites='NIO';
+if isempty(name_site) & strcmp(type,'guess')
+ name_site=hdx;
+end
 if contains(sites,name_site)
  pyro='e3d';
 else
@@ -19,10 +22,10 @@ if strcmp(type,'flist')
  if nargin>3, fno=nd; end
  flist=cell(getbin.flist(file,int32(extra_samples)));
  tai=num2cell(timeconv(double(flist{1})','unx2tai'));
- code=num2cell(uint16(flist{2}));
- azel=num2cell(complex(single(flist{3}),single(flist{4})));
- hdx=num2cell(uint32(flist{5}));
- nd=num2cell(uint16(flist{6}));
+ code=num2cell(complex(uint16(flist{2}),uint16(flist{3})));
+ azel=num2cell(complex(single(flist{4}),single(flist{5})));
+ hdx=num2cell(uint32(flist{6}));
+ nd=num2cell(uint16(flist{7}));
  h=repmat(struct('fno',fno,'tai',0,'code',0,'azel',0,'hdx',0,'nd',0),[length(tai) 1]);
  [h.tai]=tai{:};
  [h.code]=code{:};
@@ -38,10 +41,11 @@ elseif strcmp(type,'dump')
  dump=cell(getbin.gethdfmat(file,uint32(hdx),uint32(nd)));
  h=struct(dump{1}); iq=single(dump{2}); %iq=int16(dump{2});
  h.dt=uint64(h.dt); h.ipp=uint16(h.ipp); h.ws=uint16(h.ws);
- if pyro=='e3d'
+ if strcmp(pyro,'e3d')
   [~,fname,~]=fileparts(file);
   h.ex=sprintf('ed%d',h.pw); h.st=sites(fix(h.st/1000)+1);
-  raw=complex(iq(1:2:end)-mean(iq(1:2:end)),iq(2:2:end)-mean(iq(2:2:end)));
+  raw=complex(iq(1:2:end),iq(2:2:end));
+  raw=raw-mean(raw);
  else
   h.ex=char(h.ex); h.st=char(h.st);
   raw=complex(iq(2:2:end),iq(1:2:end));

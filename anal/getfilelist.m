@@ -96,25 +96,27 @@ else
                 listfile=syisr_bin('filelist',fullfile(dp,j.name),site);
 	      end
 	      load(listfile), dirlist=[]; if exist('folde','var'), folder=folde; end
-	      if size(flist,2)>7
+	      if size(flist,2)>8
 		st=struct('fno',0,'tai',0,'code',0,'azel',0,'hdx',0,'nd',0,'t408',0);
 	      else
 		st=struct('fno',0,'tai',0,'code',0,'azel',0,'hdx',0,'nd',0);
 	      end
 	      list=repmat(st,[size(flist,1) 1]);
               flist(:,2)=timeconv(flist(:,2),'unx2tai');
-	      ll=num2cell(flist(:,[1:3 6:end]));
+	      ll=num2cell(flist(:,[1:2 7:end]));
               [list.fno]=ll{:,1};
               [list.tai]=ll{:,2};
-              [list.code]=ll{:,3};
-              azel=num2cell(complex(flist(:,4),flist(:,5)));
+              code=num2cell(complex(int16(flist(:,3)),int16(flist(:,4))));
+              [list.code]=code{:};
+              azel=num2cell(complex(single(flist(:,5)),single(flist(:,6))));
               [list.azel]=azel{:};
-              [list.hdx]=ll{:,4};
-              [list.nd]=ll{:,5};
-	      if size(flist,2)>7
+              [list.hdx]=ll{:,3};
+              [list.nd]=ll{:,4};
+	      if size(flist,2)>8
                 [list.t408]=ll{:,6};
 	      end
 	      d_filename=cellstr([ones(size(fname,1),1)*[folder filesep] fname]);
+	      if exist('scale','var'), d_filename(:,2)=num2cell(single(scale(:))); end
 	    end
             syisr=2;
           end
@@ -142,7 +144,7 @@ else
               head=h5read(h5file,'/head');
               good=find(head.nd>=head.nw);
               tai=num2cell(timeconv(double(head.dt(good))*1e-6,'unx2tai')); %beijing unix time!
-              code=num2cell(head.bc(good)+head.lc(good));
+              code=num2cell(complex(head.bc(good),head.lc(good)));
               azel=num2cell(complex(head.az(good),head.el(good)));
               hdx=num2cell(good);
               s=length(tai);

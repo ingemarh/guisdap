@@ -1,4 +1,4 @@
-analysis_code=51+(0:63);
+analysis_code=complex(51,(0:63));
 analysis_lpf.data=0;
 analysis_lpf.raw=0;
 if name_site=='3'

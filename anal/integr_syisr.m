@@ -51,7 +51,7 @@ if ~isempty(a_ind) & a_ind(1)==0
   end
   a_interval=a_start+[0 a_integr];
   beams=unique(filesbeam);
-  d_beam=filesbeam(find(diff(filescode),1)+(1:length(beams))); %for remote scanning
+  d_beam=filesbeam(find(diff(real(filescode)+imag(filescode)),1)+(1:length(beams))); %for remote scanning, huihui
   if ~isempty(a_screen)
     [dx,dy,dz]=sph2cart(real(a_screen(1)),imag(a_screen(1)),1); d2=[dx dy dz];
     for j=length(beams):-1:1
@@ -112,8 +112,7 @@ for aind=0:ll:laind-1;
    end
    a_loop=loop;
   end
-  d_raw=int16(zeros(lraw,1)); draw=[];
-  global name_site, if contains('NIO',name_site), d_raw=single(zeros(lraw,1)); end
+  d_raw=single(zeros(lraw,1)); draw=[];
   for lop=0:loop-1
    fid=a_ind(innerloop(1)+lop+1);
    for jrow=1:ncode, for jcol=1:size(a_code,1)
@@ -125,7 +124,8 @@ for aind=0:ll:laind-1;
     file=d_filelist(fid+jj-1);
     if isempty(draw), tfirst=file.tai; end
     if isfield(file,'nd')
-     [head,draw]=syisr_bin('dump',d_filename{file.fno},file.hdx,file.nd);
+     [head,draw]=syisr_bin('dump',d_filename{file.fno,1},file.hdx,file.nd);
+     if size(d_filename,2)==2, draw=draw*d_filename{file.fno,2}; end
      head.nd=file.nd;
      site=head.st;
      skys=[skys;fid+jj-1];
@@ -133,7 +133,6 @@ for aind=0:ll:laind-1;
      head=h5read(file.fname,'/head',file.hdx,1);
      d_rx=h5read(file.fname,'/data',double(head.di+1),double(head.nd));
      t408=t408+head.tsky;
-     %draw=complex(double(d_rx.r),double(d_rx.i));
      draw=complex(d_rx.r,d_rx.i);
      site=file.fname(end-4); %hui hui
     end
@@ -168,14 +167,14 @@ for aind=0:ll:laind-1;
    secs=double(head.ipp)*1e-6+file.tai;
    d_parbl(inttime)=secs-tfirst;
    d_parbl(tvec)=timeconv(secs,'tai2utc');
-   d_parbl(8)=4.7e6; % dummy hui hui
+   d_parbl(8)=4.7e6; % hui hui
    d_parbl([az el])=[real(file.azel) imag(file.azel)];
    d_parbl(41)=9+strfind('SWDNIO',site);
    d_parbl(43:62)=0; % to clear upars
    d_parbl(57)=a_rcprog;
    d_parbl(58:62)=[rf;0;double(head.ws);head.et;head.at];
    if contains('NIO',site)
-    d_parbl(8)=1e6; % dummy hui hui
+    d_parbl(8)=1e6; % hui hui
     d_ExpInfo=strrep(d_ExpInfo,'syisr3','e3d');
    end
 

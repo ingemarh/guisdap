@@ -88,7 +88,7 @@ if ~isempty(msg) & strfind(msg,'missing')
    if ~nf
     warning('GUISDAP:parse',['Unable to parse directory name: ' msg])
    else
-    s=syisr_bin('guess',fullfile(data_path,files(1).name))
+    s=syisr_bin('guess',fullfile(data_path,files(1).name),'3');
     t1=timeconv(fix(s.unx),'unx2mat'); t2=t1+2;
     antenna=antennas{9+strfind('SWD',s.site)};
     if contains(s.mode,'Scan'), scan='cp3'; end

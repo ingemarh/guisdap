@@ -53,7 +53,8 @@ def flist(f,extra_samples=0):
     if type(f)==str: f=open(f,'rb')
     fend=f.name.split('-')[-1]
     tid=[]
-    code=[]
+    bc=[]
+    lc=[]
     az=[]
     el=[]
     hdx=[]
@@ -74,7 +75,8 @@ def flist(f,extra_samples=0):
         #print(TotalIQ)
         if TotalIQ>=0:
             tid.append(h.dt/1e6)
-            code.append(h.bc+h.lc)
+            bc.append(h.bc)
+            lc.append(h.lc)
             az.append(h.az)
             el.append(h.el)
             hdx.append(ftell)
@@ -83,7 +85,7 @@ def flist(f,extra_samples=0):
         else:
             print(h.nd,h.ws,h.ipp,h.Pad[4])
         ftell=f.tell()
-    return tid,code,az,el,hdx,nd,mess
+    return tid,bc,lc,az,el,hdx,nd,mess
 
 def struct2dict(s):
     return dict((field, getattr(s,field)) for field,_ in s._fields_)
@@ -113,7 +115,7 @@ def gethdf(f,hdx,nd):
     #s2=scale/4096
     #IQ32=(getIQ(f,TotalIQ)/np.array(s2)).round()
     #IQ=IQ32.astype(c_int16)
-    IQ=getIQ(f,TotalIQ)
+    IQ=getIQ(f,TotalIQ).astype(c_float)
     #IQ//=np.array(64,dtype='int16')
     return h,IQ
 
@@ -144,20 +146,27 @@ def guess(f):
 def filelist(dir,nsite='I',tsky=False,savedir=None):
     import re,scipy
     filen=[]
+    scale=[]
     mess=''
     nsites='NIO'
     sites=['ski','kai','kar']
     site=sites[nsites.find(nsite)]
-    l=np.empty((0,7))
+    l=np.empty((0,8))
     pattern=r'^%s.*\.ph+$'%(site)
     for f in sorted(os.listdir(dir)):
         if re.match(pattern,f):
-            tid,code,az,el,hdx,nd,mess=flist(os.path.join(dir,f))
+            fullfile=os.path.join(dir,f)
+            tid,bc,lc,az,el,hdx,nd,mess=flist(fullfile)
             filen+=[f]
             fno=[len(filen)]*len(tid)
-            fl=np.c_[fno,tid,code,az,el,hdx,nd]
+            fl=np.c_[fno,tid,bc,lc,az,el,hdx,nd]
             l=np.concatenate((l,fl),axis=0)
             if not mess: print('.',end='',flush=True)
+            jsonfile=Path(fullfile).with_suffix('.json')
+            if jsonfile.is_file():
+                metadata=json.loads(jsonfile.read_text(encoding="utf-8"))
+                scale.append(float(metadata.get("scale_counts_per_input_unit")))
+            #print(jsonfile,scale)
         #else: print(f)
     print()
     if not filen:
@@ -186,7 +195,10 @@ def filelist(dir,nsite='I',tsky=False,savedir=None):
     outf=os.path.join(savedir,fname)
     listf=l[l[:,1].argsort()]
     #print(list[0,:],lsort[0,:])
-    scipy.io.savemat(outf,{'folder':dir,'fname':filen,'flist':listf},do_compression=True)
+    if len(scale):
+        scipy.io.savemat(outf,{'folder':dir,'fname':filen,'scale':scale,'flist':listf},do_compression=True)
+    else:
+        scipy.io.savemat(outf,{'folder':dir,'fname':filen,'flist':listf},do_compression=True)
     return outf
 
 def main():
@@ -206,7 +218,7 @@ def main():
         exit(0)
     f=open(filename,'rb')
 
-    tid,code,az,el,hdx,nd,mess=flist(f)
+    tid,bc,lc,az,el,hdx,nd,mess=flist(f)
     print(len(tid),type(tid))
     f.seek(hdx[0],0)
     head=gethead(f)
