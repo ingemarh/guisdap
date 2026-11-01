@@ -316,12 +316,12 @@ if ~jj
   if length(di_figures)>4 & di_figures(5)
     try
       if a_plasmaline
-        figure(di_figures(5))
+        plfig=figure(di_figures(5));
         global d_saveint local path_tmp webfile
         plasma_summary(d_saveint.dir,[],[],[],-2)
-	drawnow
+        drawnow
         pngfile=sprintf('%sGup_32p.png',path_tmp);
-        exportgraphics(di_figures(5),pngfile)
+        exportgraphics(plfig,pngfile)
         webfile(1)=cellstr(pngfile);
       else
         vizu('rtgup',di_figures(5));
