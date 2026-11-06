@@ -186,54 +186,56 @@ if plots>0
 elseif plots==0 | plots==-2
  npanel=dgates*nfreq;
  height(2)=.01; height(1)=(0.87-(npanel-1)*height(2))/npanel;
- if plots==0, set(gcf,'Position',[200 30 587 807]), end
- set(gcf,'PaperPosition',[0.4 0.7 20.65 28.4],'UserData',7)
+ plfig=gcf;
+ if plots==0, set(plfig,'Position',[200 30 600 849]), end
+ set(plfig,'PaperPosition',[0.4 0.7 20.65 28.4],'UserData',7)
 
  for g=1:dgates
   mmmsig=mean(max(max(plsig(g,:,:,:))));
   for j=1:nfreq
    pn=(g-1)*nfreq+j-1;
    plfreqj=reshape(([plfreq(:,j,:);plfreq(end,j,:)+df]-df/2)/1e6,nfft+1,nfl);
-   axes('Position',[.12 .06+pn*sum(height) .84 height(1)])
+   plax=axes(plfig,'Position',[.12 .06+pn*sum(height) .84 height(1)]);
    for i=1:nfl
-    surface(p_time(:,i),plfreqj(:,i),[plsig(g,:,j,i) plsig(g,end,j,i)]'*ones(1,2))
+    surface(plax,p_time(:,i),plfreqj(:,i),[plsig(g,:,j,i) plsig(g,end,j,i)]'*ones(1,2))
    end
-   shading flat, caxis([0 mmmsig])
+   shading(plax,'flat'), caxis(plax,[0 mmmsig])
    ymin=min(plfreqj(:)); ymax=max(plfreqj(:));
-   mydatetick(gca,p_time([1 end]),pn==0)
+   mydatetick(plax,p_time([1 end]),pn==0)
    if pn==0
-    xlabel('Time [UT]')
+    xlabel(plax,'Time [UT]')
    else
-    set(gca,'xticklabel',[])
+    set(plax,'xticklabel',[])
    end
-   if pn==0, xlabel('Time [UT]'), end
-   set(gca,'ylim',[ymin ymax],'box','on','tickdir','out','xgrid','on','ygrid','on')
+   if pn==0, xlabel(plax,'Time [UT]'), end
+   set(plax,'ylim',[ymin ymax],'box','on','tickdir','out','xgrid','on','ygrid','on')
    if j==1
-    text('Position',[p_time(end) ymin+(ymax-ymin)*nfreq/2],'VerticalAlignment','top',...
+    text(plax,'Position',[p_time(end) ymin+(ymax-ymin)*nfreq/2],'VerticalAlignment','top',...
      'FontSize',12,'HorizontalAlignment','Center','Rotation',90,...
      'String',sprintf('Range %.0f-%.0f km',ran(gates(g),:)))
    end
   end
  end
  [h,d]=strtok(d_ExpInfo);
- title(sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)),...
+ title(plax,sprintf('Plasma lines  %s  %s',d,datestr(mean(p_time(1,:)),1)),...
   'interpreter','none','UserData','Experiment','VerticalAlignment','bottom')
- colormap(vizu('myb'))
- axlogo=axes('Position',[.05 .93 .07 .07]); eiscatlogo(axlogo,.5)
- axtext=axes('Position',[.07 .92 .08 .06]);axis(axtext,[-10,10,-10,10]);axis(axtext,'off')
- text('Position',[11 11],'VerticalAlignment','top','FontSize',16,...
-  'HorizontalAlignment','Left','FontWeight','bold',...
+ colormap(plfig,vizu('myb'))
+ axlogo=axes(plfig,'Position',[.05 .93 .07 .07]); eiscatlogo(axlogo,.5)
+ axtext=axes(plfig,'Position',[.12 .92 .84 .06]); axis(axtext,'off')
+ text(axtext,'Position',[0.5 1],'VerticalAlignment','middle','FontSize',16,...
+  'HorizontalAlignment','Center','FontWeight','bold',...
   'String',local.owner,'UserData','Copyright');
- text('Position',-[15 150],'String','Frequency offset [MHz]','Rotation',90,...
+ axtext=axes(plfig,'Position',[0 .06 .12 .87]); axis(axtext,'off')
+ text(axtext,'Position',[.3 .5],'String','Frequency offset [MHz]','Rotation',90,...
   'VerticalAlignment','middle','HorizontalAlignment','center')
  if ~isempty(printdir)
   if pl_dir(end)==filesep, pl_dir(end)=[]; end
   if pl_dir=='.', pl_dir=pwd; end
   [dum,fname]=fileparts(pl_dir);
   fname=minput('Print file name (.pdf .png)',fullfile(printdir,[fname '_plasmaline']),1);
-  exportgraphics(gcf,[fname '.pdf'],'Resolution','600')
-  exportgraphics(gcf,[fname '.png'],'Resolution','150')
+  exportgraphics(plfig,[fname '.pdf'],'Resolution','600')
+  exportgraphics(plfig,[fname '.png'],'Resolution','150')
   fprintf('%s.pdf and .png saved\n',fname);
-  insert_exif(gcf,fname,{'pdf' 'png'})
+  insert_exif(plfig,fname,{'pdf' 'png'})
  end
 end
